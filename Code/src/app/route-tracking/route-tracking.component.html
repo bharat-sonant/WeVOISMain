@@ -1,0 +1,207 @@
+<section class="header">
+  <!-- <div class="row no-gutters">
+    <div class="col-md-5" style=" padding-left: 20px; ">
+      <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
+          << </span></button>
+      <input id="txtDate" class="report-controls custom-date-input pd-t" type="date" (change)="setDate($event.target.value,'current')"
+        style="height: 35px; width: 33%; margin-left: 7px; margin-right: 8px;" />
+      <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
+      <select class="caret-select" id="ddlZone" style="width: 30%;"
+      (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+      <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+        ngSelected="zone.zoneNo == selectedZone?'selected':''">
+        {{zone.zoneName}}
+      </option>
+    </select>
+    </div>
+    <div class="col-md-2" style="padding-top: 15px;font-size: 20px; font-weight: bold; text-align: center;">
+      <b> ROUTE TRACKING </b>
+    </div>
+    <div class="col-md-5" style="text-align: right; padding-right: 15px;">
+      <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px;">
+        <option value="0">Speed</option>
+        <option value="1">1x</option>
+        <option value="2" >2x</option>
+        <option value="3" selected>3x</option>
+        <option value="4" >4x</option>
+        <option value="5">5x</option>
+        <option value="10" >10x</option>
+      </select>
+      <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route"><i id="playStop" class="fab fa-youtube" style="font-size: 17px;"></i></button>
+     &nbsp; <button id="btnPre" class="btn-hvr" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
+          << </span></button>
+          <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set"><i class="fas fa-sync"  style="font-size: 17px;"></i></button>
+      <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="width: 150px;">
+        <option value="0">All Time Route</option>
+        <option value="1">1 Minutes</option>
+        <option value="5">5 Minutes</option>
+        <option value="15">15 Minutes</option>
+        <option value="30">30 Minutes</option>
+        <option value="60">1 Hour</option>
+      </select>
+      <button class="btn-hvr" (click)="getRouteDataPreNext('next');"><span style="color: #fff;">>></span></button>
+    </div>
+  </div> -->
+  <div class="row">
+    <div class="col-md-5 pl-35" style="width: 100%; display: flex; margin-top: -3px;">
+      <button class="btn btn-primary " (click)="setDate('','previous');">
+        << 
+      </button>
+      <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+      <button class="btn btn-primary" (click)="setDate('','next');"> 
+        >>
+      </button>
+      <select class="caret-select" id="ddlZone"
+      (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+      <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+        ngSelected="zone.zoneNo == selectedZone?'selected':''">
+        {{zone.zoneName}}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-md-2" >
+    <h3 class="header-txt"> <b> ROUTE TRACKING </b> </h3>
+   </div>
+
+   <div class="col-md-5 txt-right">
+      <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px;">
+        <option value="0">Speed</option>
+        <option value="1">1x</option>
+        <option value="2" >2x</option>
+        <option value="3" selected>3x</option>
+        <option value="4" >4x</option>
+        <option value="5">5x</option>
+        <option value="10" >10x</option>
+      </select>
+
+      <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route"><i id="playStop" class="fab fa-youtube" style="font-size: 17px;"></i></button>
+    <button id="btnPre" class="btn-hvr" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
+          << </span></button>
+         <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set" style="margin-right: 0px;"><i class="fas fa-sync"  style="font-size: 17px;"></i></button>
+    <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">
+    <option value="0">All Time Route</option>
+    <option value="1">1 Minutes</option>
+    <option value="5">5 Minutes</option>
+    <option value="15">15 Minutes</option>
+    <option value="30">30 Minutes</option>
+    <option value="60">1 Hour</option>
+  </select>
+    <button class="btn btn-primary" (click)="getRouteDataPreNext('next');"> 
+      >>
+    </button>
+   </div>
+
+  </div>
+</section>
+
+<div #gmap style="width:100%;height:92vh;margin-top: -50px; position:absolute;" id="divMap"></div>
+
+<div class="tracking-bg">
+  <div class="main-info" style="padding-top: 10px;">
+    <div class="icon-bg">
+      <img src="../../assets/img/distance-covered.svg" style="margin-top: 6px;">
+    </div>
+    <h1>{{trackData.totalKM}} km.<br />
+      <p>Distance Covered</p>
+    </h1>
+  </div>
+  <div class="main-info" style="padding-top: 10px;border-bottom: none;">
+    <div class="icon-bg">
+      <img src="../../assets/img/travel-time.svg" style="margin-top: 6px;">
+    </div>
+    <h1>{{trackData.totalTime}}<br />
+      <p>Travel Time</p>
+    </h1>
+  </div>
+</div>
+<div id="timeBox">
+ Time : {{trackData.time}}
+</div>
+<div id="myBox">
+  <div class="accordion" >
+    <div class="card" >
+      <div aria-labelledby="headingOne" >
+        <div  class="dth">
+          <div class="table-bg">
+            <div class="tableFixHead">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col"><b>Day</b></th>
+                    <th scope="col" class="text-center"><b>Detail</b></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dt of monthDetail" (click)="getMonthSelectedDetail(dt.day);" style="cursor:pointer;">
+                    <td style="vertical-align: top; width: 50px;">{{dt.day}}</td>
+                    <td class="text-left"><span [hidden]="dt.km=='0'"> {{dt.driver}}<br><b>{{dt.km}}</b> Km in <b>{{dt.hour}} ({{dt.percentage}}%)</b></span></td>                       
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- <div class="tracking-bg">
+  <div class="main-info" style="padding-top: 10px;">
+    <div class="icon-bg">
+      <img src="../../assets/img/distance-covered.svg" style="margin-top: 6px;">
+    </div> 
+        <h1>6,141km.<br />
+          <p>Distance Covered</p>
+        </h1>
+      </div> 
+      <div class="main-info" style="padding-top: 10px;">
+        <div class="icon-bg">
+          <img src="../../assets/img/travel-time.svg" style="margin-top: 6px;">
+        </div> 
+            <h1>5:19hours<br />
+              <p>Travel Time</p>
+            </h1>
+          </div> 
+</div>
+<div class="tracking-bg3">
+  <div class="main-info" style="padding-top: 10px;">
+    
+      <img src="../../assets/img/distance-covered.svg" style="margin-top: 8px;margin-left: 8px">
+    
+        <h1>6,141km.<br />
+          <p>Distance Covered</p>
+        </h1>
+      </div> 
+      <div class="main-info" style="padding-top: 10px;">
+        
+          <img src="../../assets/img/travel-time.svg" style="margin-top: 8px;margin-left: 8px">
+         
+            <h1>5:19hours<br />
+              <p>Travel Time</p>
+            </h1>
+          </div> 
+</div>
+
+<div class="tracking-bg4">
+  <div class="main-info" style="padding-top: 10px; margin-bottom: 10px;">
+    
+      <img src="../../assets/img/distance-covered.svg" style="margin-top: 8px;margin-left: 8px">
+    
+        <h1>6,141km.<br />
+          <p>Distance Covered</p>
+        </h1>
+      </div> 
+      <div class="main-info" style="padding-top: 10px;">
+        
+          <img src="../../assets/img/travel-time.svg" style="margin-top: 8px;margin-left: 8px">
+         
+            <h1>5:19hours<br />
+              <p>Travel Time</p>
+            </h1>
+          </div> 
+</div> -->

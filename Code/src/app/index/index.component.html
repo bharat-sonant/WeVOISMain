@@ -1,0 +1,528 @@
+<div id="home">
+    <!-------------- Navbar section start ---------------->
+    <div class="container">
+        <nav class="navbar navbar-expand-md shadow bsnav bsnav-sticky bsnav-sticky-slide  " id="myDIV">
+            <a class="navbar-brand" href="#">
+                <img src="../assets/images/logo-black.svg" class="logo-1 img-fluid" alt="">
+                <img src="../assets/images/logo-white.svg" class="logo-2 img-fluid" alt="">
+            </a>
+
+            <button class="navbar-toggler toggler-spring"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav navbar-mobile mr-0">
+                    <li class="nav-item active nav-link" style="cursor: pointer;" (click)="getDetail('home');" >Home</li>
+                    <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('about');">About Us</li>
+                    <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('services');">Services</li>
+                    <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('gallery');">Gallery</li>
+                    <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('contact');">Contact</li>
+                    <li class="nav-item nav-link" ><a class="log-in" href="/portal-access">Go to Portal</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="bsnav-mobile">
+            <div class="bsnav-mobile-overlay"></div>
+            <div class="navbar"></div>
+        </div>
+    </div>
+
+    <!-------------- Navbar section End ---------------->
+
+    <!-------------- Slider section start ---------------->
+    <section class="slider">
+
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block w-100 full zoom" src="../assets/images/slider-1.svg" alt="First slide">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Your <span>"GREEN"</span><br>
+                            magicians</h5>
+                        <p>WeVOIS Labs Pvt Ltd, a solid waste management<br> company is here to make your
+                            dream come<br> true for a greener and cleaner tomorrow.</p>
+                        <div class="button">
+                            <a (click)="getDetail('about');" style="cursor: pointer;" class="hvr-shutter-in-horizontal">Explore Us</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img class="d-block w-100 full zoom" src="../assets/images/slider-2.svg" alt="Second slide">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Always working for a <br>
+                            <span>sustainable tomorrow.</span>
+                        </h5>
+                        <p>WeVOIS Labs Pvt Ltd, a solid waste management<br> company is here to make your
+                            dream come<br> true for a greener and cleaner tomorrow.</p>
+                        <div class="button">
+                            <a (click)="getDetail('about');" style="cursor: pointer;" class="hvr-shutter-in-horizontal">Explore Us</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img class="d-block w-100 full zoom" src="../assets/images/slider-3.svg" alt="Third slide">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>It's not <span>Waste</span><br>
+                            until we say it.</h5>
+                        <p>WeVOIS Labs Pvt Ltd, a solid waste management<br> company is here to make your
+                            dream come<br> true for a greener and cleaner tomorrow.</p>
+                        <div class="button">
+                            <a (click)="getDetail('about');" style="cursor: pointer;" class="hvr-shutter-in-horizontal">Explore Us</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </section>
+
+    <!-------------- Slider section End ---------------->
+</div>
+
+<!-------------- About section start ---------------->
+
+<section class="about" id="about">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center" >
+          <h1 data-aos="fade-left" data-aos-duration="1000">About Us</h1>
+          <div class="heading-border"></div>
+          <div class="main-content">
+            <p data-aos="fade-right" data-aos-duration="1000"><b>WeVOIS Labs Pvt Ltd.</b>, a solid waste management company is here to make your dream come true for a greener
+              and cleaner tomorrow. Don't worry, we’ll take it from here. We are here with a promise to deliver! With a vision
+              of circular economy WeVOIS is here to provide you with eco-friendly waste management solutions and superior services
+               and to make sure that your trash is collected on time. Our complete automated IoT- based door to door waste collection
+                solution is designed to improve efficient waste collection of the city all the while making our environment greener
+                 and communities cleaner. Our superheroes at WeVOIS work hard and skillfully day and night so that you can wake up
+                  to a greener and cleaner surrounding every morning with your favorite cup of coffee.</p>
+          </div>
+  
+        </div>
+  
+  
+      </div>
+    </div>
+  </section>
+<!-------------- About section End ---------------->
+
+<!-------------- How We Work section start ---------------->
+
+<section class="how-we-work" id="how-we-work">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 data-aos="fade-down" data-aos-duration="1000">How We Work?</h1>
+          <div class="heading-border"></div>
+        </div>
+  
+        <div class="col-md-12">
+          <div class="accordion" id="accordionExample" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fas fa-desktop"></i> &nbsp Web Based Application
+                  </button>
+                </h2>
+              </div>
+          
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="row">
+                  <div class="col-md-8">
+                <div class="card-body">
+                  <div class="left-heading"> &nbsp; WeVOIS Internal</div>
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+                  3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+                   Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. 
+                    Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, 
+                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </div>
+                </div>
+                <div class="col-md-4">
+                  <img src="../assets/images/web application.png" class="img-fluid" alt="">
+                </div>
+  
+              </div>
+  
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="fas fa-tablet-alt"></i> &nbsp Mobile App Based Monitoring
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="row">
+                  <div class="col-md-8">
+                <div class="card-body">
+                  <div class="left-heading"> &nbsp; Sikar Model</div>
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+                  3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+                   Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. 
+                    Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, 
+                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </div>
+                </div>
+                <div class="col-md-4">
+                  <img src="../assets/images/sikar-model.png" class="img-fluid" alt="">
+                </div>
+  
+              </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fas fa-chart-line"></i> &nbsp Dustbin Routing
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="row">
+                  <div class="col-md-8">
+                <div class="card-body">
+                  <div class="left-heading"> &nbsp ;Routing Application</div>
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+                  3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+                   Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. 
+                    Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, 
+                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </div>
+                </div>
+                <div class="col-md-4">
+                  <img src="../assets/images/backoffice.png" class="img-fluid" alt="">
+                </div>
+  
+              </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingFour">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    <i class="fas fa-chart-line"></i> &nbsp The Design only for Sample
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                <div class="row">
+                  <div class="col-md-8">
+                <div class="card-body">
+                  <div class="left-heading"> &nbsp Content may be as per our Requirement</div>
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+                  3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+                   Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. 
+                    Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, 
+                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </div>
+                </div>
+                <div class="col-md-4">
+                  <img src="../assets/images/backoffice.png" class="img-fluid" alt="">
+                </div>
+  
+              </div>
+              </div>
+            </div>
+          </div> </div>
+  
+  
+      </div>
+    </div>
+  </section>
+<!-------------- How We Work section End ---------------->
+
+<!-------------- Services section start ---------------->
+<section class="services" id="services" > 
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 data-aos="fade-left" data-aos-duration="1000">What we Offer</h1>
+          <div class="heading-border"></div>
+        </div> </div>
+        
+        <div class="services-content">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="serviceBox hvr-outline-in " data-aos="fade-right" data-aos-duration="1000">
+                <div class="service-icon">
+                    <span><img src="../assets/images/services1.png" class="img-fluid" alt=""></span>
+                </div>
+                <div class="service-content ">
+                    <h2 class="title">Door to Door Waste Collection</h2>
+                    <p class="description">We at WeVOIS offer you with IoT enabled Door to Door waste collection services on primarily catering to municipal bodies
+                       responsible for managing waste. We believe in dealing with the problems of waste from its core and have developed.</p>
+                    <a href="WebDesigning.html" class="read-more fa fa-plus hvr-glow" data-toggle="tooltip" title="Read More"></a>
+                </div>
+            </div>
+        </div>
+  
+        <div class="col-md-4">
+          <div class="serviceBox hvr-outline-in" data-aos="fade-left" data-aos-duration="1000">
+              <div class="service-icon icon2">
+                  <span><img src="../assets/images/services2.png" class="img-fluid" alt=""></span>
+              </div>
+              <div class="service-content">
+                  <h2 class="title">Door to Door Waste Collection</h2>
+                  <p class="description">We at WeVOIS offer you with IoT enabled Door to Door waste collection services on primarily catering to municipal bodies
+                     responsible for managing waste. We believe in dealing with the problems of waste from its core and have developed.</p>
+                  <a href="WebDesigning.html" class="read-more fa fa-plus hvr-glow" data-toggle="tooltip" title="Read More"></a>
+              </div>
+          </div>
+      </div>
+  
+      <div class="col-md-4">
+        <div class="serviceBox hvr-outline-in" data-aos="fade-right" data-aos-duration="1000">
+            <div class="service-icon icon3">
+                <span><img src="../assets/images/services3.png" class="img-fluid" alt=""></span>
+            </div>
+            <div class="service-content">
+                <h2 class="title">Door to Door Waste Collection</h2>
+                <p class="description">We at WeVOIS offer you with IoT enabled Door to Door waste collection services on primarily catering to municipal bodies
+                   responsible for managing waste. We believe in dealing with the problems of waste from its core and have developed.</p>
+                <a href="WebDesigning.html" class="read-more fa fa-plus hvr-glow" data-toggle="tooltip" title="Read More"></a>
+            </div>
+        </div>
+    </div>
+  
+      <div class="col-md-12 text-center">
+        <div class="button" data-aos="fade-down" data-aos-duration="1000">
+          <a href="#" class="hvr-shutter-in-horizontal">All Services</a>
+         </div>
+      </div>
+   
+      </div> </div>
+  
+  
+    </div>
+  </section>
+<!-------------- Services section End ---------------->
+
+<!-------------- Gallery section start ---------------->
+<section class="gallery" id="gallery" data-aos="fade-right" data-aos-duration="1000">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 data-aos="fade-down" data-aos-duration="1000">Our Gallery</h1>
+          <div class="heading-border"></div>
+        </div>     </div>
+  
+        <div class="row first-line">
+          <div class="col-8" data-aos="fade-up" data-aos-duration="1000">
+             <div class=" hovereffect">
+             <img src="../assets/images/gallery1.jpg" class="hover-shadow img-fluid">
+              </div> </div>
+  
+              <div class="col-4" >
+                  <div class="row">
+                     <div class="col-12" >
+                 <div class=" hovereffect">
+                  <img src="../assets/images/gallery2.jpg" class="hover-shadow img-fluid">
+                   </div> </div>
+                 
+                   <div class="col-12" style="padding-top:  20px;" >
+                     <div class=" hovereffect">
+                      <img src="../assets/images/gallery3.jpg" class="hover-shadow img-fluid">
+                       </div>  </div> 
+                 
+                 </div>   </div>
+                   </div>
+                   <span id="dots"></span>
+                   <span id="more">
+                   <div class="row second-line">
+                    <div class="col-4" data-aos="fade-up" data-aos-duration="1000">
+                        <div class="row">
+                           <div class="col-12" >
+                       <div class=" hovereffect">
+                        <img src="../assets/images/gallery4.jpg" class="hover-shadow img-fluid">
+                         </div> </div>
+                       
+                         <div class="col-12" style="padding-top:  20px;" >
+                           <div class=" hovereffect">
+                            <img src="../assets/images/gallery5.jpg" class="hover-shadow img-fluid">
+                             </div>  </div> 
+                       
+                       </div>   </div>
+  
+                    <div class="col-8" data-aos="fade-up" data-aos-duration="1000">
+                       <div class=" hovereffect">
+                       <img src="../assets/images/gallery6.jpg" class="hover-shadow img-fluid">
+                        </div> </div>
+                    
+                             </div>
+                             
+                            <div class="row third-line">
+                              <div class="col-4" data-aos="fade-up" data-aos-duration="1000">
+                                 <div class=" hovereffect">
+                                 <img src="../assets/images/gallery7.jpg" class="hover-shadow img-fluid">
+                                  </div> </div>
+                 
+                                  <div class="col-4" data-aos="fade-up" data-aos-duration="1000">
+                                     <div class=" hovereffect">
+                                      <img src="../assets/images/gallery5.jpg" class="hover-shadow img-fluid">
+                                       </div>  </div>   
+                                       <div class="col-4" data-aos="fade-up" data-aos-duration="1000">
+                                         <div class=" hovereffect">
+                                          <img src="../assets/images/gallery6.jpg" class="hover-shadow img-fluid">
+                                           </div>  </div>  </div>
+                            
+                            
+                            
+                            </span>
+  
+                   <div class="row">
+                    <div class="col-md-12 text-center">
+                      <div class="button" data-aos="fade-down" data-aos-duration="1000">
+                        <a href="#/" class="hvr-shutter-in-horizontal" onclick="myFunction()" id="myBtnmore" ><i class="fas fa-spinner"></i> &nbsp; Load More</a>
+                       </div>
+                    </div>     </div>
+  
+    </div>
+  </section>
+<!-------------- Gallery section End ---------------->
+
+
+<iframe id="map" src="https://www.google.com/maps/d/u/0/embed?mid=1YByvVh6BUeyl0rtg99iDnc8slhCAE9XV" width="100%"
+    height="70%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+<!-------------- Contact us section start ---------------->
+
+<section class="contact" id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>Get in Touch</h1>
+          <div class="heading-border"></div>
+        </div> </div>
+  
+        <div class="row">
+  <div class="col-md-6">
+   <div class="box">
+    <form>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Full Name</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter name">
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Email Address</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter email">
+      </div>
+  
+      <div class="form-group">
+        <label for="exampleFormControlTextarea1">Your Message</label>
+        <textarea class="form-control"  placeholder="Enter your message" id="exampleFormControlTextarea1" rows="3"></textarea>
+      </div>
+      <div class="button">
+        <a href="#" class="hvr-shutter-in-horizontal">Send Message</a>
+       </div>
+    </form>
+  
+   </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="col-md-12">
+  <div class="box">
+  <h2>Address</h2>
+  <a  href="">Tamanna Apartment, D-49/D-50, Kashyap Path, Shyam Nagar, Jaipur</a>
+  <h2 class="con-info">Phone & Email</h2>
+  <a href="">8077084247</a><br>
+  <a href="">wevoislabs@gmail.com</a>
+  </div>
+  </div>
+  
+  <div class="col-md-7 contact-links">
+    <h2>Work Links</h2>
+   <div class="links">
+    <ul class="list-unstyled">
+      <li><a href="#gallery"><i class="fas fa-angle-double-right"></i> Gallery</a></li>
+      <li><a href="#"><i class="fas fa-angle-double-right"></i> Our Team</a></li>
+      <li><a href="#map"><i class="fas fa-angle-double-right"></i> Map</a></li>
+      <li><a href="#contact"><i class="fas fa-angle-double-right"></i> Contact Us</a></li>
+    </ul>
+    <ul class="list-unstyled">
+      <li><a href="#home"><i class="fas fa-angle-double-right"></i> Home</a></li>
+      <li><a href="#about"><i class="fas fa-angle-double-right"></i> About Us</a></li>
+      <li><a href="#how-we-work"><i class="fas fa-angle-double-right"></i> How We Work</a></li>
+      <li><a href="#services"><i class="fas fa-angle-double-right"></i> What we Offer</a></li>
+  </ul> </div>
+    </div>
+  
+  </div>
+  
+  <!-- <div class="col-md-6 text-center">
+    <img src="images/contact.png" class="img-fluid" alt="" style="margin-top:70px">
+  </div> -->
+  
+      </div>
+    </div>
+  </section>
+<!-------------- Contact us section End ---------------->
+<div class="col-md-12 border-bottom"></div>
+
+<!-------------- Contact us botton Start ---------------->
+<section class="contact-bottom">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12" style="text-align: center; color: #fff;">
+                All rights are reserved by <b>WeVOIS Labs Private Limited</b>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-------------- Contact us botton End ---------------->
+
+<!-------------- Social Icon Start ---------------->
+<div class="social-icon">
+    <a href="https://www.facebook.com/wevois/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="https://twitter.com/wevois?lang=en" target="_blank"><i class="fab fa-twitter"></i></a>
+    <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+    <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank"><i class="fab fa-instagram"></i></a>
+</div>
+<!-------------- Social Icon End ---------------->
+
+<!------------------- Video Section Start -------------------->
+<div class="video-thumbnail " data-toggle="modal" data-target="#exampleModalCenter">
+    <div class="play-btn">
+        <i class="fa fa-play-circle" aria-hidden="true"></i>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop"
+                    style="width: 100%; height: auto;" controls>
+                    <source src="../assets/images/Mrf process.mp4" type="video/mp4">
+                </video>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-------------- Video section End ---------------->
+
+<!--------------------- BACK TO TOP ----------------------->
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fas fa-angle-double-up"></i></button>
+<!-------------------- BACK TO TOP END --------------------->

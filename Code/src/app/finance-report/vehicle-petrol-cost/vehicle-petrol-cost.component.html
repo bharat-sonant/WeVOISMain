@@ -1,0 +1,162 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-5" style="padding-left: 10px;">
+            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                style="width: 150px;" [(ngModel)]="selectedYear">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
+            <select class="caret-select" id="ddlMonth"   (change)="changeMonthSelection($event.target.value)"
+                style="width: 150px;">
+                <option value="0">Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>   
+        </div>
+        <div class="col-md-7" style="padding-left: 10px;padding-top: 10px;">
+            Vehicle Petrol Cost
+        </div>
+    </div>
+</section>
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover" >
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 300px!important;"><div style="width: 200px!important;">Vehicle No.</div></th>
+                                        <th scope="col" class="text-right thFixed2" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">Cost</th>
+                                        <th scope="col" class="text-center">01</th>
+                                        <th scope="col" class="text-center">02</th>
+                                        <th scope="col" class="text-center">03</th>
+                                        <th scope="col" class="text-center">04</th>
+                                        <th scope="col" class="text-center">05</th>
+                                        <th scope="col" class="text-center">06</th>
+                                        <th scope="col" class="text-center">07</th>
+                                        <th scope="col" class="text-center">08</th>
+                                        <th scope="col" class="text-center">09</th>
+                                        <th scope="col" class="text-center">10</th>
+                                        <th scope="col" class="text-center">11</th>
+                                        <th scope="col" class="text-center">12</th>
+                                        <th scope="col" class="text-center">13</th>
+                                        <th scope="col" class="text-center">14</th>
+                                        <th scope="col" class="text-center">15</th>
+                                        <th scope="col" class="text-center">16</th>
+                                        <th scope="col" class="text-center">17</th>
+                                        <th scope="col" class="text-center">18</th>
+                                        <th scope="col" class="text-center">19</th>
+                                        <th scope="col" class="text-center">20</th>
+                                        <th scope="col" class="text-center">21</th>
+                                        <th scope="col" class="text-center">22</th>
+                                        <th scope="col" class="text-center">23</th>
+                                        <th scope="col" class="text-center">24</th>
+                                        <th scope="col" class="text-center">25</th>
+                                        <th scope="col" class="text-center">26</th>
+                                        <th scope="col" class="text-center">27</th>
+                                        <th scope="col" class="text-center">28</th>
+                                        <th scope="col" class="text-center">29</th>
+                                        <th scope="col" class="text-center">30</th>
+                                        <th scope="col" class="text-center">31</th>
+                                    </tr>
+                                </thead> 
+                                <tbody>
+                                    <tr *ngFor="let dt of petrolDataList" >
+                                        <td class=" thFixed" style="vertical-align: top; font-weight: bold;"><div style="width: 200px!important;">{{dt.vehicleNo}}</div></td>
+                                        <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold;">₹{{dt.cost}}</td>
+                                        <td class=" text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day1" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day2" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day3" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day4" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day5" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day6" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day7" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day8" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day9" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day10" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day11" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day12" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day13" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day14" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day15" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day16" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day17" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day18" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day19" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day20" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day21" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day22" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day23" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day24" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day25" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day26" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day27" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day28" class="rowWidth"></div></td>
+                                        <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day29" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day30" class="rowWidth"></div></td>
+                                        <td class="text-center"  style="vertical-align: top;"><div [innerHTML]="dt.day31" class="rowWidth"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col" class="thFixed" ></th>
+                                        <th scope="col" class="thFixed2" style="font-weight: bold;">Total</th>
+                                        <th scope="col"  class="text-center" style="font-weight: bold;">{{costData.day1}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day2}}</th>
+                                        <th scope="col" class="text-center"  style="font-weight: bold;">{{costData.day3}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day4}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day5}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day6}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day7}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day8}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day9}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day10}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day11}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day12}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day13}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day14}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day15}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day16}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day17}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day18}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day19}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day20}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day21}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day22}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day23}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day24}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day25}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day26}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day27}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day28}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day29}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day30}}</th>
+                                        <th scope="col" class="text-center" style="font-weight: bold;">{{costData.day31}}</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="tracking-bg">
+    <div class="main-info" style="padding-top: 10px; text-align: left!important;">
+      <h1>Total Cost : {{costData.totalCost}}
+      </h1>
+    </div>
+  </div>
+

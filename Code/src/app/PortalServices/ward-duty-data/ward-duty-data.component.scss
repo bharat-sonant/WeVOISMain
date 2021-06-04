@@ -1,0 +1,168 @@
+.main-panel{
+    background-color: #E3E3E3;
+  }
+  
+  .halts-header{
+    background-color: #100f1a;
+    color: #fff;
+    height: 60px;
+    padding-top: 15px;
+    font-size: 16px;
+    position: relative;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .custom-date-input{   
+    height: 42px;
+ }
+
+ .report-controls{  
+  width: 100%; 
+  padding: 18px;
+  border-radius: 5px; 
+  font-size: 13px;   
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+  .btn-hvr{
+    cursor: pointer;
+    width: 50px;
+    height:36px;
+    background: #888!important;
+}
+.btn-hvr:hover{
+    background: #979797!important;
+}
+
+.inner-text{
+  text-align: left;
+  font-size: 12px;
+}
+
+.btn-update{
+  border-width: 2px;
+  font-weight: 400;
+  font-size: 0.8571em;
+  line-height: 1.35em;
+  border: none;
+  margin: 0px 1px;
+  border-radius: 0.1875rem;
+  padding: 8px 21px;
+  cursor: pointer;
+  background-color: #2dbd23;
+  color: #FFFFFF;
+
+}
+  
+  
+  /**************************Card-bg Start***************************/
+  .fa-long-arrow-alt-down{
+    color: red;
+  }
+  .fa-long-arrow-alt-up{
+    color: #0ba118;
+  }
+  .card-bg{
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 17px;
+    font-size: 16px;
+    line-height: 23px;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    text-align: center;
+  
+  background: rgb(255,255,255);
+  background: -moz-linear-gradient(-45deg, rgb(255,255,255) 82%, rgb(130,211,135) 89%, rgb(94,199,101) 91%, rgb(91,153,34) 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(82%, rgb(255,255,255)), color-stop(89%, rgb(130,211,135)), color-stop(91%, rgb(94,199,101)), color-stop(100%, rgb(91,153,34)));
+  background: -webkit-linear-gradient(-45deg, rgb(255,255,255) 82%, rgb(130,211,135) 89%, rgb(94,199,101) 91%, rgb(91,153,34) 100%);
+  background: -o-linear-gradient(-45deg, rgb(255,255,255) 82%, rgb(130,211,135) 89%, rgb(94,199,101) 91%, rgb(91,153,34) 100%);
+  background: -ms-linear-gradient(-45deg, rgb(255,255,255) 82%, rgb(130,211,135) 89%, rgb(94,199,101) 91%, rgb(91,153,34) 100%);
+  background: linear-gradient(135deg, rgb(255,255,255) 82%, rgb(130,211,135) 89%, rgb(94,199,101) 91%, rgb(91,153,34) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#5b9922', GradientType=1 );
+  }
+  // .inner-text{
+  //   margin-top: 28px;
+  // }
+  .card-bg a{
+    font-size: 24px;
+    color:rgb(29, 26, 26);
+  }
+  .card-bg h2{
+  font-size: 15px;
+    color:#000;
+  }
+  /**************************Card-bg End***************************/
+  
+  .dth{
+    border: 1px solid #c5c5c5;
+    background-color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    border-radius: 0rem 0rem 0.25rem 0.25rem;
+    float: left;
+    width: 100%;
+    
+  }
+  .dth-header{
+    text-align: center;
+    background-color: #0ba118;
+    padding: 10px;
+    color: #fff;
+    border-radius: 0.25rem 0.25rem 0rem 0rem ;
+    text-transform: uppercase;
+    letter-spacing: 0px;
+    font-weight: 500;
+  }
+  .dth-header1{
+    text-align: center;
+    background-color: #24cf0d;
+    padding: 10px;
+    color: #fff;
+    border-radius: 0.25rem 0.25rem 0rem 0rem;
+    text-transform: uppercase;
+    letter-spacing: 0px;
+    font-weight: 500;
+  }
+  .dth-header2{
+    text-align: center;
+    background-color: #698507;
+    padding: 10px;
+    color: #fff;
+    border-radius: 0.25rem 0.25rem 0rem 0rem;
+    text-transform: uppercase;
+    letter-spacing: 0px;
+    font-weight: 500;
+  }
+  .dth h4{
+    font-size: 20px;
+    width: 50%;
+    margin:0px;
+    text-align: center;
+    padding: 24px;
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    float: right;
+  }
+  .dth .red-halt{
+    background: #f3b8b8;
+    padding: 2px 15px;
+    border-radius: 20px;
+    color:#3c302c;
+  }
+  .dth .green-halt{
+    background: #b8f3cd;
+    padding: 2px 15px;
+    border-radius: 20px;
+    color:#3c302c;
+  }
+  .dth p{
+    font-size: 12px;
+    margin:0px;
+  }
+  .dth h4:hover{
+    background-color: #edf5fb!important;
+    border-radius: .25rem;
+  }
+  
+  
+  

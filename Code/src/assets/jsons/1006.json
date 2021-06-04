@@ -1,0 +1,214 @@
+{
+  "1": {
+    "points": [
+      [
+        26.8941758,
+        75.7659494
+      ],
+      [
+        26.8942523,
+        75.7659011
+      ],
+      [
+        26.8942762,
+        75.765826
+      ],
+      [
+        26.8943049,
+        75.7656543
+      ]
+    ],
+    "Houses": [
+      {
+        "latlong": {
+          "latitude": "26.89435151",
+          "longitude": "75.76567252"
+        },
+        "UID": "0083974265",
+        "Basicinfo": {
+          "CardNumber": "SIKA105",
+          "MobileNumber": "5236987412"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89432931",
+          "longitude": "75.7657356"
+        },
+        "UID": "0084013817",
+        "Basicinfo": {
+          "CardNumber": "SIKA104",
+          "MobileNumber": "5241369874"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89419254",
+          "longitude": "75.76593847"
+        },
+        "UID": "1703739733",
+        "Basicinfo": {
+          "CardNumber": "SIKA101",
+          "MobileNumber": "5463886565"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89430247",
+          "longitude": "75.76581079"
+        },
+        "UID": "0598616761",
+        "Basicinfo": {
+          "CardNumber": "SIKA103",
+          "MobileNumber": "5935565565"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89426994",
+          "longitude": "75.76590892"
+        },
+        "UID": "0084898025",
+        "Basicinfo": {
+          "CardNumber": "SIKA102",
+          "MobileNumber": "8659666525"
+        }
+      }
+    ],
+    "LineType": {}
+  },
+  "2": {
+    "points": [
+      [
+        26.8943049,
+        75.7656543
+      ],
+      [
+        26.8943337,
+        75.7654827
+      ],
+      [
+        26.8943528,
+        75.7652788
+      ],
+      [
+        26.8943767,
+        75.7651501
+      ]
+    ],
+    "Houses": [
+      {
+        "latlong": {
+          "latitude": "26.8943017",
+          "longitude": "75.76556548"
+        },
+        "UID": "0084208409",
+        "Basicinfo": {
+          "CardNumber": "SIKA107",
+          "MobileNumber": "1235123512"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89438001",
+          "longitude": "75.76538114"
+        },
+        "UID": "0886995972",
+        "Basicinfo": {
+          "CardNumber": "SIKA109",
+          "MobileNumber": "5236896523"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89435695",
+          "longitude": "75.76548271"
+        },
+        "UID": "0784971859",
+        "Basicinfo": {
+          "CardNumber": "SIKA108",
+          "MobileNumber": "8798686866"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89441102",
+          "longitude": "75.76521927"
+        },
+        "UID": "0911286939",
+        "Basicinfo": {
+          "CardNumber": "SIKA110",
+          "MobileNumber": "8965535553"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89430261",
+          "longitude": "75.76563745"
+        },
+        "UID": "0599507001",
+        "Basicinfo": {
+          "CardNumber": "SIKA106",
+          "MobileNumber": "9797979797"
+        }
+      }
+    ],
+    "LineType": {}
+  },
+  "3": {
+    "points": [
+      [
+        26.8943767,
+        75.7651501
+      ],
+      [
+        26.8944054,
+        75.7649677
+      ],
+      [
+        26.8944533,
+        75.7647424
+      ],
+      [
+        26.8944963,
+        75.7646405
+      ]
+    ],
+    "Houses": [
+      {
+        "latlong": {
+          "latitude": "26.89447098",
+          "longitude": "75.76496757"
+        },
+        "UID": "0085166681",
+        "Basicinfo": {
+          "CardNumber": "SIKA113",
+          "MobileNumber": "5236896524"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.8945208",
+          "longitude": "75.76483923"
+        },
+        "UID": "0477147856",
+        "Basicinfo": {
+          "CardNumber": "SIKA112",
+          "MobileNumber": "5463215336"
+        }
+      },
+      {
+        "latlong": {
+          "latitude": "26.89443221",
+          "longitude": "75.76511685"
+        },
+        "UID": "0881057572",
+        "Basicinfo": {
+          "CardNumber": "SIKA111",
+          "MobileNumber": "6398524172"
+        }
+      }
+    ],
+    "LineType": {}
+  }
+}

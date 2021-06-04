@@ -1,0 +1,154 @@
+<section class="halt-data">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-10 halt-header pl-0 pr-0">
+        <!------------- Header Start ---------->
+        <div class="row">
+          <div class="col-md-6 text-left" style="margin-top: -4px;">
+            <input id="txtDate" class="report-controls custom-date-input" type="date"
+              (change)="setDate($event.target.value)" />
+            <button type="submit" (click)="showHaltSummary();" class="btn mob-btn" style="margin-left: 0px;">
+              View Halt Summary</button>
+          </div>
+          <div class="col-md-3 text-left">
+            <h5 class="hide">{{haltDetails.zoneName}}</h5>
+          </div>
+          <div class="col-md-3 text-right pr-20"> </div>
+        </div>
+        <!------------- Header End ---------->
+        <div class="row" style="margin-top: 8px;">
+          <!------------- Halt Scroll List Start ---------->
+          <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+            <div class="scrollable-halt">
+              <div class="{{data.divClass}}" *ngFor="let data of haltDataList, let i=index" (click)="getHaltMap(i);">
+                <div class="halt-details">
+                  <h5 class="stopped-time">Stopped Time : <br><strong class="{{data.haltClass}}"><i
+                        class="far fa-clock"></i>
+                      {{data.time}}</strong></h5>
+                  <h5 class="break-time">Break Time : <br><strong class="{{data.haltClass}}"><i
+                        class="far fa-clock"></i>
+                      {{data.duration}} Min.</strong></h5>
+                  <button class="remark-btn button" data-toggle="modal" data-target="#exampleModalCenter"
+                    style="display:none;"><i class="fa fa-plus"></i></button>
+                  <button class="remark-btn success-btn button" style="display:none;"><i class="fa fa-eye"></i></button>
+                </div>
+                <div class="work-stop-address" style="border-bottom: 1px dotted lightgray;">
+                  <p><i class="fas fa-registered" style="color: #0ba118;"></i> {{data.type}}</p>
+                </div>
+                <div class="work-stop-address">
+                  <i class="fas fa-map-marker-alt" style="float: left;"></i>
+                  <p style="margin-left: 15px;"><span> {{data.location}}</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!------------- Halt Scroll List End ---------->
+
+          <div class="col-md-9 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
+            <div class="row">
+              <!------------- Driver Helper Summary Start ---------->
+              <!-- <div class="col-md-6" style="padding-right: 0px;">
+                <div class="dh-back">
+                  <h3> <i class="far fa-user"></i> {{haltDetails.driverName}}</h3>
+                  <h3 class="float-left"><i class="fas fa-car-alt"></i> Driver</h3>
+                  <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.driverMobile}}</a>
+                </div>
+              </div>
+              <div class="col-md-6" style="padding-left: 10px; padding-right: 5px;">
+                <div class="dh-back">
+                  <h3> <i class="far fa-user"></i> {{haltDetails.helperName}}</h3>
+                  <h3 class="float-left"><i class="fab fa-hire-a-helper"></i> Helper</h3>
+                  <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.helperMobile}}</a>
+                </div>
+              </div> -->
+              <!------------- Driver Helper Summary End ---------->
+              <!------------- Halt Map Start ---------->
+              <div class="col-md-12">
+                <div class="map-bg" style="padding-bottom: 5px;">
+                  <div class="row total-halt">
+                    <div class="col-md-5 mob-r-15" style="padding-right: 0px;">
+                      <div class="dh-back">
+                        <h3> <i class="far fa-user"></i> {{haltDetails.driverName}}</h3>
+                        <h3 class="float-left"><i class="fas fa-car-alt"></i> Driver</h3>
+                        <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.driverMobile}}</a>
+                      </div>
+                    </div>
+                    <div class="col-md-5 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
+                      <div class="dh-back">
+                        <h3> <i class="far fa-user"></i> {{haltDetails.helperName}}</h3>
+                        <h3 class="float-left"><i class="fab fa-hire-a-helper"></i> Helper</h3>
+                        <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.helperMobile}}</a>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
+                      <div class="on-map">
+                        <h5 class="danger-halt"><i _ngcontent-pns-c5="" class="far fa-hand-paper"></i>
+                          {{haltDetails.totalBreakHours}} Hour
+                          <br>
+                          <p>Total Halt</p>
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mob-mt-5" style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
+                    <div id="haltMap" style="width:100%;height:75vh; "></div>
+                  </div>
+
+                </div>
+              </div>
+              <!------------- Halt Map End ---------->
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!------------- Ward Scroll List Start ---------->
+      <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
+        <div class="scroll-list">
+          <div class="{{list.divClass}}" *ngFor="let list of haltList"
+            (click)="list.totalBreak!=0 && getZoneDetail(list.zoneNo);" style="cursor: pointer;">
+            <div class="ward-details">
+              <h6>{{list.zoneName}}</h6>
+              <div class="halt-time alert-halt">
+                <p class="{{list.haltClass}}"> {{list.totalBreakHours}} <i class="far fa-clock active-rotate-red"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!------------- Ward Scroll List End ---------->
+    </div>
+  </div>
+</section>
+
+
+<!------------- Remark Modal Start ---------->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Remark</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select id="drpRemark" class="select">
+          <option selected value="0">Remark Topic</option>
+          <option value="1">Vehicle Related</option>
+          <option value="2">Device</option>
+          <option value="3">Location Issue</option>
+          <option value="4">Fast Working</option>
+          <option value="5">Halts</option>
+          <option value="6">General</option>
+        </select>
+        <textarea id="txtRemark" placeholder="Type your concern"></textarea>
+        <input type="button" class="btn btn-success" value="Submit" />
+      </div>
+    </div>
+  </div>
+</div>
+<!---------Remark Modal End--------->

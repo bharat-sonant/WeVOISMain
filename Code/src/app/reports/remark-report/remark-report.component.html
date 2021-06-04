@@ -1,0 +1,68 @@
+<section class="header">
+    <div class="row no-gutters">
+      <div class="col-md-6" style=" padding-left: 20px;margin-top: -3px; ">
+        <button class="btn-hvr" (click)="setPreviousDate();"><span style="color: #fff;">
+            << </span></button>
+        <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value)"
+          style="height: 45px; width: 30%; margin-left: 7px; margin-right: 8px;" />
+        <button class="btn-hvr" (click)="setNextDate();"><span style="color: #fff;">>></span></button>
+        <select class="caret-select" id="ddlZone" style="width: 20%;"
+        (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+          ngSelected="zone.zoneNo == selectedZone?'selected':''">
+          {{zone.zoneName}}
+        </option>
+      </select>
+      <select class="caret-select" id="ddlCategory" style="width: 20%;"
+        (change)="changeCategorySelection($event.target.value)">
+        <option value="0">
+          --All--
+        </option>
+        <option value="1">Vehicle Related</option>
+        <option value="2">Device</option>
+        <option value="3">Location Issue</option>
+        <option value="4">Fast Working</option>
+        <option value="5">Halts</option>
+        <option value="6">General</option>
+      </select>
+      </div>
+      <div class="col-md-3" style="padding-top: 12px;font-size: 20px; font-weight: bold; text-align: left; letter-spacing: 2px; text-transform: uppercase;">
+        <b> Remark Report </b>
+      </div>
+      <div class="col-md-4" style="text-align: right; padding-right: 15px;">
+  
+        
+  
+      </div>
+    </div>
+  </section>
+  
+  
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="tdBorder">Ward</th>
+                                        <th scope="col" class="text-left">Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of remarkList" >
+                                        <td class="text-left tdBorder">{{dt.wardName}}</td>
+                                        <td class="text-left" ><b>By</b> {{dt.user}} <b> at</b> {{dt.time}}<br/><b>{{dt.topic}} : </b>{{dt.remark}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

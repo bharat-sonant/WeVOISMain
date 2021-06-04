@@ -1,0 +1,82 @@
+<div class="graph-header">
+
+  <label class="main-chart-title"> {{graphHeaderData.date}} [ {{graphHeaderData.workprogress}} % ]</label>
+
+  <select class="ddlStyle" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+    <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+      {{zone.zoneName}}
+    </option>
+  </select>
+  <div ngbDropdown style="float: right;  margin-right: 1%;  margin-top: -62px;">
+    <!-- <button style="background-color: #fd7e14;" type="button"
+      class="btn btn-round btn-default dropdown-toggle btn-simple btn-icon no-caret" ngbDropdownToggle>
+      <i class="now-ui-icons loader_gear" style="color: white;"></i>
+    </button> -->
+    <button class="interval-btn" (click)="getGrpahDataTodayAndLastFiveDays(15);">15 min</button>
+    <button class="interval-btn" (click)="getGrpahDataTodayAndLastFiveDays(30);">30 min</button>
+    <button class="interval-btn" (click)="getGrpahDataTodayAndLastFiveDays(60);">1 Hr</button> 
+    <!-- <div ngbDropdownMenu class="dropdown-menu-right">
+      <a class="dropdown-item" (click)="getGrpahDataTodayAndLastFiveDays(15);" style="cursor: pointer;">15 min</a>
+      <a class="dropdown-item" (click)="getGrpahDataTodayAndLastFiveDays(30);" style="cursor: pointer;">30 min</a>
+      <a class="dropdown-item" (click)="getGrpahDataTodayAndLastFiveDays(60);" style="cursor: pointer;">1 Hrs</a>
+    </div> -->
+  </div>
+</div>
+
+<div id="divGraph" class="graph" *ngIf="lineBigDashboardChartLabels != '' ">
+  <canvas baseChart id="bigDashboardChart" [datasets]="lineBigDashboardChartData" [labels]="lineBigDashboardChartLabels"
+    [colors]="lineBigDashboardChartColors" [options]="lineBigDashboardChartOptions"
+    [chartType]="lineBigDashboardChartType"></canvas>
+</div>
+
+<div id="divNoRecord" style="display: none;" class="divNoRecord">
+  No Assignment found for this ward today.
+</div>
+
+<div class="panel-header panel-header-lg chartDiv" *ngIf="lineBigDashboardChartLabels1 != '' ">
+  <label class="main-chart-title"> {{graphHeaderData.date1}} [ {{graphHeaderData.workprogress1}} % ]</label>
+  <canvas height="290" baseChart id="bigDashboardChart1" [datasets]="lineBigDashboardChartData1"
+    [labels]="lineBigDashboardChartLabels1" [colors]="lineBigDashboardChartColors"
+    [options]="lineBigDashboardChartOptions" [chartType]="lineBigDashboardChartType"></canvas>
+</div>
+ 
+<div class="panel-header panel-header-lg chartDiv" *ngIf="lineBigDashboardChartLabels2 != '' ">
+  <label class="main-chart-title"> {{graphHeaderData.date2}} [ {{graphHeaderData.workprogress2}} % ]</label>
+  <canvas height="290" baseChart id="bigDashboardChart2" [datasets]="lineBigDashboardChartData2"
+    [labels]="lineBigDashboardChartLabels2" [colors]="lineBigDashboardChartColors"
+    [options]="lineBigDashboardChartOptions" [chartType]="lineBigDashboardChartType"></canvas>
+</div>
+
+
+<div class="panel-header panel-header-lg chartDiv" *ngIf="lineBigDashboardChartLabels3 !='' ">
+  <label class="main-chart-title"> {{graphHeaderData.date3}} [ {{graphHeaderData.workprogress3}} % ]</label>
+  <canvas height="290" baseChart id="bigDashboardChart3" [datasets]="lineBigDashboardChartData3"
+    [labels]="lineBigDashboardChartLabels3" [colors]="lineBigDashboardChartColors"
+    [options]="lineBigDashboardChartOptions" [chartType]="lineBigDashboardChartType"></canvas>
+</div>
+
+<div class="panel-header panel-header-lg chartDiv" *ngIf="lineBigDashboardChartLabels4 !='' ">
+  <label class="main-chart-title"> {{graphHeaderData.date4}} [ {{graphHeaderData.workprogress4}} % ]</label>
+  <canvas height="290" baseChart id="bigDashboardChart4" [datasets]="lineBigDashboardChartData4"
+    [labels]="lineBigDashboardChartLabels4" [colors]="lineBigDashboardChartColors"
+    [options]="lineBigDashboardChartOptions" [chartType]="lineBigDashboardChartType"></canvas>
+</div>  
+
+
+<!-- <div class="main-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card card-chart sty">
+        <div class="card-header">
+          <h5 class="card-category">Total Data</h5>
+         
+        </div>
+        <div class="card-body">
+          <div class="chart-area">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>   -->

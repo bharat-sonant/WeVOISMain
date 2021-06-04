@@ -1,0 +1,292 @@
+.header{
+    height:64px ; width: 100%; 
+    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+    color:#fff;
+}
+.heading{padding-top: 15px; font-size: 20px; color: #fff; letter-spacing: 2px; }
+
+
+#divMap{
+    width:100%;
+    height:100%;
+    margin-top: -50px; 
+    position:absolute;
+}
+.main-info-header{
+    width: 30%;
+     position: absolute;
+      right: 0px;
+      top: 90px;
+      box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+      border-color: #a2c5da!important;
+     background: rgba(255,255,255,.9075)!important;
+     border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding: 20px;
+    color:red;
+    font-size: 20px;
+}
+ .main-info{
+    width: 12%;
+     position: absolute;
+      right: 0px;
+      top: 100px;
+      box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+      border-color: #a2c5da!important;
+     background: rgba(255,255,255,.9075)!important;
+     border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.main-info h1{
+    background-color: #0ba118;
+     color:#fff; 
+     font-size:12px;
+     line-height: 15px;
+      padding: 10px;
+    letter-spacing: 1px;
+font-weight: normal;
+margin-bottom: 0px!important;
+border-top-left-radius: 10px;
+}
+
+.main-info .seprater{
+    border-bottom: 1px dotted #c3c2c1cf;
+   width: 80%;
+   margin-left:15px;}
+
+.card {
+    box-shadow: none!important;
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .img-bg{
+    background: #fff;
+}
+
+.main-info img{
+    margin-top: 8px;
+    padding: 1px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #0ba118;
+}
+
+ .main-info h3{
+     color:#000; 
+    font-size:12px;
+    padding: 5px;
+     letter-spacing: 1px;
+     font-weight: normal;
+    margin-bottom: 0px!important;
+     }
+
+.main-info .seprater2{
+        border-bottom: 1px dotted #c3c2c1cf;
+   }
+
+.main-info a {
+    color: #333333!important;
+}
+
+.btn-primary{
+display: none;
+right: 0px;
+top: 90px;
+position: absolute;
+}
+
+
+
+
+
+
+/** Extra Small devices (landscape phones, 575px upto) **/
+@media (max-width: 575px) {
+    .heading{padding-top: 20px; font-size: 12px; color: #fff; letter-spacing: 2px; }
+    #divMap{
+        width: 100%;
+    height: 100%;
+    margin-top: -50px;
+    position: absolute;
+    overflow: hidden;
+}
+.main-info-header{
+    font-size: 12px;
+}
+.main-info{
+    width: 40%;
+     position: absolute;
+      right: 0px;
+      top: 100px;
+      box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+      border-color: #a2c5da!important;
+     background: rgba(255,255,255,.9075)!important;
+     border-top-left-radius: 10px;
+     border-bottom-left-radius: 10px;
+     display: none;
+}
+
+/********* Mobile section CSS Start*******/
+
+.btn-primary{
+    right: 80%;
+    top: 85%;
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+}
+
+.main-info-mobile{
+     width: 40%;
+     position: absolute;
+     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+     border-color: #a2c5da!important;
+     background: rgba(255,255,255,.9075)!important;
+     border-radius:10px ;
+}
+.main-info-mobile h1{
+    background-color: #ff6938b8;
+     color:#fff; 
+     font-size:12px;
+     line-height: 15px;
+      padding: 10px;
+    letter-spacing: 1px;
+    font-weight: normal;
+    margin-bottom: 0px!important;
+    border-top-left-radius:10px ;
+    border-top-right-radius:10px ;
+}
+
+.main-info-mobile .seprater{
+   border-bottom: 1px dotted #c3c2c1cf;
+   width: 80%;
+   margin-left:15px;}
+
+   .main-info-mobile .card {
+    box-shadow: none!important;
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+    padding: 10px;
+    border-radius:10px ;
+  }
+
+ .main-info-mobile .img-bg{
+    background: #fff;
+}
+
+.main-info-mobile img{
+    margin-top: 8px;
+    padding: 1px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #fe926e;
+}
+
+ .main-info-mobile h3{
+     color:#000; 
+    font-size:12px;
+    padding: 5px;
+     letter-spacing: 1px;
+     font-weight: normal;
+    margin-bottom: 0px!important;
+     }
+
+.main-info-mobile .seprater2{
+    border-bottom: 1px dotted #c3c2c1cf;
+   }
+
+.main-info-mobile a {
+    color: #333333!important;
+}
+.modal-content {
+    border:none!important;
+}
+.modalCenter{
+    top:18% !important;
+    transform: translateX(28%) !important;
+}
+
+.close{margin-top:-4px!important;}
+/********* Mobile section CSS End*******/
+
+/********* Vehicle bounce animation Start*******/
+.bounce {
+    display: inline-block;
+    position: relative;
+    -moz-animation: bounce 0.5s infinite linear;
+    -o-animation: bounce 0.5s infinite linear;
+    -webkit-animation: bounce 0.5s infinite linear;
+    animation: bounce 0.5s infinite linear;
+    color:000;
+  }
+  .fa-truck{
+      color: #fff;
+    font-size: 20px;
+    
+  }
+  @-webkit-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-moz-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-o-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-ms-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+
+/********* Vehicle bounce animation End*******/
+
+}
+
+/** Small devices (tablets, 576px  to 767px upto) **/
+@media(min-width:576px) and (max-width:767px){
+    .fleet2{display:none;}
+    .fleet-text2{display:none;}
+    
+}
+
+.hd1{color: red;
+    font-family: cursive;
+    font-size: 17px;
+    padding: 19px;
+    text-align: center;}
+
+
+
+
+
+
+

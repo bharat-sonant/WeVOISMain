@@ -1,0 +1,149 @@
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule,FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AdminLayoutRoutes } from './admin-layout.routing';
+import { IndexComponent } from '../../index/index.component';
+import { PortalAccessComponent } from '../../portal-access/portal-access.component';
+import { DashboardComponent } from '../../dashboard/dashboard.component';
+import { UserProfileComponent } from '../../user-profile/user-profile.component';
+import { TableListComponent } from '../../table-list/table-list.component';
+import { TypographyComponent } from '../../typography/typography.component';
+import { IconsComponent } from '../../icons/icons.component';
+import { MapsComponent } from '../../maps/maps.component';
+import { NotificationsComponent } from '../../notifications/notifications.component';
+import { ChartsModule } from 'ng2-charts';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
+import { UpgradeComponent } from '../../upgrade/upgrade.component';
+import { WardMonitoringComponent } from '../../reports/ward-monitoring/ward-monitoring.component';
+import { SkipLineComponent } from '../../reports/skip-line/skip-line.component';
+import { HaltsComponent } from '../../reports/halts/halts.component';
+import { LoginComponent } from '../../login/login.component';
+import { LogoutComponent } from '../../logout/logout.component';
+import { HouseEntryFormComponent } from '../../house-entry-form/house-entry-form.component';
+import { DownloadCollectionReportComponent } from '../../reports/download-collection-report/download-collection-report.component';
+import { HouseSearchComponent } from '../../housesearch/housesearch.component';
+import { HouseCardMappingComponent } from '../../house-card-mapping/house-card-mapping.component';
+import { SignupComponent } from '../../signup/signup.component';
+import { ServingareaComponent } from '../../servingarea/servingarea.component';
+import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
+import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
+import { LineCardMappingComponent } from '../../line-card-mapping/line-card-mapping.component';
+import { TimeDistanceComponent } from '../../reports/time-distance/time-distance.component';
+import { RealtimeMonitoringComponent } from '../../realtime-monitoring/realtime-monitoring.component';
+import { DustbinMonitoringComponent } from '../../dustbin-monitoring/dustbin-monitoring.component';
+import { DownloadWardwiseReportComponent } from '../../reports/download-wardwise-report/download-wardwise-report.component';
+import {UserListComponent} from "../../Users/user-list/user-list.component";
+import {UserAccessComponent} from "../../Users/user-access/user-access.component";
+import {UserAddComponent} from "../../Users/user-add/user-add.component";
+import { HomeComponent } from '../../home/home.component';
+import { HaltReportComponent } from '../../halt-report/halt-report.component';
+import { OrderByPipe } from '../../order-by.pipe';
+import { RouteTrackingComponent } from '../../route-tracking/route-tracking.component';
+import { HaltSummaryComponent } from '../../halt-summary/halt-summary.component';
+import { SalarySummaryComponent } from '../../salary-summary/salary-summary.component';
+import { WardMonitoringReportComponent } from '../../ward-monitoring-report/ward-monitoring-report.component';
+import { FinanceComponent } from '../../finance-report/finance/finance.component';
+import { WardReachCostComponent } from '../../finance-report/ward-reach-cost/ward-reach-cost.component';
+import { MonthSalaryReportComponent } from '../../finance-report/month-salary-report/month-salary-report.component';
+import { ReportsComponent } from '../../reports/reports/reports.component';
+import { RemarkReportComponent } from '../../reports/remark-report/remark-report.component';
+import { WorkAssignReportComponent } from '../../reports/work-assign-report/work-assign-report.component';
+import { PortalServicesComponent } from '../../PortalServices/portal-services/portal-services.component';
+import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
+import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-duty-data.component';
+import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
+import { InventoryComponent } from '../../Inventory/inventory/inventory.component';
+import { PetrolInventoryListComponent } from '../../Inventory/petrol-inventory-list/petrol-inventory-list.component';
+import { PetrolInventoryEntryComponent } from '../../Inventory/petrol-inventory-entry/petrol-inventory-entry.component';
+import { VehiclePetrolCostComponent } from '../../finance-report/vehicle-petrol-cost/vehicle-petrol-cost.component';
+import { MaintenanceInventoryListComponent } from '../../Inventory/maintenance-inventory-list/maintenance-inventory-list.component';
+import { MaintenanceInventoryEntryComponent } from '../../Inventory/maintenance-inventory-entry/maintenance-inventory-entry.component';
+import { VehicleMaintenanceCostComponent } from '../../finance-report/vehicle-maintenance-cost/vehicle-maintenance-cost.component';
+import { VehiclePetrolReportComponent } from '../../reports/vehicle-petrol-report/vehicle-petrol-report.component';
+import { VehiclePartReportComponent } from '../../reports/vehicle-part-report/vehicle-part-report.component';
+import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-report.component';
+import { CmsComponent } from '../../cms/cms.component';
+import { Cms1Component } from '../../cms1/cms1.component';
+import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
+import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    RouterModule.forChild(AdminLayoutRoutes),
+    FormsModule,
+    ChartsModule,
+    NgbModule,
+    ToastrModule.forRoot()
+  ],
+  declarations: [
+    IndexComponent,
+    PortalAccessComponent,
+    DashboardComponent,
+    UserProfileComponent,
+    TableListComponent,
+    UpgradeComponent,
+    TypographyComponent,
+    IconsComponent,
+    MapsComponent,
+    NotificationsComponent,
+    WardMonitoringComponent,
+    SkipLineComponent,
+    HaltsComponent,
+    LoginComponent,
+    LogoutComponent,
+    HouseEntryFormComponent,
+    DownloadCollectionReportComponent,
+    HouseSearchComponent,
+    HouseCardMappingComponent,
+    SignupComponent,
+    ServingareaComponent,
+    FleetMonitorComponent,
+    LineStatisticsComponent,
+    LineCardMappingComponent,
+    TimeDistanceComponent,
+    RealtimeMonitoringComponent,
+    DustbinMonitoringComponent,
+    DownloadWardwiseReportComponent,
+    UserListComponent,
+    UserAddComponent,
+    UserAccessComponent,
+    HomeComponent,
+    OrderByPipe,
+    HaltReportComponent,
+    RouteTrackingComponent,
+    HaltSummaryComponent,
+    SalarySummaryComponent,
+    WardMonitoringReportComponent,
+    FinanceComponent,
+    WardReachCostComponent,
+    MonthSalaryReportComponent,
+    ReportsComponent,
+    RemarkReportComponent,
+    WorkAssignReportComponent,
+    PortalServicesComponent,
+    WardWorkPercentageComponent,
+    WardDutyDataComponent,
+    DustbinAnalysisComponent,
+    InventoryComponent,
+    PetrolInventoryListComponent,
+    PetrolInventoryEntryComponent,
+    VehiclePetrolCostComponent,
+    MaintenanceInventoryListComponent,
+    MaintenanceInventoryEntryComponent,
+    VehicleMaintenanceCostComponent,
+    VehiclePetrolReportComponent,
+    VehiclePartReportComponent,
+    DustbinReportComponent,
+    CmsComponent,
+    Cms1Component,
+    VehicleReportComponent,
+    MultipleMapsComponent
+  ]
+})
+
+export class AdminLayoutModule { 
+
+}

@@ -1,0 +1,44 @@
+<section class="header">
+    <div class="row no-gutters">
+      <div class="col-md-5" style=" padding-left: 20px; margin-top: -3px;">
+        <button class="btn-hvr" (click)="setPreviousDate();"><span style="color: #fff;">
+            << </span></button>
+        <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value)"
+          style="height: 45px; width: 30%;font-size: 12px; margin-left: 7px; margin-right: 8px;" />
+        <button class="btn-hvr" (click)="setNextDate();"><span style="color: #fff;">>></span></button>
+      </div>
+      <div class="col-md-4" style="padding-top: 12px;font-size: 20px;text-transform: uppercase;letter-spacing: 2px; font-weight: bold; text-align: left;">
+        <b> Work Assign Report </b>
+      </div>
+      <div class="col-md-2" style="text-align: right; padding-right: 15px;">
+      </div>
+    </div>
+  </section>
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover" style="margin-bottom: 0px;">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="tdBorder">Name</th>
+                                        <th scope="col" class="text-left">Assign Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of workList" >
+                                        <td class="text-left tdBorder"><b class="text-trans">{{dt.name}}</b></td>
+                                        <td class="text-left" ><div [innerHTML]="dt.detail" class="rowWidth"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

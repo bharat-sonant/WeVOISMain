@@ -1,0 +1,98 @@
+<section class="header ">
+    <div class="row no-gutters ">
+        <div class="offset-3 col-6 heading text-center">
+            <b class="header-text">Halt Report !!</b>
+        </div>
+    </div>
+</section>
+<div class="divContent">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-chart" >
+                <div style="font-weight: bold; padding: 20px;">Date : </div>
+                <div class="card-body" style="height:400px; overflow-y: scroll;">
+                   
+                    
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-chart" >
+                <div style="font-weight: bold; padding: 20px;">Date : </div>
+                <div class="card-body" style="height:400px; overflow-y: scroll;">
+                    <table class="table ">
+                        <thead>
+                            <th>S.No.</th>
+                            <th>Driver Name</th>
+                            <th>Halt Time</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let halt of haltListDriver ; let i=index">
+                                <td>{{i+1}}</td>
+                                <td>{{halt.driver}}</td>
+                                <td>{{halt.breakTotal}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-chart" > 
+                <div style="font-weight: bold; padding: 20px;">Month : </div>
+                <div class="card-body"  style="height:400px; overflow-y: scroll;">
+                    <table class="table ">
+                        <thead>
+                            <th>S.No.</th>
+                            <th>Driver Name</th>
+                            <th>Halt Time</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let halts of haltMonthlyListDriver ; let i=index">
+                                <td>{{i+1}}</td>
+                                <td>{{halts.driver}}</td>
+                                <td>{{halts.breakTotal}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card card-chart">
+                <div class="card-body">
+                    <div id="divGraph" class="divChart" style="margin-top: 11px;">
+                        <div id="chartContainer" style="height: 300px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card card-chart">
+                <div class="card-body">
+                    <div id="divGraph" class="divChart" style="margin-top: 11px;">
+                        <div id="chartContainerMonth"
+                            style="height: 300px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-chart">
+                <div class="card-body">
+                    <div id="divGraph" class="divChart" style="margin-top: 11px;">
+                        <div id="chartContainerPieMonth"
+                            style="height: 400px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

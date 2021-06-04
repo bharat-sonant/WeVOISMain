@@ -1,0 +1,50 @@
+<section class="header ">
+  <div class="row no-gutters ">
+
+    <div class="offset-3 col-6 heading text-center">
+      <b class="header-text"> VEHICLE MONITORING</b>
+    </div>
+  </div>
+</section>
+
+<div #gmap id="divMap"></div>
+
+
+
+<!------------- Desktop Section Start -------------->
+<div id="helperMsgD" class="main-info-header">Select any vehilce to get details</div>
+       
+      <div id="detailD" class="main-info" style="display:none;">
+          
+        <h1 class="text-center">
+          <b>{{workerDetails.vehicleNo}}</b></h1>
+          
+        <div class="col-md-12 seprater2"></div> 
+        <div class="card">
+          <div class="img-bg">
+          <img [src]="workerDetails.driverImageUrl" class=" img-fluid" alt="Driver"> 
+        </div>
+          <h3>{{workerDetails.driverName}} <br>
+            (Driver)
+          </h3>
+          <a href="tel:+1234567890">{{workerDetails.driverMobile}}</a>
+        </div>
+
+       <div class="col-md-12 seprater"></div> 
+
+       <div class="card">
+        <div class="img-bg">
+        <img [src]="workerDetails.helperImageUrl" class=" img-fluid" alt="Helper">
+      </div>
+        <h3>{{workerDetails.helperName}}<br>
+          (Helper)
+        </h3>
+        <a href="tel:+1234567890">{{workerDetails.helperMobile}}</a>
+      </div>
+      <div class="col-md-12 seprater"></div> 
+      <div class="card">
+        <a href="{{workerDetails.wardMonitorUrl}}" target="_blank">See Current Status</a>
+      </div>
+    
+          </div>
+ <!-- Desktop Section End -->

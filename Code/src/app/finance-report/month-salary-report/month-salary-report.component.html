@@ -1,0 +1,585 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-5" style="padding-left: 10px;">
+            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                style="width: 150px;" [(ngModel)]="selectedYear">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList"
+                    ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
+            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                style="width: 150px;">
+                <option value="0">Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
+                style="width: 150px;">
+                <option value="Circle1" selected>Circle1</option>
+                <option value="Circle2">Circle2</option>
+                <option value="Circle3">Circle3</option>
+                <option value="Others">Others</option>
+            </select>
+
+        </div>
+        <div class="col-md-7" style="margin-top: 10px;">Ward Monthly Cost</div>
+    </div>
+</section>
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class=" thFixed"
+                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            Ward</th>
+                                        <th scope="col" class="text-center thFixed1"
+                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            Cost</th>
+                                        <th scope="col" class="text-center">01</th>
+                                        <th scope="col" class="text-center">02</th>
+                                        <th scope="col" class="text-center">03</th>
+                                        <th scope="col" class="text-center">04</th>
+                                        <th scope="col" class="text-center">05</th>
+                                        <th scope="col" class="text-center">06</th>
+                                        <th scope="col" class="text-center">07</th>
+                                        <th scope="col" class="text-center">08</th>
+                                        <th scope="col" class="text-center">09</th>
+                                        <th scope="col" class="text-center">10</th>
+                                        <th scope="col" class="text-center">11</th>
+                                        <th scope="col" class="text-center">12</th>
+                                        <th scope="col" class="text-center">13</th>
+                                        <th scope="col" class="text-center">14</th>
+                                        <th scope="col" class="text-center">15</th>
+                                        <th scope="col" class="text-center">16</th>
+                                        <th scope="col" class="text-center">17</th>
+                                        <th scope="col" class="text-center">18</th>
+                                        <th scope="col" class="text-center">19</th>
+                                        <th scope="col" class="text-center">20</th>
+                                        <th scope="col" class="text-center">21</th>
+                                        <th scope="col" class="text-center">22</th>
+                                        <th scope="col" class="text-center">23</th>
+                                        <th scope="col" class="text-center">24</th>
+                                        <th scope="col" class="text-center">25</th>
+                                        <th scope="col" class="text-center">26</th>
+                                        <th scope="col" class="text-center">27</th>
+                                        <th scope="col" class="text-center">28</th>
+                                        <th scope="col" class="text-center">29</th>
+                                        <th scope="col" class="text-center">30</th>
+                                        <th scope="col" class="text-center">31</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of wardDataList">
+                                        <td class=" thFixed" style="vertical-align: top; font-weight: bold;">
+                                            <div class="rowWidthWard">{{dt.wardNo}}</div>
+                                        </td>
+                                        <td class="text-left thFixed1" style="vertical-align: top; font-weight: bold;">
+                                            <div class="rowWidthTime">S : ₹ {{dt.cost}}<br />
+                                                <span [hidden]="dt.type!=null"> P : ₹ {{dt.petrolCost}}<br />
+                                                    F : ₹ {{dt.fineCost}}<br />
+                                                    T : ₹ {{dt.totalCost}}</span>
+                                            </div>
+                                        </td>
+                                        <td class=" text-center" style="vertical-align: top;">
+                                            <div class="rowWidth"><span [innerHTML]="dt.day1" [hidden]="dt.type1!=1"
+                                                    (click)="openDetail(content,dt.day1Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day1" [hidden]="dt.type1!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day2" [hidden]="dt.type2!=1"
+                                                    (click)="openDetail(content,dt.day2Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day2" [hidden]="dt.type2!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day3" [hidden]="dt.type3!=1"
+                                                    (click)="openDetail(content,dt.day3Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day3" [hidden]="dt.type3!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day4" [hidden]="dt.type4!=1"
+                                                    (click)="openDetail(content,dt.day4Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day4" [hidden]="dt.type4!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day5" [hidden]="dt.type5!=1"
+                                                    (click)="openDetail(content,dt.day5Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day5" [hidden]="dt.type5!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day6" [hidden]="dt.type6!=1"
+                                                    (click)="openDetail(content,dt.day6Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day6" [hidden]="dt.type6!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day7" [hidden]="dt.type7!=1"
+                                                    (click)="openDetail(content,dt.day7Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day7" [hidden]="dt.type7!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day8" [hidden]="dt.type8!=1"
+                                                    (click)="openDetail(content,dt.day8Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day8" [hidden]="dt.type8!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day9" [hidden]="dt.type9!=1"
+                                                    (click)="openDetail(content,dt.day9Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day9" [hidden]="dt.type9!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day10" [hidden]="dt.type10!=1"
+                                                    (click)="openDetail(content,dt.day10Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day10" [hidden]="dt.type10!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day11" [hidden]="dt.type11!=1"
+                                                    (click)="openDetail(content,dt.day11Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day11" [hidden]="dt.type11!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day12" [hidden]="dt.type12!=1"
+                                                    (click)="openDetail(content,dt.day12Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day12" [hidden]="dt.type12!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day13" [hidden]="dt.type13!=1"
+                                                    (click)="openDetail(content,dt.day13Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day13" [hidden]="dt.type13!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day14" [hidden]="dt.type14!=1"
+                                                    (click)="openDetail(content,dt.day14Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day14" [hidden]="dt.type14!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day15" [hidden]="dt.type15!=1"
+                                                    (click)="openDetail(content,dt.day15Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day15" [hidden]="dt.type15!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day16" [hidden]="dt.type16!=1"
+                                                    (click)="openDetail(content,dt.day16Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day16" [hidden]="dt.type16!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day17" [hidden]="dt.type17!=1"
+                                                    (click)="openDetail(content,dt.day17Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day17" [hidden]="dt.type17!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day18" [hidden]="dt.type18!=1"
+                                                    (click)="openDetail(content,dt.day18Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day18" [hidden]="dt.type18!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day19" [hidden]="dt.type19!=1"
+                                                    (click)="openDetail(content,dt.day19Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day19" [hidden]="dt.type19!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day20" [hidden]="dt.type20!=1"
+                                                    (click)="openDetail(content,dt.day20Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day20" [hidden]="dt.type20!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day21" [hidden]="dt.type21!=1"
+                                                    (click)="openDetail(content,dt.day21Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day21" [hidden]="dt.type21!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day22" [hidden]="dt.type22!=1"
+                                                    (click)="openDetail(content,dt.day22Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day22" [hidden]="dt.type22!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day23" [hidden]="dt.type23!=1"
+                                                    (click)="openDetail(content,dt.day23Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day23" [hidden]="dt.type23!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day24" [hidden]="dt.type24!=1"
+                                                    (click)="openDetail(content,dt.day24Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day24" [hidden]="dt.type24!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day25" [hidden]="dt.type25!=1"
+                                                    (click)="openDetail(content,dt.day25Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day25" [hidden]="dt.type25!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day26" [hidden]="dt.type26!=1"
+                                                    (click)="openDetail(content,dt.day26Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day26" [hidden]="dt.type26!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day27" [hidden]="dt.type27!=1"
+                                                    (click)="openDetail(content,dt.day27Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day27" [hidden]="dt.type27!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day28" [hidden]="dt.type28!=1"
+                                                    (click)="openDetail(content,dt.day28Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day28" [hidden]="dt.type28!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day29" [hidden]="dt.type29!=1"
+                                                    (click)="openDetail(content,dt.day29Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day29" [hidden]="dt.type29!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day30" [hidden]="dt.type30!=1"
+                                                    (click)="openDetail(content,dt.day30Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day30" [hidden]="dt.type30!=null"></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="vertical-align: top;">
+                                            <div class="rowWidth">
+                                                <span [innerHTML]="dt.day31" [hidden]="dt.type31!=1"
+                                                    (click)="openDetail(content,dt.day31Detail)"
+                                                    style="cursor: pointer;"></span>
+                                                <span [innerHTML]="dt.day31" [hidden]="dt.type31!=null"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col" class="thFixed"></th>
+                                        <th scope="col" class="thFixed1" style="font-weight: bold;"><span
+                                                id="leftTotal"> Salary :<br />
+                                                Petrol :<br />
+                                                Fine :<br /></span>
+                                            Total :</th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal1">
+                                                {{costData.salary1}}<br />{{costData.petrol1}}<br>{{costData.penalty1}}<br /></span>{{costData.day1}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span
+                                                id="leftTotal2">{{costData.salary2}}<br />{{costData.petrol2}}<br>{{costData.penalty2}}<br /></span>{{costData.day2}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span
+                                                id="leftTotal3">{{costData.salary3}}<br />{{costData.petrol3}}<br>{{costData.penalty3}}<br /></span>{{costData.day3}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span
+                                                id="leftTotal4">{{costData.salary4}}<br />{{costData.petrol4}}<br>{{costData.penalty4}}<br /></span>{{costData.day4}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal5">
+                                                {{costData.salary5}}<br />{{costData.petrol5}}<br>{{costData.penalty5}}<br /></span>{{costData.day5}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal6">
+                                                {{costData.salary6}}<br />{{costData.petrol6}}<br>{{costData.penalty6}}<br /></span>{{costData.day6}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal7">
+                                                {{costData.salary7}}<br />{{costData.petrol7}}<br>{{costData.penalty7}}<br /></span>{{costData.day7}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal8">
+                                                {{costData.salary8}}<br />{{costData.petrol8}}<br>{{costData.penalty8}}<br /></span>{{costData.day8}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal9">
+                                                {{costData.salary9}}<br />{{costData.petrol9}}<br>{{costData.penalty9}}<br /></span>{{costData.day9}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal10">
+                                                {{costData.salary10}}<br />{{costData.petrol10}}<br>{{costData.penalty10}}<br /></span>{{costData.day10}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal11">
+                                                {{costData.salary11}}<br />{{costData.petrol11}}<br>{{costData.penalty11}}<br /></span>{{costData.day11}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal12">
+                                                {{costData.salary12}}<br />{{costData.petrol12}}<br>{{costData.penalty12}}<br /></span>{{costData.day12}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal13">
+                                                {{costData.salary13}}<br />{{costData.petrol13}}<br>{{costData.penalty13}}<br /></span>{{costData.day13}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal14">
+                                                {{costData.salary14}}<br />{{costData.petrol14}}<br>{{costData.penalty14}}<br /></span>{{costData.day14}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal15">
+                                                {{costData.salary15}}<br />{{costData.petrol15}}<br>{{costData.penalty15}}<br /></span>{{costData.day15}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal16">
+                                                {{costData.salary16}}<br />{{costData.petrol16}}<br>{{costData.penalty16}}<br /></span>{{costData.day16}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal17">
+                                                {{costData.salary17}}<br />{{costData.petrol17}}<br>{{costData.penalty17}}<br /></span>{{costData.day17}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal18">
+                                                {{costData.salary18}}<br />{{costData.petrol18}}<br>{{costData.penalty18}}<br /></span>{{costData.day18}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal19">
+                                                {{costData.salary19}}<br />{{costData.petrol19}}<br>{{costData.penalty19}}<br /></span>{{costData.day19}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal20">
+                                                {{costData.salary20}}<br />{{costData.petrol20}}<br>{{costData.penalty20}}<br /></span>{{costData.day20}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal21">
+                                                {{costData.salary21}}<br />{{costData.petrol21}}<br>{{costData.penalty21}}<br /></span>{{costData.day21}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal22">
+                                                {{costData.salary22}}<br />{{costData.petrol22}}<br>{{costData.penalty22}}<br /></span>{{costData.day22}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal23">
+                                                {{costData.salary23}}<br />{{costData.petrol23}}<br>{{costData.penalty23}}<br /></span>{{costData.day23}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal24">
+                                                {{costData.salary24}}<br />{{costData.petrol24}}<br>{{costData.penalty24}}<br /></span>{{costData.day24}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal25">
+                                                {{costData.salary25}}<br />{{costData.petrol25}}<br>{{costData.penalty25}}<br /></span>{{costData.day25}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal26">
+                                                {{costData.salary26}}<br />{{costData.petrol26}}<br>{{costData.penalty26}}<br /></span>{{costData.day26}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal27">
+                                                {{costData.salary27}}<br />{{costData.petrol27}}<br>{{costData.penalty27}}<br /></span>{{costData.day27}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal28">
+                                                {{costData.salary28}}<br />{{costData.petrol28}}<br>{{costData.penalty28}}<br /></span>{{costData.day28}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal29">
+                                                {{costData.salary29}}<br />{{costData.petrol29}}<br>{{costData.penalty29}}<br /></span>{{costData.day29}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal30">
+                                                {{costData.salary30}}<br />{{costData.petrol30}}<br>{{costData.penalty30}}<br /></span>{{costData.day30}}
+                                        </th>
+                                        <th scope="col" style="font-weight: bold; text-align: right;">
+                                            <span id="leftTotal31">
+                                                {{costData.salary31}}<br />{{costData.petrol31}}<br>{{costData.penalty31}}<br /></span>{{costData.day31}}
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--Application Status Start-->
+<ng-template #content>
+    <div class="modal-dialog modal-dialog-centered" role="document" data-backdrop="false"
+        style="margin-top: 27px!important;padding-right: 2px;">
+        <div class="modal-content"
+            style="border-top-left-radius: 12px!important; border-top-right-radius: 12px!important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="dth">
+                    <div class="table-bg">
+                        <div id="divStatus" class="tableFixHead">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-left" style="width:450px!important;">Name </th>
+                                        <th id="tdPlan" scope="col" class="text-left"
+                                            style="display: none;width:400px!important;">Plan </th>
+                                        <th scope="col" class="text-left">Designation</th>
+                                        <th scope="col" class="text-left">Duty On </th>
+                                        <th scope="col" class="text-left">Duty Off </th>
+                                        <th scope="col" class="text-left">Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of OtherList">
+                                        <td class="text-left">{{dt.name}} </td>
+                                        <td class="text-left" [hidden]="dt.plan==null">{{dt.plan}} </td>
+                                        <td class="text-left">{{dt.designation}} </td>
+                                        <td class="text-left">{{dt.inTime}} </td>
+                                        <td class="text-left">{{dt.outTime}} </td>
+                                        <td class="text-left">₹ {{dt.wages}} </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Application Status End-->
+
+
+<div id="myBox">
+
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne" style="margin-bottom: 2px;">
+                <h2 class="mb-0">
+                    <div class="plan-header" data-toggle="collapse" data-target="#Detail" aria-expanded="false"
+                        aria-controls="collapseOne" style="width: 280px;">
+
+                        Total Cost : {{costData.totalCost}}
+                    </div>
+                </h2>
+            </div>
+
+            <div id="Detail" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <div class="plan-content">
+                        <div class="main-info" style="padding-top: 10px;">
+                            <div class="icon-bg">
+                                <img src="../../assets/img/salary.png" style="margin-top:5px">
+                            </div>
+                            <h1> {{costData.salary}}<br />
+                                <p>Salary</p>
+                            </h1>
+                        </div>
+                        <div id="divTotalPetrol" class="main-info  info-bg" style="padding-top: 10px;">
+                            <div class="icon-bg">
+                                <img src="../../assets/img/vehicle-petrol.png" style="margin-top:5px">
+                            </div>
+                            <h1>{{costData.petrol}}<br />
+                                <p>Petrol</p>
+                            </h1>
+                        </div>
+                        <div id="divTotalPenalty" class="main-info" style="padding-top: 10px;">
+                            <div class="icon-bg">
+                                <img src="../../assets/img/salary.png" style="margin-top:5px">
+                            </div>
+                            <h1> {{costData.penalty}}<br />
+                                <p>Penalty</p>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

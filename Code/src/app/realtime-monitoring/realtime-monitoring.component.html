@@ -1,0 +1,664 @@
+<section class="real-time-information">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-10 col-sm-12" style="padding-right: 0px;">
+        <div class="row">
+          <div class="col-md-12 top-header text-center">
+           <b class="ward-header"> {{workerDetails.wardName}}</b>
+            <span class="pos-right" style="float:right; font-size: 7px; line-height: 15px; padding-right:50px; text-align: right;">last
+              Update<br />
+              <span class="update-time" style="font-size: 18px; font-weight: bold;">{{workerDetails.lastUpdateTime}} </span></span>
+            <button class="refresh" (click)="showGraph();" title="Show Graph"><i class="fas fa-redo-alt"></i></button>
+          </div>
+          <div class="col-md-12 " style="height:28vh;width: 100%!important; padding-left: 0px; padding-right: 0px;
+          background-image: linear-gradient(to right, #2c2c2c  , #409236 );">
+            <div class="graph-section" id="divGraph" *ngIf="lineBigDashboardChartLabels != '' ">
+              <span class="main-chart-title"> </span>
+              <canvas baseChart id="bigDashboardChart" [datasets]="lineBigDashboardChartData"
+                [labels]="lineBigDashboardChartLabels" [colors]="lineBigDashboardChartColors"
+                [options]="lineBigDashboardChartOptions" [chartType]="lineBigDashboardChartType"></canvas>
+            </div>
+          </div>
+          <div class="col-md-12 mob-l mob-r" style="margin-top: 10px;padding-left: 13px;padding-right: 18px;">
+            <div class="widgets">
+              <div class="row">
+                <div class="col-md-3 hvr btm-top text-center" style="border-right: 1px solid #e0e0e0;">
+                  <div class="widgets-inner">
+                    <h3><b id="vehicleStatusH3" (click)="openVehicleStatusModel(contentVehicleStatus)"
+                        class="highlight-text">{{workerDetails.vehicleCurrentLocation}}</b>
+                    </h3>
+                    <p> Vehicle Curr. Status</p>
+                  </div>
+                </div>
+                <div class="col-md-1 hvr btm text-center" style="border-right: 1px solid #e0e0e0;">
+                  <div class="widgets-inner">
+                    <h3><b style="color: green;">{{workerDetails.tripCount}}</b>
+                    </h3>
+                    <p>Trip</p>
+                  </div>
+                </div>
+                <div class="col-md-2 hvr btm text-center" style="border-right: 1px solid lightgray;">
+                  <div class="widgets-inner">
+                    <h3><b id="appStatusH3" (click)="openMapModel(content)"
+                        style="cursor:pointer;">{{workerDetails.applicationStatus}}</b>
+                    </h3>
+                    <p>App Status</p>
+                  </div>
+                </div>
+                <div class="col-md-2 hvr btm text-center" style="border-right: 1px solid #e0e0e0;">
+                  <div class="widgets-inner">
+                    <i id="dutyDetail" (click)="openDutyModel(contentDutyStatus)" class="fas fa-user-clock"
+                      style="color:red; position:absolute;z-index: 999; right: 0px; margin-right: 10px; margin-top: 5px; cursor: pointer; display: none;"></i>
+                    <h3><b>{{workerDetails.startTime}}</b>
+                    </h3>
+                    <p># Duty On</p>
+                  </div>
+                </div>
+                <div class="col-md-2 hvr btm text-center" style="border-right: 1px solid #e0e0e0;">
+                  <div class="widgets-inner">
+                    <h3><b>{{workerDetails.wardReachTime}}</b>
+                    </h3>
+                    <p># Reach On</p>
+                  </div>
+                </div>
+                <div class="col-md-2 hvr btm-end text-center">
+                  <div class="widgets-inner">
+                    <h3><b>{{workerDetails.endTime}}</b>
+                    </h3>
+                    <p># Duty off</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-7 col-xl-4 mob-r mob-l pl-10"
+            style="margin-top: 10px; padding-right: 5px; padding-left: 13px;">
+            <div class="dh-info">
+              <div class="work-info">
+                <div class="row">
+                  <div class="col-md-6 mob-r-1" style="padding-right: 0px; border-right: 1px solid #e0e0e0;">
+                    <div class="work-content">
+                      <h3>Total Lines</h3>
+                      <h1>{{workerDetails.totalLines}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mob-l-1" style="padding-left: 0px; ">
+                    <div class="work-content">
+                      <h3>Total Halt</h3>
+                      <h1 id="totalHaltH3" style="color:red; cursor:pointer;" (click)="openMapModelHalt(contentHalt)" data-toggle="modal"
+                        data-target="#exampleModalCenter">
+                        {{workerDetails.haltTime}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mob-r-1" style="padding-right: 0px; border-right: 1px solid #e0e0e0;">
+                    <div class="work-content">
+                      <h3>Completed</h3>
+                      <h1 style="color: #049e3f;">{{workerDetails.completedLines}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mob-l-1" style="padding-left: 0px;">
+                    <div class="work-content">
+                      <h3>Curr Halt</h3>
+                      <h1 id="currentHaltH3" style="color: #ff0000;"> {{workerDetails.currentHaltTime}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mob-r-1" style="padding-right: 0px; border-right: 1px solid #e0e0e0;">
+                    <div class="work-content">
+                      <h3>Skipped</h3>
+                      <h1 style="color: #ff0000;">{{workerDetails.skippedLines}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mob-l-1" style="padding-left: 0px;">
+                    <div class="work-content">
+                      <h3>Curr Line</h3>
+                      <h1 style="color: #049e3f;">{{workerDetails.currentLine}}
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 10px;">
+              <div class="col-md-6 mob-r-1" style="padding-right: 0px; border-right: 2px solid #e0e0e0;">
+                <div class="helper-section mob-border" style="background-color: #fff;">
+                  <div class="img-circle"></div>
+                  <div class="image-background">
+                    <div class="img-section">
+                      <img [src]="workerDetails.driverImageUrl" class="img-fluid">
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="id-card-text text-center" style="margin-top: 115px;">
+                        <h6>{{workerDetails.driverName}}</h6>
+                        <p>Driver</p>
+                        <a href="telto:+911234567890">{{workerDetails.driverMobile}}</a><br>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star" style="color: #313131; font-size: 10px;"></span>
+                        <span class="fa fa-star" style="color: #313131; font-size: 10px;"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-6 mob-l-1" style="padding-left: 0px; border-left: 2px solid #e0e0e0;">
+                <div class="helper-section mob-border-end" style=" background-color: #fff;">
+                  <div class="img-circle"></div>
+                  <div class="image-background">
+                    <div class="img-section">
+                      <img [src]="workerDetails.helperImageUrl" class="img-fluid">
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="id-card-text text-center" style="margin-top: 115px;">
+                        <h6>{{workerDetails.helperName}}</h6>
+                        <p>Helper</p>
+                        <a href="telto:+911234567890">{{workerDetails.helperMobile}}</a><br>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star checked"></span>
+                        <span class="fa fa-star" style="color: #313131; font-size: 10px;"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="staff-footer" style="cursor:pointer;" (click)="openMapModelVehicle(contentVehicle)">
+                  Vehicle Number - {{workerDetails.vehicleNo}}
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-md-5 col-xl-3 pr-20" style="margin-top: 10px;">
+            <div class="row">
+              <div class="col-md-12 mob-r" style="padding-left: 5px; padding-right: 5px;">
+                <div class="vehicle-info">
+                  <div class="vehicle-content">
+                    <h3>Time (total)</h3>
+                    <h1>{{workerDetails.totalTime}}</h1>
+                  </div>
+                  <div class="vehicle-content">
+                    <h3>Time (in ward)</h3>
+                    <h1>{{workerDetails.wardTime}}</h1>
+                  </div>
+                  <div class="vehicle-content">
+                    <h3>Km Runs (total)</h3>
+                    <h1>{{workerDetails.totalKM}} km</h1>
+                  </div>
+                  <div class="vehicle-content" style="border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                    <h3>Km Runs (in ward)</h3>
+                    <h1>{{workerDetails.wardKM}} Km</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mob-r" style="margin-top:10px; padding-left: 5px; padding-right: 5px;">
+                <div class="total-ward">
+                  <div class="ward-details">
+                    <h1>Ward Details</h1>
+                  </div>
+
+                  <div class="inner-info">
+                    <h3>Total Wards</h3>
+                    <span style="color: #333333; float: right;">{{workerDetails.totalWard}}</span>
+                  </div>
+                  <div class="inner-info">
+                    <h3>Completed Ward</h3>
+                    <span style="color: #0ba118; float: right;">{{workerDetails.completedWard}}</span>
+                  </div>
+                  <div class="inner-info">
+                    <h3>Active Ward</h3>
+                    <span style="color: #0ba118; float: right;">{{workerDetails.activeWard}}</span>
+                  </div>
+                  <div class="inner-info">
+                    <h3>Inactive Ward</h3>
+                    <span style="color: #818181; float: right;">{{workerDetails.inActiveWard}}</span>
+                  </div>
+                  <div class="inner-info">
+                    <h3>Stop Ward</h3>
+                    <span style="color: #ff0000; float: right;">{{workerDetails.stopWard}}</span>
+                  </div>
+                  <div class="inner-info">
+                    <h3><a id="wardProgressLink" href="ward-monitoring-report" target="_blank" style="cursor: pointer;"> Ward Progress
+                        Summary</a>
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-xl-5 pl-25">
+            <div class="row">
+              <div class="col-md-12 mob-r" style="margin-top:10px; padding-left: 5px; padding-right: 17px;">
+                <div class="map-bg">
+                  <div #gmap style="width:100%;height:372px;" id="divMap"></div>
+                  <a id="routeTrackingLink" href="#" target="_blank" title="Show Route"> <img
+                      src="../../assets/img/route_tracking.svg" class="fa-expand-route" /> </a>
+                  <a id="mapsLink" href="#" target="_blank" title="Show on Ward Monitoring"> <img
+                      src="../../assets/img/ward_monitoring.svg" class="fa-expand-monitoring" /> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="divRemark" class="col-md-12 col-xl-7 pl-10 pr-12 ipad-pd"
+            style="margin-top: 10px; margin-bottom: 10px; padding-right: 5px;  padding-left: 13px;">
+            <div class="remark-bg">
+              <div class="remark-header ">
+                <!-- <img src="../../assets/img/remarks.svg" class="img-fluid" style="width: 5%;">&nbsp;-->Remarks
+                <i class="fas fa-plus-circle" (click)="openMapModelRemark(contentRemark,-1)"
+                  style="float: right;  cursor: pointer; padding-top: 4px; color: #0ba118;"></i>
+              </div>
+              <div class="remark-content">
+                <table class="table table-hover">
+                  <!-- <thead>
+                <tr>
+                  <th class="text-center" scope="col"  style="width: 15%;"> <img src="../../assets/img/table-img.png"></th>
+                  <th scope="col"  style="width: 55%;">Description </th>
+                  <th  scope="col"  style="width: 30%;">Time</th>
+                </tr>
+              </thead> -->
+                  <tbody>
+                    <tr *ngFor="let rl of remarkList, let i=index" [hidden]="rl.loginId==rl.userId">
+                      <td class="text-center align-top" style="width: 10%;"><img src="../../assets/img/{{rl.image}}">
+                      </td>
+                      <td class="align-top" style="width: 75%;">{{rl.remark}}</td>
+                      <td class="align-top" style="width: 15%;">{{rl.time}}</td>
+                    </tr>
+                    <tr *ngFor="let rl of remarkList, let i=index" style="cursor:pointer;"
+                      (click)="openMapModelRemark(contentRemark,i)" [hidden]="rl.loginId!=rl.userId">
+                      <td class="text-center align-top" style="width: 10%;"><img src="../../assets/img/{{rl.image}}">
+                      </td>
+                      <td class="align-top" style="width: 75%;">{{rl.remark}}</td>
+                      <td class="align-top" style="width: 15%;">{{rl.time}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-xl-5 pl-25">
+            <div class="row" style="margin-top: 10px;">
+              <div class="col-md-6 mob-r" style="padding-left: 5px; padding-right: 5px;">
+                <div class="general-info">
+                  <div class="general-content">
+                    <h3>---</h3>
+                    <h1>---</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mob-r" style="padding-left: 5px; padding-right: 17px;">
+                <div class="general-info mt-10">
+                  <div class="general-content">
+                    <h3>---</h3>
+                    <h1>---
+                    </h1>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mob-r"
+                style="padding-left: 5px; padding-right: 5px; margin-top: 10px; margin-bottom: 10px; display: none;">
+                <div class="general-info">
+                  <div class="general-content">
+                    <h3>----</h3>
+                    <h1 id="divDutyOn">----</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mob-r"
+                style="padding-left: 5px; padding-right: 17px;margin-top: 10px; margin-bottom: 10px; display: none;">
+                <div class="general-info mt-10">
+                  <div class="general-content">
+                    <h3>----</h3>
+                    <h1 id="divDutyOff">----</h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-sm-12 scroll-stop mob-l mt-10 pl-10" style="padding-right: 5px;  ">
+        <div class="scrollable-content">
+          <div *ngFor="let zone of zoneList">
+
+            <!--Active-->
+            <div class="ward-progress active-ward" (click)="getAllData(zone.zoneNo)"
+              style="width: 100%; position: relative;" [style.background-color]="zone.bgColor"
+              [hidden]="zone.status=='notStarted'">
+              <div class="img-text" style="position: absolute; top: 8px;left: -50px; overflow: visible!important;">02:55
+              </div>
+              <!-- <div class="img-tooltip"><i class="fas fa-caret-right" style="color: #fff;"></i></div> -->
+              <i class="{{zone.iconName}}" title="Active Ward" alt="Active Ward"></i>
+              <div style="width: 100%; text-align: center;">
+               <span style="float: left; font-size: 12px;"> {{zone.zoneName}}</span>
+                <i class="fas fa-microphone-alt-slash" style="color:red; " [hidden]="zone.isMic=='notActive'"></i>
+              <div class="{{zone.progressClass}}" [hidden]="zone.status=='notStarted'"
+                style="text-align: right!important; float: right;">
+                <div class="{{zone.borderClass}}" role="progressbar" [style.width]="zone.workPer" aria-valuenow="25"
+                  aria-valuemin="0" aria-valuemax="100">{{zone.workPer}}</div>
+              </div>
+            </div>
+            </div>
+            <!--Deactive-->
+            <div class="ward-progress active-ward" style="width: 100%; cursor:unset; position: relative;"
+              [style.background-color]="zone.bgColor" [hidden]="zone.status!='notStarted'">
+              <i class="{{zone.iconName}}" title="Active Ward" alt="Active Ward"></i>
+              <h3>{{zone.zoneName}}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!--Remark Status Start-->
+<ng-template #contentRemark>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Choose your remark</h5>
+        <button type="button" class="close" (click)="closeMapModel();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input id="key" type="hidden" value="0" />
+        <div class="wrap-input-effects" required>
+        <select id="drpRemark" class="input-green">
+          <option selected value="0">Remark Topic</option>
+          <option value="1">Vehicle Related</option>
+          <option value="2">Device</option>
+          <option value="3">Location Issue</option>
+          <option value="4">Fast Working</option>
+          <option value="5">Halts</option>
+          <option value="6">General</option>
+        </select>
+        <span class="focus-input"></span>
+        <span class="symbol-input">
+          <i class="fas fa-tasks" aria-hidden="true"></i>
+        </span>
+      </div>
+        <textarea id="txtRemark" placeholder="Type your concern"  style="height: 90px!important;"></textarea>
+        <input type="button" class="btn btn-success" value="SUBMIT" (click)="saveRemarks();" />
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Remark Status End-->
+
+<!--Vehicle Status Start-->
+<ng-template #contentVehicleStatus>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModel();">
+
+  </div>
+  <div class="modal-body" style="float: left;margin-top:-38px; ">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="dth">
+          <div class="table-bg">
+            <div id="divStatus" class="tableFixHead">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-left">Time </th>
+                    <th scope="col" class="text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dt of vehicleStstusList">
+                    <td class="text-left">{{dt.time}} </td>
+                    <td class="text-left">{{dt.status}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Vehicle Status End-->
+
+
+<!--Vehicle Status Start-->
+<ng-template #contentDutyStatus>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModel();">
+
+  </div>
+  <div class="modal-body" style="float: left;">
+    <div class="col-md-12" style="margin-top: -10px; margin-left: -20px;">
+      <div class="widgets-popup" *ngFor="let dt of dutyStatusList">
+        <div class="row">
+          <div class="col-md-8 hvr text-center" style="border-right: 1px solid #e0e0e0;border-bottom: 1px solid #e0e0e0;">
+            <div class="widgets-popup-inner">
+              <h3><b>{{dt.name}}</b>
+              </h3>
+              <p># Driver</p>
+            </div>
+          </div>
+          <div class="col-md-4 hvr text-center" style="border-bottom: 1px solid #e0e0e0;">
+            <div class="widgets-popup-inner">
+              <h3><b>{{dt.vehicle}}</b>
+              </h3>
+              <p># Vehicle</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 hvr text-center" style="border-right: 1px solid #e0e0e0;">
+            <div class="widgets-popup-inner">
+              <h5><b>{{dt.dutyOn}}</b>
+              </h5>
+              <p># Duty On</p>
+            </div>
+          </div>
+          <div class="col-md-4 hvr text-center" style="border-right: 1px solid #e0e0e0;">
+            <div class="widgets-popup-inner">
+              <h5><b>{{dt.reachOn}}</b>
+              </h5>
+              <p># Reach On</p>
+            </div>
+          </div>
+          <div class="col-md-4 hvr text-center">
+            <div class="widgets-popup-inner">
+              <h5><b>{{dt.dutyOff}}</b>
+              </h5>
+              <p># Duty off</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Vehicle Status End-->
+
+
+<!--Application Status Start-->
+<ng-template #content>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModel();">
+
+  </div>
+  <div class="modal-body" style="float: left;margin-top:-38px; ">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="dth">
+          <div class="table-bg">
+            <div id="divStatus" class="tableFixHead">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-left">Time </th>
+                    <th scope="col" class="text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dt of applicationDataList">
+                    <td class="text-left">{{dt.time}} </td>
+                    <td class="text-left">{{dt.status}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Application Status End-->
+
+<!--Halt Detail Start-->
+
+<ng-template #contentHalt>
+
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-top: 5px!important;padding-bottom: 5px!important;">
+        <h5 class="modal-title" id="exampleModalLongTitle"><i class="far fa-clock" style="color: green;"></i>
+          {{workerDetails.haltTime}} hour</h5>
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-3" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
+            <div id="divSequence" class="scrollable-halt">
+              <div class="{{dt.activeClass}}" *ngFor="let dt of todayHaltList, let i=index" (click)="getHaltMap(i);">
+                <div class="halt-details">
+                  <h5 class="stopped-time">Stopped Time : <br><strong [style.color]="[dt.breakBGColor]"><i
+                        class="far fa-clock"></i>
+                      {{dt.time}}</strong></h5>
+                  <h5 class="break-time">Break Time : <br><strong [style.color]="[dt.breakBGColor]"><i
+                        class="far fa-clock"></i>
+                      {{dt.duration}} Min.</strong></h5>
+                </div>
+
+                <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                  <p><i class="fas fa-registered" style="color: red;"></i> {{dt.type}}</p>
+                </div>
+                <div class="work-stop-address">
+                  <p><i class="fas fa-map-marker-alt"></i> {{dt.location}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-9 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
+            <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
+              <div id="haltMap" style="width:100%; "></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Button trigger modal -->
+<!-- Modal 
+<div class="modal remarks fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-top: 5px!important;padding-bottom: 5px!important;">
+        <h5 class="modal-title" id="exampleModalLongTitle"><i
+          class="far fa-clock" style="color: green;"></i> {{workerDetails.haltTime}} hour</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
+            <div class="scrollable-halt">
+              <div class="{{dt.activeClass}}" *ngFor="let dt of todayHaltList, let i=index" (click)="getHaltMap(i);">
+                <div class="halt-details">
+                  <h5 class="stopped-time">Stopped Time : <br><strong [style.color]="[dt.breakBGColor]"><i
+                        class="far fa-clock"></i>
+                      {{dt.time}}</strong></h5>
+                  <h5 class="break-time">Break Time : <br><strong [style.color]="[dt.breakBGColor]"><i
+                        class="far fa-clock"></i>
+                      {{dt.duration}} Min.</strong></h5>
+                </div>
+                
+                <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                  <p><i class="fas fa-registered" style="color: red;"></i> {{dt.type}}</p>
+                </div>
+                <div class="work-stop-address">
+                  <p><i class="fas fa-map-marker-alt"></i> {{dt.location}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
+            <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
+              <div id="haltMap" style="width:100%;height:460px; "></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+<!--Halt Detail End-->
+
+<!--Vehicle unassigned Start-->
+<ng-template #contentVehicle>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Not Assigned Vehicle : {{workerDetails.totalUnAssignedVehicle}}</h5>
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+      </div>
+      <div class="modal-body" >
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dth">
+              <div class="table-bg">
+                <div id="divVehicle" class="tableFixHead">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">Vehicle No. </th>
+                        <th scope="col">Reason </th>
+                      </tr>
+                    </thead>
+                    <tbody style="border: 1px solid lightgray!important;">
+                      <tr *ngFor="let veh of unAssignedVehicle, let i=index">
+                        <td class="text-left" style="width: 25%;     vertical-align: top;">{{veh.name}} </td>
+                        <td class="text-left" style="width: 75%;"><textarea id="txtVehicle{{i}}" class="input-green"  style="height: 80px;">{{veh.reason}}</textarea> </td>
+                        <!--[readOnly]="veh.entryId!=veh.userId"-->
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <input type="button" class="btn btn-success table-btn" value="Submit" (click)="saveVehicleReason();" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Vehicle unassigned End-->

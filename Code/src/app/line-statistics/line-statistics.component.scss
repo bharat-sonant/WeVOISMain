@@ -1,0 +1,68 @@
+.main-chart-title{
+    color: white;
+  font-size: 15px; 
+  font-family: Calibri;
+  text-align: center;
+  margin-left: 42%;
+  margin-top: -50px;
+  position: absolute;
+}
+
+.ddlStyle{
+  float: right;
+  margin-right: 200px;
+  margin-top: -50px;
+  width: 110px;
+  border: solid 1px #fff;
+  border-radius: 25px;
+  height: 43px;
+  padding-left: 10px;
+}
+
+.chartDiv{
+  margin: 5px;
+    border-radius: 13px;
+}
+
+.graph-header {
+  height: 65px;
+  padding-top: 65px;
+  
+  background: #141E30;  
+  background: -webkit-gradient(linear, left top, right top, from(#0c2646), color-stop(60%, #204065), to(#2a5788));
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.graph{  
+  padding-top: 25px;
+  padding-bottom: 10px;
+  background: #2c2c2c;
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  background-size: 105%;
+  position: relative;
+  overflow: hidden;
+  height: 350px;
+}
+
+.divNoRecord{
+  font-size: 20px;
+    color: red;
+    text-align: center;
+    width: 90%;
+    padding-top: 50px;
+}
+.interval-btn{
+  font-size: 11px;
+    border: solid 2px #fff;
+    padding: 5px;
+    margin: 3px;
+    background: #0ba118;
+    color: white;
+    width: 53px;
+    margin-top: 9px;
+    border-radius: 30px;
+    height: 45px;
+}
+ 

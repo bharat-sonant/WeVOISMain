@@ -1,0 +1,126 @@
+.dashboard{background:url(../../../assets/img/home-bg.jpg) no-repeat; width:100%;  background-size:cover; min-height:100vh; 
+    background-attachment: fixed; }
+.dashboard{
+   background-color: #fff;
+}
+.home-header{
+   background-color: #262127;
+   color: #fff;
+   height: 60px;
+   padding-top: 18px;
+   font-size: 18px;
+   position: relative;
+   text-align: center;
+   font-weight: bold;
+}
+.home-header a{
+   position: absolute;
+   right: 10px;
+   top: 18px;
+   font-size: 16px;
+   color: #fff;
+}
+.dashboard-widgets{
+   // width: 150px;
+   height: 150px;
+   line-height: 125px;
+   margin-top: 20px;
+   text-align: center;
+  border-radius: 4px;
+   padding: 15px;
+   background-color: #e7e7e7;
+   
+}
+.dashboard-widgets img{
+   position: relative;
+}
+.dashboard-widgets:hover{
+   -webkit-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+   -moz-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+   box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+}
+.dashboard-widgets a{
+   color: #333333;
+  // font-size: 15px;
+   cursor: pointer;
+   text-decoration: none;
+}
+.dashboard-widgets i{
+   color: #0ba118;
+   font-size: 48px;
+}
+.dashboard-widgets i:hover{
+   -webkit-transform: rotate(360deg);
+   transform: rotate(360deg);	
+   -webkit-transition: .5s all ease;
+   -moz-transition: .5s all ease;
+   transition: .5s all ease;
+}
+.dashboard-widgets span{
+   display: inline-block;
+   vertical-align: middle;
+   line-height: 2;
+}
+
+.home-footer{
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   border-top: 2px  solid lightgray;
+   color: #fff;
+   height: 60px;
+   padding-top: 18px;
+   font-size: 14px;
+   background-color: #262127;
+}
+.col-md-2{
+   padding-right: 5px;
+   padding-left: 10px;
+}
+.fa-facebook-f{
+   color:#3b5998 ;
+}
+.fa-twitter{
+   color: #00acee ;
+}
+.fa-linkedin-in{
+   color:#0e76a8 ;
+}
+
+
+.dashboard-widgets-disabled{
+   opacity: 0.4; 
+   cursor: no-drop;
+   height: 150px;
+   line-height: 125px;
+   margin-top: 20px;
+   text-align: center;
+  border-radius: 4px;
+   padding: 15px;
+   border: 1px solid rgb(184, 184, 184);
+   background-color: #e7e7e7;  
+}
+.dashboard-widgets-disabled i{
+   color: #a3a2a2;
+   font-size: 48px;
+   cursor: no-drop;
+}
+.dashboard-widgets-disabled span{
+   display: inline-block;
+   vertical-align: middle;
+   line-height: 2;
+}
+.dashboard-widgets-disabled a{
+   pointer-events: none;
+   color: #636363;
+   //font-size: 15px;
+   cursor: no-drop;
+   text-decoration: none;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+.wrapper      {background-image: url("../../assets/img/background.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    -ms-background-size: cover;
+    background-position: center center;
+    height: 100vh;}  
+    
+    
+    .wrapper img{border-radius: 10px; margin-top:100px;position: relative;}
+    .wrapper button{    background-color:#125e05; border:none;
+        padding: 20px 40px!important;  position: absolute;
+    bottom:-10px; right:14px; border-bottom-right-radius: 10px; }
+    .wrapper button:hover{background-color: #3cd121 ; border-top-left-radius: 10px; color:#000;}
+    .hvr-shutter-in-horizontal:before{background:#1c770c!important; color:#000!important;}
+footer{padding: 0px!important;}
+
+
+

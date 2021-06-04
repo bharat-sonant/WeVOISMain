@@ -1,0 +1,71 @@
+<!--  -->
+<!-- <link rel="stylesheet" href="css/aos.css"> -->
+
+<!-- Form Example -->
+<div class="limiter">
+	<div class="container-login100">
+		<div class="wrap-login100" data-aos="zoom-in-up" data-aos-duration="1000">
+			<div class="login100-pic js-tilt" data-tilt>
+				<img src="../../assets/img/recyle-round.png" alt="Waste Collection Management"
+					title="Waste Collection Management" class="hide-on-mobile img-fluid">
+			</div>
+
+			<div class="login100-form validate-form">
+				<span class="login100-form-title">
+					<img src="../../assets/img/greenlogo.png" alt="WeVOIS" title="WeVOIS" class=" img-fluid">
+				</span>
+
+				<div class="wrap-input-effects " data-validate="Valid email is required: ex@abc.xyz" required>
+					<input class="input-green" type="text" name="email " placeholder="Email" id="txtUserName">
+					<span class="focus-input"></span>
+					<span class="symbol-input">
+						<i class="fas fa-envelope" aria-hidden="true"></i>
+					</span>
+				</div>
+
+				<!-- <div class="wrap-input-effects " data-validate="Password is required" required>
+					<input class="input-green" type="password" name="pass " placeholder="Password" id="txtPassword">
+					<span class="focus-input"></span>
+					<span class="symbol-input">
+						<i class="fas fa-lock" aria-hidden="true"></i>
+					</span>
+				</div> -->
+				
+			<div class="row no-gutters">
+                    <div class="col-10">
+                    <div  class="wrap-input-effects " data-validate = "Password is required" required>
+                    <input class="input-greens" type="password" name="pass " placeholder="Password" id="txtPassword" >
+                    
+                    
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    </span>
+                  </div> </div>
+                    
+                    <div class="col-2 text-center icon" >
+                    
+                    <i id="pass-status" class="fas fa-eye" aria-hidden="true" onClick="viewPassword()"></i>
+                    </div> 
+                    
+					</div>
+					
+				<div class="login-btn">
+					<button class="login hvr-shutter-in-horizontal"
+						(click)="doLogin();">login</button>
+				</div>
+				<!-- <p style="padding-top: 15px;"> Don't have an account <a href="/signup/" class="create" style="color:green">Create Here</a></p> -->
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<!-- aos Animation start
+<script src="../../"></script>
+<script>
+      AOS.init({
+        easing: 'ease-in-out-sine'
+      });
+</script> -->

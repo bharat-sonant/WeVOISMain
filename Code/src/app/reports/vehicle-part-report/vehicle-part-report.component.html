@@ -1,0 +1,144 @@
+<section class="header">
+  <div class="row no-gutters">
+    <div class="col-md-12" style="text-align:center; padding-top: 2px; font-size: 20px; letter-spacing: 2px;">
+      Vehicle Parts List
+    </div>
+  </div>
+</section>
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-5" style="padding-left: 0px; padding-right: 0px;">
+      <div class="card" style="margin-top:-10px; ">
+        <div class="card-header">
+          <select class="caret-select" id="ddlYear" (change)="changeSelection()" style="width: 31%;"
+            [(ngModel)]="selectedYear">
+            <option value="0">Year</option>
+            <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">
+              {{yer.year}}</option>
+          </select>
+          <select class="caret-select" id="ddlMonth" (change)="changeSelection()"
+            [(ngModel)]="selectedMonth" style="width: 31%;">
+            <option value="0">Month</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <input id="ddlMonthPart" style="width: 31%;" class="caret-select-vehicle" placeholder="All Parts"
+            (keyup)="getMonthFilter();" (focus)="showMonthList();" (blur)="hideMonthList();" />
+          <div id="monthPartList" class="part-list">
+            <ul (click)="getMonthValue($event);">
+              <li *ngFor="let data of monthFilterPartList">{{data.part}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="row">
+              <div class="col-md-12 pr-1">
+                <div class="table-wrapper">
+                  <table class="table ">
+                    <thead>
+                      <th>S.No.</th>
+                      <th>Part/Accessory</th>
+                      <th class="text-right" style="padding-right: 20px;">Qty</th>
+                      <th style="padding-right: 20px;">Unit</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of monthDataList; let i=index">
+                        <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
+                        <td style="border-right:1px solid #dee2e6">
+                          {{data.part}}</td>
+                        <td style="border-right:1px solid #dee2e6">
+                          {{data.qty}}</td>
+                        <td style="border-right:1px solid #dee2e6">
+                          {{data.unit}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12 pr-1">
+                <div class="form-group">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7" style="padding-right: 0px;">
+      <div class="card" style="margin-top:-10px; ">
+        <div class="card-header">
+          <input id="ddlDatePart" style="width: 26%;" class="caret-select-vehicle" placeholder="All Parts"
+            (keyup)="getDateFilter();" (focus)="showDateList();" (blur)="hideDateList();" />
+          <div id="datePartList" class="part-list-date">
+            <ul (click)="getDateValue($event);">
+              <li *ngFor="let data of dateFilterPartList">{{data.part}}</li>
+            </ul>
+          </div>
+          &nbsp;
+          <input id="date1" class="caret-select-vehicle custom-date-input" type="date"
+            style="height: 38px; width:  26%; padding-left: 10px; margin-right: 8px;" />
+          &nbsp;
+          <input id="date2" class="caret-select-vehicle custom-date-input" type="date"
+            style="height: 38px; width:  26%; padding-left: 10px; margin-right: 8px;" />
+          <button class="fa-expand-reset" (click)="getDateDataFilter();" title="Search by Filter"><i
+              class="fas fa-search"></i>
+          </button>
+          &nbsp;
+          <button class="fa-expand-reset" (click)="resetAllFilter();" title="Reset All Filter"><i
+              class="fas fa-sync-alt"></i></button>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="row">
+              <div class="col-md-12 pr-1">
+                <div class="table-wrapper">
+                  <table class="table ">
+                    <thead>
+                      <th>S.No.</th>
+                      <th>Date</th>
+                      <th>Part/Accessory</th>
+                      <th class="text-right">Qty</th>
+                      <th >Unit</th>
+                      <th class="text-right" style="padding-right: 20px;">Bill No.</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of dateDataList; let i=index">
+                        <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
+                        <td style="border-right:1px solid #dee2e6">
+                          {{data.date}}</td>
+                        <td style="border-right:1px solid #dee2e6">
+                          {{data.part}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6">
+                          {{data.qty}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6">
+                          {{data.unit}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6">
+                          {{data.billNo}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12 pr-1">
+                <div class="form-group">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

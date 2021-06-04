@@ -1,0 +1,95 @@
+.header{
+    height:64px ; 
+    width: 100%; 
+    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+    color:#fff;
+}
+.heading{
+    padding-top: 12px; 
+    font-size: 20px; 
+    color: #fff; 
+    letter-spacing: 2px; 
+    text-transform: uppercase;
+    font-weight: normal;
+}
+input[type="checkbox"]{
+    vertical-align: middle;
+}
+
+/**************************Table Start***************************/
+.tableFixHead {
+    overflow-y: scroll;
+    height:75.5vh;
+    position: relative;
+    //border-radius: 5px;
+    //box-shadow: 0px 5px 10px 0px #e5e5e5;
+  }
+  .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1;
+   // width: 200px;
+    z-index: 10;
+  }
+  table {
+    border-collapse: collapse;
+    //margin-bottom: 0rem!important;
+    //margin-top: -13px;
+   // margin-bottom: -13px;
+   // margin-left: -7px;
+   // border: 1px solid lightgray;
+   // width: 100%;
+  }
+  thead th{
+   // padding: 10px 7px !important;
+    font-size:14px;
+    color: rgb(56, 56, 56);
+    font-weight: bold;  
+    background-color: #fff;
+  }
+  table td{
+   padding: 12px 15px !important;
+    font-size:12px;
+    min-height: 20px!important;
+  }
+/**************************Table End***************************/
+
+  /******************************Custom Scrollbar Start*********************************/
+::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: transparent; 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: transparent; 
+  -webkit-box-shadow: transparent; 
+}
+
+:hover::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+:hover::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+:hover::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: #20a120; 
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+/******************************Custom Scrollbar End*********************************/
+
+
+
+

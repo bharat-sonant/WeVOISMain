@@ -1,0 +1,49 @@
+<section class="dashboard">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12 home-header">
+          Finance Reports
+          <a href="/logout"  style="display: none;;">Sign Out <i class="fas fa-sign-out-alt"></i></a>
+        </div>
+      </div>
+      <div class="row" style="margin-top: -10px;">
+        <div class="col-md-2" routerLinkActive="active" *ngFor="let usr of accessList " [hidden]="usr.isShow"  [hidden]="usr.name!='Ward Reach Cost' && usr.name!='Salary Summary' && usr.name!='Ward Monthly Cost' ">
+          <div class="{{usr.dataClass}}">
+            <span>
+              <a [routerLink]="[usr.url]">
+                <i class="{{usr.img}}"></i><br>
+                {{usr.name}}</a></span>
+          </div>
+        </div>
+        <div class="col-md-2" routerLinkActive="active">
+          <div class="dashboard-widgets">
+            <span>
+              <a [routerLink]="['/vehicle-petrol-cost']">
+                <i class="now-ui-icons business_chart-bar-32"></i><br>
+                Vehicle Petrol Cost</a></span>
+          </div>
+        </div>
+        <div class="col-md-2" routerLinkActive="active">
+          <div class="dashboard-widgets">
+            <span>
+              <a [routerLink]="['/vehicle-maintenance-cost']">
+                <i class="now-ui-icons business_chart-bar-32"></i><br>
+                Vehicle Parts Cost</a></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center home-footer">
+          Copyright by <b
+            style="color: #f1f1f1;  border-right: 2px solid rgb(165, 165, 165);  padding-right: 10px;">WeVOIS</b>
+          &nbsp; <a href="https://www.facebook.com/wevois/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          &nbsp; <a href="https://twitter.com/wevois?lang=en" target="_blank"><i class="fab fa-twitter"></i></a>
+          &nbsp; <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank"><i
+              class="fab fa-linkedin-in"></i></a>
+          &nbsp; <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank"><i
+              class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+  
+    </div>
+  </section>

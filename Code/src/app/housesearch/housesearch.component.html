@@ -1,0 +1,181 @@
+<section class="header">
+
+  <div class="row no-gutters">
+    <div class="col-md-4">
+      <select class="caret-select" id="month">
+        <option selected value="empty" id="empty">Month</option>
+        <option value="01" name="JANUARY">JANUARY</option>
+        <option value="02" name="FEBRUARY">FEBRUARY</option>
+        <option value="03" name="MARCH">MARCH</option>
+        <option value="04" name="APRIL">APRIL</option>
+        <option value="05" name="MAY">MAY</option>
+        <option value="06" name="JUNE">JUNE</option>
+        <option value="07" name="JULY">JULY</option>
+        <option value="08" name="AUGUST">AUGUST</option>
+        <option value="09" name="SEPTEMBER">SEPTEMBER</option>
+        <option value="10" name="OCTOBER">OCTOBER</option>
+        <option value="11" name="NOVEMBER">NOVEMBER</option>
+        <option value="12" name="DECEMBER">DECEMBER</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <input type="tel" class="input-box box" id="contact" placeholder="Contact">
+    </div>
+
+    <div class="col-md-3">
+      <input type="tel" class="input-box box" id="card" placeholder="Card Number">
+
+    </div>
+
+    <div class="col-md-2">
+      <button type="submit" (click)="onSubmit()"> Search</button>
+    </div>
+  </div>
+
+<br><br>
+<div *ngIf="lesswork" style="border:1px solid red ; color:black; font-weight:normal; font-size: 15px; background-color: red; padding: 15px;">{{this.countpercentage}}% work has been completed.</div>
+<div *ngIf="averagework" style="border:1px solid yellow ; color:black; font-weight:normal; font-size: 15px; background-color: yellow; padding: 15px;">{{this.countpercentage}}% work has been completed.</div>
+<div *ngIf="mostwork" style="border:1px solid green; color:black; font-weight:normal; font-size: 15px; background-color: green; padding: 15px;">{{this.countpercentage}}% work has been completed.</div>
+
+
+
+
+<div >
+ <p id="nocontactrecord" class="text-center" style="border:1px solid rgb(250, 98, 98) ; color:white; height:80px; font-weight: bold; font-size: 20px; background-color: rgb(250, 98, 98); padding: 70px;"*ngIf="nocontactrecord"> No record found for the entered contact.</p>
+</div>
+<div >
+  <p id="nocardrecord" class="text-center" style="border:1px solid rgb(250, 98, 98) ; color:white; height:80px; font-weight: bold; font-size: 20px; background-color: rgb(250, 98, 98); padding: 70px;" *ngIf="nocardrecord"> No record found for the entered card.</p>
+ </div>
+
+<div class="row no-gutters">
+    <div class="col-md-12">
+      <table class="table " id="table1">
+        <thead>
+          <tr *ngIf="swapdetails">
+            <th>Name</th>
+            <th>Card Number</th>
+            <th>Address</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="width: 25%" *ngFor="let name of swapdetails">{{name.names}}</td>
+            <td style="width: 25%" *ngFor="let card of swapdetails">{{card.cards}}</td>
+            <td style="width: 50%" *ngFor="let address of swapdetails">{{address.addresses}}</td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+
+
+
+  <div class="row no-gutters">
+    <div class="col-md-12">
+      <div>
+        <table class="table table1" id="table2">
+          <thead>
+            <tr *ngIf="day">
+              <th>Date</th>
+              <th>Card Scanned</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let date of day">
+              <td>{{date.reportDate}}</td>
+              <td>{{date.cardScanned}} </td>
+
+
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+</section>
+
+<!-- <div class="layout">
+       
+       
+        <select name="month" class="custom-select ">
+            <option selected>Month</option>
+            <option value="01">January</option>
+            <option value="02">FEBRUARY</option>
+            <option value="03">MARCH</option>
+            <option value="04">APRIL</option>
+            <option value="05">MAY</option>
+            <option value="06">JUNE</option>
+            <option value="07">JULY</option>
+            <option value="08">AUGUST</option>
+            <option value="09">SEPTEMBER</option>
+            <option value="10">OCTOBER</option>
+            <option value="11">NOVEMBER</option>
+            <option value="12">DECEMBER</option>
+          </select>&nbsp;&nbsp;  -->
+<!--   
+        <input type="tel" class="input-box box" id="contact" placeholder="Contact"> &nbsp;&nbsp; 
+      
+       <input type="text" class="input-box box" placeholder="Card No." id="card">&nbsp;&nbsp; 
+  
+      <button type="submit" (click)="onSubmit2()" class="btn">Search</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+  
+  <div class="container">
+  <div class="row">
+ <div class="col-12">
+  <table class="table1" >
+    <tr *ngIf="n" >
+      <th class="table1"> NAME-</th><br>
+      <td class="table1" *ngFor="let name of n">{{name.names}}</td><br>
+      <th class="table1"> ADDRESS-</th><br>
+      <td class="table1" *ngFor="let address of n">{{address.addresses}}</td><br>
+      <th class="table1"> CARD NUMBER-</th><br>
+      <td class="table1" *ngFor="let card of n">{{card.cards}}</td>
+    </tr> -->
+
+<!-- <tr *ngIf="n">
+      
+    </tr>
+  
+    <tr *ngIf="n">
+      
+    </tr> -->
+
+
+<!-- </table></div></div></div> -->
+
+
+<!-- <table>
+     <tr *ngIf="carddetails">
+       <th>WARD</th>
+       <td *ngFor="let ward of carddetails">{{ward.ward}}</td>
+     </tr>
+     <tr *ngIf="carddetails">
+       <th>LINE</th>
+       <td *ngFor="let line of carddetails">{{line.line}}</td>
+     </tr>
+   </table> -->
+
+
+<!-- <div  style="height:600px; overflow: scroll; overflow-x: hidden; overflow-y: scroll;" >
+   <table >
+     <tr *ngIf="day" >
+       <th >DATE</th>
+       <th>CARD SCANNED</th>
+     </tr>
+     <tr *ngFor="let date of day">
+       <td>{{date.reportDate}}</td>
+       <td>{{date.cardScanned}}</td>
+     </tr>
+  
+   </table></div> -->

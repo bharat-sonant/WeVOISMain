@@ -1,0 +1,100 @@
+.report-ddl{    
+    border-radius: 5px;   
+    font-size: 13px;    
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.custom-date-input{   
+   height: 40px;
+}
+ .report-controls{  
+    width: 95%; 
+    padding: 10px;
+    border-radius: 5px; 
+    font-size: 13px;   
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+ }
+
+.report-header{ 
+    padding-top:40px;    
+    height: 100px !important; 
+    background: -webkit-gradient(linear, left top, right top, from(#0c2646), color-stop(60%, #204065), to(#2a5788));
+}
+
+input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.title
+{
+    width: 100%;
+    float: left;
+    font-size: 30px; 
+    color: navy;
+}
+
+.report-left-td{
+	width: 15%;
+    text-align: right;
+    background-color: #DCDCDC;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    padding: 5px;
+	padding-right: 10px;
+	font-weight: bold;
+	border-bottom: solid 1px #ccc;
+} 
+.report-right-td{	
+	text-align: left;	
+    padding: 5px;
+	padding-left: 10px;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 13px;
+	border-bottom: solid 1px #ccc;
+}
+.seperat{
+    width: 99%;height: 6px;margin-bottom:10px;
+}
+.report-map{
+	width:100%;
+	border: solid 1px #ccc;
+	padding: 10px;
+	background: #FCFCFC;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+ng-map div > img {
+	position: absolute;
+}
+.div-date{
+
+    width: 28%;
+    float: right;
+    font-size: 12px;
+    color: navy;
+    padding-top: 25px;
+    text-align: right;
+    padding-right: 14px;
+}
+
+.line-left-td{
+	width: 83px;
+    text-align: right;
+    background-color: #FCFCFC;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    padding: 5px;
+	padding-right: 10px;	
+    border-bottom: solid 1px #ccc;
+    border-right: solid 1px #ccc;
+} 
+.line-right-td{	
+	text-align: left;	
+    padding: 5px;
+	padding-left: 10px;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 13px;
+	border-bottom: solid 1px #ccc;
+}
+ 

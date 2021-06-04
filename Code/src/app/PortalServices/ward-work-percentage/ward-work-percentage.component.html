@@ -1,0 +1,58 @@
+<section class="halts">
+    <div class="container-fluid">
+        <div class="row halts-header">
+            <div class="col-md-4" style="margin-top: -4px;">
+                <button class="btn-hvr" (click)="setPreviousDate();" style="position: absolute;left: 20px;"><span
+                        style="color: #fff;">
+                        << </span></button>
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date"
+                    (change)="setDate($event.target.value)"
+                    style="height: 40px; width: 190px; margin-left: 7px; margin-right: 8px; position: absolute;left: 70px;" />
+                <button class="btn-hvr" (click)="setNextDate();" style="position: absolute;left: 276px;"><span
+                        style="color: #fff;margin-right: 8px;">>></span></button>
+                <button class="btn-update" (click)="setWardPercentageAll();" value="Update All"
+                    style="position: absolute;left: 334px;">Update All</button>
+            </div>
+            <div class="col-md-8" style="padding-left: 10%;">
+                Work Percentage
+            </div>
+
+
+        </div>
+        <div class="row">
+            <!-- <div class="col-md-2" *ngFor="let data of workList " (click)="setWardPercentage(data.zoneNo,'single')" style="cursor:pointer;" >
+                <div class="card-bg">
+                    <div class="inner-text">
+                        {{data.zoneName}} : 
+                        <b>{{data.percentage}}%</b>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-md-12">
+                <div class="card" style="margin-top:10px">
+                    <div class="row">
+                        <div class="col-md-2" style="padding-right: 7px;cursor:pointer; margin-bottom: 14px;" *ngFor="let data of workList "
+                            (click)="setWardPercentage(data.zoneNo,'single')">
+                            <div class="ward-bg">
+                                <div class="ward-details">
+                                    <div class="ward">
+                                        <h3 style="color: #707070;">Ward :</h3>
+                                    </div>
+                                    <div class="ward-name">
+                                        <h3 style="font-weight: bold;">{{data.zoneName}}</h3>
+                                    </div>
+                                </div> <br>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" [style.width]="data.percentage"
+                                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">{{data.percentage}}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

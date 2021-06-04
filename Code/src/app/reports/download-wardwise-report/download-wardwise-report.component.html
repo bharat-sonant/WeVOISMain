@@ -1,0 +1,102 @@
+<div id="divReportHeader" class="panel-header panel-header-sm report-header-bg" style="padding-bottom: 0px!important;">
+  <div class="container search-bar" id="divSearch">
+    <div class="row">
+      <div class="col-md-3 col-sm-12 searh-pad">
+        <input class="report-controls custom-date-input pd-t mrg-5" type="date" (blur)="setDate($event.target.value)" />
+      </div>
+      <div class="col-md-3 col-sm-12 searh-pad">
+        <select class="report-controls mrg-5" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                {{zone.zoneName}}
+            </option>
+        </select>
+    </div>
+      <div class="col-md-3 searh-pad">
+        <button id="btnDownloadReport" type="submit" class="btn mrg-5" (click)="prepareReport();"> Prepare
+          Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="divProgress" style="display: none;" class="progress-main-div">
+  <div class="progress-inner-div" [style.width.%]="[[progress]]">
+  </div>
+  <div class="progress-text">{{progressDisplayText}} : {{progress}} % </div>
+</div>
+
+<div style="height: 1500px">&nbsp;</div>
+
+<div class="main-content report-content" id="divReport">
+  <div class="card" style="width:960px;">
+    <div class="row no-gutters">
+      <div class="col-md-12">
+        <div class="card-header ">
+          <div class="rpt-head-text">
+            Collection Report
+          </div>
+          <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar"
+            style="width: 100%;height: 6px;margin-bottom:10px;" />
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="col-md-12">
+          <table class="tbl" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="report-left-td">Ward </td>
+              <td class="report-right-td">{{reportData.zoneName}}</td>
+            </tr>
+            <tr>
+              <td class="report-left-td">Date </td>
+              <td class="report-right-td">{{reportData.reportDate}}</td>
+            </tr>
+            <tr>
+              <td class="report-left-td">Vehicle No</td>
+              <td class="report-right-td">{{reportData.vehicleNo}}</td>
+            </tr>
+            <tr>
+              <td class="report-left-td">Driver</td>
+              <td class="report-right-td">{{reportData.driverName}} </td>
+            </tr>
+            <tr>
+              <td class="report-left-td">Helper</td>
+              <td class="report-right-td"> {{reportData.helperName}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-12">
+          <div class="divChart" style="margin-top: 11px;">
+            <div id="chartContainer" style="height: 311px; width: 100%; margin-left:auto;margin-right:auto;  ">
+            </div>
+            <div class="divPatch">
+              <div class="divPatch1"> &nbsp;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8" id="divRptRight">
+        <div class="report-map" [style.height.px]="480" style="margin-left:-17px;">
+          <div #gmap style="width:100%;height:100%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12"><img src="../assets/img/head-strip.jpg" class="seperat" /></div>
+  </div>
+</div>
+
+<div class="reportFrame">
+  <div class="rpt-head-text-report">
+    Collection Report
+  </div>
+  <img src="../assets/img/head-strip.jpg" class="img-seperator" />
+  <div style="width:30%;float: left;">
+
+    <img id="infoImg" src="" />
+    <img id="chartImg" src="" style="margin-top:10px;" />
+  </div>
+  <div class="div-rpt-map">
+    <img id="mapImg" src="" />
+  </div>
+  <img src="../assets/img/head-strip.jpg" class="img-seperator" style="margin-top:10px " />
+
+</div>

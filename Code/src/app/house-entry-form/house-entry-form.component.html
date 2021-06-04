@@ -1,0 +1,101 @@
+<div style="width: 100%;" *ngIf="customer">
+
+ 
+
+  <table style="width: 600px;margin-left: 215px;margin-top: 50px;border:solid 1px #dcdcdc;background: white;">
+    <tr>
+      <td class="left-td brd-bottom">
+        Card No
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" value="SIKA" style="width: 50px;" disabled="disabled" />
+        <input type="text" [(ngModel)]="customer.sNo" />
+        <!-- <input type="button" value="Searh" style="margin-left: 15px" class="btn-info" (onclick)="GetCardRFID()"> -->
+      </td>
+    </tr>
+    <tr>
+      <td class="left-td brd-bottom">
+        Receipt No
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" class="txt" [(ngModel)]="customer.receiptNo" />
+      </td>
+    </tr>
+    <!-- <tr>
+      <td class="left-td brd-bottom">
+        Card UID
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" disabled="disabled" [(ngModel)]="customer.rfid" />
+      </td>
+    </tr> -->
+    <tr>
+      <td class="left-td brd-bottom">
+        Name
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" class="txt" [(ngModel)]="customer.name" />
+      </td>
+    </tr>
+    <tr>
+      <td class="left-td brd-bottom">
+        Mobile
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" class="txt" [(ngModel)]="customer.mobNo" />
+      </td>
+    </tr>
+    <tr>
+      <td class="left-td brd-bottom">
+        House Type
+      </td>
+      <td class="right-td brd-bottom">
+        <select class="report-controls mrg-5 txt" (change)="SetHouseType($event.target.value)">
+          <option> -- Select -- </option>
+          <option> आवासीय(Rs 59/-) </option>
+          <option> व्यसायिक दूकान, प्रतिष्ठान, खान-पान के स्थान(Rs 236/-) </option>
+          <option> गेस्ट हाउस(Rs 590/-) </option>
+          <option> छात्रावास हॉस्टल(Rs 472/-) </option>
+          <option> होटल व रेस्ट्रोरेंट अन स्टार(Rs 590/-) </option>
+          <option> होटल व रेस्ट्रोरेंट 3 स्टार तक(Rs 1180/-) </option>
+          <option> होटल व रेस्ट्रोरेंट 5 स्टार तक(Rs 2360/-) </option>
+          <option> व्यसायिक कार्यालय, बैंक, कोचिंग आदि(Rs 590/-) </option>
+          <option> क्लिनिक डिस्पेंसरी 50 बेड तक(Rs 1770/-) </option>
+          <option> क्लिनिक डिस्पेंसरी 50 बेड से अधिक(Rs 3540/-) </option>
+          <option> लघु एवं कुटीर उद्योग(Rs 590/-) </option>
+          <option> गोदाम, कोल्ड स्टोरेज(Rs 1180/-) </option>
+          <option> शादी हॉल/उत्सव , मेला 3000 व. मी. तक(Rs 1770/-) </option>
+          <option> शादी हॉल/उत्सव,मेला 3000 व.मी. से अधिक(Rs 4720/-) </option>
+          <option> फल /सब्ज़ी ठेला, व्यसायिक ठेला, थड़ी(Rs 20/-) </option>
+        </select>
+        <!-- <input type="text" [(ngModel)]="customer.houeType" /> -->
+      </td>
+    </tr>
+    <tr>
+      <td class="left-td brd-bottom">
+        Ward
+      </td>
+      <td class="right-td brd-bottom">
+        <input type="text" class="txt" [(ngModel)]="customer.ward" />
+      </td>
+    </tr>
+    <tr>
+      <td class="left-td brd-bottom">
+        Address
+      </td>
+      <td class="right-td brd-bottom">
+        <textarea class="txt" style="height: 120px;width: 350px;" [(ngModel)]="customer.address"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      </td>
+      <td class="right-td">
+        <input type="submit" value="Save" (click)="SaveEntries();" />
+
+
+      </td>
+    </tr>
+
+  </table>
+</div>

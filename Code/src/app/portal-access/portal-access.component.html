@@ -1,0 +1,71 @@
+
+<!-------------- Navbar section start ---------------->
+<div class="container">
+  <nav class="navbar navbar-expand-md shadow bsnav bsnav-sticky bsnav-sticky-slide " id="myDIV">
+      <a class="navbar-brand" href="#">
+        <img src="../assets/images/logo-black.svg" class="logo-1 img-fluid" alt=""> 
+        <img src="../assets/images/logo-white.svg" class="logo-2 img-fluid" alt="">
+      </a>
+       
+      <button class="navbar-toggler toggler-spring"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse justify-content-end">
+          <ul class="navbar-nav navbar-mobile mr-0">
+              <li class="nav-item"><a class="nav-link log-in" href="index">Back to Home</a></li>
+          </ul>
+      </div>
+    </nav>
+  <div class="bsnav-mobile">
+    <div class="bsnav-mobile-overlay"></div>
+    <div class="navbar"></div>
+  </div>
+  
+  </div>
+  
+<!-------------- Navbar section End ---------------->
+
+<!-------------- Login section start ---------------->
+<section class="login">
+  <div class="container login-container">
+    <div class="row">
+      <div class="col-md-12 login-header text-center">
+        <!-- <h3 class="welcome-text">Welcome to <b>WeVOIS</b></h3> -->
+        <p>in Which City do you want to <span class="welcome-text">Login?</span></p> 
+      </div>
+    </div>
+     
+        <div class="login-body">
+        <!-- <ul class="navbar-nav navbar-mobile mr-0">
+          <li class="nav-item active"><a class="nav-link hvr-underline-from-center" href="#">Reengus</a></li>
+          <li class="nav-item"><a class="nav-link hvr-underline-from-center" href="#">Sikar</a></li>
+          <li class="nav-item"><a class="nav-link hvr-underline-from-center" href="#">Jaipur</a></li>
+          <li class="nav-item"><a class="nav-link hvr-underline-from-center" href="#">Demo</a></li>
+      </ul> -->
+        <div class="row">
+          <div class="col-md-6 box-center">
+            <div class="login-box" style="cursor: pointer;" (click)="getCity('sikar');">
+              Sikar
+          </div>
+          </div>
+          <div class="col-md-6 box-center-2">
+            <div class="login-box" style="cursor: pointer;" (click)="getCity('reengus');">
+              Reengus
+          </div>
+          </div>
+          <div class="col-md-6 box-center">
+            <div class="login-box" style="margin-bottom: 0px!important;cursor: pointer;" (click)="getCity('jaipur');">
+            Jaipur
+          </div>
+          </div>
+          <div class="col-md-6 box-center-2">
+            <div class="login-box" style="margin-bottom: 0px!important;cursor: pointer;"  (click)="getCity('demo');">
+            Demo
+          </div>
+          </div>
+        </div>
+    </div>
+      
+   
+  </div>
+</section>
+
+<!-------------- Login section End ---------------->

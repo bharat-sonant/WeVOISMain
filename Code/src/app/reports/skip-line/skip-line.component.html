@@ -1,0 +1,69 @@
+<div class="panel-header panel-header-sm report-header" > 
+  <nav class="navbar navbar-expand-lg navbar-transparent  navbar-absolute fixed-top" style="float: left;">
+      <div class="container-fluid">
+          <form>
+              <div class="input-group" style="width: 700px;" >
+                  <table style="width:100%;margin-top: -5px;">
+                      <tr>
+                          <td style="width:25%">
+                              <input class="report-controls custom-date-input" type="date" (blur)="setDate($event.target.value)" />
+                          </td>                         
+                          <td >
+                              <button type="submit" (click)="showReport();" class="btn btn-warning">
+                                  View Report</button>
+                          </td>
+                      </tr>
+                  </table>
+              </div>
+          </form>
+      </div>
+  </nav>
+</div>
+ <div class="main-content" id="divReport">   
+  <div class="row">
+      <div class="col-md-12">
+          <div class="card ">
+                <div class="card-header ">
+                  <div style="width: 70%;float: left;font-size: 30px; color: navy;">
+                     Skipped Lines                        
+                  </div>
+                  <div class="div-date">
+                     <b>Date : </b> <span id="spnDate"></span>                  
+                   </div>
+                  <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad"
+                      style="width: 99%;height: 6px;margin-bottom:10px;" />
+              </div>  
+               
+              <div class="card-body">
+                  <div style="width:100%;min-height: 500px;">
+                      <div style="float: left;width: 100%;" *ngIf="skippedLines">
+                          <diV>
+                              <table style="width: 99%;margin-bottom: 30px;border:solid 1px #ccc;border-bottom: none;" cellpadding="0"
+                                  cellspacing="0">
+                                  <tr *ngFor="let line of skippedLines ; index as i;">
+                                      <td class="report-left-td" style="vertical-align: top;"> {{line.wardName}} </td>
+                                      <td class="report-right-td"> 
+                                          <div *ngFor="let item of line.lines" >  
+                                              <div style="width:277px;float:left">
+                                                    <table style="width: 99%;border:solid 1px #ccc;border-bottom: none;margin: 2px;" cellpadding="0"
+                                                    cellspacing="0">
+                                                    <tr>
+                                                        <td class="line-left-td" > {{item.lineNo}} </td>
+                                                        <td class="line-right-td"> 
+                                                                {{item.reason}}                                          
+                                                        </td>                                       
+                                                    </tr>                                 
+                                                </table>                                                   
+                                            </div>
+                                          </div>                                            
+                                      </td>                                       
+                                  </tr>                                 
+                              </table> 
+                          </diV>                           
+                      </div>
+                  </div> 
+              </div>               
+          </div>
+      </div>
+  </div>
+</div>

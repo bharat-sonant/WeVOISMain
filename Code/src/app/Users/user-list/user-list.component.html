@@ -1,0 +1,66 @@
+<section class="header ">
+  <div class="row no-gutters ">
+    <div class="offset-3 col-6 heading text-center">
+      <b class="header-text"> Portal Users </b>
+    </div>
+  </div>
+</section>
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card" style="margin-top:-30px;">
+        <!-- <div class="card-header">
+          <button type="button" class="user-button" style="cursor: cell;" routerLink="/useradd">
+            <span class="icon-bg"><i class="fas fa-user-plus"></i></span>
+            <span class="text-bg">ADD USER</span></button>
+        </div> -->
+        <div class="card-body">
+          <form>
+            <div class="row">
+              <div class="col-md-12 pr-1">
+                <div class="tableFixHead">
+                <table class="table table-hover" style="border-bottom: 1px solid lightgray;">
+                  <thead>
+                    <th style="width: 65px;">S.No.</th>
+                    <th >Name</th>
+                    <th>Email</th>
+                    <th class="text-right">Mobile</th>
+                    <th class="text-right">Action</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let usr of userRecord ; let i=index">
+                      <td class="border-right border-left" style="width: 65px;">{{i+1}}</td>
+                      <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}" width="20" title="{{usr.utitle}}" />
+                        {{usr.name}}</td>
+                      <td class="border-right">{{usr.email}}</td>
+                      <td class="border-right text-right">{{usr.mobile}}</td>
+                      <td class="text-right">
+                        <i routerLink="/useracess/{{usr.$Key}}" title="User Access"
+                            class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate;"></i>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <i class="far fa-edit" routerLink="/useradd/{{usr.$Key}}"
+                          title="Edit User" style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <i class="far fa-trash-alt" (click)="deleteUsers(usr)" title="Remove User" style="cursor:pointer !important; font-size: 15px;color: red;"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+              <div class="col-md-12 pr-1">
+                <div class="form-group">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-12" style="display: flex; justify-content: center;">
+      <div class="add-user">
+      <button type="button" class="btn btn-success" (click)="addNew()"><i class="fas fa-user-plus" style="margin-right: 5px;" ></i> Add User</button>
+    </div>
+    </div>
+  </div>
+</div>

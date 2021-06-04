@@ -1,0 +1,66 @@
+<section class="header">
+  <div class="row no-gutters">
+    <div class="col-md-3">
+        <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}} >
+              {{zone.zoneName}}
+            </option>
+          </select>
+      
+    </div>
+    <div class="col-md-3">
+        <button type="submit" (click)="onSubmit();" style="cursor: pointer"> Search</button>
+      <!-- <button type="submit"> Search</button> -->
+    </div>
+  </div>
+</section>
+
+<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+
+<!-- 
+<div class="row no-gutters">
+
+  <div class="box" style="position: relative; top:-20px; left: 30px;">
+  <b>50% </b><br>
+  Complete  
+  </div> 
+
+
+</div>
+  
+<div class="row no-gutters">
+  <div class="box2" style="position: relative; bottom:-300px; left: 30px;">
+      <b>7</b>km/<b>10</b>km 
+      </div>
+    </div>    
+ 
+
+    
+
+ 
+ <div class="row no-gutters">
+
+  <div class="sticky-container">
+    <ul class="sticky">
+        <li>
+            
+            <p><a><div class="row"><div class="col-1 verticals"><a class="vertical" href="#">Profile</a></div>
+
+              <div class="col-4 driver">  <img src="../../assets/img/helperxhdpi.png" class="img-fluid" ><br><br>
+                <b>Mitali Rawat</b><br><br>
+                <a class="texts">Driver</a><br><br>
+               <a class="texts"> 8058963698</a><br><br><br></div>
+
+                <div class="col-4 helper">  <img src="../../assets/img/helperxhdpi.png" class="img-fluid" ><br><br>
+                  <b>Taniya Rawat</b><br><br>
+                  <a class="texts">Helper</a><br><br>
+                  <a class="texts">8055663698</a><br><br><br></div>
+            
+            </div></a></p>
+        </li>
+
+
+    </ul>
+</div>
+
+ </div>  -->

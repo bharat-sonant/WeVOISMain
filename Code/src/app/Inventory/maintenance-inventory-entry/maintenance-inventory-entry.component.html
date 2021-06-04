@@ -1,0 +1,203 @@
+<section class="header ">
+  <div class="row no-gutters ">
+    <div class="offset-3 col-6 heading text-center">
+      <b class="header-text"> Vehicle Parts Entry </b>
+    </div>
+  </div>
+</section>
+<div class="main-content">
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="card">
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-4">
+              <label>Date</label>
+              <div class="wrap-input-effects" required>
+                <input class="input-green" type="date" name="date" placeholder="" id="date" value="" autocomplete="off">
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label>Bill No.</label>
+              <div class="wrap-input-effects" required>
+                <input id="billNo" name="ddlVehicle" class="input-green" placeholder="Bill No." autocomplete="off" />
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-file-invoice" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label>Vendor Name</label>
+              <div class="wrap-input-effects" required>
+                <input class="input-green" type="text" name="km" placeholder="Vendor Name" id="vendorName" value=""
+                  autocomplete="off">
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-user" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-3">
+              <label>Part/Accessory</label>
+              <span id="addNew" style="cursor:pointer !important; font-size: 12px;color: royalblue;"
+                (click)="addNew();"> add new</span>
+              <span id="selectList" style="cursor:pointer !important; font-size: 12px;color: royalblue;"
+                (click)="cancel();"> cancel</span>
+              <div class="wrap-input-effects" required>
+                <input id="parts" type="text" class="input-green" placeholder="Enter Part/Accessory" value="">
+                <input id="ddlParts" name="ddlVehicle" class="input-green" placeholder="Select Part/Accessory"
+                (keyup)="getFilters();" (focus)="showList();" (blur)="hideList();" autocomplete="off" />
+              <div id="partList" class="part-list">
+                <ul (click)="getValue($event);">
+                  <li *ngFor="let data of partFilterList">{{data.part}}</li>
+                </ul>
+              </div>
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-tools" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label>Qty</label>
+              <div class="wrap-input-effects" required>
+                <input id="qty" type="number" class="input-green" placeholder="0" value="" (change)="getAmount();">
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fab fa-angellist" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <label>Price</label>
+              <div class="wrap-input-effects" required>
+                <input id="price" type="number" class="input-green" placeholder="0.00" value="" (change)="getAmount();">
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-rupee-sign" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label>Amount</label>
+              <div class="wrap-input-effects" required>
+                <input id="amount" type="number" class="input-green" placeholder="0.00" value="" readonly>
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-rupee-sign" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label>Unit</label>
+              <div class="wrap-input-effects" required>
+                <select id="ddlUnit" class="input-green">
+                  <option value="0">Select Unit</option>
+                  <option value="pcs">Pcs</option>
+                  <option value="packet">Packet</option>
+                  <option value="liters">Liters</option>
+                  <option value="ml">ml</option>
+                </select>
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="col-md-1 text-right" style="padding-right: 5px;">
+              <div class="form-group" style="padding-top: 14px;">
+                <button class="btn btn-success btn-xs" (click)="addMore();"
+                  style="background-color: #19a337!important; cursor: pointer; height: 40px;border-radius: 2px;">Add</button>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+
+            <table class="table ">
+              <thead>
+                <th>S.No.</th>
+                <th>Part/Accessory</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Action</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of partList; let i=index">
+                  <td>{{i+1}}</td>
+                  <td>
+                    {{data.part}}</td>
+                  <td>
+                    {{data.qty}}</td>
+                  <td>
+                    {{data.price}}</td>
+                  <td>
+                    {{data.amount}}</td>
+                  <td>
+                    {{data.unit}}</td>
+                  <td>
+                    <i class="far fa-trash-alt" (click)="deleteEntry(data.sno)" title="Remove Entry"
+                      style="cursor:pointer !important; font-size: 18px;color: red;"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-4">
+              <label>Remark</label>
+              <div class="wrap-input-effects" required>
+                <input class="input-green" type="text" name="remark" placeholder="Remark" id="remark" value="">
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-comment-medical" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label>Upload Slip</label>
+              <div class="file-upload-wrapper" data-text="Upload Your Slip" required>
+                <input type="file" name="file" class="file-upload-field" placeholder="" value=""
+                  (change)="onFileChanged($event)">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label>Net Amount</label>
+              <div class="wrap-input-effects" required>
+                <input id="netAmount" class="input-green" type="number" placeholder="0.00" value="" readonly>
+                <span class="focus-input"></span>
+                <span class="symbol-input">
+                  <i class="fas fa-rupee-sign" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-12 pr-1">
+              <div class="form-group">
+                <button id="btnSave" class="btn btn-success btn-xs" (click)="submitData();">SAVE</button>
+                <button id="btnCancel" class="btn btn-danger btn-xs" (click)="cancelEntry();">CANCEL</button>
+                <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
+              </div>
+            </div>
+          </div>
+          <img id="source_image" style="display: none;" />
+          <img id="result_compress_image" class='img_container' />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
