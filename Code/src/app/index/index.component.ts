@@ -15,11 +15,36 @@ export class IndexComponent implements OnInit {
     $('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
+    // When the user scrolls down 20px from the top of the document, show the button
+    //window.onscroll = function () { this.scrollFunction() };
   }
 
-
+  scrollFunction() {
+    var mybutton = document.getElementById("myBtn");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      mybutton.style.display = "block";
+    } else {
+      mybutton.style.display = "none";
+    }
+  }
 
   getDetail(id: any) {
     document.getElementById(id).scrollIntoView();
+  }
+
+  myFunction() {
+    var dots = document.getElementById("dots");
+    var moreText = document.getElementById("more");
+    var btnText = document.getElementById("myBtnmore");
+
+    if (dots.style.display === "none") {
+      dots.style.display = "inline";
+      btnText.innerHTML = "Load more";
+      moreText.style.display = "none";
+    } else {
+      dots.style.display = "none";
+      btnText.innerHTML = "View less";
+      moreText.style.display = "inline";
+    }
   }
 }

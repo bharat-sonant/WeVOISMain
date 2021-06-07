@@ -68,6 +68,7 @@ import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
+import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 
 @NgModule({
   imports: [
@@ -140,7 +141,8 @@ import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.compone
     CmsComponent,
     Cms1Component,
     VehicleReportComponent,
-    MultipleMapsComponent
+    MultipleMapsComponent,
+    TaskManagerComponent
   ]
 })
 

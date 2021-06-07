@@ -61,6 +61,8 @@ import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
+import { TaskManagerComponent } from '../../task-manager/task-manager.component';
+
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -133,6 +135,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'cms1', component: Cms1Component },
     { path: 'vehicle-report', component: VehicleReportComponent },
     { path: 'multiple-maps', component: MultipleMapsComponent },
+    { path: 'task-manager', component: TaskManagerComponent },
     //sikar
     { path: 'sikar/home', component: HomeComponent },
     { path: 'sikar/maps/:id', component: MapsComponent },
@@ -197,6 +200,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/cms1', component: Cms1Component },
     { path: 'sikar/vehicle-report', component: VehicleReportComponent },
     { path: 'sikar/multiple-maps', component: MultipleMapsComponent },
+    { path: 'sikar/task-manager', component: TaskManagerComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -262,6 +266,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/cms1', component: Cms1Component },
     { path: 'reengus/vehicle-report', component: VehicleReportComponent },
     { path: 'reengus/multiple-maps', component: MultipleMapsComponent },
+    { path: 'reengus/task-manager', component: TaskManagerComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -327,6 +332,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/cms1', component: Cms1Component },
     { path: 'jaipur/vehicle-report', component: VehicleReportComponent },
     { path: 'jaipur/multiple-maps', component: MultipleMapsComponent },
+    { path: 'jaipur/task-manager', component: TaskManagerComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -392,4 +398,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/cms1', component: Cms1Component },
     { path: 'demo/vehicle-report', component: VehicleReportComponent },
     { path: 'demo/multiple-maps', component: MultipleMapsComponent },
+    { path: 'demo/task-manager', component: TaskManagerComponent },
 ]; 

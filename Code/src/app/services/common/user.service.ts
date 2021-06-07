@@ -40,7 +40,8 @@ export class UserService {
       notificationSkippedLines: user.notificationSkippedLines,
       notificationPickDustbins: user.notificationPickDustbins,
       expiryDate: user.expiryDate,
-      notificationGeoSurfing:user.notificationGeoSurfing
+      notificationGeoSurfing:user.notificationGeoSurfing,
+      officeAppUserId:user.officeAppUserId
     })
   }
 
@@ -60,7 +61,8 @@ export class UserService {
       notificationSkippedLines: user.notificationSkippedLines,
       notificationPickDustbins: user.notificationPickDustbins,
       expiryDate: user.expiryDate,
-      notificationGeoSurfing:user.notificationGeoSurfing
+      notificationGeoSurfing:user.notificationGeoSurfing,
+      officeAppUserId:user.officeAppUserId
     })
   }
 

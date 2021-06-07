@@ -23,10 +23,10 @@ export class UserAddComponent implements OnInit {
   userRecord: any[];
   userid: any;
   $Key: any;
-  cityName:any;
+  cityName: any;
 
   ngOnInit() {
-    this.cityName=localStorage.getItem('cityName');
+    this.cityName = localStorage.getItem('cityName');
     this.toDayDate = this.commonService.setTodayDate();
     const id = this.actRoute.snapshot.paramMap.get('id');
     this.userid = id;
@@ -42,6 +42,9 @@ export class UserAddComponent implements OnInit {
           $("#email").val(data["email"]);
           $("#password").val(data["password"]);
           $('#expiryDate').val(data["expiryDate"]);
+          if (data["officeAppUserId"] != null) {
+            $('#officeAppUserId').val(data["officeAppUserId"]);
+          }
           if (data["notificationHalt"] == "1") {
             (<HTMLInputElement>document.getElementById("notificationHalt")).checked = true;
           }
@@ -160,6 +163,11 @@ export class UserAddComponent implements OnInit {
     let email: any = $("#email").val();
     let password: any = $("#password").val();
     let expiryDate: any = $("#expiryDate").val();
+    let officeAppUserId:any=$('#officeAppUserId').val();
+    if(officeAppUserId=="")
+    {
+      officeAppUserId=null;
+    }
     if (expiryDate == "") {
       expiryDate = null;
     }
@@ -194,7 +202,8 @@ export class UserAddComponent implements OnInit {
       notificationSkippedLines: notificationSkippedLines,
       notificationPickDustbins: notificationPickDustbins,
       expiryDate: expiryDate,
-      notificationGeoSurfing
+      notificationGeoSurfing:notificationGeoSurfing,
+      officeAppUserId:officeAppUserId
     };
 
     let myUser = this.db.list('Users/').valueChanges().subscribe(
@@ -230,12 +239,13 @@ export class UserAddComponent implements OnInit {
       $("#mobile").val("");
       $("#email").val("");
       $("#password").val("");
+      $('#officeAppUserId').val("");
     }
-    this.router.navigate(['/'+this.cityName+'/users']);
+    this.router.navigate(['/' + this.cityName + '/users']);
   }
 
   cancelEntry() {
-    this.router.navigate(['/'+this.cityName+'/users']);
+    this.router.navigate(['/' + this.cityName + '/users']);
   }
 
   chkEmail() {

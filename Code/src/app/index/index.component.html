@@ -134,7 +134,7 @@
               <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
                   <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    <i class="fas fa-desktop"></i> &nbsp Web Based Application
+                    <i class="fas fa-desktop"></i> &nbsp; Web Based Application
                   </button>
                 </h2>
               </div>
@@ -163,7 +163,7 @@
               <div class="card-header" id="headingTwo">
                 <h2 class="mb-0">
                   <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    <i class="fas fa-tablet-alt"></i> &nbsp Mobile App Based Monitoring
+                    <i class="fas fa-tablet-alt"></i> &nbsp; Mobile App Based Monitoring
                   </button>
                 </h2>
               </div>
@@ -190,7 +190,7 @@
               <div class="card-header" id="headingThree">
                 <h2 class="mb-0">
                   <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    <i class="fas fa-chart-line"></i> &nbsp Dustbin Routing
+                    <i class="fas fa-chart-line"></i> &nbsp; Dustbin Routing
                   </button>
                 </h2>
               </div>
@@ -198,7 +198,7 @@
                 <div class="row">
                   <div class="col-md-8">
                 <div class="card-body">
-                  <div class="left-heading"> &nbsp ;Routing Application</div>
+                  <div class="left-heading"> &nbsp; Routing Application</div>
                   Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
                   3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
                    Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
@@ -209,7 +209,6 @@
                 <div class="col-md-4">
                   <img src="../assets/images/backoffice.png" class="img-fluid" alt="">
                 </div>
-  
               </div>
               </div>
             </div>
@@ -217,7 +216,7 @@
               <div class="card-header" id="headingFour">
                 <h2 class="mb-0">
                   <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    <i class="fas fa-chart-line"></i> &nbsp The Design only for Sample
+                    <i class="fas fa-chart-line"></i> &nbsp; The Design only for Sample
                   </button>
                 </h2>
               </div>
@@ -225,7 +224,7 @@
                 <div class="row">
                   <div class="col-md-8">
                 <div class="card-body">
-                  <div class="left-heading"> &nbsp Content may be as per our Requirement</div>
+                  <div class="left-heading"> &nbsp; Content may be as per our Requirement</div>
                   Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
                   3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
                    Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
@@ -389,7 +388,7 @@
                    <div class="row">
                     <div class="col-md-12 text-center">
                       <div class="button" data-aos="fade-down" data-aos-duration="1000">
-                        <a href="#/" class="hvr-shutter-in-horizontal" onclick="myFunction()" id="myBtnmore" ><i class="fas fa-spinner"></i> &nbsp; Load More</a>
+                        <a style="cursor: pointer;" class="hvr-shutter-in-horizontal" (click)="myFunction()" id="myBtnmore" ><i class="fas fa-spinner"></i> &nbsp; Load More</a>
                        </div>
                     </div>     </div>
   
@@ -450,16 +449,16 @@
     <h2>Work Links</h2>
    <div class="links">
     <ul class="list-unstyled">
-      <li><a href="#gallery"><i class="fas fa-angle-double-right"></i> Gallery</a></li>
-      <li><a href="#"><i class="fas fa-angle-double-right"></i> Our Team</a></li>
-      <li><a href="#map"><i class="fas fa-angle-double-right"></i> Map</a></li>
-      <li><a href="#contact"><i class="fas fa-angle-double-right"></i> Contact Us</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('gallery');"><i class="fas fa-angle-double-right"></i> Gallery</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('');"><i class="fas fa-angle-double-right"></i> Our Team</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('map');"><i class="fas fa-angle-double-right"></i> Map</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('contact');"><i class="fas fa-angle-double-right"></i> Contact Us</a></li>
     </ul>
     <ul class="list-unstyled">
-      <li><a href="#home"><i class="fas fa-angle-double-right"></i> Home</a></li>
-      <li><a href="#about"><i class="fas fa-angle-double-right"></i> About Us</a></li>
-      <li><a href="#how-we-work"><i class="fas fa-angle-double-right"></i> How We Work</a></li>
-      <li><a href="#services"><i class="fas fa-angle-double-right"></i> What we Offer</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('home');"><i class="fas fa-angle-double-right"></i> Home</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('about');"><i class="fas fa-angle-double-right"></i> About Us</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('how-we-work');"><i class="fas fa-angle-double-right"></i> How We Work</a></li>
+      <li><a style="cursor: pointer;" (click)="getDetail('services');"><i class="fas fa-angle-double-right"></i> What we Offer</a></li>
   </ul> </div>
     </div>
   
@@ -498,13 +497,13 @@
 </div>
 <!-------------- Social Icon End ---------------->
 
-<!------------------- Video Section Start -------------------->
+<!------------------- Video Section Start ------------------
 <div class="video-thumbnail " data-toggle="modal" data-target="#exampleModalCenter">
     <div class="play-btn">
         <i class="fa fa-play-circle" aria-hidden="true"></i>
 
     </div>
-</div>
+</div>-->
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"

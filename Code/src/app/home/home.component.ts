@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../services/common/common.service';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class HomeComponent implements OnInit {
       name: ''
     };
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService) { }
+  constructor(public db: AngularFireDatabase, private commonService: CommonService, public dbFireStore:AngularFirestore) { }
 
   ngOnInit() {
     //this.setRemark();
@@ -35,6 +36,9 @@ export class HomeComponent implements OnInit {
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
     this.getUserAccess();
+    let storePath="Jaipur/Defaults/OfficeTask/Module";
+   // let taskList=this.dbFireStore.getInstance().collection('Jaipur').get()
+    
   }
 
 

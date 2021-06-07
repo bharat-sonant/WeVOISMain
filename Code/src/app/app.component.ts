@@ -27,6 +27,7 @@ export class AppComponent {
         storageBucket: "dtdnavigator.appspot.com",
         messagingSenderId: "381118272786"
       }
+      
       return firebase;
     }
     else if(city == "reengus") {

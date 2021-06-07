@@ -12,7 +12,11 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { FirestoreSettingsToken} from '@angular/fire/firestore';
+
 let firebase=AppComponent.prototype.getFireBase();
+
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -25,14 +29,15 @@ let firebase=AppComponent.prototype.getFireBase();
     ToastrModule.forRoot(),
     AngularFireModule.initializeApp(firebase),
     AngularFireDatabaseModule, // for database
-    AngularFireStorageModule
+    AngularFireStorageModule, // for storage
+    AngularFirestoreModule // for firestore
   ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,
 
   ],
-  providers: [],
+  providers: [{ provide: FirestoreSettingsToken, useValue: {} }],
   bootstrap: [AppComponent]
 })
 export class AppModule { 
