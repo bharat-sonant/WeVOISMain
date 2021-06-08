@@ -4778,14 +4778,23 @@ body {
 }
 .login-container{
   width: 700px;
-  height: 500px;
+  height: 420px;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  transition-duration: 0.5s;
 }
 .login-header {
   padding: 20px 40px;
-  background-color: #0ba118;
-  box-shadow: 0px 5px 6px #84cd8a;
+  background-color: #fff;
+  //box-shadow: 0px 5px 6px #84cd8a;
+  border-bottom: 1px solid rgb(233, 233, 233);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 .login-body a{
 font-size: 18px;
@@ -4794,13 +4803,13 @@ font-size: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  height: 320px;
 }
 .welcome-text{
   margin: 0px;
   font-size: 28px;
   font-family: 'montserrat', sans-serif;
-  color: #fff;
+  color: #0ba118;
   padding-bottom: 10px;
   font-weight: 700;
 }
@@ -4808,7 +4817,7 @@ font-size: 18px;
   margin: 0px;
   font-size: 18px;
   font-family: 'montserrat', sans-serif;
-  color: #fff;
+  color: #ffffff;
   font-weight: normal;
   padding-bottom: 10px;
 }
@@ -4829,8 +4838,8 @@ font-size: 18px;
   transition-timing-function: ease-out;
 }
 .login-box{
-  height: 120px;
-  width: 275px;
+  height: 110px;
+  width: 235px;
   border: 1px solid lightgray;
   display: flex;
   justify-content: center;
@@ -4838,10 +4847,12 @@ font-size: 18px;
   margin-bottom: 30px;
   cursor: pointer;
   transition: 0.3s ease-out;
-  border-radius: 2px;
+  border-radius: 10px;
 }
 .login-box:hover{
-border: 1px solid #0ba118;
+//border: 1px solid #0ba118;
+background-color: #0ba118;
+color: #fff;
 box-shadow: 5px 8px 10px #96d49b3d;
 }
 .login-box:hover a{
@@ -4863,7 +4874,15 @@ box-shadow: 5px 8px 10px #96d49b3d;
 
 
 
+/*************** Custom CSS Start **************/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
 
+h1 , h2 , h3 , h4 , h6, a{
+  font-family: 'Poppins', sans-serif!important;
+}
+p{
+  color: #414141!important;
+}
 
 
 
