@@ -4163,7 +4163,7 @@
 
 /*------------------------ Navbar Section Start -------------------------*/
 .navbar{
-  padding: 3px 100px 3px 100px;
+  padding: 1px 100px 1px 100px;
   background-color: #fff;
 }
 .shadow {
@@ -4171,7 +4171,10 @@
 }
 .navbar a{
   padding: 10px!important;
-
+}
+nav ul li{
+  font-size: 11px;
+  font-weight: bold;
 }
 .navbar a{
   color: #363957!important;
@@ -4185,10 +4188,19 @@
   background-color: #232536;
   font-weight: bold;
   font-weight: Montserrat;
-  padding: 10px 18px!important;
+  padding: 15px 18px!important;
+  font-size: 11px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: 0.3s ease-out;
+}
+.navbar .log-in:hover{
+  color: #0ba118!important;
+  border: 1px solid #232536;
+  background-color: #fff;
 }
 .logo-1{
-  width: 35px;
+  width: 38px;
 }
 .logo-2{
   display: none;
@@ -4198,7 +4210,7 @@
 }
 .navbar.scrolled .logo-2{
   display: block;
-  width: 35px;
+  width: 38px;
 }
 .navbar.scrolled{
   padding: 0px 100px 0px 100px;
@@ -4254,6 +4266,7 @@
   padding: 10px 35px;
   display: block;
   float: left;
+  letter-spacing: 1.5px;
   transform: skew(-25deg);
   background-color: #1cc22a;
   text-decoration: none;
@@ -4327,11 +4340,12 @@
   background-attachment: fixed; }
 .about{
   overflow-x: hidden;
+  padding-top: 100px;
+  padding-bottom: 100px;
   }
  h1{
-  margin-top: 100px;
   font-size: 32px;
-  color: #232536;
+  color: #000;
   font-weight: bold;
   font-family: montserrat;
   position: relative;
@@ -4342,6 +4356,7 @@
   border-radius: 50px;
   position: absolute;
   left: 46%;
+  margin-top: -20px;
 }
 .about .main-content{
   margin-top: 60px;
@@ -4355,21 +4370,39 @@
 overflow-x: hidden;
 overflow-y: hidden;
   background-color: #FFF9F9;
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
 
 .accordion{
   margin-top: 60px;
   margin-bottom: 100px;
+  border: 1px solid rgba(0,0,0,.125)!important;
 }
 .card-body{
   padding: 20px 40px 20px 40px!important;
   text-align: justify;
 }
+.card{
+  margin-bottom: -5px!important;
+  box-shadow: none!important;
+  border-bottom: 1px solid rgba(0,0,0,.125)!important;
+}
+.card-header{
+  padding:5px!important;
+  background-color: rgba(0,0,0,.03)!important;
+  border-bottom: 1px solid rgba(0,0,0,.125)!important;
+}
 .accordion button{
   text-decoration: none!important;
-  color: #363957;
-  font-size: 20px;
+  color: #000;
+  font-size: 18px;
 }
+.accordion button:active{
+  background-color: transparent!important;
+  color: #000!important;
+}
+
 .accordion button:hover{
   color: #0BA118;
 }
@@ -4384,9 +4417,9 @@ overflow-y: hidden;
 
 .left-heading{
   border-left: solid 6px #0BA118;
-  height: 35px;
-  font-size: 20px;
-  color: #363957;
+  height: 30px;
+  font-size: 18px;
+  color: #000;
   margin-bottom: 15px;
 }
 
@@ -4397,15 +4430,35 @@ overflow-y: hidden;
   overflow-x: hidden!important;
   overflow-y: hidden;
   background-color: #f1f1f1;
- 
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
 .services-content{
   margin-top:50px;
-
 }
-.serviceBox{text-align: center;margin-top: 60px;position: relative;z-index: 1; margin-bottom: 21px;  }
-.serviceBox .service-icon{width: 78px;height: 78px;border-radius:50%;background: #fff;margin: 0 auto;
-  position: absolute;top: -34px;left: 0;right: 0;z-index: 1;transition: all 0.3s ease-out 0s; border:1px solid #0BA118}
+.serviceBox{
+  text-align:center;
+  margin-top:60px;
+  position:relative;
+  z-index:1;
+  margin-bottom:21px;
+  transition: transform .5s;
+  }
+
+.serviceBox .service-icon{
+  width: 78px;
+  height: 78px;
+  border-radius:50%;
+  background: #fff;
+  margin: 0 auto;
+  position: absolute;
+  top: -34px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  transition: all 0.3s ease-out 0s;
+   border:1px solid #0BA118;
+  }
   .serviceBox .service-icon img{
     margin-top: 10px;
     width: 45px;
@@ -4428,13 +4481,12 @@ cursor: pointer;
   }
 .serviceBox .service-content{background: #fff;border: 1px solid #e7e7e7;border-radius: 3px;padding: 55px 30px;position: relative;}
 
-.serviceBox .title{font-size: 20px;color: #363957;margin: 0 0 25px 0;font-weight: normal; position: relative;transition: all 0.3s ease-out 0s;}
+.serviceBox .title{font-size: 18px;color: #363957;background-color: transparent; margin: 0 0 25px 0;font-weight: normal; position: relative;transition: all 0.3s ease-out 0s;   font-family: 'Montserrat', sans-serif;}
 .serviceBox:hover .title{color: #0ba118;}
-.serviceBox .description{ text-align: justify;}
-.serviceBox .read-more{display: block;width: 50px;height: 50px;line-height: 45px;border-radius: 50%;background: #fff;border: 1px solid #e7e7e7;font-size: 20px;
-  color: #c4c2c2;margin: 0 auto;position: absolute;bottom: -25px;left: 0; right: 0;transition: all 0.3s ease-out 0s;}
-.serviceBox .read-more:hover{border: 1px solid #0ba118;color: #0ba118;text-decoration: none;}
-
+.serviceBox .description{ text-align: justify; font-family: 'Exo 2', sans-serif; font-size: 15px;}
+.serviceBox .read-more{display: block;height: 50px;line-height: 45px;background: #fff;border: 1px solid #e7e7e7;font-size: 20px;
+  color: #c4c2c2;margin: 0 auto;position: absolute;bottom: 0px;left: 0; right: 0;transition: all 0.3s ease-out 0s;}
+.serviceBox .read-more:hover{background-color:  #0ba118;color: #fff;text-decoration: none;}
 
 .services .button a{
   background: #1cc22a;
@@ -4467,6 +4519,28 @@ text-decoration: none;
   -webkit-transition-timing-function: ease-out;
   transition-timing-function: ease-out;
 }
+.hide-box{
+  transition:all 2s ease-in-out;
+  height:0px;
+  overflow: hidden;
+}
+.hide-box.open{
+  height:auto;
+}
+.services .modal-dialog{
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: auto;
+}
+.services .modal-header{
+  padding: 20px;
+}
+.fa-plus:before {
+  content: "\f067";
+  font-family: 'Font Awesome 5 Free';
+}
 /*------------------------ What we offer Setion End -------------------------*/
 
 /*------------------------ Gallery Setion Start -------------------------*/
@@ -4474,10 +4548,11 @@ text-decoration: none;
 .gallery{
   overflow-x: hidden;
   overflow-y: hidden;
+  padding-top: 100px;
   padding-bottom: 100px;
 }
 .gallery .first-line{
-  margin-top: 80px;
+  margin-top: 60px;
   margin-bottom: 30px;
 }
 .gallery .third-line{
@@ -4486,7 +4561,7 @@ text-decoration: none;
 }
 .gallery .button a{
   background: #1cc22a;
-
+  letter-spacing: 1.5px;
   margin-top: 20px;
   color: #fff;
   padding: 10px 35px;
@@ -4499,11 +4574,108 @@ text-decoration: none;
 
 /*------------------------ Gallery Setion End -------------------------*/
 
-/*------------------------ Gallery Setion Start -------------------------*/
+/*------------------------- Our Team Section Start ----------------------*/
+/*------------------------ Our team Setion Start -------------------------*/
+.our-team{
+  padding: 0px 0px 100px 0px;
+  background-color: #FFF9F9;
+  overflow-x: hidden;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+/* .our-team{
+  background:url(../images/aboutpage-06.jpg) no-repeat; width:100%;  background-size:cover; min-height:100vh;
+}  */
+.our-team .title{
+  background-color: #0ba118;
+  color: white;
+  position: absolute;
+  bottom: -8px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  font-weight: normal;
+  text-transform: capitalize;
+  font-size:14px;
+  transition:all .9s ease 0s
+}
+.team-box{
+  box-shadow:0 0 3px rgba(0,0,0,.3);
+  position:relative
+}
+.team-box img{
+  width:100%;
+  height:auto;
+}
+.team-box .box-content{
+  width:100%;
+  height:100%;
+  padding: 15px;
+  background: rgb(69 72 69 / 78%);
+  opacity:0;
+  position:absolute;
+  padding: 15px;
+  color: #fff;
+  text-align: center;
+  top:0;
+  left:0;
+  transform:perspective(400px) rotateX(-90deg);
+  transform-origin:center top 0;
+  transition:all .5s ease 0s;
+}
+.team-box:hover .box-content{
+  opacity:1;
+  transform:perspective(400px) rotateX(0)
+}
+.team-box:hover .box-content p{
+color: #fff!important;
+}
+.team-box .about-team .box-content .about-team img{
+  transition:all .35s ease 0s
+}
+.team-box:hover .title{
+   display: none;
+  }
+.about-team .title{
+  width:100%;
+}
+.about-team p{
+  font-size: 14px;
+}
+
+@media only screen and (max-width:990px){.team-box{margin-bottom:20px}
+}
+.our-team .col-md-3{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+/*********************** Demo - 9 *******************/
+.box9{background:#000;text-align:center;position:relative}
+.box9 img{width:100%;height:auto}
+.box9:hover img{opacity:.5}
+.box9 .box-content{padding:30px 10px 30px 0;background:rgba(0,0,0,.65);position:absolute;top:0;left:0;bottom:0;right:0;opacity:0}
+.box9:hover .box-content{top:10px;left:10px;bottom:10px;right:10px;opacity:1}
+.box9 .title{font-weight:700;color:#fff;line-height:17px;margin:5px 0;position:absolute;bottom:55%}
+.box10 .icon li a,.box9 .icon li a{line-height:35px;border-radius:50%}
+.box9 .icon{list-style:none;padding:0;margin:0;position:absolute;top:40%; left: 40%;}
+.box9 .icon li{display:inline-block;opacity:0;transform:translateY(40px)}
+.box9:hover .icon li{opacity:1;transform:translateY(0)}
+.box9:hover .icon li:first-child{transition-delay:.1s}
+.box9:hover .icon li:nth-child(2){transition-delay:.2s}
+.box9 .icon li a{display:block;width:35px;height:35px;background:#0BA118;font-size:20px;color:#fff;margin-right:5px;transition:all .35s ease 0s}
+.box9 .icon a:hover{background:#fff; color:#0BA118;}
+@media only screen and (max-width:990px){.box9{margin-bottom:20px}
+}
+/*------------------------ Our team Setion End -------------------------*/
+
+/*------------------------- Our Team Section End ----------------------*/
+
+/*------------------------ Contact Setion Start -------------------------*/
 .contact{
   overflow-x: hidden;
   background-color: #1a1a1d;
-  padding-bottom: 50px;
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
  /* .contact{ 
 	 background:url(../images/contact-bg.svg) no-repeat; width:100%;  background-size:cover; min-height:100vh; 
@@ -4516,15 +4688,18 @@ text-decoration: none;
     position: relative;
 }
 .contact label{
-  color:#ababab;
+  color:#fff;
 }
 .contact a{
   font-weight: 100;
   color:#fff;
 }
 .contact .box{
-  margin-top: 80px;
+  margin-top: 60px;
   margin-bottom:40px ;
+}
+.contact .box a{
+  text-decoration: none!important;
 }
 .contact .button a{
   background: #1cc22a;
@@ -4538,9 +4713,11 @@ text-decoration: none;
   text-decoration: none;
 }
 .contact h2{
-  font-size: 20px;
+  font-size: 18px;
   color: #0BA118;
+  margin-bottom: 15px;
   font-weight: normal;
+  font-family: 'Poppins',sans-serif;
   transition: all 0.3s ease-out 0s;
 }
 .contact .con-info{
@@ -4563,7 +4740,10 @@ text-decoration: none;
   padding:20px;
   background: #fff;
 }
-
+.form-control{
+  background-color: #fff!important;
+  border-radius: 5px!important;
+}
 .links {
   float: left;
   width: 100%;
@@ -4668,16 +4848,16 @@ html {
 
 /*******************Back to top End*****************/
 .social-icon{
-  width: 195px;
+  //width: 195px;
   height: 60px;
   padding: 20px;
   padding-top: 10px;
-  border-radius: 0px 25px 25px 0px;
+  border-radius: 0px 60px 60px 0px;
   background-color: #0BA118;
   color: #fff;
   position: fixed;
   bottom: 20px;
-  left:-130px;
+  left:-115px;
 }
 .social-icon:hover{
   left:0px;
@@ -4856,13 +5036,53 @@ box-shadow: 5px 8px 10px #96d49b3d;
 
 
 
+/*************** Custom CSS Start **************/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
+
+h1 , h2 , h3 , h4 , h6, p, a{
+  font-family: 'Poppins', sans-serif!important;
+}
+p{
+  font-size: 14px!important;
+  color: #414141!important;
+}
 
 
 
+/******************************Custom Scrollbar Start*********************************/
+::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: transparent; 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: transparent; 
+  -webkit-box-shadow: transparent; 
+}
 
-
-
-
-
+:hover::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+:hover::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+:hover::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: #20a120; 
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+/******************************Custom Scrollbar End*********************************/
 
 

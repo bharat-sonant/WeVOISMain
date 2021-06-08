@@ -4163,7 +4163,7 @@
 
 /*------------------------ Navbar Section Start -------------------------*/
 .navbar{
-  padding: 3px 100px 3px 100px;
+  padding: 1px 100px 1px 100px;
   background-color: #fff;
 }
 .shadow {
@@ -4186,9 +4186,17 @@
   font-weight: bold;
   font-weight: Montserrat;
   padding: 10px 18px!important;
+  font-size: 11px;
+  border: 1px solid transparent!important;
+}
+.navbar .log-in:hover{
+  color: #0ba118!important;
+  border: 1px solid #232536!important;
+  background-color: #fff;
+  border-radius: 50px!important;
 }
 .logo-1{
-  width: 35px;
+  width: 38px;
 }
 .logo-2{
   display: none;
@@ -4849,7 +4857,7 @@ box-shadow: 5px 8px 10px #96d49b3d;
 }
 .box-center-2{
   display: flex; 
-  justify-content: flex-end;
+  justify-content: start;
 }
 
 
