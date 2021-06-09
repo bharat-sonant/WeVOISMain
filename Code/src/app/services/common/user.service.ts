@@ -41,7 +41,8 @@ export class UserService {
       notificationPickDustbins: user.notificationPickDustbins,
       expiryDate: user.expiryDate,
       notificationGeoSurfing:user.notificationGeoSurfing,
-      officeAppUserId:user.officeAppUserId
+      officeAppUserId:user.officeAppUserId,
+      empLocation:user.empLocation
     })
   }
 
@@ -62,7 +63,8 @@ export class UserService {
       notificationPickDustbins: user.notificationPickDustbins,
       expiryDate: user.expiryDate,
       notificationGeoSurfing:user.notificationGeoSurfing,
-      officeAppUserId:user.officeAppUserId
+      officeAppUserId:user.officeAppUserId,
+      empLocation:user.empLocation
     })
   }
 

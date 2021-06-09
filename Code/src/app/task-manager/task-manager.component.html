@@ -1,123 +1,180 @@
 <section class="header">
-    <div class="row no-gutters">
-      <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
-        <button type="button" class="user-button" style="cursor: cell;" (click)="addNew()">
-          <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ADD NEW</span></button>
-      </div>
-      <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-        Task Manager
-      </div>
-      <div class="col-md-4"></div>
+  <div class="row no-gutters">
+    <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
+      <button type="button" class="user-button" style="cursor: cell;" (click)="addNew(contentTask,'0')">
+        <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ADD NEW</span></button>
     </div>
-  </section>
-  <div class="main-content">
-    <div class="row">
-      <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
-        <div class="card" style="margin-top:-10px; ">
-          <div class="card-header">
-            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
-              style="width: 150px;" [(ngModel)]="selectedYear">
-              <option value="0">Year</option>
-              <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">
-                {{yer.year}}</option>
-            </select>
-            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
-              style="width: 150px;">
-              <option value="0">Month</option>
-              <option value="01">January</option>
-              <option value="02">February</option>
-              <option value="03">March</option>
-              <option value="04">April</option>
-              <option value="05">May</option>
-              <option value="06">June</option>
-              <option value="07">July</option>
-              <option value="08">August</option>
-              <option value="09">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </select>
-            <input id="ddlVehicle" style="width: 150px;" class="caret-select-vehicle" placeholder="Select Vehicle"
-              (keyup)="getFilters();" (focus)="showList();" (blur)="hideList();" />
-            <div id="vehicleList" class="vehicle-list">
-              <ul (click)="getValue($event);">
-                <li *ngFor="let data of vehicleList">{{data.vehicle}}</li>
-              </ul>
-            </div>
-            &nbsp;
-            <input id="txtDate" class="caret-select-vehicle custom-date-input" type="date" (change)="getDateList();"
-              style="height: 38px; width: 150px; padding-left: 10px; margin-right: 8px;" />
-            <button class="fa-expand-showgraph" (click)="resetAllFilter();" title="Reset All Filter"><i
-                class="fas fa-sync-alt"></i></button>
-  
-            <span class="data">Summary
-            </span>
-  
+    <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+      Task Manager
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+</section>
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
+      <div class="card" style="margin-top:-10px; ">
+        <div class="card-header">
+          <select class="caret-select" id="ddlYear" (change)="getTaskList()"
+            style="width: 150px;" [(ngModel)]="selectedYear">
+            <option value="0">Year</option>
+            <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">
+              {{yer.year}}</option>
+          </select>
+          <select class="caret-select" id="ddlMonth" (change)="getTaskList()"
+            style="width: 150px;">
+            <option value="0">Month</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select class="caret-select" id="ddlCategory" (change)="getTaskList()"
+            style="width: 150px;">
+            <option value="0">All</option>
+            <option value={{proj.project}} *ngFor="let proj of projectList">
+              {{proj.project}}</option>
+          </select>
+          &nbsp;
+          <input id="txtDate" class="caret-select-vehicle custom-date-input" type="date" (change)="getTaskList();"
+            style="height: 38px; width: 150px; padding-left: 10px; margin-right: 8px;" />
+          <button class="fa-expand-showgraph" (click)="resetAllFilter();" title="Reset All Filter"><i
+              class="fas fa-sync-alt"></i></button>
+
+          <span class="indication"><i class="fas fa-caret-left"></i></span>
+          <span class="data"> <i class="far fa-clock"></i> {{taskData.totalMinutes}} min
+          </span>
+
+        </div>
+        <div class="card-body">
+          <div *ngFor="let data of petrolList; let i=index" id="remark{{i}}"
+            style="position: absolute;border-radius: 5px; width:300px; height: 300px; border: 1px solid lightgrey; left: 60vh; padding: 10px; z-index: 99; display: none; background-color: white; text-align: left;">
+            <b>Remark</b><i class="fas fa-times" style="float: right;" (click)="hideRemark();"></i>
+            <hr />
+            {{data.remark}}
           </div>
-          <div class="card-body">
-            <div *ngFor="let data of petrolList; let i=index" id="remark{{i}}" style="position: absolute;border-radius: 5px; width:300px; height: 300px; border: 1px solid lightgrey; left: 60vh; padding: 10px; z-index: 99; display: none; background-color: white; text-align: left;">
-              <b>Remark</b><i class="fas fa-times" style="float: right;" (click)="hideRemark();"></i>
-              <hr/>
-              {{data.remark}}</div>
-            <form>
-              <div class="row">
-                <div class="col-md-12 pr-1">
-                  <div class="table-wrapper">
-                    <table class="table ">
-                      <thead>
-                        <th style="border-right:1px solid #dee2e6">S.No.</th>
-                        <th style="border-right:1px solid #dee2e6">Date</th>
-                        <th style="border-right:1px solid #dee2e6">Vehicle No.</th>
-                        <th class="text-right" style="border-right:1px solid #dee2e6">Petrol (In Liters)</th>
-                        <th class="text-right" style="border-right:1px solid #dee2e6">Price (₹)</th>
-                        <th class="text-right" style="border-right:1px solid #dee2e6">Amount (₹)</th>
-                        <th class="text-right" style="border-right:1px solid #dee2e6">KM reading</th>
-                        <th class="text-right" style="padding-right: 20px;">Action</th>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let data of petrolList; let i=index">
-                          <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                          <td style="border-right:1px solid #dee2e6">
-                            {{data.date}}</td>
-                          <td style="border-right:1px solid #dee2e6">
-                            {{data.vehicleNo}}</td>
-                          <td class="text-right" style="border-right:1px solid #dee2e6;">
-                            {{data.liters}}</td>
-                          <td class="text-right" style="border-right:1px solid #dee2e6">
-                            {{data.price}}</td>
-                          <td class="text-right" style="border-right:1px solid #dee2e6">
-                            {{data.amount}}</td>
-                          <td class="text-right" style="border-right:1px solid #dee2e6">{{data.km}}</td>
-                          <td class="text-right" style="padding-right: 20px;">
-                            <a class="single_2"  data-fancybox data-src="#hidden-content" href="javascript:;" title="View Remark">
-                              <i class="fas fa-comment-medical" style="cursor:pointer !important;font-size: 14px; color: #2c2c2c;" [hidden]="data.remark==null" (click)="showRemark(i);"></i>
-                            </a>
-                            
-                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="single_2" href="{{data.slipImageURL}}" title="View Slip">
-                              <i class="far fa-eye" style="font-size: 14px; color: #2c2c2c;" ></i>
-                            </a> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <i class="far fa-edit" routerLink="/petrol-inventory-entry/{{data.date}}/{{data.entryNo}}/{{data.vehicleNo}}"
-                              title="Edit Entry" style="cursor:pointer !important; font-size: 14px;color: royalblue;"
-                              [hidden]="data.userId!=data.createdBy"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <i class="far fa-trash-alt" (click)="deleteEntry(data.entryNo,data.date,data.vehicleNo)" title="Remove Entry"
-                              style="cursor:pointer !important; font-size: 14px;color: red;"
-                              [hidden]="data.userId!=data.createdBy"></i>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;" >
-                  <div class="form-group">
-                    <h5>No data available on Selected Date</h5>
-                  </div>
+          <form>
+            <div class="row">
+              <div class="col-md-12 pr-1">
+                <div class="table-wrapper">
+                  <table class="table ">
+                    <thead>
+                      <th style="border-right:1px solid #dee2e6">S.No.</th>
+                      <th style="border-right:1px solid #dee2e6">Date</th>
+                      <th style="border-right:1px solid #dee2e6">Time</th>
+                      <th style="border-right:1px solid #dee2e6">Category</th>
+                      <th style="border-right:1px solid #dee2e6">Module</th>
+                      <th style="border-right:1px solid #dee2e6">Task</th>
+                      <th style="border-right:1px solid #dee2e6">Task Description</th>
+                      <th style="padding-right: 20px;">Action</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of userTaskList;">
+                        <td style="border-right:1px solid #dee2e6; width:5%;">{{data.sno}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.date}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.timeInMinutes}} min</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.category}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.project}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.task}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:40%">{{data.description}}</td>
+                        <td class="text-center" style="padding-right: 20px;width:5%">
+                          <i class="far fa-edit" (click)="addNew(contentTask,data.key)" title="Edit Entry"
+                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"
+                            [hidden]="data.userId!=data.createdBy"></i>&nbsp;&nbsp;
+                          <i class="far fa-trash-alt" title="Remove Entry" (click)="delete(data.key)"
+                            style="cursor:pointer !important; font-size: 14px;color: red;"
+                            [hidden]="data.userId!=data.createdBy"></i>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            </form>
-          </div>
+              <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                <div class="form-group">
+                  <h5>No data available on Selected Date</h5>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+
+<!--Remark Status Start-->
+<ng-template #contentTask>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
+        <button type="button" class="close" (click)="closeModel();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input id="key" type="hidden" value="0" />
+        <div class="wrap-input-effects" required>
+          <select id="drpProject" class="input-green" (change)="getTask($event.target.value);">
+            <option value="0">Select Project</option>
+            <option value={{proj.project}} *ngFor="let proj of projectList">
+              {{proj.project}}</option>
+          </select>
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fas fa-tasks" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="wrap-input-effects" required>
+          <select id="drpTask" class="input-green">
+            <option value="0">Select Task</option>
+            <option value={{task.task}} *ngFor="let task of taskList">
+              {{task.task}}</option>
+          </select>
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fas fa-tasks" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="wrap-input-effects" required>
+          <select id="drpCategory" class="input-green">
+            <option value="0">Select Category</option>
+            <option value={{cat.category}} *ngFor="let cat of categoryList">
+              {{cat.category}}</option>
+          </select>
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fas fa-tasks" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="wrap-input-effects" required>
+          <b> Estimate Time</b>
+          <input id="estmateTime" type="number" class="input-green"
+            style="width: 200px; float: right; margin-bottom: 10px;" />
+          <span class="focus-input-time"></span>
+          <span class="symbol-input-time">
+            <i class="far fa-clock" aria-hidden="true"></i>
+          </span>
+        </div>
+        <textarea id="txtDescription" placeholder="Task description" style="height: 140px!important;"></textarea>
+        <input type="button" class="btn btn-success" value="SUBMIT" (click)="saveTask();" />
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Remark Status End-->

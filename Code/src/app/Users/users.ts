@@ -15,6 +15,7 @@ export interface Users {
     expiryDate:any;
     notificationGeoSurfing:any;
     officeAppUserId:any;
+    empLocation:any;
 }
 
 export interface UserAccess {
