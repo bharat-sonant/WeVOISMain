@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
       name: ''
     };
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService, public dbFireStore:AngularFirestore) { }
+  constructor(public db: AngularFireDatabase, private commonService: CommonService, public dbFireStore: AngularFirestore) { }
 
   ngOnInit() {
     //this.setRemark();
@@ -36,9 +36,9 @@ export class HomeComponent implements OnInit {
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
     this.getUserAccess();
-    let storePath="Jaipur/Defaults/OfficeTask/Module";
-   // let taskList=this.dbFireStore.getInstance().collection('Jaipur').get()
-    
+    let storePath = "Jaipur/Defaults/OfficeTask/Module";
+    // let taskList=this.dbFireStore.getInstance().collection('Jaipur').get()
+
   }
 
 
@@ -169,15 +169,24 @@ export class HomeComponent implements OnInit {
   }
 
   getUserAccess() {
+    
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"]==this.userid) {
+        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid) {
           let url = "javaScript:void(0);";
           let dataClass = "dashboard-widgets";
           this.isShow = false;
-          this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
+          console.log(localStorage.getItem('officeAppUserId'))
+          if (userAccessList[i]["url"].includes("task-manager")) {
+            if (localStorage.getItem('officeAppUserId') != null) {
+              this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
+            }
+          }
+          else {
+            this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
+          }
         }
       }
     }

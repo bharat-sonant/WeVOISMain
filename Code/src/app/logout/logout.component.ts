@@ -31,6 +31,8 @@ export class LogoutComponent implements OnInit {
     localStorage.setItem('dustbin', null);
     localStorage.setItem('portalAccess', null);
     localStorage.setItem('userID', null);
+    localStorage.removeItem('officeAppUserId');
+    localStorage.removeItem('empLocation');
     localStorage.setItem('cityName', null);
     this.router.navigate(['/index']);
     $("#divSideMenus").hide();

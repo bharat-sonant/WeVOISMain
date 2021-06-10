@@ -271,7 +271,15 @@ export class SidebarComponent implements OnInit {
         for (let i = 0; i < userAccessList.length; i++) {
           if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid) {
             let url = "javaScript:void(0);";
-            this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
+            if (userAccessList[i]["url"].includes("task-manager")) {
+              if (localStorage.getItem('officeAppUserId') != null) {
+                this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
+              }
+            }
+            else{
+              this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
+             
+            }
           }
         }
       }
@@ -486,7 +494,7 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  
+
 
   getPage(value: any) {
     this.userid = localStorage.getItem('userID');
@@ -506,7 +514,7 @@ export class SidebarComponent implements OnInit {
       CmsComponent.prototype.setDesign();
     }
   }
-  
+
 }
 
 export class userDetail {

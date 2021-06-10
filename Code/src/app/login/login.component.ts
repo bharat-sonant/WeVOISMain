@@ -22,10 +22,11 @@ export class LoginComponent implements OnInit {
   vehicleList: any[];
   dustbinList: any[];
   fixdGeoLocations: any[];
-  cityName:any;
+  cityName: any;
 
   ngOnInit() {
-    this.cityName=localStorage.getItem('cityName');
+    console.log("ddgdgdfg")
+    this.cityName = localStorage.getItem('cityName');
     $('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
@@ -45,7 +46,7 @@ export class LoginComponent implements OnInit {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
-              userList.push({ userKey: index, userId: data[index]["userId"], name: data[index]["name"], email: data[index]["email"], password: data[index]["password"], userType: data[index]["userType"], expiryDate: data[index]["expiryDate"], notificationHalt: data[index]["notificationHalt"], notificationMobileDataOff: data[index]["notificationMobileDataOff"], notificationSkippedLines: data[index]["notificationSkippedLines"], notificationPickDustbins: data[index]["notificationPickDustbins"],notificationGeoSurfing:data[index]["notificationGeoSurfing"] });
+              userList.push({ userKey: index, userId: data[index]["userId"], name: data[index]["name"], email: data[index]["email"], password: data[index]["password"], userType: data[index]["userType"], expiryDate: data[index]["expiryDate"], notificationHalt: data[index]["notificationHalt"], notificationMobileDataOff: data[index]["notificationMobileDataOff"], notificationSkippedLines: data[index]["notificationSkippedLines"], notificationPickDustbins: data[index]["notificationPickDustbins"], notificationGeoSurfing: data[index]["notificationGeoSurfing"],officeAppUserId:data[index]["officeAppUserId"],empLocation:data[index]["empLocation"] });
             }
           }
         }
@@ -94,21 +95,21 @@ export class LoginComponent implements OnInit {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
-              
-              this.portalAccessList.push({ parentId: 0, pageID: index, name: data[index]["name"], img: data[index]["img"], position: data[index]["position"], url: "/"+this.cityName+data[index]["url"] });
+
+              this.portalAccessList.push({ parentId: 0, pageID: index, name: data[index]["name"], img: data[index]["img"], position: data[index]["position"], url: "/" + this.cityName + data[index]["url"] });
               if (data[index]["SubPages"] != null) {
                 let data2 = data[index]["SubPages"];
                 let keyArray2 = Object.keys(data2);
                 if (keyArray2.length > 0) {
                   for (let j = 0; j < keyArray2.length; j++) {
                     let index2 = keyArray2[j];
-                    this.portalAccessList.push({ parentId: index, pageID: index2, name: data2[index2]["name"], img: data2[index2]["img"], position: data2[index2]["position"], url: "/"+this.cityName+data2[index2]["url"] });
+                    this.portalAccessList.push({ parentId: index, pageID: index2, name: data2[index2]["name"], img: data2[index2]["img"], position: data2[index2]["position"], url: "/" + this.cityName + data2[index2]["url"] });
                     if (data2[index2]["SubPages"] != null) {
                       let data3 = data2[index2]["SubPages"];
                       let keyArray3 = Object.keys(data3);
                       for (let k = 0; k < keyArray3.length; k++) {
                         let index3 = keyArray3[k];
-                        this.portalAccessList.push({ parentId: index2, pageID: index3, name: data3[index3]["name"], img: data3[index3]["img"], position: data3[index3]["position"], url: "/"+this.cityName+data3[index3]["url"] });
+                        this.portalAccessList.push({ parentId: index2, pageID: index3, name: data3[index3]["name"], img: data3[index3]["img"], position: data3[index3]["position"], url: "/" + this.cityName + data3[index3]["url"] });
                       }
                     }
                   }
@@ -118,7 +119,7 @@ export class LoginComponent implements OnInit {
             this.portalAccessList = this.commonService.transform(this.portalAccessList, 'position');
             this.getUserAccess();
             localStorage.setItem('portalAccess', JSON.stringify(this.portalAccessList));
-            
+
           }
         }
       }
@@ -132,6 +133,7 @@ export class LoginComponent implements OnInit {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetails = userList.find(item => item.email == userName && item.password == password);
     if (userDetails != undefined) {
+
       if (userDetails.expiryDate != null) {
         this.expiryDate = userDetails.expiryDate;
         localStorage.setItem('expiryDate', this.expiryDate);
@@ -144,6 +146,12 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('userID', userDetails.userId);
       localStorage.setItem('userKey', userDetails.userKey);
       localStorage.setItem('userType', userDetails.userType);
+      if (userDetails.officeAppUserId != undefined) {
+        localStorage.setItem('officeAppUserId', userDetails.officeAppUserId);
+      }
+      if (userDetails.empLocation != undefined) {
+        localStorage.setItem('empLocation', userDetails.empLocation);
+      }
       localStorage.setItem('notificationHalt', userDetails.notificationHalt);
       localStorage.setItem('notificationMobileDataOff', userDetails.notificationMobileDataOff);
       localStorage.setItem('notificationSkippedLines', userDetails.notificationSkippedLines);
@@ -153,10 +161,10 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem('loginStatus', "Success");
           setTimeout(() => {
-            window.location.href = this.cityName+"/home";
-          //  $("#divMainContent").css("width", "calc(100% - 80px)");
-          //  $("#divSideMenus").show();
-          }, 1000);          
+            window.location.href = this.cityName + "/home";
+            //  $("#divMainContent").css("width", "calc(100% - 80px)");
+            //  $("#divSideMenus").show();
+          }, 1000);
           // this.router.navigate(['/home']);
         }
         else {
@@ -168,10 +176,10 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('expiryDate', null);
         localStorage.setItem('loginStatus', "Success");
         setTimeout(() => {
-          window.location.href = this.cityName+"/home";
-         // $("#divMainContent").css("width", "calc(100% - 80px)");
+          window.location.href = this.cityName + "/home";
+          // $("#divMainContent").css("width", "calc(100% - 80px)");
           //$("#divSideMenus").show();
-        }, 1000);       
+        }, 1000);
       }
     }
     else {
