@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
-              userList.push({ userKey: index, userId: data[index]["userId"], name: data[index]["name"], email: data[index]["email"], password: data[index]["password"], userType: data[index]["userType"], expiryDate: data[index]["expiryDate"], notificationHalt: data[index]["notificationHalt"], notificationMobileDataOff: data[index]["notificationMobileDataOff"], notificationSkippedLines: data[index]["notificationSkippedLines"], notificationPickDustbins: data[index]["notificationPickDustbins"], notificationGeoSurfing: data[index]["notificationGeoSurfing"],officeAppUserId:data[index]["officeAppUserId"],empLocation:data[index]["empLocation"] });
+              userList.push({ userKey: index, userId: data[index]["userId"], name: data[index]["name"], email: data[index]["email"], password: data[index]["password"], userType: data[index]["userType"], expiryDate: data[index]["expiryDate"], notificationHalt: data[index]["notificationHalt"], notificationMobileDataOff: data[index]["notificationMobileDataOff"], notificationSkippedLines: data[index]["notificationSkippedLines"], notificationPickDustbins: data[index]["notificationPickDustbins"], notificationGeoSurfing: data[index]["notificationGeoSurfing"], officeAppUserId: data[index]["officeAppUserId"], empLocation: data[index]["empLocation"], isTaskManager: data[index]["isTaskManager"] });
             }
           }
         }
@@ -151,6 +151,12 @@ export class LoginComponent implements OnInit {
       }
       if (userDetails.empLocation != undefined) {
         localStorage.setItem('empLocation', userDetails.empLocation);
+      }
+      if (userDetails.isTaskManager != undefined) {
+        localStorage.setItem('isTaskManager', userDetails.isTaskManager);
+      }
+      else {
+        localStorage.setItem("isTaskManager", "0");
       }
       localStorage.setItem('notificationHalt', userDetails.notificationHalt);
       localStorage.setItem('notificationMobileDataOff', userDetails.notificationMobileDataOff);

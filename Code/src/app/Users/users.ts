@@ -16,6 +16,7 @@ export interface Users {
     notificationGeoSurfing:any;
     officeAppUserId:any;
     empLocation:any;
+    isTaskManager:any;
 }
 
 export interface UserAccess {

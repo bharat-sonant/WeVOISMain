@@ -42,7 +42,8 @@ export class UserService {
       expiryDate: user.expiryDate,
       notificationGeoSurfing:user.notificationGeoSurfing,
       officeAppUserId:user.officeAppUserId,
-      empLocation:user.empLocation
+      empLocation:user.empLocation,
+      isTaskManager:user.isTaskManager
     })
   }
 
@@ -64,7 +65,8 @@ export class UserService {
       expiryDate: user.expiryDate,
       notificationGeoSurfing:user.notificationGeoSurfing,
       officeAppUserId:user.officeAppUserId,
-      empLocation:user.empLocation
+      empLocation:user.empLocation,
+      isTaskManager:user.isTaskManager
     })
   }
 

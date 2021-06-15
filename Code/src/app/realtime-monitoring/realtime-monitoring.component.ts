@@ -15,7 +15,7 @@ import { resolveNgModuleDep } from '@angular/core/src/view/ng_module';
 @Component({
   selector: 'app-realtime-monitoring',
   templateUrl: './realtime-monitoring.component.html',
-  styleUrls: ['./realtime-monitoring.component.scss']
+  styleUrls: ['./realtime-monitoring.component.scss'],
 })
 export class RealtimeMonitoringComponent implements OnInit {
 
