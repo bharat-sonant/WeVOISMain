@@ -4162,6 +4162,9 @@
 /*# sourceMappingURL=hover.css.map */
 
 /*------------------------ Navbar Section Start -------------------------*/
+html {
+  scroll-behavior: smooth!important;
+}
 .navbar{
   padding: 1px 100px 1px 100px;
   background-color: #fff;
@@ -4921,7 +4924,7 @@ color: #fff!important;
 }
 
 .border-bottom{
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid #0ba118!important;
 }
 
 .contact-bottom{
@@ -4958,6 +4961,7 @@ color: #fff!important;
 .links i{
   color:#ababab;
 }
+
 /**************************video section start************************/
 .video-thumbnail {
  position: fixed;

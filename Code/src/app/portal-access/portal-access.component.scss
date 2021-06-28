@@ -4783,7 +4783,7 @@ body {
   border-radius: 10px;
   position: absolute;
   left: 50%;
-  top: 54%;
+  top: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   transition-duration: 0.5s;
@@ -4795,6 +4795,15 @@ body {
   border-bottom: 1px solid rgb(233, 233, 233);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+}
+.back{
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+.back i{
+  color: #000;
+  font-size: 18px;
 }
 .login-body a{
 font-size: 18px;
@@ -4839,7 +4848,7 @@ font-size: 18px;
 }
 .login-box{
   height: 110px;
-  width: 235px;
+  width: 190px;
   border: 1px solid lightgray;
   display: flex;
   justify-content: center;
@@ -4849,6 +4858,21 @@ font-size: 18px;
   transition: 0.3s ease-out;
   border-radius: 10px;
 }
+.login-box i{
+  font-size:20px!important;
+}
+.login-box p{
+  font-size:14px!important;
+  text-align: center;
+  letter-spacing: 5px;
+  line-height: 28px;
+  margin-right: -5px!important;
+  padding: 0px!important;
+  transition: 0.3s ease-out;
+}
+.login-box:hover p{
+  color: #fff!important;
+  }
 .login-box:hover{
 //border: 1px solid #0ba118;
 background-color: #0ba118;
