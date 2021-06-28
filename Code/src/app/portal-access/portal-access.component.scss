@@ -4847,7 +4847,7 @@ font-size: 18px;
   transition-timing-function: ease-out;
 }
 .login-box{
-  height: 110px;
+  height: 120px;
   width: 190px;
   border: 1px solid lightgray;
   display: flex;
@@ -4860,6 +4860,11 @@ font-size: 18px;
 }
 .login-box i{
   font-size:20px!important;
+  background: #8080802e;
+  padding: 15px;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
 }
 .login-box p{
   font-size:14px!important;
@@ -4878,6 +4883,10 @@ font-size: 18px;
 background-color: #0ba118;
 color: #fff;
 box-shadow: 5px 8px 10px #96d49b3d;
+}
+.login-box:hover i{
+  background: #fff;
+  color: #0ba118!important;
 }
 .login-box:hover a{
   color:#0ba118;
