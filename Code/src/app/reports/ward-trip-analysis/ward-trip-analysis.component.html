@@ -1,0 +1,169 @@
+<section class="dustbin-analysis">
+    <div id="divLoader" class="loaderClass">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div id="ImageLoader" class="loaderClass-no-bg">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div class="container-fluid no-gutters">
+        <div class="row">
+
+            <div class="col-md-12 desk-hide">
+                <div class="header">
+                    <h3 class="header-text">Ward Trip Analysis
+                        <div class="refresh" style="display: none;">
+                            <span
+                                style="float:right; font-size: 8px; line-height: 15px; padding-right:58px; text-align: right; color: #fff;">last
+                                Update<br />
+                                <span style="font-size: 16px; font-weight: bold;">{{tripData.refreshTime}}
+                                </span></span>
+                            <button class="refresh-button" (click)="refreshData();" title="Refresh Data">
+                                <i class="fas fa-redo-alt"></i></button>
+                        </div>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-md-12 mob-20" style="padding-right: 0px; padding-left: 28px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12 pr-0" style="margin-top: 10px;">
+                                <div class="top">
+                                    <div class="row" style="margin-top:-10px;">
+                                        <div class="col-md-12" style="width: 100%; display: flex;">
+                                            <button class="btn btn-primary " (click)="setDate('','previous');">
+                                                << </button>
+                                                    <input id="txtDate" class="date-input" type="date"
+                                                        (change)="setDate($event.target.value,'current')">
+                                                    <button class="btn btn-primary" (click)="setDate('','next');"> >>
+                                                    </button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <select class="caret-select" id="ddlTrip"
+                                                (change)="getTripData($event.target.value)">
+                                                <option value="{{trip.tripId}}" *ngFor="let trip of tripList">
+                                                    {{trip.tripName}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-10 pr-0">
+                                <div class="dustbin-card">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="float">
+                                                <div class="fleft">
+                                                    <h6> <img src="../../../assets/img/man.png">
+                                                        &nbsp;{{tripData.driverName}}<br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tripData.driverMobile}}
+                                                    </h6>
+                                                </div>
+                                                <div class="fright">
+                                                    <p
+                                                        style="  display: inline-block; position: absolute; right: 25px; top: 3px;">
+                                                        {{tripData.startTime}}
+                                                        <br> <span>Time</span>
+                                                    </p>
+                                                    <!-- <img src="../../../assets/img/clock-icon.png" style="position: absolute; right: 25px; top: 7px;"> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 pl-0 pr-0 mt-10">
+                                    <div class="all-data">
+                                        <div class="data-1" style="border-right: 1px solid lightgray;">
+                                            <!-- <i class="fas fa-diagnoses" style="height: 17px;color: red;text-align: center!important;float:none!important;margin-right: 0px;"></i> -->
+                                            <p class="pen-analysis">
+                                                {{tripData.pendingAnalysis}}</p>
+                                            <h5>Pending Analysis</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="divAccess" class="col-md-12 mt-10 pl-0 pr-0">
+                                    <div class="progress-card">
+                                        <div class="row">
+                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkFilledStatus"
+                                                     value="0" (click)="getSelected('chkFilledStatus');">
+                                                <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
+                                            </div>
+                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkRemark"
+                                                    value="0" (click)="getSelected('chkRemark');">
+                                                <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
+                                            </div>
+                                        </div>
+                                        <div class="dustbin-progress" style="margin-top: 5px;height: 38px;">
+                                            <p class="align-self-center" style="color: green;"><b
+                                                    [innerHTML]="tripData.analysisDetail"></b> </p>
+                                            <button type="button" class="btn btn-success"
+                                                (click)="saveTripAnalysis();">Save <i class="fas fa-save"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mob-mid"
+                        style="padding-right: 50px; padding-left: 10px; padding-bottom: 20px;">
+                        <div class="row">
+                            <div class="col-md-12 mob-hide">
+                                <div class="header">
+                                    <h3 class="header-text">Ward Trip Analysis
+                                        <div class="refresh" style="display: none;">
+                                            <span
+                                                style="float:right; font-size: 8px; line-height: 15px; padding-right:58px; text-align: right; color: #fff;">last
+                                                Update<br />
+                                                <span
+                                                    style="font-size: 16px; font-weight: bold;">{{tripData.refreshTime}}
+                                                </span></span>
+                                            <button class="refresh-button" (click)="refreshData();"
+                                                title="Refresh Data">
+                                                <i class="fas fa-redo-alt"></i></button>
+                                        </div>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mob-res" style="margin-top: -40px;">
+                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                    data-interval="false">
+                                    <div class="carousel-inner">
+                                        <div id="slide1" class="carousel-item active">
+                                            <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{tripData.imageUrl}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 desk-right mob-bottom">
+                        <div class="scroll-list">
+                            <div id="filter{{i}}" class="{{data.divClass}}" *ngFor="let data of zoneList ; let i=index"
+                                (click)="data.iconClass!='fas fa-ellipsis-h' && getTripZoneData(data.zoneNo);">
+                                <i class="{{data.iconClass}}"></i>
+                                <div style="width: 76%; float: left;">
+                                    <div class="address-text">
+                                        <h6>
+                                            {{data.zoneName}}
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div style="width: 24%; float: right; text-align: right;">
+                                    <div class="address-text">
+                                        <h6 [innerHTML]="data.duration" style="font-size:10px;">
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

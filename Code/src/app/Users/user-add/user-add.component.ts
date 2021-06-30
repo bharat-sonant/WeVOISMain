@@ -42,12 +42,6 @@ export class UserAddComponent implements OnInit {
           $("#email").val(data["email"]);
           $("#password").val(data["password"]);
           $('#expiryDate').val(data["expiryDate"]);
-          if (data["officeAppUserId"] != null) {
-            $('#officeAppUserId').val(data["officeAppUserId"]);
-          }
-          if (data["empLocation"] != null) {
-            $('#empLocation').val(data["empLocation"]);
-          }
           if (data["notificationHalt"] == "1") {
             (<HTMLInputElement>document.getElementById("notificationHalt")).checked = true;
           }
@@ -63,10 +57,6 @@ export class UserAddComponent implements OnInit {
           if (data["notificationGeoSurfing"] == 1) {
             (<HTMLInputElement>document.getElementById("notificationGeoSurfing")).checked = true;
           }
-          if (data["isTaskManager"] == 1) {
-            (<HTMLInputElement>document.getElementById("isTaskManager")).checked = true;
-          }
-
           myUser.unsubscribe();
         })
 
@@ -170,12 +160,6 @@ export class UserAddComponent implements OnInit {
     let email: any = $("#email").val();
     let password: any = $("#password").val();
     let expiryDate: any = $("#expiryDate").val();
-    let officeAppUserId: any = $('#officeAppUserId').val();
-    let empLocation: any = $('#empLocation').val();
-    let isTaskManager: any = 0;
-    if (officeAppUserId == "") {
-      officeAppUserId = null;
-    }
     if (expiryDate == "") {
       expiryDate = null;
     }
@@ -194,9 +178,6 @@ export class UserAddComponent implements OnInit {
     element = <HTMLInputElement>document.getElementById("notificationGeoSurfing");
     if (element.checked == true)
       notificationGeoSurfing = 1;
-    element = <HTMLInputElement>document.getElementById("isTaskManager");
-    if (element.checked == true)
-      isTaskManager = 1;
 
     const dish = {
       $Key: this.$Key,
@@ -213,10 +194,7 @@ export class UserAddComponent implements OnInit {
       notificationSkippedLines: notificationSkippedLines,
       notificationPickDustbins: notificationPickDustbins,
       expiryDate: expiryDate,
-      notificationGeoSurfing: notificationGeoSurfing,
-      officeAppUserId: officeAppUserId,
-      empLocation: empLocation,
-      isTaskManager:isTaskManager
+      notificationGeoSurfing
     };
 
     let myUser = this.db.list('Users/').valueChanges().subscribe(
@@ -252,8 +230,6 @@ export class UserAddComponent implements OnInit {
       $("#mobile").val("");
       $("#email").val("");
       $("#password").val("");
-      $('#officeAppUserId').val("");
-      $('#empLocation').val("0");
     }
     this.router.navigate(['/' + this.cityName + '/users']);
   }

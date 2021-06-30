@@ -46,7 +46,7 @@ export class VehicleReportComponent implements OnInit {
       for (let i = 1; i < vehicleList.length; i++) {
         if (vehicleList[i]["vehicle"] != "Drum/Can" && vehicleList[i]["vehicle"] != "Motor Cycle") {
           this.vehicleList.push({ vehicle: vehicleList[i]["vehicle"] });
-          // this.vehicleDataList.push({ vehicle: vehicleList[i]["vehicle"] });
+          this.vehicleDataList.push({ vehicle: vehicleList[i]["vehicle"] });
         }
       }
       this.getReason(this.vehicleList[0]["vehicle"]);
@@ -54,6 +54,8 @@ export class VehicleReportComponent implements OnInit {
   }
 
   getReason(vehicle: any) {
+    this.vehicleDataList = [];
+    this.vehicleDetailList = [];
     let days = new Date(parseInt(this.selectedYear), parseInt(this.selectedMonth), 0).getDate();
     let rowTo = days;
     if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
@@ -62,6 +64,7 @@ export class VehicleReportComponent implements OnInit {
 
     if (vehicle == "All Vehicle") {
       for (let i = 1; i < this.vehicleList.length; i++) {
+        this.vehicleDataList.push({ vehicle: this.vehicleList[i]["vehicle"] });
         for (let j = 1; j <= rowTo; j++) {
           let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (j < 10 ? '0' : '') + j;
           let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split('-')[1]) - 1);
@@ -70,6 +73,7 @@ export class VehicleReportComponent implements OnInit {
       }
     }
     else {
+      this.vehicleDataList.push({ vehicle: vehicle });
       for (let j = 1; j <= rowTo; j++) {
         let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (j < 10 ? '0' : '') + j;
         let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split('-')[1]) - 1);
@@ -84,39 +88,17 @@ export class VehicleReportComponent implements OnInit {
       data => {
         vehicleInstance.unsubscribe();
         if (data != null) {
+          let d = "day" + parseFloat(monthDate.split("-")[2]);
           let vehicleDetails = this.vehicleDataList.find(item => item.vehicle == vehicle);
           if (vehicleDetails != undefined) {
-            if (vehicleDetails.data == null) {
-              vehicleDetails.data = [];
-              let reason = data.toString();
-              if (reason.length > 50) {
-                reason = data.toString().substring(0, 50) + "...";
-              }
-              vehicleDetails.data.push({ date: monthDate, reason, resonDetail: this.commonService.replaceAll(data.toString(),"\n","<br/>") });
-            }
-            else {
-              let reason = data.toString();
-              if (reason.length > 50) {
-                reason = data.toString().substring(0, 50) + "...";
-              }
-              vehicleDetails.data.push({ date: monthDate, reason: reason, resonDetail: this.commonService.replaceAll(data.toString(),"\n","<br/>") });
-            }
-          }
-          else {
-            let reason = data.toString();
-            if (reason.length > 50) {
-              reason = data.toString().substring(0, 50) + "...";
-            }
-            let dataList = [];
-            dataList.push({ date: monthDate, reason: data.toString().substring(0, 50) + "...", resonDetail: this.commonService.replaceAll(data.toString(),"\n","<br/>") });
-            this.vehicleDataList.push({ vehicle: vehicle, reason: data.toString(), data: dataList });
+            vehicleDetails[d] = data.toString();
           }
         }
       });
   }
 
   changeSelection() {
-    this.vehicleDataList = [];
+
     let vehicle = $('#ddlVehicle').val();
     this.selectedYear = $('#ddlYear').val();
     this.selectedMonth = $('#ddlMonth').val();
@@ -163,14 +145,22 @@ export class VehicleReportComponent implements OnInit {
     this.vehicleDetailList = [];
     let vehicleDetails = this.vehicleDataList.find(item => item.vehicle == vehicle);
     if (vehicleDetails != undefined) {
-      if (vehicleDetails.data != null) {
-        let vehicleData = vehicleDetails.data;
-        for (let i = 0; i < vehicleData.length; i++) {
-          this.vehicleDetailList.push({ date: vehicleData[i]["date"], reason: vehicleData[i]["resonDetail"].toString().replaceAll("\n", "<br/>") });
+      let days = new Date(parseInt(this.selectedYear), parseInt(this.selectedMonth), 0).getDate();
+      let rowTo = days;
+      if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
+        rowTo = parseInt(this.commonService.setTodayDate().split("-")[2]);
+      }
+      for (let i = 1; i <= rowTo; i++) {
+        let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+        let d = "day" + parseFloat(monthDate.split("-")[2]);
+        var reason = vehicleDetails[d];
+        if (reason != undefined) {
+          this.vehicleDetailList.push({ date: monthDate, reason: reason.toString().replaceAll("\n", "<br/>") });
         }
       }
     }
   }
-
-
 }
+
+
+

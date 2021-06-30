@@ -59,9 +59,14 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
+    this.commonService.setZones();
+    this.commonService.setFixedLoctions();
+    this.commonService.setVehicle();
+    this.commonService.setDustbin();
+    this.commonService.setWebPortalUsers();
+    this.commonService.setPortalPages(this.cityName);
+    $('#drpMainCity').val(this.cityName);
     this.userDetail.homeLink = "/" + this.cityName + "/home";
-    //localStorage.setItem('geoSurfing', null);
-    //localStorage.setItem('pickDustbins', null);
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
     if (date != null) {
@@ -75,56 +80,72 @@ export class SidebarComponent implements OnInit {
     else {
       localStorage.setItem('date', this.toDayDate);
     }
-
-    this.userid = localStorage.getItem('userID');
-    if (this.userid != null) {
-      this.userType = localStorage.getItem('userType');
-      this.portalAccessList = [];
-      this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-      this.getUserAccess();
-      this.wardIndex = 1;
-      this.haltDetails = [];
-      this.pickDustbins = [];
-      this.toDayDate = this.commonService.setTodayDate();
-      this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
-      this.currentYear = new Date().getFullYear();
-      this.getZoneList();
-      if (localStorage.getItem('notificationHalt') == "1") {
-        this.getHalts();
-      }
-      if (localStorage.getItem('notificationMobileDataOff') == "1") {
-        this.notifyMobileDataOff();
-        let dataInterval = interval(180000).subscribe((val) => {
-          if (localStorage.getItem('notificationMobileDataOff') == "1") {
-            this.notifyMobileDataOff();
+    setTimeout(() => {
+      this.userid = localStorage.getItem('userID');
+      if (this.userid != null) {
+        this.userType = localStorage.getItem('userType');
+        this.portalAccessList = [];
+        this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+        console.log("sdgsdgsd")
+        this.getUserAccess();
+        this.wardIndex = 1;
+        this.haltDetails = [];
+        this.pickDustbins = [];
+        this.toDayDate = this.commonService.setTodayDate();
+        this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
+        this.currentYear = new Date().getFullYear();
+        this.getZoneList();
+        if (localStorage.getItem('notificationHalt') == "1") {
+          this.getHalts();
+        }
+        if (localStorage.getItem('notificationMobileDataOff') == "1") {
+          this.notifyMobileDataOff();
+          let dataInterval = interval(180000).subscribe((val) => {
+            if (localStorage.getItem('notificationMobileDataOff') == "1") {
+              this.notifyMobileDataOff();
+            }
+          });
+          this.commonService.notificationInterval = dataInterval;
+        }
+        if (localStorage.getItem('notificationSkippedLines') == "1") {
+          this.skippedLines = JSON.parse(localStorage.getItem("skipLines"));
+          if (this.skippedLines == null) {
+            this.skippedLines = [];
           }
-        });
-        this.commonService.notificationInterval = dataInterval;
-      }
-      if (localStorage.getItem('notificationSkippedLines') == "1") {
-        this.skippedLines = JSON.parse(localStorage.getItem("skipLines"));
-        if (this.skippedLines == null) {
-          this.skippedLines = [];
+          this.getSkippedLines();
         }
-        this.getSkippedLines();
-      }
 
-      if (localStorage.getItem('notificationPickDustbins') == "1") {
-        this.planList = JSON.parse(localStorage.getItem("pickDustbins"));
-        if (this.planList == null) {
-          this.planList = [];
+        if (localStorage.getItem('notificationPickDustbins') == "1") {
+          this.planList = JSON.parse(localStorage.getItem("pickDustbins"));
+          if (this.planList == null) {
+            this.planList = [];
+          }
+          this.getDustbinPicked();
         }
-        this.getDustbinPicked();
-      }
 
-      if (localStorage.getItem('notificationGeoSurfing') == "1") {
-        this.geoList = JSON.parse(localStorage.getItem("geoSurfing"));
-        if (this.geoList == null) {
-          this.geoList = [];
+        if (localStorage.getItem('notificationGeoSurfing') == "1") {
+          this.geoList = JSON.parse(localStorage.getItem("geoSurfing"));
+          if (this.geoList == null) {
+            this.geoList = [];
+          }
+          this.getGeoSurfing();
         }
-        this.getGeoSurfing();
       }
-    }
+    }, 2000);
+
+  }
+
+  changeCity() {
+    this.cityName = $('#drpMainCity').val();
+    localStorage.setItem('cityName', this.cityName);
+    localStorage.setItem('isCityChange',"yes");
+    let path = window.location.href;
+    let newPath = path.split('/')[path.split('/').length - 1];
+    //window.location.href = this.cityName + "/" + newPath;
+    window.location.href = this.cityName + "/home";
+
+
+
   }
 
   getGeoSurfing() {
@@ -276,9 +297,9 @@ export class SidebarComponent implements OnInit {
                 this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
               }
             }
-            else{
+            else {
               this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
-             
+
             }
           }
         }
@@ -495,23 +516,78 @@ export class SidebarComponent implements OnInit {
   }
 
 
-
   getPage(value: any) {
     this.userid = localStorage.getItem('userID');
     CmsComponent.prototype.userid = this.userid;
     let list = value.split('/');
-    if (list.length <= 3) {
-      this.router.navigate([value]);
+    if (list.length <= 2) {
+      this.router.navigate([value], { replaceUrl: true });
     }
     else {
       let url = window.location.href;
-      if (!url.includes("cms")) {
-        this.router.navigate([value]);
-      }
+      this.router.navigate([value], { replaceUrl: true });
+      // if (!url.includes("cms")) {
+      //   this.router.navigate([value],{ replaceUrl: true});
+      //  }
       const id = list[list.length - 1];
       let pageList = id.split('-');
-      CmsComponent.prototype.getPages(pageList[pageList.length - 1]);
-      CmsComponent.prototype.setDesign();
+      this.getPages(pageList[pageList.length - 1]);
+      //CmsComponent.prototype.setDesign();
+    }
+  }
+
+
+  getPages(pageId: any) {
+    CmsComponent.prototype.accessList = [];
+    let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
+    if (userAccessList != null) {
+      let detail = userAccessList.find(item => item.pageId == pageId);
+      if (detail != undefined) {
+        $('#pageName').html(detail.name);
+        $('#pageNameMobile').html(detail.name);
+      }
+      let k = 0;
+      this.clearAll();
+      for (let i = 0; i < userAccessList.length; i++) {
+        if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid) {
+
+          this.isShow = false;
+          k = k + 1;
+          let element = <HTMLElement>(document.getElementById('div' + k));
+          if (element != undefined) {
+            $('#div' + k).show();
+            $('#span' + k).html(userAccessList[i]["name"]);
+            let className = $('#icon' + k).attr('class');
+            $('#icon' + k).removeClass(className);
+            $('#icon' + k).addClass(userAccessList[i]["img"]);
+            if (element != null) {
+              element.addEventListener('click', (e) => {
+                this.getPage(userAccessList[i]["url"]);
+              });
+            }
+          }
+          element = <HTMLElement>(document.getElementById('divMob' + k));
+          if (element != undefined) {
+            $('#divMob' + k).show();
+            $('#spanMob' + k).html(userAccessList[i]["name"]);
+            let className = $('#iconMob' + k).attr('class');
+            $('#iconMob' + k).removeClass(className);
+            $('#iconMob' + k).addClass(userAccessList[i]["img"]);
+            if (element != null) {
+              element.addEventListener('click', (e) => {
+                this.getPage(userAccessList[i]["url"]);
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  clearAll() {
+    for (let k = 1; k <= 12; k++) {
+      $('#div' + k).hide();
+      $('#divMob' + k).hide();
     }
   }
 

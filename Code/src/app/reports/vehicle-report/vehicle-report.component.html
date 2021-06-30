@@ -32,6 +32,7 @@
         </div>
     </div>
 </section>
+
 <section class="halts" style="padding-left: 10px;">
     <div class="container-fluid">
         <div class="row" style="margin-top: -40px;">
@@ -39,32 +40,143 @@
                 <div>
                     <div class="table-bg">
                         <div class="tableFixHead">
-                            <table class="table table-hover">
+                            <table class="table table-hover" style="margin-bottom: 0px;">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="tdBorder">Vehicle</th>
-                                        <th scope="col" class="text-left">Date/Reason</th>
+                                        <th scope="col" class=" thFixed"
+                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 300px!important;border-right: 1px solid lightgray;">
+                                            <div style="width: 200px!important;">Vehicle No.</div>
+                                        </th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">01</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">02</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">03</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">04</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">05</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">06</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">07</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">08</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">09</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">10</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">11</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">12</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">13</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">14</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">15</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">16</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">17</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">18</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">19</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">20</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">21</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">22</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">23</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">24</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">25</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">26</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">27</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">28</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">29</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">30</th>
+                                        <th scope="col" class="text-left" style=" border-right: 1px solid lightgray;">31</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let dt of vehicleDataList">
-                                        <td class="tdBorder"
-                                            style="font-weight: bold; width: 15%!important; padding-top: 10px!important; vertical-align: top;">
-                                            <span style="cursor: pointer;"
-                                                (click)="showVehicleDetail(contentDetail,dt.vehicle);">{{dt.vehicle}}</span>
+                                        <td class=" thFixed" style="vertical-align: top; font-weight: bold;border-right: 1px solid lightgray;">
+                                            <div style="width: 200px!important; cursor: pointer;" (click)="showVehicleDetail(contentDetail,dt.vehicle);">{{dt.vehicle}}</div>
                                         </td>
-                                        <td class="text-left  " style=" width: 95%!important; ">
-                                            <div class="tableFixHeadDetail">
-
-                                                <div class="row">
-                                                    <div class="col-md-4" *ngFor="let dtd of dt.data"
-                                                        style="padding-bottom: 10px;">
-                                                        <b> {{dtd.date}}</b> -<span
-                                                            [innerHTML]="dtd.resonDetail"></span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
+                                        <td class=" text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day1" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day2" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day3" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day4" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day5" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day6" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day7" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day8" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day9" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day10" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day11" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day12" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day13" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day14" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day15" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day16" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day17" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day18" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day19" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day20" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day21" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day22" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day23" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day24" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day25" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day26" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day27" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day28" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day29" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day30" class="rowWidth"></div>
+                                        </td>
+                                        <td class="text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
+                                            <div [innerHTML]="dt.day31" class="rowWidth"></div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -117,7 +229,7 @@
                         <div class="dth">
                             <div class="table-bg">
                                 <div id="divStatus" class="tableFixHead">
-                                    <table class="table table-hover">
+                                    <table class="table table-hover" style="margin-bottom: 0px!important;">
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-left"
@@ -127,9 +239,9 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let dt of vehicleDetailList">
-                                                <td style="width: 20%; vertical-align: top; border-right: 1px solid lightgray;"
-                                                    class="text-left">{{dt.date}} </td>
-                                                <td style="width: 80%;" class="text-left" [innerHTML]="dt.reason"></td>
+                                                <td style="width: 25%; vertical-align: top; border-right: 1px solid lightgray;"
+                                                    class="text-left border-bottom border-left">{{dt.date}} </td>
+                                                <td style="width: 75%;" class="text-left border-bottom border-left" [innerHTML]="dt.reason"></td>
                                             </tr>
                                         </tbody>
                                     </table>

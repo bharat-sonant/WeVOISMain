@@ -291,16 +291,16 @@
               <div class="col-md-6 mob-r" style="padding-left: 5px; padding-right: 5px;">
                 <div class="general-info">
                   <div class="general-content">
-                    <h3>---</h3>
-                    <h1>---</h1>
+                    <h3>Heros on work</h3>
+                    <h1 >{{workerDetails.peopleAtWork}}</h1>
                   </div>
                 </div>
               </div>
               <div class="col-md-6 mob-r" style="padding-left: 5px; padding-right: 17px;">
                 <div class="general-info mt-10">
                   <div class="general-content">
-                    <h3>---</h3>
-                    <h1>---
+                    <h3>Garage Duty</h3>
+                    <h1 style="cursor:pointer;" (click)="openMapModelGarage(contentGarage)">{{workerDetails.garageWorkDutyCount}}
                     </h1>
                   </div>
                 </div>
@@ -309,8 +309,8 @@
                 style="padding-left: 5px; padding-right: 5px; margin-top: 10px; margin-bottom: 10px; display: none;">
                 <div class="general-info">
                   <div class="general-content">
-                    <h3>----</h3>
-                    <h1 id="divDutyOn">----</h1>
+                    <h3>---</h3>
+                    <h1 >---</h1>
                   </div>
                 </div>
               </div>
@@ -319,7 +319,7 @@
                 <div class="general-info mt-10">
                   <div class="general-content">
                     <h3>----</h3>
-                    <h1 id="divDutyOff">----</h1>
+                    <h1 >----</h1>
                   </div>
                 </div>
               </div>
@@ -362,7 +362,6 @@
     </div>
   </div>
 </section>
-
 
 <!--Remark Status Start-->
 <ng-template #contentRemark>
@@ -412,7 +411,7 @@
         <div class="dth">
           <div class="table-bg">
             <div id="divStatus" class="tableFixHead">
-              <table class="table table-hover">
+              <table class="table table-hover" style="margin-bottom: 0px;">
                 <thead>
                   <tr>
                     <th scope="col" class="text-left">Time </th>
@@ -421,7 +420,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let dt of vehicleStstusList">
-                    <td class="text-left">{{dt.time}} </td>
+                    <td class="text-left border-left">{{dt.time}} </td>
                     <td class="text-left">{{dt.status}} </td>
                   </tr>
                 </tbody>
@@ -443,20 +442,20 @@
     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModel();">
 
   </div>
-  <div class="modal-body" style="float: left;">
+  <div class="modal-body" style="float: left;padding: 20px 12px 10px 15px;">
     <div class="col-md-12" style="margin-top: -10px; margin-left: -20px;">
-      <div class="widgets-popup" *ngFor="let dt of dutyStatusList">
+      <div class="widgets-popup" *ngFor="let dt of dutyStatusList" style="padding:0px!important">
         <div class="row">
-          <div class="col-md-8 hvr text-center" style="border-right: 1px solid #e0e0e0;border-bottom: 1px solid #e0e0e0;">
-            <div class="widgets-popup-inner">
-              <h3><b>{{dt.name}}</b>
+          <div class="col-md-8 hvr text-center" style="border-right: 1px solid #e0e0e0; padding-right: 0px; ">
+            <div class="widgets-popup-inner" style="padding: 10px;border-bottom: 1px solid #e0e0e0;background: #0ba1181a; border-top-left-radius: 5px;">
+              <h3><b> {{dt.name}}</b>
               </h3>
               <p># Driver</p>
             </div>
           </div>
-          <div class="col-md-4 hvr text-center" style="border-bottom: 1px solid #e0e0e0;">
-            <div class="widgets-popup-inner">
-              <h3><b>{{dt.vehicle}}</b>
+          <div class="col-md-4 hvr text-center" style="padding-left: 0px; ">
+            <div class="widgets-popup-inner" style="padding: 10px;border-bottom: 1px solid #e0e0e0;background: #0ba1181a; border-top-right-radius: 5px;">
+              <h3><b> {{dt.vehicle}}</b>
               </h3>
               <p># Vehicle</p>
             </div>
@@ -464,21 +463,21 @@
         </div>
         <div class="row">
           <div class="col-md-4 hvr text-center" style="border-right: 1px solid #e0e0e0;">
-            <div class="widgets-popup-inner">
+            <div class="widgets-popup-inner" style="padding: 10px;">
               <h5><b>{{dt.dutyOn}}</b>
               </h5>
               <p># Duty On</p>
             </div>
           </div>
-          <div class="col-md-4 hvr text-center" style="border-right: 1px solid #e0e0e0;">
-            <div class="widgets-popup-inner">
-              <h5><b>{{dt.reachOn}}</b>
+          <div class="col-md-4 hvr text-center" style="border-right: 1px solid #e0e0e0;padding-left: 0px;">
+            <div class="widgets-popup-inner" style="padding: 10px;">
+              <h5><b> {{dt.reachOn}}</b>
               </h5>
-              <p># Reach On</p>
+              <p ># Reach On</p>
             </div>
           </div>
-          <div class="col-md-4 hvr text-center">
-            <div class="widgets-popup-inner">
+          <div class="col-md-4 hvr text-center" style="padding-left: 0px;">
+            <div class="widgets-popup-inner" style="padding: 10px;">
               <h5><b>{{dt.dutyOff}}</b>
               </h5>
               <p># Duty off</p>
@@ -514,7 +513,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let dt of applicationDataList">
-                    <td class="text-left">{{dt.time}} </td>
+                    <td class="text-left border-left">{{dt.time}} </td>
                     <td class="text-left">{{dt.status}} </td>
                   </tr>
                 </tbody>
@@ -573,54 +572,6 @@
   </div>
 </ng-template>
 
-<!-- Button trigger modal -->
-<!-- Modal 
-<div class="modal remarks fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header" style="padding-top: 5px!important;padding-bottom: 5px!important;">
-        <h5 class="modal-title" id="exampleModalLongTitle"><i
-          class="far fa-clock" style="color: green;"></i> {{workerDetails.haltTime}} hour</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-4" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
-            <div class="scrollable-halt">
-              <div class="{{dt.activeClass}}" *ngFor="let dt of todayHaltList, let i=index" (click)="getHaltMap(i);">
-                <div class="halt-details">
-                  <h5 class="stopped-time">Stopped Time : <br><strong [style.color]="[dt.breakBGColor]"><i
-                        class="far fa-clock"></i>
-                      {{dt.time}}</strong></h5>
-                  <h5 class="break-time">Break Time : <br><strong [style.color]="[dt.breakBGColor]"><i
-                        class="far fa-clock"></i>
-                      {{dt.duration}} Min.</strong></h5>
-                </div>
-                
-                <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
-                  <p><i class="fas fa-registered" style="color: red;"></i> {{dt.type}}</p>
-                </div>
-                <div class="work-stop-address">
-                  <p><i class="fas fa-map-marker-alt"></i> {{dt.location}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
-            <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
-              <div id="haltMap" style="width:100%;height:460px; "></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
--->
-<!--Halt Detail End-->
 
 <!--Vehicle unassigned Start-->
 <ng-template #contentVehicle>
@@ -645,8 +596,11 @@
                     </thead>
                     <tbody style="border: 1px solid lightgray!important;">
                       <tr *ngFor="let veh of unAssignedVehicle, let i=index">
-                        <td class="text-left" style="width: 25%;     vertical-align: top;">{{veh.name}} </td>
-                        <td class="text-left" style="width: 75%;"><textarea id="txtVehicle{{i}}" class="input-green"  style="height: 80px;">{{veh.reason}}</textarea> </td>
+                        <td class="text-left" style="width: 25%; vertical-align: top;">{{veh.name}} <br/>
+                          <input id="chk{{i}}" type="checkbox" (change)="showRemark();" [checked]="veh.isChecked">&nbsp; <span style="font-weight: normal!important; font-size: 10px;"> यदि वाहन में कोई समस्या है तो यहां क्लिक करें और कारण लिखें |</span>  </td>
+                        <td class="text-left" style="width: 75%;">
+                          <textarea id="txtVehicle{{i}}" class="{{veh.textAreaClass}}" style="height: 80px;" readonly>{{veh.reason}}</textarea>
+                         </td>
                         <!--[readOnly]="veh.entryId!=veh.userId"-->
                       </tr>
                     </tbody>
@@ -662,3 +616,46 @@
   </div>
 </ng-template>
 <!--Vehicle unassigned End-->
+
+
+<!--Garage Worker Start-->
+<ng-template #contentGarage>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Garage Duty Persons : {{workerDetails.garageWorkDutyCount}}</h5>
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+      </div>
+      <div class="modal-body" >
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dth">
+              <div class="table-bg">
+                <div id="divVehicle" class="tableFixHead">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name </th>
+                        <th scope="col">Duty On </th>
+                        <th scope="col">Duty off </th>
+                      </tr>
+                    </thead>
+                    <tbody style="border: 1px solid lightgray!important;">
+                      <tr *ngFor="let garage of garageDutyList, let i=index">
+                        <td class="text-left" style="width: 60%; vertical-align: top; font-weight: normal!important;">{{garage.name}} ({{garage.designation}})</td>
+                        <td class="text-left" style="width: 20%; vertical-align: top;  font-weight: normal!important;" [innerHTML]="garage.dutyOnTime"></td>
+                        <td class="text-left" style="width: 20%; vertical-align: top; font-weight: normal!important;" [innerHTML]="garage.dutyOffTime"></td>
+                        <!--[readOnly]="veh.entryId!=veh.userId"-->
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Garage Worker End-->

@@ -40,7 +40,7 @@ export class FleetMonitorComponent {
   wardIndex: number;
   currentMonthName: any;
   currentYear: any;
-  cityName: any;
+  cityName:any;
   workerDetails: WorkderDetails =
     {
       vehicleNo: '',
@@ -54,11 +54,12 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
+    
     this.cityName = localStorage.getItem('cityName');
     this.commonService.chkUserPermission("Vehicle Monitoring");
     this.todayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1]) - 1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1])-1);
     this.setHeight();
     this.getZoneList();
     this.setMap();
@@ -160,12 +161,14 @@ export class FleetMonitorComponent {
   showVehicle(wardNo: string, workPercentage: any) {
 
     this.bounds = new google.maps.LatLngBounds();
-    let currentLocationPath = 'CurrentLocationInfo/' + wardNo + '/CurrentLoc';
+
+    let currentLocationPath = "CurrentLocationInfo/" + wardNo + "/latLng";
+   // let dbPath="RealTimeDetails/WardDetails/"+wardNo;
     let vehicleLocation = this.db.object(currentLocationPath).valueChanges().subscribe(
       locationData => {
         vehicleLocation.unsubscribe();
 
-        let cureentStatusDPath = 'CurrentLocationInfo/' + wardNo + '/StatusId';
+        let cureentStatusDPath = 'RealTimeDetails/WardDetails/' + wardNo + '/activityStatus';
 
 
 
@@ -174,13 +177,13 @@ export class FleetMonitorComponent {
 
             let vehiclePath = '../assets/img/tipper-green.png';
 
-            if (statusId == '3') {
+            if (statusId == 'completed') {
               vehiclePath = '../assets/img/tipper-gray.png';
-            } else if (statusId == '2') {
+            } else if (statusId == 'stopped') {
               vehiclePath = '../assets/img/tipper-red.png';
             }
 
-            if (statusId != "3") {
+            if (statusId != "completed") {
 
               let driverIdPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails/driver';
               let driver = this.db.object(driverIdPath).valueChanges().subscribe(
@@ -198,13 +201,15 @@ export class FleetMonitorComponent {
                       if (cardEntiresArr[cardEntiresArr.length - 1] == 'Out') {
                         vehiclePath = '../assets/img/tipper-gray.png';
                       }
+                      let location = locationData.toString().split(",");
+                     // let location = locationData.toString().split(":")[1].replace('(', '').replace(')', '').replace(' ', '').split(",");
                       //this.marker.setMap(null);
                       this.marker = new google.maps.Marker({
-                        position: { lat: locationData["lat"], lng: locationData["lng"] },
+                        position: { lat: Number(location[0]), lng: Number(location[1]) },
                         map: this.map,
                         icon: vehiclePath,
                       });
-                      this.bounds.extend({ lat: Number(locationData["lat"]), lng: Number(locationData["lng"]) });
+                      this.bounds.extend({ lat: Number(location[0]), lng: Number(location[1]) });
 
 
                       if (cardEntiresArr[cardEntiresArr.length - 1] == 'In') {
@@ -251,13 +256,14 @@ export class FleetMonitorComponent {
                               details.vehicleNo = workerData["vehicle"];
                               this.cityName = localStorage.getItem('cityName');
                               details.wardMonitorUrl = "/" + this.cityName + "/maps/" + wardNo;
+                             // details.wardMonitorUrl = "maps/" + wardNo;
                               $('#helperMsgD').hide();
                               $('#helperMsgM').hide();
                               $('#detailD').show();
-                              let driverList = workerData["driver"].toString().split(',');
-                              let helperList = workerData["helper"].toString().split(',');
-                              let driverId = driverList[driverList.length - 1].trim();
-                              let helperId = helperList[helperList.length - 1].trim();
+                              let driverList=workerData["driver"].toString().split(',');
+                              let helperList=workerData["helper"].toString().split(',');
+                              let driverId=driverList[driverList.length-1].trim();
+                              let helperId=helperList[helperList.length-1].trim();
                               this.employeeDetail = JSON.parse(localStorage.getItem("employee"));
                               if (this.employeeDetail != null) {
                                 let driverDetails = this.employeeDetail.find(item => item.userName == driverId);
@@ -275,7 +281,7 @@ export class FleetMonitorComponent {
                                       details.driverName = (driverData["name"]).toUpperCase();
                                       details.driverMobile = driverData["mobile"];
                                       details.driverImageUrl = driverData["profilePhotoURL"] != null && driverData["profilePhotoURL"] != "" ? (driverData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail)); 
                                     });
                                 }
                                 let helperDetails = this.employeeDetail.find(item => item.userName == helperId);
@@ -293,13 +299,13 @@ export class FleetMonitorComponent {
                                       details.helperName = (helperData["name"]).toUpperCase();
                                       details.helperMobile = helperData["mobile"];
                                       details.helperImageUrl = helperData["profilePhotoURL"] != null && helperData["profilePhotoURL"] != "" ? (helperData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail)); 
                                     });
                                 }
 
                               }
                               else {
-                                this.employeeDetail = [];
+                                this.employeeDetail=[];
                                 let driverPath = 'Employees/' + workerData["driver"] + '/GeneralDetails';
                                 let driver = dbPath.object(driverPath).valueChanges().subscribe(
                                   driverData => {
@@ -308,7 +314,7 @@ export class FleetMonitorComponent {
                                     details.driverName = (driverData["name"]).toUpperCase();
                                     details.driverMobile = driverData["mobile"];
                                     details.driverImageUrl = driverData["profilePhotoURL"] != null && driverData["profilePhotoURL"] != "" ? (driverData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail)); 
                                   });
                                 let helperPath = 'Employees/' + workerData["helper"] + '/GeneralDetails';
                                 let helper = dbPath.object(helperPath).valueChanges().subscribe(
@@ -318,7 +324,7 @@ export class FleetMonitorComponent {
                                     details.helperName = (helperData["name"]).toUpperCase();
                                     details.helperMobile = helperData["mobile"];
                                     details.helperImageUrl = helperData["profilePhotoURL"] != null && helperData["profilePhotoURL"] != "" ? (helperData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail)); 
                                   });
                               }
                             });

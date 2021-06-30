@@ -407,9 +407,9 @@
                     <tr *ngFor="let plan of planList">
                         <td>{{plan.planName}}</td>
                         <td><span style="color:green">{{plan.dustbinPicked}}</span></td>
-                        <td>{{plan.date}}</td>
-                        <td><span style="color:blue">{{plan.dustbinAssigned}}</span>/{{plan.maxDustbin}}</td>
-                        <td>
+                        <td style="width: 90px!important;">{{plan.date}}</td>
+                        <td style="width: 30px!important;"><span style="color:blue">{{plan.dustbinAssigned}}</span>/{{plan.maxDustbin}}</td>
+                        <td style="width: 90px!important;">
                             <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0"
                                 (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>&nbsp;&nbsp;
                             <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');"

@@ -619,7 +619,9 @@ export class MonthSalaryReportComponent implements OnInit {
             let secondHelperSalary = "secondHelperSalary" + parseFloat(monthDate.split("-")[2]);
             let thirdHelperSalary = "thirdHelperSalary" + parseFloat(monthDate.split("-")[2]);
             let fourthHelperSalary = "fourthHelperSalary" + parseFloat(monthDate.split("-")[2]);
-            let totalSalary = 0;
+            let totalSalary = Number(zoneDetails.totalSalary);
+            let wardSalary=0;
+            let cost=Number(zoneDetails.cost);
             let driverList = [];
             let helperList = [];
             let secondHelperList = [];
@@ -690,47 +692,50 @@ export class MonthSalaryReportComponent implements OnInit {
                 });
               }
             }
+            totalSalary = Number(totalSalary) + Number(salary.toString().trim());
+            
             if (zoneDetails[driverSalary] != null) {
               driverList = zoneDetails[driverSalary].toString().split(',');
               for (let i = 0; i < driverList.length; i++) {
-                totalSalary = Number(totalSalary) + Number(driverList[i].toString().trim());
+                wardSalary = Number(wardSalary) + Number(driverList[i].toString().trim());
               }
             }
             if (zoneDetails[helperSalary] != null) {
               helperList = zoneDetails[helperSalary].toString().split(',');
               for (let i = 0; i < helperList.length; i++) {
-                totalSalary = Number(totalSalary) + Number(helperList[i].toString().trim());
+                wardSalary = Number(wardSalary) + Number(helperList[i].toString().trim());
               }
             }
             if (zoneDetails[secondHelperSalary] != null) {
               secondHelperList = zoneDetails[secondHelperSalary].toString().split(',');
               for (let i = 0; i < secondHelperList.length; i++) {
-                totalSalary = Number(totalSalary) + Number(secondHelperList[i].toString().trim());
+                wardSalary = Number(wardSalary) + Number(secondHelperList[i].toString().trim());
               }
             }
             if (zoneDetails[thirdHelperSalary] != null) {
               thirdHelperList = zoneDetails[thirdHelperSalary].toString().split(',');
               for (let i = 0; i < thirdHelperList.length; i++) {
-                totalSalary = Number(totalSalary) + Number(thirdHelperList[i].toString().trim());
+                wardSalary = Number(wardSalary) + Number(thirdHelperList[i].toString().trim());
               }
             }
             if (zoneDetails[fourthHelperSalary] != null) {
               fourthHelperList = zoneDetails[fourthHelperSalary].toString().split(',');
               for (let i = 0; i < fourthHelperList.length; i++) {
-                totalSalary = Number(totalSalary) + Number(fourthHelperList[i].toString().trim());
+                wardSalary = Number(wardSalary) + Number(fourthHelperList[i].toString().trim());
               }
             }
+            
             zoneDetails.totalSalary = totalSalary.toFixed(2);
             if (zoneDetails[d] != null) {
               let daydetail = zoneDetails[d];
               let dayArray = daydetail.split("<br/>");
-              zoneDetails[d] = " " + zoneDetails.totalSalary + "<br/> " + dayArray[1] + "<br/>" + dayArray[2] + "<br/>" + (parseFloat(zoneDetails.totalSalary) + parseFloat(dayArray[1]) + parseFloat(dayArray[2])).toFixed(2) + "";
+              zoneDetails[d] = " " + wardSalary + "<br/> " + dayArray[1] + "<br/>" + dayArray[2] + "<br/>" + (Number(wardSalary) + parseFloat(dayArray[1]) + parseFloat(dayArray[2])).toFixed(2) + "";
             }
-            this.costData.totalCost = (parseFloat(this.costData.totalCost) + Number(totalSalary)).toFixed(2);
-            this.costData.salary = (parseFloat(this.costData.salary) + Number(totalSalary)).toFixed(2);
-            zoneDetails.cost = (parseFloat(zoneDetails.cost) + Number(totalSalary)).toFixed(2);
-            zoneDetails.totalCost = (parseFloat(zoneDetails.totalCost) + Number(totalSalary)).toFixed(2);
-            this.getSum(d, totalSalary, "S");
+            this.costData.totalCost = (parseFloat(this.costData.totalCost) + Number(salary)).toFixed(2);
+            this.costData.salary = (parseFloat(this.costData.salary) + Number(salary)).toFixed(2);
+            zoneDetails.cost = (Number(cost) + Number(salary)).toFixed(2);
+            zoneDetails.totalCost = (parseFloat(zoneDetails.totalCost) + Number(salary)).toFixed(2);
+            this.getSum(d, salary, "S");
           }
         }
       }
@@ -738,6 +743,8 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getSalary(wardNo: any, monthName: any, monthDate: any) {
+   // this.getWardSalary(wardNo, monthName, monthDate);
+   // return;
     if (monthDate == this.toDayDate) {
       this.getWardSalary(wardNo, monthName, monthDate);
     }
@@ -980,11 +987,11 @@ export class MonthSalaryReportComponent implements OnInit {
 
   clearAll() {
     this.zoneList = [];
+    this.wardDataList = [];
     this.costData.totalCost = "0.00";
     this.costData.salary = "0.00";
     this.costData.petrol = "0.00";
     this.costData.penalty = "0.00";
-    this.wardDataList = [];
     this.costData.day1 = "0.00";
     this.costData.day2 = "0.00";
     this.costData.day3 = "0.00";

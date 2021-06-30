@@ -2,6 +2,7 @@
 
 import { Component, ViewChild } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireModule } from 'angularfire2';
 import { HttpClient } from '@angular/common/http';
 import { interval } from 'rxjs';
 //services
@@ -21,7 +22,7 @@ export class MapsComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService) { }
+  constructor(public db: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -55,6 +56,12 @@ export class MapsComponent {
   wardEndUrl = "../assets/img/end-image.png";
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   lines: any[] = [];
+  lastLineInstance: any;
+  workerDetails: any;
+  wardLines: any;
+  zoneKML: any;
+  parhadhouseMarker: any;
+  allMatkers: any[] = [];
 
   progressData: progressDetail =
     {
@@ -110,10 +117,10 @@ export class MapsComponent {
   getZones() {
     return new Promise(resolve => {
       this.zoneList = [];
-      this.zoneList.push({ zoneNo: "0", zoneName: "-- Select Zone --" });
       let allZones = this.mapService.getZones(this.toDayDate);
       let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe(
         data => {
+          getRealTimeWardDetails.unsubscribe();
           for (let index = 1; index < allZones.length; index++) {
             let zoneNo = allZones[index]["zoneNo"];
             let zoneName = allZones[index]["zoneName"];
@@ -129,7 +136,6 @@ export class MapsComponent {
         });
     });
   }
-
 
   getEmployeeData() {
     let workDetailsPath = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails';
@@ -176,13 +182,26 @@ export class MapsComponent {
       });
   }
 
+
   getProgressDetail() {
+    if (this.lastLineInstance != null) {
+      this.lastLineInstance.unsubscribe();
+    }
+    if (this.workerDetails != null) {
+      this.workerDetails.unsubscribe();
+    }
+    this.lastLineInstance = this.db.object('WasteCollectionInfo/LastLineCompleted/' + this.selectedZone).valueChanges().subscribe(
+      lastLine => {
+        if (lastLine != null) {
+          this.progressData.currentLine = Number(lastLine) + 1;
+        }
+      });
     let totalLineData = this.db.object('WardLines/' + this.selectedZone).valueChanges().subscribe(
       totalLines => {
         totalLineData.unsubscribe();
         let workerDetailsdbPath = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/Summary';
         this.progressData.totalLines = Number(totalLines);
-        let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe(
+        this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe(
           workerData => {
             if (workerData != null) {
               if (workerData["completedLines"] != null) {
@@ -234,10 +253,12 @@ export class MapsComponent {
     this.map.setMapTypeId('styled_map');
   }
 
+
+
   setKml() {
     this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
       wardPath => {
-        new google.maps.KmlLayer({
+        this.zoneKML = new google.maps.KmlLayer({
           url: wardPath.toString(),
           map: this.map
         });
@@ -245,8 +266,12 @@ export class MapsComponent {
   }
 
   changeZoneSelection(filterVal: any) {
+    if (filterVal == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+    }
+    this.clearAllOnMap();
     this.activeZone = filterVal;
-    this.setMaps();
+    // this.setMaps();
     this.setKml();
     this.progressData.houses = 0;
     this.progressData.scanedHouses = 0;
@@ -260,40 +285,124 @@ export class MapsComponent {
     this.houseList = [];
     this.showVehicleMovement();
     this.getAllLinesFromJson();
-    setTimeout(() => {
-      this.plotLinesOnMap(this.lines);
-    }, 2000);
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
     $('#houseCount').hide();
+    $('#houseDetail').hide();
     this.getParshadHouse();
   }
 
-  getAllLinesFromJson() {
-
-    this.lines = [];
-    for (let i = 1; i < 500; i++) {
-      let wardLines = this.db.list('Defaults/WardLines/' + this.selectedZone + '/' + i + '/points').valueChanges().subscribe(
-        zoneData => {
-          wardLines.unsubscribe();
-          if (zoneData.length > 0) {
-            let lineData = zoneData;
-            var latLng = [];
-            for (let j = 0; j < lineData.length; j++) {
-              latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-            }
-            this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
-          }
-        });
+  clearAllOnMap() {
+    if (this.allMatkers.length > 0) {
+      for (let i = 0; i < this.allMatkers.length; i++) {
+        this.allMatkers[i]["marker"].setMap(null);
+      }
+      this.allMatkers = [];
     }
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        this.houseMarkerList[i]["marker"].setMap(null);
+      }
+      this.houseMarkerList = [];
+    }
+    if (this.zoneKML != null) {
+      this.zoneKML.setMap(null);
+    }
+    if (this.parhadhouseMarker != null) {
+      this.parhadhouseMarker.setMap(null);
+    }
+    if (this.marker != null) {
+      this.marker.setMap(null);
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
+    this.polylines = [];
   }
 
+  getAllLinesFromJson() {
+    this.lines = [];
+    this.polylines = [];
+    let wardLineCount = this.db.object('WardLines/' + this.selectedZone + '').valueChanges().subscribe(
+      lineCount => {
+        wardLineCount.unsubscribe();
+        if (lineCount != null) {
+          this.wardLines = Number(lineCount);
+          for (let i = 1; i < Number(lineCount); i++) {
+            let wardLines = this.db.list('Defaults/WardLines/' + this.selectedZone + '/' + i + '/points').valueChanges().subscribe(
+              zoneData => {
+                wardLines.unsubscribe();
+                if (zoneData.length > 0) {
+                  let lineData = zoneData;
+                  var latLng = [];
+                  for (let j = 0; j < lineData.length; j++) {
+                    latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
+                  }
+                  this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
+                  this.plotLineOnMap(i, latLng, (i - 1), this.selectedZone);
+                }
+              });
+          }
+        }
+      }
+    );
+    setTimeout(() => {
+      if (this.lines.length > 0) {
+        let latLngArray = [];
+        latLngArray = this.lines[0]["latlng"];
+        let lat = latLngArray[0]["lat"];
+        let lng = latLngArray[0]["lng"];
+        this.setMarker(lat, lng, this.wardStartUrl, null, "Ward Start", "ward");
+
+        latLngArray = this.lines[this.lines.length - 1]["latlng"];
+        lat = latLngArray[latLngArray.length - 1]["lat"];
+        lng = latLngArray[latLngArray.length - 1]["lng"];
+        this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward");
+      }
+    }, 1000);
+  }
+
+  plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
+    let dbPathLineStatus = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+    let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
+      status => {
+
+        if (wardNo == this.selectedZone) {
+
+          if (this.polylines[index] != undefined) {
+            this.polylines[index].setMap(null);
+          }
+          let line = new google.maps.Polyline({
+            path: latlng,
+            strokeColor: this.commonService.getLineColor(status),
+            strokeWeight: 2
+          });
+          this.polylines[index] = line;
+          this.polylines[index].setMap(this.map);
+          // let checkMarkerDetails = status != null ? true : false;
+
+          // if (status != null || Number(lastLine) == (lineNo - 1)) {
+          //   checkMarkerDetails = true;
+          //  }
+
+          let userType = localStorage.getItem('userType');
+          if (userType == "Internal User") {
+            let lat = latlng[0]["lat"];
+            let lng = latlng[0]["lng"];
+            this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo");
+          }
+        }
+
+      });
+  }
   getParshadHouse() {
     this.progressData.parshadName = "";
-    this.progressData.parshadMobile=""; 
+    this.progressData.parshadMobile = "";
     let dbPath = "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -306,7 +415,7 @@ export class MapsComponent {
             this.progressData.parshadMobile = data["mobile"];
           }
           let imgUrl = this.parshadImageUrl;
-          new google.maps.Marker({
+          this.parhadhouseMarker = new google.maps.Marker({
             position: { lat: Number(data["lat"]), lng: Number(data["lng"]) },
             map: this.map,
             icon: {
@@ -379,88 +488,37 @@ export class MapsComponent {
     if (this.vehicleLocationInstance != undefined) {
       this.vehicleLocationInstance.unsubscribe();
     }
-    this.vehicleLocationInstance = this.db.object('CurrentLocationInfo/' + this.selectedZone).valueChanges().subscribe(
+    let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
+    this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         if (data != undefined) {
-          let statusId = data["StatusId"];
-          let vehicleIcon = '../assets/img/tipper-green.png';
-          if (statusId == '3') {
-            vehicleIcon = '../assets/img/tipper-gray.png';
-          } else if (statusId == '2') {
-            vehicleIcon = '../assets/img/tipper-red.png';
-          }
-          if (data["CurrentLoc"] != null) {
-            let lat = data["CurrentLoc"]["lat"];
-            let lng = data["CurrentLoc"]["lng"];
-            this.marker.setMap(null);
-            this.marker = new google.maps.Marker({
-              position: { lat: Number(lat), lng: Number(lng) },
-              map: this.map,
-              icon: vehicleIcon,
-            });
-          }
-        }
-      });
-  }
-
-  plotLinesOnMap(zoneLines: any[]) {
-    this.houseMarkerList = [];
-    if (this.completedLinesInstance != undefined) {
-      this.completedLinesInstance.unsubscribe();
-    }
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + this.selectedZone).valueChanges().subscribe(
-      lastLine => {
-        this.polylines = [];
-        for (let index = 0; index < zoneLines.length; index++) {
-          let lineNo = index + 1;
-          this.progressData.currentLine = Number(lastLine) + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-              if (this.polylines[index] != undefined) {
-                this.polylines[index].setMap(null);
+          dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
+          let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
+            statusData => {
+              statusInstance.unsubscribe();
+              let statusId = statusData.toString();
+              let vehicleIcon = '../assets/img/tipper-green.png';
+              if (statusId == 'completed') {
+                vehicleIcon = '../assets/img/tipper-gray.png';
+              } else if (statusId == 'stopped') {
+                vehicleIcon = '../assets/img/tipper-red.png';
               }
-              let lineData = zoneLines.find(item => item.lineNo == lineNo);
-              if (lineData != undefined) {
-
-                let line = new google.maps.Polyline({
-                  path: lineData.latlng,
-                  strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+              if (data != null) {
+                let location = data.toString().split(",");
+                let lat = Number(location[0]);
+                let lng = Number(location[1]);
+                this.marker.setMap(null);
+                this.marker = new google.maps.Marker({
+                  position: { lat: Number(lat), lng: Number(lng) },
+                  map: this.map,
+                  icon: vehicleIcon,
                 });
-                this.polylines[index] = line;
-                this.polylines[index].setMap(this.map);
-                let checkMarkerDetails = status != null ? true : false;
-
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
-                  checkMarkerDetails = true;
-                }
-
-                let userType = localStorage.getItem('userType');
-                if (userType == "Internal User") {
-                  let lat = lineData.latlng[0]["lat"];
-                  let lng = lineData.latlng[0]["lng"];
-                  this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo");
-                }
-                lastLineDone.unsubscribe();
               }
             });
         }
       });
-
-    if (zoneLines.length > 0) {
-      let latLngArray = [];
-      latLngArray = zoneLines[0]["latlng"];
-      let lat = latLngArray[0]["lat"];
-      let lng = latLngArray[0]["lng"];
-      this.setMarker(lat, lng, this.wardStartUrl, null, "Ward Start", "ward");
-
-      latLngArray = zoneLines[zoneLines.length - 1]["latlng"];
-      lat = latLngArray[latLngArray.length - 1]["lat"];
-      lng = latLngArray[latLngArray.length - 1]["lng"];
-      this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward");
-    }
   }
+
 
   setMarker(lat: any, lng: any, markerURL: any, markerLabel: any, contentString: any, type: any) {
     let marker = new google.maps.Marker({
@@ -488,6 +546,7 @@ export class MapsComponent {
         infowindow.open(this.map, marker);
       });
     }
+    this.allMatkers.push({ marker });
   }
 
   getHouses() {
@@ -495,8 +554,11 @@ export class MapsComponent {
       this.houseList = [];
       this.progressData.houses = 0;
       this.progressData.scanedHouses = 0;
-      for (let i = 1; i < 500; i++) {
+      for (let i = 1; i < this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
+        let object = this.db.database.ref(housePath).child('key');
+
+
         let houseInstance = this.db.list(housePath).valueChanges().subscribe(
           houseData => {
             houseInstance.unsubscribe();
@@ -504,7 +566,7 @@ export class MapsComponent {
               for (let j = 0; j < houseData.length; j++) {
                 let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(',')[0];
                 let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(',')[1];
-                let rfid = houseData[j]["rfid"];
+                let cardNo = houseData[j]["cardNo"];
                 let isApproved = "no";
                 if (houseData[j]["isApproved"] != null) {
                   if (houseData[j]["isApproved"] == "yes") {
@@ -524,22 +586,24 @@ export class MapsComponent {
                   }
                 }
 
-                this.houseList.push({ markerType: markerType, lat: lat, lng: lng, rfid: rfid, isApproved: isApproved });
+                this.houseList.push({ markerType: markerType, lat: lat, lng: lng, cardNo: cardNo, isApproved: isApproved });
                 this.progressData.houses = Number(this.progressData.houses) + 1;
-                let scanCardPath = 'HousesCollectionInfo/' + this.selectedZone + '/' + this.toDayDate + '/' + i + "/" + rfid + "/scan-time";
+                let scanCardPath = 'HousesCollectionInfo/' + this.selectedZone + '/' + this.toDayDate + '/' + i + "/" + cardNo + "/scan-time";
                 let scanInfo = this.db.object(scanCardPath).valueChanges().subscribe(
                   scanTime => {
+
                     scanInfo.unsubscribe();
                     if (scanTime != null) {
                       this.progressData.scanedHouses = Number(this.progressData.scanedHouses) + 1;
-                      let houseDetails = this.houseList.find(item => item.rfid == rfid);
+                      let houseDetails = this.houseList.find(item => item.cardNo == cardNo);
                       if (houseDetails != undefined) {
                         houseDetails.markerType = "green";
                         this.plotHouses(houseDetails.markerType, houseDetails.lat, houseDetails.lng, isApproved);
                       }
                     }
                     else {
-                      let houseDetails = this.houseList.find(item => item.rfid == rfid);
+                      let houseDetails = this.houseList.find(item => item.cardNo == cardNo);
+
                       if (houseDetails != undefined) {
                         this.plotHouses(houseDetails.markerType, houseDetails.lat, houseDetails.lng, isApproved);
                       }
@@ -555,6 +619,8 @@ export class MapsComponent {
   }
 
   plotHouses(markerType: string, lat: any, lng: any, isApproved: any) {
+
+
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
       let imgUrl = "../assets/img/" + markerType + "-home.png";

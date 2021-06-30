@@ -301,35 +301,42 @@ export class RouteTrackingComponent {
           if (this.vehicleLocationInstance != undefined) {
             this.vehicleLocationInstance.unsubscribe();
           }
-          this.vehicleLocationInstance = this.db.object('CurrentLocationInfo/' + this.selectedZone).valueChanges().subscribe(
+          let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
+          this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
               if (data != undefined) {
-                let statusId = data["StatusId"];
-                let vehicleIcon = '';
-                if (this.vehicleName.includes("TRACTOR")) {
-                  vehicleIcon = this.getIcon("activeTractor");
-                  if (statusId == '3') {
-                    vehicleIcon = this.getIcon("deActiveTractor");
-                  } else if (statusId == '2') {
-                    vehicleIcon = this.getIcon("stopTractor");
-                  }
-                }
-                else {
-                  vehicleIcon = this.getIcon("activeVehicle");
-                  if (statusId == '3') {
-                    vehicleIcon = this.getIcon("deActiveVehicle");
-                  } else if (statusId == '2') {
-                    vehicleIcon = this.getIcon("stopVehicle");
-                  }
-                }
-                let lat = data["CurrentLoc"]["lat"];
-                let lng = data["CurrentLoc"]["lng"];
-                this.marker.setMap(null);
-                this.marker = new google.maps.Marker({
-                  position: { lat: Number(lat), lng: Number(lng) },
-                  map: this.map,
-                  icon: vehicleIcon,
-                });
+                dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
+                let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  statusData => {
+                    statusInstance.unsubscribe();
+                    let statusId = statusData.toString();
+                    let vehicleIcon = '';
+                    if (this.vehicleName.includes("TRACTOR")) {
+                      vehicleIcon = this.getIcon("activeTractor");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveTractor");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopTractor");
+                      }
+                    }
+                    else {
+                      vehicleIcon = this.getIcon("activeVehicle");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveVehicle");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopVehicle");
+                      }
+                    }
+                    let location = data.toString().split(",");
+                    let lat = Number(location[0]);
+                    let lng = Number(location[1]);
+                    this.marker.setMap(null);
+                    this.marker = new google.maps.Marker({
+                      position: { lat: Number(lat), lng: Number(lng) },
+                      map: this.map,
+                      icon: vehicleIcon,
+                    });
+                  });
               }
             });
         }

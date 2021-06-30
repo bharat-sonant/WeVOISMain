@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 })
 export class UserListComponent implements OnInit {
 
-  constructor(private router: Router, public usrService: UserService, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
+  constructor(private router: Router,public usrService: UserService, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
 
   userRecord: any[];
   User: Users[];
@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
     this.commonService.chkUserPermission("Users");
     this.dataState();
     this.getUserList();
-  }
+  } 
 
   getUserList() {
     let index: any;
@@ -52,10 +52,10 @@ export class UserListComponent implements OnInit {
               if (data["isDelete"] == "0") {
                 this.userRecord.push({ uid: data["uid"], name: data["name"], email: data["email"], mobile: data["mobile"], userType: data["userType"], password: data["password"], $Key: lineNo, imgUrl: imgUrl, utitle: utitle });
               }
-              // myUser.unsubscribe();
+             // myUser.unsubscribe();
             });
         }
-        // MUser.unsubscribe();
+       // MUser.unsubscribe();
       });
   }
 
@@ -73,16 +73,15 @@ export class UserListComponent implements OnInit {
         closeButton: true,
         toastClass: "alert alert-info alert-with-icon",
         positionClass: 'toast-bottom-right',
-
+        
       }); // Alert message will show up when student successfully deleted.
     }
     //this.getUserList();
   }
 
+
   addNew() {
     this.router.navigate(['/' + this.cityName + '/useradd']);
   }
-
-
 
 }

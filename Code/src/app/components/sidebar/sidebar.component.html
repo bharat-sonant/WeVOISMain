@@ -1,39 +1,26 @@
-
-<div class="logo"> 
-    <a [routerLink]="['/home']" class="simple-text logo-mini">
-      <div class="logo-img">
-          <img src="./assets/img/wevois-logo-white.png"/>
-      </div>
+<div class="logo">
+    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
+        <div class="logo-img">
+            <img src="./assets/img/wevois-logo-white.png" />
+        </div>
     </a><br>
-    <a [routerLink]="['/home']" class="simple-text logo-noraml">
+    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml">
         WeVOIS
     </a>
 </div>
 
 <!------Shubham 1 Style Start---------->
-<!-- <div class="sidebar-wrapper">
-  <ul class="nav">
-      <li routerLinkActive="active" *ngFor="let usr of accessList">
-          <a [routerLink]="[usr.url]" >
-              <i class="{{usr.img}}"></i>
-              <p>{{usr.name}}</p>
-          </a>
-      </li>
-      <li >
-          <a href="/logout" >
-              <i class="fas fa-sign-out-alt"></i>
-              <p>Log Out</p>
-          </a>
-      </li>
-  </ul>
-</div> -->
-<!------Shubham 1 Style End---------->
-
-<!------Shubham 2 Style Start---------->
 <div class="sidebar-wrapper">
     <ul class="nav">
+        <li>
+            <select id="drpMainCity" (change)="changeCity();">
+                <option value="sikar">Sikar</option>
+                <option value="reengus">Reengus</option>
+                <option value="jaipur">Jaipur</option>
+            </select>
+        </li>
         <li routerLinkActive="active" *ngFor="let usr of accessList">
-            <a (click)="getPage(usr.url)" [routerLink]="[usr.url]" >
+            <a [routerLink]="[usr.url]" (click)="getPage(usr.url)">
                 <i class="{{usr.img}}"></i>
                 <p>{{usr.name}}</p>
             </a>
@@ -43,13 +30,28 @@
                 <i class="fas fa-sign-out-alt"></i>
                 <p>Log Out</p>
             </a>
-           <!--  <a  href="/logout"  data-toggle="modal" data-target="#exampleModalCenter">
-                <i class="fas fa-sign-out-alt"></i>
-                <p>Log Out</p>
-            </a>-->
         </li>
     </ul>
-</div> 
+</div>
+<!------Shubham 1 Style End---------->
+
+<!------Shubham 2 Style Start---------->
+<!-- <div class="sidebar-wrapper">
+    <ul class="nav">
+        <li *ngFor="let usr of accessList">
+            <a (click)="getPage(usr.url)" >
+                <i class="{{usr.img}}"></i>
+                <p>{{usr.name}}</p>
+            </a>
+        </li>
+        <li>
+            <a href="/logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <p>Log Out</p>
+            </a>
+        </li>
+    </ul>
+</div>  -->
 <!------Shubham 2 Style End---------->
 
 <!------Harendra Sir Style Start---------->
@@ -70,9 +72,9 @@
   </ul>
 </div>  -->
 <!------Harendra Sir Style End---------->
-  
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">

@@ -3,6 +3,9 @@
     <div class="col-md-2">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
+        <option value="0" >
+          -- Select Zone --
+        </option>
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
           ngSelected="zone.zoneNo == selectedZone?'selected':''">
           {{zone.zoneName}}
@@ -34,7 +37,7 @@
 
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
 
-<div class="driver-helper-box">
+<!-- <div class="driver-helper-box">
   <div class="driver">
     <div class="row">
       <div class="col-4 align-self-center">
@@ -70,6 +73,40 @@
       </div>
     </div>
   </div>
+</div> -->
+
+<div class="driver-helper-box">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="main-box">
+        <div class="designation">
+        <h5> D </h5>
+      </div>
+      <div class="all-details">
+        <h6>{{progressData.driverName}} <br> 
+        <p>{{progressData.driverMobile}}</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> H </h5>
+      </div>
+      <div class="all-details">
+        <h6>{{progressData.helperName}} <br> 
+        <p>{{progressData.helperMobile}}</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> P </h5>
+      </div>
+      <div class="all-details">
+        <h6>{{progressData.parshadName}} <br> 
+        <p>{{progressData.parshadMobile}}</p> </h6>
+      </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="line-details-box">
@@ -93,13 +130,13 @@
       <p>Current Lines</p>
     </h3>
   </div>
-  <div class="lines">
-    <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;">km</span> 
+  <div class="lines"> 
+    <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span> 
       <p>Total Ward Length</p>
     </h3>
   </div>
   <div class="lines2">
-    <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;">km</span> 
+    <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span> 
       <p>Current Ward Length</p>
     </h3>
   </div>

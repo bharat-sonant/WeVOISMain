@@ -23,7 +23,7 @@ export class PetrolInventoryListComponent implements OnInit {
   vehicleAllList: any[] = [];
   totalLiters: any = 0;
   totalAmount: any = 0;
-  cityName: any;
+  cityName:any;
   costData: costDatail =
     {
       totalLiters: "0.000",
@@ -170,7 +170,7 @@ export class PetrolInventoryListComponent implements OnInit {
               for (let i = 0; i < keyArray.length - 1; i++) {
                 let index = keyArray[i];
                 if (data[index]["isDelete"] == 0) {
-                  this.averageList.push({ km: data[index]["vehicleMeterReading"], petrol: data[index]["liters"], date: monthDate });
+                  this.averageList.push({ km: data[index]["vehicleMeterReading"], petrol: data[index]["liters"],date:monthDate });
                 }
               }
             }
@@ -207,7 +207,7 @@ export class PetrolInventoryListComponent implements OnInit {
             avgrage = Number((Km / petrol).toFixed(2))
           }
         }
-
+                
         this.db.object("Inventory/PetrolData/" + year + "/" + monthName + "/Vehicles/" + vehicleNo).update({
           "average": avgrage,
           "km": Km,
@@ -306,7 +306,8 @@ export class PetrolInventoryListComponent implements OnInit {
                     this.totalLiters = this.totalLiters + Number(data[index]["liters"]);
                     this.totalAmount = this.totalAmount + Number(data[index]["amount"]);
                     let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + this.vehicleAllList[i]["vehicle"] + "%2F" + data[index]["slipImage"] + "?alt=media";
-                    if (new Date(monthDate) <= new Date("2021-03-16")) {
+                    if(new Date(monthDate)<=new Date("2021-03-16"))
+                    { 
                       slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
                     }
                     this.petrolList.push({ entryNo: index, km: km, date: monthDate, vehicleNo: this.vehicleAllList[i]["vehicle"], liters: data[index]["liters"], price: Number(data[index]["price"]).toFixed(2), amount: data[index]["amount"], userId: this.userId, createdBy: data[index]["userId"], slipImageURL: slipImageURL, remark: data[index]["remark"] });
@@ -337,7 +338,8 @@ export class PetrolInventoryListComponent implements OnInit {
                   this.totalLiters = this.totalLiters + Number(data[index]["liters"]);
                   this.totalAmount = this.totalAmount + Number(data[index]["amount"]);
                   let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + vehicle + "%2F" + data[index]["slipImage"] + "?alt=media";
-                  if (new Date(monthDate) <= new Date("2021-03-16")) {
+                   if(new Date(monthDate)<=new Date("2021-03-16"))
+                  { 
                     slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
                   }
                   this.petrolList.push({ entryNo: index, km: km, date: monthDate, vehicleNo: vehicle, liters: data[index]["liters"], price: Number(data[index]["price"]).toFixed(2), amount: data[index]["amount"], userId: this.userId, createdBy: data[index]["userId"], slipImageURL: slipImageURL, remark: data[index]["remark"] });
@@ -350,10 +352,12 @@ export class PetrolInventoryListComponent implements OnInit {
         });
     }
     setTimeout(() => {
-      if (this.petrolList.length > 0) {
+      if(this.petrolList.length>0)
+      {
         $('#divMessage').hide();
       }
-      else {
+      else
+      {
         $('#divMessage').show();
       }
     }, 1000);
@@ -419,11 +423,9 @@ export class PetrolInventoryListComponent implements OnInit {
     $('#vehicleList').hide();
     this.getPetrolList(e.target.innerHTML);
   }
-
   addNew() {
     this.router.navigate(['/' + this.cityName + '/petrol-inventory-entry']);
   }
-
 }
 
 export class costDatail {

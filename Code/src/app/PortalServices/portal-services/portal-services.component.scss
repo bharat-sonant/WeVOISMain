@@ -219,7 +219,10 @@ text-transform: uppercase;
    text-align: center;
    cursor: pointer;
    color: #000;
-   display: table;
+   //display: table;
+   display: flex;
+   justify-content:center;
+   align-items: center;
 
    /* "to left" / "to right" - affects initial color */
    //background: linear-gradient(to left, #e7e7e7 50%, #0ba118 50%) right;
@@ -294,8 +297,10 @@ text-transform: uppercase;
     transform: scale(1.03);
 }
 .vertical{
-   display: table-cell;
-   vertical-align: middle;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
 }
 i{
    font-size: 48px;

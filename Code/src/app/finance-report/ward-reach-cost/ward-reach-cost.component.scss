@@ -73,11 +73,15 @@ height: 42px;
   position: relative;
   border-radius: 5px;
 }
+.tableFixHead thead {
+  background-color: #f1f1f1;
+}
 .tableFixHead thead th {
   position: sticky;
   top: 0;
-  background-color: #fff;
+  background-color: #f1f1f1;
   width: 200px;
+  z-index: 11;
 }
 table {
   border-collapse: collapse;

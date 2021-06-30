@@ -13,10 +13,7 @@ export interface Users {
     notificationSkippedLines:any;
     notificationPickDustbins:any;
     expiryDate:any;
-    notificationGeoSurfing:any;
-    officeAppUserId:any;
-    empLocation:any;
-    isTaskManager:any;
+    notificationGeoSurfing:any
 }
 
 export interface UserAccess {

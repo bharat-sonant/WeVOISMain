@@ -18,6 +18,8 @@ export class PortalAccessComponent implements OnInit {
   getCity(city:any)
   {
     localStorage.setItem('cityName', city);
+    
+    localStorage.setItem('isCityChange',"no");
     let path=city+"/login";
     window.location.href=path;
   }

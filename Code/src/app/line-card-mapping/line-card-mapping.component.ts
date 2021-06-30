@@ -39,6 +39,9 @@ export class LineCardMappingComponent {
   centerPoint: any;
   selectedCardDetails: any[];
   selectedCardCount = 0;
+  markerList: any[] = [];
+  isFirst = true;
+  previousLine: any;
 
   cardDetails: CardDetails =
     {
@@ -60,7 +63,6 @@ export class LineCardMappingComponent {
     };
 
   ngOnInit() {
-
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();
@@ -73,7 +75,6 @@ export class LineCardMappingComponent {
       $('.navbar-toggler').show();
       $('#divMap').css("height", $(window).height() - 80);
     }, 2000);
-
   }
 
   setMap() {
@@ -98,125 +99,148 @@ export class LineCardMappingComponent {
 
   changeZoneSelection(filterVal: any) {
     this.activeZone = filterVal;
+    $('#txtLineNo').val("1");
+    this.loadData();
   }
 
   loadData() {
+    this.isFirst = true;
     $("#txtNewLine").val('');
+    this.cardDetails.totalCardOnLine = 0;
     this.selectedZone = this.activeZone;
+    if (this.selectedZone == undefined || this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
     this.polylines = [];
     this.selectedCardDetails = [];
     this.setMap();
     this.getLinesFromJson();
-    this.cardDetails.selectedHouseCount = this.selectedCardDetails.length;
+    this.cardDetails.selectedHouseCount = 0;
+    this.cardDetails.totalCardOnLine = 0;
+  }
+
+  nextPrevious(type: any) {
+    if (this.selectedZone == undefined || this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+    let currentLine = 1;
+    let lineNo = this.previousLine;
+    if (lineNo == "") {
+      $('#txtLineNo').val(currentLine);
+      this.getLineData();
+    }
+    else if (type == "next") {
+      currentLine = Number(lineNo) + 1;
+      $('#txtLineNo').val(currentLine);
+      this.getLineData();
+    }
+    else {
+      if (Number(lineNo) != 1) {
+        currentLine = Number(lineNo) - 1;
+        $('#txtLineNo').val(currentLine);
+        this.getLineData();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "line number not less than 1 !!!");
+      }
+    }
   }
 
   moveToNewLine() {
-
     if ($("#txtNewLine").val() == "") {
-      this.showMessagebox("Please enter line no.");
-    } else {
+      this.commonService.setAlertMessage("error", "Please enter line no.");
+      return;
+    }
+    if (this.selectedCardDetails.length == 0) {
+      this.commonService.setAlertMessage("error", "Please select atleast one card to move");
+      return;
+    }
+    if (this.selectedCardDetails[0]["line"] == $("#txtNewLine").val()) {
+      this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
+      return;
+    }
 
-      if (this.selectedCardDetails.length == 0) {
-        this.showMessagebox("Please select atleast one card to move");
+    for (let index = 0; index < this.selectedCardDetails.length; index++) {
+      const element = this.selectedCardDetails[index];
+      let cardNo = element["cardNo"];
+      let mobile = element["mobile"];
+      let surveyorId = element["surveyorId"];
+      if (element["surveyorId"] == undefined) {
+        surveyorId = "";
       }
 
-      for (let index = 0; index < this.selectedCardDetails.length; index++) {
-        const element = this.selectedCardDetails[index];
-        let cardNo = element["cardNo"];
-        let mobile = element["mobile"];
-        let surveyorId = element["surveyorId"];
-        if (element["surveyorId"] == undefined) {
-          surveyorId = "";
-        }
+      let createdDate = element["createdDate"];
+      if (element["createdDate"] == undefined) {
+        createdDate = "";
+      }
 
-        let createdDate = element["createdDate"];
-        if (element["createdDate"] == undefined) {
-          createdDate = "";
-        }
+      let approverId = element["approverId"];
+      if (element["approverId"] == undefined) {
+        approverId = "";
+      }
 
-        let approverId = element["approverId"];
-        if (element["approverId"] == undefined) {
-          approverId = "";
-        }
+      let approvingDate = element["approvingDate"];
+      if (element["approvingDate"] == undefined) {
+        approvingDate = "";
+      }
 
-        let approvingDate = element["approvingDate"];
-        if (element["approvingDate"] == undefined) {
-          approvingDate = "";
-        }
+      let isApproved = element["isApproved"];
+      if (element["isApproved"] == undefined) {
+        isApproved = "";
+      }
 
-        let isApproved = element["isApproved"];
-        if (element["isApproved"] == undefined) {
-          isApproved = "";
-        }
+      this.db.object('Houses/' + this.selectedZone + '/' + $("#txtNewLine").val() + '/' + cardNo).set({
+        address: element["address"] == undefined ? "" : element["address"],
+        approverId: approverId,
+        approvingDate: approvingDate,
+        cardNo: element["cardNo"] == undefined ? "" : element["cardNo"],
+        cardType: element["cardType"] == undefined ? "" : element["cardType"],
+        colonyName: element["colonyName"] == undefined ? "" : element["colonyName"],
+        createdDate: createdDate,
+        houseType: element["houseType"] == undefined ? "" : element["houseType"],
+        isApproved: isApproved,
+        isNameCorrect: element["isNameCorrect"] == undefined ? "" : element["isNameCorrect"],
+        latLng: element["latLng"] == undefined ? "" : element["latLng"],
+        line: $("#txtNewLine").val(),
+        mobile: element["mobile"] == undefined ? "" : element["mobile"],
+        name: element["name"] == undefined ? "" : element["name"],
+        phaseNo: element["phaseNo"] == undefined ? "" : element["phaseNo"],
+        rfid: element["rfid"] == undefined ? "" : element["rfid"],
+        surveyorId: surveyorId,
+        ward: element["ward"] == undefined ? "" : element["ward"],
 
+      });
 
+      let path = 'Houses/' + this.selectedZone + '/' + element["line"] + '/' + cardNo;
+      this.db.object(path).remove();
 
+      // modify card ward mapping
+      this.db.object('CardWardMapping/' + element["cardNo"]).set({
+        line: $("#txtNewLine").val(),
+        ward: this.selectedZone
+      });
 
-        this.db.object('Houses/' + this.selectedZone + '/' + $("#txtNewLine").val() + '/' + cardNo).set({
-          address: element["address"] == undefined ? "" : element["address"],
-          approverId: approverId,
-          approvingDate: approvingDate,
-          cardNo: element["cardNo"] == undefined ? "" : element["cardNo"],
-          cardType: element["cardType"] == undefined ? "" : element["cardType"],
-          colonyName: element["colonyName"] == undefined ? "" : element["colonyName"],
-          createdDate: createdDate,
-          houseType: element["houseType"] == undefined ? "" : element["houseType"],
-          isApproved: isApproved,
-          isNameCorrect: element["isNameCorrect"] == undefined ? "" : element["isNameCorrect"],
-          latLng: element["latLng"] == undefined ? "" : element["latLng"],
-          line: $("#txtNewLine").val(),
-          mobile: element["mobile"] == undefined ? "" : element["mobile"],
-          name: element["name"] == undefined ? "" : element["name"],
-          phaseNo: element["phaseNo"] == undefined ? "" : element["phaseNo"],
-          rfid: element["rfid"] == undefined ? "" : element["rfid"],
-          surveyorId: surveyorId,
-          ward: element["ward"] == undefined ? "" : element["ward"],
-
-        });
-
-
-        let path = 'Houses/' + this.selectedZone + '/' + element["line"] + '/' + cardNo;
-        this.db.object(path).remove();
-
-        // modify card ward mapping
-        this.db.object('CardWardMapping/' + element["cardNo"]).set({
+      if (mobile != "") {
+        // modify house ward mapping
+        this.db.object('HouseWardMapping/' + mobile).set({
           line: $("#txtNewLine").val(),
           ward: this.selectedZone
         });
-
-        if (mobile != "") {
-          // modify house ward mapping
-          this.db.object('HouseWardMapping/' + mobile).set({
-            line: $("#txtNewLine").val(),
-            ward: this.selectedZone
-          });
-        }
-
-        setTimeout(() => {
-          this.loadData();
-        }, 3000);
       }
     }
-
-
-
-  }
-
-  showMessagebox(message: string) {
-    let toast = this.toastr.error('<span class="now-ui-icons ui-1_bell-53"></span> ' + message + '.', '', {
-      disableTimeOut: true,
-      closeButton: true,
-      enableHtml: true,
-      toastClass: "alert alert-danger alert-with-icon",
-      positionClass: 'toast-bottom-right',
-      tapToDismiss: false
-    });
+    setTimeout(() => {
+      this.commonService.setAlertMessage("success", "Card moved to Line " + $("#txtNewLine").val() + " successfully");
+      $("#txtNewLine").val("");
+      this.getLineData();
+    }, 3000);
   }
 
   getLinesFromJson() {
     let wardLines = this.db.object('Defaults/WardLines/' + this.selectedZone).valueChanges().subscribe(
       zoneLine => {
-
+        wardLines.unsubscribe();
         var linePath = [];
         for (let i = 1; i < 10000; i++) {
 
@@ -229,30 +253,28 @@ export class LineCardMappingComponent {
 
           linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
         }
-
         this.allLines = linePath;
         this.drawAllLines();
-
       });
   }
 
   drawAllLines() {
-
+    this.cardDetails.selectedHouseCount = 0;
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
     this.polylines = [];
     let requestedLineNo = $("#txtLineNo").val();
-
+    this.previousLine = requestedLineNo;
     for (let index = 0; index < this.allLines.length; index++) {
-
       if (this.polylines[index] != undefined) {
         this.polylines[index].setMap(null);
       }
-
       let lineNo = index + 1;
-
       let lineData = this.allLines.find(item => item.lineNo == lineNo);
-
       if (lineData != undefined) {
-
         let strokeWeight = 2;
         let status = "";
         if (lineNo == requestedLineNo) {
@@ -265,7 +287,6 @@ export class LineCardMappingComponent {
           strokeColor: this.commonService.getLineColor(status),
           strokeWeight: strokeWeight
         });
-
         this.polylines[index] = line;
         this.polylines[index].setMap(this.map);
         this.setLineInfo(lineData, lineNo);
@@ -273,31 +294,66 @@ export class LineCardMappingComponent {
     }
 
     setTimeout(() => {
-
       let lineNo = $("#txtLineNo").val();
       let firstLine = this.allLines.find(item => item.lineNo == Number(lineNo));
       this.centerPoint = firstLine.latlng[0];
-      this.map.setZoom(19);
+      if (this.isFirst == true) {
+        this.map.setZoom(19);
+        this.isFirst = false;
+      }
       this.map.setCenter(this.centerPoint);
-      this.showHouses(lineNo)
-    }, 2000);
+      this.showHouses(lineNo);
 
+    }, 2000);
+  }
+
+  getLineData() {
+    this.cardDetails.selectedHouseCount = 0;
+    this.cardDetails.totalCardOnLine = 0;
+    // previousLine
+    let firstLine = this.allLines.find(item => item.lineNo == Number(this.previousLine));
+    this.polylines[Number(this.previousLine) - 1].setMap(null);
+    let line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor(""),
+      strokeWeight: 2
+    });
+    this.polylines[Number(this.previousLine) - 1] = line;
+    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
+
+    // new Line
+    let lineNo = $("#txtLineNo").val();
+    this.polylines[Number(lineNo) - 1].setMap(null);
+    firstLine = this.allLines.find(item => item.lineNo == Number(lineNo));
+    this.centerPoint = firstLine.latlng[0];
+    line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor("requestedLine"),
+      strokeWeight: 5
+    });
+    this.polylines[Number(lineNo) - 1] = line;
+    this.polylines[Number(lineNo) - 1].setMap(this.map);
+    this.previousLine = lineNo;
+    this.map.setCenter(this.centerPoint);
+    this.showHouses(lineNo);
   }
 
   showHouses(lineNo: any) {
-
+    this.cardDetails.totalCardOnLine = 0;
     this.selectedCardDetails = [];
     let housePath = 'Houses/' + this.selectedZone + '/' + lineNo;
-    let isSelected = false;
-    let markers = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        this.markerList[i]["marker"].setMap(null);
+      }
+    }
+    this.markerList = [];
     let housesData = this.db.object(housePath).valueChanges().subscribe(
       data => {
-
+        housesData.unsubscribe();
         if (data != null) {
           var keyArray = Object.keys(data);
-
           for (let index = 0; index < keyArray.length; index++) {
-
             const cardNo = keyArray[index];
             let cardData = data[cardNo];
             if (cardData["latLng"] != undefined) {
@@ -307,87 +363,69 @@ export class LineCardMappingComponent {
               if (cardData["phaseNo"] == "1") {
                 url = "../assets/img/blue-home.png";
               }
-              //if (cardData["phaseNo"] == "2") {
-              let marker = new google.maps.Marker({
-                position: { lat: Number(latLng[0]), lng: Number(latLng[1]) },
-                icon: {
-                  url: url,
-                }
-              });
-
-              marker.addListener('click', (e) => {
-                let lineData = this.selectedCardDetails.find(item => item.cardNo == cardData["cardNo"]);
-                if (lineData == undefined) {
-                  this.selectedCardDetails.push({
-                    address: cardData["address"],
-                    cardNo: cardData["cardNo"],
-                    cardType: cardData["cardType"],
-                    colonyName: cardData["colonyName"],
-                    createdDate: cardData["createdDate"],
-                    houseType: cardData["houseType"],
-                    isNameCorrect: cardData["isNameCorrect"],
-                    latLng: cardData["latLng"],
-                    line: cardData["line"],
-                    mobile: cardData["mobile"],
-                    name: cardData["name"],
-                    phaseNo: cardData["phaseNo"],
-                    rfid: cardData["rfid"],
-                    surveyorId: cardData["surveyorId"],
-                    ward: cardData["ward"],
-                    approverId: cardData["approverId"],
-                    approvingDate: cardData["approvingDate"],
-                    isApproved: cardData["isApproved"],
-                  });
-
-                  isSelected = true;
-                } else {
-                  this.selectedCardDetails = this.selectedCardDetails.filter(item => item !== lineData);
-                  isSelected = false;
-                }
-
-                this.setMarkerAsSelected(markers, latLng[0], latLng[1], isSelected);
-                this.cardDetails.selectedHouseCount = this.selectedCardDetails.length;
-
-              });
-
-              markers.push(marker);
-              this.plotAllMarkers(markers);
-              //}
+              this.setMarkers(latLng[0], latLng[1], url, cardData, cardNo);
             }
           }
         }
       });
   }
 
-  plotAllMarkers(markers: any) {
+  setMarkers(lat: any, lng: any, url: any, cardData: any, cardNo: any) {
+    let isSelected = false;
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      icon: {
+        url: url,
+      }
+    });
 
-    this.cardDetails.totalCardOnLine = markers.length;
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(this.map);
-    }
+    marker.addListener('click', (e) => {
+      let lineData = this.selectedCardDetails.find(item => item.cardNo == cardNo);
+      if (lineData == undefined) {
+        this.selectedCardDetails.push({
+          address: cardData["address"],
+          cardNo: cardData["cardNo"],
+          cardType: cardData["cardType"],
+          colonyName: cardData["colonyName"],
+          createdDate: cardData["createdDate"],
+          houseType: cardData["houseType"],
+          isNameCorrect: cardData["isNameCorrect"],
+          latLng: cardData["latLng"],
+          line: cardData["line"],
+          mobile: cardData["mobile"],
+          name: cardData["name"],
+          phaseNo: cardData["phaseNo"],
+          rfid: cardData["rfid"],
+          surveyorId: cardData["surveyorId"],
+          ward: cardData["ward"],
+          approverId: cardData["approverId"],
+          approvingDate: cardData["approvingDate"],
+          isApproved: cardData["isApproved"],
+        });
+        isSelected = true;
+      } else {
+        this.selectedCardDetails = this.selectedCardDetails.filter(item => item !== lineData);
+        isSelected = false;
+      }
+      this.setMarkerAsSelected(marker, isSelected);
+      this.cardDetails.selectedHouseCount = this.selectedCardDetails.length;
+    });
+    marker.setMap(this.map);
+    this.markerList.push({ marker });
+    this.cardDetails.totalCardOnLine = this.markerList.length;
   }
 
-  setMarkerAsSelected(markers: any, lat: string, lng: string, isSelected: boolean) {
-
-
-    for (var i = 0; i < markers.length; i++) {
-      let marketLat = markers[i].position.lat();
-      let markerLng = markers[i].position.lng();
-      if (marketLat == lat && markerLng == lng) {
-        if (isSelected) {
-          markers[i].icon.url = "../assets/img/green-home.png";
-        } else {
-          markers[i].icon.url = "../assets/img/red-home.png";
-        }
-
-        markers[i].setMap(null);
-        markers[i].setMap(this.map);
-      }
+  setMarkerAsSelected(marker: any, isSelected: boolean) {
+    if (isSelected) {
+      marker.icon.url = "../assets/img/green-home.png";
+    } else {
+      marker.icon.url = "../assets/img/red-home.png";
     }
+    marker.setMap(null);
+    marker.setMap(this.map);
   }
 
   setLineInfo(lineData: any, lineNo: any) {
-
     let statusString = '<div style="margin:10px;background-color: white;float: left;">';
     statusString += '<div style="width: 100%;text-align:center;font-size:13px;color:black;font-weight:bold">' + lineNo;
     statusString += '</div></div>';
@@ -407,7 +445,6 @@ export class LineCardMappingComponent {
   }
 }
 
-
 export class CardDetails {
   mobile: string;
   address: string;
@@ -425,5 +462,3 @@ export class CardDetails {
   selectedHouseCount: number;
   totalCardOnLine: number;
 }
-
-

@@ -12,6 +12,7 @@
 .custom-date-input{   
 height: 42px;
 }
+
 .caret-select{margin-top: 0px!important; margin-left:10px!important;
   border-radius: 5px;
   padding:10px; border:none!important;  width: 97%;}
@@ -90,6 +91,7 @@ table{
   background-color: #f1f1f1;
   width: 100px;
   color: black;
+  z-index: 11;
 }
 table {
   border-collapse: collapse;
@@ -196,6 +198,7 @@ margin: 0px!important;
   border-left: 1px solid #0ba118;
   width: 370px;
   box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+  z-index: 999;
   }
   #myBox .main-info{
   padding: 7px 15px;
@@ -345,7 +348,7 @@ label{
     top: 16px;  
     position: absolute;
     background-color: #fff;
-    width: 400px;
+    width: 450px;
     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
     }
   #accordion .panel{
@@ -568,6 +571,7 @@ top: 0;
 height: 35px;
 color: #000;
 background-color: #f1f1f1;
+z-index: 333;
 }
 .seq-scroll::-webkit-scrollbar {
 display: block;

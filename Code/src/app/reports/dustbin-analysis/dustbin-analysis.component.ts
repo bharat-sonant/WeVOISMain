@@ -197,7 +197,6 @@ export class DustbinAnalysisComponent implements OnInit {
               pickingPlanWithDatePath.unsubscribe();
             });
 
-
         } else {
           let bins = pickingPlanData["bins"];
           this.getBinsDetail(bins, planId);
@@ -219,7 +218,6 @@ export class DustbinAnalysisComponent implements OnInit {
         dustbinAddress => {
           let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe(
             dustbinHistoryData => {
-
               this.dustbinList.push({
                 dustbinId: binId,
                 address: dustbinAddress,
@@ -241,7 +239,6 @@ export class DustbinAnalysisComponent implements OnInit {
                 filledPercentage: this.checkAnalysisValues(dustbinHistoryData, 'filledPercentage'),
                 analysisRemark: this.checkAnalysisValues(dustbinHistoryData, 'remark'),
               });
-
 
               if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
                 firstIndexNeedtobeSelected = index;
@@ -273,7 +270,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let plan = this.planList.find(item => item.planId == planId);
     this.commonService.getEmplyeeDetailByEmployeeId(plan.driver).then((employee) => this.planDetail.driverName = employee["name"] + " [D]");
     this.commonService.getEmplyeeDetailByEmployeeId(plan.helper).then((employee) => this.planDetail.helper = employee["name"] + " [H1]");
-    if (plan.secondHelper! = undefined) {
+    if (plan.secondHelper != undefined) {
       this.commonService.getEmplyeeDetailByEmployeeId(plan.secondHelper).then((employee) => this.planDetail.secondHelper = employee["name"] + " [H2]");
     } else {
       this.planDetail.secondHelper = "Not Assigned";
@@ -478,7 +475,6 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   showDustbinData(index: any) {
-
     if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
       $('#ImageLoader').show();
     }
@@ -519,6 +515,7 @@ export class DustbinAnalysisComponent implements OnInit {
   setFillingPercentage() {
     if (this.binDetail.filledPercentage == undefined || this.binDetail.filledPercentage == "") {
       this.binDetail.filledPercentage = "0";
+      this.fillPercentage = "0";
     }
 
     let element = <HTMLInputElement>document.getElementById('radio' + this.binDetail.filledPercentage + '');
@@ -526,7 +523,6 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setRemark() {
-
 
     let chkRemark1 = <HTMLInputElement>document.getElementById('chkRemark1');
     let chkRemark2 = <HTMLInputElement>document.getElementById('chkRemark2');
@@ -639,7 +635,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let data = this.dustbinList.find(item => item.dustbinId == this.binDetail.binId);
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
-    data.analysisRemarks = this.getRemarks();
+    data.analysisRemark = this.getRemarks();
     data.filledPercentage = this.fillPercentage;
     data.iconClass = "fas fa-diagnoses";
 
@@ -745,7 +741,7 @@ export class DustbinAnalysisComponent implements OnInit {
       this.currentSlide = this.currentSlide + 1;
     }
 
-    for (let i = 1; i <= this.maxSlideCount; i++) {
+    for (let i = 1; i <= 4; i++) {
 
       let slideImage = <HTMLImageElement>document.getElementById("img" + i);
       this.removeOldClasses(i);
@@ -762,7 +758,6 @@ export class DustbinAnalysisComponent implements OnInit {
         $('#i' + i).hide();
       }
     }
-
   }
 
   removeOldClasses(index: any) {

@@ -6,13 +6,17 @@
     </div>
     <div style="float: left;" style="width: 31%;text-align: right;margin-right: 10px;">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-        style="position: absolute;top: -3px;right: 208px;">
+        style="position: absolute;top: -3px;right: 315px;">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
           {{zone.zoneName}}
         </option>
       </select>
-      <input id="txtLineNo" class="txt-lineNo" type="text" value="1" style="position: absolute;top: -3px;right: 140px;">
-      <button class="save-btn btn" type="submit" (click)="loadData();"
+      <button class="save-btn btn" type="submit" (click)="nextPrevious('pre');"
+        style="position: absolute;top: -3px;right: 260px; width: 40px;"> << </button>
+      <input id="txtLineNo" class="txt-lineNo" type="text" value="1" style="position: absolute;top: -3px;right: 190px;">
+      <button class="save-btn btn" type="submit" (click)="nextPrevious('next');"
+      style="position: absolute;top: -3px;right: 140px; width: 40px;"> >> </button>
+      <button class="save-btn btn" type="submit" (click)="getLineData();"
         style="position: absolute;top: -3px;right: 15px;"> Show Houses</button>
     </div>
   </div>
@@ -25,17 +29,18 @@
   <div id="divDetails">
     <div class="div-values div-style">
       <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.totalCardOnLine}}</span>
-       Cards on Line
+      Cards on Line
     </div>
 
     <div class="div-labels" style="height: 43px;padding-top: 20px;width: 40%;border-bottom: none;text-align: right;">
       Move to Line</div>
-    <div class="div-values" style="width: 59%; border-bottom: none;"> <input type="text" id="txtNewLine"
+    <div class="div-values" style="width: 59%; border-bottom: none;"> <input type="number" id="txtNewLine"
         class="txt-newLine" />
       <img (click)="moveToNewLine();" src="../../assets/img/save1.png"
         style="width: 32px; margin-left: 15px;margin-top: 0px;cursor: pointer;">
-    </div>
-    <div class="div-values div-style">
+    </div> 
+    <div class="div-values"
+      style="border-top: solid 1px #DCDCDC; text-align: center;   height: 50px;    padding: 0px;">
       <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.selectedHouseCount}}</span>
       Card Selected
     </div>

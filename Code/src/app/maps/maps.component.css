@@ -251,19 +251,59 @@ margin: 0px!important;
 
 /*************New Work CSS*****************/
 .driver-helper-box{
-width: 265px;
+width: 270px;
 min-height: 100px;
 background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
 position: absolute;
 right: 15px;
-top: 65px;
+top: 80px;
 /* border-radius: 5px; */
 border:1px solid #80bd7b;
 }
 .driver{
 padding: 5px;
+display: flex;
+justify-content: center;
+align-items: center;
 }
+.driver h5{
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 700;
+}
+.main-box{
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid lightgray;
+}
+.main-box .designation{
+    width: 50px;
+    float: left;
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid lightgray;
+}
+.designation h5{
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0px;
+    color: #0ba118;
+    text-shadow: 0 2px 2px #c8c8c8;
+}
+.main-box .all-details{
+    float: left;
+    padding: 10px;
+}
+.all-details h6{
+ font-size: 12px;
+ line-height: 1.5;
+ margin: 0px;
+}
+.all-details p{
+    font-weight:normal;
+    margin: 0px;
+   }
 .img-circle{
 border:2px solid lightgray;
 padding: 2px;
@@ -289,26 +329,26 @@ border-bottom: 1px dotted #80bd7b;
 
 
 .line-details-box-house{
-    width: 265px;
+    width: 270px;
     min-height: 100px;
     background-color: #ffffff;
     box-shadow: 0 2px 5px 2px #dedede;
     position: absolute;
     right: 15px;
-    top: 452px;
+    top: 432px;
     /* border-radius: 5px; */
     border: 1px solid lightgray;
     display: none;
     }
 
 .line-details-box{
-width: 265px;
+width: 270px;
 min-height: 100px;
 background-color: #ffffff;
 box-shadow: 0 2px 5px 2px #dedede;
 position: absolute;
 right: 15px;
-top: 300px;
+top: 265px;
 /* border-radius: 5px; */
 border: 1px solid lightgray;
 }

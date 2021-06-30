@@ -190,8 +190,6 @@ export class WardReachCostComponent implements OnInit {
                 cost = Number(cost) + Number(reachCostList[i].trim());
               }
               zoneDetails[d] = duration + " min (₹ " + cost.toFixed(2) + ")";
-              // zoneDetails[d] = zoneDetails[d] + "<br/>" + workerData["driverName"].toUpperCase();
-              //console.log("totalMin" + zoneDetails.totalMin)
               zoneDetails.totalMin = Number(zoneDetails.totalMin) + Number(duration);
               let totalTime = this.commonService.getHrsFull(zoneDetails.totalMin);
               zoneDetails.totalTime = totalTime;

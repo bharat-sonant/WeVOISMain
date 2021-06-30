@@ -34,11 +34,18 @@ export class HomeComponent implements OnInit {
     this.userDetail.name = localStorage.getItem('userName');
     this.commonService.chkUserExpiryDate();
     this.portalAccessList = [];
-    this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-    this.getUserAccess();
-    let storePath = "Jaipur/Defaults/OfficeTask/Module";
-    // let taskList=this.dbFireStore.getInstance().collection('Jaipur').get()
-
+    let cityChange = localStorage.getItem('isCityChange');
+    if (cityChange == "yes") {
+      setTimeout(() => {
+        this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+        this.getUserAccess();
+        localStorage.setItem('isCityChange', "no");
+      }, 2000);
+    }
+    else {
+      this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+      this.getUserAccess();
+    }
   }
 
 
@@ -169,7 +176,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUserAccess() {
-    
+
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {

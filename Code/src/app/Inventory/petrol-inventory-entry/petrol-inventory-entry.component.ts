@@ -299,7 +299,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
       return;
     }
 
-    if ($("#ddlVehicle").val() != "Drum/Can") {
+    if ($("#ddlVehicle").val() != "Drum/Can") { 
       if ($("#km").val() != "") {
         let reading = $("#km").val();
         if (Number(reading) < this.vehicleLastMeterReading) {
@@ -573,8 +573,8 @@ export class PetrolInventoryEntryComponent implements OnInit {
       }
       setTimeout(() => {
         this.setAlertMessage("success", "Entry Updated Successfully !!!");
-
         this.router.navigate(['/' + this.cityName + '/petrol-inventory-list']);
+        this.router.navigate(['/petrol-inventory-list']);
       }, 4000);
     }
   }

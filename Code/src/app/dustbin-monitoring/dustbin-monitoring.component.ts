@@ -66,7 +66,7 @@ export class DustbinMonitoringComponent {
   pickedDustbinUrl: any;
   assignedDustbinUrl: any;
   defaultDustbinUrl: any;
-  cityName: any;
+  cityName:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
