@@ -854,6 +854,16 @@ export class CommonService {
 
   //#region  all local storage
 
+  setLocalStorageData(cityName:any)
+  {
+    this.setPortalPages(cityName);
+    this.setWebPortalUsers();
+    this.setZones();
+    this.setFixedLoctions();
+    this.setVehicle();
+    this.setDustbin();
+  }
+
 
   setFixedLoctions() {
     let fixedLocation = [];
@@ -1049,6 +1059,41 @@ export class CommonService {
         }
       }
     );
+  }
+
+  setNotificationPermissions(userId:any)
+  {
+    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+    let userDetails = userList.find(item => item.userId == userId);
+    if (userDetails != undefined) {
+      if (userDetails.officeAppUserId != undefined) {
+        localStorage.setItem('officeAppUserId', userDetails.officeAppUserId);
+      }
+      if (userDetails.empLocation != undefined) {
+        localStorage.setItem('empLocation', userDetails.empLocation);
+      }
+      if (userDetails.isTaskManager != undefined) {
+        localStorage.setItem('isTaskManager', userDetails.isTaskManager);
+      }
+      else {
+        localStorage.setItem("isTaskManager", "0");
+      }
+      localStorage.setItem('notificationHalt', userDetails.notificationHalt);
+      localStorage.setItem('notificationMobileDataOff', userDetails.notificationMobileDataOff);
+      localStorage.setItem('notificationSkippedLines', userDetails.notificationSkippedLines);
+      localStorage.setItem('notificationPickDustbins', userDetails.notificationPickDustbins);
+      localStorage.setItem('notificationGeoSurfing', userDetails.notificationGeoSurfing);
+      
+    }
+  }
+
+  setCityData() {
+    if (localStorage.getItem('isCityChange') == "yes") {
+      localStorage.setItem('isCityChange', "no");
+      setTimeout(() => {
+        window.location.href = window.location.href;
+      }, 1000);
+    }
   }
 
   //#endregion

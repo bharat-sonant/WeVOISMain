@@ -88,7 +88,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   vehicleLocationInstance: any;
   vehicleStatusInstance: any;
   completedLinesInstance: any;
-  zoneKML: any[]=[];
+  zoneKML: any[] = [];
   allMarkers: any[] = [];
   cityName: any;
 
@@ -176,6 +176,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
+    //this.commonService.setCityData();
     let element = <HTMLAnchorElement>document.getElementById("wardProgressLink");
     element.href = this.cityName + "/ward-monitoring-report";
     this.bounds = new google.maps.LatLngBounds();
@@ -213,7 +214,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     // this.setWardCompleted();
     setTimeout(() => {
       this.getWardsStatusWise();
-    }, 2000);
+    }, 1000);
   }
 
   clearAllOnMap() {
@@ -222,7 +223,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.zoneKML[i]["marker"].setMap(null);
       }
     }
-    this.zoneKML=[];
+    this.zoneKML = [];
     if (this.allMarkers.length > 0) {
       for (let i = 0; i < this.allMarkers.length; i++) {
         this.allMarkers[i]["marker"].setMap(null);
@@ -1857,11 +1858,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   setKml() {
     this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
       wardPath => {
-      let  marker = new google.maps.KmlLayer({
+        let marker = new google.maps.KmlLayer({
           url: wardPath.toString(),
           map: this.map
         });
-        this.zoneKML.push({marker});
+        this.zoneKML.push({ marker });
       });
   }
 

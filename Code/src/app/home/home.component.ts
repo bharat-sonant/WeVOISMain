@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../services/common/common.service';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { inspect } from 'util';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
   constructor(public db: AngularFireDatabase, private commonService: CommonService, public dbFireStore: AngularFirestore) { }
 
   ngOnInit() {
+    //this.getBreakDustbin();
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
@@ -34,18 +36,51 @@ export class HomeComponent implements OnInit {
     this.userDetail.name = localStorage.getItem('userName');
     this.commonService.chkUserExpiryDate();
     this.portalAccessList = [];
-    let cityChange = localStorage.getItem('isCityChange');
-    if (cityChange == "yes") {
+    this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+    if (localStorage.getItem('isCityChange') == "yes") {  
+      localStorage.setItem('isCityChange','no');
       setTimeout(() => {
-        this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
         this.getUserAccess();
-        localStorage.setItem('isCityChange', "no");
       }, 2000);
     }
     else {
-      this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
       this.getUserAccess();
     }
+    // this.commonService.setCityData();
+    // if (localStorage.getItem('isCityChange') == "yes") {
+    //   localStorage.setItem('isCityChange', "no");
+    // setTimeout(() => {
+    //   window.location.href = window.location.href;
+    //}, 1000);
+    //  }
+    //  else {
+    //setTimeout(() => {
+
+    // }, 1000);
+    //  }
+
+  }
+
+  getBreakDustbin() {
+    let dbPath = "DustbinData/DustbinDetails";
+    let instance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let zone = data[i]["zone"];
+            let ward = data[i]["ward"];
+            if (data[i]["isBroken"] != null) {
+              if (data[i]["isBroken"] == true) {
+                console.log("Zone: " + zone + "  address: " + data[i]["address"]);
+              }
+            }
+
+          }
+
+        }
+      }
+    );
   }
 
 

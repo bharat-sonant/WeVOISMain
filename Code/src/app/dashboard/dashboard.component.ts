@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();
 
+    //this.commonService.setCityData();
     this.allZones = this.mapService.getZones(this.todayDate);
     this.getAssignedWardList();
     //this.getAvailableWards();
@@ -71,19 +72,9 @@ export class DashboardComponent implements OnInit {
       this.wards = [];
       this.getWardWorkProgressData(this.todayDate);
     });
+
   }
 
-  getAvailableWards() {
-    let wards = this.db.list('Defaults/AvailableWard').valueChanges().subscribe(
-      wardsData => {
-        for (let index = 0; index < wardsData.length; index++) {
-          const element = wardsData[index];
-
-
-        }
-
-      });
-  }
 
   getAssignedWardList() {
     let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate).valueChanges().subscribe(

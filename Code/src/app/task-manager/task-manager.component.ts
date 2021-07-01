@@ -66,7 +66,6 @@ export class TaskManagerComponent implements OnInit {
 
 
   fillDropdown() {
-console.log(this.empLocation);
     this.dbFireStore
       .doc("" + this.empLocation + "/Defaults")
       .get()

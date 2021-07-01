@@ -27,13 +27,13 @@
                           type="checkbox" id="chk{{usr.pageID}}" [checked]="usr.ischeck" (change)="setAccess(usr.pageID,'first')">
                         {{usr.name}}</td>
                       <td style="width:75%">
-                        <table class="table border-bottom" style="margin-top: -13px;margin-bottom: -13px;margin-left: 15px;">
+                        <table class="table" style="margin-top: -13px;margin-bottom: -13px;margin-left: 15px;">
                           <tbody>
                             <tr *ngFor="let usrSecond of usr.secondLevel">
                               <td class="border-left" style="width:25%; vertical-align: top;"><input type="checkbox" id="chk{{usrSecond.pageID}}" [checked]="usrSecond.ischeck" (change)="setAccess(usrSecond.pageID,'second')">
                                 {{usrSecond.name}}</td>
                                 <td  style="width:75%;">
-                                  <table class="table border-bottom" style="margin-top: -13px;margin-bottom: -13px;margin-left: 15px;">
+                                  <table class="table" style="margin-top: -13px;margin-bottom: -13px;margin-left: 15px;">
                                     <tbody>
                                       <tr *ngFor="let usrThird of usrSecond.thirdLevel">
                                         <td class="border-left"><input type="checkbox" id="chk{{usrThird.pageID}}" [checked]="usrThird.ischeck">

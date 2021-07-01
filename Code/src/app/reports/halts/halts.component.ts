@@ -35,7 +35,7 @@ export class HaltsComponent {
   haltMarkerList: any;
   fixdGeoLocations: any;
   preSelectedMarker: any;
-  cityName:any;
+  cityName: any;
   haltDetails: haltDetail =
     {
       zoneName: '---',
@@ -47,7 +47,7 @@ export class HaltsComponent {
     }
 
   ngOnInit() {
-    this.cityName=localStorage.getItem('cityName');
+    this.cityName = localStorage.getItem('cityName');
     this.bounds = new google.maps.LatLngBounds();
     this.commonService.chkUserPermission("Halt Report");
     this.selectedDate = this.commonService.setTodayDate();
@@ -376,7 +376,7 @@ export class HaltsComponent {
   }
 
   showHaltSummary() {
-    this.router.navigate(['/'+this.cityName+'/halt-summary']);
+    this.router.navigate(['/' + this.cityName + '/halt-summary']);
   }
 }
 export class haltDetail {

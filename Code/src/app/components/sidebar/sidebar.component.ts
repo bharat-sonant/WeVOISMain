@@ -59,12 +59,13 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
-    this.commonService.setZones();
-    this.commonService.setFixedLoctions();
-    this.commonService.setVehicle();
-    this.commonService.setDustbin();
-    this.commonService.setWebPortalUsers();
-    this.commonService.setPortalPages(this.cityName);
+    this.userid = localStorage.getItem('userID');
+    if (localStorage.getItem('isCityChange') == "yes") {
+      this.commonService.setLocalStorageData(this.cityName);
+      setTimeout(() => {
+        this.commonService.setNotificationPermissions(this.userid);
+      }, 2000);
+    }
     $('#drpMainCity').val(this.cityName);
     this.userDetail.homeLink = "/" + this.cityName + "/home";
     this.toDayDate = this.commonService.setTodayDate();
@@ -80,13 +81,13 @@ export class SidebarComponent implements OnInit {
     else {
       localStorage.setItem('date', this.toDayDate);
     }
-    setTimeout(() => {
-      this.userid = localStorage.getItem('userID');
-      if (this.userid != null) {
-        this.userType = localStorage.getItem('userType');
-        this.portalAccessList = [];
-        this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-        console.log("sdgsdgsd")
+
+
+    if (this.userid != null) {
+      this.userType = localStorage.getItem('userType');
+      this.portalAccessList = [];
+      this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+      setTimeout(() => {
         this.getUserAccess();
         this.wardIndex = 1;
         this.haltDetails = [];
@@ -130,22 +131,17 @@ export class SidebarComponent implements OnInit {
           }
           this.getGeoSurfing();
         }
-      }
-    }, 2000);
-
+      }, 2000);
+    }
   }
 
   changeCity() {
     this.cityName = $('#drpMainCity').val();
     localStorage.setItem('cityName', this.cityName);
-    localStorage.setItem('isCityChange',"yes");
-    let path = window.location.href;
-    let newPath = path.split('/')[path.split('/').length - 1];
-    //window.location.href = this.cityName + "/" + newPath;
-    window.location.href = this.cityName + "/home";
-
-
-
+    localStorage.setItem('isCityChange', "yes");
+    //setTimeout(() => {
+    window.location.href = "/" + this.cityName + "/home";
+    //}, 6000);
   }
 
   getGeoSurfing() {

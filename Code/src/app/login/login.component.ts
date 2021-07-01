@@ -29,12 +29,7 @@ export class LoginComponent implements OnInit {
     $('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.commonService.setZones();
-    this.commonService.setFixedLoctions();
-    this.commonService.setVehicle();
-    this.commonService.setDustbin();
-    this.commonService.setWebPortalUsers();
-    this.commonService.setPortalPages(this.cityName);
+    this.commonService.setLocalStorageData(this.cityName);    
   }
 
   doLogin() {

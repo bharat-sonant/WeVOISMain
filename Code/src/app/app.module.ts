@@ -25,7 +25,7 @@ let firebase = {
 };
 let city = localStorage.getItem('cityName');
 if (city == 'sikar') {
-  firebase= {
+  firebase = {
     apiKey: "AIzaSyA1ZU5hI7Fho0B4ZJO2w8-fsCKMbq95m4c",
     authDomain: "dtdnavigator.firebaseapp.com",
     databaseURL: "https://dtdnavigator.firebaseio.com",
