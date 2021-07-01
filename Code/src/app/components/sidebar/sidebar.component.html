@@ -1,37 +1,37 @@
 <div class="logo">
-    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
-        <div class="logo-img">
-            <img src="./assets/img/wevois-logo-white.png" />
-        </div>
-    </a><br>
-    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml">
-        WeVOIS
-    </a>
+  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
+    <div class="logo-img">
+      <img src="./assets/img/wevois-logo-white.png" />
+    </div>
+  </a><br>
+  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml">
+    WeVOIS
+  </a>
 </div>
 
 <!------Shubham 1 Style Start---------->
 <div class="sidebar-wrapper">
-    <ul class="nav">
-        <li>
-            <select id="drpMainCity" (change)="changeCity();">
-                <option value="sikar">Sikar</option>
-                <option value="reengus">Reengus</option>
-                <option value="jaipur">Jaipur</option>
-            </select>
-        </li>
-        <li routerLinkActive="active" *ngFor="let usr of accessList">
-            <a [routerLink]="[usr.url]" (click)="getPage(usr.url)">
-                <i class="{{usr.img}}"></i>
-                <p>{{usr.name}}</p>
-            </a>
-        </li>
-        <li>
-            <a href="/logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <p>Log Out</p>
-            </a>
-        </li>
-    </ul>
+  <ul class="nav">
+    <div class="seprater">
+      <li (click)="openCityModel(contentCity)" style="cursor: pointer;">
+        <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px;">
+        <p style="margin-top: -27px; margin-left: 45px; color: #fff; text-transform: uppercase;"><span
+            id="cityName">Sikar</span> <i class="fas fa-caret-down"></i></p>
+      </li>
+    </div>
+    <li routerLinkActive="active" *ngFor="let usr of accessList">
+      <a [routerLink]="[usr.url]" (click)="getPage(usr.url)">
+        <i class="{{usr.img}}"></i>
+        <p>{{usr.name}}</p>
+      </a>
+    </li>
+    <li>
+      <a href="/logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <p>Log Out</p>
+      </a>
+    </li>
+  </ul>
 </div>
 <!------Shubham 1 Style End---------->
 
@@ -87,3 +87,61 @@
       </div>
     </div>
   </div> -->
+
+
+<!--Login city  Start-->
+<ng-template #contentCity>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <section class="login">
+          <div class="container login-container">
+            <div class="row">
+              <div class="col-md-2 login-header back">
+              </div>
+              <div class="col-md-8 login-header text-center">
+                <p style="padding-top: 5px;"><span class="welcome-text" id="popUpCityName">Sikar</span></p>
+              </div>
+              <div class="col-md-2 back login-header">
+                <button type="button" class="close" (click)="closeMapModel();">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="login-body">
+              <div class="row">
+                <div class="col-md-4 box-center">
+                  <div id="sikarBox" class="login-box active-box" style="cursor: pointer;"
+                    (click)="changeCity('sikar');">
+                    <p>
+                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-4 box-center-2">
+                  <div id="reengusBox" class="login-box" style="cursor: pointer;" (click)="changeCity('reengus');">
+                    <p>
+                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-4 box-center">
+                  <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;"
+                    (click)="changeCity('jaipur');">
+                    <p>
+                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--city Status End-->

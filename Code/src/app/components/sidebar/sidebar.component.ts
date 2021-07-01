@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { HttpClient } from '@angular/common/http';
 import { interval, observable } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //services
 import { CommonService } from '../../services/common/common.service';
@@ -10,6 +11,7 @@ import * as $ from "jquery";
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router, NavigationEnd, RouterLink } from "@angular/router";
 import { CmsComponent } from '../../cms/cms.component';
+import { domainToUnicode } from 'url';
 
 declare interface RouteInfo {
   path: string;
@@ -42,7 +44,7 @@ export class SidebarComponent implements OnInit {
     };
   menuItems: any[];
 
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public router: Router) { }
+  constructor(public db: AngularFireDatabase, private modalService: NgbModal, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public router: Router) { }
 
   zoneList: any[];
   toDayDate: any;
@@ -59,6 +61,10 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
+    $('#cityName').html(this.cityName);
+    let element=<HTMLImageElement>document.getElementById("cityImage");
+    element.src=this.getCityIcon(this.cityName);
+
     this.userid = localStorage.getItem('userID');
     if (localStorage.getItem('isCityChange') == "yes") {
       this.commonService.setLocalStorageData(this.cityName);
@@ -66,7 +72,6 @@ export class SidebarComponent implements OnInit {
         this.commonService.setNotificationPermissions(this.userid);
       }, 2000);
     }
-    $('#drpMainCity').val(this.cityName);
     this.userDetail.homeLink = "/" + this.cityName + "/home";
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
@@ -135,13 +140,21 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  changeCity() {
-    this.cityName = $('#drpMainCity').val();
-    localStorage.setItem('cityName', this.cityName);
+  getCityIcon(cityName: any) {
+    let icon = "./assets/img/sikar.svg";
+    if (cityName == "reengus") {
+      icon = "./assets/img/reengus.svg";
+    }
+    else if (cityName == "jaipur") {
+      icon = "./assets/img/jaipur.svg";
+    }
+    return icon;
+  }
+
+  changeCity(cityName:any) {
+    localStorage.setItem('cityName', cityName);
     localStorage.setItem('isCityChange', "yes");
-    //setTimeout(() => {
-    window.location.href = "/" + this.cityName + "/home";
-    //}, 6000);
+    window.location.href = "/" + cityName + "/home";
   }
 
   getGeoSurfing() {
@@ -585,6 +598,48 @@ export class SidebarComponent implements OnInit {
       $('#div' + k).hide();
       $('#divMob' + k).hide();
     }
+  }
+
+
+
+  openCityModel(content: any) {
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let height = 290;
+    let width = 350;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+    $('#popUpCityName').html(this.cityName);
+    let elementSikar=<HTMLElement>document.getElementById("sikarBox");
+    let classNameSikar=elementSikar.className;
+    let elementReengus=<HTMLElement>document.getElementById("reengusBox");
+    let classNameReengus=elementReengus.className;
+    let elementJaipur=<HTMLElement>document.getElementById("jaipurBox");
+    let classNameJaipur=elementJaipur.className;
+    $('#sikarBox').removeClass(classNameSikar);
+    $('#reengusBox').removeClass(classNameReengus);
+    $('#jaipurBox').removeClass(classNameJaipur);
+    if(this.cityName=="sikar"){
+      $('#sikarBox').addClass("login-box active-box");
+      $('#reengusBox').addClass("login-box");
+      $('#jaipurBox').addClass("login-box");
+    }
+    else if(this.cityName=="reengus"){
+      $('#sikarBox').addClass("login-box");
+      $('#reengusBox').addClass("login-box active-box");
+      $('#jaipurBox').addClass("login-box");
+    }
+    else if(this.cityName=="jaipur"){
+      $('#sikarBox').addClass("login-box");
+      $('#reengusBox').addClass("login-box");
+      $('#jaipurBox').addClass("login-box active-box");
+    }
+  }
+
+  closeMapModel() {
+    this.modalService.dismissAll();
   }
 
 }
