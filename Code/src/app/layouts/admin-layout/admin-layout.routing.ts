@@ -62,6 +62,7 @@ import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
+import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -136,6 +137,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'vehicle-report', component: VehicleReportComponent },
     { path: 'multiple-maps', component: MultipleMapsComponent },
     { path: 'task-manager', component: TaskManagerComponent },
+    { path: 'ward-trip-analysis', component: WardTripAnalysisComponent },
     //sikar
     { path: 'sikar/home', component: HomeComponent },
     { path: 'sikar/maps/:id', component: MapsComponent },
@@ -201,6 +203,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vehicle-report', component: VehicleReportComponent },
     { path: 'sikar/multiple-maps', component: MultipleMapsComponent },
     { path: 'sikar/task-manager', component: TaskManagerComponent },
+    { path: 'sikar/ward-trip-analysis', component: WardTripAnalysisComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -267,6 +270,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vehicle-report', component: VehicleReportComponent },
     { path: 'reengus/multiple-maps', component: MultipleMapsComponent },
     { path: 'reengus/task-manager', component: TaskManagerComponent },
+    { path: 'reengus/ward-trip-analysis', component: WardTripAnalysisComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -333,6 +337,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/vehicle-report', component: VehicleReportComponent },
     { path: 'jaipur/multiple-maps', component: MultipleMapsComponent },
     { path: 'jaipur/task-manager', component: TaskManagerComponent },
+    { path: 'jaipur/ward-trip-analysis', component: WardTripAnalysisComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -399,4 +404,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/vehicle-report', component: VehicleReportComponent },
     { path: 'demo/multiple-maps', component: MultipleMapsComponent },
     { path: 'demo/task-manager', component: TaskManagerComponent },
+    { path: 'demo/ward-trip-analysis', component: WardTripAnalysisComponent },
 ]; 
