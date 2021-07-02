@@ -67,7 +67,7 @@ export class TaskManagerComponent implements OnInit {
 
   fillDropdown() {
     this.dbFireStore
-      .doc("" + this.empLocation + "/Defaults")
+      .doc("Testing/Defaults")
       .get()
       .subscribe((ss) => {
         this.modulesObject = ss;
@@ -80,7 +80,7 @@ export class TaskManagerComponent implements OnInit {
       });
 
     this.dbFireStore
-      .doc("" + this.empLocation + "/Defaults")
+      .doc("Testing/Defaults")
       .get()
       .subscribe((ss) => {
         let categoriesArrayList = ss.get("Office");

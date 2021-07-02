@@ -3,13 +3,14 @@ import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angular
 import { Users } from '../../Users/users';  // Users data type interface class
 import { UserAccess } from '../../Users/users';  // Users data type interface class
 import { Remarks } from '../../Users/users';  // Users data type interface class
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(public db: AngularFireDatabase) { }
+  constructor(public db: AngularFireDatabase,public dbFireStore: AngularFirestore) { }
 
   usersRef: AngularFireList<any>;    // Reference to Users data list, its an Observable
   userRef: AngularFireObject<any>;   // Reference to Users object, its an Observable too
@@ -25,49 +26,12 @@ export class UserService {
 
   // Create User
   AddUser(user: Users) {
-    this.usersRef = this.db.list('/Users');
-    this.usersRef.push({
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      mobile: user.mobile,
-      password: user.password,
-      userType: user.userType,
-      creattionDate: user.creattionDate,
-      isDelete: 0,
-      notificationHalt: user.notificationHalt,
-      notificationMobileDataOff: user.notificationMobileDataOff,
-      notificationSkippedLines: user.notificationSkippedLines,
-      notificationPickDustbins: user.notificationPickDustbins,
-      expiryDate: user.expiryDate,
-      notificationGeoSurfing:user.notificationGeoSurfing,
-      officeAppUserId:user.officeAppUserId,
-      empLocation:user.empLocation,
-      isTaskManager:user.isTaskManager
-    })
+    this.dbFireStore.doc("UserManagement/Users").collection("Users").add(user);
   }
 
   // Update User Object
   UpdateUser(user: Users) {
-    this.userRef = this.db.object('/Users/' + user.$Key);
-    this.userRef.update({
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      mobile: user.mobile,
-      password: user.password,
-      userType: user.userType,
-      isDelete: 0,
-      notificationHalt: user.notificationHalt,
-      notificationMobileDataOff: user.notificationMobileDataOff,
-      notificationSkippedLines: user.notificationSkippedLines,
-      notificationPickDustbins: user.notificationPickDustbins,
-      expiryDate: user.expiryDate,
-      notificationGeoSurfing:user.notificationGeoSurfing,
-      officeAppUserId:user.officeAppUserId,
-      empLocation:user.empLocation,
-      isTaskManager:user.isTaskManager
-    })
+    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(user.$Key).update(user);
   }
 
   // Fetch Single User Object
@@ -84,10 +48,7 @@ export class UserService {
 
   // Delete User Object
   DeleteUser(id: string) {
-    this.userRef = this.db.object('/Users/' + id);
-    this.userRef.update({
-      isDelete: 1
-    })
+    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(id).delete();
   }
 
 
@@ -150,9 +111,9 @@ export class UserService {
       updatedBy: plan.updatedBy,
       zone: plan.zone,
       maxDustbinCapacity: plan.maxDustbinCapacity,
-      isConfirmed:plan.isConfirmed,
-      pickedDustbin:plan.pickedDustbin,
-      highPriority:plan.highPriority
+      isConfirmed: plan.isConfirmed,
+      pickedDustbin: plan.pickedDustbin,
+      highPriority: plan.highPriority
     })
   }
 
@@ -171,9 +132,9 @@ export class UserService {
       updatedBy: plan.updatedBy,
       zone: plan.zone,
       maxDustbinCapacity: plan.maxDustbinCapacity,
-      isConfirmed:plan.isConfirmed,
-      pickedDustbin:plan.pickedDustbin,
-      highPriority:plan.highPriority
+      isConfirmed: plan.isConfirmed,
+      pickedDustbin: plan.pickedDustbin,
+      highPriority: plan.highPriority
     })
   }
 
@@ -195,7 +156,7 @@ export interface DustbinPlans {
   updatedBy: string;
   zone: string;
   maxDustbinCapacity: number;
-  isConfirmed:string;
-  pickedDustbin:string;
-  highPriority:string;
+  isConfirmed: string;
+  pickedDustbin: string;
+  highPriority: string;
 }

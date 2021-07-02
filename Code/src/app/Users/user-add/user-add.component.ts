@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 import { Users } from '../../Users/users';  // Users data type interface class
 import * as $ from 'jquery';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from "@angular/router";
 
 
@@ -15,7 +16,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class UserAddComponent implements OnInit {
   //public userForm: FormGroup;
-  constructor(private router: Router, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
+  constructor(private router: Router, public dbFireStore: AngularFirestore, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
 
   usr: Users;
   toDayDate: any;
@@ -31,71 +32,45 @@ export class UserAddComponent implements OnInit {
     const id = this.actRoute.snapshot.paramMap.get('id');
     this.userid = id;
     if (id != null) {
-      //this.usrid=id;
+      this.usrid = id;
       this.$Key = id;
-      let myUser = this.db.object('Users/' + id).valueChanges().subscribe(
-        data => {
-          this.usrid = data["userId"];
-          $("#name").val(data["name"]);
-          $("#userType").val(data["userType"]);
-          $("#mobile").val(data["mobile"]);
-          $("#email").val(data["email"]);
-          $("#password").val(data["password"]);
-          $('#expiryDate').val(data["expiryDate"]);
-          if (data["officeAppUserId"] != null) {
-            $('#officeAppUserId').val(data["officeAppUserId"]);
+      this.dbFireStore
+      .collection("UserManagement").doc("Users").collection("Users").doc(this.userid)
+      .get()
+      .subscribe((doc) => {        
+        this.usrid = doc.data()["userId"];
+          $("#name").val(doc.data()["name"]);
+          $("#name").val(doc.data()["name"]);
+          $("#userType").val(doc.data()["userType"]);
+          $("#mobile").val(doc.data()["mobile"]);
+          $("#email").val(doc.data()["email"]);
+          $("#password").val(doc.data()["password"]);
+          $('#expiryDate').val(doc.data()["expiryDate"]);
+          if (doc.data()["officeAppUserId"] != null) {
+            $('#officeAppUserId').val(doc.data()["officeAppUserId"]);
           }
-          if (data["empLocation"] != null) {
-            $('#empLocation').val(data["empLocation"]);
+          if (doc.data()["empLocation"] != null) {
+            $('#empLocation').val(doc.data()["empLocation"]);
           }
-          if (data["notificationHalt"] == "1") {
+          if (doc.data()["notificationHalt"] == "1") {
             (<HTMLInputElement>document.getElementById("notificationHalt")).checked = true;
           }
-          if (data["notificationMobileDataOff"] == 1) {
+          if (doc.data()["notificationMobileDataOff"] == 1) {
             (<HTMLInputElement>document.getElementById("notificationMobileDataOff")).checked = true;
           }
-          if (data["notificationSkippedLines"] == 1) {
+          if (doc.data()["notificationSkippedLines"] == 1) {
             (<HTMLInputElement>document.getElementById("notificationSkippedLines")).checked = true;
           }
-          if (data["notificationPickDustbins"] == 1) {
+          if (doc.data()["notificationPickDustbins"] == 1) {
             (<HTMLInputElement>document.getElementById("notificationPickDustbins")).checked = true;
           }
-          if (data["notificationGeoSurfing"] == 1) {
+          if (doc.data()["notificationGeoSurfing"] == 1) {
             (<HTMLInputElement>document.getElementById("notificationGeoSurfing")).checked = true;
           }
-          if (data["isTaskManager"] == 1) {
+          if (doc.data()["isTaskManager"] == 1) {
             (<HTMLInputElement>document.getElementById("isTaskManager")).checked = true;
           }
-
-          myUser.unsubscribe();
-        })
-
-      let myUserList = this.db.list('Users/').valueChanges().subscribe(
-        dataList => {
-          this.userRecord = [];
-          for (let i = 0; i < dataList.length; i++) {
-            this.userRecord.push({ userId: dataList[i]["userId"], email: dataList[i]["email"], isDelete: dataList[i]["isDelete"] });
-          }
-          myUser.unsubscribe();
-        });
-    }
-    else {
-      let myUser = this.db.list('Users/').valueChanges().subscribe(
-        data => {
-          this.userRecord = [];
-          this.$Key = 1;
-          if (data.length == 0) {
-            this.usrid = 1;
-          }
-          else {
-            for (let i = 0; i < data.length; i++) {
-              this.userRecord.push({ userId: data[i]["userId"], email: data[i]["email"], isDelete: data[i]["isDelete"] });
-            }
-            var sorted = this.userRecord.sort();
-            this.usrid = (this.userRecord[this.userRecord.length - 1]["userId"] + 1);
-          }
-          myUser.unsubscribe();
-        });
+      });
     }
   }
 
@@ -216,12 +191,11 @@ export class UserAddComponent implements OnInit {
       notificationGeoSurfing: notificationGeoSurfing,
       officeAppUserId: officeAppUserId,
       empLocation: empLocation,
-      isTaskManager:isTaskManager
+      isTaskManager: isTaskManager
     };
 
     let myUser = this.db.list('Users/').valueChanges().subscribe(
       data => {
-
         this.userRecord = [];
         if (data.length == 0) {
           this.usrid = 1;

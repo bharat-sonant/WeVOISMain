@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 import { Users } from '../../Users/users';  // Users data type interface class
 import * as $ from 'jquery';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class UserListComponent implements OnInit {
 
-  constructor(private router: Router, public usrService: UserService, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
+  constructor(private router: Router, public dbFireStore: AngularFirestore, public usrService: UserService, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
 
   userRecord: any[];
   User: Users[];
@@ -29,33 +30,24 @@ export class UserListComponent implements OnInit {
   }
 
   getUserList() {
-    let index: any;
-    let MUser = this.db.object('Users/').valueChanges().subscribe(
-      mdata => {
-
-        this.userRecord = [];
-        var keyArray = Object.keys(mdata);
-        index = keyArray.length;
-        for (let k = 0; k < keyArray.length; k++) {
-          let lineNo = keyArray[k];
-
-          let myUser = this.db.object('Users/' + lineNo).valueChanges().subscribe(
-            data => {
-
-              let imgUrl = "internal-user.png";
-              let utitle = "Internal User";
-              if (data["userType"] == "External User") {
-                imgUrl = "external-user.png";
-                utitle = "External User";
-
-              }
-              if (data["isDelete"] == "0") {
-                this.userRecord.push({ uid: data["uid"], name: data["name"], email: data["email"], mobile: data["mobile"], userType: data["userType"], password: data["password"], $Key: lineNo, imgUrl: imgUrl, utitle: utitle });
-              }
-              // myUser.unsubscribe();
-            });
-        }
-        // MUser.unsubscribe();
+    this.userRecord=[];
+    this.dbFireStore
+      .collection("UserManagement").doc("Users").collection("Users")
+      .get()
+      .subscribe((ss) => {
+        const document = ss.docs;
+        document.forEach(doc => {
+          let imgUrl = "internal-user.png";
+          let utitle = "Internal User";
+          if (doc.data()["userType"] == "External User") {
+            imgUrl = "external-user.png";
+            utitle = "External User";
+          }
+          if (doc.data()["isDelete"] == "0") {
+            this.userRecord.push({ uid: doc.data()["uid"], name: doc.data()["name"], email: doc.data()["email"], mobile: doc.data()["mobile"], userType: doc.data()["userType"], password: doc.data()["password"], $Key: doc.id, imgUrl: imgUrl, utitle: utitle });
+          }
+          console.log(doc.id, '=>', doc.data());
+        });
       });
   }
 
