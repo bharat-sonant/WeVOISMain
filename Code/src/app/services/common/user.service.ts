@@ -30,8 +30,8 @@ export class UserService {
   }
 
   // Update User Object
-  UpdateUser(user: Users) {
-    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(user.$Key).update(user);
+  UpdateUser(id:any,user: Users) {
+    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(id).update(user);
   }
 
   // Fetch Single User Object

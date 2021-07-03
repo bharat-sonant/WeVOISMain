@@ -554,7 +554,7 @@ export class MapsComponent {
       this.houseList = [];
       this.progressData.houses = 0;
       this.progressData.scanedHouses = 0;
-      for (let i = 1; i < this.wardLines; i++) {
+      for (let i = 1; i <= this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
         let object = this.db.database.ref(housePath).child('key');
 

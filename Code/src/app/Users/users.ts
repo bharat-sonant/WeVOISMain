@@ -1,5 +1,4 @@
 export interface Users {
-    $Key:any;
     userId:any;
     name:string;
     email:string;
@@ -15,7 +14,7 @@ export interface Users {
     expiryDate:any;
     notificationGeoSurfing:any;
     officeAppUserId:any;
-    empLocation:any;
+    accessCity:any;
     isTaskManager:any;
 }
 

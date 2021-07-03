@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 21.73"><defs><style>.cls-1{fill:#fff;}</style></defs><title>jaipur</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M9,18.9,14,14a7,7,0,1,0-9.9,0Zm0,2.83L2.64,15.36a9,9,0,1,1,12.72,0Z"/><path class="cls-1" d="M5.91,13.51V5H8.1a7.45,7.45,0,0,1,1.62.14,2.64,2.64,0,0,1,1,.46,2.21,2.21,0,0,1,.74.84,2.28,2.28,0,0,1,.26,1.06,2.45,2.45,0,0,1-.41,1.4,2.63,2.63,0,0,1-1.17.94l2.59,3.66H10.43L8.17,10.17H7.88v3.34Zm2.3-6.95H7.88V8.91h.43A1.87,1.87,0,0,0,9.48,8.6a1.05,1.05,0,0,0,.4-.89,1,1,0,0,0-.39-.88A2.32,2.32,0,0,0,8.21,6.56Z"/></g></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.5, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 18 21.7" style="enable-background:new 0 0 18 21.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.5;}
+	.st1{fill:#FFFFFF;}
+</style>
+<title>jaipur</title>
+<g class="st0">
+	<g id="Layer_1-2">
+		<path class="st1" d="M9,18.9l5-4.9c2.7-2.7,2.7-7.2,0-9.9s-7.2-2.7-9.9,0c-2.7,2.7-2.7,7.2,0,9.9L9,18.9z M9,21.7l-6.4-6.4
+			c-3.5-3.5-3.5-9.2,0-12.7s9.2-3.5,12.7,0s3.5,9.2,0,12.7c0,0,0,0,0,0L9,21.7z"/>
+		<path class="st1" d="M5.9,13.5V5h2.2c0.5,0,1.1,0,1.6,0.1c0.4,0.1,0.7,0.2,1,0.5c0.3,0.2,0.6,0.5,0.7,0.8c0.2,0.3,0.3,0.7,0.3,1.1
+			c0,0.5-0.1,1-0.4,1.4c-0.3,0.4-0.7,0.7-1.2,0.9l2.6,3.7h-2.3l-2.3-3.3H7.9v3.3H5.9z M8.2,6.6H7.9v2.3h0.4c0.4,0,0.8-0.1,1.2-0.3
+			c0.3-0.2,0.4-0.5,0.4-0.9c0-0.3-0.1-0.7-0.4-0.9C9.1,6.6,8.7,6.5,8.2,6.6z"/>
+	</g>
+</g>
+</svg>

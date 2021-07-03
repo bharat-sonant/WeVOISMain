@@ -27,18 +27,20 @@ export class UserAddComponent implements OnInit {
   cityName: any;
 
   ngOnInit() {
+    //this.getUsers();
+    
     this.cityName = localStorage.getItem('cityName');
     this.toDayDate = this.commonService.setTodayDate();
     const id = this.actRoute.snapshot.paramMap.get('id');
     this.userid = id;
+
     if (id != null) {
       this.usrid = id;
-      this.$Key = id;
       this.dbFireStore
-      .collection("UserManagement").doc("Users").collection("Users").doc(this.userid)
-      .get()
-      .subscribe((doc) => {        
-        this.usrid = doc.data()["userId"];
+        .collection("UserManagement").doc("Users").collection("Users").doc(this.userid)
+        .get()
+        .subscribe((doc) => {
+          this.usrid = doc.data()["userId"];
           $("#name").val(doc.data()["name"]);
           $("#name").val(doc.data()["name"]);
           $("#userType").val(doc.data()["userType"]);
@@ -70,8 +72,74 @@ export class UserAddComponent implements OnInit {
           if (doc.data()["isTaskManager"] == 1) {
             (<HTMLInputElement>document.getElementById("isTaskManager")).checked = true;
           }
-      });
+          if (doc.data()["accessCity"] != null) {
+            let userCityList = doc.data()["accessCity"].split(',');
+            if (userCityList.length > 0) {
+              for (let i = 0; i < userCityList.length; i++) {
+                if (userCityList[i] == "sikar") {
+                  (<HTMLInputElement>document.getElementById("chkCitySikar")).checked = true;
+                }
+                else if (userCityList[i] == "reengus") {
+                  (<HTMLInputElement>document.getElementById("chkCityReengus")).checked = true;
+                }
+                else if (userCityList[i] == "jaipur") {
+                  (<HTMLInputElement>document.getElementById("chkCityJaipur")).checked = true;
+                }
+              }
+            }
+          }
+        });
     }
+    else {
+      this.userRecord = [];
+      this.dbFireStore
+        .collection("UserManagement").doc("Users").collection("Users")
+        .get()
+        .subscribe((ss) => {
+          const document = ss.docs;
+          document.forEach(doc => {
+            this.userRecord.push({ userId: doc.data()["userId"] });
+          });
+          if (this.userRecord.length == 0) {
+            this.usrid = 1;
+          }
+          else {
+            var sorted = this.userRecord.sort();
+            this.usrid = (this.userRecord[this.userRecord.length - 1]["userId"] + 1);
+          }
+        });
+    }
+    
+  }
+
+  getUsers() {
+    let MUser = this.db.list('Users/').valueChanges().subscribe(
+      mdata => {
+        MUser.unsubscribe();
+        console.log(mdata);
+        for (let i = 0; i < mdata.length; i++) {
+          const dish = {
+            userId:mdata[i]["userId"],
+            name: mdata[i]["name"],
+            userType: mdata[i]["userType"],
+            mobile: mdata[i]["mobile"],
+            email: mdata[i]["email"],
+            password: mdata[i]["password"],
+            creattionDate: mdata[i]["creattionDate"],
+            isDelete: mdata[i]["isDelete"],
+            notificationHalt: 0,
+            notificationMobileDataOff: 0,
+            notificationSkippedLines: 0,
+            notificationPickDustbins: 0,
+            expiryDate: 0,
+            notificationGeoSurfing:0,
+            officeAppUserId:"0",
+            accessCity: "sikar",
+            isTaskManager: 0
+          };
+          this.usrService.AddUser(dish);
+        }
+      });
   }
 
   submitData() {
@@ -146,7 +214,8 @@ export class UserAddComponent implements OnInit {
     let password: any = $("#password").val();
     let expiryDate: any = $("#expiryDate").val();
     let officeAppUserId: any = $('#officeAppUserId').val();
-    let empLocation: any = $('#empLocation').val();
+    let accessCity: any = "";
+    let accessCityList = [];
     let isTaskManager: any = 0;
     if (officeAppUserId == "") {
       officeAppUserId = null;
@@ -172,9 +241,27 @@ export class UserAddComponent implements OnInit {
     element = <HTMLInputElement>document.getElementById("isTaskManager");
     if (element.checked == true)
       isTaskManager = 1;
+    element = <HTMLInputElement>document.getElementById("chkCitySikar");
+    if (element.checked == true)
+      accessCityList.push({ city: "sikar" });
+    element = <HTMLInputElement>document.getElementById("chkCityReengus");
+    if (element.checked == true)
+      accessCityList.push({ city: "reengus" });
+    element = <HTMLInputElement>document.getElementById("chkCityJaipur");
+    if (element.checked == true)
+      accessCityList.push({ city: "jaipur" });
+    if (accessCityList.length > 0) {
+      for (let i = 0; i < accessCityList.length; i++) {
+        if (i == 0) {
+          accessCity = accessCityList[i]["city"];
+        }
+        else {
+          accessCity = accessCity + "," + accessCityList[i]["city"];
+        }
+      }
+    }
 
     const dish = {
-      $Key: this.$Key,
       userId: userId,
       name: name,
       userType: userType,
@@ -190,28 +277,12 @@ export class UserAddComponent implements OnInit {
       expiryDate: expiryDate,
       notificationGeoSurfing: notificationGeoSurfing,
       officeAppUserId: officeAppUserId,
-      empLocation: empLocation,
+      accessCity: accessCity,
       isTaskManager: isTaskManager
     };
 
-    let myUser = this.db.list('Users/').valueChanges().subscribe(
-      data => {
-        this.userRecord = [];
-        if (data.length == 0) {
-          this.usrid = 1;
-        }
-        else {
-          for (let i = 0; i < data.length; i++) {
-            this.userRecord.push({ userId: data[i]["userId"] });
-          }
-          var sorted = this.userRecord.sort();
-          this.usrid = (this.userRecord[this.userRecord.length - 1]["userId"] + 1);
-        }
-        myUser.unsubscribe();
-      });
-
     if (id != null) {
-      this.usrService.UpdateUser(dish);
+      this.usrService.UpdateUser(id, dish);
       let message = "" + $("#name").val() + " Updated Successfully !!!";
       let cssClass = "alert alert-info alert-with-icon";
       this.commonService.setAlertMessageWithCss("success", message, cssClass);
@@ -221,13 +292,6 @@ export class UserAddComponent implements OnInit {
       let message = "" + $("#name").val() + " Added Successfully !!!";
       let cssClass = "alert alert-info alert-with-icon";
       this.commonService.setAlertMessageWithCss("success", message, cssClass);
-      $("#name").val("");
-      $("#userType").val("0");
-      $("#mobile").val("");
-      $("#email").val("");
-      $("#password").val("");
-      $('#officeAppUserId').val("");
-      $('#empLocation').val("0");
     }
     this.router.navigate(['/' + this.cityName + '/users']);
   }
