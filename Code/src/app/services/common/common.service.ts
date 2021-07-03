@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
 import { data } from 'jquery';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { data } from 'jquery';
 
 export class CommonService {
 
-  constructor(private router: Router, public db: AngularFireDatabase, private toastr: ToastrService) { }
+  constructor(private router: Router, public dbFireStore: AngularFirestore, public db: AngularFireDatabase, private toastr: ToastrService) { }
 
   notificationInterval: any;
 
@@ -854,8 +855,7 @@ export class CommonService {
 
   //#region  all local storage
 
-  setLocalStorageData(cityName:any)
-  {
+  setLocalStorageData(cityName: any) {
     this.setPortalPages(cityName);
     this.setWebPortalUsers();
     this.setZones();
@@ -978,17 +978,22 @@ export class CommonService {
 
   setWebPortalUsers() {
     let userList = [];
-    this.db.object('Users').valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              userList.push({ userKey: index, userId: data[index]["userId"], name: data[index]["name"], email: data[index]["email"], password: data[index]["password"], userType: data[index]["userType"], expiryDate: data[index]["expiryDate"], notificationHalt: data[index]["notificationHalt"], notificationMobileDataOff: data[index]["notificationMobileDataOff"], notificationSkippedLines: data[index]["notificationSkippedLines"], notificationPickDustbins: data[index]["notificationPickDustbins"], notificationGeoSurfing: data[index]["notificationGeoSurfing"], officeAppUserId: data[index]["officeAppUserId"], empLocation: data[index]["empLocation"], isTaskManager: data[index]["isTaskManager"] });
-            }
+    this.dbFireStore
+      .collection("UserManagement").doc("Users").collection("Users")
+      .get()
+      .subscribe((ss) => {
+        const document = ss.docs;
+        document.forEach(doc => {
+          let imgUrl = "internal-user.png";
+          let utitle = "Internal User";
+          if (doc.data()["userType"] == "External User") {
+            imgUrl = "external-user.png";
+            utitle = "External User";
           }
-        }
+          if (doc.data()["isDelete"] == "0") {
+            userList.push({ userKey: doc.id, userId: doc.data()["userId"], name: doc.data()["name"], email: doc.data()["email"], password: doc.data()["password"], userType: doc.data()["userType"], expiryDate: doc.data()["expiryDate"], notificationHalt: doc.data()["notificationHalt"], notificationMobileDataOff: doc.data()["notificationMobileDataOff"], notificationSkippedLines: doc.data()["notificationSkippedLines"], notificationPickDustbins: doc.data()["notificationPickDustbins"], notificationGeoSurfing: doc.data()["notificationGeoSurfing"], officeAppUserId: doc.data()["officeAppUserId"], accessCity: doc.data()["accessCity"], isTaskManager: doc.data()["isTaskManager"] });
+          }
+        });
         localStorage.setItem('webPortalUserList', JSON.stringify(userList));
       });
   }
@@ -1061,8 +1066,7 @@ export class CommonService {
     );
   }
 
-  setNotificationPermissions(userId:any)
-  {
+  setNotificationPermissions(userId: any) {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetails = userList.find(item => item.userId == userId);
     if (userDetails != undefined) {
@@ -1083,7 +1087,7 @@ export class CommonService {
       localStorage.setItem('notificationSkippedLines', userDetails.notificationSkippedLines);
       localStorage.setItem('notificationPickDustbins', userDetails.notificationPickDustbins);
       localStorage.setItem('notificationGeoSurfing', userDetails.notificationGeoSurfing);
-      
+
     }
   }
 

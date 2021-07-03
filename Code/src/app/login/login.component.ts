@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     $('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.commonService.setLocalStorageData(this.cityName);    
+    this.commonService.setLocalStorageData(this.cityName);
   }
 
   doLogin() {
@@ -38,7 +38,23 @@ export class LoginComponent implements OnInit {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetails = userList.find(item => item.email == userName && item.password == password);
     if (userDetails != undefined) {
+      let isAccess = false;
+      let accessCityList = userDetails.accessCity.split(',');
+      for(let i=0;i<accessCityList.length;i++)
+      {
+        if(accessCityList[i]==this.cityName){
+          isAccess=true;
+        }
+      }
 
+      if(isAccess==false){
+        this.commonService.setAlertMessage("error","sorry! you have not permission for this city.");
+        setTimeout(() => {
+          window.location.href="portal-access";
+        }, 100); 
+        return;       
+      }
+      
       if (userDetails.expiryDate != null) {
         this.expiryDate = userDetails.expiryDate;
         localStorage.setItem('expiryDate', this.expiryDate);
@@ -51,13 +67,13 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('userID', userDetails.userId);
       localStorage.setItem('userKey', userDetails.userKey);
       localStorage.setItem('userType', userDetails.userType);
-      if (userDetails.officeAppUserId != undefined) {
+      if (userDetails.officeAppUserId != 0) {
         localStorage.setItem('officeAppUserId', userDetails.officeAppUserId);
       }
-      if (userDetails.empLocation != undefined) {
+      if (userDetails.empLocation != 0) {
         localStorage.setItem('empLocation', userDetails.empLocation);
       }
-      if (userDetails.isTaskManager != undefined) {
+      if (userDetails.isTaskManager != 0) {
         localStorage.setItem('isTaskManager', userDetails.isTaskManager);
       }
       else {
