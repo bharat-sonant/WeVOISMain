@@ -237,7 +237,7 @@
   }
   .login-box{
     height: 115px;
-    width: 127px;
+    width: 200px;
     border: 1px solid lightgray;
     display: flex;
     justify-content: center;

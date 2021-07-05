@@ -775,6 +775,8 @@ export class SidebarComponent implements OnInit {
     let classNameReengus = elementReengus.className;
     let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
     let classNameJaipur = elementJaipur.className;
+    let elementDemo = <HTMLElement>document.getElementById("demoBox");
+    let classNameDemo = elementDemo.className;
     $("#sikarBox").removeClass(classNameSikar);
     $("#reengusBox").removeClass(classNameReengus);
     $("#jaipurBox").removeClass(classNameJaipur);
@@ -782,14 +784,22 @@ export class SidebarComponent implements OnInit {
       $("#sikarBox").addClass("login-box active-box");
       $("#reengusBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box");
+      $("#demoBox").addClass("login-box");
     } else if (this.cityName == "reengus") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box active-box");
       $("#jaipurBox").addClass("login-box");
+      $("#demoBox").addClass("login-box");
     } else if (this.cityName == "jaipur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box active-box");
+      $("#demoBox").addClass("login-box");
+    }else if (this.cityName == "demo") {
+      $("#sikarBox").addClass("login-box");
+      $("#reengusBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
+      $("#demoBox").addClass("login-box active-box");
     }
     for(let i=0;i<this.accessCity.length;i++){
       if(this.accessCity[i]["city"]=="sikar"){
@@ -800,6 +810,9 @@ export class SidebarComponent implements OnInit {
       }
       else if(this.accessCity[i]["city"]=="jaipur"){
         $('#jaipurDiv').show();
+      }
+      else if(this.accessCity[i]["city"]=="demo"){
+        $('#demoDiv').show();
       }
     }
   }
