@@ -71,23 +71,7 @@ export class UserAddComponent implements OnInit {
           }
           if (doc.data()["isTaskManager"] == 1) {
             (<HTMLInputElement>document.getElementById("isTaskManager")).checked = true;
-          }
-          if (doc.data()["accessCity"] != null) {
-            let userCityList = doc.data()["accessCity"].split(',');
-            if (userCityList.length > 0) {
-              for (let i = 0; i < userCityList.length; i++) {
-                if (userCityList[i] == "sikar") {
-                  (<HTMLInputElement>document.getElementById("chkCitySikar")).checked = true;
-                }
-                else if (userCityList[i] == "reengus") {
-                  (<HTMLInputElement>document.getElementById("chkCityReengus")).checked = true;
-                }
-                else if (userCityList[i] == "jaipur") {
-                  (<HTMLInputElement>document.getElementById("chkCityJaipur")).checked = true;
-                }
-              }
-            }
-          }
+          }          
         });
     }
     else {
@@ -134,7 +118,6 @@ export class UserAddComponent implements OnInit {
             expiryDate: 0,
             notificationGeoSurfing:0,
             officeAppUserId:"0",
-            accessCity: "sikar",
             isTaskManager: 0
           };
           this.usrService.AddUser(dish);
@@ -214,14 +197,12 @@ export class UserAddComponent implements OnInit {
     let password: any = $("#password").val();
     let expiryDate: any = $("#expiryDate").val();
     let officeAppUserId: any = $('#officeAppUserId').val();
-    let accessCity: any = "";
-    let accessCityList = [];
     let isTaskManager: any = 0;
     if (officeAppUserId == "") {
-      officeAppUserId = null;
+      officeAppUserId = 0;
     }
     if (expiryDate == "") {
-      expiryDate = null;
+      expiryDate = "";
     }
     let element = <HTMLInputElement>document.getElementById("notificationHalt");
     if (element.checked == true)
@@ -241,25 +222,7 @@ export class UserAddComponent implements OnInit {
     element = <HTMLInputElement>document.getElementById("isTaskManager");
     if (element.checked == true)
       isTaskManager = 1;
-    element = <HTMLInputElement>document.getElementById("chkCitySikar");
-    if (element.checked == true)
-      accessCityList.push({ city: "sikar" });
-    element = <HTMLInputElement>document.getElementById("chkCityReengus");
-    if (element.checked == true)
-      accessCityList.push({ city: "reengus" });
-    element = <HTMLInputElement>document.getElementById("chkCityJaipur");
-    if (element.checked == true)
-      accessCityList.push({ city: "jaipur" });
-    if (accessCityList.length > 0) {
-      for (let i = 0; i < accessCityList.length; i++) {
-        if (i == 0) {
-          accessCity = accessCityList[i]["city"];
-        }
-        else {
-          accessCity = accessCity + "," + accessCityList[i]["city"];
-        }
-      }
-    }
+    
 
     const dish = {
       userId: userId,
@@ -277,7 +240,6 @@ export class UserAddComponent implements OnInit {
       expiryDate: expiryDate,
       notificationGeoSurfing: notificationGeoSurfing,
       officeAppUserId: officeAppUserId,
-      accessCity: accessCity,
       isTaskManager: isTaskManager
     };
 

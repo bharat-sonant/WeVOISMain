@@ -18,7 +18,14 @@
                     <thead>
                       <th>S.No.</th>
                       <th>Name</th>
-                      <th></th>
+                      <th style="text-align: right;"><b>City&nbsp;</b>
+                      <select id="ddlCity" (change)="changeCity();">
+                        <option value="sikar">Sikar</option>
+                        <option value="reengus">Reengus</option>
+                        <option value="jaipur">Jaipur</option>
+                        <option value="demo">Demo</option>
+                      </select>
+                      </th>
                     </thead>
                     <tbody>
                       <tr *ngFor="let usr of accessList">

@@ -12,7 +12,7 @@
 <!------Shubham 1 Style Start---------->
 <div class="sidebar-wrapper">
   <ul class="nav">
-    <div class="seprater">
+    <div id="liCity" class="seprater" style="display: none;">
       <li (click)="openCityModel(contentCity)" style="cursor: pointer;">
         <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px;">
         <p style="margin-top: -27px; margin-left: 45px; color: #fff; text-transform: uppercase; font-size: 12px;"><span
@@ -111,23 +111,23 @@
 
             <div class="login-body">
               <div class="row">
-                <div class="col-md-4 box-center">
-                  <div id="sikarBox" class="login-box active-box" style="cursor: pointer;"
+                <div id="sikarDiv" class="col-md-4 box-center" style="display: none;">
+                  <div id="sikarBox" class="login-box active-box" style="cursor: pointer; "
                     (click)="changeCity('sikar');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
                     </p>
                   </div>
                 </div>
-                <div class="col-md-4 box-center-2">
-                  <div id="reengusBox" class="login-box" style="cursor: pointer;" (click)="changeCity('reengus');">
+                <div id="reengusDiv" class="col-md-4 box-center-2" style="display: none;">
+                  <div id="reengusBox" class="login-box" style="cursor: pointer; " (click)="changeCity('reengus');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
                     </p>
                   </div>
                 </div>
-                <div class="col-md-4 box-center">
-                  <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;"
+                <div id="jaipurDiv" class="col-md-4 box-center" style="display: none;">
+                  <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; "
                     (click)="changeCity('jaipur');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur

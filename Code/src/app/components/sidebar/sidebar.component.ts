@@ -1,17 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { HttpClient } from '@angular/common/http';
-import { interval, observable } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LineCardMappingComponent } from "./../../line-card-mapping/line-card-mapping.component";
+import { Component, OnInit } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import { HttpClient } from "@angular/common/http";
+import { interval, observable } from "rxjs";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 //services
-import { CommonService } from '../../services/common/common.service';
-import { MapService } from '../../services/map/map.service';
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router, NavigationEnd, RouterLink } from "@angular/router";
-import { CmsComponent } from '../../cms/cms.component';
-import { domainToUnicode } from 'url';
+import { ToastrService } from "ngx-toastr";
+import {
+  ActivatedRoute,
+  Router,
+  NavigationEnd,
+  RouterLink,
+} from "@angular/router";
+import { CmsComponent } from "../../cms/cms.component";
+import { domainToUnicode } from "url";
 
 declare interface RouteInfo {
   path: string;
@@ -21,30 +27,35 @@ declare interface RouteInfo {
 }
 
 export const ROUTES: RouteInfo[] = [
-  { path: '/dashboard', title: 'Dashboard', icon: 'design_app', class: '' },
+  { path: "/dashboard", title: "Dashboard", icon: "design_app", class: "" },
 ];
 
 @Component({
-  selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  selector: "app-sidebar",
+  templateUrl: "./sidebar.component.html",
+  styleUrls: ["./sidebar.component.css"],
 })
-
 export class SidebarComponent implements OnInit {
-
   userid: any;
   isShow: any;
   accessList: any[];
   portalAccessList: any[];
   userType: any;
-  userDetail: userDetail =
-    {
-      name: '',
-      homeLink: '/home'
-    };
+  userDetail: userDetail = {
+    name: "",
+    homeLink: "/home",
+  };
   menuItems: any[];
 
-  constructor(public db: AngularFireDatabase, private modalService: NgbModal, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public router: Router) { }
+  constructor(
+    public db: AngularFireDatabase,
+    private modalService: NgbModal,
+    public httpService: HttpClient,
+    private mapService: MapService,
+    private commonService: CommonService,
+    private toastr: ToastrService,
+    public router: Router
+  ) {}
 
   zoneList: any[];
   toDayDate: any;
@@ -58,15 +69,20 @@ export class SidebarComponent implements OnInit {
   planList: any[];
   geoList: any[];
   cityName: any;
+  accessCity:any[]=[];
 
   ngOnInit() {
-    this.cityName = localStorage.getItem('cityName');
-    $('#cityName').html(this.cityName);
-    let element=<HTMLImageElement>document.getElementById("cityImage");
-    element.src=this.getCityIcon(this.cityName);
+    this.cityName = localStorage.getItem("cityName");
+    this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
+    if (this.accessCity.length > 1) {
+      $("#liCity").show();      
+    }
+    $("#cityName").html(this.cityName);
+    let element = <HTMLImageElement>document.getElementById("cityImage");
+    element.src = this.getCityIcon(this.cityName);
 
-    this.userid = localStorage.getItem('userID');
-    if (localStorage.getItem('isCityChange') == "yes") {
+    this.userid = localStorage.getItem("userID");
+    if (localStorage.getItem("isCityChange") == "yes") {
       this.commonService.setLocalStorageData(this.cityName);
       setTimeout(() => {
         this.commonService.setNotificationPermissions(this.userid);
@@ -77,19 +93,17 @@ export class SidebarComponent implements OnInit {
     let date = localStorage.getItem("date");
     if (date != null) {
       if (this.toDayDate != date) {
-        localStorage.setItem('date', this.toDayDate);
-        localStorage.setItem('skipLines', null);
-        localStorage.setItem('pickDustbins', null);
-        localStorage.setItem('geoSurfing', null);
+        localStorage.setItem("date", this.toDayDate);
+        localStorage.setItem("skipLines", null);
+        localStorage.setItem("pickDustbins", null);
+        localStorage.setItem("geoSurfing", null);
       }
+    } else {
+      localStorage.setItem("date", this.toDayDate);
     }
-    else {
-      localStorage.setItem('date', this.toDayDate);
-    }
-
 
     if (this.userid != null) {
-      this.userType = localStorage.getItem('userType');
+      this.userType = localStorage.getItem("userType");
       this.portalAccessList = [];
       this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
       setTimeout(() => {
@@ -98,22 +112,24 @@ export class SidebarComponent implements OnInit {
         this.haltDetails = [];
         this.pickDustbins = [];
         this.toDayDate = this.commonService.setTodayDate();
-        this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
+        this.currentMonth = this.commonService.getCurrentMonthName(
+          new Date(this.toDayDate).getMonth()
+        );
         this.currentYear = new Date().getFullYear();
         this.getZoneList();
-        if (localStorage.getItem('notificationHalt') == "1") {
+        if (localStorage.getItem("notificationHalt") == "1") {
           this.getHalts();
         }
-        if (localStorage.getItem('notificationMobileDataOff') == "1") {
+        if (localStorage.getItem("notificationMobileDataOff") == "1") {
           this.notifyMobileDataOff();
           let dataInterval = interval(180000).subscribe((val) => {
-            if (localStorage.getItem('notificationMobileDataOff') == "1") {
+            if (localStorage.getItem("notificationMobileDataOff") == "1") {
               this.notifyMobileDataOff();
             }
           });
           this.commonService.notificationInterval = dataInterval;
         }
-        if (localStorage.getItem('notificationSkippedLines') == "1") {
+        if (localStorage.getItem("notificationSkippedLines") == "1") {
           this.skippedLines = JSON.parse(localStorage.getItem("skipLines"));
           if (this.skippedLines == null) {
             this.skippedLines = [];
@@ -121,7 +137,7 @@ export class SidebarComponent implements OnInit {
           this.getSkippedLines();
         }
 
-        if (localStorage.getItem('notificationPickDustbins') == "1") {
+        if (localStorage.getItem("notificationPickDustbins") == "1") {
           this.planList = JSON.parse(localStorage.getItem("pickDustbins"));
           if (this.planList == null) {
             this.planList = [];
@@ -129,7 +145,7 @@ export class SidebarComponent implements OnInit {
           this.getDustbinPicked();
         }
 
-        if (localStorage.getItem('notificationGeoSurfing') == "1") {
+        if (localStorage.getItem("notificationGeoSurfing") == "1") {
           this.geoList = JSON.parse(localStorage.getItem("geoSurfing"));
           if (this.geoList == null) {
             this.geoList = [];
@@ -144,16 +160,16 @@ export class SidebarComponent implements OnInit {
     let icon = "./assets/img/sikar.svg";
     if (cityName == "reengus") {
       icon = "./assets/img/reengus.svg";
-    }
-    else if (cityName == "jaipur") {
+    } else if (cityName == "jaipur") {
       icon = "./assets/img/jaipur.svg";
     }
     return icon;
   }
 
-  changeCity(cityName:any) {
-    localStorage.setItem('cityName', cityName);
-    localStorage.setItem('isCityChange', "yes");
+  changeCity(cityName: any) {
+    localStorage.setItem("cityName", cityName);
+    localStorage.setItem("isCityChange", "yes");
+    this.getUserAccess();
     window.location.href = "/" + cityName + "/home";
   }
 
@@ -161,10 +177,21 @@ export class SidebarComponent implements OnInit {
     if (this.zoneList.length > 0) {
       for (let i = 1; i < this.zoneList.length; i++) {
         let zoneNo = this.zoneList[i]["zoneNo"];
-        let dbPath = "GeoGraphicallySurfingHistory/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.toDayDate + "";
-        let geoInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            if (localStorage.getItem('notificationGeoSurfing') == "1") {
+        let dbPath =
+          "GeoGraphicallySurfingHistory/" +
+          zoneNo +
+          "/" +
+          this.currentYear +
+          "/" +
+          this.currentMonth +
+          "/" +
+          this.toDayDate +
+          "";
+        let geoInstance = this.db
+          .object(dbPath)
+          .valueChanges()
+          .subscribe((data) => {
+            if (localStorage.getItem("notificationGeoSurfing") == "1") {
               if (data != null) {
                 let keyArray = Object.keys(data);
                 if (keyArray.length > 0) {
@@ -174,23 +201,30 @@ export class SidebarComponent implements OnInit {
                     let remark = data[index];
                     tripList.push({ remark: remark });
                     if (remark == "ward-out") {
-                      let message = "Ward " + zoneNo + " driver is going to out of ward";
+                      let message =
+                        "Ward " + zoneNo + " driver is going to out of ward";
                       this.sendGeoNotification(zoneNo, index, remark, message);
-                    }
-                    else if (remark == "collectionPoint1-in") {
-                      let message = "Ward " + zoneNo + " driver reached at Collection Point 1";
+                    } else if (remark == "collectionPoint1-in") {
+                      let message =
+                        "Ward " +
+                        zoneNo +
+                        " driver reached at Collection Point 1";
                       this.sendGeoNotification(zoneNo, index, remark, message);
-                    }
-                    else if (remark == "dumpingYard-in") {
-                      let message = "Ward " + zoneNo + " driver reached at Dumping Yard";
+                    } else if (remark == "dumpingYard-in") {
+                      let message =
+                        "Ward " + zoneNo + " driver reached at Dumping Yard";
                       this.sendGeoNotification(zoneNo, index, remark, message);
-                    }
-                    else if (remark == "collectionPoint2-in") {
-                      let message = "Ward " + zoneNo + " driver reached at Collection Point 2";
+                    } else if (remark == "collectionPoint2-in") {
+                      let message =
+                        "Ward " +
+                        zoneNo +
+                        " driver reached at Collection Point 2";
                       this.sendGeoNotification(zoneNo, index, remark, message);
-                    }
-                    else if (remark == "plant-in") {
-                      let message = "Ward " + zoneNo + " driver reached at Composting Plant";
+                    } else if (remark == "plant-in") {
+                      let message =
+                        "Ward " +
+                        zoneNo +
+                        " driver reached at Composting Plant";
                       this.sendGeoNotification(zoneNo, index, remark, message);
                     }
                   }
@@ -198,8 +232,7 @@ export class SidebarComponent implements OnInit {
                 }
               }
             }
-          }
-        );
+          });
       }
     }
   }
@@ -210,14 +243,11 @@ export class SidebarComponent implements OnInit {
       for (let i = 0; i < tripList.length; i++) {
         if (tripList[i]["remark"] == "collectionPoint1-in") {
           tripCount = tripCount + 1;
-        }
-        else if (tripList[i]["remark"] == "collectionPoint2-in") {
+        } else if (tripList[i]["remark"] == "collectionPoint2-in") {
           tripCount = tripCount + 1;
-        }
-        else if (tripList[i]["remark"] == "dumpingYard-in") {
+        } else if (tripList[i]["remark"] == "dumpingYard-in") {
           tripCount = tripCount + 1;
-        }
-        else if (tripList[i]["remark"] == "plant-in") {
+        } else if (tripList[i]["remark"] == "plant-in") {
           tripCount = tripCount + 1;
         }
       }
@@ -225,50 +255,46 @@ export class SidebarComponent implements OnInit {
     let lastWardStatus = tripList[tripList.length - 1]["remark"];
     if (lastWardStatus == "ward-in") {
       lastWardStatus = "Ward In";
-    }
-    else if (lastWardStatus == "ward-out") {
+    } else if (lastWardStatus == "ward-out") {
       lastWardStatus = "Ward Out";
-    }
-    else if (lastWardStatus == "office-in") {
+    } else if (lastWardStatus == "office-in") {
       lastWardStatus = "Office In";
-    }
-    else if (lastWardStatus == "office-out") {
+    } else if (lastWardStatus == "office-out") {
       lastWardStatus = "Office Out";
-    }
-    else if (lastWardStatus == "petrolPump-in") {
+    } else if (lastWardStatus == "petrolPump-in") {
       lastWardStatus = "Petrol Pump In";
-    }
-    else if (lastWardStatus == "petrolPump-out") {
+    } else if (lastWardStatus == "petrolPump-out") {
       lastWardStatus = "Petrol Pump Out";
-    }
-    else if (lastWardStatus == "collectionPoint1-in") {
+    } else if (lastWardStatus == "collectionPoint1-in") {
       lastWardStatus = "Collection Point 1 In";
-    }
-    else if (lastWardStatus == "collectionPoint1-out") {
+    } else if (lastWardStatus == "collectionPoint1-out") {
       lastWardStatus = "Collection Point 1 Out";
-    }
-    else if (lastWardStatus == "collectionPoint2-in") {
+    } else if (lastWardStatus == "collectionPoint2-in") {
       lastWardStatus = "Collection Point 2 In";
-    }
-    else if (lastWardStatus == "collectionPoint2-out") {
+    } else if (lastWardStatus == "collectionPoint2-out") {
       lastWardStatus = "Collection Point 2 Out";
-    }
-    else if (lastWardStatus == "dumpingYard-in") {
+    } else if (lastWardStatus == "dumpingYard-in") {
       lastWardStatus = "Dumping Yard In";
-    }
-    else if (lastWardStatus == "dumpingYard-out") {
+    } else if (lastWardStatus == "dumpingYard-out") {
       lastWardStatus = "Dumping Yard Out";
-    }
-    else if (lastWardStatus == "plant-in") {
+    } else if (lastWardStatus == "plant-in") {
       lastWardStatus = "Composting Plant In";
-    }
-    else if (lastWardStatus == "plant-out") {
+    } else if (lastWardStatus == "plant-out") {
       lastWardStatus = "Composting Plant Out";
     }
-    let dbPath = "WasteCollectionInfo/" + ZoneNo + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.toDayDate + "/Summary";
+    let dbPath =
+      "WasteCollectionInfo/" +
+      ZoneNo +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonth +
+      "/" +
+      this.toDayDate +
+      "/Summary";
     this.db.object(dbPath).update({
-      "trip": tripCount,
-      "vehicleCurrentLocation": lastWardStatus
+      trip: tripCount,
+      vehicleCurrentLocation: lastWardStatus,
     });
   }
 
@@ -277,19 +303,29 @@ export class SidebarComponent implements OnInit {
     if (this.geoList == null) {
       this.geoList = [];
     }
-    let geoListDetails = this.geoList.find(item => item.zoneNo == zoneNo && item.time == time && item.isSent == true);
+    let geoListDetails = this.geoList.find(
+      (item) =>
+        item.zoneNo == zoneNo && item.time == time && item.isSent == true
+    );
     if (geoListDetails == undefined) {
-      this.geoList.push({ zoneNo: zoneNo, time: time, remark: remark, isSent: true });
+      this.geoList.push({
+        zoneNo: zoneNo,
+        time: time,
+        remark: remark,
+        isSent: true,
+      });
       let notificationTime = new Date(this.toDayDate + " " + time);
       let currentTime = new Date();
-      let timeDiff = this.commonService.timeDifferenceMin(currentTime, notificationTime);
+      let timeDiff = this.commonService.timeDifferenceMin(
+        currentTime,
+        notificationTime
+      );
       // console.log(timeDiff);
       if (timeDiff < 15) {
-
         let cssClass = "alert alert-danger alert-with-icon";
         this.setNotificationAlert(message, cssClass);
       }
-      localStorage.setItem('geoSurfing', JSON.stringify(this.geoList));
+      localStorage.setItem("geoSurfing", JSON.stringify(this.geoList));
     }
   }
 
@@ -299,16 +335,30 @@ export class SidebarComponent implements OnInit {
       let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
       if (userAccessList != null) {
         for (let i = 0; i < userAccessList.length; i++) {
-          if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid) {
+          if (
+            userAccessList[i]["parentId"] == 0 &&
+            userAccessList[i]["userId"] == this.userid &&
+            userAccessList[i]["city"] == this.cityName
+          ) {
             let url = "javaScript:void(0);";
             if (userAccessList[i]["url"].includes("task-manager")) {
-              if (localStorage.getItem('officeAppUserId') != null) {
-                this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
+              if (localStorage.getItem("officeAppUserId") != null) {
+                this.accessList.push({
+                  name: userAccessList[i]["name"],
+                  url: userAccessList[i]["url"],
+                  isShow: this.isShow,
+                  position: userAccessList[i]["position"],
+                  img: userAccessList[i]["img"],
+                });
               }
-            }
-            else {
-              this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"] });
-
+            } else {
+              this.accessList.push({
+                name: userAccessList[i]["name"],
+                url: userAccessList[i]["url"],
+                isShow: this.isShow,
+                position: userAccessList[i]["position"],
+                img: userAccessList[i]["img"],
+              });
             }
           }
         }
@@ -319,10 +369,19 @@ export class SidebarComponent implements OnInit {
   // picked Dustbin Start
 
   getDustbinPicked() {
-    let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonth + "/" + this.toDayDate + "";
-    let pickInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (localStorage.getItem('notificationPickDustbins') == "1") {
+    let dbPath =
+      "DustbinData/DustbinPickHistory/" +
+      this.currentYear +
+      "/" +
+      this.currentMonth +
+      "/" +
+      this.toDayDate +
+      "";
+    let pickInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        if (localStorage.getItem("notificationPickDustbins") == "1") {
           if (data != null) {
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
@@ -335,31 +394,63 @@ export class SidebarComponent implements OnInit {
                     let planIndex = planArray[j];
                     if (dustbinData[planIndex]["endTime"] != null) {
                       let address = dustbinData[planIndex]["address"];
-                      dbPath = "DustbinData/DustbinPickingPlans/" + this.toDayDate + "/" + planIndex + "/planName";
-                      let palnInstance = this.db.object(dbPath).valueChanges().subscribe(
-                        palnData => {
+                      dbPath =
+                        "DustbinData/DustbinPickingPlans/" +
+                        this.toDayDate +
+                        "/" +
+                        planIndex +
+                        "/planName";
+                      let palnInstance = this.db
+                        .object(dbPath)
+                        .valueChanges()
+                        .subscribe((palnData) => {
                           palnInstance.unsubscribe();
                           if (palnData != null) {
-                            let planDetails = this.planList.find(item => item.planId == planIndex && item.dustbinId == dustbinIndex);
+                            let planDetails = this.planList.find(
+                              (item) =>
+                                item.planId == planIndex &&
+                                item.dustbinId == dustbinIndex
+                            );
                             if (planDetails == undefined) {
-                              this.planList = JSON.parse(localStorage.getItem("pickDustbins"));
+                              this.planList = JSON.parse(
+                                localStorage.getItem("pickDustbins")
+                              );
                               if (this.planList == null) {
                                 this.planList = [];
                               }
-                              this.planList.push({ planId: planIndex, dustbinId: dustbinIndex, planName: palnData, address: address, isSend: true });
-                              let notificationTime = new Date(dustbinData[planIndex]["endTime"]);
+                              this.planList.push({
+                                planId: planIndex,
+                                dustbinId: dustbinIndex,
+                                planName: palnData,
+                                address: address,
+                                isSend: true,
+                              });
+                              let notificationTime = new Date(
+                                dustbinData[planIndex]["endTime"]
+                              );
                               let currentTime = new Date();
-                              let timeDiff = this.commonService.timeDifferenceMin(currentTime, notificationTime);
+                              let timeDiff =
+                                this.commonService.timeDifferenceMin(
+                                  currentTime,
+                                  notificationTime
+                                );
                               if (timeDiff < 15) {
-                                let message = "Dustbin Picked for Plan " + palnData + " at address " + address;
-                                let cssClass = "alert alert-danger alert-with-icon";
+                                let message =
+                                  "Dustbin Picked for Plan " +
+                                  palnData +
+                                  " at address " +
+                                  address;
+                                let cssClass =
+                                  "alert alert-danger alert-with-icon";
                                 this.setNotificationAlert(message, cssClass);
                               }
-                              localStorage.setItem('pickDustbins', JSON.stringify(this.planList));
+                              localStorage.setItem(
+                                "pickDustbins",
+                                JSON.stringify(this.planList)
+                              );
                             }
                           }
-                        }
-                      );
+                        });
                     }
                   }
                 }
@@ -367,8 +458,7 @@ export class SidebarComponent implements OnInit {
             }
           }
         }
-      }
-    );
+      });
   }
   // picked Dustbin End
 
@@ -377,7 +467,7 @@ export class SidebarComponent implements OnInit {
       return false;
     }
     return true;
-  };
+  }
 
   getZoneList() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -392,10 +482,21 @@ export class SidebarComponent implements OnInit {
 
   getWardWiseHalts(wardNo: string) {
     var dt = new Date();
-    let haltCheckPath = 'HaltInfo/' + wardNo + '/' + '' + this.currentYear + '/' + this.currentMonth + '/' + this.toDayDate;
-    let halts = this.db.list(haltCheckPath).valueChanges().subscribe(
-      haltData => {
-        if (localStorage.getItem('notificationHalt') == "1") {
+    let haltCheckPath =
+      "HaltInfo/" +
+      wardNo +
+      "/" +
+      "" +
+      this.currentYear +
+      "/" +
+      this.currentMonth +
+      "/" +
+      this.toDayDate;
+    let halts = this.db
+      .list(haltCheckPath)
+      .valueChanges()
+      .subscribe((haltData) => {
+        if (localStorage.getItem("notificationHalt") == "1") {
           this.wardIndex++;
           if (haltData.length > 0) {
             let currentTime = new Date(dt.getTime() - 10 * 60000);
@@ -403,9 +504,16 @@ export class SidebarComponent implements OnInit {
             let endTime = haltData[haltData.length - 1]["endTime"];
             let hatlTime = new Date(this.toDayDate + " " + startTime);
             if (hatlTime > currentTime) {
-              let halt = this.haltDetails.find(item => item.wardNo == wardNo && item.startTime == startTime);
+              let halt = this.haltDetails.find(
+                (item) => item.wardNo == wardNo && item.startTime == startTime
+              );
               if (halt == undefined) {
-                this.haltDetails.push({ wardNo: wardNo, date: this.toDayDate, startTime: startTime, notified: false });
+                this.haltDetails.push({
+                  wardNo: wardNo,
+                  date: this.toDayDate,
+                  startTime: startTime,
+                  notified: false,
+                });
               }
             }
             this.notifyHalts();
@@ -419,9 +527,13 @@ export class SidebarComponent implements OnInit {
 
   notifyHalts() {
     for (let index = 0; index < this.haltDetails.length; index++) {
-      let record = this.haltDetails.find(item => item.notified == false);
+      let record = this.haltDetails.find((item) => item.notified == false);
       if (record != undefined) {
-        let message = "ward " + record.wardNo + " driver is stopped working, he stopped at " + record.startTime;
+        let message =
+          "ward " +
+          record.wardNo +
+          " driver is stopped working, he stopped at " +
+          record.startTime;
         let cssClass = "alert alert-danger alert-with-icon";
         this.setNotificationAlert(message, cssClass);
         record.notified = true;
@@ -430,28 +542,48 @@ export class SidebarComponent implements OnInit {
   }
 
   notifyMobileDataOff() {
-
     this.getRunningTasks();
     return false;
   }
 
   getRunningTasks() {
     var dt = new Date();
-    let Vehicle = this.db.list('Vehicles').valueChanges().subscribe(
-      data => {
+    let Vehicle = this.db
+      .list("Vehicles")
+      .valueChanges()
+      .subscribe((data) => {
         for (let index = 0; index < data.length; index++) {
           if (data[index]["assigned-task"] != undefined) {
             if (data[index]["assigned-task"] != "") {
-              let dbPath = 'LocationHistory/' + data[index]["assigned-task"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + this.toDayDate + "/last-update-time";
-              let locations = this.db.object(dbPath).valueChanges().subscribe(
-                updatedTime => {
+              let dbPath =
+                "LocationHistory/" +
+                data[index]["assigned-task"] +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonth +
+                "/" +
+                this.toDayDate +
+                "/last-update-time";
+              let locations = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((updatedTime) => {
                   if (updatedTime != null) {
-                    var lastUpdatedTime = new Date(this.toDayDate + " " + updatedTime);
+                    var lastUpdatedTime = new Date(
+                      this.toDayDate + " " + updatedTime
+                    );
                     var currentTime = new Date(dt.getTime());
-                    var difference = currentTime.getTime() - lastUpdatedTime.getTime(); // This will give difference in milliseconds
+                    var difference =
+                      currentTime.getTime() - lastUpdatedTime.getTime(); // This will give difference in milliseconds
                     var resultInMinutes = Math.round(difference / 60000);
                     if (resultInMinutes >= 7) {
-                      let message = "Ward " + data[index]["assigned-task"] + " : We are not getting any data from last " + resultInMinutes + " minutes. ";
+                      let message =
+                        "Ward " +
+                        data[index]["assigned-task"] +
+                        " : We are not getting any data from last " +
+                        resultInMinutes +
+                        " minutes. ";
                       let cssClass = "alert alert-danger alert-with-icon";
                       this.setNotificationAlert(message, cssClass);
                     }
@@ -470,33 +602,52 @@ export class SidebarComponent implements OnInit {
     this.getWardWiseSkippedLines(wardNo);
   }
 
-
-
   getWardWiseSkippedLines(wardNo: any) {
-    let skippedLinePath = 'WasteCollectionInfo/' + wardNo + '/' + '' + this.currentYear + '/' + this.currentMonth + '/' + this.toDayDate + '/Summary/skippedLines';
-    let skippedLinesInstance = this.db.object(skippedLinePath).valueChanges().subscribe(
-      skippedData => {
-        if (localStorage.getItem('notificationSkippedLines') == "1") {
+    let skippedLinePath =
+      "WasteCollectionInfo/" +
+      wardNo +
+      "/" +
+      "" +
+      this.currentYear +
+      "/" +
+      this.currentMonth +
+      "/" +
+      this.toDayDate +
+      "/Summary/skippedLines";
+    let skippedLinesInstance = this.db
+      .object(skippedLinePath)
+      .valueChanges()
+      .subscribe((skippedData) => {
+        if (localStorage.getItem("notificationSkippedLines") == "1") {
           if (skippedData != null) {
             if (skippedData != 0) {
               if (this.skippedLines.length > 0) {
-                let zoneDetails = this.skippedLines.find(item => item.wardNo == wardNo);
+                let zoneDetails = this.skippedLines.find(
+                  (item) => item.wardNo == wardNo
+                );
                 if (zoneDetails != undefined) {
                   if (zoneDetails.skipLine != skippedData) {
                     zoneDetails.skipLine = skippedData;
                     this.notificationSkipLine(wardNo, skippedData);
                   }
-                }
-                else {
-                  this.skippedLines.push({ wardNo: wardNo, skipLine: skippedData });
+                } else {
+                  this.skippedLines.push({
+                    wardNo: wardNo,
+                    skipLine: skippedData,
+                  });
                   this.notificationSkipLine(wardNo, skippedData);
                 }
-              }
-              else {
-                this.skippedLines.push({ wardNo: wardNo, skipLine: skippedData });
+              } else {
+                this.skippedLines.push({
+                  wardNo: wardNo,
+                  skipLine: skippedData,
+                });
                 this.notificationSkipLine(wardNo, skippedData);
               }
-              localStorage.setItem('skipLines', JSON.stringify(this.skippedLines));
+              localStorage.setItem(
+                "skipLines",
+                JSON.stringify(this.skippedLines)
+              );
             }
           }
           this.wardIndex++;
@@ -514,76 +665,79 @@ export class SidebarComponent implements OnInit {
   }
 
   setNotificationAlert(message: any, cssClass: any) {
-    let toast = this.toastr.error('<span class="now-ui-icons ui-1_bell-53"></span> ' + message + '.', '', {
-      disableTimeOut: true,
-      closeButton: true,
-      enableHtml: true,
-      toastClass: cssClass,
-      positionClass: 'toast-bottom-right',
-      tapToDismiss: false
-    });
+    let toast = this.toastr.error(
+      '<span class="now-ui-icons ui-1_bell-53"></span> ' + message + ".",
+      "",
+      {
+        disableTimeOut: true,
+        closeButton: true,
+        enableHtml: true,
+        toastClass: cssClass,
+        positionClass: "toast-bottom-right",
+        tapToDismiss: false,
+      }
+    );
   }
 
-
   getPage(value: any) {
-    this.userid = localStorage.getItem('userID');
+    this.userid = localStorage.getItem("userID");
     CmsComponent.prototype.userid = this.userid;
-    let list = value.split('/');
+    let list = value.split("/");
     if (list.length <= 2) {
       this.router.navigate([value], { replaceUrl: true });
-    }
-    else {
+    } else {
       let url = window.location.href;
       this.router.navigate([value], { replaceUrl: true });
       // if (!url.includes("cms")) {
       //   this.router.navigate([value],{ replaceUrl: true});
       //  }
       const id = list[list.length - 1];
-      let pageList = id.split('-');
+      let pageList = id.split("-");
       this.getPages(pageList[pageList.length - 1]);
       //CmsComponent.prototype.setDesign();
     }
   }
 
-
   getPages(pageId: any) {
     CmsComponent.prototype.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
-      let detail = userAccessList.find(item => item.pageId == pageId);
+      let detail = userAccessList.find((item) => item.pageId == pageId);
       if (detail != undefined) {
-        $('#pageName').html(detail.name);
-        $('#pageNameMobile').html(detail.name);
+        $("#pageName").html(detail.name);
+        $("#pageNameMobile").html(detail.name);
       }
       let k = 0;
       this.clearAll();
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid) {
-
+        if (
+          userAccessList[i]["parentId"] == pageId &&
+          userAccessList[i]["userId"] == this.userid
+        ) {
           this.isShow = false;
           k = k + 1;
-          let element = <HTMLElement>(document.getElementById('div' + k));
+          let element = <HTMLElement>document.getElementById("div" + k);
           if (element != undefined) {
-            $('#div' + k).show();
-            $('#span' + k).html(userAccessList[i]["name"]);
-            let className = $('#icon' + k).attr('class');
-            $('#icon' + k).removeClass(className);
-            $('#icon' + k).addClass(userAccessList[i]["img"]);
+            $("#div" + k).show();
+            $("#span" + k).html(userAccessList[i]["name"]);
+            let className = $("#icon" + k).attr("class");
+            $("#icon" + k).removeClass(className);
+            $("#icon" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
-              element.addEventListener('click', (e) => {
+              element.addEventListener("click", (e) => {
                 this.getPage(userAccessList[i]["url"]);
               });
             }
           }
-          element = <HTMLElement>(document.getElementById('divMob' + k));
+          element = <HTMLElement>document.getElementById("divMob" + k);
           if (element != undefined) {
-            $('#divMob' + k).show();
-            $('#spanMob' + k).html(userAccessList[i]["name"]);
-            let className = $('#iconMob' + k).attr('class');
-            $('#iconMob' + k).removeClass(className);
-            $('#iconMob' + k).addClass(userAccessList[i]["img"]);
+            $("#divMob" + k).show();
+            $("#spanMob" + k).html(userAccessList[i]["name"]);
+            let className = $("#iconMob" + k).attr("class");
+            $("#iconMob" + k).removeClass(className);
+            $("#iconMob" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
-              element.addEventListener('click', (e) => {
+              element.addEventListener("click", (e) => {
                 this.getPage(userAccessList[i]["url"]);
               });
             }
@@ -595,53 +749,64 @@ export class SidebarComponent implements OnInit {
 
   clearAll() {
     for (let k = 1; k <= 12; k++) {
-      $('#div' + k).hide();
-      $('#divMob' + k).hide();
+      $("#div" + k).hide();
+      $("#divMob" + k).hide();
     }
   }
 
-
-
   openCityModel(content: any) {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 290;
     let width = 350;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", "26px");
-    $('#popUpCityName').html(this.cityName);
-    let elementSikar=<HTMLElement>document.getElementById("sikarBox");
-    let classNameSikar=elementSikar.className;
-    let elementReengus=<HTMLElement>document.getElementById("reengusBox");
-    let classNameReengus=elementReengus.className;
-    let elementJaipur=<HTMLElement>document.getElementById("jaipurBox");
-    let classNameJaipur=elementJaipur.className;
-    $('#sikarBox').removeClass(classNameSikar);
-    $('#reengusBox').removeClass(classNameReengus);
-    $('#jaipurBox').removeClass(classNameJaipur);
-    if(this.cityName=="sikar"){
-      $('#sikarBox').addClass("login-box active-box");
-      $('#reengusBox').addClass("login-box");
-      $('#jaipurBox').addClass("login-box");
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#popUpCityName").html(this.cityName);
+    let elementSikar = <HTMLElement>document.getElementById("sikarBox");
+    let classNameSikar = elementSikar.className;
+    let elementReengus = <HTMLElement>document.getElementById("reengusBox");
+    let classNameReengus = elementReengus.className;
+    let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
+    let classNameJaipur = elementJaipur.className;
+    $("#sikarBox").removeClass(classNameSikar);
+    $("#reengusBox").removeClass(classNameReengus);
+    $("#jaipurBox").removeClass(classNameJaipur);
+    if (this.cityName == "sikar") {
+      $("#sikarBox").addClass("login-box active-box");
+      $("#reengusBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
+    } else if (this.cityName == "reengus") {
+      $("#sikarBox").addClass("login-box");
+      $("#reengusBox").addClass("login-box active-box");
+      $("#jaipurBox").addClass("login-box");
+    } else if (this.cityName == "jaipur") {
+      $("#sikarBox").addClass("login-box");
+      $("#reengusBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box active-box");
     }
-    else if(this.cityName=="reengus"){
-      $('#sikarBox').addClass("login-box");
-      $('#reengusBox').addClass("login-box active-box");
-      $('#jaipurBox').addClass("login-box");
-    }
-    else if(this.cityName=="jaipur"){
-      $('#sikarBox').addClass("login-box");
-      $('#reengusBox').addClass("login-box");
-      $('#jaipurBox').addClass("login-box active-box");
+    for(let i=0;i<this.accessCity.length;i++){
+      if(this.accessCity[i]["city"]=="sikar"){
+        $('#sikarDiv').show();
+      }
+      else if(this.accessCity[i]["city"]=="reengus"){
+        $('#reengusDiv').show();
+      }
+      else if(this.accessCity[i]["city"]=="jaipur"){
+        $('#jaipurDiv').show();
+      }
     }
   }
 
   closeMapModel() {
     this.modalService.dismissAll();
   }
-
 }
 
 export class userDetail {

@@ -21,8 +21,8 @@ export class UserAccessComponent implements OnInit {
   portalAccessList: any[];
   userAccessPages: any[];
   cityName: any;
+  selectedCity:any;
   saveType: any;
-
   userDetail: userDetail =
     {
       name: '',
@@ -83,6 +83,7 @@ export class UserAccessComponent implements OnInit {
   }
 
   getUserAccess(userKey) {
+    this.selectedCity=$('#ddlCity').val();
     this.userAccessPages = [];
     this.dbFireStore
       .collection("UserManagement").doc("Users").collection("Users").doc(userKey)
@@ -92,13 +93,14 @@ export class UserAccessComponent implements OnInit {
         this.userDetail.userType = doc.data()["userType"];
         this.userid = doc.data()["userId"].toString();
         this.dbFireStore
-          .collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(this.userid)
+          .collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity)
           .get()
           .subscribe((doc) => {
             if (doc.data() == undefined) {
               this.saveType = "add";
             }
             else {
+              if(doc.data()["pageId"]!=null){
               let pageId = doc.data()["pageId"];
               let dataList = pageId.toString().split(',');
               for (let i = 0; i < dataList.length; i++) {
@@ -106,6 +108,7 @@ export class UserAccessComponent implements OnInit {
               }
               this.saveType = "update";
             }
+          }
             this.getPortalPages();
           });
       });
@@ -213,10 +216,10 @@ export class UserAccessComponent implements OnInit {
       pageId: accessPages
     }
     if (this.saveType == "add") {
-      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).set(aa);
+      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).set(aa);
     }
     else {
-      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).update(aa);
+      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).update(aa);
     }
     this.toastr.error("Portal Accesss Updated Successfully !!!", '', {
       timeOut: 6000,
@@ -302,6 +305,11 @@ export class UserAccessComponent implements OnInit {
         }
       }
     }
+  }
+
+  changeCity(){
+    const id = this.actRoute.snapshot.paramMap.get('id');
+    this.getUserAccess(id);
   }
 }
 

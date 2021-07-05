@@ -14,7 +14,6 @@ export interface Users {
     expiryDate:any;
     notificationGeoSurfing:any;
     officeAppUserId:any;
-    accessCity:any;
     isTaskManager:any;
 }
 

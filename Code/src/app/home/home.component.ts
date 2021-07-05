@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   accessList: any[];
   portalAccessList: any[];
   userType: any;
+  cityName:any;
   userDetail: userDetail =
     {
       name: ''
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
+    this.cityName = localStorage.getItem('cityName');
     this.userid = localStorage.getItem('userID');
     this.userType = localStorage.getItem('userType');
     this.userDetail.name = localStorage.getItem('userName');
@@ -211,12 +213,11 @@ export class HomeComponent implements OnInit {
   }
 
   getUserAccess() {
-
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid) {
+        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid  && userAccessList[i]["city"] ==this.cityName) {
           let url = "javaScript:void(0);";
           let dataClass = "dashboard-widgets";
           this.isShow = false;
