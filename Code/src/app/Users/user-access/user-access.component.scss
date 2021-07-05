@@ -90,6 +90,12 @@ input[type="checkbox"]{
 }
 /******************************Custom Scrollbar End*********************************/
 
+select:focus-visible{
+  outline: none!important;
+}
+
+
+
 
 
 

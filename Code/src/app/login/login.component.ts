@@ -139,9 +139,7 @@ export class LoginComponent implements OnInit {
               "error",
               "sorry! you have not access for " + this.cityName + ""
             );
-            setTimeout(() => {
-              window.location.href = "/portal-access";
-            }, 100);
+            this.router.navigate(["/portal-access"]);
           } else {
             let pageId = doc.data()["pageId"];
             if (pageId == null) {
@@ -149,12 +147,8 @@ export class LoginComponent implements OnInit {
                 "error",
                 "sorry! you have not access for " + this.cityName + ""
               );
-              setTimeout(() => {
-                window.location.href = "/portal-access";
-              }, 100);
-            }
-            else
-            {
+              this.router.navigate(["/portal-access"]);
+            } else {
               this.doLogin();
             }
           }

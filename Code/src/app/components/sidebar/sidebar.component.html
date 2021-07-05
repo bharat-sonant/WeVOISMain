@@ -111,37 +111,31 @@
 
             <div class="login-body">
               <div class="row" style="display: flex; justify-content: center;">
-                <div id="sikarDiv" class="col-md-4 box-center" style="display: none;">
-                  <div id="sikarBox" class="login-box active-box" style="cursor: pointer; "
+                <div id="sikarBox" class="login-box active-box" style="cursor: pointer; margin-right: 5px; display: none; "
                     (click)="changeCity('sikar');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
                     </p>
                   </div>
-                </div>
-                <div id="reengusDiv" class="col-md-4 box-center-2" style="display: none;">
-                  <div id="reengusBox" class="login-box" style="cursor: pointer; " (click)="changeCity('reengus');">
+                  <div id="reengusBox" class="login-box" style="cursor: pointer; margin-left: 5px; margin-right: 5px;  display: none;" (click)="changeCity('reengus');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
                     </p>
                   </div>
-                </div>
-                <div id="jaipurDiv" class="col-md-4 box-center" style="display: none;">
-                  <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; "
+                  <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px;  display: none;"
                     (click)="changeCity('jaipur');">
                     <p>
                       <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur
                     </p>
                   </div>
+                  <div id="demoBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px;  display: none; "
+                  (click)="changeCity('demo');">
+                  <p>
+                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Demo
+                  </p>
                 </div>
-                <div id="demoDiv" class="col-md-4 box-center" style="display: none;">
-                  <div id="demoBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; "
-                    (click)="changeCity('demo');">
-                    <p>
-                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Demo
-                    </p>
-                  </div>
-                </div>
+                
+              
               </div>
             </div>
 

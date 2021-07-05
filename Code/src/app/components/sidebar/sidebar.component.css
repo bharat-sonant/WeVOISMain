@@ -166,8 +166,8 @@
 /*******************Login Start*****************/
 
   .login-container{
-    width: 515px;
-    height: 300px;
+    width: 600px;
+    height: 280px;
     background-color: #fff;
     border-radius: 10px;
     position: absolute;
@@ -236,8 +236,8 @@
     transition-timing-function: ease-out;
   }
   .login-box{
-    height: 115px;
-    width: 200px;
+    height: 120px;
+    width: 140px!important;
     border: 1px solid lightgray;
     display: flex;
     justify-content: center;

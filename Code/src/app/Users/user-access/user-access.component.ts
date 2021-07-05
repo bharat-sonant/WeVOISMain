@@ -221,14 +221,14 @@ export class UserAccessComponent implements OnInit {
     else {
       this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).update(aa);
     }
-    this.toastr.error("Portal Accesss Updated Successfully !!!", '', {
+    this.toastr.error("Portal Accesss Updated Successfully for "+this.selectedCity+" City !!!", '', {
       timeOut: 6000,
       enableHtml: true,
       closeButton: true,
       toastClass: "alert alert-info alert-with-icon",
       positionClass: 'toast-bottom-right'
     });
-    this.router.navigate(['/' + this.cityName + '/users']);
+    //this.router.navigate(['/' + this.cityName + '/users']);
   }
   
   cancelEntry() {

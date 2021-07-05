@@ -758,7 +758,7 @@ export class SidebarComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 290;
-    let width = 350;
+    let width = 650;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content")
       .parent()
@@ -803,16 +803,16 @@ export class SidebarComponent implements OnInit {
     }
     for(let i=0;i<this.accessCity.length;i++){
       if(this.accessCity[i]["city"]=="sikar"){
-        $('#sikarDiv').show();
+        $('#sikarBox').show();
       }
       else if(this.accessCity[i]["city"]=="reengus"){
-        $('#reengusDiv').show();
+        $('#reengusBox').show();
       }
       else if(this.accessCity[i]["city"]=="jaipur"){
-        $('#jaipurDiv').show();
+        $('#jaipurBox').show();
       }
       else if(this.accessCity[i]["city"]=="demo"){
-        $('#demoDiv').show();
+        $('#demoBox').show();
       }
     }
   }

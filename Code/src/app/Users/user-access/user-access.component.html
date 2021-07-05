@@ -2,6 +2,7 @@
   <div class="row no-gutters ">
     <div class="col-12 heading text-center">
       <div class="header-text"> Portal Access for <b>{{userDetail.name}}</b> ({{userDetail.userType}}) </div>
+      
     </div>
   </div>
 </section>
@@ -18,13 +19,26 @@
                     <thead>
                       <th>S.No.</th>
                       <th>Name</th>
-                      <th style="text-align: right;"><b>City&nbsp;</b>
-                      <select id="ddlCity" (change)="changeCity();">
-                        <option value="sikar">Sikar</option>
-                        <option value="reengus">Reengus</option>
-                        <option value="jaipur">Jaipur</option>
-                        <option value="demo">Demo</option>
-                      </select>
+                      <th style="text-align: right; padding-right: 215px;">
+                        <div style="position: absolute; top:3px; right:4px;">
+                          <i class="fas fa-city" style="margin-top: 13px;"></i>
+                          <select id="ddlCity" (change)="changeCity();" style="font-size: 15px;
+                          font-weight: bold;
+                          line-height: 1.5;
+                          color: #000000;
+                          display: block;
+                          background: none;
+                          height: 40px;
+                          border-radius: 2px;
+                          padding: 0 10px 0 10px;
+                          border: none;
+                          float: right;">
+                            <option value="sikar">Sikar</option>
+                            <option value="reengus">Reengus</option>
+                            <option value="jaipur">Jaipur</option>
+                            <option value="demo">Demo</option>
+                          </select>
+                        </div>
                       </th>
                     </thead>
                     <tbody>
