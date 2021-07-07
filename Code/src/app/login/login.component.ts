@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   dustbinList: any[];
   fixdGeoLocations: any[];
   cityName: any;
+  toDayDate:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -35,9 +36,11 @@ export class LoginComponent implements OnInit {
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     this.commonService.setLocalStorageData(this.cityName);
+    this.toDayDate = this.commonService.setTodayDate();
   }
 
   doLogin() {
+    localStorage.setItem('loginDate',this.toDayDate);
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));

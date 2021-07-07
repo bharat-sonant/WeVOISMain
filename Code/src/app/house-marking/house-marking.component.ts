@@ -224,21 +224,21 @@ export class HouseMarkingComponent {
   getMarkerIcon(type: any) {
     let url = "../assets/img/final-marker-2.svg";
     if (type == 1 || type == 16) {
-      url = "../assets/img/house.svg";
+      url = "../assets/img/marking-house.svg";
     } else if (type == 2 || type == 17) {
-      url = "../assets/img/shop.svg";
+      url = "../assets/img/marking-shop.svg";
     } else if (type == 11 || type == 12) {
-      url = "../assets/img/warehouse.svg";
+      url = "../assets/img/marking-warehouse.svg";
     } else if (type == 8) {
-      url = "../assets/img/institutes.svg";
+      url = "../assets/img/marking-institute.svg";
     } else if (type == 5 || type == 6 || type == 7 || type == 3 || type == 4) {
-      url = "../assets/img/hotel.svg";
+      url = "../assets/img/marking-hotel.svg";
     } else if (type == 13 || type == 14) {
-      url = "../assets/img/wedding.svg";
+      url = "../assets/img/marking-hall.svg";
     } else if (type == 15 || type == 16) {
-      url = "../assets/img/thela.svg";
+      url = "../assets/img/marking-thela.svg";
     } else if (type == 9 || type == 10) {
-      url = "../assets/img/hospital.svg";
+      url = "../assets/img/marking-hospital.svg";
     }
     return url;
   }

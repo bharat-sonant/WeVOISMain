@@ -72,6 +72,13 @@ export class SidebarComponent implements OnInit {
   accessCity: any[] = [];
 
   ngOnInit() {
+    if (localStorage.getItem("loginDate") != null) {
+      if (
+        this.commonService.setTodayDate() != localStorage.getItem("loginDate")
+      ) {
+        window.location.href = "/portal-access";
+      }
+    }
     this.cityName = localStorage.getItem("cityName");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
@@ -347,7 +354,13 @@ export class SidebarComponent implements OnInit {
               if (localStorage.getItem("officeAppUserId") != null) {
                 this.accessList.push({
                   name: userAccessList[i]["name"],
-                  url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ "/" + userAccessList[i]["url"],
+                  url:
+                    "/" +
+                    this.cityName +
+                    "/" +
+                    userAccessList[i]["pageId"] +
+                    "/" +
+                    userAccessList[i]["url"],
                   isShow: this.isShow,
                   position: userAccessList[i]["position"],
                   img: userAccessList[i]["img"],
@@ -356,7 +369,13 @@ export class SidebarComponent implements OnInit {
             } else {
               this.accessList.push({
                 name: userAccessList[i]["name"],
-                url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ "/" + userAccessList[i]["url"],
+                url:
+                  "/" +
+                  this.cityName +
+                  "/" +
+                  userAccessList[i]["pageId"] +
+                  "/" +
+                  userAccessList[i]["url"],
                 isShow: this.isShow,
                 position: userAccessList[i]["position"],
                 img: userAccessList[i]["img"],

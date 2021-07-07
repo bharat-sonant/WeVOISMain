@@ -996,8 +996,10 @@ export class CommonService {
   }
 
   chkUserPageAccess(pageURL: any, city: any) {
-    let urlCity=pageURL.split('/')[pageURL.split('/').length-3];
-    console.log(urlCity);
+    if (this.setTodayDate() != localStorage.getItem("loginDate")) {
+      window.location.href = "/portal-access";
+    }
+    let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
       let value = "/" + city + "/home";
       this.router.navigate([value], { replaceUrl: true });
