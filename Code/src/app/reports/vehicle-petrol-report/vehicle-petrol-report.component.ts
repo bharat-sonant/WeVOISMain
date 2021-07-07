@@ -47,6 +47,7 @@ export class VehiclePetrolReportComponent implements OnInit {
   constructor(public db: AngularFireDatabase, private modalService: NgbModal, public toastr: ToastrService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getVehicle();
     $('#divLoader').show();

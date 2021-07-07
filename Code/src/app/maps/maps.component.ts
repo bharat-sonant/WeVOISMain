@@ -85,12 +85,12 @@ export class MapsComponent {
     };
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     let userType = localStorage.getItem('userType');
     if (userType == "External User") {
       $('#isHouse').hide();
       $('#showHouseLabel').hide();
     }
-    this.commonService.chkUserPermission("Monitoring");
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());

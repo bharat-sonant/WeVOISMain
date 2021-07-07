@@ -80,6 +80,7 @@ export class MultipleMapsComponent {
   constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName=localStorage.getItem('cityName');
     let element=<HTMLAnchorElement>document.getElementById("homeLink");
     element.href="/"+this.cityName+"/home";

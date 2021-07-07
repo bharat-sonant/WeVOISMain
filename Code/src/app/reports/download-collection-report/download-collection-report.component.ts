@@ -60,6 +60,7 @@ export class DownloadCollectionReportComponent {
 
   ngOnInit() {
 
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.progress = 0;
     this.getZoneList();
     this.reportImages = [];

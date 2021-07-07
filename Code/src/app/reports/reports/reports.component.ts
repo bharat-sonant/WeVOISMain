@@ -17,6 +17,7 @@ export class ReportsComponent implements OnInit {
   portalAccessList: any[];
   userType: any;
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.userid = localStorage.getItem('userID');
     this.commonService.chkUserPermission("Reports");
     this.portalAccessList = [];

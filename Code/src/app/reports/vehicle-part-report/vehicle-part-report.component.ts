@@ -28,6 +28,7 @@ export class VehiclePartReportComponent implements OnInit {
   dateDataList: any[];
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.dateDataList = [];
     this.dateDataListStore = [];
     this.toDayDate = this.commonService.setTodayDate();

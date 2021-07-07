@@ -38,6 +38,7 @@ export class TaskManagerComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isFirst = false;
     this.cityName = localStorage.getItem('cityName');
     this.userId = localStorage.getItem('userID');

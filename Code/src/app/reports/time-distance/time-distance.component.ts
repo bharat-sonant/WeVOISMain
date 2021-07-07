@@ -91,6 +91,7 @@ export class TimeDistanceComponent implements OnInit {
   constructor(public db: AngularFireDatabase, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.todayDate = this.commonService.setTodayDate();
     this.zoneList = this.mapService.getZones(this.todayDate);
     this.zoneList.splice(0, 1);

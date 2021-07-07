@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
   constructor(public db: AngularFireDatabase, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.commonService.chkUserPermission("Dashboard");
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));    
     this.todayDate = this.commonService.setTodayDate();//"2019-07-24";
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();

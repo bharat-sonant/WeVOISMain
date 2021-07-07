@@ -995,9 +995,22 @@ export class CommonService {
     return returnValue;
   }
 
-  getFireBase() {
-    let abc = environment.firebase;
-    return abc;
+  chkUserPageAccess(pageURL: any, city: any) {
+    let urlCity=pageURL.split('/')[pageURL.split('/').length-3];
+    console.log(urlCity);
+    if (city != urlCity) {
+      let value = "/" + city + "/home";
+      this.router.navigate([value], { replaceUrl: true });
+    }
+    let pageId = pageURL.split(city)[1].split("/")[1];
+    let accessList = JSON.parse(localStorage.getItem("userAccessList"));
+    let pageDetails = accessList.find(
+      (item) => item.pageId == pageId && item.city == city
+    );
+    if (pageDetails == undefined) {
+      let value = "/" + city + "/home";
+      this.router.navigate([value], { replaceUrl: true });
+    }
   }
 
   //#region  all local storage
@@ -1141,6 +1154,12 @@ export class CommonService {
                 letestZone.push({ zoneNo: data[index], zoneName: "Wet 2" });
               } else if (data[index].toString() == "WetWaste2") {
                 letestZone.push({ zoneNo: data[index], zoneName: "Wet 3" });
+              } else if (data[index].toString() == "WetWaste4") {
+                letestZone.push({ zoneNo: data[index], zoneName: "Wet 4" });
+              } else if (data[index].toString() == "WetWaste5") {
+                letestZone.push({ zoneNo: data[index], zoneName: "Wet 5" });
+              } else if (data[index].toString() == "WetWaste6") {
+                letestZone.push({ zoneNo: data[index], zoneName: "Wet 6" });
               } else if (data[index].toString() == "CompactorTracking1") {
                 letestZone.push({
                   zoneNo: data[index],

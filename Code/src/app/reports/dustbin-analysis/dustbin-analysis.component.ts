@@ -68,6 +68,7 @@ export class DustbinAnalysisComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     let element = <HTMLAnchorElement>document.getElementById("dustbinReportLink");
     element.href = this.cityName + "/dustbin-report";

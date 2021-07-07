@@ -132,11 +132,11 @@ export class HaltSummaryComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     $('#divG').hide();
     $('#divTbl').show();
     $('#spGraph').show();
     $('#spTable').hide();
-    //this.commonService.chkUserPermission("halt-summary");
     this.currentDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());

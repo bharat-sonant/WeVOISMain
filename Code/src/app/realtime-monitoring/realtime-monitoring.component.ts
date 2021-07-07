@@ -175,6 +175,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     //this.commonService.setCityData();
     let element = <HTMLAnchorElement>document.getElementById("wardProgressLink");

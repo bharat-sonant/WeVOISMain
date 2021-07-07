@@ -74,7 +74,7 @@ export class UserAccessComponent implements OnInit {
             }
             this.dbFireStore
               .collection("UserManagement").doc("PortalSectionAccess").collection("Pages").add(aa);
-            console.log(this.portalAccessList);
+            
 
           }
         }

@@ -38,6 +38,7 @@ export class WardTripAnalysisComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.setDefaultValues();
     this.getPendingAnalysis();
     this.getWardTrips();

@@ -21,6 +21,7 @@ export class VehicleReportComponent implements OnInit {
   vehicleDetailList: any[];
   yearList: any[];
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];

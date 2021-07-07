@@ -100,7 +100,6 @@ export class UserAddComponent implements OnInit {
     let MUser = this.db.list('Users/').valueChanges().subscribe(
       mdata => {
         MUser.unsubscribe();
-        console.log(mdata);
         for (let i = 0; i < mdata.length; i++) {
           const dish = {
             userId:mdata[i]["userId"],

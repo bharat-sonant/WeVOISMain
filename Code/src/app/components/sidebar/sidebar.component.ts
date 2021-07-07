@@ -69,13 +69,13 @@ export class SidebarComponent implements OnInit {
   planList: any[];
   geoList: any[];
   cityName: any;
-  accessCity:any[]=[];
+  accessCity: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
-      $("#liCity").show();      
+      $("#liCity").show();
     }
     $("#cityName").html(this.cityName);
     let element = <HTMLImageElement>document.getElementById("cityImage");
@@ -162,6 +162,8 @@ export class SidebarComponent implements OnInit {
       icon = "./assets/img/reengus.svg";
     } else if (cityName == "jaipur") {
       icon = "./assets/img/jaipur.svg";
+    } else if (cityName == "demo") {
+      icon = "./assets/img/demo.svg";
     }
     return icon;
   }
@@ -345,7 +347,7 @@ export class SidebarComponent implements OnInit {
               if (localStorage.getItem("officeAppUserId") != null) {
                 this.accessList.push({
                   name: userAccessList[i]["name"],
-                  url: userAccessList[i]["url"],
+                  url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ "/" + userAccessList[i]["url"],
                   isShow: this.isShow,
                   position: userAccessList[i]["position"],
                   img: userAccessList[i]["img"],
@@ -354,7 +356,7 @@ export class SidebarComponent implements OnInit {
             } else {
               this.accessList.push({
                 name: userAccessList[i]["name"],
-                url: userAccessList[i]["url"],
+                url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ "/" + userAccessList[i]["url"],
                 isShow: this.isShow,
                 position: userAccessList[i]["position"],
                 img: userAccessList[i]["img"],
@@ -712,7 +714,8 @@ export class SidebarComponent implements OnInit {
       for (let i = 0; i < userAccessList.length; i++) {
         if (
           userAccessList[i]["parentId"] == pageId &&
-          userAccessList[i]["userId"] == this.userid
+          userAccessList[i]["userId"] == this.userid &&
+          userAccessList[i]["city"] == this.cityName
         ) {
           this.isShow = false;
           k = k + 1;
@@ -725,7 +728,13 @@ export class SidebarComponent implements OnInit {
             $("#icon" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
               element.addEventListener("click", (e) => {
-                this.getPage(userAccessList[i]["url"]);
+                this.getPage(
+                  "/" +
+                    this.cityName +
+                    "/" +
+                    userAccessList[i]["pageId"] +
+                    userAccessList[i]["url"]
+                );
               });
             }
           }
@@ -738,7 +747,13 @@ export class SidebarComponent implements OnInit {
             $("#iconMob" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
               element.addEventListener("click", (e) => {
-                this.getPage(userAccessList[i]["url"]);
+                this.getPage(
+                  "/" +
+                    this.cityName +
+                    "/" +
+                    userAccessList[i]["pageId"] +
+                    userAccessList[i]["url"]
+                );
               });
             }
           }
@@ -795,24 +810,21 @@ export class SidebarComponent implements OnInit {
       $("#reengusBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box active-box");
       $("#demoBox").addClass("login-box");
-    }else if (this.cityName == "demo") {
+    } else if (this.cityName == "demo") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box");
       $("#demoBox").addClass("login-box active-box");
     }
-    for(let i=0;i<this.accessCity.length;i++){
-      if(this.accessCity[i]["city"]=="sikar"){
-        $('#sikarBox').show();
-      }
-      else if(this.accessCity[i]["city"]=="reengus"){
-        $('#reengusBox').show();
-      }
-      else if(this.accessCity[i]["city"]=="jaipur"){
-        $('#jaipurBox').show();
-      }
-      else if(this.accessCity[i]["city"]=="demo"){
-        $('#demoBox').show();
+    for (let i = 0; i < this.accessCity.length; i++) {
+      if (this.accessCity[i]["city"] == "sikar") {
+        $("#sikarBox").show();
+      } else if (this.accessCity[i]["city"] == "reengus") {
+        $("#reengusBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur") {
+        $("#jaipurBox").show();
+      } else if (this.accessCity[i]["city"] == "demo") {
+        $("#demoBox").show();
       }
     }
   }

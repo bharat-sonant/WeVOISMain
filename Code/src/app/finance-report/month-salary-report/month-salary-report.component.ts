@@ -170,7 +170,7 @@ export class MonthSalaryReportComponent implements OnInit {
     };
 
   ngOnInit() {
-    //this.commonService.chkUserPermission("Ward Reach Cost");
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];

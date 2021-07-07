@@ -69,6 +69,7 @@ export class DustbinMonitoringComponent {
   cityName:any;
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;

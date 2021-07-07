@@ -54,6 +54,7 @@ export class SalarySummaryComponent implements OnInit {
 
     };
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.currentDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());

@@ -23,6 +23,7 @@ export class UserListComponent implements OnInit {
   cityName: any;
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.commonService.chkUserPermission("Users");
     this.dataState();

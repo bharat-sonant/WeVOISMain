@@ -55,6 +55,16 @@ else if (city == 'jaipur') {
     messagingSenderId: "381118272786",
   };
 }
+else if (city == 'demo') {
+  firebase = {
+    apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+    authDomain: "dtdnavigator.firebaseapp.com",
+    databaseURL: "https://dtdnavigatortesting.firebaseio.com",
+    projectId: "dtdnavigator",
+    storageBucket: "dtdnavigator.appspot.com",
+    messagingSenderId: "381118272786"
+  };
+}
 
 @NgModule({
   imports: [
@@ -74,7 +84,6 @@ else if (city == 'jaipur') {
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-
   ],
   providers: [{ provide: FirestoreSettingsToken, useValue: {} }],
   bootstrap: [AppComponent]

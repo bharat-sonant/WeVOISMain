@@ -34,6 +34,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   cityName:any;
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName=localStorage.getItem('cityName');
     const id = this.actRoute.snapshot.paramMap.get('id');
     const id2 = this.actRoute.snapshot.paramMap.get('id2');

@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  
+   /* 
   firebase: { 
     apiKey: "AIzaSyA1ZU5hI7Fho0B4ZJO2w8-fsCKMbq95m4c",
     authDomain: "dtdnavigator.firebaseapp.com",
@@ -25,7 +25,7 @@ export const environment = {
     //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
   }
 
- /* 
+
 
   firebase: {
     apiKey: "AIzaSyA1ZU5hI7Fho0B4ZJO2w8-fsCKMbq95m4c",

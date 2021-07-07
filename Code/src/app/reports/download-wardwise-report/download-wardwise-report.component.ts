@@ -58,7 +58,7 @@ export class DownloadWardwiseReportComponent {
   reportCount: number;
 
   ngOnInit() {
-    this.commonService.chkUserPermission("Download Ward Report");
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
 
     this.progress = 0;
     this.getZoneList();

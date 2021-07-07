@@ -63,6 +63,7 @@ export class LineCardMappingComponent {
     };
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();

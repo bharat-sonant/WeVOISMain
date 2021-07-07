@@ -17,6 +17,7 @@ export class WardWorkPercentageComponent implements OnInit {
   currentMonthName: any;
   currentYear: any;
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());

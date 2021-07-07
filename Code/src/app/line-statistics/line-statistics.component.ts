@@ -93,7 +93,7 @@ export class LineStatisticsComponent implements OnInit {
   constructor(public db: AngularFireDatabase, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.commonService.chkUserPermission("Time Distance Report");
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.todayDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();

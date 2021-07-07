@@ -1,51 +1,49 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { CommonService } from '../services/common/common.service';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { inspect } from 'util';
-
+import { Component, OnInit } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import { CommonService } from "../services/common/common.service";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { inspect } from "util";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: "app-home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.scss"],
 })
-
-
 export class HomeComponent implements OnInit {
-
   userid: any;
   isShow: any;
   accessList: any[];
   portalAccessList: any[];
   userType: any;
-  cityName:any;
-  userDetail: userDetail =
-    {
-      name: ''
-    };
+  cityName: any;
+  userDetail: userDetail = {
+    name: "",
+  };
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService, public dbFireStore: AngularFirestore) { }
+  constructor(
+    public db: AngularFireDatabase,
+    private commonService: CommonService,
+    public dbFireStore: AngularFirestore
+  ) {}
 
   ngOnInit() {
     //this.getBreakDustbin();
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
-    this.cityName = localStorage.getItem('cityName');
-    this.userid = localStorage.getItem('userID');
-    this.userType = localStorage.getItem('userType');
-    this.userDetail.name = localStorage.getItem('userName');
+    this.cityName = localStorage.getItem("cityName");
+    this.userid = localStorage.getItem("userID");
+    this.userType = localStorage.getItem("userType");
+    this.userDetail.name = localStorage.getItem("userName");
     this.commonService.chkUserExpiryDate();
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-    if (localStorage.getItem('isCityChange') == "yes") {  
-      localStorage.setItem('isCityChange','no');
+    if (localStorage.getItem("isCityChange") == "yes") {
+      localStorage.setItem("isCityChange", "no");
       setTimeout(() => {
         this.getUserAccess();
       }, 2000);
-    }
-    else {
+    } else {
       this.getUserAccess();
     }
     // this.commonService.setCityData();
@@ -60,13 +58,14 @@ export class HomeComponent implements OnInit {
 
     // }, 1000);
     //  }
-
   }
 
   getBreakDustbin() {
     let dbPath = "DustbinData/DustbinDetails";
-    let instance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
+    let instance = this.db
+      .list(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         instance.unsubscribe();
         if (data.length > 0) {
           for (let i = 0; i < data.length; i++) {
@@ -74,26 +73,24 @@ export class HomeComponent implements OnInit {
             let ward = data[i]["ward"];
             if (data[i]["isBroken"] != null) {
               if (data[i]["isBroken"] == true) {
-                console.log("Zone: " + zone + "  address: " + data[i]["address"]);
+                console.log(
+                  "Zone: " + zone + "  address: " + data[i]["address"]
+                );
               }
             }
-
           }
-
         }
-      }
-    );
+      });
   }
 
-
   setRemark() {
-    this.db.object('OtherWages').update({
-      "1": "Tyers"
+    this.db.object("HouseSurveyMarking").update({
+      "1": "Tyers",
     });
   }
 
   setAllWard() {
-    this.db.object('Defaults/AllWard/Circle1').update({
+    this.db.object("Defaults/AllWard/Circle1").update({
       "1": "[{wardNo:1, startDate:'2021-12-02'}]",
       "2": "2",
       "3": "3",
@@ -126,7 +123,7 @@ export class HomeComponent implements OnInit {
   }
 
   setAvailableWard() {
-    this.db.object('Defaults/AvailableWard').update({
+    this.db.object("Defaults/AvailableWard").update({
       "1": "1",
       "2": "2",
       "3": "3",
@@ -208,7 +205,7 @@ export class HomeComponent implements OnInit {
       "79": "Test_Ward_63",
       "80": "Test_Ward_64",
       "81": "Test_Ward_55",
-      "82": "FixedWages"
+      "82": "FixedWages",
     });
   }
 
@@ -217,18 +214,34 @@ export class HomeComponent implements OnInit {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid  && userAccessList[i]["city"] ==this.cityName) {
+        if (
+          userAccessList[i]["parentId"] == 0 &&
+          userAccessList[i]["userId"] == this.userid &&
+          userAccessList[i]["city"] == this.cityName
+        ) {
           let url = "javaScript:void(0);";
           let dataClass = "dashboard-widgets";
           this.isShow = false;
-          console.log(localStorage.getItem('officeAppUserId'))
           if (userAccessList[i]["url"].includes("task-manager")) {
-            if (localStorage.getItem('officeAppUserId') != null) {
-              this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
+            if (localStorage.getItem("officeAppUserId") != null) {
+              this.accessList.push({
+                name: userAccessList[i]["name"],
+                url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ userAccessList[i]["url"],
+                isShow: this.isShow,
+                position: userAccessList[i]["position"],
+                img: userAccessList[i]["img"],
+                dataClass: dataClass,
+              });
             }
-          }
-          else {
-            this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
+          } else {
+            this.accessList.push({
+              name: userAccessList[i]["name"],
+              url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ userAccessList[i]["url"],
+              isShow: this.isShow,
+              position: userAccessList[i]["position"],
+              img: userAccessList[i]["img"],
+              dataClass: dataClass,
+            });
           }
         }
       }
@@ -238,4 +251,3 @@ export class HomeComponent implements OnInit {
 export class userDetail {
   name: string;
 }
-

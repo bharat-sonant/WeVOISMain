@@ -70,6 +70,7 @@ import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-rep
 import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
+import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
 
 @NgModule({
   imports: [
@@ -144,7 +145,8 @@ import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward
     VehicleReportComponent,
     MultipleMapsComponent,
     TaskManagerComponent,
-    WardTripAnalysisComponent
+    WardTripAnalysisComponent,
+    HouseMarkingComponent
   ]
 })
 

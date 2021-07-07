@@ -43,6 +43,7 @@ export class HaltReportComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 201);
     this.selectedDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());

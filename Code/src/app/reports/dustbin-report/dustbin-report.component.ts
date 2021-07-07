@@ -54,6 +54,7 @@ export class DustbinReportComponent implements OnInit {
   highPriority: any;
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.userId = localStorage.getItem('userID');
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

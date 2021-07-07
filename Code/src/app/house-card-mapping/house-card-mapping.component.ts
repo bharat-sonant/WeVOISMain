@@ -41,6 +41,7 @@ export class HouseCardMappingComponent {
 
   ngOnInit() {
 
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     //this.setHeight();
     //this.getZoneList();

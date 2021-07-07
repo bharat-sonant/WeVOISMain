@@ -54,7 +54,7 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
-    //this.commonService.setCityData();
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.commonService.chkUserPermission("Vehicle Monitoring");
     this.todayDate = this.commonService.setTodayDate();

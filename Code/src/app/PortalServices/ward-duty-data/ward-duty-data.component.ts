@@ -21,6 +21,7 @@ export class WardDutyDataComponent implements OnInit {
   halperSalary:any;
   totalSalary:any;
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     //this.selectedDate = this.commonService.setTodayDate();
    // $('#txtDate').val(this.selectedDate);
     this.selectedDate = "2020-12-24";

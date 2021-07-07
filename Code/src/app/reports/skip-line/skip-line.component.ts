@@ -35,6 +35,7 @@ export class SkipLineComponent implements OnInit {
 
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     
     this.getZoneList();
     

@@ -56,6 +56,7 @@ export class VehiclePetrolCostComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];

@@ -47,9 +47,9 @@ export class HaltsComponent {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.bounds = new google.maps.LatLngBounds();
-    this.commonService.chkUserPermission("Halt Report");
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());

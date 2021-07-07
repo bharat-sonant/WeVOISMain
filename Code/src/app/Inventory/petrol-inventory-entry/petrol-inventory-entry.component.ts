@@ -44,6 +44,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.preDate = null;
     this.preSlipImage = null;

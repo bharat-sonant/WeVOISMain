@@ -19,6 +19,7 @@ export class PortalServicesComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getUserAccess();
   }

@@ -61,7 +61,7 @@ export class WardMonitoringComponent {
   constructor(public db: AngularFireDatabase, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.commonService.chkUserPermission("Collection Report");
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
 

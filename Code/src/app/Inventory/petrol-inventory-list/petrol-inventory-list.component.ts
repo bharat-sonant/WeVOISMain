@@ -31,6 +31,7 @@ export class PetrolInventoryListComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.userId = localStorage.getItem('userID');
     this.toDayDate = this.commonService.setTodayDate();
