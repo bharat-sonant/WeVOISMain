@@ -254,11 +254,11 @@ export class UserAddComponent implements OnInit {
       let cssClass = "alert alert-info alert-with-icon";
       this.commonService.setAlertMessageWithCss("success", message, cssClass);
     }
-    this.router.navigate(['/' + this.cityName + '/users']);
+    this.router.navigate(['/' + this.cityName + '/11/users']);
   }
 
   cancelEntry() {
-    this.router.navigate(['/' + this.cityName + '/users']);
+    this.router.navigate(['/' + this.cityName + '/11/users']);
   }
 
   chkEmail() {

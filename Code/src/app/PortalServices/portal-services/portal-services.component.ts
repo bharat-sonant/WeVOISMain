@@ -3,6 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: 'app-portal-services',
@@ -11,7 +12,7 @@ import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 })
 export class PortalServicesComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
+  constructor(public db: AngularFireDatabase, private router: Router, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
   toDayDate: any;
   yearList: any[] = [];
   zoneList: any[];
@@ -19,7 +20,7 @@ export class PortalServicesComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getUserAccess();
   }
@@ -27,18 +28,14 @@ export class PortalServicesComponent implements OnInit {
   getUserAccess() {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
-      for(let i=0;i<userAccessList.length;i++)
-      {
-        if(userAccessList[i]["pageId"]=="8A")
-        {
+      for (let i = 0; i < userAccessList.length; i++) {
+        if (userAccessList[i]["pageId"] == "8A") {
           $('#divLineCard').show();
         }
-        if(userAccessList[i]["pageId"]=="8B")
-        {
+        if (userAccessList[i]["pageId"] == "8B") {
           $('#divWorkPercentage').show();
         }
-        if(userAccessList[i]["pageId"]=="8C")
-        {
+        if (userAccessList[i]["pageId"] == "8C") {
           $('#divReachCost').show();
         }
       }
@@ -163,9 +160,9 @@ export class PortalServicesComponent implements OnInit {
                     }
                   }
                   if (startTime != "") {
-                 //   this.db.object('WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/Summary').update({
-                //      "dutyInTime": startTime
-                //    });
+                    //   this.db.object('WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/Summary').update({
+                    //      "dutyInTime": startTime
+                    //    });
                     let dbPathLine = 'WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/LineStatus';
                     let LineInfo = this.db.list(dbPathLine).valueChanges().subscribe(
                       lineData => {
@@ -223,6 +220,11 @@ export class PortalServicesComponent implements OnInit {
       toastClass: "alert alert-info alert-with-icon",
       positionClass: 'toast-bottom-right'
     });
+  }
+
+  goToPage(url: any) {
+    url = localStorage.getItem("cityName") + url;
+    this.router.navigate([url]);
   }
 
 }

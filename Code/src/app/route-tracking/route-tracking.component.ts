@@ -83,7 +83,7 @@ export class RouteTrackingComponent {
     };
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.setSpeed(Number($('#ddlSpeed').val()));
     $('#btnPre').show();
     $('#btnReset').hide();

@@ -63,9 +63,9 @@ export class LoginComponent implements OnInit {
       if (userDetails.officeAppUserId != 0) {
         localStorage.setItem("officeAppUserId", userDetails.officeAppUserId);
       }
-      if (userDetails.accessCity != "") {
-        localStorage.setItem("accessCity", userDetails.accessCity);
-      }
+     // if (userDetails.accessCity != "") {
+     //   localStorage.setItem("accessCity", userDetails.accessCity);
+    //  }
       if (userDetails.isTaskManager != 0) {
         localStorage.setItem("isTaskManager", userDetails.isTaskManager);
       } else {

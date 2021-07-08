@@ -48,7 +48,7 @@ export class UserService {
 
   // Delete User Object
   DeleteUser(id: string) {
-    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(id).delete();
+    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(id).update({isDelete:1});
   }
 
 

@@ -1163,6 +1163,7 @@ export class DustbinReportComponent implements OnInit {
           this.zoneList.push({ zoneNo: this.dustbinStorageList[i]["zone"], zone: "Zone " + this.dustbinStorageList[i]["zone"], pickFrequency: this.dustbinStorageList[i]["pickFrequency"] })
         }
       }
+      this.zoneList=this.commonService.transformNumeric(this.zoneList,'zone');
       this.selectedZone = this.zoneList[0]["zoneNo"];
       this.getDustbins();
     }

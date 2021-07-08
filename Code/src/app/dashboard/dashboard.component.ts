@@ -66,6 +66,7 @@ export class DashboardComponent implements OnInit {
     this.getCompletedWards();
     this.getActiveVehicles();
     this.drawWorkProgress();
+    this.getWardCollection();
     this.getWardWorkProgressData(this.todayDate);
     let drawProgress = interval(60000).subscribe((val) => {
       this.workDone = [];
@@ -73,6 +74,18 @@ export class DashboardComponent implements OnInit {
       this.getWardWorkProgressData(this.todayDate);
     });
 
+  }
+
+  getWardCollection()
+  {
+    console.log("dfgdfg")
+    let collectionInstance=this.db.object("WardTrips/"+this.currentYear+"/"+this.currentMonthName+"/"+this.todayDate+"/totalWasteCollection").valueChanges().subscribe(
+      data=>{
+        if(data !=null){
+          this.dashboardData.wasteCollected=data.toString();
+        }
+      }
+    );
   }
 
 

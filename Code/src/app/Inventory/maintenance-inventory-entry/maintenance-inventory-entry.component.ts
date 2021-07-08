@@ -34,7 +34,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   cityName:any;
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+   // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName=localStorage.getItem('cityName');
     const id = this.actRoute.snapshot.paramMap.get('id');
     const id2 = this.actRoute.snapshot.paramMap.get('id2');
@@ -438,7 +438,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
       }
       setTimeout(() => {
         this.setAlertMessage("success", "Entry Updated Successfully !!!");
-        this.router.navigate(['/' + this.cityName + '/maintenance-inventory-list']);
+        this.router.navigate(['/' + this.cityName + '/7B/maintenance-inventory-list']);
         //this.router.navigate(['/maintenance-inventory-list']);
       }, 4000);
     }
@@ -457,7 +457,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   }
 
   cancelEntry() {
-    this.router.navigate(['/' + this.cityName + '/maintenance-inventory-list']);
+    this.router.navigate(['/' + this.cityName + '/7B/maintenance-inventory-list']);
   }
 
   setAlertMessage(type: any, message: any) {

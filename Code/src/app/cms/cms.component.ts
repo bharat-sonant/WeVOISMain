@@ -32,7 +32,6 @@ export class CmsComponent implements OnInit {
     const id = this.actRoute.snapshot.paramMap.get("id");
     let pageList = id.split("-");
     this.getPages(pageList[pageList.length - 1]);
-
     // this.setDesign();
   }
 

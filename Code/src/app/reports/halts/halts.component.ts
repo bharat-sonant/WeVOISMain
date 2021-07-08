@@ -376,7 +376,7 @@ export class HaltsComponent {
   }
 
   showHaltSummary() {
-    this.router.navigate(['/' + this.cityName + '/halt-summary']);
+    this.router.navigate(['/' + this.cityName + '/10B4/halt-summary']);
   }
 }
 export class haltDetail {

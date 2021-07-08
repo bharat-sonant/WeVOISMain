@@ -563,7 +563,7 @@ export class DustbinAnalysisComponent implements OnInit {
       let userData = this.commonService.getPortalUserDetailById(this.binDetail.analysisBy);
       if (userData != undefined) {
         let date = this.binDetail.analysisAt.split(" ");
-        let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1])) + ", " + date[1];
+        let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1])-1) + ", " + date[1];
         this.binDetail.analysisDetail = "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
 
       } else {

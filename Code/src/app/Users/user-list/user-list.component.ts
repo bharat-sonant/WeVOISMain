@@ -69,7 +69,7 @@ export class UserListComponent implements OnInit {
 
       }); // Alert message will show up when student successfully deleted.
     }
-    //this.getUserList();
+    this.getUserList();
   }
 
   addNew() {

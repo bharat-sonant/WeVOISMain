@@ -21,7 +21,7 @@ export class WardMonitoringReportComponent implements OnInit {
   wardList: any[] = [];
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+   // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.getWards();
     this.selectedCircle = "Circle1";
     //this.commonService.chkUserPermission("Ward Monitoring Report");

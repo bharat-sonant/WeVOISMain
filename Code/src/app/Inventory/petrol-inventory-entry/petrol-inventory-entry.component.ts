@@ -44,7 +44,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+   // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.preDate = null;
     this.preSlipImage = null;
@@ -574,14 +574,14 @@ export class PetrolInventoryEntryComponent implements OnInit {
       }
       setTimeout(() => {
         this.setAlertMessage("success", "Entry Updated Successfully !!!");
-        this.router.navigate(['/' + this.cityName + '/petrol-inventory-list']);
-        this.router.navigate(['/petrol-inventory-list']);
+        this.router.navigate(['/' + this.cityName + '/7A/petrol-inventory-list']);
+        //this.router.navigate(['/petrol-inventory-list']);
       }, 4000);
     }
   }
 
   cancelEntry() {
-    this.router.navigate(['/' + this.cityName + '/petrol-inventory-list']);
+    this.router.navigate(['/' + this.cityName + '/7A/petrol-inventory-list']);
   }
 
   setAlertMessage(type: any, message: any) {

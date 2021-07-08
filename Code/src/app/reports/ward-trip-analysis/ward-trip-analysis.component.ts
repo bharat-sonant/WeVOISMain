@@ -202,7 +202,7 @@ export class WardTripAnalysisComponent implements OnInit {
       let userData = this.commonService.getPortalUserDetailById(this.tripDetail.analysisBy);
       if (userData != undefined) {
         let date = this.tripDetail.analysisAt.split(" ");
-        let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1])) + ", " + date[1];
+        let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1])-1) + ", " + date[1];
         this.tripData.analysisDetail = "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
       } else {
         this.commonService.setAlertMessage('error', 'Something went wrong, Please logout and login again.');
