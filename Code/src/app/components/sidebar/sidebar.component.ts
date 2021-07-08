@@ -72,13 +72,13 @@ export class SidebarComponent implements OnInit {
   accessCity: any[] = [];
 
   ngOnInit() {
-    if (localStorage.getItem("loginDate") != null) {
-      if (
-        this.commonService.setTodayDate() != localStorage.getItem("loginDate")
-      ) {
-        window.location.href = "/portal-access";
-      }
-    }
+    //if (localStorage.getItem("loginDate") != null) {
+    //  if (
+    //    this.commonService.setTodayDate() != localStorage.getItem("loginDate")
+    //  ) {
+    //    window.location.href = "/portal-access";
+    //  }
+   // }
     this.cityName = localStorage.getItem("cityName");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
