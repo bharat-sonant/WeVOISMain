@@ -1,0 +1,111 @@
+<section class="header">
+    <div class="row no-gutters">
+      <div class="col-md-2">
+        <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+          [(ngModel)]="selectedZone">
+          <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+            {{zone.zoneName}}
+          </option>
+        </select>  
+      </div>
+      <div class="col-md-7" style="padding-top: 20px; padding-left: 30px;;">
+        
+      </div>
+      
+    <div id="houseCount" class="col-md-3 text-right total-house" >
+      <div>
+
+      </div>
+      <div class="fix-home">        
+        <div class="float-r">
+          <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
+          <h6>Total Marked</h6>
+        </div>
+      </div>
+    </div>
+  
+    </div>
+  </section>
+  
+  <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+  
+<div class="driver-helper-box">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/house.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>आवासीय व आवासीय परिसर</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/shop.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>व्यसायिक दूकान, प्रतिष्ठान,<br/> खान-पान के स्थान, व्यावसायिक परिसर </p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/warehouse.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>लघु एवं कुटीर उद्योग, गोदाम, कोल्ड स्टोरेज </p> </h6>
+      </div>
+      </div>
+      
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/institutes.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>व्यसायिक कार्यालय, बैंक, कोचिंग आदि </p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/hotel.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>गेस्ट हाउस, छात्रावास/हॉस्टल, <br/> होटल व रेस्ट्रोरेंट</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/fair-wedding-park.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6> 
+        <p>शादी हॉल/उत्सव व मेला</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/thela.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>फल /सब्ज़ी ठेला, व्यसायिक ठेला व थड़ी</p> </h6>
+      </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+        <h5> <img src="../assets/img/hospital.svg"> </h5>
+      </div>
+      <div class="all-details">
+        <h6>
+        <p>क्लिनिक, डिस्पेंसरी व अस्पताल</p> </h6>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
