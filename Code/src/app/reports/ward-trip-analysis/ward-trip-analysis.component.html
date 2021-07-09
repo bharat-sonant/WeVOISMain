@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-5" style="margin-top: -40px;padding-right: 10px;padding-left: 5px;">
+                            <div class="col-md-3" style="margin-top: -40px;padding-right: 10px;padding-left: 5px;">
                                 <div class="dustbin-card">
                                             <div class="float">
                                                 <div class="fleft">
@@ -63,35 +63,32 @@
                                                     <img src="../../../assets/img/man.png" >
                                                 </div>
                                                      <h6 style=" float: left; width: calc(100% - 30px);">
-                                                        Subhash Singh Chauhan
+                                                        &nbsp;{{tripData.driverName}}
                                                     </h6>
-                                                </div>
-                                                <div class="fright">
-                                                    <p>
-                                                        {{tripData.startTime}} 08:00 AM
-                                                        <br> <span> Start Time</span>
-                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="float" style="border-bottom:0px!important">
                                                 <div class="fleft">
                                                     <div class="img-left" style="width: 30px; float:left">
-                                                    <img src="../../../assets/img/man.png" style="padding-right: 15px;">
+                                                    <img src="../../../assets/img/mobile.png" style="padding-right: 15px;">
                                                     </div>
                                                     <h6 style=" float: left; width: calc(100% - 30px);">
-                                                        Subhash Singh Chauhan
+                                                        {{tripData.driverMobile}}
                                                     </h6>
-                                                </div>
-                                                <div class="fright">
-                                                    <p>
-                                                        {{tripData.startTime}} 08:00 PM
-                                                        <br> <span> End Time</span>
-                                                    </p>
                                                 </div>
                                             </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 pl-0 mt-10" style="margin-top: -40px;  padding-right: 50px!important;">
+                            <div class="col-md-3" style="margin-top: -40px;padding-right: 10px;padding-left: 5px;">
+                                <div class="all-data">
+                                    <div class="data-1" >
+                                        <p class="pen-analysis">
+                                            {{tripData.startTime}}
+                                        <h5>Start Time</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 pl-0 mt-10" style="margin-top: -40px;  padding-right: 50px!important;">
                                 <div class="all-data">
                                     <div class="data-1" >
                                         <!-- <i class="fas fa-diagnoses" style="height: 17px;color: red;text-align: center!important;float:none!important;margin-right: 0px;"></i> -->
@@ -126,7 +123,7 @@
                                 <div class="col-md-12 mt-10">
                                     <div class="remark-page">
                                         <p class="align-self-center" style="color: green;margin-bottom: 0px;"><b
-                                            [innerHTML]="tripData.analysisDetail"></b><b>Remark By :</b> Harendra Singh Chaudhary </p>
+                                            [innerHTML]="tripData.analysisDetail"></b> </p>
                                     </div>
                                 </div>
                             </div>

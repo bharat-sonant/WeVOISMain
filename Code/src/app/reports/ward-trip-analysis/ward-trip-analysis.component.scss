@@ -340,6 +340,11 @@
     //   1px 1px 0 #ff0000;  
   text-shadow: -1px 0px 0px black;
   }
+  .pen-analysis {
+    color: #49ac41;
+    letter-spacing: 2px;
+    text-shadow: -1px 0px 0px black;
+}
    .summ-text{
     //  color: #fff;
     // letter-spacing: 2px;  
@@ -712,19 +717,8 @@
    height: 51.5px;
   }
   .fleft{
-    width: 75%;
-    float: left;
     padding: 6px 10px;
-    border-right: 1px dotted lightgray;
     display: flex;
-    align-items: center;
-  }
-  .fright{
-    width: calc(100% - 75%);
-    float: right;
-    padding: 4px 10px;
-    display: flex;
-    justify-content: flex-end;
     align-items: center;
   }
   .fleft h6{
