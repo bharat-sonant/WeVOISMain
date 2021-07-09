@@ -166,7 +166,7 @@
 /*******************Login Start*****************/
 
   .login-container{
-    width: 600px;
+   /* width: 600px; */
     height: 280px;
     background-color: #fff;
     border-radius: 10px;
