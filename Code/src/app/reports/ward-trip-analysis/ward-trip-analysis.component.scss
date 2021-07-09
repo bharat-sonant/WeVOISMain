@@ -305,9 +305,11 @@
     box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    min-height: 30px;
+    height: 103px;
     border-radius: 5px;
     overflow: hidden;
+    display: grid;
+    align-items: center;
   }
   .inner-data{
     padding: 6px 10px;
@@ -628,18 +630,14 @@
     transform: rotate(360deg); /* Equal to rotateZ(45deg) */
   }
   
-  .radio-text{
-    font-size: 12px;
-    padding-right: 0px!important;
-    // padding-left: 15px!important;
-    // padding-right: 5px!important;
-  }
+
   hr{
     margin-top: 5px!important;
     margin-bottom: 10px!important;
   }
   label{
     vertical-align: middle;
+    margin-bottom: 0px!important;
   }
   .picked{
     color: red!important;
@@ -711,23 +709,29 @@
    border-bottom: 1px dotted lightgray;
    display: flex;
    align-items: center;
+   height: 51.5px;
   }
   .fleft{
-    width: 66%;
+    width: 75%;
     float: left;
     padding: 6px 10px;
     border-right: 1px dotted lightgray;
+    display: flex;
+    align-items: center;
   }
   .fright{
-    width: calc(100% - 66%);
+    width: calc(100% - 75%);
     float: right;
     padding: 4px 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
   .fleft h6{
-    margin: 0px;
     font-size: 12px;
     font-weight: normal;
     text-transform: lowercase!important;
+    margin-bottom:0px!important
   }
   .fleft h6::first-line{
     text-transform: capitalize!important;
@@ -771,14 +775,15 @@
     box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    min-height: 30px;
+    min-height: 103px;
     border-radius: 5px;
     overflow: hidden;
+    justify-content: center;
   }
-  .data-1{
-    float: left;
-    width: 33.33%;
-  }
+  // .data-1{
+  //   float: left;
+  //   width: 33.33%;
+  // }
   .data-2{
     float: left;
     width: 33.33%;
@@ -794,8 +799,32 @@
   .desk-hide{
     display: none;
   }
-  
-  
+  .review-page{
+    background-color: #fff;
+    box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    border-radius: 5px;
+    min-height: 130px;
+  }
+  .radio-text{
+    padding: 12px 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    // padding-left: 15px!important;
+    // padding-right: 5px!important;
+  }
+  .remark-page{
+    background-color: #fff;
+    box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    border-radius: 5px;
+    min-height: 40px;
+    padding: 12px 10px;
+  }
+
   /******************Mediaquery Start *******************/
   // Small devices (landscape phones, 576px and up)
   @media (max-width: 576px) {
