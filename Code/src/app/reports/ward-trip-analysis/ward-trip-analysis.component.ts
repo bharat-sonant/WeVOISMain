@@ -27,10 +27,10 @@ export class WardTripAnalysisComponent implements OnInit {
   tripData: tripDetail =
     {
       pendingAnalysis: '0',
-      refreshTime: '00:00',
+      refreshTime: '00:00:00',
       driverName: "",
       driverMobile: "",
-      startTime: "",
+      startTime: "00:00:00",
       analysisDetail: "",
       imageUrl: "",
       remark: "",
@@ -180,7 +180,7 @@ export class WardTripAnalysisComponent implements OnInit {
       }
       this.tripDetail = tripDetails;
       this.tripData.driverName = tripDetails.driverName;
-      this.tripData.driverMobile = tripDetails.driverMobile;
+      this.tripData.driverMobile ="+91 "+ tripDetails.driverMobile;
       this.tripData.startTime = tripDetails.time;
       this.tripData.filledStatus = tripDetails.filledStatus;
       this.tripData.remark = tripDetails.remark;
@@ -305,7 +305,7 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.filledStatus = "";
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.remark = "";
-    this.tripData.startTime = "";
+    this.tripData.startTime = "00:00:00";
     let element = <HTMLInputElement>document.getElementById('chkFilledStatus');
     element.checked = false;
     element = <HTMLInputElement>document.getElementById('chkRemark');

@@ -70,10 +70,10 @@
                                             <div class="float" style="border-bottom:0px!important">
                                                 <div class="fleft">
                                                     <div class="img-left" style="width: 30px; float:left">
-                                                    <img src="../../../assets/img/mobile.png" style="padding-right: 15px;">
+                                                        <i class="fas fa-mobile-alt" style="font-size: 18px; color: #4aad43;"></i>
                                                     </div>
                                                     <h6 style=" float: left; width: calc(100% - 30px);">
-                                                        {{tripData.driverMobile}}
+                                                       {{tripData.driverMobile}}
                                                     </h6>
                                                 </div>
                                             </div>
@@ -112,9 +112,7 @@
                                            value="0" (click)="getSelected('chkRemark');">
                                        <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
                                    </div>
-                                   <div class="dustbin-progress" style="padding: 10px 0px; height: 38px;">
-                                    <p class="align-self-center" style="color: green;"><b
-                                            [innerHTML]="tripData.analysisDetail"></b> </p>
+                                   <div class="dustbin-progress" style="padding: 10px 0px; height: 38px;">                                    
                                     <button type="button" class="btn w-100 btn-success"
                                         (click)="saveTripAnalysis();" style="height: 36px;">Save <i class="fas fa-save"></i></button>
                                 </div>

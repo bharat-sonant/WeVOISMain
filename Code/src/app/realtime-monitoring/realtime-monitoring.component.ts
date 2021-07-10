@@ -1347,27 +1347,66 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getDutyOnOff() {
     this.dutyStatusList = [];
-    let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+    let zoneDetails = this.zoneList.find(
+      (item) => item.zoneNo == this.selectedZone
+    );
     if (zoneDetails != undefined) {
       if (zoneDetails.dutyOnTime != "---") {
-        let driverList = zoneDetails.driverName.toString().split(',');
-        let vehicleList = zoneDetails.vehicleNo.toString().split(',');
-        let dutyOnList = zoneDetails.dutyOnTime.toString().split(',');
-        let dutyOffList = zoneDetails.dutyOffTime.toString().split(',');
-        let reachOnList = zoneDetails.wardReachTime.toString().split(',');
+        let driverList = zoneDetails.driverName.toString().split(",");
+        let vehicleList = zoneDetails.vehicleNo.toString().split(",");
+        let dutyOnList = zoneDetails.dutyOnTime.toString().split(",");
+        let dutyOffList = zoneDetails.dutyOffTime.toString().split(",");
+        let reachOnList = zoneDetails.wardReachTime.toString().split(",");
         for (let i = 0; i < driverList.length; i++) {
-          this.dutyStatusList.push({ name: driverList[i], dutyOn: "---", reachOn: "---", dutyOff: "---" });
+          this.dutyStatusList.push({
+            name: driverList[i],
+            dutyOn: "---",
+            reachOn: "---",
+            dutyOff: "---",
+          });
           if (dutyOnList[i] != null) {
-            this.dutyStatusList[i]["dutyOn"] = this.commonService.tConvert(dutyOnList[i].trim());
+            this.dutyStatusList[i]["dutyOn"] = this.commonService.tConvert(
+              dutyOnList[i].trim()
+            );
           }
           if (dutyOffList[i] != null) {
-            this.dutyStatusList[i]["dutyOff"] = this.commonService.tConvert(dutyOffList[i].trim());
-          }
-          if (reachOnList[i] != null) {
-            this.dutyStatusList[i]["reachOn"] = this.commonService.tConvert(reachOnList[i]);
+            this.dutyStatusList[i]["dutyOff"] = this.commonService.tConvert(
+              dutyOffList[i].trim()
+            );
           }
           if (vehicleList[i] != null) {
             this.dutyStatusList[i]["vehicle"] = vehicleList[i];
+          }
+        }
+        for (let i = 0; i < reachOnList.length; i++) {
+          this.getReachOnTime(reachOnList[i].trim());
+        }
+      }
+    }
+  }
+  
+  getReachOnTime(reachTime: any) {
+    let dat1 = new Date(this.toDayDate + " " + reachTime);
+    for (let i = 0; i < this.dutyStatusList.length; i++) {
+      let startDate = new Date(
+        this.toDayDate + " " + this.dutyStatusList[i]["dutyOn"]
+      );
+      if (dat1 > startDate) {
+        if (this.dutyStatusList[i]["dutyOn"] == "---") {
+          this.dutyStatusList[i]["reachOn"] =
+            this.commonService.tConvert(reachTime);
+        } else {
+          if (this.dutyStatusList[i]["dutyOff"] == "---") {
+            this.dutyStatusList[i]["reachOn"] =
+            this.commonService.tConvert(reachTime);
+          } else {
+            let endDate = new Date(
+              this.toDayDate + " " + this.dutyStatusList[i]["dutyOff"]
+            );
+            if (dat1 < endDate) {
+              this.dutyStatusList[i]["reachOn"] =
+                this.commonService.tConvert(reachTime);
+            }
           }
         }
       }
