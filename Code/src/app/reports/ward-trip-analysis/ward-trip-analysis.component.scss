@@ -114,6 +114,7 @@
     font-size: 12px;
     border: 1px solid lightgray;
     border-radius: 0.1875rem;
+    padding: 0px 0px 0px 10px;
   }
   select:focus{
     outline: none!important;
@@ -799,7 +800,7 @@
     -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
     border-radius: 5px;
-    min-height: 130px;
+    min-height: 134px;
   }
   .radio-text{
     padding: 12px 10px;

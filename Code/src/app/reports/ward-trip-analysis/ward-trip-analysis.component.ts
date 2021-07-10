@@ -22,7 +22,7 @@ export class WardTripAnalysisComponent implements OnInit {
   allZoneList: any[];
   selectedZone: any[];
   selectedTrip: any[];
-  imageNotAvailablePath = '../assets/img/img-not-available.png';
+  imageNotAvailablePath = '../assets/img/img-not-available-01.jpg';
   tripDetail: any;
   tripData: tripDetail =
     {
