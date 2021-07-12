@@ -12,6 +12,10 @@
     font-weight: bold;
     text-transform: uppercase;
   }
+
+  .caret-select{margin-top: 0px!important; margin-left:10px!important;
+    border-radius: 5px;
+    padding:10px; border:none!important;  width: 97%;}
   
   /**************************graph Start***************************/
   .graph-box{
@@ -35,7 +39,7 @@
     margin-top: 15px;
     text-align: center;
     // border-bottom: 5px solid #dcdcdc;
-    background-color: #fff;;
+    background-color: #fff;
     padding: 15px;
     padding-top:8px;
     color: #444444;
@@ -48,7 +52,7 @@
   }
   .tableFixHead {
     overflow-y: auto;
-    height: 322px;
+    height: 84vh;
   }
   
   .tableFixHead thead th {
@@ -61,13 +65,13 @@
     width: 100%;
   }
   thead th{
-    font-size:20px;
+    font-size:16px;
     color: rgb(56, 56, 56);
     font-weight: normal;
   }
   table td{
     padding: 12px 12px !important;
-    font-size:18px;
+    font-size:12px;
   }
   .tableFixHead a{
     color: #000;
@@ -126,7 +130,7 @@
     margin-top: 10px;
     background-color: #fff;
     padding: 17px;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 23px;
     border-radius: 0.25rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
@@ -194,7 +198,7 @@
     font-weight: 500;
   }
   .dth h4{
-    font-size: 20px;
+    font-size: 12px;
     width: 50%;
     margin:0px;
     text-align: center;
@@ -222,5 +226,26 @@
   .dth h4:hover{
     background-color: #edf5fb!important;
     border-radius: .25rem;
+  }
+
+  .pos-right{
+    padding-right:42px!important;
+  }
+  .update-time{
+    font-size: 12px!important;
+  }
+
+  .refresh{
+    background: #fff;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 4px;
+    height: 35px;
+    width: 35px;
+    position: absolute;
+    bottom: 5px;
+    top: 7px;
+    right: 15px;
   }
   

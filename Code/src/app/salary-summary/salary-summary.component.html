@@ -1,27 +1,43 @@
 <section class="halts">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12 text-center halts-header">
+      <div class="col-md-2 halts-header">
+        <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+        style="width: 150px;" [(ngModel)]="selectedYear">
+        <option value="0">Year</option>
+        <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+    </select>
+    <button class="refresh" (click)="updateSalary();" title="Update Salaey"><i class="fas fa-redo-alt" style="color:green;"></i></button>
+    </div>
+    <div class="col-md-2 halts-header">
+    <span class="pos-right" style="float:left; font-size: 7px; line-height: 15px; padding-right:50px; text-align: right;">last
+          Update<br />
+          <span class="update-time" style="font-size: 18px; font-weight: bold;">{{salaryData.lastUpdateTime}} </span></span>
+        
+      </div>
+      <div class="col-md-6 text-center halts-header">
         Salary Summary
+      </div>
+      <div class="col-md-2 halts-header" style="float:right;">       
+        Total Salary : {{salaryData.totalSalary}}       
       </div>
     </div>
     <div class="row" style="margin-top: 10px;">
-      <div class="col-md-7" style="padding-left: 16px;">
+      <div class="col-md-8" style="padding-left: 16px;">
         <div id="divG">
         <div style="background-color: #fff; padding-top: 20px; border-radius: 0.25rem;
         box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);">
           <div id="divGraph" style="margin-top: 15px;width: 100%!important;">
-            <div id="chartContainer" style="height: 288px; width: 98%; margin-left:auto;margin-right:auto;  ">
+            <div id="chartContainer" style="height: 350px; width: 98%; margin-left:auto;margin-right:auto;  ">
             </div>
           </div>
         </div>
       </div>
-
       </div>
-      <div class="col-md-5" style="padding-left: 5px;">
+      <div class="col-md-4" style="padding-left: 5px;">
         <div >
           <div class="table-bg">
-            <div class="tableFixHead">
+            <div style="min-height: 385px;">
               <table class="table table-hover">
                 <thead>
                   <tr>
@@ -31,7 +47,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let dt of monthSalaryList">
-                    <td>{{dt.month}}  {{dt.year}}</td>
+                    <td>{{dt.month}} {{dt.year}}</td>
                     <td class="text-center">{{dt.salary}}</td>
                   </tr>
                 </tbody>

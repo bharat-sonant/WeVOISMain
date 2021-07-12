@@ -804,6 +804,6 @@ export class DustbinMonitoringComponent {
   }
 
   showImageDetail() {
-    this.router.navigate(['/' + this.cityName + '/dustbin-analysis']);
+    this.router.navigate(['/' + this.cityName + '/3A/dustbin-analysis']);
   }
 }

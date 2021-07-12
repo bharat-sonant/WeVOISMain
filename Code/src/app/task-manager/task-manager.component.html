@@ -45,7 +45,7 @@
             <option value={{user.empID}} *ngFor="let user of userList">
               {{user.name}}</option>
           </select>
-          <select class="caret-select" id="ddlCategory" (change)="getTaskList()" style="width: 150px;">
+          <select class="caret-select" id="ddlCategory" (change)="getTaskList()" style="width: 150px; display: none;">
             <option value="0">All Projects</option>
             <option value={{proj.project}} *ngFor="let proj of projectList">
               {{proj.project}}</option>
@@ -79,11 +79,11 @@
                       <th style="padding-right: 20px;">Action</th>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let data of userTaskList;">
-                        <td style="border-right:1px solid #dee2e6; width:5%;">{{data.sno}} {{data.isNameShow}}</td>
-                        <td style="border-right:1px solid #dee2e6; width:15%;" [hidden]="data.isNameShow==0">
+                      <tr *ngFor="let data of userTaskList;let i=index">
+                        <td style="border-right:1px solid #dee2e6; width:5%;">{{i+1}} </td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;" [hidden]="data.isNameShow==0">
                           {{data.name}}</td>
-                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                        <td style="border-right:1px solid #dee2e6; width:8%;">
                           {{data.date}}</td>
                         <td class="text-right" style="border-right:1px solid #dee2e6; width:5%;">
                           {{data.timeInMinutes}} min</td>
@@ -93,7 +93,7 @@
                           {{data.project}}</td>
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.task}}</td>
-                        <td style="border-right:1px solid #dee2e6; width:42%">{{data.description}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:24%">{{data.description}}</td>
                         <td class="text-center" style="padding-right: 20px;width:8%">
                           <span [hidden]="data.date!=data.todayDate">
                             <i class="far fa-file-alt" (click)="openModel(contentStatus,data.key,'status')"
@@ -141,6 +141,17 @@
         <input id="key" type="hidden" value="0" />
         <input id="status" type="hidden" value="In Progress" />
         <input id="remark" type="hidden" value="" />
+        <div class="wrap-input-effects" required>
+          <select id="drpFor" class="input-green" (change)="getProjects($event.target.value);">
+            <option value="0">Select Task For</option>
+            <option value={{main.mainCat}} *ngFor="let main of mainList">
+              {{main.mainCat}}</option>
+          </select>
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fas fa-tasks" aria-hidden="true"></i>
+          </span>
+        </div>
         <div class="wrap-input-effects" required>
           <select id="drpProject" class="input-green" (change)="getTask($event.target.value);">
             <option value="0">Select Project</option>
@@ -239,13 +250,13 @@
           <tr>
             <td>
 
-              <select class="caret-select" id="ddlYearSummary" (change)="getSummary()" style="width: 150px;">
+              <select class="caret-select" id="ddlYearSummary" (change)="getSummary()" style="width: 161px;">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList">
                   {{yer.year}}</option>
               </select>
 
-              <select class="caret-select" id="ddlMonthSummary" (change)="getSummary()" style="width: 150px;">
+              <select class="caret-select" id="ddlMonthSummary" (change)="getSummary()" style="width: 161px;">
                 <option value="0">Month</option>
                 <option value="01">January</option>
                 <option value="02">February</option>
@@ -260,7 +271,7 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
               </select>
-              <select class="caret-select" id="ddlCategorySummary" (change)="getSummary()" style="width: 150px;">
+              <select class="caret-select" id="ddlCategorySummary" (change)="getSummary()" style="width: 150px; display: none;">
                 <option value="0">All</option>
                 <option value={{proj.project}} *ngFor="let proj of projectList">
                   {{proj.project}}</option>
