@@ -1,1 +1,48 @@
-<p>task-management-masters works!</p>
+<section class="task-masters">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 top-header text-center">
+                <b class="ward-header"> Task Management Masters</b>
+               </div>
+               <div class="col-md-12 mt-10">
+                <button class="tablink" onclick="openPage('Category', this, 'white')">Category</button>
+                <button class="tablink" onclick="openPage('Projects', this, 'white')" id="defaultOpen">Projects</button>
+                <button class="tablink" onclick="openPage('Modules', this, 'white')">Modules</button>
+                <button class="tablink" onclick="openPage('Other', this, 'white')">Other</button>
+                
+                <div id="Category" class="tabcontent show active">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <select name="" id="">
+                                <option value=""> Select One</option>
+                                <option value=""> Select Two</option>
+                                <option value=""> Select Three</option>
+                                <option value=""> Select Four</option>
+                            </select>
+                        </div>
+                    <div class="col-md-12 mt-10">
+                        <textarea name="" id="" cols="30" rows="10"> wrtite here...</textarea>
+                    </div>
+                    <div class="col-md-12">
+                    <button type="button w-100" class="btn btn-success">SUBMIT</button>
+                    </div>
+                </div>
+                </div>
+                
+                <div id="Projects" class="tabcontent">
+                  <h3>Projects</h3>
+                </div>
+                
+                <div id="Modules" class="tabcontent">
+                  <h3>Modules</h3>
+                  <p>Get in touch, or swing by for a cup of coffee.</p>
+                </div>
+                
+                <div id="Other" class="tabcontent">
+                  <h3>Other</h3>
+                  <p>Who we are and what we do.</p>
+                </div>
+               </div>
+        </div>
+    </div>
+</section>
