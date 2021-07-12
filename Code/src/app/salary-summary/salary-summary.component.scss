@@ -5,18 +5,51 @@
   .halts-header{
     background-color: #100f1a;
     color: #fff;
-    height: 60px;
-    padding-top: 15px;
-    font-size: 16px;
+    height: 57px;
+    padding-top: 10px;
+    font-size: 20px;
     position: relative;
     font-weight: bold;
     text-transform: uppercase;
   }
 
-  .caret-select{margin-top: 0px!important; margin-left:10px!important;
+  .caret-select{
+    margin-top:-3px!important;
+     margin-left:10px!important;
     border-radius: 5px;
-    padding:10px; border:none!important;  width: 97%;}
-  
+    padding:10px;
+     border:none!important; 
+    height: 38px;
+    font-size: 12px;
+     width: 97%;
+    }
+  .salary-header{
+    border-left: 2px solid #0ba118;
+    color: #16ea28;
+    min-width: 200px;
+    height: 57px;
+    top: 0px;
+    right: 0px;
+    position: fixed;
+    font-size: 20px;
+    font-weight:bold;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    line-height: 8px;
+    text-align: center;
+    padding: 7px;
+    transition: 0.5s;
+  }
+  .salary-header:hover{
+    background: #100f1a;
+    color: #16ea28;
+  }
+  .last-update{
+    top: 3px;
+    right: 215px;
+    position: fixed;
+  }
   /**************************graph Start***************************/
   .graph-box{
     background-color: rgb(16, 15, 26);
@@ -65,12 +98,16 @@
     width: 100%;
   }
   thead th{
-    font-size:16px;
+    font-size:14px;
     color: rgb(56, 56, 56);
-    font-weight: normal;
+    font-weight: bold;
+    padding: 12px 14px !important;
   }
   table td{
-    padding: 12px 12px !important;
+    font-size:12px;
+  }
+  table td{
+    padding: 12px 22px !important;
     font-size:12px;
   }
   .tableFixHead a{
@@ -229,7 +266,7 @@
   }
 
   .pos-right{
-    padding-right:42px!important;
+    padding-right:60px!important;
   }
   .update-time{
     font-size: 12px!important;
