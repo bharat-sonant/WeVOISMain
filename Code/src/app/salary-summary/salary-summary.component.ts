@@ -33,7 +33,7 @@ export class SalarySummaryComponent implements OnInit {
   monthSalaryListShow: any[] = [];
   salaryData: salaryDetail = {
     totalSalary: "0.00",
-    lastUpdateTime: "gsdgs",
+    lastUpdateTime: "",
   };
 
   ngOnInit() {
