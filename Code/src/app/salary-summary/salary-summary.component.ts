@@ -19,7 +19,7 @@ export class SalarySummaryComponent implements OnInit {
     public db: AngularFireDatabase,
     private commonService: CommonService,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   selectedDate: any;
   currentMonth: any;
@@ -51,7 +51,8 @@ export class SalarySummaryComponent implements OnInit {
     this.getMonthSalary();
     setTimeout(() => {
       this.getMonthSalaryGraph();
-    }, 2000);
+      this.getTotalSalary();
+    }, 3000);
   }
 
   getLastUpdate() {
@@ -61,7 +62,9 @@ export class SalarySummaryComponent implements OnInit {
       .valueChanges()
       .subscribe((data) => {
         lastUpdateInstance.unsubscribe();
-        this.salaryData.lastUpdateTime = data.toString();
+        if (data != null) {
+          this.salaryData.lastUpdateTime = data.toString();
+        }
       });
   }
 
@@ -75,6 +78,7 @@ export class SalarySummaryComponent implements OnInit {
   }
 
   getMonthSalary() {
+    this.salaryData.totalSalary = "0.00";
     let currentMonth = Number(this.currentDate.split("-")[1]);
     if (this.selectedYear != this.currentYear) {
       currentMonth = 12;
@@ -106,10 +110,9 @@ export class SalarySummaryComponent implements OnInit {
             );
             if (monthDetail != undefined) {
               monthDetail.salary = Number(data).toFixed(2);
-              this.salaryData.totalSalary = (
-                Number(this.salaryData.totalSalary) + Number(data)
-              ).toFixed(2);
             }
+          } else {
+            // this.getCurrentMonthSalary(i, monthName);
           }
         });
     }
@@ -127,11 +130,24 @@ export class SalarySummaryComponent implements OnInit {
       ":" +
       new Date().toTimeString().split(" ")[0].split(":")[1];
     let updateTime = this.currentDate + " " + time;
-    this.db.object("FinanceSummary/Salary/").update({"lastUpdateDate":updateTime});
-    this.salaryData.lastUpdateTime=updateTime;
+    this.db
+      .object("FinanceSummary/Salary/")
+      .update({ lastUpdateDate: updateTime });
+    this.salaryData.lastUpdateTime = updateTime;
     setTimeout(() => {
       this.getMonthSalaryGraph();
-    }, 2000);
+      this.getTotalSalary();
+    }, 3000);
+  }
+
+  getTotalSalary() {
+    this.salaryData.totalSalary = "0.00";
+    for (let i = 0; i < this.monthSalaryList.length; i++) {
+      this.salaryData.totalSalary = (
+        Number(this.salaryData.totalSalary) +
+        Number(this.monthSalaryList[i]["salary"])
+      ).toFixed(2);
+    }
   }
 
   getCurrentMonthSalary(index: any, monthName: any) {
@@ -178,18 +194,15 @@ export class SalarySummaryComponent implements OnInit {
               );
               if (monthDetail != undefined) {
                 monthDetail.salary = monthSalary.toFixed(2);
-                this.salaryData.totalSalary = (
-                  Number(this.salaryData.totalSalary) + Number(monthSalary)
-                ).toFixed(2);
               }
             }
             this.db
               .object(
                 "FinanceSummary/Salary/" +
-                  this.selectedYear +
-                  "/" +
-                  monthName +
-                  ""
+                this.selectedYear +
+                "/" +
+                monthName +
+                ""
               )
               .update({
                 salary: monthSalary,
@@ -258,6 +271,7 @@ export class SalarySummaryComponent implements OnInit {
     this.getMonthSalary();
     setTimeout(() => {
       this.getMonthSalaryGraph();
+      this.getTotalSalary();
     }, 2000);
   }
 }
