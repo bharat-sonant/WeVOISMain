@@ -38,6 +38,9 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8C") {
           $('#divReachCost').show();
         }
+        if (userAccessList[i]["pageId"] == "8D") {
+          $('#divTaskMasters').show();
+        }
       }
       this.getSalary();
       this.getYear();

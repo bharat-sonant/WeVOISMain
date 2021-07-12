@@ -71,6 +71,7 @@ import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.compone
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
+import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 
 @NgModule({
   imports: [
@@ -146,7 +147,8 @@ import { HouseMarkingComponent } from '../../house-marking/house-marking.compone
     MultipleMapsComponent,
     TaskManagerComponent,
     WardTripAnalysisComponent,
-    HouseMarkingComponent
+    HouseMarkingComponent,
+    TaskManagementMastersComponent
   ]
 })
 

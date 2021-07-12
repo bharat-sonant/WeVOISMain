@@ -169,7 +169,6 @@ export class TaskManagerComponent implements OnInit {
   getTaskList() {
     this.taskData.totalMinutes = "0";
     let empID = $("#ddlUsers").val();
-    console.log(empID);
     this.userTaskList = [];
     if (this.isTaskManager == "0") {
       this.getEmployeeTaskList(empID, localStorage.getItem("userName"), "0");
@@ -316,7 +315,7 @@ export class TaskManagerComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     if (type == "task") {
-      let height = 490;
+      let height = 550;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")

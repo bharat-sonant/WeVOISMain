@@ -6,7 +6,7 @@
       </div>
     </div>   
     <div class="row" style="margin-top: -10px;">
-      <div id="divLineCard"    class="col-md-2" style="padding-left: 17px; padding-right: 8px; padding-top: 25px;">
+      <div id="divLineCard"    class="col-md-2" style="padding-left: 17px; padding-right: 8px; padding-top: 25px; display: none;">
         <div class="more-cards rainbow" (click)="goToPage('/8A/line-card-mapping');">
           <div class="vertical">
           <i class="now-ui-icons location_pin" style="font-weight: bold;"></i> <br>
@@ -14,11 +14,19 @@
         </div>
         </div>
        </div>
-       <div id="divWorkPercentage"  class="col-md-2" style="padding-left: 7px; padding-right: 8px; padding-top: 25px;">
+       <div id="divWorkPercentage"  class="col-md-2" style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
         <div class="more-cards rainbow"  (click)="goToPage('/8B/ward-work-percentage');">
           <div class="vertical">
             <i class="fas fa-percentage"></i> <br>
           <h3>Work Percentage</h3>
+        </div>
+        </div>
+       </div>
+       <div id="divTaskMasters"  class="col-md-2" style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
+        <div class="more-cards rainbow"  (click)="goToPage('/8D/task-management-masters');">
+          <div class="vertical">
+            <i class="fas fa-tasks"></i> <br>
+          <h3>Task Masters</h3>
         </div>
         </div>
        </div>
