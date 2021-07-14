@@ -234,7 +234,7 @@ export class SalarySummaryComponent implements OnInit {
       animationEnabled: true,
       theme: "light2", // "light1", "light2", "dark1", "dark2"
       axisY: {
-        title: "Salary (in hour)",
+       // title: "Salary (in month)",
         titleFontSize: 20,
         labelFontSize: 12,
       },
@@ -248,9 +248,9 @@ export class SalarySummaryComponent implements OnInit {
       data: [
         {
           type: "column",
-          showInLegend: true,
+          showInLegend: false,
           legendMarkerColor: "grey",
-          legendText: "Ward No.",
+          legendText: "Month",
           dataPoints: chartData,
           fontSize: 12,
         },

@@ -57,14 +57,14 @@
 
       <div class="last-update">
         <span class="pos-right"
-          style="float:left; font-size: 7px; line-height: 15px; padding-right:50px; padding-top: 10px; text-align: right;color:#fff;">Last
+          style="float:left; font-size: 10px; line-height: 15px; padding-right:50px; padding-top: 10px; text-align: right;color:#fff;">Last
           Update<br />
           <span class="update-time"
             style="font-size: 18px; font-weight: bold;color: #fff;">{{salaryData.lastUpdateTime}} </span></span>
         <button class="refresh" (click)="updateSalary();" title="Update Salaey"><i class="fas fa-redo-alt"
             style="color:#0ba118;"></i></button>
       </div>
-      <div class="salary-header">
+      <div class="salary-header" style="display: none;">
         ₹ {{salaryData.totalSalary}} <br> <span style="font-size:12px;font-weight: normal;color:#fff;">Total
           Salary</span>
       </div>

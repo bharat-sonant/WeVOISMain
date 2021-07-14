@@ -48,8 +48,11 @@ export class HouseMarkingComponent {
   wardLines: any;
   zoneKML: any;
   allMatkers: any[] = [];
+  lineNo: any;
+
   markerData: markerDetail = {
     totalMarkers: 0,
+    markerImgURL: "../assets/img/img-not-available-01.jpg",
   };
 
   ngOnInit() {
@@ -62,10 +65,12 @@ export class HouseMarkingComponent {
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.toDayDate).getMonth()
     );
+    this.lineNo = "1";
     this.setHeight();
     this.getZones();
     this.selectedZone = this.zoneList[1]["zoneNo"];
     this.activeZone = this.zoneList[1]["zoneNo"];
+    this.getLineApprove();
     this.setMaps();
     this.setKml();
     this.onSubmit();
@@ -188,11 +193,19 @@ export class HouseMarkingComponent {
         latLngArray = this.lines[0]["latlng"];
         let lat = latLngArray[0]["lat"];
         let lng = latLngArray[0]["lng"];
-        this.setMarker(lat, lng, this.wardStartUrl, null, "Ward Start", "ward");
+        this.setMarker(
+          lat,
+          lng,
+          this.wardStartUrl,
+          null,
+          "Ward Start",
+          "ward",
+          ""
+        );
         latLngArray = this.lines[this.lines.length - 1]["latlng"];
         lat = latLngArray[latLngArray.length - 1]["lat"];
         lng = latLngArray[latLngArray.length - 1]["lng"];
-        this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward");
+        this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward", "");
       }
     }, 1000);
   }
@@ -212,9 +225,18 @@ export class HouseMarkingComponent {
             if (data[i]["latLng"] != undefined) {
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
+              let imageName = data[i]["image"];
               let type = data[i]["houseType"];
               let markerURL = this.getMarkerIcon(type);
-              this.setMarker(lat, lng, markerURL, null, "", "marker");
+              this.setMarker(
+                lat,
+                lng,
+                markerURL,
+                null,
+                imageName,
+                "marker",
+                lineNo
+              );
             }
           }
         }
@@ -282,7 +304,8 @@ export class HouseMarkingComponent {
               this.invisibleImageUrl,
               lineNo.toString(),
               "",
-              "lineNo"
+              "lineNo",
+              ""
             );
           }
         }
@@ -294,8 +317,9 @@ export class HouseMarkingComponent {
     lng: any,
     markerURL: any,
     markerLabel: any,
-    contentString: any,
-    type: any
+    imageName: any,
+    type: any,
+    lineNo: any
   ) {
     if (type == "lineNo") {
       let marker = new google.maps.Marker({
@@ -325,15 +349,146 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(30, 40),
+          scaledSize: new google.maps.Size(20, 30),
           origin: new google.maps.Point(0, 0),
         },
+      });
+      let wardNo = this.selectedZone;
+      let markerDetail = this.markerData;
+      marker.addListener("click", function () {
+        let slipImageURL =
+          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Test%2FMarkingSurveyImages%2F" +
+          wardNo +
+          "%2F" +
+          lineNo +
+          "%2F" +
+          imageName +
+          "?alt=media";
+        markerDetail.markerImgURL = slipImageURL;
       });
 
       this.allMatkers.push({ marker });
     }
   }
+
+  //#region Line Marking Status
+
+  getNextPrevious(type: any) {
+    let lineNo = $("#txtLineNo").val();
+    if (lineNo == "") {
+      this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+      return;
+    }
+    if (type == "pre") {
+      if (lineNo != "1") {
+        this.lineNo = Number(lineNo) - 1;
+        $("#txtLineNo").val(this.lineNo);
+        this.getLineApprove();
+      }
+    } else if (type == "next") {
+      if (Number(lineNo) < this.wardLines) {
+        this.lineNo = Number(lineNo) + 1;
+        $("#txtLineNo").val(this.lineNo);
+        this.getLineApprove();
+      }
+    }
+  }
+
+  getLineDetail()
+  {
+    let lineNo = $("#txtLineNo").val();
+    if (lineNo == "") {
+      this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+      return;
+    }
+    if(Number(lineNo)<=this.wardLines){
+      this.lineNo=lineNo;
+      this.getLineApprove();
+    }
+    else
+    {
+      this.commonService.setAlertMessage("error","Line no. not exist in ward !!!");
+      this.lineNo=1;
+      $("#txtLineNo").val(this.lineNo);
+      this.getLineApprove();
+    }
+  }
+
+  getLineApprove() {
+    let dbPath =
+      "EntityMarkingData/MarkedHouses/" +
+      this.selectedZone +
+      "/" +
+      this.lineNo +
+      "/ApproveStatus";
+    let approveInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        approveInstance.unsubscribe();
+        if (data != null) {
+        //  $("#txtReamrk").val(data["remark"]);
+          if (data["status"] == "Confirm") {
+            let element = <HTMLInputElement>(
+              document.getElementById("rdoConfirm")
+            );
+            element.checked = true;
+          } else if (data["status"] == "Reject") {
+            let element = <HTMLInputElement>(
+              document.getElementById("rdoReject")
+            );
+            element.checked = true;
+          }
+        } else {
+          let element = <HTMLInputElement>document.getElementById("rdoConfirm");
+          element.checked = false;
+          element = <HTMLInputElement>document.getElementById("rdoReject");
+          element.checked = false;
+        //  $("#txtReamrk").val("");
+        }
+      });
+  }
+
+  saveData() {
+    let lineNo = $("#txtLineNo").val();
+    //let remark = $("#txtReamrk").val();
+    let status = "";
+    if (lineNo == "") {
+      this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+      return;
+    }
+    let element = <HTMLInputElement>document.getElementById("rdoConfirm");
+    if (element.checked == true) {
+      status = "Confirm";
+    }
+    element = <HTMLInputElement>document.getElementById("rdoReject");
+    if (element.checked == true) {
+      status = "Reject";
+    }
+    if (status == "") {
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select confirm or reject status !!!"
+      );
+      return;
+    }
+    this.lineNo = lineNo;
+    let dbPath =
+      "EntityMarkingData/MarkedHouses/" +
+      this.selectedZone +
+      "/" +
+      this.lineNo +
+      "/ApproveStatus";
+    const data = {
+      status: status,
+      //remark: remark,
+    };
+    this.db.object(dbPath).update(data);
+  }
+
+  //#endregion
 }
 export class markerDetail {
   totalMarkers: number;
+  markerImgURL: string;
 }
