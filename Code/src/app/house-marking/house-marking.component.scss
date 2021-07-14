@@ -251,15 +251,14 @@ margin: 0px!important;
 
 /*************New Work CSS*****************/
 .driver-helper-box{
-width: 270px;
-min-height: 100px;
-background-color: #ffffff;
-box-shadow: 0 1px 5px 1px #80bd7b;
-position: absolute;
-right: 15px;
-top: 200px;
-/* border-radius: 5px; */
-border:1px solid #80bd7b;
+    width: 270px;
+    min-height: 100px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 5px 1px #80bd7b;
+    position: absolute;
+    right: 290px;
+    top: 0px;
+    border: 1px solid #80bd7b;
 }
 .driver{
 padding: 5px;
@@ -445,26 +444,25 @@ margin: 0px;
 
 // image box
 .image-box{
-    width: 270px;
-    min-height: 100px;
+    width: 274px;
+    height: 220px;
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
-    right: 290px;
-    top: 200px;
-    /* border-radius: 5px; */
-    border:1px solid #80bd7b;
+    right: -1px;
+    top: 222px;
+    border: 1px solid #80bd7b;
     }
 
     .house-card-box{
-        width: 300px;
-        min-height: 105px;
-        background-color: #ffffff;
-        position: fixed;
-        right: 15px;
-        top: 72px;
-        box-shadow: 0px 7px 10px 0px lightgrey;
-        border-radius: 5px;
+        width: 273px;
+    min-height: 105px;
+    background-color: #ffffff;
+    position: fixed;
+    right: 15px;
+    top: 72px;
+    box-shadow: 0px 7px 10px 0px lightgrey;
+    border-radius: 5px;
         }
 
         .div-values{
