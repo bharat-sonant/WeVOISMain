@@ -47,6 +47,7 @@ export class PetrolInventoryListComponent implements OnInit {
     //this.setNewDataStructure();
   }
 
+
   setNewDataStructure() {
     let currentYear = "2021";
     let currentMonth = "03";
@@ -306,10 +307,10 @@ export class PetrolInventoryListComponent implements OnInit {
                     }
                     this.totalLiters = this.totalLiters + Number(data[index]["liters"]);
                     this.totalAmount = this.totalAmount + Number(data[index]["amount"]);
-                    let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + this.vehicleAllList[i]["vehicle"] + "%2F" + data[index]["slipImage"] + "?alt=media";
+                    let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + this.vehicleAllList[i]["vehicle"] + "%2F" + data[index]["slipImage"] + "?alt=media";
                     if(new Date(monthDate)<=new Date("2021-03-16"))
                     { 
-                      slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
+                      slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
                     }
                     this.petrolList.push({ entryNo: index, km: km, date: monthDate, vehicleNo: this.vehicleAllList[i]["vehicle"], liters: data[index]["liters"], price: Number(data[index]["price"]).toFixed(2), amount: data[index]["amount"], userId: this.userId, createdBy: data[index]["userId"], slipImageURL: slipImageURL, remark: data[index]["remark"] });
                   }
@@ -338,10 +339,10 @@ export class PetrolInventoryListComponent implements OnInit {
                   }
                   this.totalLiters = this.totalLiters + Number(data[index]["liters"]);
                   this.totalAmount = this.totalAmount + Number(data[index]["amount"]);
-                  let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + vehicle + "%2F" + data[index]["slipImage"] + "?alt=media";
+                  let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + vehicle + "%2F" + data[index]["slipImage"] + "?alt=media";
                    if(new Date(monthDate)<=new Date("2021-03-16"))
                   { 
-                    slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
+                    slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FPetrolSlip%2F" + monthDate + "%2F" + data[index]["slipImage"] + "?alt=media";
                   }
                   this.petrolList.push({ entryNo: index, km: km, date: monthDate, vehicleNo: vehicle, liters: data[index]["liters"], price: Number(data[index]["price"]).toFixed(2), amount: data[index]["amount"], userId: this.userId, createdBy: data[index]["userId"], slipImageURL: slipImageURL, remark: data[index]["remark"] });
                 }

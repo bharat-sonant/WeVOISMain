@@ -324,7 +324,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
     let isDelete = 0;
     if (this.selectedFile != null) {
       let fileName = billNo + "_" + this.selectedFile.name;
-      const path = "Sikar/VehiclePartBill/" + date + "/" + fileName;
+      const path = ""+this.commonService.getFireStoreCity()+"/VehiclePartBill/" + date + "/" + fileName;
       this.billImage = fileName;
       const ref = this.storage.storage.app.storage('gs://dtdnavigator.appspot.com').ref(path);
 

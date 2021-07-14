@@ -40,7 +40,7 @@ export class MaintenanceInventoryListComponent implements OnInit {
     $('#ddlMonth').val(this.selectedMonth);
     $('#ddlYear').val(this.selectedYear);
     this.getMaintenanceList("All Parts", $('#date').val());
-  }
+  }  
 
   getParts() {
     let dbPath = "Defaults/VehicleParts";
@@ -117,7 +117,7 @@ export class MaintenanceInventoryListComponent implements OnInit {
                 if (part == "All Parts" || part == "") {
                   let parts = data[index]["Detail"];
                   this.totalAmount = this.totalAmount + Number(data[index]["netAmount"]);
-                  let billImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FVehiclePartBill%2F" + data[index]["date"] + "%2F" + data[index]["billImage"] + "?alt=media";
+                  let billImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FVehiclePartBill%2F" + data[index]["date"] + "%2F" + data[index]["billImage"] + "?alt=media";
                   this.maintenanceList.push({ entryNo: index, date: data[index]["date"], billNo: data[index]["billNo"], netAmount: data[index]["netAmount"], userId: this.userId, createdBy: data[index]["userId"], billImageURL: billImageURL, remark: data[index]["remark"], details: parts });
                 }
                 else {
@@ -132,7 +132,7 @@ export class MaintenanceInventoryListComponent implements OnInit {
                         }
                       }
                       if (partAmount != 0) {
-                        let billImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FVehiclePartBill%2F" + data[index]["date"] + "%2F" + data[index]["billImage"] + "?alt=media";
+                        let billImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FVehiclePartBill%2F" + data[index]["date"] + "%2F" + data[index]["billImage"] + "?alt=media";
                         this.maintenanceList.push({ entryNo: index, date: data[index]["date"], billNo: data[index]["billNo"], netAmount: partAmount, userId: this.userId, createdBy: data[index]["userId"], billImageURL: billImageURL, remark: data[index]["remark"], details: data[index]["Detail"] });
                       }
                     }

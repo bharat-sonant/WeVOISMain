@@ -145,7 +145,7 @@ export class VehiclePetrolCostComponent implements OnInit {
                       let userId = data[index]["userId"];
                       if (data[index]["slipImage"] != null) {
                         // let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + petrolList[k]["date"] + "%2F" + petrolList[k]["slipImage"] + "?alt=media";
-                        let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Sikar%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + index + "%2F" + data[index]["slipImage"] + "?alt=media";
+                        let slipImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+this.commonService.getFireStoreCity()+"%2FPetrolSlip%2F" + monthDate.split('-')[0] + "%2F" + monthName + "%2F" + monthDate + "%2F" + index + "%2F" + data[index]["slipImage"] + "?alt=media";
 
                         vehicleDetails[d] = "<a class='single_2'  href='" + slipImageURL + "' title='" + index + " / " + leters + " ltr ₹" + amount + " on " + data[index]["date"] + "'><i class='far fa-eye' style='font-size: 18px; color: chocolate;'></i></a> " + leters + " liter at " + amount + "<br/>(---)";
                       }

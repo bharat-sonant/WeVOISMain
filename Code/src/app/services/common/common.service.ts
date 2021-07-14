@@ -1015,6 +1015,20 @@ export class CommonService {
     }
   }
 
+  getFireStoreCity() {
+    let city = "Sikar";
+    if (localStorage.getItem('cityName') == "sikar") {
+      city = "Sikar";
+    } else if (localStorage.getItem('cityName') == "reengus") {
+      city = "Reengus";
+    } else if (localStorage.getItem('cityName') == "jaipur") {
+      city = "Jaipur";
+    } else if (localStorage.getItem('cityName') == "demo") {
+      city = "Test";
+    }
+    return city;
+  }
+
   //#region  all local storage
 
   setLocalStorageData(cityName: any) {

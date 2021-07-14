@@ -3,46 +3,75 @@
         <div class="row">
             <div class="col-md-12 top-header text-center">
                 <b class="ward-header"> Task Management Masters</b>
-               </div>
-               <div class="col-md-12 mt-10">
+            </div>
+            <div class="col-md-12 mt-10">
                 <button class="tablink" onclick="openPage('Category', this, 'white')">Category</button>
                 <button class="tablink" onclick="openPage('Projects', this, 'white')" id="defaultOpen">Projects</button>
                 <button class="tablink" onclick="openPage('Modules', this, 'white')">Modules</button>
                 <button class="tablink" onclick="openPage('Other', this, 'white')">Other</button>
-                
+
                 <div id="Category" class="tabcontent show active">
                     <div class="row">
-                        <div class="col-md-12">
-                            <select name="" id="">
-                                <option value=""> Select One</option>
-                                <option value=""> Select Two</option>
-                                <option value=""> Select Three</option>
-                                <option value=""> Select Four</option>
-                            </select>
+                        <div class="col-md-12 mt-10">
+                            Main Category<br />
+                            <select id="ddlMainCategory" style="width: 200px!important;">
+                                <option value="0">--Select--</option>
+                                <option value={{cat.mainCat}} *ngFor="let cat of mainTaskList">
+                                    {{cat.mainCat}}</option>
+                            </select> &nbsp;<span id="addNewMainCategory" style="cursor: pointer;" (click)="addMainCategory();">add New</span><br />
+                            <input id="txtMainCategory" type="text" style="display:none" />
                         </div>
-                    <div class="col-md-12 mt-10">
-                        <textarea name="" id="" cols="30" rows="10"> wrtite here...</textarea>
-                    </div>
-                    <div class="col-md-12">
-                    <button type="button w-100" class="btn btn-success">SUBMIT</button>
+                        <div class="col-md-12 mt-10">
+                            Category<br/>
+                            <input id="txtCategory" type="text" />
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button w-100" class="btn btn-success"
+                                (click)="addCategory()">SUBMIT</button>
+                        </div>
                     </div>
                 </div>
-                </div>
-                
+
                 <div id="Projects" class="tabcontent">
-                  <h3>Projects</h3>
+                    <h3>Projects</h3>
+                    <div class="row">
+                        <div class="col-md-12 mt-10">
+                            Main Category<br />
+                            <select id="ddlMainCategoryModule" style="width: 200px!important;" (change)="getProjectSelect()">
+                                <option value="0">--Select--</option>
+                                <option value={{cat.mainCat}} *ngFor="let cat of mainTaskList">
+                                    {{cat.mainCat}}</option>
+                            </select> 
+                        </div>
+                        <div class="col-md-12 mt-10">
+                            Projects<br />
+                            <select id="ddlProjects" style="width: 200px!important;">
+                                <option value="0">--Select--</option>
+                                <option value={{project.project}} *ngFor="let project of projectList">
+                                    {{project.project}}</option>
+                            </select> &nbsp;<span id="addNewProjects" style="cursor: pointer;" (click)="addProjects();">add New</span><br />
+                            <input id="txtProjects" type="text" style="display:none" />
+                        </div>
+                        <div class="col-md-12 mt-10">
+                            Task<br/>
+                            <input id="txtModules" type="text" />
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button w-100" class="btn btn-success"
+                                (click)="addModules()">SUBMIT</button>
+                        </div>
+                    </div>
                 </div>
-                
                 <div id="Modules" class="tabcontent">
-                  <h3>Modules</h3>
-                  <p>Get in touch, or swing by for a cup of coffee.</p>
+                    <h3>Modules</h3>
+                    <p>Get in touch, or swing by for a cup of coffee.</p>
                 </div>
-                
+
                 <div id="Other" class="tabcontent">
-                  <h3>Other</h3>
-                  <p>Who we are and what we do.</p>
+                    <h3>Other</h3>
+                    <p>Who we are and what we do.</p>
                 </div>
-               </div>
+            </div>
         </div>
     </div>
 </section>

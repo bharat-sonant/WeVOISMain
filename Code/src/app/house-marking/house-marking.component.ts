@@ -78,20 +78,6 @@ export class HouseMarkingComponent {
     this.onSubmit();
   }
 
-  getFireStoreCity() {
-    let city = "Sikar";
-    if (this.cityName == "sikar") {
-      city = "Sikar";
-    } else if (this.cityName == "reengus") {
-      city = "Reengus";
-    } else if (this.cityName == "jaipur") {
-      city = "Jaipur";
-    } else if (this.cityName == "demo") {
-      city = "Test";
-    }
-    return city;
-  }
-
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
@@ -375,7 +361,7 @@ export class HouseMarkingComponent {
       });
       let wardNo = this.selectedZone;
       let markerDetail = this.markerData;
-      let city = this.getFireStoreCity();
+      let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
         let imageURL =
           "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
