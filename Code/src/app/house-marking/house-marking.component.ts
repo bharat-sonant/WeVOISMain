@@ -49,6 +49,7 @@ export class HouseMarkingComponent {
   zoneKML: any;
   allMatkers: any[] = [];
   lineNo: any;
+  cityName: any;
 
   markerData: markerDetail = {
     totalMarkers: 0,
@@ -56,6 +57,7 @@ export class HouseMarkingComponent {
   };
 
   ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(
       window.location.href,
       localStorage.getItem("cityName")
@@ -74,6 +76,20 @@ export class HouseMarkingComponent {
     this.setMaps();
     this.setKml();
     this.onSubmit();
+  }
+
+  getFireStoreCity() {
+    let city = "Sikar";
+    if (this.cityName == "sikar") {
+      city = "Sikar";
+    } else if (this.cityName == "reengus") {
+      city = "Reengus";
+    } else if (this.cityName == "jaipur") {
+      city = "Jaipur";
+    } else if (this.cityName == "demo") {
+      city = "Test";
+    }
+    return city;
   }
 
   getZones() {
@@ -126,7 +142,7 @@ export class HouseMarkingComponent {
     this.setKml();
     this.onSubmit();
     this.lineNo = 1;
-    this.selectedZone=this.activeZone;
+    this.selectedZone = this.activeZone;
     $("#txtLineNo").val(this.lineNo);
     this.getLineApprove();
   }
@@ -359,16 +375,19 @@ export class HouseMarkingComponent {
       });
       let wardNo = this.selectedZone;
       let markerDetail = this.markerData;
+      let city = this.getFireStoreCity();
       marker.addListener("click", function () {
         let imageURL =
-          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Test%2FMarkingSurveyImages%2F" +
+          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+          city +
+          "%2FMarkingSurveyImages%2F" +
           wardNo +
           "%2F" +
           lineNo +
           "%2F" +
           imageName +
           "?alt=media";
-          console.log(imageURL);
+        console.log(imageURL);
         markerDetail.markerImgURL = imageURL;
       });
 
