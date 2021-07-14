@@ -125,6 +125,10 @@ export class HouseMarkingComponent {
     this.activeZone = filterVal;
     this.setKml();
     this.onSubmit();
+    this.lineNo = 1;
+    this.selectedZone=this.activeZone;
+    $("#txtLineNo").val(this.lineNo);
+    this.getLineApprove();
   }
 
   onSubmit() {
@@ -394,21 +398,21 @@ export class HouseMarkingComponent {
     }
   }
 
-  getLineDetail()
-  {
+  getLineDetail() {
     let lineNo = $("#txtLineNo").val();
     if (lineNo == "") {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
       return;
     }
-    if(Number(lineNo)<=this.wardLines){
-      this.lineNo=lineNo;
+    if (Number(lineNo) <= this.wardLines) {
+      this.lineNo = lineNo;
       this.getLineApprove();
-    }
-    else
-    {
-      this.commonService.setAlertMessage("error","Line no. not exist in ward !!!");
-      this.lineNo=1;
+    } else {
+      this.commonService.setAlertMessage(
+        "error",
+        "Line no. not exist in ward !!!"
+      );
+      this.lineNo = 1;
       $("#txtLineNo").val(this.lineNo);
       this.getLineApprove();
     }
@@ -427,7 +431,7 @@ export class HouseMarkingComponent {
       .subscribe((data) => {
         approveInstance.unsubscribe();
         if (data != null) {
-        //  $("#txtReamrk").val(data["remark"]);
+          //  $("#txtReamrk").val(data["remark"]);
           if (data["status"] == "Confirm") {
             let element = <HTMLInputElement>(
               document.getElementById("rdoConfirm")
@@ -444,7 +448,7 @@ export class HouseMarkingComponent {
           element.checked = false;
           element = <HTMLInputElement>document.getElementById("rdoReject");
           element.checked = false;
-        //  $("#txtReamrk").val("");
+          //  $("#txtReamrk").val("");
         }
       });
   }
