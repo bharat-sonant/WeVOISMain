@@ -353,14 +353,14 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(20, 30),
+          scaledSize: new google.maps.Size(15, 20),
           origin: new google.maps.Point(0, 0),
         },
       });
       let wardNo = this.selectedZone;
       let markerDetail = this.markerData;
       marker.addListener("click", function () {
-        let slipImageURL =
+        let imageURL =
           "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Test%2FMarkingSurveyImages%2F" +
           wardNo +
           "%2F" +
@@ -368,7 +368,8 @@ export class HouseMarkingComponent {
           "%2F" +
           imageName +
           "?alt=media";
-        markerDetail.markerImgURL = slipImageURL;
+          console.log(imageURL);
+        markerDetail.markerImgURL = imageURL;
       });
 
       this.allMatkers.push({ marker });
