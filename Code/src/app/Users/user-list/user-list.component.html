@@ -35,10 +35,10 @@
                       <td class="border-right">{{usr.email}}</td>
                       <td class="border-right text-right">{{usr.mobile}}</td>
                       <td class="text-right">
-                        <i routerLink="/useracess/{{usr.$Key}}" title="User Access"
+                        <i routerLink="/{{usr.cityName}}/useracess/{{usr.$Key}}" title="User Access"
                             class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate;"></i>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <i class="far fa-edit" routerLink="/useradd/{{usr.$Key}}"
+                        <i class="far fa-edit" routerLink="/{{usr.cityName}}/useradd/{{usr.$Key}}"
                           title="Edit User" style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                         <i class="far fa-trash-alt" (click)="deleteUsers(usr)" title="Remove User" style="cursor:pointer !important; font-size: 15px;color: red;"></i>
                       </td>
