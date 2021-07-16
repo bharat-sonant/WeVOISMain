@@ -128,7 +128,6 @@ export class TaskManagerComponent implements OnInit {
                   .collection(refModule)
                   .get()
                   .subscribe((module) => {
-                    console.log(module);
                     module.forEach((ModuleDoc) => {
                       let moduleId = ModuleDoc.id;
                       let name = ModuleDoc.data()["name"];
@@ -139,7 +138,6 @@ export class TaskManagerComponent implements OnInit {
                         name: name,
                       });
                     });
-                    
                   });
               });
             });
@@ -179,15 +177,16 @@ export class TaskManagerComponent implements OnInit {
     this.getCategory(id);
   }
 
-  
   getTask(id: any) {
     this.taskList = [];
-    let taskDetail=this.taskFilterList.filter((item)=>item.project==id);
-    if(taskDetail.length>0)
-    {
-      for(let i=0;i<taskDetail.length;i++){
-        this.taskList.push({id:taskDetail[i]["id"],name:taskDetail[i]["name"]});
-      }      
+    let taskDetail = this.taskFilterList.filter((item) => item.project == id);
+    if (taskDetail.length > 0) {
+      for (let i = 0; i < taskDetail.length; i++) {
+        this.taskList.push({
+          id: taskDetail[i]["id"],
+          name: taskDetail[i]["name"],
+        });
+      }
     }
   }
 
@@ -259,7 +258,9 @@ export class TaskManagerComponent implements OnInit {
     let date = $("#txtDate").val();
     let year = $("#ddlYear").val();
     let month = $("#ddlMonth").val();
-    let project = $("#ddlCategory").val();
+    let project = $("#ddlProject").val();
+    let category = $("#ddlCategory").val();
+    let task = $("#ddlTask").val();
     if (date != "") {
       date =
         date.toString().split("-")[2] +
@@ -294,6 +295,12 @@ export class TaskManagerComponent implements OnInit {
         }
         if (project != "0") {
           query = query.where("project", "==", project);
+        }
+        if (category != "0") {
+          query = query.where("category", "==", category);
+        }
+        if (task != "0") {
+          query = query.where("task", "==", task);
         }
         // query=query.orderBy('date');
         return query;
@@ -336,25 +343,29 @@ export class TaskManagerComponent implements OnInit {
       ).toString();
       if (userTaskLists.length > 0) {
         for (let i = 0; i < userTaskLists.length; i++) {
-          let category="";
-          let task="";
-          let categoryDetail=this.categoryFilterList.find(item=>item.id==userTaskLists[i]["category"]);
-          if(categoryDetail!=undefined){
-            category=categoryDetail.name;
+          let category = "";
+          let task = "";
+          let categoryDetail = this.categoryFilterList.find(
+            (item) => item.id == userTaskLists[i]["category"]
+          );
+          if (categoryDetail != undefined) {
+            category = categoryDetail.name;
           }
-          let taskDetail=this.taskFilterList.find(item=>item.id==userTaskLists[i]["task"]);
-          if(taskDetail!=undefined){
-            task=taskDetail.name;
+          let taskDetail = this.taskFilterList.find(
+            (item) => item.id == userTaskLists[i]["task"]
+          );
+          if (taskDetail != undefined) {
+            task = taskDetail.name;
           }
           this.userTaskList.push({
             sno: userTaskLists[i]["sno"],
             key: userTaskLists[i]["key"],
             categoryId: userTaskLists[i]["category"],
-            category:category,
+            category: category,
             date: userTaskLists[i]["date"],
             project: userTaskLists[i]["project"],
             taskId: userTaskLists[i]["task"],
-            task:task,
+            task: task,
             description: userTaskLists[i]["description"],
             timeInMinutes: userTaskLists[i]["timeInMinutes"],
             todayDate: todayDate,
@@ -471,7 +482,6 @@ export class TaskManagerComponent implements OnInit {
     this.summaryList = [];
     this.modalService.dismissAll();
   }
-
 
   saveTask() {
     let key = $("#key").val();
@@ -592,7 +602,6 @@ export class TaskManagerComponent implements OnInit {
     setTimeout(() => {
       this.getTaskList();
     }, 200);
-    
   }
 
   //#region Task Status
@@ -698,13 +707,15 @@ export class TaskManagerComponent implements OnInit {
           let time = Number(this.allTaskList[i]["timeInMinutes"]);
           let task = this.allTaskList[i]["task"];
           let category = this.allTaskList[i]["category"];
-          let categoryDetail=this.categoryFilterList.find(item=>item.id==category);
-          if(categoryDetail!=undefined){
-            category=categoryDetail.name;
+          let categoryDetail = this.categoryFilterList.find(
+            (item) => item.id == category
+          );
+          if (categoryDetail != undefined) {
+            category = categoryDetail.name;
           }
-          let taskDetail=this.taskFilterList.find(item=>item.id==task);
-          if(taskDetail!=undefined){
-            task=taskDetail.name;
+          let taskDetail = this.taskFilterList.find((item) => item.id == task);
+          if (taskDetail != undefined) {
+            task = taskDetail.name;
           }
           let summaryDetails = this.summaryList.find(
             (item) => item.project == this.allTaskList[i]["project"]

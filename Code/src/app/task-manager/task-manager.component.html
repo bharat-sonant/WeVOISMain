@@ -4,7 +4,7 @@
       <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentTask,'0','task')">
         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ADD NEW</span></button>
       &nbsp;&nbsp;
-      <button type="button" class="user-button" style="cursor:pointer;"
+      <button type="button" class="user-button" style="cursor:pointer; display: none;"
         (click)="openModel(contentSummary,'0','summary')">
         <span class="text-bg">&nbsp;&nbsp;Summary</span></button>
     </div>
@@ -19,13 +19,13 @@
     <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
       <div class="card" style="margin-top:-10px; ">
         <div class="card-header">
-          <select class="caret-select" id="ddlYear" (change)="getTaskList()" style="width: 150px;"
+          <select class="caret-select" id="ddlYear" (change)="getTaskList()" style="width: 130px;"
             [(ngModel)]="selectedYear">
             <option value="0">Year</option>
             <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">
               {{yer.year}}</option>
           </select>
-          <select class="caret-select" id="ddlMonth" (change)="getTaskList()" style="width: 150px;">
+          <select class="caret-select" id="ddlMonth" (change)="getTaskList()" style="width: 130px;">
             <option value="0">Month</option>
             <option value="01">January</option>
             <option value="02">February</option>
@@ -40,19 +40,29 @@
             <option value="11">November</option>
             <option value="12">December</option>
           </select>
-          <select class="caret-select" id="ddlUsers" (change)="getTaskList()" style="width: 150px;">
+          <select class="caret-select" id="ddlUsers" (change)="getTaskList()" style="width: 120px;">
             <option value="0">All Users</option>
             <option value={{user.empID}} *ngFor="let user of userList">
               {{user.name}}</option>
           </select>
-          <select class="caret-select" id="ddlCategory" (change)="getTaskList()" style="width: 150px; display: none;">
+          <select class="caret-select" id="ddlProject" (change)="getTaskList()" style="width: 120px;">
             <option value="0">All Projects</option>
-            <option value={{proj.project}} *ngFor="let proj of projectList">
-              {{proj.project}}</option>
+            <option value={{proj.id}} *ngFor="let proj of projectFilterList">
+              {{proj.name}}</option>
           </select>
-          &nbsp;
+          <select class="caret-select" id="ddlCategory" (change)="getTaskList()" style="width: 120px;">
+            <option value="0">All Category</option>
+            <option value={{cat.id}} *ngFor="let cat of categoryFilterList">
+              {{cat.name}}</option>
+          </select>
+          <select class="caret-select" id="ddlTask" (change)="getTaskList()" style="width: 120px;">
+            <option value="0">All Tasks</option>
+            <option value={{task.id}} *ngFor="let task of taskFilterList">
+              {{task.name}}</option>
+          </select>
+          
           <input id="txtDate" class="caret-select-vehicle custom-date-input" type="date" (change)="getTaskList();"
-            style="height: 38px; width: 150px; padding-left: 10px; margin-right: 8px;" />
+            style="height: 38px; width: 140px; padding-left: 10px; margin-right: 8px;" />
           <button class="fa-expand-showgraph" (click)="resetAllFilter();" title="Reset All Filter"><i
               class="fas fa-sync-alt"></i></button>
           <span class="indication"><i class="fas fa-caret-left"></i></span>
@@ -61,7 +71,7 @@
 
         </div>
         <div class="card-body">
-          
+
           <form>
             <div class="row">
               <div class="col-md-12 pr-1">
@@ -69,11 +79,11 @@
                   <table class="table ">
                     <thead>
                       <th style="border-right:1px solid #dee2e6">S.No.</th>
-                      <th id="showName"  style="border-right:1px solid #dee2e6">Name</th>
+                      <th id="showName" style="border-right:1px solid #dee2e6">Name</th>
                       <th style="border-right:1px solid #dee2e6">Date</th>
                       <th style="border-right:1px solid #dee2e6">Time</th>
+                      <th style="border-right:1px solid #dee2e6">Project</th>
                       <th style="border-right:1px solid #dee2e6">Category</th>
-                      <th style="border-right:1px solid #dee2e6">Module</th>
                       <th style="border-right:1px solid #dee2e6">Task</th>
                       <th style="border-right:1px solid #dee2e6">Task Description</th>
                       <th style="padding-right: 20px;">Action</th>
@@ -87,10 +97,11 @@
                           {{data.date}}</td>
                         <td class="text-right" style="border-right:1px solid #dee2e6; width:5%;">
                           {{data.timeInMinutes}} min</td>
-                        <td style="border-right:1px solid #dee2e6; width:10%;">
-                          {{data.category}}</td>
+
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.project}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%;">
+                          {{data.category}}</td>
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.task}}</td>
                         <td style="border-right:1px solid #dee2e6; width:24%">{{data.description}}</td>
@@ -271,7 +282,8 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
               </select>
-              <select class="caret-select" id="ddlCategorySummary" (change)="getSummary()" style="width: 150px; display: none;">
+              <select class="caret-select" id="ddlCategorySummary" (change)="getSummary()"
+                style="width: 150px; display: none;">
                 <option value="0">All</option>
                 <option value={{proj.project}} *ngFor="let proj of projectList">
                   {{proj.project}}</option>

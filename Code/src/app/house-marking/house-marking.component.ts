@@ -363,6 +363,10 @@ export class HouseMarkingComponent {
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
+        $('#divLoader').show();
+        setTimeout(() => {
+          $('#divLoader').hide();
+        }, 2000);
         let imageURL =
           "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
           city +
@@ -373,7 +377,6 @@ export class HouseMarkingComponent {
           "%2F" +
           imageName +
           "?alt=media";
-        console.log(imageURL);
         markerDetail.markerImgURL = imageURL;
       });
 
@@ -494,6 +497,7 @@ export class HouseMarkingComponent {
       //remark: remark,
     };
     this.db.object(dbPath).update(data);
+    this.commonService.setAlertMessage("success","Line approve status updated !!!");
   }
 
   //#endregion

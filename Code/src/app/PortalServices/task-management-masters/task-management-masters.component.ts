@@ -132,7 +132,6 @@ export class TaskManagementMastersComponent implements OnInit {
                   .collection(refModule)
                   .get()
                   .subscribe((module) => {
-                    console.log(module);
                     module.forEach((ModuleDoc) => {
                       let moduleId = ModuleDoc.id;
                       let name = ModuleDoc.data()["name"];
@@ -453,7 +452,6 @@ export class TaskManagementMastersComponent implements OnInit {
   addProject() {
     let id = $("#projectId").val();
     let projectmaincatId = $("#projectmaincatId").val();
-    console.log(id);
     let mainCategory = $("#ddlMainProjectCategory").val();
     let project = $("#txtProject").val();
     if (mainCategory == "0") {

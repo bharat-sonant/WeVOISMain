@@ -78,7 +78,6 @@ export class DashboardComponent implements OnInit {
 
   getWardCollection()
   {
-    console.log("dfgdfg")
     let collectionInstance=this.db.object("WardTrips/"+this.currentYear+"/"+this.currentMonthName+"/"+this.todayDate+"/totalWasteCollection").valueChanges().subscribe(
       data=>{
         if(data !=null){
