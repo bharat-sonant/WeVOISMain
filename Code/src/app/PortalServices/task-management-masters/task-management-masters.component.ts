@@ -20,17 +20,75 @@ export class TaskManagementMastersComponent implements OnInit {
   mainTaskList: any[];
   categoryList: any[];
   projectList: any[];
+  moduleProjectList: any[];
   taskList: any[];
   isMaincatNew = false;
   isProjectNew = false;
 
   ngOnInit() {
+    this.setActiveTab("Department");
     this.getMainTask();
+  }
+
+  setActiveTab(tab: any) {
+    $("#Department").hide();
+    $("#Category").hide();
+    $("#Projects").hide();
+    $("#Modules").hide();
+
+    let element = <HTMLButtonElement>document.getElementById("tabDepartment");
+    let className = element.className;
+    $("#tabDepartment").removeClass(className);
+    $("#tabDepartment").addClass("tablink");
+
+    element = <HTMLButtonElement>document.getElementById("tabCategory");
+    className = element.className;
+    $("#tabCategory").removeClass(className);
+    $("#tabCategory").addClass("tablink");
+
+    element = <HTMLButtonElement>document.getElementById("tabProjects");
+    className = element.className;
+    $("#tabProjects").removeClass(className);
+    $("#tabProjects").addClass("tablink");
+
+    element = <HTMLButtonElement>document.getElementById("tabModules");
+    className = element.className;
+    $("#tabModules").removeClass(className);
+    $("#tabModules").addClass("tablink");
+
+    if (tab == "Department") {
+      $("#Department").show();
+      element = <HTMLButtonElement>document.getElementById("tabDepartment");
+      className = element.className;
+      $("#tabDepartment").removeClass(className);
+      $("#tabDepartment").addClass("tablink active-tab");
+    } else if (tab == "Category") {
+      $("#Category").show();
+      element = <HTMLButtonElement>document.getElementById("tabCategory");
+      className = element.className;
+      $("#tabCategory").removeClass(className);
+      $("#tabCategory").addClass("tablink active-tab");
+    } else if (tab == "Projects") {
+      $("#Projects").show();
+      element = <HTMLButtonElement>document.getElementById("tabProjects");
+      className = element.className;
+      $("#tabProjects").removeClass(className);
+      $("#tabProjects").addClass("tablink active-tab");
+    } else if (tab == "Modules") {
+      $("#Modules").show();
+      element = <HTMLButtonElement>document.getElementById("tabModules");
+      className = element.className;
+      $("#tabModules").removeClass(className);
+      $("#tabModules").addClass("tablink active-tab");
+    }
   }
 
   getMainTask() {
     this.mainTaskList = [];
     this.categoryList = [];
+    this.projectList = [];
+    this.taskList = [];
+    this.moduleProjectList = [];
     this.dbFireStore
       .collection("UserManagement")
       .doc("TaskManagement")
@@ -39,37 +97,270 @@ export class TaskManagementMastersComponent implements OnInit {
       .subscribe((ss) => {
         ss.forEach((doc) => {
           this.mainTaskList.push({ mainCat: doc.id });
+          let mainCategory = doc.id;
+          //for category list
+          const refCategory = doc.ref.path + "/Category";
+          this.dbFireStore
+            .collection(refCategory)
+            .get()
+            .subscribe((cat) => {
+              cat.forEach((catDoc) => {
+                let id = catDoc.id;
+                let name = catDoc.data()["name"];
+                this.categoryList.push({
+                  mainCategory: mainCategory,
+                  id: id,
+                  name: name,
+                });
+              });
+            });
+          // for Project List
+          const refProject = doc.ref.path + "/Projects";
+          this.dbFireStore
+            .collection(refProject)
+            .get()
+            .subscribe((project) => {
+              project.forEach((projectDoc) => {
+                let project = projectDoc.id;
+                this.projectList.push({
+                  mainCategory: mainCategory,
+                  id: project,
+                  name: project,
+                });
+                const refModule = projectDoc.ref.path + "/Modules";
+                this.dbFireStore
+                  .collection(refModule)
+                  .get()
+                  .subscribe((module) => {
+                    console.log(module);
+                    module.forEach((ModuleDoc) => {
+                      let moduleId = ModuleDoc.id;
+                      let name = ModuleDoc.data()["name"];
+                      this.taskList.push({
+                        mainCategory: mainCategory,
+                        project: project,
+                        id: moduleId,
+                        name: name,
+                      });
+                    });
+                  });
+              });
+            });
         });
       });
   }
 
-  addMainCategory() {
-    if (this.isMaincatNew == false) {
-      this.isMaincatNew = true;
-      $("#txtMainCategory").show();
-      $("#ddlMainCategory").hide();
-      $("#addNewMainCategory").html("Reset");
-    } else {
-      this.isMaincatNew = false;
-      $("#txtMainCategory").hide();
-      $("#ddlMainCategory").show();
-      $("#addNewMainCategory").html("add New");
+  //#region common function
+
+  openModel(content: any, id: any, type: any) {
+    if (type == "department") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 280;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id == 0) {
+        $("#exampleModalLongTitle").html("Add Task Department");
+      } else {
+        $("#exampleModalLongTitle").html("Update Task Department");
+        $("#departmentId").val(id);
+        $("#txtDepartment").val(id);
+      }
+    } else if (type == "category") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 320;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#addNewMainCategory").show();
+      if (id != "0") {
+        $("#exampleModalLongTitle").html("Update Category");
+        this.isMaincatNew == false;
+        let categoryDetail = this.categoryList.find((item) => item.id == id);
+        if (categoryDetail != undefined) {
+          setTimeout(() => {
+            $("#ddlMainCategory").val(categoryDetail.mainCategory);
+          }, 100);
+          $("#txtCategory").val(categoryDetail.name);
+          $("#catId").val(id);
+          $("#maincatId").val(categoryDetail.mainCategory);
+          $("#addNewMainCategory").hide();
+        }
+      } else {
+        $("#exampleModalLongTitle").html("Add Category");
+      }
+    } else if (type == "project") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 320;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#addNewMainProjectCategory").show();
+      if (id != "0") {
+        $("#exampleModalLongTitle").html("Update Project");
+        this.isMaincatNew == false;
+        let projectDetail = this.projectList.find((item) => item.id == id);
+        if (projectDetail != undefined) {
+          setTimeout(() => {
+            $("#ddlMainProjectCategory").val(projectDetail.mainCategory);
+          }, 100);
+          $("#txtProject").val(projectDetail.name);
+          $("#projectId").val(id);
+          $("#projectmaincatId").val(projectDetail.mainCategory);
+          $("#addNewMainProjectCategory").hide();
+        }
+      } else {
+        $("#exampleModalLongTitle").html("Add Project");
+      }
+    } else if (type == "module") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 400;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id == "0") {
+        $("#exampleModalLongTitle").html("Add Module");
+      } else {
+        $("#exampleModalLongTitle").html("Update Module");
+        let moduleDetail = this.taskList.find((item) => item.id == id);
+        if (moduleDetail != undefined) {
+          setTimeout(() => {
+            $("#ddlMainModuleCategory").val(moduleDetail.mainCategory);
+            let projectList = this.projectList.filter(
+              (item) => item.mainCategory == moduleDetail.mainCategory
+            );
+            if (projectList.length > 0) {
+              for (let i = 0; i < projectList.length; i++) {
+                this.moduleProjectList.push({
+                  id: projectList[i]["id"],
+                  name: projectList[i]["name"],
+                });
+              }
+              setTimeout(() => {
+                $("#ddlProject").val(moduleDetail.project);
+              }, 100);
+            }
+            $("#txtModule").val(moduleDetail.name);
+            $("#moduleId").val(id);
+            $("#modulemaincatId").val(moduleDetail.mainCategory);
+            $("#moduleprojectId").val(moduleDetail.project);
+          }, 100);
+        }
+      }
     }
   }
 
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+  //#endregion
+
+  //#region Task Department
+
+  addTaskDepartment() {
+    let id = $("#departmentId").val();
+    let department = $("#txtDepartment").val();
+
+    if (department == "") {
+      this.commonService.setAlertMessage("error", "Please enter project !!!");
+      return;
+    }
+    const data = {};
+    let message = "";
+    if (id == "0") {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(department.toString())
+        .set(data);
+      message = "Task Department Added Successfully!!!";
+    } else {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(id.toString())
+        .delete();
+
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(department.toString())
+        .set(data);
+      message = "Task Department Updated Successfully!!!";
+    }
+    $("#departmentId").val("0");
+    $("#txtDepartment").val("");
+    this.commonService.setAlertMessage("success", message);
+    setTimeout(() => {
+      this.getMainTask();
+    }, 200);
+    this.closeModel();
+  }
+
+  deleteTaskDepartment(id: any) {
+    this.dbFireStore
+      .collection("UserManagement")
+      .doc("TaskManagement")
+      .collection("Tasks")
+      .doc(id.toString())
+      .delete();
+    this.commonService.setAlertMessage(
+      "success",
+      "Project deleted successfully !!!"
+    );
+    setTimeout(() => {
+      this.getMainTask();
+    }, 200);
+  }
+
+  //#endregion
+
+  //#region Category
+
   addCategory() {
-    let mainCategory = "";
+    let id = $("#catId").val();
+    let mainCatId = $("#maincatId").val();
+    let mainCategory = $("#ddlMainCategory").val();
     let category = $("#txtCategory").val();
-    if (this.isMaincatNew == false && $("#ddlMainCategory").val() == "0") {
+    if (mainCategory == "0") {
       this.commonService.setAlertMessage(
         "error",
         "Please select Main Category !!!"
-      );
-      return;
-    } else if (this.isMaincatNew == true && $("#txtMainCategory").val() == "") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please enter Main Category !!!"
       );
       return;
     }
@@ -77,29 +368,312 @@ export class TaskManagementMastersComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter Category !!!");
       return;
     }
-    let catList = [];
-    if (this.isMaincatNew == false) {
-      mainCategory = $("#ddlMainCategory").val().toString();
-    } else {
-      mainCategory = $("#txtMainCategory").val().toString();
-    }
+
     const data = {
-      name: category
+      name: category,
     };
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("TaskManagement")
-      .collection("Tasks")
-      .doc(mainCategory.toString()).collection("Category").add(data);
+    let message = "";
+    if (id == "0") {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(mainCategory.toString())
+        .collection("Category")
+        .add(data);
+      message = "Category Added Successfully!!!";
+    } else {
+      if (mainCatId != mainCategory) {
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(mainCatId.toString())
+          .collection("Category")
+          .doc(id.toString())
+          .delete();
+
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(mainCategory.toString())
+          .collection("Category")
+          .add(data);
+      } else {
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(mainCategory.toString())
+          .collection("Category")
+          .doc(id.toString())
+          .update(data);
+      }
+      message = "Category Updated Successfully!!!";
+    }
+    $("#catId").val("0");
     $("#ddlMainCategory").val("0");
-    $("#txtMainCategory").val("");
     $("#txtCategory").val("");
-    this.commonService.setAlertMessage(
-      "success",
-      "Category Added Successfully!!!"
-    );
+    this.commonService.setAlertMessage("success", message);
     this.isMaincatNew = false;
-    this.addMainCategory();
+    setTimeout(() => {
+      this.getMainTask();
+    }, 600);
+
+    this.closeModel();
   }
 
+  deleteCategory(id: any) {
+    let categoryDetail = this.categoryList.find((item) => item.id == id);
+    if (categoryDetail != undefined) {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(categoryDetail.mainCategory.toString())
+        .collection("Category")
+        .doc(id.toString())
+        .delete();
+      this.commonService.setAlertMessage(
+        "success",
+        "Category deleted successfully !!!"
+      );
+      this.isMaincatNew = false;
+      setTimeout(() => {
+        this.getMainTask();
+      }, 600);
+    }
+  }
+
+  //#endregion
+
+  //#region Project
+
+  addProject() {
+    let id = $("#projectId").val();
+    let projectmaincatId = $("#projectmaincatId").val();
+    console.log(id);
+    let mainCategory = $("#ddlMainProjectCategory").val();
+    let project = $("#txtProject").val();
+    if (mainCategory == "0") {
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select Main Category !!!"
+      );
+      return;
+    }
+    if (project == "") {
+      this.commonService.setAlertMessage("error", "Please enter project !!!");
+      return;
+    }
+    const data = {};
+    let message = "";
+    if (id == "0") {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(mainCategory.toString())
+        .collection("Projects")
+        .doc(project.toString())
+        .set(data);
+      message = "Project Added Successfully!!!";
+    } else {
+      let deleteCategory = mainCategory;
+      if (projectmaincatId != mainCategory) {
+        deleteCategory = projectmaincatId;
+      }
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(deleteCategory.toString())
+        .collection("Projects")
+        .doc(id.toString())
+        .delete();
+
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(mainCategory.toString())
+        .collection("Projects")
+        .doc(project.toString())
+        .set(data);
+      message = "Project Updated Successfully!!!";
+    }
+    $("#projectId").val("0");
+    $("#ddlMainProjectCategory").val("0");
+    $("#txtProject").val("");
+    this.commonService.setAlertMessage("success", message);
+    this.isMaincatNew = false;
+    setTimeout(() => {
+      this.getMainTask();
+    }, 600);
+
+    this.closeModel();
+  }
+
+  deleteProject(id: any) {
+    let projectDetail = this.projectList.find((item) => item.id == id);
+    if (projectDetail != undefined) {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(projectDetail.mainCategory.toString())
+        .collection("Projects")
+        .doc(id.toString())
+        .delete();
+      this.commonService.setAlertMessage(
+        "success",
+        "Project deleted successfully !!!"
+      );
+      this.isMaincatNew = false;
+      setTimeout(() => {
+        this.getMainTask();
+      }, 600);
+    }
+  }
+
+  //#endregion Project
+
+  //#region Modules
+
+  getModuleProject() {
+    this.moduleProjectList = [];
+    let mainCategory = $("#ddlMainModuleCategory").val();
+    if (mainCategory == "0") {
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select main category !!!"
+      );
+      return;
+    }
+    let projectList = this.projectList.filter(
+      (item) => item.mainCategory == mainCategory
+    );
+    if (projectList.length > 0) {
+      for (let i = 0; i < projectList.length; i++) {
+        this.moduleProjectList.push({
+          id: projectList[i]["id"],
+          name: projectList[i]["name"],
+        });
+      }
+    }
+  }
+
+  addModule() {
+    let id = $("#moduleId").val();
+    let maincatid = $("#modulemaincatId").val();
+    let projectid = $("#moduleprojectId").val();
+    let mainCategory = $("#ddlMainModuleCategory").val();
+    let project = $("#ddlProject").val();
+    let module = $("#txtModule").val();
+
+    if (mainCategory == "0") {
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select main category !!!"
+      );
+      return;
+    }
+    if (project == "0") {
+      this.commonService.setAlertMessage("error", "Please select project !!!");
+      return;
+    }
+    if (module == "") {
+      this.commonService.setAlertMessage("error", "Please enter module !!!");
+      return;
+    }
+
+    const data = {
+      name: module,
+    };
+    let message = "";
+    if (id == "0") {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(mainCategory.toString())
+        .collection("Projects")
+        .doc(project.toString())
+        .collection("Modules")
+        .add(data);
+      message = "Module Added Successfully!!!";
+    } else {
+      if (projectid != project) {
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(maincatid.toString())
+          .collection("Projects")
+          .doc(projectid.toString())
+          .collection("Modules")
+          .doc(id.toString())
+          .delete();
+
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(mainCategory.toString())
+          .collection("Projects")
+          .doc(project.toString())
+          .collection("Modules")
+          .add(data);
+      } else {
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(mainCategory.toString())
+          .collection("Projects")
+          .doc(project.toString())
+          .collection("Modules")
+          .doc(id.toString())
+          .update(data);
+      }
+      message = "Module Updated Successfully!!!";
+    }
+    $("#moduleId").val("0");
+    $("#ddlMainModuleCategory").val("0");
+    $("#ddlProject").val("0");
+    $("#txtModule").val("");
+    this.commonService.setAlertMessage("success", message);
+    setTimeout(() => {
+      this.getMainTask();
+    }, 600);
+
+    this.closeModel();
+  }
+
+  deleteModule(id: any) {
+    let moduleDetail = this.taskList.find((item) => item.id == id);
+    if (moduleDetail != undefined) {
+      this.dbFireStore
+        .collection("UserManagement")
+        .doc("TaskManagement")
+        .collection("Tasks")
+        .doc(moduleDetail.mainCategory.toString())
+        .collection("Projects")
+        .doc(moduleDetail.project.toString())
+        .collection("Modules")
+        .doc(id.toString())
+        .delete();
+      this.commonService.setAlertMessage(
+        "success",
+        "Module deleted successfully !!!"
+      );
+      this.isMaincatNew = false;
+      setTimeout(() => {
+        this.getMainTask();
+      }, 600);
+    }
+  }
+
+  //#endregion
 }

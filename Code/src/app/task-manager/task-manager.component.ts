@@ -1,4 +1,4 @@
-
+import { progressDetail } from "./../maps/maps.component";
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
@@ -36,6 +36,9 @@ export class TaskManagerComponent implements OnInit {
   allTaskList: any[];
   summaryList: any[];
   userList: any[] = [];
+  categoryFilterList: any[];
+  projectFilterList: any[];
+  taskFilterList: any[];
   empID: any;
   empLocation: any;
   isFirst: any;
@@ -63,7 +66,9 @@ export class TaskManagerComponent implements OnInit {
     $("#ddlYear").val(this.selectedYear);
     $("#txtDate").val(this.toDayDate);
     this.fillDropdown();
-    this.fillUsers();
+    setTimeout(() => {
+      this.fillUsers();
+    }, 1000);
   }
 
   getYear() {
@@ -75,6 +80,10 @@ export class TaskManagerComponent implements OnInit {
   }
 
   fillDropdown() {
+    this.mainList = [];
+    this.categoryFilterList = [];
+    this.projectFilterList = [];
+    this.taskFilterList = [];
     this.dbFireStore
       .collection("UserManagement")
       .doc("TaskManagement")
@@ -83,46 +92,103 @@ export class TaskManagerComponent implements OnInit {
       .subscribe((ss) => {
         ss.forEach((doc) => {
           this.mainList.push({ mainCat: doc.id });
+          let mainCategory = doc.id;
+          //for category list
+          const refCategory = doc.ref.path + "/Category";
+          this.dbFireStore
+            .collection(refCategory)
+            .get()
+            .subscribe((cat) => {
+              cat.forEach((catDoc) => {
+                let id = catDoc.id;
+                let name = catDoc.data()["name"];
+                this.categoryFilterList.push({
+                  mainCategory: mainCategory,
+                  id: id,
+                  name: name,
+                });
+              });
+            });
+          // for Project List
+          const refProject = doc.ref.path + "/Projects";
+          this.dbFireStore
+            .collection(refProject)
+            .get()
+            .subscribe((project) => {
+              project.forEach((projectDoc) => {
+                let project = projectDoc.id;
+                this.projectFilterList.push({
+                  mainCategory: mainCategory,
+                  id: project,
+                  name: project,
+                });
+                // for task list
+                const refModule = projectDoc.ref.path + "/Modules";
+                this.dbFireStore
+                  .collection(refModule)
+                  .get()
+                  .subscribe((module) => {
+                    console.log(module);
+                    module.forEach((ModuleDoc) => {
+                      let moduleId = ModuleDoc.id;
+                      let name = ModuleDoc.data()["name"];
+                      this.taskFilterList.push({
+                        mainCategory: mainCategory,
+                        project: project,
+                        id: moduleId,
+                        name: name,
+                      });
+                    });
+                    
+                  });
+              });
+            });
         });
       });
   }
 
   getCategory(id: any) {
     this.categoryList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("TaskManagement")
-      .collection("Tasks")
-      .doc(id)
-      .get()
-      .subscribe((ss) => {
-        let catList = ss.data()["Category"];
-        for (let i = 0; i < catList.length; i++) {
-          this.categoryList.push({ category: catList[i] });
-        }
-      });
+    let categoryDetail = this.categoryFilterList.filter(
+      (item) => item.mainCategory == id
+    );
+    if (categoryDetail.length > 0) {
+      for (let i = 0; i < categoryDetail.length; i++) {
+        this.categoryList.push({
+          id: categoryDetail[i]["id"],
+          name: categoryDetail[i]["name"],
+        });
+      }
+    }
   }
 
   getProjects(id: any, project: any) {
     this.projectList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("TaskManagement")
-      .collection("Tasks")
-      .doc(id)
-      .collection("Modules")
-      .get()
-      .subscribe((ss) => {
-        ss.forEach((doc) => {
-          this.projectList.push({
-            project: doc.id,
-            taskList: doc.data()["Modules"],
-          });
+    let projectDetail = this.projectFilterList.filter(
+      (item) => item.mainCategory == id
+    );
+    if (projectDetail.length > 0) {
+      for (let i = 0; i < projectDetail.length; i++) {
+        this.projectList.push({
+          id: projectDetail[i]["id"],
+          name: projectDetail[i]["name"],
         });
-        this.getTask(project);
-      });
+      }
+    }
 
     this.getCategory(id);
+  }
+
+  
+  getTask(id: any) {
+    this.taskList = [];
+    let taskDetail=this.taskFilterList.filter((item)=>item.project==id);
+    if(taskDetail.length>0)
+    {
+      for(let i=0;i<taskDetail.length;i++){
+        this.taskList.push({id:taskDetail[i]["id"],name:taskDetail[i]["name"]});
+      }      
+    }
   }
 
   fillUsers() {
@@ -229,7 +295,7 @@ export class TaskManagerComponent implements OnInit {
         if (project != "0") {
           query = query.where("project", "==", project);
         }
-       // query=query.orderBy('date');
+        // query=query.orderBy('date');
         return query;
       });
 
@@ -270,13 +336,25 @@ export class TaskManagerComponent implements OnInit {
       ).toString();
       if (userTaskLists.length > 0) {
         for (let i = 0; i < userTaskLists.length; i++) {
+          let category="";
+          let task="";
+          let categoryDetail=this.categoryFilterList.find(item=>item.id==userTaskLists[i]["category"]);
+          if(categoryDetail!=undefined){
+            category=categoryDetail.name;
+          }
+          let taskDetail=this.taskFilterList.find(item=>item.id==userTaskLists[i]["task"]);
+          if(taskDetail!=undefined){
+            task=taskDetail.name;
+          }
           this.userTaskList.push({
             sno: userTaskLists[i]["sno"],
             key: userTaskLists[i]["key"],
-            category: userTaskLists[i]["category"],
+            categoryId: userTaskLists[i]["category"],
+            category:category,
             date: userTaskLists[i]["date"],
             project: userTaskLists[i]["project"],
-            task: userTaskLists[i]["task"],
+            taskId: userTaskLists[i]["task"],
+            task:task,
             description: userTaskLists[i]["description"],
             timeInMinutes: userTaskLists[i]["timeInMinutes"],
             todayDate: todayDate,
@@ -291,7 +369,10 @@ export class TaskManagerComponent implements OnInit {
           });
         }
       }
-       this.userTaskList = this.commonService.transformNumeric(this.userTaskList,'date');
+      this.userTaskList = this.commonService.transformNumeric(
+        this.userTaskList,
+        "date"
+      );
     });
   }
 
@@ -330,8 +411,8 @@ export class TaskManagerComponent implements OnInit {
           $("#key").val(id);
           let taskFor = taskDetails.taskFor;
           let project = taskDetails.project;
-          let category = taskDetails.category;
-          let task = taskDetails.task;
+          let category = taskDetails.categoryId;
+          let task = taskDetails.taskId;
           let status = taskDetails.status;
           let remark = taskDetails.remark;
           this.getProjects(taskFor, project);
@@ -391,16 +472,6 @@ export class TaskManagerComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  getTask(id: any) {
-    this.taskList = [];
-    let projectDetails = this.projectList.find((item) => item.project == id);
-    if (projectDetails != undefined) {
-      let taskList = projectDetails.taskList;
-      for (let i = 0; i < taskList.length; i++) {
-        this.taskList.push({ task: taskList[i] });
-      }
-    }
-  }
 
   saveTask() {
     let key = $("#key").val();
@@ -518,7 +589,10 @@ export class TaskManagerComponent implements OnInit {
     $("#txtDescription").val("");
     $("#estmateTime").val("");
     this.closeModel();
-    this.getTaskList();
+    setTimeout(() => {
+      this.getTaskList();
+    }, 200);
+    
   }
 
   //#region Task Status
@@ -624,6 +698,14 @@ export class TaskManagerComponent implements OnInit {
           let time = Number(this.allTaskList[i]["timeInMinutes"]);
           let task = this.allTaskList[i]["task"];
           let category = this.allTaskList[i]["category"];
+          let categoryDetail=this.categoryFilterList.find(item=>item.id==category);
+          if(categoryDetail!=undefined){
+            category=categoryDetail.name;
+          }
+          let taskDetail=this.taskFilterList.find(item=>item.id==task);
+          if(taskDetail!=undefined){
+            task=taskDetail.name;
+          }
           let summaryDetails = this.summaryList.find(
             (item) => item.project == this.allTaskList[i]["project"]
           );
