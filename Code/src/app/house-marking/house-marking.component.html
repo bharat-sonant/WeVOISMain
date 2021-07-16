@@ -33,33 +33,37 @@
 
 <div class="house-card-box">
 
-  <div id="divDetails" style="    background: #fff; border-right: 1px solid lightgray;border-bottom: 1px solid lightgray;">
+  <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
     <div class="div-values div-style">
       <span style="font-weight: bold;font-size: 30px; padding-right: 5px; height: 35px;"></span>
       Line Approve Status
     </div>
-    <div class="row" style="padding-left:10px; padding-top: 20px; padding-right: 10px; text-align: center;">
-      <div class="col-md-12">
-        <span (click)="getNextPrevious('pre');" style="background-color: green; padding: 10px; color: #fff; border-radius: 5px; cursor: pointer;">
+    <div class="row" style="padding-top: 10px; text-align: center;">
+      <div class="col-md-12" style="padding-bottom: 10px;">
+        <span (click)="getNextPrevious('pre');" class="btn-hvr" style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer;">
           << </span>
-            &nbsp;&nbsp;<input id="txtLineNo" type="text" style="width: 80px; padding: 6px; text-align: center; font-weight: bold;" value="1" />
-            &nbsp;&nbsp;<span (click)="getNextPrevious('next');" style="background-color: green; padding: 10px; color: #fff; border-radius: 5px; cursor: pointer;"> >>
+            &nbsp;&nbsp;<input id="txtLineNo" type="text" style="width: 50px;border: 1px solid lightgray;border-radius: 5px; padding: 6px; text-align: center; font-weight: bold;" value="1" />
+            &nbsp;&nbsp;<span (click)="getNextPrevious('next');" class="btn-hvr" style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer;"> >>
             </span>
             &nbsp;&nbsp;
-            <span (click)="getLineDetail();" style="background-color: green; padding: 10px; color: #fff; border-radius: 5px; cursor: pointer;"> Show </span>
+            <span (click)="getLineDetail();" style="background-color: #0ba118; padding: 10px; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;"> Show </span>
       </div>
-      <div class="col-md-6" style="padding-top: 20px;">
-        <input id="rdoConfirm" type="radio" name="gender">&nbsp;Confirm
-      </div>
-      <div class="col-md-6" style="padding-top: 20px;">
-        <input id="rdoReject" type="radio" name="gender">&nbsp;Reject
-      </div>
-      <div class="col-md-12" style="padding-top: 10px; display: none;">
-        <textarea id="txtReamrk" placeholder="Remark" style="width: 100%;"></textarea>
+      <div class="col-md-6" style="padding-top: 10px;">
+        <div class="row">
+          <div class="col-md-12" style="padding-left: 15px;font-size: 12px;">
+            <input id="rdoConfirm" type="radio" name="gender">&nbsp; Confirm
+          </div>
+          <div class="col-md-12" style="padding-top: 2px;padding-left: 3px;font-size: 12px;">
+            <input id="rdoReject" type="radio" name="gender">&nbsp; Reject
+          </div>
+          <div class="col-md-12" style="padding-top: 10px; display: none;">
+            <textarea id="txtReamrk" placeholder="Remark" style="width: 100%;"></textarea>
+          </div>
+        </div>
       </div>
 
-      <div class="col-md-12" style="margin-left: -20px;">
-        <button class="btn btn-success" style="width: 100%;" (click)="saveData();">Save</button>
+      <div class="col-md-6" style="margin-left: -33px;">
+        <button class="btn btn-success w-100" style="width: 100%;" (click)="saveData();" style="background:#0ba118!important;">Save</button>
       </div>
     </div>
   </div>
@@ -70,7 +74,7 @@
       <div class="col-md-12">
         <div class="main-box">
           <a href="{{markerData.markerImgURL}}" target="_blank">
-          <img id="markingImg" [src]="markerData.markerImgURL" style="height:220px; width: 274px;" />
+          <img id="markingImg" [src]="markerData.markerImgURL" style="height:233px; width: 274px;" />
         </a>
         </div>
       </div>

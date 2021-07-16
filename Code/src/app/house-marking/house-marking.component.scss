@@ -256,7 +256,7 @@ margin: 0px!important;
     background-color: #ffffff;
    // box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
-    right: 285px;
+    right: 235px;
     top: 0px;
     border: 1px solid #80bd7b;
     z-index: -111;
@@ -266,6 +266,9 @@ padding: 5px;
 display: flex;
 justify-content: center;
 align-items: center;
+}
+.btn-hvr:hover{
+    background: #726f6f!important;
 }
 .driver h5{
     margin: 0px;
@@ -473,23 +476,25 @@ margin: 0px;
 
 // image box
 .image-box{
-    width: 274px;
-    height: 223px;
+    width: 225px;
+    height: 233px;
+    border-radius: 5px;
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
     right: -1px;
-    top: 204px;
+    top: 170px;
     border: 1px solid #80bd7b;
     }
 
     .house-card-box{
-        width: 273px;
+        width: 225px;
     min-height: 105px;
     background-color: #ffffff;
     position: fixed;
     right: 15px;
     top: 72px;
+    box-shadow: 0px 4px 7px 0px lightgrey;
    // box-shadow: 0px 7px 10px 0px lightgrey;
     border-radius: 5px;
         }
@@ -511,13 +516,16 @@ margin: 0px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #0ba118;
+            background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
             color: #fff;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             padding: 2px!important;
             border-bottom: none;
-            box-shadow: 0px 4px 7px 0px lightgrey;
+           // box-shadow: 0px 4px 7px 0px lightgrey;
+            font-size: 12px;
+            font-weight: 600;
+
         }
     
     
