@@ -251,14 +251,15 @@ margin: 0px!important;
 
 /*************New Work CSS*****************/
 .driver-helper-box{
-    width: 270px;
+    width: 50px;
     min-height: 100px;
     background-color: #ffffff;
-    box-shadow: 0 1px 5px 1px #80bd7b;
+   // box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
-    right: 290px;
+    right: 285px;
     top: 0px;
     border: 1px solid #80bd7b;
+    z-index: -111;
 }
 .driver{
 padding: 5px;
@@ -275,6 +276,7 @@ align-items: center;
     width: 100%;
     float: left;
     border-bottom: 1px solid lightgray;
+    height: 51px;
 }
 .main-box .designation{
     width: 50px;
@@ -292,7 +294,7 @@ align-items: center;
 }
 .main-box .all-details{
     float: left;
-    padding: 10px;
+   // padding: 10px;
 }
 .all-details h6{
  font-size: 12px;
@@ -303,6 +305,33 @@ align-items: center;
     font-weight:normal;
     margin: 0px;
    }
+.all-details {
+width: 0!important;
+-webkit-transition: max-width 0.5s;
+transition: max-width 0.3s;
+display: inline-block;
+vertical-align: top;
+white-space: nowrap;
+overflow: hidden;
+background: #fff;
+transition: 0.5s;
+}
+.main-box:hover .all-details {
+    width: 13rem!important;
+    transform: translate(-15em,0);
+    -webkit-transform: translate(-15em,0);
+    -moz-transform: translate(-15em,0);
+    -o-transform: translate(-15em,0);
+    -ms-transform: translate(-15em,0);
+    margin-top: -52px;
+    padding: 10px;
+    height: 51px;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid #0ba118;
+}
+
+
 .img-circle{
 border:2px solid lightgray;
 padding: 2px;
@@ -461,7 +490,7 @@ margin: 0px;
     position: fixed;
     right: 15px;
     top: 72px;
-    box-shadow: 0px 7px 10px 0px lightgrey;
+   // box-shadow: 0px 7px 10px 0px lightgrey;
     border-radius: 5px;
         }
 
