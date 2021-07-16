@@ -194,6 +194,7 @@ export class HouseMarkingComponent {
         }
       });
     setTimeout(() => {
+      console.log(this.lines.length)
       if (this.lines.length > 0) {
         let latLngArray = [];
         latLngArray = this.lines[0]["latlng"];
@@ -213,7 +214,7 @@ export class HouseMarkingComponent {
         lng = latLngArray[latLngArray.length - 1]["lng"];
         this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward", "");
       }
-    }, 1000);
+    }, 2000);
   }
 
   getMarkedHouses(lineNo: any) {
@@ -225,10 +226,10 @@ export class HouseMarkingComponent {
       .subscribe((data) => {
         houseInstance.unsubscribe();
         if (data.length > 0) {
-          this.markerData.totalMarkers =
-            Number(this.markerData.totalMarkers) + Number(data.length - 1);
           for (let i = 0; i < data.length - 1; i++) {
             if (data[i]["latLng"] != undefined) {
+              this.markerData.totalMarkers =
+                Number(this.markerData.totalMarkers) + 1;
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
               let imageName = data[i]["image"];
@@ -347,6 +348,19 @@ export class HouseMarkingComponent {
       });
 
       this.allMatkers.push({ marker });
+    } else if (type == "ward") {
+      let marker = new google.maps.Marker({
+        position: { lat: Number(lat), lng: Number(lng) },
+        map: this.map,
+        icon: {
+          url: markerURL,
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scaledSize: new google.maps.Size(30, 40),
+          origin: new google.maps.Point(0, 0),
+        },
+      });
+      this.allMatkers.push({ marker });
     } else {
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
@@ -363,9 +377,9 @@ export class HouseMarkingComponent {
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
-        $('#divLoader').show();
+        $("#divLoader").show();
         setTimeout(() => {
-          $('#divLoader').hide();
+          $("#divLoader").hide();
         }, 2000);
         let imageURL =
           "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
@@ -497,7 +511,10 @@ export class HouseMarkingComponent {
       //remark: remark,
     };
     this.db.object(dbPath).update(data);
-    this.commonService.setAlertMessage("success","Line approve status updated !!!");
+    this.commonService.setAlertMessage(
+      "success",
+      "Line approve status updated !!!"
+    );
   }
 
   //#endregion
