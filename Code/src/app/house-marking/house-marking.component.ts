@@ -194,7 +194,6 @@ export class HouseMarkingComponent {
         }
       });
     setTimeout(() => {
-      console.log(this.lines.length)
       if (this.lines.length > 0) {
         let latLngArray = [];
         latLngArray = this.lines[0]["latlng"];
