@@ -143,7 +143,7 @@
         <input id="remark" type="hidden" value="" />
         <div class="wrap-input-effects" required>
           <select id="drpFor" class="input-green" (change)="getProjects($event.target.value);">
-            <option value="0">Select Task For</option>
+            <option value="0">Select Task Category</option>
             <option value={{main.mainCat}} *ngFor="let main of mainList">
               {{main.mainCat}}</option>
           </select>
@@ -155,8 +155,8 @@
         <div class="wrap-input-effects" required>
           <select id="drpProject" class="input-green" (change)="getTask($event.target.value);">
             <option value="0">Select Project</option>
-            <option value={{proj.project}} *ngFor="let proj of projectList">
-              {{proj.project}}</option>
+            <option value={{proj.id}} *ngFor="let proj of projectList">
+              {{proj.name}}</option>
           </select>
           <span class="focus-input"></span>
           <span class="symbol-input">
@@ -166,8 +166,8 @@
         <div class="wrap-input-effects" required>
           <select id="drpTask" class="input-green">
             <option value="0">Select Task</option>
-            <option value={{task.task}} *ngFor="let task of taskList">
-              {{task.task}}</option>
+            <option value={{task.id}} *ngFor="let task of taskList">
+              {{task.name}}</option>
           </select>
           <span class="focus-input"></span>
           <span class="symbol-input">
@@ -177,8 +177,8 @@
         <div class="wrap-input-effects" required>
           <select id="drpCategory" class="input-green">
             <option value="0">Select Category</option>
-            <option value={{cat.category}} *ngFor="let cat of categoryList">
-              {{cat.category}}</option>
+            <option value={{cat.id}} *ngFor="let cat of categoryList">
+              {{cat.name}}</option>
           </select>
           <span class="focus-input"></span>
           <span class="symbol-input">
