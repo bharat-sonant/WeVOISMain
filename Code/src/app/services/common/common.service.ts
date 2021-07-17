@@ -1017,13 +1017,13 @@ export class CommonService {
 
   getFireStoreCity() {
     let city = "Sikar";
-    if (localStorage.getItem('cityName') == "sikar") {
+    if (localStorage.getItem("cityName") == "sikar") {
       city = "Sikar";
-    } else if (localStorage.getItem('cityName') == "reengus") {
+    } else if (localStorage.getItem("cityName") == "reengus") {
       city = "Reengus";
-    } else if (localStorage.getItem('cityName') == "jaipur") {
+    } else if (localStorage.getItem("cityName") == "jaipur") {
       city = "Jaipur";
-    } else if (localStorage.getItem('cityName') == "demo") {
+    } else if (localStorage.getItem("cityName") == "demo") {
       city = "Test";
     }
     return city;
@@ -1216,6 +1216,10 @@ export class CommonService {
             imgUrl = "external-user.png";
             utitle = "External User";
           }
+          let haltDisableAccess = 0;
+          if (doc.data()["haltDisableAccess"] != undefined) {
+            haltDisableAccess = doc.data()["haltDisableAccess"];
+          }
           if (doc.data()["isDelete"] == "0") {
             userList.push({
               userKey: doc.id,
@@ -1233,6 +1237,7 @@ export class CommonService {
               notificationGeoSurfing: doc.data()["notificationGeoSurfing"],
               officeAppUserId: doc.data()["officeAppUserId"],
               isTaskManager: doc.data()["isTaskManager"],
+              haltDisableAccess: haltDisableAccess,
             });
           }
         });

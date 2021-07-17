@@ -1,23 +1,30 @@
+import { FinanceComponent } from "./../../finance-report/finance/finance.component";
+import { LineCardMappingComponent } from "./../../line-card-mapping/line-card-mapping.component";
 /// <reference types="@types/googlemaps" />
-import { Component } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import * as $ from 'jquery';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
+import { Component } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import * as $ from "jquery";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 //services
-import { CommonService } from '../../services/common/common.service';
-import { MapService } from '../../services/map/map.service';
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
 
 @Component({
-  selector: 'app-halts',
-  templateUrl: './halts.component.html',
-  styleUrls: ['./halts.component.scss']
+  selector: "app-halts",
+  templateUrl: "./halts.component.html",
+  styleUrls: ["./halts.component.scss"],
 })
-
 export class HaltsComponent {
   require: any;
   public map: google.maps.Map;
-  constructor(private router: Router, public db: AngularFireDatabase, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(
+    private router: Router,
+    public db: AngularFireDatabase,
+    private mapService: MapService,
+    private commonService: CommonService,
+    private modalService: NgbModal
+  ) {}
   zoneList: any[];
   selectedDate: any;
   public selectedZone: any;
@@ -36,24 +43,32 @@ export class HaltsComponent {
   fixdGeoLocations: any;
   preSelectedMarker: any;
   cityName: any;
-  haltDetails: haltDetail =
-    {
-      zoneName: '---',
-      driverName: '---',
-      driverMobile: '---',
-      helperName: '---',
-      helperMobile: '---',
-      totalBreakHours: '00:00'
-    }
+  ishaltDisableAccess = false;
+  haltDetails: haltDetail = {
+    zoneName: "---",
+    driverName: "---",
+    driverMobile: "---",
+    helperName: "---",
+    helperMobile: "---",
+    totalBreakHours: "00:00",
+  };
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
-    this.cityName = localStorage.getItem('cityName');
+    this.commonService.chkUserPageAccess(
+      window.location.href,
+      localStorage.getItem("cityName")
+    );
+    if (localStorage.getItem("haltDisableAccess") == "1") {
+      this.ishaltDisableAccess = true;
+    }
+    this.cityName = localStorage.getItem("cityName");
     this.bounds = new google.maps.LatLngBounds();
     this.selectedDate = this.commonService.setTodayDate();
-    $('#txtDate').val(this.selectedDate);
-    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = new Date().getFullYear();
+    $("#txtDate").val(this.selectedDate);
+    this.currentMonth = this.commonService.getCurrentMonthName(
+      new Date(this.selectedDate).getMonth()
+    );
+    this.currentYear = new Date(this.selectedDate).getFullYear();
     this.minHalt = 5;
     this.setMapHeight();
     this.getZoneList();
@@ -62,8 +77,8 @@ export class HaltsComponent {
 
   setMapHeight() {
     let windowHeight = $(window).height();
-    let mapHeight = (windowHeight - 155) + "px";
-    $('#haltMap').css("height", mapHeight)
+    let mapHeight = windowHeight - 155 + "px";
+    $("#haltMap").css("height", mapHeight);
   }
 
   getZoneList() {
@@ -72,14 +87,23 @@ export class HaltsComponent {
   }
 
   getHaltList() {
-
     this.haltList = [];
     this.haltDataInfo = [];
     if (this.zoneList.length > 0) {
       for (let i = 1; i < this.zoneList.length; i++) {
-        let haltInfoPath = 'HaltInfo/' + this.zoneList[i]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + this.selectedDate;
-        let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
-          haltData => {
+        let haltInfoPath =
+          "HaltInfo/" +
+          this.zoneList[i]["zoneNo"] +
+          "/" +
+          this.currentYear +
+          "/" +
+          this.currentMonth +
+          "/" +
+          this.selectedDate;
+        let haltInfoData = this.db
+          .list(haltInfoPath)
+          .valueChanges()
+          .subscribe((haltData) => {
             haltInfoData.unsubscribe();
             let zoneNo = this.zoneList[i]["zoneNo"];
             //let zoneName = this.zoneList[i]["zoneName"].replace("Ward ", "");
@@ -88,14 +112,44 @@ export class HaltsComponent {
             if (haltData.length > 0) {
               for (let index = 0; index < haltData.length; index++) {
                 if (haltData[index]["haltType"] != "network-off") {
-                  let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
+                  let duration =
+                    haltData[index]["duration"] != undefined
+                      ? haltData[index]["duration"]
+                      : 0;
                   if (duration > this.minHalt) {
                     totalBreak += duration;
                     if (haltData[index]["location"] != null) {
-                      let latlng = haltData[index]["location"].split(':')[1].split(',');
+                      let removeReason = "0";
+                      let canRemove = "yes";
+                      let remark = "";
+                      if (haltData[index]["canRemove"] != null) {
+                        canRemove = haltData[index]["canRemove"];
+                      }
+                      if (haltData[index]["removeReason"] != null) {
+                        removeReason = haltData[index]["removeReason"];
+                      }
+                      if (haltData[index]["remark"] != null) {
+                        remark = haltData[index]["remark"];
+                      }
+                      let latlng = haltData[index]["location"]
+                        .split(":")[1]
+                        .split(",");
                       let lt = $.trim(latlng[0]).replace("(", "");
                       let lg = $.trim(latlng[1]).replace(")", "");
-                      this.haltDataInfo.push({ zoneNo: zoneNo, time: haltData[index]["startTime"], duration: duration, type: haltData[index]["haltType"], location: haltData[index]["locality"], lat: lt, lng: lg });
+                      this.haltDataInfo.push({
+                        index: index,
+                        zoneNo: zoneNo,
+                        time: haltData[index]["startTime"],
+                        duration: duration,
+                        type: haltData[index]["haltType"],
+                        location: haltData[index]["locality"],
+                        lat: lt,
+                        lng: lg,
+                        removeReason: removeReason,
+                        canRemove: canRemove,
+                        remark: remark,
+                        ishaltDisableAccess:this.ishaltDisableAccess
+                      });
                     }
                   }
                 }
@@ -107,10 +161,20 @@ export class HaltsComponent {
             if (totalBreak == 0) {
               displayIndex = 2;
             }
-            this.haltList.push({ zoneNo: zoneNo, zoneName: zoneName, totalBreak: totalBreak, totalBreakHours: this.commonService.getHrs(totalBreak), divClass: divClass, haltClass: haltClass, displayIndex: displayIndex });
+            this.haltList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              totalBreak: totalBreak,
+              totalBreakHours: this.commonService.getHrs(totalBreak),
+              divClass: divClass,
+              haltClass: haltClass,
+              displayIndex: displayIndex,
+            });
             // this.haltList = this.commonService.transform(this.haltList, "displayIndex");
             if (this.haltList.length == this.zoneList.length - 1) {
-              let haltDetail = this.haltList.find(item => item.totalBreak > 0);
+              let haltDetail = this.haltList.find(
+                (item) => item.totalBreak > 0
+              );
               if (haltDetail != undefined) {
                 this.getZoneDetail(haltDetail.zoneNo);
               }
@@ -121,6 +185,7 @@ export class HaltsComponent {
   }
 
   getZoneDetail(zoneNo: any) {
+    this.selectedZone = zoneNo;
     this.getEmployee(zoneNo);
     this.setMapHalt();
     setTimeout(() => {
@@ -128,8 +193,8 @@ export class HaltsComponent {
     }, 200);
     this.getFixedGeoLocation();
     this.haltDataList = [];
-    this.haltMarkerList = []
-    let haltDetail = this.haltList.find(item => item.zoneNo == zoneNo);
+    this.haltMarkerList = [];
+    let haltDetail = this.haltList.find((item) => item.zoneNo == zoneNo);
     if (haltDetail != undefined) {
       this.haltDetails.zoneName = haltDetail.zoneName;
       this.haltDetails.totalBreakHours = haltDetail.totalBreakHours;
@@ -137,7 +202,10 @@ export class HaltsComponent {
     for (let i = 0; i < this.haltDataInfo.length; i++) {
       if (this.haltDataInfo[i]["zoneNo"] == zoneNo) {
         let divClass = this.getClass(0, "listClass");
-        let haltClass = this.getClass(this.haltDataInfo[i]["duration"], "haltClass");
+        let haltClass = this.getClass(
+          this.haltDataInfo[i]["duration"],
+          "haltClass"
+        );
         if (this.haltDataList.length == 0) {
           divClass = this.getClass(1, "listClass");
         }
@@ -147,7 +215,18 @@ export class HaltsComponent {
         let time = this.haltDataInfo[i]["time"];
         let duration = this.haltDataInfo[i]["duration"];
         let type = this.haltDataInfo[i]["type"];
-        let imageUrl = "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
+        let remark = this.haltDataInfo[i]["remark"];
+        let index = this.haltDataInfo[i]["index"];
+        let imageUrl =
+          "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
+        let removeReason = "0";
+        let canRemove = "yes";
+        if (this.haltDataInfo[i]["canRemove"] != null) {
+          canRemove = this.haltDataInfo[i]["canRemove"];
+        }
+        if (this.haltDataInfo[i]["removeReason"] != null) {
+          removeReason = this.haltDataInfo[i]["removeReason"];
+        }
 
         let height = 50;
         let point1 = 25;
@@ -160,14 +239,43 @@ export class HaltsComponent {
           point2 = 50;
           this.preSelectedMarker = 0;
         }
-        this.haltDataList.push({ time: time, duration: duration, type: type, location: location, lat: lat, lng: lng, divClass: divClass, haltClass: haltClass });
-        this.setMarker(0, lat, lng, duration, time, imageUrl, height, point1, point2, '', '', 'halt', isAnimation);
+        this.haltDataList.push({
+          index: index,
+          id: i,
+          time: time,
+          duration: duration,
+          type: type,
+          location: location,
+          lat: lat,
+          lng: lng,
+          divClass: divClass,
+          haltClass: haltClass,
+          removeReason: removeReason,
+          canRemove: canRemove,
+          remark: remark,
+          ishaltDisableAccess:this.ishaltDisableAccess
+        });
+        this.setMarker(
+          0,
+          lat,
+          lng,
+          duration,
+          time,
+          imageUrl,
+          height,
+          point1,
+          point2,
+          "",
+          "",
+          "halt",
+          isAnimation
+        );
       }
     }
   }
 
   getFixedGeoLocation() {
-    this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));;
+    this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));
     if (this.fixdGeoLocations != null) {
       for (let i = 0; i < this.fixdGeoLocations.length; i++) {
         let Lat = this.fixdGeoLocations[i]["lat"];
@@ -176,7 +284,21 @@ export class HaltsComponent {
         let height = 50;
         let point1 = 25;
         let point2 = 31;
-        this.setMarker(0, Lat, Lng, 0, 0, imageUrl, height, point1, point2, this.fixdGeoLocations[i]["name"], this.fixdGeoLocations[i]["address"], "fixed", false);
+        this.setMarker(
+          0,
+          Lat,
+          Lng,
+          0,
+          0,
+          imageUrl,
+          height,
+          point1,
+          point2,
+          this.fixdGeoLocations[i]["name"],
+          this.fixdGeoLocations[i]["address"],
+          "fixed",
+          false
+        );
       }
     }
   }
@@ -193,9 +315,24 @@ export class HaltsComponent {
     let lg = this.haltDataList[i]["lng"];
     let time = this.haltDataList[i]["time"];
     let duration = this.haltDataList[i]["duration"];
-    let imageUrl = "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
+    let imageUrl =
+      "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
     this.bounds.extend({ lat: Number(lt), lng: Number(lg) });
-    this.setMarker(i, lt, lg, duration, time, imageUrl, height, point1, point2, '', '', "preSelected", isAnimation,);
+    this.setMarker(
+      i,
+      lt,
+      lg,
+      duration,
+      time,
+      imageUrl,
+      height,
+      point1,
+      point2,
+      "",
+      "",
+      "preSelected",
+      isAnimation
+    );
 
     i = index;
     this.haltMarkerList[i]["marker"].setMap(null);
@@ -211,11 +348,38 @@ export class HaltsComponent {
     duration = this.haltDataList[i]["duration"];
     imageUrl = "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
     this.bounds.extend({ lat: Number(lt), lng: Number(lg) });
-    this.setMarker(i, lt, lg, duration, time, imageUrl, height, point1, point2, '', '', "selected", isAnimation);
-
+    this.setMarker(
+      i,
+      lt,
+      lg,
+      duration,
+      time,
+      imageUrl,
+      height,
+      point1,
+      point2,
+      "",
+      "",
+      "selected",
+      isAnimation
+    );
   }
 
-  setMarker(i: any, lat: any, lng: any, duration: any, time: any, imageUrl: any, height: any, point1: any, point2: any, name: any, location: any, type: any, isAnimation: any) {
+  setMarker(
+    i: any,
+    lat: any,
+    lng: any,
+    duration: any,
+    time: any,
+    imageUrl: any,
+    height: any,
+    point1: any,
+    point2: any,
+    name: any,
+    location: any,
+    type: any,
+    isAnimation: any
+  ) {
     let lt = lat;
     let lg = lng;
     let markerURL = imageUrl;
@@ -226,71 +390,90 @@ export class HaltsComponent {
     let marker = new google.maps.Marker({
       position: { lat: Number(lt), lng: Number(lg) },
       map: this.mapHalt,
-      label: { text: ' ' + markerLabel + ' ', color: "white", fontSize: "12px", fontWeight: "bold" },
+      label: {
+        text: " " + markerLabel + " ",
+        color: "white",
+        fontSize: "12px",
+        fontWeight: "bold",
+      },
       icon: {
         url: markerURL,
         fillOpacity: 1,
         strokeWeight: 0,
         scaledSize: new google.maps.Size(height, height),
         origin: new google.maps.Point(0, 0),
-        labelOrigin: new google.maps.Point(point1, point2)
-      }
+        labelOrigin: new google.maps.Point(point1, point2),
+      },
     });
 
-    let contentString = 'Start Time : ' + time + ' <br/> Break Time : ' + duration;
+    let contentString =
+      "Start Time : " + time + " <br/> Break Time : " + duration;
     if (type == "fixed") {
-      contentString = '<b>' + name + '</b>: ' + location;
+      contentString = "<b>" + name + "</b>: " + location;
     }
 
     let infowindow = new google.maps.InfoWindow({
-      content: contentString
+      content: contentString,
     });
     if (isAnimation == true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
 
-    marker.addListener('click', function () {
+    marker.addListener("click", function () {
       infowindow.open(this.mapHalt, marker);
     });
     if (type == "halt") {
       this.haltMarkerList.push({ marker });
-    }
-    else if (type == "selected" || type == "preSelected") {
+    } else if (type == "selected" || type == "preSelected") {
       this.haltMarkerList[i]["marker"] = marker;
     }
   }
 
   getEmployee(zoneNo: any) {
-    let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+    let zoneDetail = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetail != undefined) {
       if (zoneDetail.driverId == null) {
-        let workerDataPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonth + '/' + this.selectedDate + '/WorkerDetails';
-        let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
-          workerInfo => {
+        let workerDataPath =
+          "WasteCollectionInfo/" +
+          zoneNo +
+          "/" +
+          this.currentYear +
+          "/" +
+          this.currentMonth +
+          "/" +
+          this.selectedDate +
+          "/WorkerDetails";
+        let workerDetails = this.db
+          .object(workerDataPath)
+          .valueChanges()
+          .subscribe((workerInfo) => {
             workerDetails.unsubscribe();
             if (workerInfo != null) {
-              let driverList = workerInfo["driver"].toString().split(',');
-              let helperList = workerInfo["helper"].toString().split(',');
+              let driverList = workerInfo["driver"].toString().split(",");
+              let helperList = workerInfo["helper"].toString().split(",");
               let driverId = driverList[driverList.length - 1].trim();
               let helperId = helperList[helperList.length - 1].trim();
               zoneDetail.driverId = driverId;
               zoneDetail.helperId = helperId;
-              this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
-                zoneDetail.driverName = employee["name"];
-                zoneDetail.driverMobile = employee["mobile"];
-                this.haltDetails.driverName = employee["name"];
-                this.haltDetails.driverMobile = employee["mobile"];
-              });
-              this.commonService.getEmplyeeDetailByEmployeeId(helperId).then((employee) => {
-                zoneDetail.helperName = employee["name"];
-                zoneDetail.helperMobile = employee["mobile"];
-                this.haltDetails.helperName = employee["name"];
-                this.haltDetails.helperMobile = employee["mobile"];
-              });
+              this.commonService
+                .getEmplyeeDetailByEmployeeId(driverId)
+                .then((employee) => {
+                  zoneDetail.driverName = employee["name"];
+                  zoneDetail.driverMobile = employee["mobile"];
+                  this.haltDetails.driverName = employee["name"];
+                  this.haltDetails.driverMobile = employee["mobile"];
+                });
+              this.commonService
+                .getEmplyeeDetailByEmployeeId(helperId)
+                .then((employee) => {
+                  zoneDetail.helperName = employee["name"];
+                  zoneDetail.helperMobile = employee["mobile"];
+                  this.haltDetails.helperName = employee["name"];
+                  this.haltDetails.helperMobile = employee["mobile"];
+                });
             }
           });
-      }
-      else {
+      } else {
         this.haltDetails.driverName = zoneDetail.driverName;
         this.haltDetails.driverMobile = zoneDetail.driverMobile;
         this.haltDetails.helperName = zoneDetail.helperName;
@@ -305,8 +488,7 @@ export class HaltsComponent {
     if (classType == "divClass") {
       if (totalBreak == 0) {
         className = "ward-header disabled";
-      }
-      else {
+      } else {
         className = "ward-header";
       }
     }
@@ -324,8 +506,7 @@ export class HaltsComponent {
     if (classType == "listClass") {
       if (totalBreak == 0) {
         className = "halt-bg";
-      }
-      else {
+      } else {
         className = "halt-bg active";
       }
     }
@@ -338,34 +519,39 @@ export class HaltsComponent {
       markerColor = "green";
     } else if (breakTime > 10 && breakTime <= 20) {
       markerColor = "orange";
-    } else { markerColor = "red"; }
+    } else {
+      markerColor = "red";
+    }
     return markerColor;
   }
 
   setMapHalt() {
-    var mapstyle = new google.maps.StyledMapType(
-      [
-        {
-          featureType: 'poi',
-          elementType: 'labels',
-          stylers: [{ visibility: "off" }]
-        },
-      ]
-    );
+    var mapstyle = new google.maps.StyledMapType([
+      {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }],
+      },
+    ]);
 
     let mapProp = this.commonService.initMapProperties();
-    this.mapHalt = new google.maps.Map(document.getElementById("haltMap"), mapProp);
+    this.mapHalt = new google.maps.Map(
+      document.getElementById("haltMap"),
+      mapProp
+    );
 
     //this.mapHalt.mapTypes.set('styled_map', mapstyle);
     //this.mapHalt.setMapTypeId('styled_map');
   }
 
   setKmlHalt(wardNo: string) {
-    this.db.object('Defaults/KmlBoundary/' + wardNo).valueChanges().subscribe(
-      wardPath => {
+    this.db
+      .object("Defaults/KmlBoundary/" + wardNo)
+      .valueChanges()
+      .subscribe((wardPath) => {
         new google.maps.KmlLayer({
           url: wardPath.toString(),
-          map: this.mapHalt
+          map: this.mapHalt,
         });
       });
   }
@@ -376,8 +562,118 @@ export class HaltsComponent {
   }
 
   showHaltSummary() {
-    this.router.navigate(['/' + this.cityName + '/10B4/halt-summary']);
+    this.router.navigate(["/" + this.cityName + "/10B4/halt-summary"]);
   }
+
+  //#region  disable halts start
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  openModel(content: any, id: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 240;
+    let width = 350;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    for (let i = 0; i < this.haltDataList.length; i++) {
+      if (i == id) {
+        $("#txtRemark").val(this.haltDataList[i]["remark"]);
+      }
+    }
+    if (type == "disable") {
+      $("#btnRemark").val("Disable Halt");
+    } else {
+      $("#btnRemark").val("Enable Halt");
+    }
+    $("#type").val(type);
+    $("#haltId").val(id);
+  }
+
+  saveRemark() {
+    let id = Number($("#haltId").val());
+    let time = this.haltDataList[id]["time"];
+    let remark = $("#txtRemark").val();
+
+    let monthName = this.commonService.getCurrentMonthName(
+      new Date(this.selectedDate).getMonth()
+    );
+    let year = new Date(this.selectedDate).getFullYear();
+
+    let dbPath =
+      "HaltInfo/" +
+      this.selectedZone +
+      "/" +
+      year +
+      "/" +
+      monthName +
+      "/" +
+      this.selectedDate +
+      "/" +
+      time;
+    if ($("#type").val() == "disable") {
+      // if ($("#txtRemark").val() == "") {
+      //   this.commonService.setAlertMessage("error", "Please enter remark !!!");
+      //   return;
+      // }
+
+      this.db.object(dbPath).update({
+        canRemove: "no",
+        remark: remark,
+      });
+
+      this.haltDataList[id]["canRemove"] = "no";
+      this.haltDataList[id]["remark"] = remark;
+      let index = this.haltDataList[id]["index"];
+      let haltDetail = this.haltDataInfo.find(
+        (item) => item.index == index && item.zoneNo == this.selectedZone
+      );
+      if (haltDetail != undefined) {
+        haltDetail.canRemove = "no";
+        haltDetail.remark = remark;
+      }
+
+      this.commonService.setAlertMessage(
+        "success",
+        "halt disabled successfully !!!"
+      );
+    } else {
+      this.db.object(dbPath).update({
+        canRemove: "yes",
+        remark: remark,
+      });
+      this.haltDataList[id]["canRemove"] = "yes";
+      this.haltDataList[id]["remark"] = $("#txtRemark").val();
+      let index = this.haltDataList[id]["index"];
+      let haltDetail = this.haltDataInfo.find(
+        (item) => item.index == index && item.zoneNo == this.selectedZone
+      );
+      if (haltDetail != undefined) {
+        haltDetail.canRemove = "yes";
+        haltDetail.remark = $("#txtRemark").val();
+      }
+
+      this.commonService.setAlertMessage(
+        "success",
+        "halt enabled successfully !!!"
+      );
+    }
+    $("#txtRemark").val("");
+    $("#type").val("0");
+    $("#haltId").val("0");
+    this.closeModel();
+  }
+
+  //#endregion disable halts end
 }
 export class haltDetail {
   zoneName: string;

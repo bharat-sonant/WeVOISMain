@@ -72,6 +72,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("isTaskManager", "0");
       }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
+      localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem(
         "notificationMobileDataOff",
         userDetails.notificationMobileDataOff

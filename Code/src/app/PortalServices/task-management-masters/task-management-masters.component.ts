@@ -15,18 +15,19 @@ export class TaskManagementMastersComponent implements OnInit {
     private commonService: CommonService,
     public dbFireStore: AngularFirestore,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   mainTaskList: any[];
   categoryList: any[];
   projectList: any[];
+  projectCategoryList:any[];
   moduleProjectList: any[];
   taskList: any[];
   isMaincatNew = false;
   isProjectNew = false;
 
   ngOnInit() {
-    this.setActiveTab("Department");
+    this.setActiveTab("Category");
     this.getMainTask();
   }
 
@@ -176,7 +177,7 @@ export class TaskManagementMastersComponent implements OnInit {
     } else if (type == "category") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 320;
+      let height = 280;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
@@ -207,7 +208,7 @@ export class TaskManagementMastersComponent implements OnInit {
     } else if (type == "project") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 320;
+      let height = 280;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
@@ -251,6 +252,18 @@ export class TaskManagementMastersComponent implements OnInit {
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id == "0") {
         $("#exampleModalLongTitle").html("Add Module");
+        $("#ddlMainModuleCategory").val("Office");
+        let projectList = this.projectList.filter(
+          (item) => item.mainCategory == "Office"
+        );
+        if (projectList.length > 0) {
+          for (let i = 0; i < projectList.length; i++) {
+            this.moduleProjectList.push({
+              id: projectList[i]["id"],
+              name: projectList[i]["name"],
+            });
+          }
+        }
       } else {
         $("#exampleModalLongTitle").html("Update Module");
         let moduleDetail = this.taskList.find((item) => item.id == id);

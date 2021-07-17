@@ -28,9 +28,14 @@
                   <h5 class="break-time">Break Time : <br><strong class="{{data.haltClass}}"><i
                         class="far fa-clock"></i>
                       {{data.duration}} Min.</strong></h5>
-                  <button class="remark-btn button" data-toggle="modal" data-target="#exampleModalCenter"
-                    style="display:none;"><i class="fa fa-plus"></i></button>
-                  <button class="remark-btn success-btn button" style="display:none;"><i class="fa fa-eye"></i></button>
+                  <span [hidden]="data.ishaltDisableAccess==0">
+                    <button class="remark-btn button" [hidden]="data.canRemove=='no'"
+                      (click)="openModel(contentRemark,i,'disable');"><i class="fas fa-check"
+                        style="color: green;"></i></button>
+                    <button class="remark-btn button" [hidden]="data.canRemove=='yes'"
+                      (click)="openModel(contentRemark,i,'show');"><i class="fas fa-times"
+                        style="color: red;"></i></button>
+                  </span>
                 </div>
                 <div class="work-stop-address" style="border-bottom: 1px dotted lightgray;">
                   <p><i class="fas fa-registered" style="color: #0ba118;"></i> {{data.type}}</p>
@@ -91,7 +96,8 @@
                     </div>
                   </div>
 
-                  <div class="mob-mt-5" style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
+                  <div class="mob-mt-5"
+                    style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
                     <div id="haltMap" style="width:100%;height:75vh; "></div>
                   </div>
 
@@ -124,31 +130,23 @@
 </section>
 
 
-<!------------- Remark Modal Start ---------->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
+<!--Remark Modal Start-->
+<ng-template #contentRemark>
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Remark</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="exampleModalLongTitle">Remark for halt</h5>
+        <button type="button" class="close" (click)="closeModel();">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <select id="drpRemark" class="select">
-          <option selected value="0">Remark Topic</option>
-          <option value="1">Vehicle Related</option>
-          <option value="2">Device</option>
-          <option value="3">Location Issue</option>
-          <option value="4">Fast Working</option>
-          <option value="5">Halts</option>
-          <option value="6">General</option>
-        </select>
+        <input type="hidden" id="haltId" value="0" />
+        <input type="hidden" id="type" value="0" />
         <textarea id="txtRemark" placeholder="Type your concern"></textarea>
-        <input type="button" class="btn btn-success" value="Submit" />
+        <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="saveRemark();" />
       </div>
     </div>
   </div>
-</div>
-<!---------Remark Modal End--------->
+</ng-template>
+<!--Remark Modal End-->
