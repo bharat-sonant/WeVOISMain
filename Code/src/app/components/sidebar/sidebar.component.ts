@@ -89,6 +89,7 @@ export class SidebarComponent implements OnInit {
     element.src = this.getCityIcon(this.cityName);
 
     this.userid = localStorage.getItem("userID");
+    console.log(localStorage.getItem("isCityChange"));
     if (localStorage.getItem("isCityChange") == "yes") {
       localStorage.setItem("isCityChange","no");
       this.commonService.setLocalStorageData(this.cityName);

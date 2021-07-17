@@ -1032,6 +1032,7 @@ export class CommonService {
   //#region  all local storage
 
   setLocalStorageData(cityName: any) {
+    console.log(this.db);
     this.setPortalPages();
     this.setWebPortalUsers();
     this.setZones();
@@ -1058,6 +1059,8 @@ export class CommonService {
           });
         }
         localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
+        console.log("fixedLocation");
+        console.log(JSON.parse(localStorage.getItem("fixedLocation")));
         
       });
   }
@@ -1083,6 +1086,8 @@ export class CommonService {
             }
           }
           localStorage.setItem("vehicle", JSON.stringify(vehicleList));
+          console.log("vehicle");
+          console.log(JSON.parse(localStorage.getItem("vehicle")));
         }
       });
   }
@@ -1129,6 +1134,8 @@ export class CommonService {
             }
           }
           localStorage.setItem("dustbin", JSON.stringify(dustbinList));
+          console.log("Dustbin");
+          console.log(JSON.parse(localStorage.getItem("dustbin")));
         }
       });
   }
@@ -1196,7 +1203,8 @@ export class CommonService {
             }
           }
           localStorage.setItem("latest-zones", JSON.stringify(letestZone));
-          console.log(letestZone);
+          console.log("Zone");
+          console.log(JSON.parse(localStorage.getItem("latest-zones")));
         }
         wardDetail.unsubscribe();
       });
