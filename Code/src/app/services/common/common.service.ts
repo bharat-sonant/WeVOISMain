@@ -1058,6 +1058,7 @@ export class CommonService {
           });
         }
         localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
+        
       });
   }
 
@@ -1195,6 +1196,7 @@ export class CommonService {
             }
           }
           localStorage.setItem("latest-zones", JSON.stringify(letestZone));
+          console.log(letestZone);
         }
         wardDetail.unsubscribe();
       });

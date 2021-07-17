@@ -90,6 +90,7 @@ export class SidebarComponent implements OnInit {
 
     this.userid = localStorage.getItem("userID");
     if (localStorage.getItem("isCityChange") == "yes") {
+      localStorage.setItem("isCityChange","no");
       this.commonService.setLocalStorageData(this.cityName);
       setTimeout(() => {
         this.commonService.setNotificationPermissions(this.userid);
