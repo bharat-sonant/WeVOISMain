@@ -117,11 +117,25 @@ export class TaskManagerComponent implements OnInit {
             .subscribe((project) => {
               project.forEach((projectDoc) => {
                 let project = projectDoc.id;
+                let projectCategory=[];
+                if (projectDoc.data()["Category"] != undefined) {
+                  let projectCategoryList = projectDoc.data()["Category"];
+                  for (let i = 0; i < projectCategoryList.length; i++) {
+                    let categoryDetail = this.categoryFilterList.find(
+                      (item) => item.id == projectCategoryList[i]
+                    );
+                    if (categoryDetail != undefined) {
+                      projectCategory.push({id:categoryDetail.id,name:categoryDetail.name});
+                    }
+                  }                  
+                }
                 this.projectFilterList.push({
                   mainCategory: mainCategory,
                   id: project,
                   name: project,
+                  projectCategory:projectCategory
                 });
+
                 // for task list
                 const refModule = projectDoc.ref.path + "/Modules";
                 this.dbFireStore
@@ -147,20 +161,15 @@ export class TaskManagerComponent implements OnInit {
 
   getCategory(id: any) {
     this.categoryList = [];
-    let categoryDetail = this.categoryFilterList.filter(
-      (item) => item.mainCategory == id
+    let projectDetail = this.projectFilterList.find(
+      (item) => item.id == id
     );
-    if (categoryDetail.length > 0) {
-      for (let i = 0; i < categoryDetail.length; i++) {
-        this.categoryList.push({
-          id: categoryDetail[i]["id"],
-          name: categoryDetail[i]["name"],
-        });
-      }
+    if (projectDetail!=undefined) {
+        this.categoryList=projectDetail.projectCategory;      
     }
   }
 
-  getProjects(id: any, project: any) {
+  getProjects(id: any) {
     this.projectList = [];
     let projectDetail = this.projectFilterList.filter(
       (item) => item.mainCategory == id
@@ -173,8 +182,6 @@ export class TaskManagerComponent implements OnInit {
         });
       }
     }
-
-    this.getCategory(id);
   }
 
   getTask(id: any) {
@@ -188,6 +195,8 @@ export class TaskManagerComponent implements OnInit {
         });
       }
     }
+
+    this.getCategory(id);
   }
 
   fillUsers() {
@@ -405,8 +414,8 @@ export class TaskManagerComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     if (type == "task") {
-      let height = 550;
-      let width = 350;
+      let height = 500;
+      let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
         .parent()
@@ -426,7 +435,7 @@ export class TaskManagerComponent implements OnInit {
           let task = taskDetails.taskId;
           let status = taskDetails.status;
           let remark = taskDetails.remark;
-          this.getProjects(taskFor, project);
+          this.getProjects(taskFor);
           this.getTask(project);
           setTimeout(() => {
             $("#remark").val(remark);
@@ -439,6 +448,9 @@ export class TaskManagerComponent implements OnInit {
             $("#txtDescription").val(taskDetails.description);
           }, 1000);
         }
+      }
+      else{
+        this.getProjects("Office");
       }
     } else if (type == "status") {
       let height = 350;
@@ -458,7 +470,24 @@ export class TaskManagerComponent implements OnInit {
         $("#drpStatus").val(taskDetails.status);
         $("#txtRemark").val(taskDetails.remark);
       }
-    } else {
+    }
+    else if(type=="deleteTask"){
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#deleteId").val(id);
+    }
+    else {
       let height = (windowHeight * 90) / 100;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
@@ -476,6 +505,12 @@ export class TaskManagerComponent implements OnInit {
         this.getSummary();
       }, 600);
     }
+  }
+
+  confirmDelete(){
+    let id=$('#deleteId').val();
+    this.delete(id);
+    this.closeModel();
   }
 
   closeModel() {

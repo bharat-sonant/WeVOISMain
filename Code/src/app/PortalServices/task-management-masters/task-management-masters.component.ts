@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFirestore } from "@angular/fire/firestore";
+import { HtmlAstPath } from "@angular/compiler";
 
 @Component({
   selector: "app-task-management-masters",
@@ -15,12 +16,12 @@ export class TaskManagementMastersComponent implements OnInit {
     private commonService: CommonService,
     public dbFireStore: AngularFirestore,
     private modalService: NgbModal
-  ) { }
+  ) {}
 
   mainTaskList: any[];
   categoryList: any[];
   projectList: any[];
-  projectCategoryList:any[];
+  projectCategoryList: any[];
   moduleProjectList: any[];
   taskList: any[];
   isMaincatNew = false;
@@ -123,10 +124,33 @@ export class TaskManagementMastersComponent implements OnInit {
             .subscribe((project) => {
               project.forEach((projectDoc) => {
                 let project = projectDoc.id;
+                let projectCategory = "";
+                let projectCategoryId = "";
+                if (projectDoc.data()["Category"] != undefined) {
+                  let projectCategoryList = projectDoc.data()["Category"];
+                  for (let i = 0; i < projectCategoryList.length; i++) {
+                    let categoryDetail = this.categoryList.find(
+                      (item) => item.id == projectCategoryList[i]
+                    );
+                    if (categoryDetail != undefined) {
+                      if (i == 0) {
+                        projectCategory = categoryDetail.name;
+                        projectCategoryId = categoryDetail.id;
+                      } else {
+                        projectCategory =
+                          projectCategory + ", " + categoryDetail.name;
+                        projectCategoryId =
+                          projectCategoryId + ", " + categoryDetail.id;
+                      }
+                    }
+                  }
+                }
                 this.projectList.push({
                   mainCategory: mainCategory,
                   id: project,
                   name: project,
+                  projectCategory: projectCategory,
+                  projectCategoryId:projectCategoryId
                 });
                 const refModule = projectDoc.ref.path + "/Modules";
                 this.dbFireStore
@@ -153,6 +177,7 @@ export class TaskManagementMastersComponent implements OnInit {
   //#region common function
 
   openModel(content: any, id: any, type: any) {
+    console.log(type);
     if (type == "department") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
@@ -239,7 +264,7 @@ export class TaskManagementMastersComponent implements OnInit {
     } else if (type == "module") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 400;
+      let height = 320;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
@@ -291,13 +316,117 @@ export class TaskManagementMastersComponent implements OnInit {
           }, 100);
         }
       }
+    } else if (type == "projectCategory") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 600;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#exampleModalLongTitle").html("Choose Category for " + id);
+      $("#projectCatgoryId").val(id);
+      setTimeout(() => {
+        let projectDetail = this.projectList.find((item) => item.id == id);
+        if (projectDetail != undefined) {
+          let projectCategoryList = projectDetail.projectCategoryId.split(",");
+          if (projectCategoryList.length > 0) {
+            for (let i = 0; i < this.categoryList.length; i++) {
+              for (let j = 0; j < projectCategoryList.length; j++) {
+                if (
+                  this.categoryList[i]["id"] == projectCategoryList[j].trim()
+                ) {
+                  let element = <HTMLInputElement>(
+                    document.getElementById("chk" + i)
+                  );
+                  element.checked = true;
+                }
+              }
+            }
+          }
+        }
+      }, 600);
+    }
+    else if(type=="deleteCategory"){
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#deleteId").val(id);
+      $('#confirmType').val('category');
+    }
+    else if(type=="deleteProject"){
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#deleteId").val(id);
+      $('#confirmType').val('project');
+    }
+    else if(type=="deleteModule"){
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 350;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#deleteId").val(id);
+      $('#confirmType').val('module');
     }
   }
 
   closeModel() {
     this.modalService.dismissAll();
   }
+
+  confirmDelete()
+  {
+    let deleteId=$('#deleteId').val();
+    let confirmType=$('#confirmType').val();
+    if(confirmType=="category"){
+      this.deleteCategory(deleteId);
+    } else if(confirmType=="project"){
+      this.deleteProject(deleteId);
+    } else if(confirmType=="module"){
+      this.deleteModule(deleteId);
+    }
+  }
+
+
   //#endregion
+
+  
 
   //#region Task Department
 
@@ -461,6 +590,48 @@ export class TaskManagementMastersComponent implements OnInit {
   //#endregion
 
   //#region Project
+
+  addProjectCategory() {
+    let projectId = $("#projectCatgoryId").val();
+    let projectDetail = this.projectList.find((item) => item.id == projectId);
+    if (projectDetail != undefined) {
+      let projectCategory = "";
+      for (let i = 0; i < this.categoryList.length; i++) {
+        let chk = "chk" + i;
+        let element = <HTMLInputElement>document.getElementById(chk);
+        if (element.checked == true) {
+          if (projectCategory == "") {
+            projectCategory = this.categoryList[i]["id"];
+          } else {
+            projectCategory =
+              projectCategory + "," + this.categoryList[i]["id"];
+          }
+        }
+      }
+      if (projectCategory != "") {
+        let projectCategoryList = projectCategory.split(",");
+        const data = {
+          Category: projectCategoryList,
+        };
+        this.dbFireStore
+          .collection("UserManagement")
+          .doc("TaskManagement")
+          .collection("Tasks")
+          .doc(projectDetail.mainCategory.toString())
+          .collection("Projects")
+          .doc(projectId.toString())
+          .set(data);
+      }
+      this.commonService.setAlertMessage(
+        "success",
+        "Project category updated successfully !!!"
+      );
+      setTimeout(() => {
+        this.getMainTask();
+      }, 600);
+      this.closeModel();
+    }
+  }
 
   addProject() {
     let id = $("#projectId").val();

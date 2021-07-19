@@ -81,11 +81,11 @@
                       <th style="border-right:1px solid #dee2e6">S.No.</th>
                       <th id="showName" style="border-right:1px solid #dee2e6">Name</th>
                       <th style="border-right:1px solid #dee2e6">Date</th>
-                      <th style="border-right:1px solid #dee2e6">Time</th>
                       <th style="border-right:1px solid #dee2e6">Project</th>
                       <th style="border-right:1px solid #dee2e6">Category</th>
-                      <th style="border-right:1px solid #dee2e6">Task</th>
+                      <th style="border-right:1px solid #dee2e6">Module</th>
                       <th style="border-right:1px solid #dee2e6">Task Description</th>
+                      <th style="border-right:1px solid #dee2e6">Time</th>
                       <th style="padding-right: 20px;">Action</th>
                     </thead>
                     <tbody>
@@ -95,8 +95,7 @@
                           {{data.name}}</td>
                         <td style="border-right:1px solid #dee2e6; width:8%;">
                           {{data.date}}</td>
-                        <td class="text-right" style="border-right:1px solid #dee2e6; width:5%;">
-                          {{data.timeInMinutes}} min</td>
+                        
 
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.project}}</td>
@@ -105,6 +104,8 @@
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.task}}</td>
                         <td style="border-right:1px solid #dee2e6; width:24%">{{data.description}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6; width:5%;">
+                          {{data.timeInMinutes}} min</td>
                         <td class="text-center" style="padding-right: 20px;width:8%">
                           <span [hidden]="data.date!=data.todayDate">
                             <i class="far fa-file-alt" (click)="openModel(contentStatus,data.key,'status')"
@@ -114,7 +115,7 @@
                             <i class="far fa-edit" (click)="openModel(contentTask,data.key,'task')" title="Edit Entry"
                               style="cursor:pointer !important; font-size: 14px;color: royalblue;"
                               [hidden]="data.userId!=data.createdBy"></i>&nbsp;&nbsp;
-                            <i class="far fa-trash-alt" title="Remove Entry" (click)="delete(data.key)"
+                            <i class="far fa-trash-alt" title="Remove Entry" (click)="openModel(contentConfirmation,data.key,'deleteTask')" 
                               style="cursor:pointer !important; font-size: 14px;color: red;"
                               [hidden]="data.userId!=data.createdBy"></i>
                           </span>
@@ -138,6 +139,32 @@
 </div>
 
 
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete?</h5>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" id="deleteId" value="0" />
+              <div class="row">
+              <div class="col-md-6">
+                  <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmDelete()">
+                      Confirm</button>
+              </div>
+              <div class="col-md-6">
+                  <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                      Cancel</button>
+              </div>
+          </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+<!--Delete Confirmation End-->
+
+
 <!--Tasks  Start-->
 <ng-template #contentTask>
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -152,9 +179,8 @@
         <input id="key" type="hidden" value="0" />
         <input id="status" type="hidden" value="In Progress" />
         <input id="remark" type="hidden" value="" />
-        <div class="wrap-input-effects" required>
+        <div class="wrap-input-effects" required style="display: none;">
           <select id="drpFor" class="input-green" (change)="getProjects($event.target.value);">
-            <option value="0">Select Task Category</option>
             <option value={{main.mainCat}} *ngFor="let main of mainList">
               {{main.mainCat}}</option>
           </select>
@@ -197,16 +223,16 @@
           </span>
         </div>
         <div class="wrap-input-effects" required>
-          <b> Estimate Time</b>
+          <b> Estimate Time (in hour)</b>
           <input id="estmateTime" type="number" class="input-green"
-            style="width: 200px; float: right; margin-bottom: 10px;" />
+            style="width: 150px; float: right; margin-bottom: 10px;" />
           <span class="focus-input-time"></span>
           <span class="symbol-input-time">
             <i class="far fa-clock" aria-hidden="true"></i>
           </span>
         </div>
         <textarea id="txtDescription" placeholder="Task description" style="height: 140px!important;"></textarea>
-        <input type="button" class="btn btn-success" style="width: 100%;" value="SUBMIT" (click)="saveTask();" />
+        <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveTask();" />
       </div>
     </div>
   </div>

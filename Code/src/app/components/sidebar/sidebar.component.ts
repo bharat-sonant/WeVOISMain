@@ -793,8 +793,8 @@ export class SidebarComponent implements OnInit {
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 290;
-    let width = 650;
+    let height = 270;
+    let width = 500;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content")
       .parent()
@@ -843,7 +843,7 @@ export class SidebarComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur") {
-        $("#jaipurBox").show();
+        $("#jaipurBox").hide();
       } else if (this.accessCity[i]["city"] == "demo") {
         $("#demoBox").show();
       }

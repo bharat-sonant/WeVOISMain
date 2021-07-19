@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
+    this.commonService.getFireStoreCity();
     this.cityName = localStorage.getItem("cityName");
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");

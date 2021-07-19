@@ -1016,15 +1016,11 @@ export class CommonService {
   }
 
   getFireStoreCity() {
-    let city = "Sikar";
-    if (localStorage.getItem("cityName") == "sikar") {
-      city = "Sikar";
-    } else if (localStorage.getItem("cityName") == "reengus") {
-      city = "Reengus";
-    } else if (localStorage.getItem("cityName") == "jaipur") {
+    let city =
+      localStorage.getItem("cityName").charAt(0).toUpperCase() +
+      localStorage.getItem("cityName").slice(1);
+    if (city == "Demo") {
       city = "Jaipur";
-    } else if (localStorage.getItem("cityName") == "demo") {
-      city = "Test";
     }
     return city;
   }
@@ -1061,7 +1057,6 @@ export class CommonService {
         localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
         console.log("fixedLocation");
         console.log(JSON.parse(localStorage.getItem("fixedLocation")));
-        
       });
   }
 

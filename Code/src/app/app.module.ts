@@ -60,10 +60,10 @@ else if (city == 'demo') {
   firebase = {
     apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
     authDomain: "dtdnavigator.firebaseapp.com",
-    databaseURL: "https://dtdnavigatortesting.firebaseio.com",
+    databaseURL: "https://dtdjaipur.firebaseio.com",
     projectId: "dtdnavigator",
     storageBucket: "dtdnavigator.appspot.com",
-    messagingSenderId: "381118272786"
+    messagingSenderId: "381118272786",
   };
 }
 
