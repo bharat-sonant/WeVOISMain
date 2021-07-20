@@ -67,7 +67,6 @@ else if (city == 'demo') {
   };
 }
 
-console.log(firebase);
 
 @NgModule({
   imports: [

@@ -50,6 +50,9 @@ export class HouseMarkingComponent {
   allMatkers: any[] = [];
   lineNo: any;
   cityName: any;
+  previousLine: any;
+  centerPoint: any;
+  houseMarker: any[]=[];
 
   markerData: markerDetail = {
     totalMarkers: 0,
@@ -68,6 +71,7 @@ export class HouseMarkingComponent {
       new Date(this.toDayDate).getMonth()
     );
     this.lineNo = "1";
+    this.previousLine = "1";
     this.setHeight();
     this.getZones();
     this.selectedZone = this.zoneList[1]["zoneNo"];
@@ -136,6 +140,11 @@ export class HouseMarkingComponent {
   onSubmit() {
     this.selectedZone = this.activeZone;
     this.polylines = [];
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+    }
     this.getAllLinesFromJson();
   }
 
@@ -167,7 +176,7 @@ export class HouseMarkingComponent {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
-          for (let i = 1; i < Number(lineCount); i++) {
+          for (let i = 1; i <= Number(lineCount); i++) {
             let wardLines = this.db
               .list(
                 "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points"
@@ -187,7 +196,9 @@ export class HouseMarkingComponent {
                     color: "#87CEFA",
                   });
                   this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-                  this.getMarkedHouses(i);
+                  if (this.lineNo == i.toString()) {
+                    this.getMarkedHouses(i);
+                  }
                 }
               });
           }
@@ -217,6 +228,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.houseMarker = [];
     let dbPath =
       "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db
@@ -288,14 +300,21 @@ export class HouseMarkingComponent {
       .object(dbPathLineStatus)
       .valueChanges()
       .subscribe((status) => {
+        lineStatus.unsubscribe();
         if (wardNo == this.selectedZone) {
           if (this.polylines[index] != undefined) {
             this.polylines[index].setMap(null);
           }
+          let strokeWeight = 2;
+          let lineColor = "";
+          if (lineNo == this.lineNo) {
+            strokeWeight = 5;
+            status = "requestedLine";
+          }
           let line = new google.maps.Polyline({
             path: latlng,
             strokeColor: this.commonService.getLineColor(status),
-            strokeWeight: 2,
+            strokeWeight: strokeWeight,
           });
           this.polylines[index] = line;
           this.polylines[index].setMap(this.map);
@@ -311,7 +330,7 @@ export class HouseMarkingComponent {
               lineNo.toString(),
               "",
               "lineNo",
-              ""
+              lineNo
             );
           }
         }
@@ -393,7 +412,7 @@ export class HouseMarkingComponent {
         markerDetail.markerImgURL = imageURL;
       });
 
-      this.allMatkers.push({ marker });
+      this.houseMarker.push({ marker });
     }
   }
 
@@ -405,19 +424,58 @@ export class HouseMarkingComponent {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
       return;
     }
+
     if (type == "pre") {
       if (lineNo != "1") {
         this.lineNo = Number(lineNo) - 1;
         $("#txtLineNo").val(this.lineNo);
         this.getLineApprove();
+        this.getHouseLineData();
       }
     } else if (type == "next") {
       if (Number(lineNo) < this.wardLines) {
         this.lineNo = Number(lineNo) + 1;
         $("#txtLineNo").val(this.lineNo);
         this.getLineApprove();
+        this.getHouseLineData();
       }
     }
+  }
+
+  getHouseLineData() {
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+    }
+    // previousLine
+    let firstLine = this.lines.find(
+      (item) => item.lineNo == Number(this.previousLine)
+    );
+    this.polylines[Number(this.previousLine) - 1].setMap(null);
+    let line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor(""),
+      strokeWeight: 2,
+    });
+    this.polylines[Number(this.previousLine) - 1] = line;
+    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
+
+    // new Line
+    this.lineNo = $("#txtLineNo").val();
+    this.polylines[Number(this.lineNo) - 1].setMap(null);
+    firstLine = this.lines.find((item) => item.lineNo == Number(this.lineNo));
+    this.centerPoint = firstLine.latlng[0];
+    line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor("requestedLine"),
+      strokeWeight: 5,
+    });
+    this.polylines[Number(this.lineNo) - 1] = line;
+    this.polylines[Number(this.lineNo) - 1].setMap(this.map);
+    this.previousLine = this.lineNo;
+    this.map.setCenter(this.centerPoint);
+    this.getMarkedHouses(this.lineNo);
   }
 
   getLineDetail() {
@@ -429,6 +487,7 @@ export class HouseMarkingComponent {
     if (Number(lineNo) <= this.wardLines) {
       this.lineNo = lineNo;
       this.getLineApprove();
+      this.getHouseLineData();
     } else {
       this.commonService.setAlertMessage(
         "error",
@@ -437,6 +496,7 @@ export class HouseMarkingComponent {
       this.lineNo = 1;
       $("#txtLineNo").val(this.lineNo);
       this.getLineApprove();
+      this.getHouseLineData();
     }
   }
 

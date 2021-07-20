@@ -89,14 +89,13 @@ export class SidebarComponent implements OnInit {
     element.src = this.getCityIcon(this.cityName);
 
     this.userid = localStorage.getItem("userID");
-    console.log(localStorage.getItem("isCityChange"));
-    //if (localStorage.getItem("isCityChange") == "yes") {
-    //  localStorage.setItem("isCityChange","no");
+    if (localStorage.getItem("isCityChange") == "yes") {
+      localStorage.setItem("isCityChange","no");
       this.commonService.setLocalStorageData(this.cityName);
       setTimeout(() => {
         this.commonService.setNotificationPermissions(this.userid);
       }, 2000);
-   // }
+    }
     this.userDetail.homeLink = "/" + this.cityName + "/home";
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
