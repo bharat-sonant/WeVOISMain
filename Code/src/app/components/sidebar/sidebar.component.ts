@@ -826,10 +826,10 @@ export class SidebarComponent implements OnInit {
       $("#reengusBox").addClass("login-box active-box");
       $("#jaipurBox").addClass("login-box");
       $("#demoBox").addClass("login-box");
-    } else if (this.cityName == "jaipur") {
+    } else if (this.cityName == "test") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      $("#jaipurBox").addClass("login-box active-box");
+      $("#jaipurBox").addClass("login-box");
       $("#demoBox").addClass("login-box");
     } else if (this.cityName == "demo") {
       $("#sikarBox").addClass("login-box");
@@ -843,7 +843,7 @@ export class SidebarComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
       } else if (this.accessCity[i]["city"] == "test") {
-        $("#jaipurBox").show();
+        $("#jaipurBox").hide();
       } else if (this.accessCity[i]["city"] == "demo") {
         $("#demoBox").show();
       }
