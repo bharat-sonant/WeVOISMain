@@ -1035,6 +1035,7 @@ export class CommonService {
     this.setFixedLoctions();
     this.setVehicle();
     this.setDustbin();
+    
   }
 
   setFixedLoctions() {
@@ -1136,6 +1137,7 @@ export class CommonService {
   }
 
   setZones() {
+    console.log("dfgf")
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
     let wardDetail = this.db
@@ -1262,6 +1264,7 @@ export class CommonService {
         let pageList = JSON.parse(doc.data()["pages"]);
         portalAccessList = this.transform(pageList, "position");
         localStorage.setItem("portalAccess", JSON.stringify(portalAccessList));
+        console.log(portalAccessList)
       });
   }
 
@@ -1307,6 +1310,7 @@ export class CommonService {
           accessList = this.transform(accessList, "position");
           localStorage.setItem("userAccessList", JSON.stringify(accessList));
           localStorage.setItem("accessCity", JSON.stringify(accessCity));
+          console.log("User Access"+accessList)
         });
     }
   }

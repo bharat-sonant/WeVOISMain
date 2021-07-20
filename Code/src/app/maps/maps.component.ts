@@ -567,6 +567,7 @@ export class MapsComponent {
                 let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(',')[0];
                 let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(',')[1];
                 let cardNo = houseData[j]["cardNo"];
+                let rfId=houseData[j]["rfid"];
                 let isApproved = "no";
                 if (houseData[j]["isApproved"] != null) {
                   if (houseData[j]["isApproved"] == "yes") {
@@ -588,7 +589,7 @@ export class MapsComponent {
 
                 this.houseList.push({ markerType: markerType, lat: lat, lng: lng, cardNo: cardNo, isApproved: isApproved });
                 this.progressData.houses = Number(this.progressData.houses) + 1;
-                let scanCardPath = 'HousesCollectionInfo/' + this.selectedZone + '/' + this.toDayDate + '/' + i + "/" + cardNo + "/scan-time";
+                let scanCardPath = 'HousesCollectionInfo/' + this.selectedZone + '/' + this.toDayDate + '/' + i + "/" + rfId + "/scan-time";
                 let scanInfo = this.db.object(scanCardPath).valueChanges().subscribe(
                   scanTime => {
 

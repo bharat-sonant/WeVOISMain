@@ -46,14 +46,14 @@ else if (city == 'reengus') {
     //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
   };
 }
-else if (city == 'jaipur') {
+else if (city == 'test') {
   firebase = {
     apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
     authDomain: "dtdnavigator.firebaseapp.com",
-    databaseURL: "https://dtdjaipur.firebaseio.com",
+    databaseURL: "https://dtdnavigatortesting.firebaseio.com",
     projectId: "dtdnavigator",
     storageBucket: "dtdnavigator.appspot.com",
-    messagingSenderId: "381118272786",
+    messagingSenderId: "381118272786"
   };
 }
 else if (city == 'demo') {

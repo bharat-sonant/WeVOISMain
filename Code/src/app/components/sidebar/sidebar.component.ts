@@ -90,13 +90,13 @@ export class SidebarComponent implements OnInit {
 
     this.userid = localStorage.getItem("userID");
     console.log(localStorage.getItem("isCityChange"));
-    if (localStorage.getItem("isCityChange") == "yes") {
-      localStorage.setItem("isCityChange","no");
+    //if (localStorage.getItem("isCityChange") == "yes") {
+    //  localStorage.setItem("isCityChange","no");
       this.commonService.setLocalStorageData(this.cityName);
       setTimeout(() => {
         this.commonService.setNotificationPermissions(this.userid);
       }, 2000);
-    }
+   // }
     this.userDetail.homeLink = "/" + this.cityName + "/home";
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
@@ -169,7 +169,7 @@ export class SidebarComponent implements OnInit {
     let icon = "./assets/img/sikar.svg";
     if (cityName == "reengus") {
       icon = "./assets/img/reengus.svg";
-    } else if (cityName == "jaipur") {
+    } else if (cityName == "test") {
       icon = "./assets/img/jaipur.svg";
     } else if (cityName == "demo") {
       icon = "./assets/img/demo.svg";
@@ -842,8 +842,8 @@ export class SidebarComponent implements OnInit {
         $("#sikarBox").show();
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
-      } else if (this.accessCity[i]["city"] == "jaipur") {
-        $("#jaipurBox").hide();
+      } else if (this.accessCity[i]["city"] == "test") {
+        $("#jaipurBox").show();
       } else if (this.accessCity[i]["city"] == "demo") {
         $("#demoBox").show();
       }

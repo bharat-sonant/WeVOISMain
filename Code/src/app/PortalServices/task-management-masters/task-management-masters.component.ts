@@ -278,6 +278,7 @@ export class TaskManagementMastersComponent implements OnInit {
       if (id == "0") {
         $("#exampleModalLongTitle").html("Add Module");
         $("#ddlMainModuleCategory").val("Office");
+        this.moduleProjectList=[];
         let projectList = this.projectList.filter(
           (item) => item.mainCategory == "Office"
         );
