@@ -23,6 +23,7 @@ export class HouseMarkingComponent {
     public httpService: HttpClient,
     private actRoute: ActivatedRoute,
     private mapService: MapService,
+    private router: Router,
     private commonService: CommonService
   ) {}
 
@@ -577,6 +578,11 @@ export class HouseMarkingComponent {
   }
 
   //#endregion
+
+  
+  assignSurveyor() {
+    this.router.navigate(["/" + this.cityName + "/2H/house-marking-assignment"]);
+  }
 }
 export class markerDetail {
   totalMarkers: number;
