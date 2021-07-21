@@ -581,7 +581,7 @@ export class HouseMarkingComponent {
 
   
   assignSurveyor() {
-    this.router.navigate(["/" + this.cityName + "/2H/house-marking-assignment"]);
+    this.router.navigate(["/" + this.cityName + "/13B/house-marking-assignment"]);
   }
 }
 export class markerDetail {
