@@ -72,6 +72,7 @@ import { TaskManagerComponent } from '../../task-manager/task-manager.component'
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
+import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
 
 @NgModule({
   imports: [
@@ -148,7 +149,8 @@ import { TaskManagementMastersComponent } from '../../PortalServices/task-manage
     TaskManagerComponent,
     WardTripAnalysisComponent,
     HouseMarkingComponent,
-    TaskManagementMastersComponent
+    TaskManagementMastersComponent,
+    HouseMarkingAssignmentComponent
   ]
 })
 

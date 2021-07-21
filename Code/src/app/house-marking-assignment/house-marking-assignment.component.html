@@ -1,0 +1,160 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
+            <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentAssign,0,'add');">
+                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ASSIGN
+                    NEW</span></button>
+
+        </div>
+        <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+            House Marking Assignment List
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
+            <div class="card" style="margin-top:-10px;  ">
+                <div class="card-header">
+                    <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                        style="width: 150px;display: none;" [(ngModel)]="selectedYear">
+                        <option value="0">Year</option>
+                        <option value={{yer.year}} *ngFor="let yer of yearList"
+                            ngSelected="yer.year == selectedYear?'selected':''">
+                            {{yer.year}}</option>
+                    </select>
+                    <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                        style="width: 150px;display: none;">
+                        <option value="0">Month</option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    &nbsp;
+                    <input id="txtDate" class="caret-select-vehicle custom-date-input" type="date"
+                        (change)="getDateList();"
+                        style="height: 38px; width: 150px;display: none; padding-left: 10px; margin-right: 8px;" />
+                    <button class="fa-expand-showgraph" (click)="resetAllFilter();" style="display: none;"
+                        title="Reset All Filter"><i class="fas fa-sync-alt"></i></button>
+
+                    <span class="indication"><i class="fas fa-caret-left"></i></span>
+                    <span class="data" style="display: none;"><i class="fas fa-gas-pump" style="display: none;"></i>
+                        &nbsp;&nbsp; <i class="fas fa-rupee-sign" style="display: none;"></i>
+                    </span>
+
+                </div>
+                <div class="card-body">
+                    <div *ngFor="let data of petrolList; let i=index" id="remark{{i}}"
+                        style="position: absolute;border-radius: 5px; width:300px; height: 300px; border: 1px solid lightgrey; left: 60vh; padding: 10px; z-index: 99; display: none; background-color: white; text-align: left;">
+                        <b>Remark</b><i class="fas fa-times" style="float: right;" (click)="hideRemark();"></i>
+                        <hr />
+                        {{data.remark}}
+                    </div>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper">
+                                    <table class="table ">
+                                        <thead>
+                                            <th style="border-right:1px solid #dee2e6">S.No.</th>
+                                            <th style="border-right:1px solid #dee2e6">Ward No</th>
+                                            <th style="border-right:1px solid #dee2e6">Name</th>
+                                            <th style="border-right:1px solid #dee2e6">line No</th>
+                                            <th class="text-right" style="padding-right: 20px;">Action</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let data of assignedList; let i=index">
+                                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.wardNo}}</td>
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.name}}</td>
+                                                <td style="border-right:1px solid #dee2e6;">
+                                                    {{data.lines}}</td>
+                                                <td class="text-right" style="padding-right: 20px;">
+                                                    <i class="far fa-edit"
+                                                        (click)="openModel(contentAssign,data.userId,'update');"
+                                                        title="Edit Entry"
+                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <i class="far fa-trash-alt" (click)="deleteEntry(data.userId)"
+                                                        title="Remove Entry"
+                                                        style="cursor:pointer !important; font-size: 14px;color: red;"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                style="padding-top: 20vh; display: none;">
+                                <div class="form-group">
+                                    <h5>No data available</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Assign  Start-->
+<ng-template #contentAssign>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward Lines</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
+                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                            {{zone.zoneName}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-tasks" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="row">
+                    <div class="col-md-12"><label>Select Lines</label></div>
+                    <div class="col-md-4" *ngFor="let line of lineList">
+                        <input type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                    </div>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <select id="drpSurveyor" class="input-green">
+                        <option value="0">Select Surveyor</option>
+                        <option value={{user.id}} *ngFor="let user of userList">
+                            {{user.name}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-tasks" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveAssignment();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Assign End-->

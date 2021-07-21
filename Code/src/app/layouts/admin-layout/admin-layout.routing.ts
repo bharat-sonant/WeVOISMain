@@ -65,6 +65,7 @@ import { TaskManagerComponent } from '../../task-manager/task-manager.component'
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
+import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -143,6 +144,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'sikar/house-marking', component: HouseMarkingComponent },
     { path: 'sikar/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'sikar/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -212,6 +214,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'sikar/:id/house-marking', component: HouseMarkingComponent },
     { path: 'sikar/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'sikar/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -281,6 +284,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'reengus/house-marking', component: HouseMarkingComponent },
     { path: 'reengus/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'reengus/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -350,6 +354,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'reengus/:id/house-marking', component: HouseMarkingComponent },
     { path: 'reengus/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'reengus/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -419,6 +424,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'test/house-marking', component: HouseMarkingComponent },
     { path: 'test/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'test/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -488,6 +494,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'test/:id/house-marking', component: HouseMarkingComponent },
     { path: 'test/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'test/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -557,6 +564,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'demo/house-marking', component: HouseMarkingComponent },
     { path: 'demo/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'demo/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -626,4 +634,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: 'demo/:id/house-marking', component: HouseMarkingComponent },
     { path: 'demo/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'demo/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
 ]; 

@@ -1,0 +1,238 @@
+import { LineCardMappingComponent } from "./../line-card-mapping/line-card-mapping.component";
+import { Component, OnInit } from "@angular/core";
+import { attachEmbeddedView } from "@angular/core/src/view";
+import { AngularFireDatabase } from "angularfire2/database";
+import { CommonService } from "../services/common/common.service";
+import { Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { MapService } from "../services/map/map.service";
+
+@Component({
+  selector: "app-house-marking-assignment",
+  templateUrl: "./house-marking-assignment.component.html",
+  styleUrls: ["./house-marking-assignment.component.scss"],
+})
+export class HouseMarkingAssignmentComponent implements OnInit {
+  constructor(
+    private router: Router,
+    public db: AngularFireDatabase,
+    private commonService: CommonService,
+    private modalService: NgbModal,
+    private mapService: MapService
+  ) {}
+  toDayDate: any;
+  selectedMonth: any;
+  public selectedYear: any;
+  yearList: any[] = [];
+  assignedList: any[] = [];
+  userId: any;
+  WardList: any[] = [];
+  vehicleAllList: any[] = [];
+  totalLiters: any = 0;
+  totalAmount: any = 0;
+  cityName: any;
+  zoneList: any[];
+  dbPath: any;
+  userList: any[];
+  lineList: any[];
+  houseData: houseDatail = {
+    totalLiters: "0.000",
+    totalAmount: "0.00",
+  };
+  ngOnInit() {
+    this.getZoneList();
+    this.getUsers();
+    this.getAssignedList();
+  }
+
+  getAssignedList() {
+    this.dbPath = "SurveyorsCuurentAssignment";
+    let assignInstance = this.db
+      .object(this.dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        assignInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let wardNo = data[index]["ward"];
+              let lines = data[index]["line"];
+              let name = data[index]["name"];
+              this.assignedList.push({
+                userId: index,
+                name: name,
+                wardNo: wardNo,
+                lines: lines,
+              });
+            }
+          }
+        }
+      });
+  }
+
+  getUsers() {
+    this.userList = [];
+    this.dbPath = "Surveyors";
+    let userInstance = this.db
+      .object(this.dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        userInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length - 1; i++) {
+              let index = keyArray[i];
+              let name = data[index]["name"];
+              if (data[index]["status"] == "2") {
+                this.userList.push({ id: index, name: name });
+              }
+            }
+          }
+        }
+      });
+  }
+
+  getLines(wardNo: any) {
+    this.lineList = [];
+    if (wardNo == "0") {
+      this.commonService.setAlertMessage("error", "Plese select ward !!!");
+      return;
+    }
+    this.dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "";
+    let lineInstance = this.db
+      .object(this.dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        lineInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length - 1; i++) {
+              let index = keyArray[i];
+              if (data[index]["ApproveStatus"] != null) {
+                if (data[index]["ApproveStatus"]["status"] == "Confirm") {
+                  this.lineList.push({ lineNo: index, isChecked: 0 });
+                }
+              }
+            }
+          }
+        }
+      });
+  }
+
+  saveAssignment() {
+    let wardNo = $("#ddlWard").val();
+    let userId = $("#drpSurveyor").val();
+    let name = "";
+    let lines = "";
+    if (wardNo == "0") {
+      this.commonService.setAlertMessage("error", "Plese select ward !!!");
+      return;
+    }
+    if (userId == "0") {
+      this.commonService.setAlertMessage("error", "Plese select surveyor !!!");
+      return;
+    }
+
+    let userDetail = this.userList.find((item) => item.id == userId);
+    if (userDetail != undefined) {
+      name = userDetail.name;
+    }
+    let isChecked = false;
+    if (this.lineList.length > 0) {
+      for (let i = 0; i < this.lineList.length; i++) {
+        let lineNo = this.lineList[i]["lineNo"];
+        let chk = "chk" + lineNo;
+        let element = <HTMLInputElement>document.getElementById(chk);
+        if (element.checked == true) {
+          isChecked = true;
+          if (lines != "") {
+            lines = lines + ",";
+          }
+          lines = lines + lineNo;
+        }
+      }
+      if (isChecked == false) {
+        this.commonService.setAlertMessage(
+          "error",
+          "Plese select at least one line !!!"
+        );
+        return;
+      }
+      const data = {
+        line: lines,
+        name: name,
+        ward: wardNo,
+      };
+      this.dbPath = "SurveyorsCuurentAssignment/" + userId;
+      this.db.object(this.dbPath).update(data);
+      this.lineList = [];
+      this.commonService.setAlertMessage(
+        "success",
+        "Lines assigned successfully !!"
+      );
+      this.closeModel();
+    }
+  }
+
+  getZoneList() {
+    this.zoneList = [];
+    this.zoneList = this.mapService.getlatestZones();
+  }
+
+  openModel(content: any, id: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+
+    let height = 500;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    if (id != "0") {
+      $("#key").val(id);
+      setTimeout(() => {
+        let listDetail = this.assignedList.find((item) => item.userId == id);
+        if (listDetail != undefined) {
+          $("#ddlWard").val(listDetail.wardNo);
+          $("#drpSurveyor").val(id);
+          let lines = listDetail.lines.split(",");
+          this.getLines(listDetail.wardNo);
+          setTimeout(() => {
+            if (lines.length > 0) {
+              for (let i = 0; i < lines.length; i++) {
+                let lineDetail = this.lineList.find(
+                  (item) => item.lineNo == lines[i].trim()
+                );
+                if (lineDetail != undefined) {
+                  let chk = "chk" + lineDetail.lineNo;
+                  (<HTMLInputElement>document.getElementById(chk)).checked =
+                    true;
+                }
+              }
+            }
+          }, 600);
+        }
+      }, 100);
+    } else {
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+}
+
+export class houseDatail {
+  totalLiters: string;
+  totalAmount: string;
+}
