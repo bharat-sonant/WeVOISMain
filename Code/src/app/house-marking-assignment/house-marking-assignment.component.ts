@@ -41,38 +41,11 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   };
   ngOnInit() {
     this.getZoneList();
-    this.getUsers();
     this.getAssignedList();
   }
 
   getAssignedList() {
-    this.dbPath = "SurveyorsCuurentAssignment";
-    let assignInstance = this.db
-      .object(this.dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        assignInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              let wardNo = data[index]["ward"];
-              let lines = data[index]["line"];
-              let name = data[index]["name"];
-              this.assignedList.push({
-                userId: index,
-                name: name,
-                wardNo: wardNo,
-                lines: lines,
-              });
-            }
-          }
-        }
-      });
-  }
-
-  getUsers() {
+    this.assignedList = [];
     this.userList = [];
     this.dbPath = "Surveyors";
     let userInstance = this.db
@@ -87,7 +60,28 @@ export class HouseMarkingAssignmentComponent implements OnInit {
               let index = keyArray[i];
               let name = data[index]["name"];
               if (data[index]["status"] == "2") {
-                this.userList.push({ id: index, name: name });
+                this.dbPath = "SurveyorsCuurentAssignment/" + index;
+                let assignInstance = this.db
+                  .object(this.dbPath)
+                  .valueChanges()
+                  .subscribe((dataSurvey) => {
+                    assignInstance.unsubscribe();
+                    if (dataSurvey != null) {
+                      this.assignedList.push({
+                        userId: index,
+                        name: name,
+                        wardNo: dataSurvey["ward"],
+                        lines: dataSurvey["line"],
+                      });
+                    } else {
+                      this.assignedList.push({
+                        userId: index,
+                        name: name,
+                        wardNo: "",
+                        lines: "",
+                      });
+                    }
+                  });
               }
             }
           }
@@ -110,7 +104,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length - 1; i++) {
+            for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
               if (data[index]["ApproveStatus"] != null) {
                 if (data[index]["ApproveStatus"]["status"] == "Confirm") {
@@ -125,19 +119,15 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   saveAssignment() {
     let wardNo = $("#ddlWard").val();
-    let userId = $("#drpSurveyor").val();
+    let userId = $("#key").val();
     let name = "";
     let lines = "";
     if (wardNo == "0") {
       this.commonService.setAlertMessage("error", "Plese select ward !!!");
       return;
     }
-    if (userId == "0") {
-      this.commonService.setAlertMessage("error", "Plese select surveyor !!!");
-      return;
-    }
 
-    let userDetail = this.userList.find((item) => item.id == userId);
+    let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
       name = userDetail.name;
     }
@@ -174,8 +164,26 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         "success",
         "Lines assigned successfully !!"
       );
+      let userDetail = this.assignedList.find((item) => item.userId == userId);
+      if (userDetail != undefined) {
+        userDetail.wardNo=wardNo;
+        userDetail.lines=lines;
+      }
       this.closeModel();
     }
+  }
+
+  deleteEntry(userId: any) {
+    this.dbPath = "SurveyorsCuurentAssignment/" + userId;
+    const data = { line: null, name: null, ward: null };
+    this.db.object(this.dbPath).update(data);
+    let userDetail = this.assignedList.find((item) => item.userId == userId);
+      if (userDetail != undefined) {
+        userDetail.wardNo="";
+        userDetail.lines="";
+      }
+    this.commonService.setAlertMessage("success", "Lines assigned removed !!");
+    this.closeModel();
   }
 
   getZoneList() {
@@ -184,51 +192,75 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   openModel(content: any, id: any, type: any) {
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-
-    let height = 500;
-    let width = 400;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
-    if (id != "0") {
-      $("#key").val(id);
-      setTimeout(() => {
-        let listDetail = this.assignedList.find((item) => item.userId == id);
-        if (listDetail != undefined) {
-          $("#ddlWard").val(listDetail.wardNo);
-          $("#drpSurveyor").val(id);
-          let lines = listDetail.lines.split(",");
-          this.getLines(listDetail.wardNo);
-          setTimeout(() => {
-            if (lines.length > 0) {
-              for (let i = 0; i < lines.length; i++) {
-                let lineDetail = this.lineList.find(
-                  (item) => item.lineNo == lines[i].trim()
-                );
-                if (lineDetail != undefined) {
-                  let chk = "chk" + lineDetail.lineNo;
-                  (<HTMLInputElement>document.getElementById(chk)).checked =
-                    true;
+    this.lineList = [];
+    if (type == "update") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 500;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id != "0") {
+        $("#key").val(id);
+        setTimeout(() => {
+          let listDetail = this.assignedList.find((item) => item.userId == id);
+          if (listDetail != undefined) {
+            if (listDetail.wardNo != "") {
+              $("#ddlWard").val(listDetail.wardNo);
+              let lines = listDetail.lines.split(",");
+              this.getLines(listDetail.wardNo);
+              setTimeout(() => {
+                if (lines.length > 0) {
+                  for (let i = 0; i < lines.length; i++) {
+                    let lineDetail = this.lineList.find(
+                      (item) => item.lineNo == lines[i].trim()
+                    );
+                    if (lineDetail != undefined) {
+                      let chk = "chk" + lineDetail.lineNo;
+                      (<HTMLInputElement>document.getElementById(chk)).checked =
+                        true;
+                    }
+                  }
                 }
-              }
+              }, 600);
             }
-          }, 600);
-        }
-      }, 100);
+          }
+        }, 100);
+      }
     } else {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id != "0") {
+        $("#deleteId").val(id);
+      }
     }
   }
 
   closeModel() {
     this.modalService.dismissAll();
+  }
+
+  confirmDelete() {
+    let id = $("#deleteId").val();
+    this.deleteEntry(id);
   }
 }
 
