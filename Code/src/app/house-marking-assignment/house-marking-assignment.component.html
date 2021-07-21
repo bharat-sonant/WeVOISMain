@@ -1,7 +1,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
-            <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentAssign,0,'add');">
+            <button type="button" class="user-button" style="cursor: cell; display: none;" (click)="openModel(contentAssign,0,'add');">
                 <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ASSIGN
                     NEW</span></button>
 
@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
             <div class="card" style="margin-top:-10px;  ">
-                <div class="card-header">
+                <div class="card-header" style="display: none;">
                     <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
                         style="width: 150px;display: none;" [(ngModel)]="selectedYear">
                         <option value="0">Year</option>
@@ -67,8 +67,8 @@
                                     <table class="table ">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6">Ward No</th>
                                             <th style="border-right:1px solid #dee2e6">Name</th>
+                                            <th style="border-right:1px solid #dee2e6">Ward No</th>
                                             <th style="border-right:1px solid #dee2e6">line No</th>
                                             <th class="text-right" style="padding-right: 20px;">Action</th>
                                         </thead>
@@ -76,9 +76,9 @@
                                             <tr *ngFor="let data of assignedList; let i=index">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
-                                                    {{data.wardNo}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.wardNo}}</td>
                                                 <td style="border-right:1px solid #dee2e6;">
                                                     {{data.lines}}</td>
                                                 <td class="text-right" style="padding-right: 20px;">
@@ -86,7 +86,7 @@
                                                         (click)="openModel(contentAssign,data.userId,'update');"
                                                         title="Edit Entry"
                                                         style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <i class="far fa-trash-alt" (click)="deleteEntry(data.userId)"
+                                                    <i class="far fa-trash-alt" (click)="openModel(contentConfirmation,data.userId,'delete')"
                                                         title="Remove Entry"
                                                         style="cursor:pointer !important; font-size: 14px;color: red;"></i>
                                                 </td>
@@ -109,7 +109,30 @@
     </div>
 </div>
 
-
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteId" value="0" />
+                <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmDelete()">
+                        Confirm</button>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                        Cancel</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+  </ng-template>
+  <!--Delete Confirmation End-->
 
 <!--Assign  Start-->
 <ng-template #contentAssign>
@@ -135,22 +158,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12"><label>Select Lines</label></div>
-                    <div class="col-md-4" *ngFor="let line of lineList">
-                        <input type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                    <div class="row" style="height: 275px; width: 100%!important; padding: 10px;">
+                        <div class="col-md-4" *ngFor="let line of lineList">
+                            <input type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                        </div>
                     </div>
                 </div>
-                <div class="wrap-input-effects" required>
-                    <select id="drpSurveyor" class="input-green">
-                        <option value="0">Select Surveyor</option>
-                        <option value={{user.id}} *ngFor="let user of userList">
-                            {{user.name}}</option>
-                    </select>
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-tasks" aria-hidden="true"></i>
-                    </span>
-                </div>
-
                 <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
                     (click)="saveAssignment();" />
             </div>
