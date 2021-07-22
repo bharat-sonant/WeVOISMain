@@ -35,14 +35,94 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   dbPath: any;
   userList: any[];
   lineList: any[];
+  lineMarkerList: any[];
   houseData: houseDatail = {
-    totalLiters: "0.000",
-    totalAmount: "0.00",
+    totalMarking: "0",
+    totalSurveyed: "0",
   };
   ngOnInit() {
     this.getZoneList();
     this.getAssignedList();
   }
+
+  //#region serveyor detail
+
+  getServeyorDetail(userId: any) {
+    this.houseData.totalMarking = "0";
+    this.houseData.totalSurveyed = "0";
+    this.lineMarkerList = [];
+    let detail = this.assignedList.find((item) => item.userId == userId);
+    if (detail != undefined) {
+      let wardNo = detail.wardNo;
+      let lines = detail.lines.split(",");
+      if (lines.length > 0) {
+        for (let i = 0; i < lines.length; i++) {
+          let totalMarkers = 0;
+          let lineNo = lines[i].trim();
+          this.dbPath =
+            "EntityMarkingData/MarkedHouses/" +
+            wardNo +
+            "/" +
+            lineNo +
+            "/marksCount";
+          let lineDetailInstance = this.db
+            .object(this.dbPath)
+            .valueChanges()
+            .subscribe((data) => {
+              lineDetailInstance.unsubscribe();
+              if (data != null) {
+                totalMarkers = totalMarkers + Number(data);
+                this.houseData.totalMarking = (
+                  Number(this.houseData.totalMarking) + Number(totalMarkers)
+                ).toString();
+                let count = Number(data);
+                this.lineMarkerList.push({
+                  lineNo: lineNo,
+                  markers: totalMarkers,
+                  surveyed: 0,
+                });
+
+                let totalSurved = 0;
+                for (let j = 1; j <= count; j++) {
+                  this.dbPath =
+                    "EntityMarkingData/MarkedHouses/" +
+                    wardNo +
+                    "/" +
+                    lineNo +
+                    "/" +
+                    j +
+                    "/isSurveyed";
+                  let surveyInstance = this.db
+                    .object(this.dbPath)
+                    .valueChanges()
+                    .subscribe((surveyData) => {
+                      surveyInstance.unsubscribe();
+                      if (surveyData != null) {
+                        totalSurved = totalSurved + 1;
+
+                        let lineDetail = this.lineMarkerList.find(
+                          (item) => (item.lineNo = lineNo)
+                        );
+                        if (lineDetail != undefined) {
+                          lineDetail.surveyed = totalSurved;
+                          this.houseData.totalSurveyed = (
+                            Number(this.houseData.totalSurveyed) +
+                            Number(1)
+                          ).toString();
+                        }
+                      }
+                    });
+                }
+              }
+            });
+        }
+      }
+    }
+  }
+
+  //#endregion
+
+  //#region  List Detail
 
   getAssignedList() {
     this.assignedList = [];
@@ -166,8 +246,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       );
       let userDetail = this.assignedList.find((item) => item.userId == userId);
       if (userDetail != undefined) {
-        userDetail.wardNo=wardNo;
-        userDetail.lines=lines;
+        userDetail.wardNo = wardNo;
+        userDetail.lines = lines;
       }
       this.closeModel();
     }
@@ -178,10 +258,10 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     const data = { line: null, name: null, ward: null };
     this.db.object(this.dbPath).update(data);
     let userDetail = this.assignedList.find((item) => item.userId == userId);
-      if (userDetail != undefined) {
-        userDetail.wardNo="";
-        userDetail.lines="";
-      }
+    if (userDetail != undefined) {
+      userDetail.wardNo = "";
+      userDetail.lines = "";
+    }
     this.commonService.setAlertMessage("success", "Lines assigned removed !!");
     this.closeModel();
   }
@@ -262,9 +342,11 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     let id = $("#deleteId").val();
     this.deleteEntry(id);
   }
+
+  //#endregion
 }
 
 export class houseDatail {
-  totalLiters: string;
-  totalAmount: string;
+  totalMarking: string;
+  totalSurveyed: string;
 }

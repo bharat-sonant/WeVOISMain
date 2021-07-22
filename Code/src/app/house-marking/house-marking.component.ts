@@ -8,6 +8,7 @@ import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
+import { timeStamp } from "console";
 
 @Component({
   selector: "app-house-marking",
@@ -56,7 +57,7 @@ export class HouseMarkingComponent {
   houseMarker: any[]=[];
 
   markerData: markerDetail = {
-    totalMarkers: 0,
+    totalMarkers: "0",
     markerImgURL: "../assets/img/img-not-available-01.jpg",
   };
 
@@ -124,7 +125,7 @@ export class HouseMarkingComponent {
   }
 
   changeZoneSelection(filterVal: any) {
-    this.markerData.totalMarkers = 0;
+    this.markerData.totalMarkers = "0";
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
@@ -147,6 +148,21 @@ export class HouseMarkingComponent {
       }
     }
     this.getAllLinesFromJson();
+    this.getTotalMarkers();
+  }
+
+  getTotalMarkers()
+  {
+    let dbPath="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+this.selectedZone+"";
+    let totalInstance=this.db.object(dbPath).valueChanges().subscribe(
+      data=>{
+        totalInstance.unsubscribe();
+        if(data!=null){
+          this.markerData.totalMarkers=data.toString();
+        }
+      }
+    );
+
   }
 
   clearAllOnMap() {
@@ -240,8 +256,6 @@ export class HouseMarkingComponent {
         if (data.length > 0) {
           for (let i = 0; i < data.length - 1; i++) {
             if (data[i]["latLng"] != undefined) {
-              this.markerData.totalMarkers =
-                Number(this.markerData.totalMarkers) + 1;
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
               let imageName = data[i]["image"];
@@ -585,6 +599,6 @@ export class HouseMarkingComponent {
   }
 }
 export class markerDetail {
-  totalMarkers: number;
+  totalMarkers: string;
   markerImgURL: string;
 }

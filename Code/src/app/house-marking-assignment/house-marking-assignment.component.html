@@ -14,7 +14,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-12" style="padding-left: 0px;padding-right:0px;">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:0px;">
             <div class="card" style="margin-top:-10px;  ">
                 <div class="card-header" style="display: none;">
                     <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
@@ -54,26 +54,20 @@
 
                 </div>
                 <div class="card-body">
-                    <div *ngFor="let data of petrolList; let i=index" id="remark{{i}}"
-                        style="position: absolute;border-radius: 5px; width:300px; height: 300px; border: 1px solid lightgrey; left: 60vh; padding: 10px; z-index: 99; display: none; background-color: white; text-align: left;">
-                        <b>Remark</b><i class="fas fa-times" style="float: right;" (click)="hideRemark();"></i>
-                        <hr />
-                        {{data.remark}}
-                    </div>
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper">
                                     <table class="table ">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6">Name</th>
-                                            <th style="border-right:1px solid #dee2e6">Ward No</th>
-                                            <th style="border-right:1px solid #dee2e6">line No</th>
-                                            <th class="text-right" style="padding-right: 20px;">Action</th>
+                                            <th style="border-right:1px solid #dee2e6; width:10%;">S.No.</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward No</th>
+                                            <th style="border-right:1px solid #dee2e6; width:40%;">line No</th>
+                                            <th class="text-right" style="padding-right: 20px;; width:10%;">Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let data of assignedList; let i=index">
+                                            <tr *ngFor="let data of assignedList; let i=index" style="cursor: pointer;" (click)="getServeyorDetail(data.userId);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
@@ -103,6 +97,51 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 0px;padding-right:0px;">
+            <div class="card" style="margin-top:-10px; padding-left: 20px;  ">
+                <div class="card-header" >
+                   <h5> Detail</h5>
+                </div>
+                <div class="card-body" style="padding-left: 20px;">
+                    <div class="row">
+                        <div class="clo-md-6">                           
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <b>Total : {{houseData.totalSurveyed}}/{{houseData.totalMarking}}</b>
+                                        <div class="table-wrapper">
+                                            <table class="table ">
+                                                <thead>
+                                                    <th style="border-right:1px solid #dee2e6; width:10%;">Line No.</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Surveyed</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of lineMarkerList; let i=index">
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.lineNo}}</td>
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.markers}}</td>
+                                                        <td style="border-right:1px solid #dee2e6;">
+                                                            {{data.surveyed}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
