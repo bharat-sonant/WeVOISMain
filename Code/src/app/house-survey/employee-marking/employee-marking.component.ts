@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
@@ -30,6 +29,7 @@ export class EmployeeMarkingComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.getZoneList();
     this.getEmployee();
   }
 
@@ -70,30 +70,76 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   openModel(content: any, id: any, type: any) {
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 500;
-    let width = 400;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
-    if (id != "0") {
-      $("#key").val(id);
+    if (type != "ward") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 500;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id != "0") {
+        $("#key").val(id);
+        let userDetail = this.userList.find((item) => item.empId == id);
+        if (userDetail != undefined) {
+          $("#txtName").val(userDetail.name);
+          $("#txtPhone").val(userDetail.phone);
+          $("#txtPassword").val(userDetail.password);
+          if (userDetail.isActive == true) {
+            let element = <HTMLInputElement>document.getElementById("chkAcive");
+            element.checked = true;
+          }
+        }
+      }
+    } else {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 200;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#empID").val(id);
       let userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
-        $("#txtName").val(userDetail.name);
-        $("#txtPhone").val(userDetail.phone);
-        $("#txtPassword").val(userDetail.password);
-        if (userDetail.isActive == true) {
-          let element = <HTMLInputElement>document.getElementById("chkAcive");
-          element.checked = true;
+        if (userDetail.wardNo != null) {
+          setTimeout(() => {
+            $("#ddlWard").val(userDetail.wardNo);
+          }, 100);
         }
+      }
+    }
+  }
+
+  saveWard() {
+    let empID = $("#empID").val();
+    if ($("#ddlWard").val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward!!!");
+      return;
+    }
+    if (empID != "0") {
+      let wardNo = $("#ddlWard").val();
+      let dbPath = "EntityMarkingData/MarkerAppAccess/" + empID;
+      this.db.object(dbPath).update({
+        assignedWard: wardNo,
+      });
+      $("#empID").val("0");
+      this.closeModel();
+      let userDetail = this.userList.find((item) => item.empId == empID);
+      if (userDetail != undefined) {
+        userDetail.wardNo = wardNo;
       }
     }
   }
@@ -181,23 +227,21 @@ export class EmployeeMarkingComponent implements OnInit {
               .valueChanges()
               .subscribe((data) => {
                 instance.unsubscribe();
-                if(data.length>0)
-                {
-                  for(let j=0;j<data.length;j++)
-                  {
-                    if(data[j]["userId"]!=undefined){
-                      if(data[j]["userId"]==empId){
-                        this.markerData.totalWardMarking=(Number(this.markerData.totalWardMarking)+1).toString()
+                if (data.length > 0) {
+                  for (let j = 0; j < data.length; j++) {
+                    if (data[j]["userId"] != undefined) {
+                      if (data[j]["userId"] == empId) {
+                        this.markerData.totalWardMarking = (
+                          Number(this.markerData.totalWardMarking) + 1
+                        ).toString();
                       }
                     }
                   }
-
                 }
               });
           }
         }
       });
-    
   }
 
   getMarkerDetail(empId: any, wardNo: any) {
