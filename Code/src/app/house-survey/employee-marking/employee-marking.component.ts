@@ -1,11 +1,10 @@
-import { ToastrService } from 'ngx-toastr';
+
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
-import { isatty } from "tty";
 
 @Component({
   selector: "app-employee-marking",
@@ -24,6 +23,7 @@ export class EmployeeMarkingComponent implements OnInit {
   userList: any[];
   markerList: any[];
   lastEmpId: any;
+  zoneList: any[];
   markerData: markerDatail = {
     totalMarking: "0",
     totalWardMarking: "0",
@@ -31,6 +31,11 @@ export class EmployeeMarkingComponent implements OnInit {
 
   ngOnInit() {
     this.getEmployee();
+  }
+
+  getZoneList() {
+    this.zoneList = [];
+    this.zoneList = this.mapService.getlatestZones();
   }
 
   getEmployee() {
