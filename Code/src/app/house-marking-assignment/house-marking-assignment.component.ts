@@ -1,6 +1,4 @@
-import { LineCardMappingComponent } from "./../line-card-mapping/line-card-mapping.component";
 import { Component, OnInit } from "@angular/core";
-import { attachEmbeddedView } from "@angular/core/src/view";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { Router } from "@angular/router";

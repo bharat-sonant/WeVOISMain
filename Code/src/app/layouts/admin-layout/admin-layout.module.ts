@@ -73,6 +73,7 @@ import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward
 import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
+import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 
 @NgModule({
   imports: [
@@ -150,7 +151,8 @@ import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/
     WardTripAnalysisComponent,
     HouseMarkingComponent,
     TaskManagementMastersComponent,
-    HouseMarkingAssignmentComponent
+    HouseMarkingAssignmentComponent,
+    EmployeeMarkingComponent
   ]
 })
 
