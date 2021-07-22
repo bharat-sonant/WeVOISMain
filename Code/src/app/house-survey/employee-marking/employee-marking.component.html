@@ -1,7 +1,8 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
-            <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentEmployee,0,'add');">
+            <button type="button" class="user-button" style="cursor: cell;"
+                (click)="openModel(contentEmployee,0,'add');">
                 <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
                     NEW</span></button>
 
@@ -37,7 +38,8 @@
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="padding-right: 20px;">
-                                                    <span style="cursor: pointer;" >Assign Ward</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <span style="cursor: pointer;" (click)="openModel(contentWard,data.empId,'ward');">Assign
+                                                        Ward</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     <i class="far fa-edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry"
@@ -74,7 +76,8 @@
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <b>Total Marker : {{markerData.totalMarking}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Current Ward Marking : {{markerData.totalWardMarking}}</b>
+                                        <b>Total Marker : {{markerData.totalMarking}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            Current Ward Marking : {{markerData.totalWardMarking}}</b>
                                         <div class="table-wrapper">
                                             <table class="table ">
                                                 <thead>
@@ -82,7 +85,7 @@
                                                     <th style="border-right:1px solid #dee2e6; width:80%;">Markers</th>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let data of markerList; let i=index" >
+                                                    <tr *ngFor="let data of markerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
                                                             {{data.date}}</td>
                                                         <td style="border-right:1px solid #dee2e6">
@@ -108,12 +111,43 @@
     </div>
 </div>
 
-<!--Assign  Start-->
+
+<!--ward assign  Start-->
+<ng-template #contentWard>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="empID" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlWard" class="input-green">
+                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                            {{zone.zoneName}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-tasks" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveWard();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--ward assign End-->
+
+<!--employee  Start-->
 <ng-template #contentEmployee>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward Lines</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -121,29 +155,29 @@
             <div class="modal-body">
                 <input id="key" type="hidden" value="0" />
                 <div class="wrap-input-effects" required>
-                    <input type="text" id="txtName" class="input-green" placeholder="Name"/>
+                    <input type="text" id="txtName" class="input-green" placeholder="Name" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-tasks" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No."/>
+                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-tasks" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input type="text" id="txtPassword" class="input-green" placeholder="Password"/>
+                    <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-tasks" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input type="checkbox" id="chkAcive">  Is Active
-                    
+                    <input type="checkbox" id="chkAcive"> Is Active
+
                 </div>
                 <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
                     (click)="saveEmployee();" />
@@ -151,4 +185,4 @@
         </div>
     </div>
 </ng-template>
-<!--Assign End-->
+<!--employee End-->
