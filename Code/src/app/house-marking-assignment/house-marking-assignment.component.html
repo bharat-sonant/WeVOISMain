@@ -111,20 +111,17 @@
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <b>Total : {{houseData.totalSurveyed}}/{{houseData.totalMarking}}</b>
+                                        <b>Total Surveyed : {{houseData.totalSurveyed}}</b>
                                         <div class="table-wrapper">
                                             <table class="table ">
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:10%;">Line No.</th>
-                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
-                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Surveyed</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:30%;">Date</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:70%;">Surveyed</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
-                                                            {{data.lineNo}}</td>
-                                                        <td style="border-right:1px solid #dee2e6">
-                                                            {{data.markers}}</td>
+                                                            {{data.date}}</td>
                                                         <td style="border-right:1px solid #dee2e6;">
                                                             {{data.surveyed}}</td>
                                                     </tr>

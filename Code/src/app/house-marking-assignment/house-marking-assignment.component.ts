@@ -46,76 +46,32 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   //#region serveyor detail
 
   getServeyorDetail(userId: any) {
+    console.log(userId);
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
     this.lineMarkerList = [];
-    let detail = this.assignedList.find((item) => item.userId == userId);
-    if (detail != undefined) {
-      let wardNo = detail.wardNo;
-      let lines = detail.lines.split(",");
-      if (lines.length > 0) {
-        for (let i = 0; i < lines.length; i++) {
-          let totalMarkers = 0;
-          let lineNo = lines[i].trim();
-          this.dbPath =
-            "EntityMarkingData/MarkedHouses/" +
-            wardNo +
-            "/" +
-            lineNo +
-            "/marksCount";
-          let lineDetailInstance = this.db
-            .object(this.dbPath)
-            .valueChanges()
-            .subscribe((data) => {
-              lineDetailInstance.unsubscribe();
-              if (data != null) {
-                totalMarkers = totalMarkers + Number(data);
-                this.houseData.totalMarking = (
-                  Number(this.houseData.totalMarking) + Number(totalMarkers)
-                ).toString();
-                let count = Number(data);
-                this.lineMarkerList.push({
-                  lineNo: lineNo,
-                  markers: totalMarkers,
-                  surveyed: 0,
-                });
-
-                let totalSurved = 0;
-                for (let j = 1; j <= count; j++) {
-                  this.dbPath =
-                    "EntityMarkingData/MarkedHouses/" +
-                    wardNo +
-                    "/" +
-                    lineNo +
-                    "/" +
-                    j +
-                    "/isSurveyed";
-                  let surveyInstance = this.db
-                    .object(this.dbPath)
-                    .valueChanges()
-                    .subscribe((surveyData) => {
-                      surveyInstance.unsubscribe();
-                      if (surveyData != null) {
-                        totalSurved = totalSurved + 1;
-
-                        let lineDetail = this.lineMarkerList.find(
-                          (item) => (item.lineNo = lineNo)
-                        );
-                        if (lineDetail != undefined) {
-                          lineDetail.surveyed = totalSurved;
-                          this.houseData.totalSurveyed = (
-                            Number(this.houseData.totalSurveyed) +
-                            Number(1)
-                          ).toString();
-                        }
-                      }
-                    });
-                }
-              }
-            });
+    this.dbPath = "EntitySurveyData/SurveyDateWise/" + userId;
+    let instance = this.db
+      .object(this.dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        instance.unsubscribe();
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if(index=="totalCount")
+            {
+              this.houseData.totalSurveyed=data[index];
+            }
+            else
+            {
+              this.lineMarkerList.push({date:index,surveyed:data[index]});
+            }
+          }
         }
-      }
-    }
+        console.log(data);
+      });
   }
 
   //#endregion
