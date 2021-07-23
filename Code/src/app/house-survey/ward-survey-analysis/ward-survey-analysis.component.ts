@@ -9,7 +9,7 @@ import { interval } from "rxjs";
 import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
-import { ActivatedRoute, Router } from "@angular/router";  
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-ward-survey-analysis",
@@ -55,11 +55,16 @@ export class WardSurveyAnalysisComponent {
   cityName: any;
   previousLine: any;
   centerPoint: any;
-  houseMarker: any[]=[];
+  houseMarker: any[] = [];
 
   progressData: progressDetail = {
     totalMarkers: 0,
-    totalSurveyed:0
+    totalSurveyed: 0,
+    totalWardMarkers: 0,
+    totalWardSurveyed: 0,
+    cardNo: "",
+    cardType: "",
+    name: "",
   };
 
   ngOnInit() {
@@ -79,7 +84,6 @@ export class WardSurveyAnalysisComponent {
     this.getZones();
     this.selectedZone = this.zoneList[1]["zoneNo"];
     this.activeZone = this.zoneList[1]["zoneNo"];
-    this.getLineApprove();
     this.setMaps();
     this.setKml();
     this.onSubmit();
@@ -136,7 +140,6 @@ export class WardSurveyAnalysisComponent {
     this.lineNo = 1;
     this.selectedZone = this.activeZone;
     $("#txtLineNo").val(this.lineNo);
-    this.getLineApprove();
   }
 
   onSubmit() {
@@ -151,28 +154,31 @@ export class WardSurveyAnalysisComponent {
     this.getTotalMarkers();
   }
 
-  getTotalMarkers()
-  {
-    let dbPath="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+this.selectedZone+"";
-    let totalInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
+  getTotalMarkers() {
+    let dbPath =
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+      this.selectedZone +
+      "";
+    let totalInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         totalInstance.unsubscribe();
-        if(data!=null){
-          this.progressData.totalMarkers=Number(data);
+        if (data != null) {
+          this.progressData.totalMarkers = Number(data);
         }
-      }
-    );
+      });
 
-    dbPath="EntitySurveyData/TotalHouseCount/"+this.selectedZone;
-    let surveyedInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
+    dbPath = "EntitySurveyData/TotalHouseCount/" + this.selectedZone;
+    let surveyedInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         surveyedInstance.unsubscribe();
-        if(data!=null){
-          this.progressData.totalSurveyed=Number(data);
+        if (data != null) {
+          this.progressData.totalSurveyed = Number(data);
         }
-      }
-    );
-
+      });
   }
 
   clearAllOnMap() {
@@ -191,6 +197,9 @@ export class WardSurveyAnalysisComponent {
       }
     }
     this.polylines = [];
+    this.progressData.cardNo = "";
+    this.progressData.cardType = "";
+    this.progressData.name = "";
   }
 
   getAllLinesFromJson() {
@@ -234,7 +243,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.progressData.totalWardMarkers = 0;
+    this.progressData.totalWardSurveyed = 0;
+    this.progressData.cardNo = "";
+    this.progressData.cardType = "";
+    this.progressData.name = "";
     this.houseMarker = [];
+    $("#divCardDetail").hide();
     let dbPath =
       "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db
@@ -245,20 +260,24 @@ export class WardSurveyAnalysisComponent {
         if (data.length > 0) {
           for (let i = 0; i < data.length - 1; i++) {
             if (data[i]["latLng"] != undefined) {
+              this.progressData.totalWardMarkers++;
               let markerURL = "../assets/img/red-home.png";
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
-              if(data[i]["isSurveyed"]!=null){
-                if(data[i]["isSurveyed"]=="yes"){
+              let cardNo = "";
+              if (data[i]["isSurveyed"] != null) {
+                if (data[i]["isSurveyed"] == "yes") {
+                  this.progressData.totalWardSurveyed++;
                   markerURL = "../assets/img/green-home.png";
+                  cardNo = data[i]["cardNumber"];
                 }
-              }              
+              }
               this.setMarker(
                 lat,
                 lng,
                 markerURL,
                 null,
-                "",
+                cardNo,
                 "marker",
                 lineNo
               );
@@ -266,11 +285,6 @@ export class WardSurveyAnalysisComponent {
           }
         }
       });
-  }
-
-  getMarkerIcon(type: any) {
-    let url = "../assets/img/red-home.png";
-    return url;
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
@@ -332,7 +346,7 @@ export class WardSurveyAnalysisComponent {
     lng: any,
     markerURL: any,
     markerLabel: any,
-    imageName: any,
+    cardNo: any,
     type: any,
     lineNo: any
   ) {
@@ -356,19 +370,6 @@ export class WardSurveyAnalysisComponent {
       });
 
       this.allMatkers.push({ marker });
-    } else if (type == "ward") {
-      let marker = new google.maps.Marker({
-        position: { lat: Number(lat), lng: Number(lng) },
-        map: this.map,
-        icon: {
-          url: markerURL,
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scaledSize: new google.maps.Size(30, 40),
-          origin: new google.maps.Point(0, 0),
-        },
-      });
-      this.allMatkers.push({ marker });
     } else {
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
@@ -381,6 +382,34 @@ export class WardSurveyAnalysisComponent {
           origin: new google.maps.Point(0, 0),
         },
       });
+      if (cardNo != "") {
+        let wardNo = this.selectedZone;
+        let progressData = this.progressData;
+        let db = this.db;
+        marker.addListener("click", function () {
+          $("#divLoader").show();
+          setTimeout(() => {
+            $("#divLoader").hide();
+          }, 600);
+          let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
+          let houseInstance = db
+            .object(dbPath)
+            .valueChanges()
+            .subscribe((data) => {
+              houseInstance.unsubscribe();
+              if (data != null) {
+                $("#divCardDetail").show();
+                progressData.cardNo = data["cardNo"];
+                progressData.cardType = data["cardType"];
+                progressData.name = data["name"];
+              }
+            });
+        });
+      } else {
+        marker.addListener("click", function () {
+          $("#divCardDetail").hide();
+        });
+      }
       this.houseMarker.push({ marker });
     }
   }
@@ -398,14 +427,12 @@ export class WardSurveyAnalysisComponent {
       if (lineNo != "1") {
         this.lineNo = Number(lineNo) - 1;
         $("#txtLineNo").val(this.lineNo);
-        this.getLineApprove();
         this.getHouseLineData();
       }
     } else if (type == "next") {
       if (Number(lineNo) < this.wardLines) {
         this.lineNo = Number(lineNo) + 1;
         $("#txtLineNo").val(this.lineNo);
-        this.getLineApprove();
         this.getHouseLineData();
       }
     }
@@ -455,7 +482,6 @@ export class WardSurveyAnalysisComponent {
     }
     if (Number(lineNo) <= this.wardLines) {
       this.lineNo = lineNo;
-      this.getLineApprove();
       this.getHouseLineData();
     } else {
       this.commonService.setAlertMessage(
@@ -464,52 +490,19 @@ export class WardSurveyAnalysisComponent {
       );
       this.lineNo = 1;
       $("#txtLineNo").val(this.lineNo);
-      this.getLineApprove();
       this.getHouseLineData();
     }
   }
 
-  getLineApprove() {
-    let dbPath =
-      "EntityMarkingData/MarkedHouses/" +
-      this.selectedZone +
-      "/" +
-      this.lineNo +
-      "/ApproveStatus";
-    let approveInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        approveInstance.unsubscribe();
-        if (data != null) {
-          //  $("#txtReamrk").val(data["remark"]);
-          if (data["status"] == "Confirm") {
-            let element = <HTMLInputElement>(
-              document.getElementById("rdoConfirm")
-            );
-            element.checked = true;
-          } else if (data["status"] == "Reject") {
-            let element = <HTMLInputElement>(
-              document.getElementById("rdoReject")
-            );
-            element.checked = true;
-          }
-        } else {
-          let element = <HTMLInputElement>document.getElementById("rdoConfirm");
-          element.checked = false;
-          element = <HTMLInputElement>document.getElementById("rdoReject");
-          element.checked = false;
-          //  $("#txtReamrk").val("");
-        }
-      });
-  }
-
-
   //#endregion
-
 }
 
 export class progressDetail {
   totalMarkers: number;
   totalSurveyed: number;
+  totalWardMarkers: number;
+  totalWardSurveyed: number;
+  cardNo: string;
+  cardType: string;
+  name: string;
 }
