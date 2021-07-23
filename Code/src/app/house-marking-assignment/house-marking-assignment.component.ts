@@ -37,6 +37,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   houseData: houseDatail = {
     totalMarking: "0",
     totalSurveyed: "0",
+    name: "",
+    wardNo: "",
   };
   ngOnInit() {
     this.getZoneList();
@@ -46,10 +48,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   //#region serveyor detail
 
   getServeyorDetail(userId: any) {
-    console.log(userId);
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
     this.lineMarkerList = [];
+    let userDetail=this.assignedList.find(item=>item.userId==userId);
+    if(userDetail!=undefined){
+      this.houseData.name=userDetail.name;
+      this.houseData.wardNo=userDetail.wardNo;
+    }
     this.dbPath = "EntitySurveyData/SurveyDateWise/" + userId;
     let instance = this.db
       .object(this.dbPath)
@@ -60,17 +66,13 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
-            if(index=="totalCount")
-            {
-              this.houseData.totalSurveyed=data[index];
-            }
-            else
-            {
-              this.lineMarkerList.push({date:index,surveyed:data[index]});
+            if (index == "totalCount") {
+              this.houseData.totalSurveyed = data[index];
+            } else {
+              this.lineMarkerList.push({ date: index, surveyed: data[index] });
             }
           }
         }
-        console.log(data);
       });
   }
 
@@ -303,4 +305,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 export class houseDatail {
   totalMarking: string;
   totalSurveyed: string;
+  name: string;
+  wardNo: string;
 }

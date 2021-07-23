@@ -26,6 +26,8 @@ export class EmployeeMarkingComponent implements OnInit {
   markerData: markerDatail = {
     totalMarking: "0",
     totalWardMarking: "0",
+    name: "",
+    wardNo: "",
   };
 
   ngOnInit() {
@@ -247,6 +249,11 @@ export class EmployeeMarkingComponent implements OnInit {
   getMarkerDetail(empId: any, wardNo: any) {
     this.markerData.totalMarking = "0";
     this.markerList = [];
+    let userDetail=this.userList.find(item=>item.empId==empId);
+    if(userDetail!=undefined){
+      this.markerData.name=userDetail.name;
+      this.markerData.wardNo=userDetail.wardNo;
+    }
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
     let markerInstance = this.db
@@ -293,4 +300,6 @@ export class EmployeeMarkingComponent implements OnInit {
 export class markerDatail {
   totalMarking: string;
   totalWardMarking: string;
+  name: string;
+  wardNo: string;
 }
