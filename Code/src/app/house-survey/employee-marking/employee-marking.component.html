@@ -31,7 +31,7 @@
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;padding-right: 20px;">Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="active-tr" *ngFor="let data of userList; let i=index" style="cursor: pointer;"
+                                            <tr  *ngFor="let data of userList; let i=index" style="cursor: pointer;"
                                                 (click)="getMarkerDetail(data.empId, data.wardNo);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
