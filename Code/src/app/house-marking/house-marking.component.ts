@@ -8,7 +8,6 @@ import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
-import { timeStamp } from "console";
 
 @Component({
   selector: "app-house-marking",
