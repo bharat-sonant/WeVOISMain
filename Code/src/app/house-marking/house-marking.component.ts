@@ -220,27 +220,6 @@ export class HouseMarkingComponent {
           }
         }
       });
-    setTimeout(() => {
-      if (this.lines.length > 0) {
-        let latLngArray = [];
-        latLngArray = this.lines[0]["latlng"];
-        let lat = latLngArray[0]["lat"];
-        let lng = latLngArray[0]["lng"];
-        this.setMarker(
-          lat,
-          lng,
-          this.wardStartUrl,
-          null,
-          "Ward Start",
-          "ward",
-          ""
-        );
-        latLngArray = this.lines[this.lines.length - 1]["latlng"];
-        lat = latLngArray[latLngArray.length - 1]["lat"];
-        lng = latLngArray[latLngArray.length - 1]["lng"];
-        this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward", "");
-      }
-    }, 2000);
   }
 
   getMarkedHouses(lineNo: any) {

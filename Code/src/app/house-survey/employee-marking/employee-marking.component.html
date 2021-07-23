@@ -8,7 +8,7 @@
 
         </div>
         <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Employee Marking List
+            Marking Surveyor List
         </div>
         <div class="col-md-4"></div>
     </div>
@@ -38,7 +38,7 @@
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
-                                                    <span style="cursor: pointer;" (click)="openModel(contentWard,data.empId,'ward');">Assign
+                                                    <span style="cursor: pointer;"  [hidden]="data.isActive==false" (click)="openModel(contentWard,data.empId,'ward');">Assign
                                                         Ward</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     <i class="far fa-edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"

@@ -67,6 +67,7 @@ import { HouseMarkingComponent } from '../../house-marking/house-marking.compone
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
+import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -147,6 +148,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'sikar/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'sikar/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'sikar/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -218,6 +220,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'sikar/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'sikar/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'sikar/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -289,6 +292,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'reengus/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'reengus/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'reengus/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -360,6 +364,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'reengus/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'reengus/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'reengus/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -431,6 +436,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'test/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'test/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'test/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -502,6 +508,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'test/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'test/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'test/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -573,6 +580,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'demo/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'demo/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'demo/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -644,4 +652,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/task-management-masters', component: TaskManagementMastersComponent },
     { path: 'demo/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'demo/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'demo/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
 ]; 
