@@ -73,7 +73,7 @@ export class EmployeeMarkingComponent implements OnInit {
     if (type != "ward") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 345;
+      let height = 335;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
