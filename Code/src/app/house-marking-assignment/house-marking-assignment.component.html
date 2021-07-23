@@ -1,21 +1,14 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
-            <button type="button" class="user-button" style="cursor: cell; display: none;" (click)="openModel(contentAssign,0,'add');">
-                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ASSIGN
-                    NEW</span></button>
-
-        </div>
-        <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-12" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
             House Marking Assignment List
         </div>
-        <div class="col-md-4"></div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:0px;">
-            <div class="card" style="margin-top:-10px;  ">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  ">
                 <div class="card-header" style="display: none;">
                     <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
                         style="width: 150px;display: none;" [(ngModel)]="selectedYear">
@@ -53,27 +46,27 @@
                     </span>
 
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div class="table-wrapper">
-                                    <table class="table ">
+                                <div class="table-wrapper table-one">
+                                    <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:10%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward No</th>
-                                            <th style="border-right:1px solid #dee2e6; width:40%;">line No</th>
-                                            <th class="text-right" style="padding-right: 20px;; width:10%;">Action</th>
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:25%;">Line No.</th>
+                                            <th class="text-right" style="padding-right: 20px;; width:15%;">Action</th>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let data of assignedList; let i=index" style="cursor: pointer;" (click)="getServeyorDetail(data.userId);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
-                                                <td style="border-right:1px solid #dee2e6;">
+                                                <td class="border-right text-right" style="border-right:1px solid #dee2e6;">
                                                     {{data.lines}}</td>
                                                 <td class="text-right" style="padding-right: 20px;">
                                                     <i class="far fa-edit"
@@ -100,20 +93,32 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 0px;padding-right:0px;">
-            <div class="card" style="margin-top:-10px; padding-left: 20px;  ">
-                <div class="card-header" >
-                   <h5> Detail</h5>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px;">
+                <div class="card-header custom-header" >
+                        <div class="row">
+                                <div class="col-md-6 text-left">
+                                  <h5> <b>Harendra Singh Chaudhary <br><span style="color:#707070; font-weight:normal;"> (1005)</span> </b></h5>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                        <div class="table-heading">
+                                            <h3>
+                                                <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br>
+                                                Total Surveyed
+                                            </h3>
+                                        </div>
+                                    </div>
+                            </div>
                 </div>
                 <div class="card-body" style="padding-left: 20px;">
                     <div class="row">
-                        <div class="clo-md-6">                           
+
+                        <div class="col-md-12">                           
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <b>Total Surveyed : {{houseData.totalSurveyed}}</b>
-                                        <div class="table-wrapper">
-                                            <table class="table ">
+                                        <div class="table-wrapper table-scroll" style="padding:0px 20px 20px 20px;">
+                                            <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
                                                     <th style="border-right:1px solid #dee2e6; width:30%;">Date</th>
                                                     <th style="border-right:1px solid #dee2e6; width:70%;">Surveyed</th>
@@ -189,16 +194,20 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-tasks" aria-hidden="true"></i>
+                            <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="row">
-                    <div class="col-md-12"><label>Select Lines</label></div>
-                    <div class="row" style="height: 275px; width: 100%!important; padding: 10px;">
-                        <div class="col-md-4" *ngFor="let line of lineList">
-                            <input type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                    <div class="col-md-12"><label>Select Lines</label></div>                       
+                    <div class="col-md-12">
+                        <div class="checkbox-scroll">
+                        <div class="row">
+                        <div class="col-md-2" *ngFor="let line of lineList" style="margin-bottom: 10px;"> 
+                            <input type="checkbox" id="chk{{line.lineNo}}" style="vertical-align: middle;"/> {{line.lineNo}}
                         </div>
-                    </div>
+                    </div>   
+                </div>
+                        </div>
                 </div>
                 <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
                     (click)="saveAssignment();" />

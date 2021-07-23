@@ -71,12 +71,12 @@
     padding: 15px 0px 15px 15px !important;
     box-shadow: 0px 4px 4px #0e0e0e1a;
   }
-    .card-body{
-      padding: 0px;
-      height: 76vh;
-      overflow: hidden;
-      overflow-y: scroll;
-   }
+  //   .card-body{
+  //     padding: 0px;
+  //     height: 76vh;
+  //     overflow: hidden;
+  //     overflow-y: scroll;
+  //  }
     .data{
       padding-top: 7px;
       float: right;
@@ -95,7 +95,7 @@
      font-size: 15px;
      }
     table td{
-      font-size: 11px;
+      font-size: 12px;
       padding: 12px 12px;
     }
     table th{
@@ -348,3 +348,76 @@
     background: #0ba118!important;
   }
   
+  .custom-header{
+    height: 80px;
+  }
+  .custom-header h5{
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+  .heading-table{
+    font-size: 14px;
+    color:#333;
+    margin-top: -10px;
+    text-transform: capitalize;
+  }
+  .modal-title{
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .table-heading h3{
+    line-height: 28px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #707070;
+    margin-bottom: 15px;
+    margin-top: 3px;
+    margin-right: 15px;
+  }
+  .table-heading .tbl-points{
+    font-weight: bold;
+    border-radius: 10px;
+    background: #0ba11714;
+    color: #19d92a;
+    padding: 5px 20px;
+    font-size: 24px;
+  }
+
+  .table-one{
+    height: 88vh;
+    overflow: hidden;
+    overflow-y: scroll;
+  }
+  .table-scroll{
+    padding: 0px;
+    height: 73.5vh;
+    overflow: hidden;
+    overflow-y: scroll;
+  }
+  table tr:hover{
+    background: #f3f3f3;
+  }
+  .active-tr{
+    background: #0ba118;
+    color: #fff;
+  }
+  .active-tr i{
+    color: #fff!important;
+  }
+.checkbox-scroll{
+  height: 270px;
+  overflow: hidden;
+  overflow-y:scroll;
+  border:1px solid lightgray;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+
+
+
+
