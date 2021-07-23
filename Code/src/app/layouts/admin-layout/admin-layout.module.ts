@@ -74,6 +74,7 @@ import { HouseMarkingComponent } from '../../house-marking/house-marking.compone
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
+import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 
 @NgModule({
   imports: [
@@ -152,7 +153,8 @@ import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/em
     HouseMarkingComponent,
     TaskManagementMastersComponent,
     HouseMarkingAssignmentComponent,
-    EmployeeMarkingComponent
+    EmployeeMarkingComponent,
+    WardSurveyAnalysisComponent
   ]
 })
 
