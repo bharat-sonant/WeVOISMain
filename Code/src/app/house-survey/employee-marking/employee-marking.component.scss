@@ -361,6 +361,7 @@
     color: #333;
     font-weight: bold;
     margin-top: -3px;
+    text-transform: uppercase;
   }
 .heading-table{
   font-size: 14px;
@@ -405,4 +406,11 @@
 }
 table tr:hover{
   background: #f3f3f3;
+}
+.active-tr{
+  background: #0ba118;
+  color: #fff;
+}
+.active-tr i{
+  color: #fff!important;
 }

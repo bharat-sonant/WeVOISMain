@@ -8,7 +8,7 @@
 
         </div>
         <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Employee Marking List
+            Marking Surveyor List
         </div>
         <div class="col-md-4"></div>
     </div>
@@ -25,151 +25,36 @@
                                     <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:8%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:38%;">Name</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:25%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:29%;padding-right: 20px;">Action</th>
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">Login ID/Password</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:17%;">Ward No.</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;padding-right: 20px;">Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
+                                            <tr class="active-tr" *ngFor="let data of userList; let i=index" style="cursor: pointer;"
                                                 (click)="getMarkerDetail(data.empId, data.wardNo);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
+                                                    <td style="border-right:1px solid #dee2e6">
+                                                        {{data.empId}} / {{data.password}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
-                                                        <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
+                                                        <i class="fas fa-map-marked-alt" [hidden]="data.isActive==false" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
                                                         style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
+                                                   
                                                     <i class="far fa-edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry"
-                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
                                                     <i class="far fa-trash-alt"
                                                         (click)="openModel(contentConfirmation,data.userId,'delete')"
                                                         title="Remove Entry"
                                                         style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
                                                 </td>
                                             </tr>
-                                            <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                                            (click)="getMarkerDetail(data.empId, data.wardNo);">
-                                            <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                            <td style="border-right:1px solid #dee2e6">
-                                                {{data.name}}</td>
-                                            <td class="text-right" style="border-right:1px solid #dee2e6">
-                                                {{data.wardNo}}</td>
-                                            <td class="text-right">
-                                                    <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                                    style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                                                <i class="far fa-edit"
-                                                    (click)="openModel(contentEmployee,data.empId,'update');"
-                                                    title="Edit Entry"
-                                                    style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <i class="far fa-trash-alt"
-                                                    (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                                    title="Remove Entry"
-                                                    style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                                            </td>
-                                        </tr>
-                                        <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                                        (click)="getMarkerDetail(data.empId, data.wardNo);">
-                                        <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                        <td style="border-right:1px solid #dee2e6">
-                                            {{data.name}}</td>
-                                        <td class="text-right" style="border-right:1px solid #dee2e6">
-                                            {{data.wardNo}}</td>
-                                        <td class="text-right">
-                                                <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                                style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                                            <i class="far fa-edit"
-                                                (click)="openModel(contentEmployee,data.empId,'update');"
-                                                title="Edit Entry"
-                                                style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <i class="far fa-trash-alt"
-                                                (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                                title="Remove Entry"
-                                                style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                                        </td>
-                                    </tr>
-                                    <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                                    (click)="getMarkerDetail(data.empId, data.wardNo);">
-                                    <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                    <td style="border-right:1px solid #dee2e6">
-                                        {{data.name}}</td>
-                                    <td class="text-right" style="border-right:1px solid #dee2e6">
-                                        {{data.wardNo}}</td>
-                                    <td class="text-right">
-                                            <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                            style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                                        <i class="far fa-edit"
-                                            (click)="openModel(contentEmployee,data.empId,'update');"
-                                            title="Edit Entry"
-                                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <i class="far fa-trash-alt"
-                                            (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                            title="Remove Entry"
-                                            style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                                    </td>
-                                </tr>
-                                <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                                (click)="getMarkerDetail(data.empId, data.wardNo);">
-                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                <td style="border-right:1px solid #dee2e6">
-                                    {{data.name}}</td>
-                                <td class="text-right" style="border-right:1px solid #dee2e6">
-                                    {{data.wardNo}}</td>
-                                <td class="text-right">
-                                        <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                        style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                                    <i class="far fa-edit"
-                                        (click)="openModel(contentEmployee,data.empId,'update');"
-                                        title="Edit Entry"
-                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <i class="far fa-trash-alt"
-                                        (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                        title="Remove Entry"
-                                        style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                                </td>
-                            </tr>
-                            <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                            (click)="getMarkerDetail(data.empId, data.wardNo);">
-                            <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                            <td style="border-right:1px solid #dee2e6">
-                                {{data.name}}</td>
-                            <td class="text-right" style="border-right:1px solid #dee2e6">
-                                {{data.wardNo}}</td>
-                            <td class="text-right">
-                                    <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                    style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                                <i class="far fa-edit"
-                                    (click)="openModel(contentEmployee,data.empId,'update');"
-                                    title="Edit Entry"
-                                    style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <i class="far fa-trash-alt"
-                                    (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                    title="Remove Entry"
-                                    style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                            </td>
-                        </tr>
-                        <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                        (click)="getMarkerDetail(data.empId, data.wardNo);">
-                        <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                        <td style="border-right:1px solid #dee2e6">
-                            {{data.name}}</td>
-                        <td class="text-right" style="border-right:1px solid #dee2e6">
-                            {{data.wardNo}}</td>
-                        <td class="text-right">
-                                <i class="fas fa-map-marked-alt" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
-                                style="cursor:pointer !important; font-size: 14px;color: #10d903;margin-right:10px;"></i>
-                            <i class="far fa-edit"
-                                (click)="openModel(contentEmployee,data.empId,'update');"
-                                title="Edit Entry"
-                                style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <i class="far fa-trash-alt"
-                                (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                title="Remove Entry"
-                                style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
-                        </td>
-                    </tr>
+                                    
                                         </tbody>
                                     </table>
                                 </div>
@@ -230,54 +115,7 @@
                                                         <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
                                                             {{data.markers}}</td>
                                                     </tr>
-                                                    <tr *ngFor="let data of markerList; let i=index">
-                                                            <td style="border-right:1px solid #dee2e6">
-                                                                {{data.date}}</td>
-                                                            <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                {{data.markers}}</td>
-                                                        </tr>
-                                                        <tr *ngFor="let data of markerList; let i=index">
-                                                                <td style="border-right:1px solid #dee2e6">
-                                                                    {{data.date}}</td>
-                                                                <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                    {{data.markers}}</td>
-                                                            </tr>
-                                                            <tr *ngFor="let data of markerList; let i=index">
-                                                                    <td style="border-right:1px solid #dee2e6">
-                                                                        {{data.date}}</td>
-                                                                    <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                        {{data.markers}}</td>
-                                                                </tr>
-                                                                <tr *ngFor="let data of markerList; let i=index">
-                                                                        <td style="border-right:1px solid #dee2e6">
-                                                                            {{data.date}}</td>
-                                                                        <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                            {{data.markers}}</td>
-                                                                    </tr>
-                                                                    <tr *ngFor="let data of markerList; let i=index">
-                                                                            <td style="border-right:1px solid #dee2e6">
-                                                                                {{data.date}}</td>
-                                                                            <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                                {{data.markers}}</td>
-                                                                        </tr>
-                                                                        <tr *ngFor="let data of markerList; let i=index">
-                                                                                <td style="border-right:1px solid #dee2e6">
-                                                                                    {{data.date}}</td>
-                                                                                <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                                    {{data.markers}}</td>
-                                                                            </tr>
-                                                                            <tr *ngFor="let data of markerList; let i=index">
-                                                                                    <td style="border-right:1px solid #dee2e6">
-                                                                                        {{data.date}}</td>
-                                                                                    <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                                        {{data.markers}}</td>
-                                                                                </tr>
-                                                                                <tr *ngFor="let data of markerList; let i=index">
-                                                                                        <td style="border-right:1px solid #dee2e6">
-                                                                                            {{data.date}}</td>
-                                                                                        <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
-                                                                                            {{data.markers}}</td>
-                                                                                    </tr>
+                                                   
 
                                                 </tbody>
                                             </table>
