@@ -110,24 +110,24 @@
                                     </div>
                             </div>
                 </div>
-                <div class="card-body" style="padding-left: 20px;">
+                <div class="card-body" style="padding: 3px 11px 15px 0px;">
                     <div class="row">
 
                         <div class="col-md-12">                           
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll" style="padding:0px 20px 20px 20px;">
+                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
                                             <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
                                                     <th style="border-right:1px solid #dee2e6; width:30%;">Date</th>
-                                                    <th style="border-right:1px solid #dee2e6; width:70%;">Surveyed</th>
+                                                    <th class="border-right" style="border-right:1px solid #dee2e6; width:70%;">Surveyed</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
                                                             {{data.date}}</td>
-                                                        <td style="border-right:1px solid #dee2e6;">
+                                                        <td class="border-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.surveyed}}</td>
                                                     </tr>
                                                 </tbody>
