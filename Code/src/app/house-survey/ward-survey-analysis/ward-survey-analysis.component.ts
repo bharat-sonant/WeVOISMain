@@ -9,7 +9,7 @@ import { interval } from "rxjs";
 import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";  
 
 @Component({
   selector: "app-ward-survey-analysis",
