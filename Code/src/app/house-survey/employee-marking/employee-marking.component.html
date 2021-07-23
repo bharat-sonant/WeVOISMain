@@ -24,10 +24,11 @@
                                 <div class="table-wrapper">
                                     <table class="table" style="border-bottom:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:8%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:38%;">Name</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:25%;">Ward No</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:29%;padding-right: 20px;">Action</th>
+                                            <th style="border-right:1px solid #dee2e6; width:10%;">S.No.</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Login ID/Password</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">Ward No</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:30%;padding-right: 20px;">Action</th>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
@@ -35,6 +36,8 @@
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
+                                                    <td style="border-right:1px solid #dee2e6">
+                                                        {{data.empId}} / {{data.password}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
