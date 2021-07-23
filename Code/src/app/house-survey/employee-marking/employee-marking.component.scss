@@ -73,7 +73,7 @@
   }
     .card-body{
       padding: 0px;
-      height: 76vh;
+      height: 81.7vh;
       overflow: hidden;
       overflow-y: scroll;
    }
@@ -95,7 +95,7 @@
      font-size: 15px;
      }
     table td{
-      font-size: 11px;
+      font-size: 12px;
       padding: 12px 12px;
     }
     table th{
@@ -348,3 +348,28 @@
     background: #0ba118!important;
   }
   
+
+
+
+
+
+  .custom-header{
+    height: 45px;
+  }
+  .custom-header h5{
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-top: -3px;
+  }
+.heading-table{
+  font-size: 14px;
+  color:#333;
+  margin-top: -10px;
+  text-transform: capitalize;
+}
+
+
+
+
+
