@@ -8,6 +8,7 @@ import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
+import { timeStamp } from "console";
 
 @Component({
   selector: "app-house-marking",
@@ -53,11 +54,12 @@ export class HouseMarkingComponent {
   cityName: any;
   previousLine: any;
   centerPoint: any;
-  houseMarker: any[]=[];
+  houseMarker: any[] = [];
 
   markerData: markerDetail = {
     totalMarkers: "0",
     markerImgURL: "../assets/img/img-not-available-01.jpg",
+    houseType: "",
   };
 
   ngOnInit() {
@@ -150,18 +152,20 @@ export class HouseMarkingComponent {
     this.getTotalMarkers();
   }
 
-  getTotalMarkers()
-  {
-    let dbPath="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+this.selectedZone+"";
-    let totalInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
+  getTotalMarkers() {
+    let dbPath =
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+      this.selectedZone +
+      "";
+    let totalInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         totalInstance.unsubscribe();
-        if(data!=null){
-          this.markerData.totalMarkers=data.toString();
+        if (data != null) {
+          this.markerData.totalMarkers = data.toString();
         }
-      }
-    );
-
+      });
   }
 
   clearAllOnMap() {
@@ -259,16 +263,26 @@ export class HouseMarkingComponent {
               let lng = data[i]["latLng"].split(",")[1];
               let imageName = data[i]["image"];
               let type = data[i]["houseType"];
-              let markerURL = this.getMarkerIcon(type);
-              this.setMarker(
-                lat,
-                lng,
-                markerURL,
-                null,
-                imageName,
-                "marker",
-                lineNo
-              );
+              let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+              let houseInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((data) => {
+                  houseInstance.unsubscribe();
+                  if (data != null) {
+                    let houseType = data.toString().split("(")[0];
+                    let markerURL = this.getMarkerIcon(type);
+                    this.setMarker(
+                      lat,
+                      lng,
+                      markerURL,
+                      houseType,
+                      imageName,
+                      "marker",
+                      lineNo
+                    );
+                  }
+                });
             }
           }
         }
@@ -277,21 +291,30 @@ export class HouseMarkingComponent {
 
   getMarkerIcon(type: any) {
     let url = "../assets/img/final-marker-2.svg";
-    if (type == 1 || type == 19 ) {
+    if (type == 1 || type == 19) {
       url = "../assets/img/marking-house.svg";
-    } else if (type == 2 || type == 3 || type==6 || type==7 || type==8 || type==9 || type==10 || type==20) {
+    } else if (
+      type == 2 ||
+      type == 3 ||
+      type == 6 ||
+      type == 7 ||
+      type == 8 ||
+      type == 9 ||
+      type == 10 ||
+      type == 20
+    ) {
       url = "../assets/img/marking-shop.svg";
-    } else if (type==14 || type==15) {
+    } else if (type == 14 || type == 15) {
       url = "../assets/img/marking-warehouse.svg";
-    } else if (type==21 || type==22) {
+    } else if (type == 21 || type == 22) {
       url = "../assets/img/marking-institute.svg";
-    } else if (type==4 || type==5 ) {
+    } else if (type == 4 || type == 5) {
       url = "../assets/img/marking-hotel.svg";
-    } else if (type==16 || type==17) {
+    } else if (type == 16 || type == 17) {
       url = "../assets/img/marking-hall.svg";
-    } else if (type==18) {
+    } else if (type == 18) {
       url = "../assets/img/marking-thela.svg";
-    } else if (type==11 || type==12 || type==13) {
+    } else if (type == 11 || type == 12 || type == 13) {
       url = "../assets/img/marking-hospital.svg";
     }
     return url;
@@ -401,7 +424,7 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(15, 20),
+          scaledSize: new google.maps.Size(20, 20),
           origin: new google.maps.Point(0, 0),
         },
       });
@@ -424,6 +447,7 @@ export class HouseMarkingComponent {
           imageName +
           "?alt=media";
         markerDetail.markerImgURL = imageURL;
+        markerDetail.houseType=markerLabel;
       });
 
       this.houseMarker.push({ marker });
@@ -592,12 +616,14 @@ export class HouseMarkingComponent {
 
   //#endregion
 
-  
   assignSurveyor() {
-    this.router.navigate(["/" + this.cityName + "/13B/house-marking-assignment"]);
+    this.router.navigate([
+      "/" + this.cityName + "/13B/house-marking-assignment",
+    ]);
   }
 }
 export class markerDetail {
   totalMarkers: string;
   markerImgURL: string;
+  houseType: string;
 }
