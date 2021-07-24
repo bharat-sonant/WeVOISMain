@@ -82,7 +82,7 @@
                 </div>
                 <div class="card-body" style="padding: 15px 11px 15px 0px;">
                     <div class="row">
-                        <div class="col-md-6 text-center">
+                        <div class="col-md-3 text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{markerData.totalMarking}}</span>
@@ -90,7 +90,23 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-6 text-center">
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{markerData.totalDays}}</span>
+                                    Working Days
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{markerData.average}}</span>
+                                    Avg. Per Day
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
                                 <div class="table-heading" style="border-right:none!important;">
                                     <h3>
                                         <span class="tbl-points"> {{markerData.totalWardMarking}}</span> 
@@ -159,6 +175,9 @@
                     <span class="symbol-input">
                             <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
                     </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="checkbox" id="chkRemove" style="vertical-align: middle;"> Remove assigned ward
                 </div>
                 <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
                     (click)="saveWard();" />

@@ -4,6 +4,7 @@ import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
+import { HtmlAstPath } from "@angular/compiler";
 
 @Component({
   selector: "app-employee-marking",
@@ -26,6 +27,8 @@ export class EmployeeMarkingComponent implements OnInit {
   markerData: markerDatail = {
     totalMarking: "0",
     totalWardMarking: "0",
+    totalDays: 0,
+    average: 0,
     name: "",
     wardNo: "",
   };
@@ -102,7 +105,7 @@ export class EmployeeMarkingComponent implements OnInit {
     } else {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 200;
+      let height = 230;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
@@ -133,6 +136,10 @@ export class EmployeeMarkingComponent implements OnInit {
     }
     if (empID != "0") {
       let wardNo = $("#ddlWard").val();
+      let element = <HTMLInputElement>document.getElementById("chkRemove");
+      if (element.checked == true) {
+        wardNo = null;
+      }
       let dbPath = "EntityMarkingData/MarkerAppAccess/" + empID;
       this.db.object(dbPath).update({
         assignedWard: wardNo,
@@ -212,61 +219,45 @@ export class EmployeeMarkingComponent implements OnInit {
     this.getEmployee();
   }
 
-  getCurrentWardMarking(empId: any, wardNo: any) {
-    this.markerData.totalWardMarking = "0";
-    let dbPath = "WardLines/" + wardNo;
-    let wardLineInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((lineData) => {
-        wardLineInstance.unsubscribe();
-        if (lineData != null) {
-          let lines = Number(lineData);
-          for (let i = 1; i <= lines; i++) {
-            dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i;
-            let instance = this.db
-              .list(dbPath)
-              .valueChanges()
-              .subscribe((data) => {
-                instance.unsubscribe();
-                if (data.length > 0) {
-                  for (let j = 0; j < data.length; j++) {
-                    if (data[j]["userId"] != undefined) {
-                      if (data[j]["userId"] == empId) {
-                        this.markerData.totalWardMarking = (
-                          Number(this.markerData.totalWardMarking) + 1
-                        ).toString();
-                      }
-                    }
-                  }
-                }
-              });
-          }
-        }
-      });
-  }
-
   getMarkerDetail(empId: any, wardNo: any) {
     this.markerData.totalMarking = "0";
+    this.markerData.totalWardMarking = "0";
+    this.markerData.average = 0;
+    this.markerData.totalDays = 0;
     this.markerList = [];
-    let userDetail=this.userList.find(item=>item.empId==empId);
-    if(userDetail!=undefined){
-      this.markerData.name=userDetail.name;
-      this.markerData.wardNo=userDetail.wardNo;
+    let userDetail = this.userList.find((item) => item.empId == empId);
+    if (userDetail != undefined) {
+      this.markerData.name = userDetail.name;
+      this.markerData.wardNo = userDetail.wardNo;
     }
     let dbPath =
-      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
+      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
+      empId +
+      "/total";
     let markerInstance = this.db
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
         markerInstance.unsubscribe();
-        if (data != null) {
+        if (data != undefined) {
           this.markerData.totalMarking = data.toString();
         }
       });
     if (wardNo != "") {
-      this.getCurrentWardMarking(empId, wardNo);
+      dbPath =
+        "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
+        empId +
+        "/" +
+        wardNo;
+      let wardInstance = this.db
+        .object(dbPath)
+        .valueChanges()
+        .subscribe((data) => {
+          wardInstance.unsubscribe();
+          if (data != undefined) {
+            this.markerData.totalWardMarking = data.toString();
+          }
+        });
     }
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/DateWise";
     let dateInstance = this.db
@@ -283,6 +274,8 @@ export class EmployeeMarkingComponent implements OnInit {
               if (list.length > 0) {
                 for (let j = 0; j < list.length; j++) {
                   if (list[j] == empId) {
+                    this.markerData.totalDays =
+                      Number(this.markerData.totalDays) + 1;
                     this.markerList.push({
                       date: index,
                       markers: data[index][list[j]],
@@ -290,6 +283,11 @@ export class EmployeeMarkingComponent implements OnInit {
                   }
                 }
               }
+            }
+            if (this.markerData.totalDays != 0) {
+              this.markerData.average =
+                Number(this.markerData.totalMarking) /
+                Number(this.markerData.totalDays);
             }
           }
         }
@@ -300,6 +298,8 @@ export class EmployeeMarkingComponent implements OnInit {
 export class markerDatail {
   totalMarking: string;
   totalWardMarking: string;
+  totalDays: number;
+  average: number;
   name: string;
   wardNo: string;
 }
