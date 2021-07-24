@@ -57,6 +57,7 @@ export class HouseMarkingComponent {
 
   markerData: markerDetail = {
     totalMarkers: "0",
+    totalApproved: "0",
     markerImgURL: "../assets/img/img-not-available-01.jpg",
     houseType: "",
   };
@@ -169,7 +170,10 @@ export class HouseMarkingComponent {
       .subscribe((data) => {
         totalInstance.unsubscribe();
         if (data != null) {
-          this.markerData.totalMarkers = data.toString();
+          this.markerData.totalMarkers = data["total"].toString();
+          if (data["approved"] != undefined) {
+            this.markerData.totalApproved = data["approved"].toString();
+          }
         }
       });
   }
@@ -544,8 +548,11 @@ export class HouseMarkingComponent {
     }
   }
 
-  assignUrl(){
-    window.open("/" + this.cityName + "/13B/house-marking-assignment", '_blank');
+  assignUrl() {
+    window.open(
+      "/" + this.cityName + "/13B/house-marking-assignment",
+      "_blank"
+    );
   }
 
   getLineApprove() {
@@ -602,6 +609,57 @@ export class HouseMarkingComponent {
       //remark: remark,
     };
     this.db.object(dbPath).update(data);
+    dbPath =
+      "EntityMarkingData/MarkedHouses/" +
+      this.selectedZone +
+      "/" +
+      this.lineNo +
+      "/marksCount";
+    let markerCountInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        markerCountInstance.unsubscribe();
+        if (data != undefined) {
+          let markerCount = Number(data);
+          dbPath =
+            "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+            this.selectedZone +
+            "/approved";
+          let approvedInstance = this.db
+            .object(dbPath)
+            .valueChanges()
+            .subscribe((data) => {
+              approvedInstance.unsubscribe();
+              dbPath =
+                "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+                this.selectedZone;
+              if (data == undefined) {
+                this.db.object(dbPath).update({
+                  approved: markerCount,
+                });
+              } else {
+                let approved = Number(data);
+                if (status == "Confirm") {
+                  let approvedCount = approved + markerCount;
+                  this.db.object(dbPath).update({
+                    approved: approvedCount,
+                  });
+                } else {
+                  let approvedCount = approved - markerCount;
+                  this.db.object(dbPath).update({
+                    approved: approvedCount,
+                  });
+                }
+              }
+              setTimeout(() => {
+                this.getTotalMarkers();
+              }, 600);
+            });
+        }
+      });
+     
+    
     this.commonService.setAlertMessage(
       "success",
       "Line approve status updated !!!"
@@ -618,6 +676,7 @@ export class HouseMarkingComponent {
 }
 export class markerDetail {
   totalMarkers: string;
+  totalApproved: string;
   markerImgURL: string;
   houseType: string;
 }
