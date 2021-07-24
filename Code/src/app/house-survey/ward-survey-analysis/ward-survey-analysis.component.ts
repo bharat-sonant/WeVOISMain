@@ -249,7 +249,7 @@ export class WardSurveyAnalysisComponent {
     this.progressData.cardType = "";
     this.progressData.name = "";
     this.houseMarker = [];
-    $("#divCardDetail").hide();
+    $("#divCardDetail").show();
     let dbPath =
       "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db

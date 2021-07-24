@@ -135,3 +135,10 @@ button{font-family: Montserrat-Bold; font-size: 14px;  color: #fff; text-transfo
             width: 65%;
         }
     }
+
+    button:focus-visible{
+        outline: none!important;
+    }
+    button:focus{
+        outline: none!important;
+    }

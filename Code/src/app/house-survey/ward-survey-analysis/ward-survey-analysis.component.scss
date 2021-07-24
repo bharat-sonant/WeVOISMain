@@ -492,13 +492,14 @@ margin: 0px;
 // image box
 .image-box{
     width: 225px;
-    height: 100px;
+    min-height: 50px;
     border-radius: 5px;
     background-color: #ffffff;
-    box-shadow: 0 1px 5px 1px #80bd7b;
+   // box-shadow: 0 1px 5px 1px #80bd7b;
+    box-shadow: 0 1px 5px 1px #0000005e;
     position: absolute;
     right: -1px;
-    top: 130px;
+    top: 133px;
     border: 1px solid #80bd7b;
     }
 
@@ -509,7 +510,8 @@ margin: 0px;
     position: fixed;
     right: 15px;
     top: 72px;
-    box-shadow: 0px 4px 7px 0px lightgrey;
+    box-shadow: 0 1px 5px 1px #0000005e;
+    border: 1px solid #e6e6e6;
    // box-shadow: 0px 7px 10px 0px lightgrey;
     border-radius: 5px;
         }
@@ -553,6 +555,52 @@ margin: 0px;
     position: absolute; left: 50%;top: 50%;  transform: translate(-50%, -50%); 
   }
     
-    
-    
-    
+.f-left{
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid #e6e6e6;
+    padding:12px 15px;
+}
+.f-left p{
+    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: 84px;
+    font-weight: bold;
+    color:#707070;
+}
+.f-left h3{
+    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: calc(100% - 84px);
+    font-weight: normal;
+    color:#333;
+    text-transform: capitalize;
+}
+.border-bottom{
+    padding-bottom: 15px;
+}
+
+.house-card-box .fix-home{
+    width: 100%;
+    float: left;
+    text-align: left;
+}
+.house-card-box .float-l{
+    float: left;
+    width: 125px;
+    padding: 0px 15px;
+}
+.house-card-box .float-r{
+    float: left;
+    width: calc(100% - 125px);
+    margin-right: 0px!important;
+    padding: 0px 0px;
+}
+button:focus-visible{
+    outline: none!important;
+}
+button:focus{
+    outline: none!important;
+}
