@@ -374,14 +374,17 @@
   font-weight: bold;
 }
 .table-heading{
-  border-right: 1px solid lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px dashed #e6e6e6;
 }
 .table-heading h3{
-  line-height: 35px;
+  line-height: 32px;
   font-size: 12px;
   font-weight: normal;
   color: #707070;
-  margin-bottom: 28px;
+  margin-bottom: 0px;
   margin-top: 14px;
 }
 .table-heading .tbl-points{
@@ -389,9 +392,23 @@
   border-radius: 10px;
   background: #0ba11714;
   color: #0ba118;
-  padding: 10px 20px;
+  padding: 7px 20px;
   font-size: 24px;
-  margin-right: 15px;
+}
+.mb-15{
+  margin-bottom: 15px!important;
+}
+.ml-0{
+  margin-left:0px!important;
+}
+.mr-10{
+  margin-right:-10px!important;
+}
+.pl-0{
+  padding-left: 0px!important;
+}
+.pr-0{
+  padding-right: 0px!important;
 }
 .table-one{
   height: 88vh;

@@ -565,15 +565,19 @@ margin: 0px;
     font-size: 12px;
     margin:0px!important;
     float: left;
-    width: 84px;
+    width: 78px;
     font-weight: bold;
     color:#707070;
+}
+.f-right{
+    margin-right: 4px;
+    float:right;
 }
 .f-left h3{
     font-size: 12px;
     margin:0px!important;
     float: left;
-    width: calc(100% - 84px);
+    width: calc(100% - 78px);
     font-weight: normal;
     color:#333;
     text-transform: capitalize;
