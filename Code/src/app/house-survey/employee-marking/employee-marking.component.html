@@ -22,28 +22,35 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table"
+                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:8%;">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
-                                            <th style="border-right:1px solid #dee2e6; width:30%;">Login ID/Password</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:17%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;padding-right: 20px;">Action</th>
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">Login ID/Password
+                                            </th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:17%;">
+                                                Ward No.</th>
+                                            <th class="text-right"
+                                                style="border-right:1px solid #dee2e6; width:15%;padding-right: 20px;">
+                                                Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr  *ngFor="let data of userList; let i=index" style="cursor: pointer;"
+                                            <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
                                                 (click)="getMarkerDetail(data.empId, data.wardNo);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
-                                                    <td style="border-right:1px solid #dee2e6">
-                                                        {{data.empId}} / {{data.password}}</td>
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.empId}} / {{data.password}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
-                                                        <i class="fas fa-map-marked-alt" [hidden]="data.isActive==false" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"
+                                                    <i class="fas fa-map-marked-alt" [hidden]="data.isActive==false"
+                                                        (click)="openModel(contentWard,data.empId,'ward');"
+                                                        title="Assign Ward"
                                                         style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:10px;"></i>
-                                                   
+
                                                     <i class="far fa-edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry"
@@ -54,7 +61,7 @@
                                                         style="cursor:pointer !important; font-size: 14px;color: red; display: none;"></i>
                                                 </td>
                                             </tr>
-                                    
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -75,63 +82,106 @@
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
-                          <h5> <b>{{markerData.name}} ({{markerData.wardNo}}) </b></h5>
+                            <h5> <b>{{markerData.name}} ({{markerData.wardNo}}) </b></h5>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="card-body" style="padding: 15px 11px 15px 0px;">
-                    <div class="row">
-                        <div class="col-md-3 text-center">
+                    <div class="row ml-0 mr-10">
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalMarking}}</span>
+                                    <span class="tbl-points"> {{markerData.totalMarking}}</span><br />
                                     Total Marker
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalDays}}</span>
+                                    <span class="tbl-points"> {{markerData.totalDays}}</span><br />
                                     Working Days
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.average}}</span>
+                                    <span class="tbl-points"> {{markerData.average}}</span><br />
                                     Avg. Per Day
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
-                                <div class="table-heading" style="border-right:none!important;">
-                                    <h3>
-                                        <span class="tbl-points"> {{markerData.totalWardMarking}}</span> 
-                                        Current Ward Marking
-                                    </h3>
-                                </div>
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
+                            <div class="table-heading" style="border-right:none!important;">
+                                <h3>
+                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />
+                                    Current Ward Marking
+                                </h3>
                             </div>
-                        <div class="col-md-12">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
                                         <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
-                                            <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                            <table class="table"
+                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
                                                     <th style="border-right:1px solid #dee2e6; width:110px;">Date</th>
-                                                    <th class="text-right" style="padding-right:20px; border-right:1px solid #dee2e6;">Markers</th>
+                                                    <th class="text-right"
+                                                        style="padding-right:20px; border-right:1px solid #dee2e6;">
+                                                        Markers</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of markerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
                                                             {{data.date}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;padding-right:20px; ">
+                                                        <td class="text-right"
+                                                            style="border-right:1px solid #dee2e6;padding-right:20px; ">
                                                             {{data.markers}}</td>
                                                     </tr>
-                                                   
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-md-6">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
+                                            <table class="table"
+                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                                <thead>
+                                                    <th style="border-right:1px solid #dee2e6; width:110px;">Ward No.
+                                                    </th>
+                                                    <th class="text-right"
+                                                        style="padding-right:20px; border-right:1px solid #dee2e6;">
+                                                        Markers</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of markerWardList; let i=index">
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.wardNo}}</td>
+                                                        <td class="text-right"
+                                                            style="border-right:1px solid #dee2e6;padding-right:20px; ">
+                                                            {{data.markers}}</td>
+                                                    </tr>
 
                                                 </tbody>
                                             </table>
@@ -173,7 +223,7 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                            <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>

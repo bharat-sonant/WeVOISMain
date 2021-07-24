@@ -22,6 +22,7 @@ export class EmployeeMarkingComponent implements OnInit {
 
   userList: any[];
   markerList: any[];
+  markerWardList:any[];
   lastEmpId: any;
   zoneList: any[];
   markerData: markerDatail = {
@@ -225,6 +226,7 @@ export class EmployeeMarkingComponent implements OnInit {
     this.markerData.average = 0;
     this.markerData.totalDays = 0;
     this.markerList = [];
+    this.markerWardList=[];
     let userDetail = this.userList.find((item) => item.empId == empId);
     if (userDetail != undefined) {
       this.markerData.name = userDetail.name;
@@ -243,22 +245,29 @@ export class EmployeeMarkingComponent implements OnInit {
           this.markerData.totalMarking = data.toString();
         }
       });
-    if (wardNo != "") {
-      dbPath =
-        "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-        empId +
-        "/" +
-        wardNo;
-      let wardInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          wardInstance.unsubscribe();
-          if (data != undefined) {
-            this.markerData.totalWardMarking = data.toString();
+
+    dbPath =
+      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
+    let wardInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        wardInstance.unsubscribe();
+        if (data != undefined) {
+          console.log(data);
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length-1; i++) {
+              let index = keyArray[i];
+              if (index == wardNo) {
+                this.markerData.totalWardMarking=data[index];
+              }
+              this.markerWardList.push({wardNo:index,markers:data[index]});              
+            }
           }
-        });
-    }
+        }
+      });
+
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/DateWise";
     let dateInstance = this.db
       .object(dbPath)
