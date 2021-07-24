@@ -10,9 +10,7 @@
       </select>
     </div>
     <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;;">
-      <button type="submit" (click)="assignSurveyor();" class="btn mob-btn" style="margin-left: 0px; height:40px;">
-        Assign to Surveyor </button>
-
+      
     </div>
     <div class="col-md-5" style="padding-top: 20px; padding-left: 30px;;">
 
@@ -39,25 +37,21 @@
 <div class="house-card-box">
 
   <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
-    <div class="div-values div-style">
-      <span style="font-weight: bold;font-size: 30px; padding-right: 5px; height: 35px;"></span>
-      Line Approve Status
-    </div>
     <div class="row" style="padding-top: 10px; text-align: center;">
         <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
         <button (click)="getNextPrevious('pre');" class="btn-hvr" 
-        style="background-color: #888;font-size: 12px; width:32px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
+        style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
           << </button>
-            <input id="txtLineNo" type="text" 
-            style="width: 50px;border: 1px solid lightgray;border-radius: 5px; padding: 6px; text-align: center; font-weight: bold;" value="1" />
+            <input id="txtLineNo" type="text" (keyup)="getCurrentLineNo($event);"
+            style="width: 110px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;" value="1" />
             <button (click)="getNextPrevious('next');" class="btn-hvr" 
-            style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:32px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;"> >>
+            style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;"> >>
       </button>
             <button (click)="getLineDetail();" class="show-btn" title="Show" 
-            style="background-color: #888; padding: 10px; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important"> Show </button>
+            style="background-color: #888; padding: 10px; display: none; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important"> Show </button>
           </div>
 
-      <div class="col-md-6" style="padding-top: 10px;">
+      <div class="col-md-6" style="padding-top: 10px; display: none;">
         <div class="row">
           <div class="col-md-12" style="padding-left: 15px;font-size: 12px;">
             <input id="rdoConfirm" type="radio" name="gender">&nbsp; Confirm
@@ -71,8 +65,8 @@
         </div>
       </div>
 
-      <div class="col-md-6" style="margin-left: -33px;">
-        <button class="btn btn-success w-100" style="width: 100%;" (click)="saveData();" style="background:#0ba118!important;">Save</button>
+      <div class="col-md-12" style="margin-left: -10px;" >
+        <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:200px; background:#0ba118!important;">Approve Line</button>
       </div>
     </div>
   </div>
@@ -185,6 +179,4 @@
     </div>
   </div>
 
-  <div class="info-box">
-
-  </div>
+    <button id="btnAssign" class="btn btn-success assign-button"  (click)="assignUrl();" style="background:#0ba118!important;">Assign to Surveyor</button>

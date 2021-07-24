@@ -84,6 +84,12 @@ export class HouseMarkingComponent {
     this.onSubmit();
   }
 
+  getCurrentLineNo(event: any) {
+    if (event.key == "Enter") {
+      this.getLineDetail();
+    }
+  }
+
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
@@ -134,6 +140,7 @@ export class HouseMarkingComponent {
     this.setKml();
     this.onSubmit();
     this.lineNo = 1;
+    this.previousLine = 1;
     this.selectedZone = this.activeZone;
     $("#txtLineNo").val(this.lineNo);
     this.getLineApprove();
@@ -446,7 +453,7 @@ export class HouseMarkingComponent {
           imageName +
           "?alt=media";
         markerDetail.markerImgURL = imageURL;
-        markerDetail.houseType=markerLabel;
+        markerDetail.houseType = markerLabel;
       });
 
       this.houseMarker.push({ marker });
@@ -537,6 +544,10 @@ export class HouseMarkingComponent {
     }
   }
 
+  assignUrl(){
+    window.open("/" + this.cityName + "/13B/house-marking-assignment", '_blank');
+  }
+
   getLineApprove() {
     let dbPath =
       "EntityMarkingData/MarkedHouses/" +
@@ -549,50 +560,34 @@ export class HouseMarkingComponent {
       .valueChanges()
       .subscribe((data) => {
         approveInstance.unsubscribe();
+
         if (data != null) {
           //  $("#txtReamrk").val(data["remark"]);
           if (data["status"] == "Confirm") {
-            let element = <HTMLInputElement>(
-              document.getElementById("rdoConfirm")
-            );
-            element.checked = true;
-          } else if (data["status"] == "Reject") {
-            let element = <HTMLInputElement>(
-              document.getElementById("rdoReject")
-            );
-            element.checked = true;
+            $("#btnSave").html("Reject Line");
+          } else {
+            $("#btnSave").html("Approve Line");
           }
         } else {
-          let element = <HTMLInputElement>document.getElementById("rdoConfirm");
-          element.checked = false;
-          element = <HTMLInputElement>document.getElementById("rdoReject");
-          element.checked = false;
-          //  $("#txtReamrk").val("");
+          $("#btnSave").html("Approve Line");
         }
       });
   }
 
   saveData() {
     let lineNo = $("#txtLineNo").val();
-    //let remark = $("#txtReamrk").val();
+    let lineStatus = $("#btnSave").html();
     let status = "";
+    if (lineStatus == "Approve Line") {
+      status = "Confirm";
+      $("#btnSave").html("Reject Line");
+    } else {
+      status = "Reject";
+      $("#btnSave").html("Approve Line");
+    }
+
     if (lineNo == "") {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
-      return;
-    }
-    let element = <HTMLInputElement>document.getElementById("rdoConfirm");
-    if (element.checked == true) {
-      status = "Confirm";
-    }
-    element = <HTMLInputElement>document.getElementById("rdoReject");
-    if (element.checked == true) {
-      status = "Reject";
-    }
-    if (status == "") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select confirm or reject status !!!"
-      );
       return;
     }
     this.lineNo = lineNo;

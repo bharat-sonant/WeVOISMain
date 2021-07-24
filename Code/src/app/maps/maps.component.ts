@@ -568,6 +568,8 @@ export class MapsComponent {
                 let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(',')[1];
                 let cardNo = houseData[j]["cardNo"];
                 let rfId=houseData[j]["rfid"];
+                console.log("Line No: "+i);
+                console.log("rfid : "+rfId);
                 let isApproved = "no";
                 if (houseData[j]["isApproved"] != null) {
                   if (houseData[j]["isApproved"] == "yes") {
