@@ -603,6 +603,7 @@ line-height: 18px;
     align-items: center;
     height: 42px;
     text-transform: uppercase;
+    transition: 0.2s;
 }
 #btnAssign span{
 background:#0ba118;
@@ -612,11 +613,14 @@ position: absolute;
     transition: 0.2s;
     font-size: 16px;
 }
+#btnAssign:hover{
+        padding-right: 28px;
+    }
 #btnAssign:hover span{
     padding: 5px;
     border-radius: 50%;
     position: absolute;
         right: 10px;
-        font-size: 20px;
+        font-size: 22px;
     }
 
