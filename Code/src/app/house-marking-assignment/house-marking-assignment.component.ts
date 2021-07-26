@@ -121,34 +121,36 @@ export class HouseMarkingAssignmentComponent implements OnInit {
               let index = keyArray[i];
               let name = data[index]["name"];
               if (data[index]["status"] == "2") {
-                this.dbPath = "SurveyorsCuurentAssignment/" + index;
-                let assignInstance = this.db
-                  .object(this.dbPath)
-                  .valueChanges()
-                  .subscribe((dataSurvey) => {
-                    assignInstance.unsubscribe();
-                    if (dataSurvey != null) {
-                      this.assignedList.push({
-                        userId: index,
-                        name: name,
-                        wardNo: dataSurvey["ward"],
-                        lines: dataSurvey["line"],
-                      });
-                    } else {
-                      this.assignedList.push({
-                        userId: index,
-                        name: name,
-                        wardNo: "",
-                        lines: "",
-                      });
-                    }
-                    if (i == 0) {
-                      this.getServeyorDetail(index, 0);
-                      setTimeout(() => {
-                        $("#tr0").addClass("active");
-                      }, 600);
-                    }
-                  });
+                if (data[index]["surveyor-type"] == "Surveyor") {
+                  this.dbPath = "SurveyorsCuurentAssignment/" + index;
+                  let assignInstance = this.db
+                    .object(this.dbPath)
+                    .valueChanges()
+                    .subscribe((dataSurvey) => {
+                      assignInstance.unsubscribe();
+                      if (dataSurvey != null) {
+                        this.assignedList.push({
+                          userId: index,
+                          name: name,
+                          wardNo: dataSurvey["ward"],
+                          lines: dataSurvey["line"],
+                        });
+                      } else {
+                        this.assignedList.push({
+                          userId: index,
+                          name: name,
+                          wardNo: "",
+                          lines: "",
+                        });
+                      }
+                      if (i == 0) {
+                        this.getServeyorDetail(index, 0);
+                        setTimeout(() => {
+                          $("#tr0").addClass("active");
+                        }, 600);
+                      }
+                    });
+                }
               }
             }
           }

@@ -150,6 +150,8 @@ export class HouseMarkingComponent {
   }
 
   onSubmit() {
+    this.markerData.houseType="";
+    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
     this.selectedZone = this.activeZone;
     this.polylines = [];
     if (this.houseMarker.length > 0) {
@@ -452,6 +454,8 @@ export class HouseMarkingComponent {
   //#region Line Marking Status
 
   getNextPrevious(type: any) {
+    this.markerData.houseType="";
+    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
     let lineNo = $("#txtLineNo").val();
     if (lineNo == "") {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
@@ -554,7 +558,12 @@ export class HouseMarkingComponent {
       .subscribe((data) => {
         countInstance.unsubscribe();
         if (data != null) {
+          $('#btnSave').show();
           this.markerData.totalLineMarkers = data.toString();
+        }
+        else
+        {
+          $('#btnSave').hide();
         }
       });
     dbPath =
