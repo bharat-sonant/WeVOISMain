@@ -68,7 +68,7 @@ export class EmployeeMarkingComponent implements OnInit {
                 isActive: data[index]["isActive"],
                 password: data[index]["password"],
               });
-              if (i == keyArray.length - 1) {
+              if (i == 0) {
                 this.getMarkerDetail(index, wardNo, 0);
                 setTimeout(() => {
                   $("#tr0").addClass("active");
