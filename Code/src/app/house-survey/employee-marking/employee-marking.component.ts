@@ -4,7 +4,7 @@ import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
-import { HtmlAstPath } from "@angular/compiler";
+import { HtmlAstPath, identifierModuleUrl } from "@angular/compiler";
 
 @Component({
   selector: "app-employee-marking",
@@ -22,7 +22,7 @@ export class EmployeeMarkingComponent implements OnInit {
 
   userList: any[];
   markerList: any[];
-  markerWardList:any[];
+  markerWardList: any[];
   lastEmpId: any;
   zoneList: any[];
   markerData: markerDatail = {
@@ -33,6 +33,7 @@ export class EmployeeMarkingComponent implements OnInit {
     name: "",
     wardNo: "",
   };
+  isFirst = true;
 
   ngOnInit() {
     this.getZoneList();
@@ -67,12 +68,122 @@ export class EmployeeMarkingComponent implements OnInit {
                 isActive: data[index]["isActive"],
                 password: data[index]["password"],
               });
+              if (i == keyArray.length - 1) {
+                this.getMarkerDetail(index, wardNo, 0);
+                setTimeout(() => {
+                  $("#tr0").addClass("active");
+                }, 600);
+              }
             }
           }
         } else {
           this.lastEmpId = 101;
         }
       });
+  }
+
+  
+
+  getMarkerDetail(empId: any, wardNo: any, index: any) {
+    if (this.isFirst == false) {
+      this.setActiveClass(index);
+    } else {
+      this.isFirst = false;
+    }
+    this.markerData.totalMarking = "0";
+    this.markerData.totalWardMarking = "0";
+    this.markerData.average = 0;
+    this.markerData.totalDays = 0;
+    this.markerList = [];
+    this.markerWardList = [];
+    let userDetail = this.userList.find((item) => item.empId == empId);
+    if (userDetail != undefined) {
+      this.markerData.name = userDetail.name;
+      this.markerData.wardNo = userDetail.wardNo;
+    }
+    let dbPath =
+      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
+      empId +
+      "/total";
+    let markerInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        markerInstance.unsubscribe();
+        if (data != undefined) {
+          this.markerData.totalMarking = data.toString();
+        }
+      });
+
+    dbPath =
+      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
+    let wardInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        wardInstance.unsubscribe();
+        if (data != undefined) {
+          console.log(data);
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length - 1; i++) {
+              let index = keyArray[i];
+              if (index == wardNo) {
+                this.markerData.totalWardMarking = data[index];
+              }
+              this.markerWardList.push({ wardNo: index, markers: data[index] });
+            }
+          }
+        }
+      });
+
+    dbPath = "EntityMarkingData/MarkingSurveyData/Employee/DateWise";
+    let dateInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        dateInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let list = Object.keys(data[index]);
+              if (list.length > 0) {
+                for (let j = 0; j < list.length; j++) {
+                  if (list[j] == empId) {
+                    this.markerData.totalDays =
+                      Number(this.markerData.totalDays) + 1;
+                    this.markerList.push({
+                      date: index,
+                      markers: data[index][list[j]],
+                    });
+                  }
+                }
+              }
+            }
+            if (this.markerData.totalDays != 0) {
+              this.markerData.average =
+                Number(this.markerData.totalMarking) /
+                Number(this.markerData.totalDays);
+            }
+          }
+        }
+      });
+  }
+
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.userList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        $("#tr" + i).removeClass(className);
+      }
+      if (i == index) {
+        $("#tr" + i).addClass("active");
+      }
+    }
   }
 
   openModel(content: any, id: any, type: any) {
@@ -218,89 +329,6 @@ export class EmployeeMarkingComponent implements OnInit {
     }
     this.closeModel();
     this.getEmployee();
-  }
-
-  getMarkerDetail(empId: any, wardNo: any) {
-    this.markerData.totalMarking = "0";
-    this.markerData.totalWardMarking = "0";
-    this.markerData.average = 0;
-    this.markerData.totalDays = 0;
-    this.markerList = [];
-    this.markerWardList=[];
-    let userDetail = this.userList.find((item) => item.empId == empId);
-    if (userDetail != undefined) {
-      this.markerData.name = userDetail.name;
-      this.markerData.wardNo = userDetail.wardNo;
-    }
-    let dbPath =
-      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-      empId +
-      "/total";
-    let markerInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        markerInstance.unsubscribe();
-        if (data != undefined) {
-          this.markerData.totalMarking = data.toString();
-        }
-      });
-
-    dbPath =
-      "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
-    let wardInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        wardInstance.unsubscribe();
-        if (data != undefined) {
-          console.log(data);
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length-1; i++) {
-              let index = keyArray[i];
-              if (index == wardNo) {
-                this.markerData.totalWardMarking=data[index];
-              }
-              this.markerWardList.push({wardNo:index,markers:data[index]});              
-            }
-          }
-        }
-      });
-
-    dbPath = "EntityMarkingData/MarkingSurveyData/Employee/DateWise";
-    let dateInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        dateInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              let list = Object.keys(data[index]);
-              if (list.length > 0) {
-                for (let j = 0; j < list.length; j++) {
-                  if (list[j] == empId) {
-                    this.markerData.totalDays =
-                      Number(this.markerData.totalDays) + 1;
-                    this.markerList.push({
-                      date: index,
-                      markers: data[index][list[j]],
-                    });
-                  }
-                }
-              }
-            }
-            if (this.markerData.totalDays != 0) {
-              this.markerData.average =
-                Number(this.markerData.totalMarking) /
-                Number(this.markerData.totalDays);
-            }
-          }
-        }
-      });
   }
 }
 

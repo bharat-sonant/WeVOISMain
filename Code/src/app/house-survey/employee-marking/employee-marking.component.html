@@ -36,8 +36,8 @@
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let data of userList; let i=index" style="cursor: pointer;"
-                                                (click)="getMarkerDetail(data.empId, data.wardNo);">
+                                            <tr id="tr{{i}}" *ngFor="let data of userList; let i=index" style="cursor: pointer;"
+                                                (click)="getMarkerDetail(data.empId, data.wardNo,i);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
@@ -82,7 +82,7 @@
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <h5> <b>{{markerData.name}} ({{markerData.wardNo}}) </b></h5>
+                            <h5> <b>{{markerData.name}} </b></h5>
                         </div>
                     </div>
 

@@ -21,13 +21,13 @@
 
       </div>
       <div class="fix-home">
-        <div class="float-l" style="margin-left: 10px;">
-          <i class="fas fa-home" style="color:red;"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
-          <h6>Total Marker</h6>
+        <div class="float-l" style="margin-left: 10px; margin-top: 12px;">
+           <span class="house"><span style="color: #1fda2f;" > {{markerData.approvedLines}}</span>/{{markerData.totalLines}}</span><br>
+          <h6>Approved Lines</h6>
         </div>
         <div class="float-r">
-          <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalApproved}}</span><br>
-          <h6>Approved Marker</h6>
+          <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
+          <h6>Total Marker</h6>
         </div>
       </div>
       
@@ -47,7 +47,7 @@
         <button (click)="getNextPrevious('pre');" class="btn-hvr" 
         style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
           << </button>
-            <input id="txtLineNo" type="text" (keyup)="getCurrentLineNo($event);"
+            <input id="txtLineNo" type="text" (keyup)="getCurrentLineNo($event);" autocomplete="off"
             style="width: 110px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;" value="1" />
             <button (click)="getNextPrevious('next');" class="btn-hvr" 
             style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;"> >>
@@ -71,7 +71,17 @@
       </div>
 
       <div class="col-md-12" style="margin-left: -10px;" >
-        <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:200px; background:#0ba118!important;">Approve Line</button>
+        <div class="row">
+          <div class="col-md-4">
+            {{markerData.totalLineMarkers}}<br/>
+            Markers in Line
+
+          </div>
+          <div class="col-md-8">
+            <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:115px; background:#0ba118!important;">Approve Line</button>
+          </div>
+        </div>
+       
       </div>
     </div>
   </div>
@@ -94,7 +104,6 @@
       </div>
     </div>
   </div>
-
 
   <div class="driver-helper-box">
     <div class="row">

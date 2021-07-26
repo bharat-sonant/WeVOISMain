@@ -23,7 +23,7 @@
                                             <th class="text-right" style="padding-right: 20px;; width:15%;">Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let data of assignedList; let i=index" style="cursor: pointer;" (click)="getServeyorDetail(data.userId);">
+                                            <tr id="tr{{i}}" *ngFor="let data of assignedList; let i=index" style="cursor: pointer;" (click)="getServeyorDetail(data.userId,i);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
@@ -61,8 +61,7 @@
                 <div class="card-header custom-header" >
                         <div class="row">
                                 <div class="col-md-6 text-left">
-                                  <h5> <b>{{houseData.name}} <br><span style="color:#707070; font-weight:normal;">
-                                    <i class="fas fa-map-marked-alt" style="margin-right:5px;" aria-hidden="true"></i> {{houseData.wardNo}} </span> </b></h5>
+                                  <h5> <b>{{houseData.name}} </b></h5>
                                 </div>
                                 <div class="col-md-6 text-right">
                                         <div class="table-heading">

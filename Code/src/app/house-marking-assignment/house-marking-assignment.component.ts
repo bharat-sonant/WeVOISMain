@@ -34,6 +34,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   userList: any[];
   lineList: any[];
   lineMarkerList: any[];
+  isFirst = true;
   houseData: houseDatail = {
     totalMarking: "0",
     totalSurveyed: "0",
@@ -47,14 +48,33 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   //#region serveyor detail
 
-  getServeyorDetail(userId: any) {
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.assignedList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        $("#tr" + i).removeClass(className);
+      }
+      if (i == index) {
+        $("#tr" + i).addClass("active");
+      }
+    }
+  }
+
+  getServeyorDetail(userId: any, index: any) {
+    if (this.isFirst == false) {
+      this.setActiveClass(index);
+    } else {
+      this.isFirst = false;
+    }
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
     this.lineMarkerList = [];
-    let userDetail=this.assignedList.find(item=>item.userId==userId);
-    if(userDetail!=undefined){
-      this.houseData.name=userDetail.name;
-      this.houseData.wardNo=userDetail.wardNo;
+    let userDetail = this.assignedList.find((item) => item.userId == userId);
+    if (userDetail != undefined) {
+      this.houseData.name = userDetail.name;
+      this.houseData.wardNo = userDetail.wardNo;
     }
     this.dbPath = "EntitySurveyData/SurveyDateWise/" + userId;
     let instance = this.db
@@ -62,14 +82,19 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       .valueChanges()
       .subscribe((data) => {
         instance.unsubscribe();
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            if (index == "totalCount") {
-              this.houseData.totalSurveyed = data[index];
-            } else {
-              this.lineMarkerList.push({ date: index, surveyed: data[index] });
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (index == "totalCount") {
+                this.houseData.totalSurveyed = data[index];
+              } else {
+                this.lineMarkerList.push({
+                  date: index,
+                  surveyed: data[index],
+                });
+              }
             }
           }
         }
@@ -116,6 +141,12 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                         wardNo: "",
                         lines: "",
                       });
+                    }
+                    if (i == 0) {
+                      this.getServeyorDetail(index, 0);
+                      setTimeout(() => {
+                        $("#tr0").addClass("active");
+                      }, 600);
                     }
                   });
               }

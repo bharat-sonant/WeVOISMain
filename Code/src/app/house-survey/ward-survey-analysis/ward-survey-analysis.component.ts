@@ -155,10 +155,11 @@ export class WardSurveyAnalysisComponent {
   }
 
   getTotalMarkers() {
+    this.progressData.totalMarkers=0;
+    this.progressData.totalSurveyed=0;
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone +
-      "";
+      this.selectedZone+"/total";
     let totalInstance = this.db
       .object(dbPath)
       .valueChanges()

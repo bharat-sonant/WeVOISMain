@@ -57,7 +57,9 @@ export class HouseMarkingComponent {
 
   markerData: markerDetail = {
     totalMarkers: "0",
-    totalApproved: "0",
+    totalLines: "0",
+    totalLineMarkers: "0",
+    approvedLines: "0",
     markerImgURL: "../assets/img/img-not-available-01.jpg",
     houseType: "",
   };
@@ -171,9 +173,6 @@ export class HouseMarkingComponent {
         totalInstance.unsubscribe();
         if (data != null) {
           this.markerData.totalMarkers = data["total"].toString();
-          if (data["approved"] != undefined) {
-            this.markerData.totalApproved = data["approved"].toString();
-          }
         }
       });
   }
@@ -196,7 +195,26 @@ export class HouseMarkingComponent {
     this.polylines = [];
   }
 
+  getApprovedLines() {
+    this.markerData.approvedLines = "0";
+    let dbPath =
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+      this.selectedZone +
+      "/approved";
+    let approvedInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        approvedInstance.unsubscribe();
+        if (data != null) {
+          this.markerData.approvedLines = data.toString();
+        }
+      });
+  }
+
   getAllLinesFromJson() {
+    this.getApprovedLines();
+    this.markerData.totalLines = "0";
     this.lines = [];
     this.polylines = [];
     let wardLineCount = this.db
@@ -206,6 +224,7 @@ export class HouseMarkingComponent {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
+          this.markerData.totalLines = lineCount.toString();
           for (let i = 1; i <= Number(lineCount); i++) {
             let wardLines = this.db
               .list(
@@ -234,27 +253,6 @@ export class HouseMarkingComponent {
           }
         }
       });
-    setTimeout(() => {
-      if (this.lines.length > 0) {
-        let latLngArray = [];
-        latLngArray = this.lines[0]["latlng"];
-        let lat = latLngArray[0]["lat"];
-        let lng = latLngArray[0]["lng"];
-        this.setMarker(
-          lat,
-          lng,
-          this.wardStartUrl,
-          null,
-          "Ward Start",
-          "ward",
-          ""
-        );
-        latLngArray = this.lines[this.lines.length - 1]["latlng"];
-        lat = latLngArray[latLngArray.length - 1]["lat"];
-        lng = latLngArray[latLngArray.length - 1]["lng"];
-        this.setMarker(lat, lng, this.wardEndUrl, null, "Ward End", "ward", "");
-      }
-    }, 2000);
   }
 
   getMarkedHouses(lineNo: any) {
@@ -413,19 +411,6 @@ export class HouseMarkingComponent {
       });
 
       this.allMatkers.push({ marker });
-    } else if (type == "ward") {
-      let marker = new google.maps.Marker({
-        position: { lat: Number(lat), lng: Number(lng) },
-        map: this.map,
-        icon: {
-          url: markerURL,
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scaledSize: new google.maps.Size(30, 40),
-          origin: new google.maps.Point(0, 0),
-        },
-      });
-      this.allMatkers.push({ marker });
     } else {
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
@@ -556,7 +541,23 @@ export class HouseMarkingComponent {
   }
 
   getLineApprove() {
+    this.markerData.totalLineMarkers = "0";
     let dbPath =
+      "EntityMarkingData/MarkedHouses/" +
+      this.selectedZone +
+      "/" +
+      this.lineNo +
+      "/marksCount";
+    let countInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        countInstance.unsubscribe();
+        if (data != null) {
+          this.markerData.totalLineMarkers = data.toString();
+        }
+      });
+    dbPath =
       "EntityMarkingData/MarkedHouses/" +
       this.selectedZone +
       "/" +
@@ -610,56 +611,34 @@ export class HouseMarkingComponent {
     };
     this.db.object(dbPath).update(data);
     dbPath =
-      "EntityMarkingData/MarkedHouses/" +
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
       this.selectedZone +
-      "/" +
-      this.lineNo +
-      "/marksCount";
-    let markerCountInstance = this.db
+      "/approved";
+    let approvedInstance = this.db
       .object(dbPath)
       .valueChanges()
-      .subscribe((data) => {
-        markerCountInstance.unsubscribe();
-        if (data != undefined) {
-          let markerCount = Number(data);
-          dbPath =
-            "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-            this.selectedZone +
-            "/approved";
-          let approvedInstance = this.db
-            .object(dbPath)
-            .valueChanges()
-            .subscribe((data) => {
-              approvedInstance.unsubscribe();
-              dbPath =
-                "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-                this.selectedZone;
-              if (data == undefined) {
-                this.db.object(dbPath).update({
-                  approved: markerCount,
-                });
-              } else {
-                let approved = Number(data);
-                if (status == "Confirm") {
-                  let approvedCount = approved + markerCount;
-                  this.db.object(dbPath).update({
-                    approved: approvedCount,
-                  });
-                } else {
-                  let approvedCount = approved - markerCount;
-                  this.db.object(dbPath).update({
-                    approved: approvedCount,
-                  });
-                }
-              }
-              setTimeout(() => {
-                this.getTotalMarkers();
-              }, 600);
-            });
+      .subscribe((dataCount) => {
+        approvedInstance.unsubscribe();
+        let approvedCount = 1;
+        if (dataCount != null) {
+          if (status == "Confirm") {
+            approvedCount = Number(dataCount) + 1;
+          } else {
+            approvedCount = Number(dataCount) - 1;
+          }
         }
+        dbPath =
+          "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+          this.selectedZone;
+        this.db.object(dbPath).update({
+          approved: approvedCount,
+        });
+        setTimeout(() => {
+          this.getApprovedLines();
+        }, 200);
+
       });
-     
-    
+
     this.commonService.setAlertMessage(
       "success",
       "Line approve status updated !!!"
@@ -676,7 +655,9 @@ export class HouseMarkingComponent {
 }
 export class markerDetail {
   totalMarkers: string;
-  totalApproved: string;
+  totalLines: string;
+  totalLineMarkers: string;
+  approvedLines: string;
   markerImgURL: string;
   houseType: string;
 }
