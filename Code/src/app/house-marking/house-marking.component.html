@@ -45,10 +45,10 @@
     <div class="row" style="padding-top: 10px; text-align: center;">
         <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
         <button (click)="getNextPrevious('pre');" class="btn-hvr" 
-        style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
+        style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 9px!important;">
           << </button>
             <input id="txtLineNo" type="text" (keyup)="getCurrentLineNo($event);" autocomplete="off"
-            style="width: 110px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;" value="1" />
+            style="width: 105px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;" value="1" />
             <button (click)="getNextPrevious('next');" class="btn-hvr" 
             style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;"> >>
       </button>
@@ -70,15 +70,15 @@
         </div>
       </div>
 
-      <div class="col-md-12" style="margin-left: -10px;" >
-        <div class="row">
-          <div class="col-md-4">
-            {{markerData.totalLineMarkers}}<br/>
-            Markers in Line
+      <div class="col-md-12" >
+        <div class="row" style="margin-left:0px; margin-right:0px;">
+          <div class="col-md-6 mt-12 marker-section">
+            <h3>{{markerData.totalLineMarkers}}<br/>
+           <span > Markers in Line</span> </h3>
 
           </div>
-          <div class="col-md-8">
-            <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:115px; background:#0ba118!important;">Approve Line</button>
+          <div class="col-md-6 pl-0 ml-21">
+            <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:100px; background:#0ba118!important;">Approve Line</button>
           </div>
         </div>
        
@@ -193,4 +193,6 @@
     </div>
   </div>
 
-    <button id="btnAssign" class="btn btn-success assign-button"  (click)="assignUrl();" style="background:#0ba118!important;">Assign to Surveyor</button>
+    <button id="btnAssign" class="btn btn-success assign-button"  (click)="assignUrl();" style="background:#0ba118!important;">Assign this ward 
+      <span><i class="far fa-hand-point-right"></i></span> 
+    </button>
