@@ -557,13 +557,16 @@ export class HouseMarkingComponent {
       .valueChanges()
       .subscribe((data) => {
         countInstance.unsubscribe();
+        let element=<HTMLButtonElement>document.getElementById("btnSave");
         if (data != null) {
-          $('#btnSave').show();
+          $("#btnSave").css("background", "#0ba118");
+          element.disabled=false;
           this.markerData.totalLineMarkers = data.toString();
         }
         else
         {
-          $('#btnSave').hide();
+          $("#btnSave").css("background", "#ccc");
+          element.disabled=true;
         }
       });
     dbPath =
