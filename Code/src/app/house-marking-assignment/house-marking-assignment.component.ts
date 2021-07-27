@@ -120,6 +120,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             for (let i = 0; i < keyArray.length - 1; i++) {
               let index = keyArray[i];
               let name = data[index]["name"];
+              let loginId=data[index]["pin"];
               if (data[index]["status"] == "2") {
                 if (data[index]["surveyor-type"] == "Surveyor") {
                   this.dbPath = "SurveyorsCuurentAssignment/" + index;
@@ -134,6 +135,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                           name: name,
                           wardNo: dataSurvey["ward"],
                           lines: dataSurvey["line"],
+                          loginId:loginId
                         });
                       } else {
                         this.assignedList.push({

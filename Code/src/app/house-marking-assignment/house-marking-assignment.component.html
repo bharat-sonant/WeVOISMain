@@ -7,7 +7,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-8" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -17,23 +17,23 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:10%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
-                                                Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:25%;">
+                                            <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
+                                            <th  style="border-right:1px solid #dee2e6; width:20%;">
+                                                Assigned Ward</th>
+                                            <th  style="border-right:1px solid #dee2e6; width:40%;">
                                                 Line No.</th>
-                                            <th class="text-right" style="padding-right: 20px;; width:15%;">Action</th>
+                                            <th class="text-center" style="width:15%;">Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of assignedList; let i=index"
                                                 style="cursor: pointer;" (click)="getServeyorDetail(data.userId,i);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
-                                                    {{data.name}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                    {{data.name}}<br/> ({{data.loginId}})</td>
+                                                <td  style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
-                                                <td class="border-right text-right"
+                                                <td 
                                                     style="border-right:1px solid #dee2e6;">
                                                     {{data.lines}}</td>
                                                 <td class="text-right" style="padding-right: 20px;">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-4" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
                     <div class="row">
