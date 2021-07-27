@@ -421,7 +421,7 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(20, 20),
+          scaledSize: new google.maps.Size(27, 27),
           origin: new google.maps.Point(0, 0),
         },
       });

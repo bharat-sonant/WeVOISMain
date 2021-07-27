@@ -1,6 +1,6 @@
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-2">
+    <div class="col-md-3">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -9,11 +9,8 @@
         </option>
       </select>
     </div>
-    <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;;">
-      
-    </div>
-    <div class="col-md-5" style="padding-top: 20px; padding-left: 30px;;">
-
+    <div class="col-md-6" style="padding-top: 0px; padding-left: 10px;;">
+     <h1 class="ward-header"> Hosue Marking</h1>
     </div>
 
     <div id="houseCount" class="col-md-3 text-right total-house">
@@ -120,7 +117,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-shop.svg"> </h5>
+            <h5> <img src="../assets/img/marking-shop.svg" style="margin-top: -5px;"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -129,7 +126,7 @@
           </div>
         </div>
         <div class="main-box">
-          <div class="designation">
+          <div class="designation" style="margin-top: -5px;">
             <h5> <img src="../assets/img/marking-warehouse.svg"> </h5>
           </div>
           <div class="all-details">
@@ -141,7 +138,7 @@
 
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-institute.svg"> </h5>
+            <h5> <img src="../assets/img/marking-institute.svg" style="margin-top: -8px;"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -151,7 +148,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-hotel.svg"> </h5>
+            <h5> <img src="../assets/img/marking-hotel.svg" style="height: 38px; margin-top: -4px;"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -171,7 +168,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-thela.svg"> </h5>
+            <h5> <img src="../assets/img/marking-thela.svg" style="height: 32px;margin-top: -5px;"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -181,7 +178,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-hospital.svg"> </h5>
+            <h5> <img src="../assets/img/marking-hospital.svg" style="margin-top: -9px;height: 50px;"> </h5>
           </div>
           <div class="all-details">
             <h6>
