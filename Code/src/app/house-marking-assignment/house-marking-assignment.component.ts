@@ -143,6 +143,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                           name: name,
                           wardNo: "",
                           lines: "",
+                          loginId:loginId
                         });
                       }
                       if (i == 0) {

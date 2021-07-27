@@ -29,7 +29,7 @@ export class EmployeeMarkingComponent implements OnInit {
     totalMarking: "0",
     totalWardMarking: "0",
     totalDays: 0,
-    average: 0,
+    average: "0",
     name: "",
     wardNo: "",
   };
@@ -82,8 +82,6 @@ export class EmployeeMarkingComponent implements OnInit {
       });
   }
 
-  
-
   getMarkerDetail(empId: any, wardNo: any, index: any) {
     if (this.isFirst == false) {
       this.setActiveClass(index);
@@ -92,7 +90,7 @@ export class EmployeeMarkingComponent implements OnInit {
     }
     this.markerData.totalMarking = "0";
     this.markerData.totalWardMarking = "0";
-    this.markerData.average = 0;
+    this.markerData.average = "0";
     this.markerData.totalDays = 0;
     this.markerList = [];
     this.markerWardList = [];
@@ -164,8 +162,8 @@ export class EmployeeMarkingComponent implements OnInit {
             }
             if (this.markerData.totalDays != 0) {
               this.markerData.average =
-                Number(this.markerData.totalMarking) /
-                Number(this.markerData.totalDays);
+                (Number(this.markerData.totalMarking) /
+                Number(this.markerData.totalDays)).toFixed(2);
             }
           }
         }
@@ -187,7 +185,47 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   openModel(content: any, id: any, type: any) {
-    if (type != "ward") {
+    if (type == "ward") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 190;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#empID").val(id);
+      let userDetail = this.userList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        if (userDetail.wardNo != null) {
+          setTimeout(() => {
+            $("#ddlWard").val(userDetail.wardNo);
+          }, 100);
+        }
+      }
+    } else if (type == "delete") {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 170;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id != "0") {
+        $("#deleteId").val(id);
+      }
+    } else {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 335;
@@ -214,29 +252,19 @@ export class EmployeeMarkingComponent implements OnInit {
           }
         }
       }
-    } else {
-      this.modalService.open(content, { size: "lg" });
-      let windowHeight = $(window).height();
-      let height = 230;
-      let width = 400;
-      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
-      $("div .modal-dialog-centered").css("margin-top", "26px");
-      $("#empID").val(id);
-      let userDetail = this.userList.find((item) => item.empId == id);
-      if (userDetail != undefined) {
-        if (userDetail.wardNo != null) {
-          setTimeout(() => {
-            $("#ddlWard").val(userDetail.wardNo);
-          }, 100);
-        }
-      }
+    }
+  }
+
+  removeAssignment() {
+    let empID = $("#deleteId").val();
+    let dbPath = "EntityMarkingData/MarkerAppAccess/" + empID;
+    this.db.object(dbPath).update({
+      assignedWard: null,
+    });
+    this.closeModel();
+    let userDetail = this.userList.find((item) => item.empId == empID);
+    if (userDetail != undefined) {
+      userDetail.wardNo = null;
     }
   }
 
@@ -327,6 +355,7 @@ export class EmployeeMarkingComponent implements OnInit {
         isActive: isActive,
       });
     }
+    this.isFirst = true;
     this.closeModel();
     this.getEmployee();
   }
@@ -336,7 +365,7 @@ export class markerDatail {
   totalMarking: string;
   totalWardMarking: string;
   totalDays: number;
-  average: number;
+  average: string;
   name: string;
   wardNo: string;
 }
