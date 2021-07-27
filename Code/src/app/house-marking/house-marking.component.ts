@@ -545,7 +545,7 @@ export class HouseMarkingComponent {
   }
 
   getLineApprove() {
-    this.markerData.totalLineMarkers = "0";
+    
     let dbPath =
       "EntityMarkingData/MarkedHouses/" +
       this.selectedZone +
@@ -565,7 +565,8 @@ export class HouseMarkingComponent {
         }
         else
         {
-          $("#btnSave").css("background", "#ccc");
+          this.markerData.totalLineMarkers = "0";
+          $("#btnSave").css("background", "#626262");
           element.disabled=true;
         }
       });
