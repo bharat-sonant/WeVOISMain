@@ -1000,9 +1000,14 @@ export class CommonService {
       window.location.href = "/portal-access";
     }
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
+    console.log(urlCity);
     if (city != urlCity) {
-      let value = "/" + city + "/home";
-      this.router.navigate([value], { replaceUrl: true });
+      urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
+
+      if (city != urlCity) {
+        let value = "/" + city + "/home";
+         this.router.navigate([value], { replaceUrl: true });
+      }
     }
     let pageId = pageURL.split(city)[1].split("/")[1];
     let accessList = JSON.parse(localStorage.getItem("userAccessList"));
@@ -1034,7 +1039,6 @@ export class CommonService {
     this.setFixedLoctions();
     this.setVehicle();
     this.setDustbin();
-    
   }
 
   setFixedLoctions() {

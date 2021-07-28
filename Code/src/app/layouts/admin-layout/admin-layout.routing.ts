@@ -68,6 +68,7 @@ import { TaskManagementMastersComponent } from '../../PortalServices/task-manage
 import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
+import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -149,6 +150,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'sikar/employee-marking', component: EmployeeMarkingComponent },
     { path: 'sikar/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'sikar/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'sikar/ward-survey-summary', component: WardSurveySummaryComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -221,6 +224,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'sikar/:id/employee-marking', component: EmployeeMarkingComponent },
     { path: 'sikar/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'sikar/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'sikar/:id/ward-survey-summary', component: WardSurveySummaryComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -293,6 +298,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'reengus/employee-marking', component: EmployeeMarkingComponent },
     { path: 'reengus/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'reengus/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'reengus/ward-survey-summary', component: WardSurveySummaryComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -365,6 +372,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'reengus/:id/employee-marking', component: EmployeeMarkingComponent },
     { path: 'reengus/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'reengus/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'reengus/:id/ward-survey-summary', component: WardSurveySummaryComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -437,6 +446,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'test/employee-marking', component: EmployeeMarkingComponent },
     { path: 'test/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'test/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'test/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -509,6 +520,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'test/:id/employee-marking', component: EmployeeMarkingComponent },
     { path: 'test/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'test/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'test/:id/ward-survey-summary', component: WardSurveySummaryComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -581,6 +594,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'demo/employee-marking', component: EmployeeMarkingComponent },
     { path: 'demo/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'demo/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'demo/ward-survey-summary', component: WardSurveySummaryComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -653,4 +668,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: 'demo/:id/employee-marking', component: EmployeeMarkingComponent },
     { path: 'demo/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'demo/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'demo/:id/ward-survey-summary', component: WardSurveySummaryComponent },
 ]; 

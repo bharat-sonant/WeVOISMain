@@ -82,8 +82,14 @@ export class WardSurveyAnalysisComponent {
     this.previousLine = "1";
     this.setHeight();
     this.getZones();
-    this.selectedZone = this.zoneList[1]["zoneNo"];
-    this.activeZone = this.zoneList[1]["zoneNo"];
+    const id = this.actRoute.snapshot.paramMap.get("id1");
+    if (id != null) {
+      this.selectedZone = id.trim();
+      this.activeZone = id.trim();
+    } else {
+      this.selectedZone = this.zoneList[1]["zoneNo"];
+      this.activeZone = this.zoneList[1]["zoneNo"];
+    }
     this.setMaps();
     this.setKml();
     this.onSubmit();
@@ -155,11 +161,12 @@ export class WardSurveyAnalysisComponent {
   }
 
   getTotalMarkers() {
-    this.progressData.totalMarkers=0;
-    this.progressData.totalSurveyed=0;
+    this.progressData.totalMarkers = 0;
+    this.progressData.totalSurveyed = 0;
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone+"/total";
+      this.selectedZone +
+      "/total";
     let totalInstance = this.db
       .object(dbPath)
       .valueChanges()
