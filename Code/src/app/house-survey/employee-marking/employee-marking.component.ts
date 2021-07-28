@@ -161,9 +161,10 @@ export class EmployeeMarkingComponent implements OnInit {
               }
             }
             if (this.markerData.totalDays != 0) {
-              this.markerData.average =
-                (Number(this.markerData.totalMarking) /
-                Number(this.markerData.totalDays)).toFixed(2);
+              this.markerData.average = (
+                Number(this.markerData.totalMarking) /
+                Number(this.markerData.totalDays)
+              ).toFixed(2);
             }
           }
         }
@@ -186,6 +187,14 @@ export class EmployeeMarkingComponent implements OnInit {
 
   openModel(content: any, id: any, type: any) {
     if (type == "ward") {
+      let userDetail = this.userList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        if(userDetail.isActive==false)
+        {
+          this.commonService.setAlertMessage("error","This account is in-active, please active account !!!");
+          return;
+        }
+      }
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 190;
@@ -200,7 +209,7 @@ export class EmployeeMarkingComponent implements OnInit {
         .css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#empID").val(id);
-      let userDetail = this.userList.find((item) => item.empId == id);
+      userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         if (userDetail.wardNo != null) {
           setTimeout(() => {
@@ -209,6 +218,14 @@ export class EmployeeMarkingComponent implements OnInit {
         }
       }
     } else if (type == "delete") {
+      let userDetail = this.userList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        if(userDetail.wardNo==null)
+        {
+          this.commonService.setAlertMessage("error","No assignment found !!!");
+          return;
+        }
+      }
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;

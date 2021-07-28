@@ -47,11 +47,11 @@
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
-                                                    <i class="fas fa-map-marked-alt" [hidden]="data.isActive==false"
+                                                    <i class="fas fa-map-marked-alt" 
                                                         (click)="openModel(contentWard,data.empId,'ward');"
                                                         title="Assign Ward"
                                                         style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:5px;"></i>
-                                                    <i class="fas fa-ban" [hidden]="data.wardNo==null"
+                                                    <i class="fas fa-ban" 
                                                         (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                         title="Remove Assignment"
                                                         style="cursor:pointer !important; font-size: 14px;color: red;margin-right:5px;"></i>

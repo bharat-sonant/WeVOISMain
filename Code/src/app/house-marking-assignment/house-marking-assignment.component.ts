@@ -120,7 +120,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             for (let i = 0; i < keyArray.length - 1; i++) {
               let index = keyArray[i];
               let name = data[index]["name"];
-              let loginId=data[index]["pin"];
+              let loginId = data[index]["pin"];
               if (data[index]["status"] == "2") {
                 if (data[index]["surveyor-type"] == "Surveyor") {
                   this.dbPath = "SurveyorsCuurentAssignment/" + index;
@@ -135,7 +135,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                           name: name,
                           wardNo: dataSurvey["ward"],
                           lines: dataSurvey["line"],
-                          loginId:loginId
+                          loginId: loginId,
                         });
                       } else {
                         this.assignedList.push({
@@ -143,7 +143,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                           name: name,
                           wardNo: "",
                           lines: "",
-                          loginId:loginId
+                          loginId: loginId,
                         });
                       }
                       if (i == 0) {
@@ -307,6 +307,13 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }, 100);
       }
     } else {
+      let listDetail = this.assignedList.find((item) => item.userId == id);
+      if (listDetail != undefined) {
+        if (listDetail.wardNo == "") {
+          this.commonService.setAlertMessage("error", "No assignment found!!!");
+          return;
+        }
+      }
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;
