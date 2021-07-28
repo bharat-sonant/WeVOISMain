@@ -8,7 +8,7 @@
 
         </div>
         <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Marking Surveyor
+            Employee Marking
         </div>
         <div class="col-md-4"></div>
     </div>
@@ -23,16 +23,16 @@
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
                                     <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                        style="border-bottom:1px solid #dee2e6;border-right: 1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:8%;">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
                                             <th style="border-right:1px solid #dee2e6; width:30%;">Login ID/Password
                                             </th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:17%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Assigned</th>
                                             <th class="text-right"
-                                                style="border-right:1px solid #dee2e6; width:15%;padding-right: 20px;">
+                                                style="border-right:1px solid #dee2e6; width:17%;padding-right: 20px;">
                                                 Action</th>
                                         </thead>
                                         <tbody>
@@ -44,17 +44,17 @@
                                                     {{data.name}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.empId}} / {{data.password}}</td>
-                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
                                                     <i class="fas fa-map-marked-alt" [hidden]="data.isActive==false"
                                                         (click)="openModel(contentWard,data.empId,'ward');"
                                                         title="Assign Ward"
-                                                        style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:5px;"></i>
+                                                        style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:8px;"></i>
                                                     <i class="fas fa-ban" [hidden]="data.wardNo==null"
                                                         (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                         title="Remove Assignment"
-                                                        style="cursor:pointer !important; font-size: 14px;color: red;margin-right:5px;"></i>
+                                                        style="cursor:pointer !important; font-size: 14px;color: red;margin-right:8px;"></i>
                                                     <i class="far fa-edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry"

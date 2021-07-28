@@ -19,7 +19,7 @@
       </div>
       <div class="fix-home">
         <div class="float-l" style="margin-left: 10px; margin-top: 12px;">
-           <span class="house"><span style="color: #1fda2f;" > {{markerData.approvedLines}}</span>/{{markerData.totalLines}}</span><br>
+          <i class="fas fa-check-circle"></i>  <span class="house"><span style="color: #1fda2f;" > {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
           <h6>Approved Lines</h6>
         </div>
         <div class="float-r">
@@ -89,13 +89,13 @@
       <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
   </div>
     <div class="row">
-      <div class="col-md-12" style="padding: 10px; height:50px; margin-left: 10px;">
-        {{markerData.houseType}}
+      <div class="col-md-12 house-type">
+       <h3> {{markerData.houseType}}</h3>
       </div>
       <div class="col-md-12">
         <div class="main-box">
           <a href="{{markerData.markerImgURL}}" target="_blank">
-          <img id="markingImg" [src]="markerData.markerImgURL" style="height:233px; width: 274px;" />
+          <img id="markingImg" [src]="markerData.markerImgURL" style="height:222px; width: 274px;" />
         </a>
         </div>
       </div>
