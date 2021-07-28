@@ -545,7 +545,7 @@ export class HouseMarkingComponent {
   }
 
   getLineApprove() {
-    this.markerData.totalLineMarkers = "0";
+    
     let dbPath =
       "EntityMarkingData/MarkedHouses/" +
       this.selectedZone +
@@ -557,13 +557,17 @@ export class HouseMarkingComponent {
       .valueChanges()
       .subscribe((data) => {
         countInstance.unsubscribe();
+        let element=<HTMLButtonElement>document.getElementById("btnSave");
         if (data != null) {
-          $('#btnSave').show();
+          $("#btnSave").css("background", "#0ba118");
+          element.disabled=false;
           this.markerData.totalLineMarkers = data.toString();
         }
         else
         {
-          $('#btnSave').hide();
+          this.markerData.totalLineMarkers = "0";
+          $("#btnSave").css("background", "#626262");
+          element.disabled=true;
         }
       });
     dbPath =
