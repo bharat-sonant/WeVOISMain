@@ -19,7 +19,9 @@ export class PortalServicesComponent implements OnInit {
   driverSalary: any;
   halperSalary: any;
   totalSalary: any;
+  userId: any;
   ngOnInit() {
+    this.userId = localStorage.getItem("userID");
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getUserAccess();
@@ -29,17 +31,25 @@ export class PortalServicesComponent implements OnInit {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["pageId"] == "8A") {
+        if (userAccessList[i]["pageId"] == "8A" &&
+        userAccessList[i]["userId"] == this.userId) {
           $('#divLineCard').show();
         }
-        if (userAccessList[i]["pageId"] == "8B") {
+        if (userAccessList[i]["pageId"] == "8B" &&
+        userAccessList[i]["userId"] == this.userId) {
           $('#divWorkPercentage').show();
         }
-        if (userAccessList[i]["pageId"] == "8C") {
+        if (userAccessList[i]["pageId"] == "8C" &&
+        userAccessList[i]["userId"] == this.userId) {
           $('#divReachCost').show();
         }
-        if (userAccessList[i]["pageId"] == "8D") {
+        if (userAccessList[i]["pageId"] == "8D" &&
+        userAccessList[i]["userId"] == this.userId) {
           $('#divTaskMasters').show();
+        }
+        if (userAccessList[i]["pageId"] == "8E" &&
+        userAccessList[i]["userId"] == this.userId) {
+          $('#divMapReview').show();
         }
       }
       this.getSalary();

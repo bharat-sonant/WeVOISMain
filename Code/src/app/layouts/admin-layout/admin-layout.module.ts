@@ -76,6 +76,7 @@ import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
+import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 
 
 @NgModule({
@@ -157,7 +158,8 @@ import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summa
     HouseMarkingAssignmentComponent,
     EmployeeMarkingComponent,
     WardSurveyAnalysisComponent,
-    WardSurveySummaryComponent
+    WardSurveySummaryComponent,
+    MapCardReviewComponent
   ]
 })
 

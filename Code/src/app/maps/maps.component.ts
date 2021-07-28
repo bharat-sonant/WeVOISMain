@@ -440,7 +440,7 @@ export class MapsComponent {
     if (element.checked == true) {
       $('#isHouse').prop("disabled", true);
       $('#houseCount').show();
-      $('#houseDetail').show();
+      $('#houseDetail').hide();
       if (this.houseList.length == 0) {
         let element = <HTMLInputElement>document.getElementById("isHouse");
         if (element.checked == true) {
@@ -575,6 +575,7 @@ export class MapsComponent {
                   }
                 }
                 let markerType = "red";
+                /*
                 if (houseData[j]["phaseNo"] == "1") {
                   markerType = "blue";
                   if (isApproved == "yes") {
@@ -586,6 +587,7 @@ export class MapsComponent {
                     markerType = "yellow";
                   }
                 }
+                */
 
                 this.houseList.push({ markerType: markerType, lat: lat, lng: lng, cardNo: cardNo, isApproved: isApproved });
                 this.progressData.houses = Number(this.progressData.houses) + 1;
