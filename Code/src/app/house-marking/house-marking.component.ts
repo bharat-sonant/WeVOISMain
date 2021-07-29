@@ -321,7 +321,7 @@ export class HouseMarkingComponent {
     } else if (type == 4 || type == 5) {
       url = "../assets/img/marking-hotel.svg";
     } else if (type == 16 || type == 17) {
-      url = "../assets/img/marking-hall.svg";
+      url = "../assets/img/marking-mela.svg";
     } else if (type == 18) {
       url = "../assets/img/marking-thela.svg";
     } else if (type == 11 || type == 12 || type == 13) {
