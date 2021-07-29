@@ -120,11 +120,18 @@ export class WardSurveySummaryComponent implements OnInit {
               surveyedInstance.unsubscribe();
               if (data != null) {
                 let surveyed = Number(data);
-                let percentage =
-                  ((surveyed * 100) /
-                  Number(this.wardProgressList[index]["markers"])).toFixed(2);
                 this.wardProgressList[index]["surveyed"] = surveyed;
-                this.wardProgressList[index]["percentage"] = percentage;
+                
+                let percentage =
+                  (surveyed * 100) /
+                  Number(this.wardProgressList[index]["markers"]);
+                  if(percentage%1==0){
+                    this.wardProgressList[index]["percentage"] = percentage.toFixed(0);
+                  }
+                  else
+                  {
+                    this.wardProgressList[index]["percentage"] = percentage.toFixed(2);
+                  }                
               }
             });
         }

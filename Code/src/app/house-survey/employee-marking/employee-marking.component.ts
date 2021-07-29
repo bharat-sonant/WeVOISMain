@@ -161,10 +161,14 @@ export class EmployeeMarkingComponent implements OnInit {
               }
             }
             if (this.markerData.totalDays != 0) {
-              this.markerData.average = (
+              let average =
                 Number(this.markerData.totalMarking) /
-                Number(this.markerData.totalDays)
-              ).toFixed(2);
+                Number(this.markerData.totalDays);
+              if (average % 1 == 0) {
+                this.markerData.average = average.toFixed(0);
+              } else {
+                this.markerData.average = average.toFixed(2);
+              }
             }
           }
         }
@@ -189,9 +193,11 @@ export class EmployeeMarkingComponent implements OnInit {
     if (type == "ward") {
       let userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
-        if(userDetail.isActive==false)
-        {
-          this.commonService.setAlertMessage("error","This account is in-active, please active account !!!");
+        if (userDetail.isActive == false) {
+          this.commonService.setAlertMessage(
+            "error",
+            "This account is in-active, please active account !!!"
+          );
           return;
         }
       }
@@ -220,9 +226,11 @@ export class EmployeeMarkingComponent implements OnInit {
     } else if (type == "delete") {
       let userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
-        if(userDetail.wardNo==null)
-        {
-          this.commonService.setAlertMessage("error","No assignment found !!!");
+        if (userDetail.wardNo == null) {
+          this.commonService.setAlertMessage(
+            "error",
+            "No assignment found !!!"
+          );
           return;
         }
       }
