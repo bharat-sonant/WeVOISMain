@@ -16,12 +16,12 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { FirestoreSettingsToken } from '@angular/fire/firestore';
 
 let firebase = {
-  apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+  apiKey: "AIzaSyA1ZU5hI7Fho0B4ZJO2w8-fsCKMbq95m4c",
     authDomain: "dtdnavigator.firebaseapp.com",
-    databaseURL: "https://dtdreengus.firebaseio.com",
+    databaseURL: "https://dtdnavigator.firebaseio.com",
     projectId: "dtdnavigator",
     storageBucket: "dtdnavigator.appspot.com",
-    messagingSenderId: "381118272786",
+    messagingSenderId: "381118272786"
 };
 let city = localStorage.getItem('cityName');
 
