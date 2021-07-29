@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,NgZone,PLATFORM_ID } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { inspect } from "util";
+import { FirebaseAppConfig,_firebaseAppFactory } from "angularfire2";
 
 @Component({
   selector: "app-home",
@@ -23,10 +24,11 @@ export class HomeComponent implements OnInit {
   constructor(
     public db: AngularFireDatabase,
     private commonService: CommonService,
-    public dbFireStore: AngularFirestore
+    public dbFireStore: AngularFirestore,public zone:NgZone
   ) {}
 
   ngOnInit() {
+    this.findDatabaseSetting();
     //this.getBreakDustbin();
     //this.setRemark();
     //this.setAllWard();
@@ -59,6 +61,28 @@ export class HomeComponent implements OnInit {
 
     // }, 1000);
     //  }
+  }
+
+  findDatabaseSetting()
+  {
+    let firebase = {
+      apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+      authDomain: "dtdnavigator.firebaseapp.com",
+      databaseURL: "https://dtdreengus.firebaseio.com",
+      projectId: "dtdnavigator",
+      storageBucket: "dtdnavigator.appspot.com",
+      messagingSenderId: "381118272786",
+      //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
+    };
+    this.db.database.app.options["databaseURL"]="https://dtdreengus.firebaseio.com";
+    const newDb=new AngularFireDatabase(_firebaseAppFactory(firebase, "dtdreengus"),"dtdreengus","",PLATFORM_ID,this.zone);
+
+    let instance=newDb.list("Vehicles").valueChanges().subscribe(
+      data=>{
+        instance.unsubscribe();
+        console.log(data);
+      }
+    );
   }
 
   getBreakDustbin() {
