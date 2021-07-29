@@ -18,11 +18,11 @@
   
         </div>
         <div class="fix-home">
-          <div class="float-l" style="margin-left: 10px;">
+          <div class="float-r" style="margin-left: 10px;">
             <i class="fas fa-home"></i> <span class="house"> {{progressData.houses}}</span><br>
             <h6>Total House</h6>
           </div>
-          <div class="float-r">
+          <div class="float-r"  style="display: none;">
             <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
             <h6>Scanned House</h6>
           </div>
@@ -59,13 +59,13 @@
         <p>Phase 2 (Approved)</p>
       </h3>
     </div>
-    <div class="lines">
+    <div class="lines" style="display: none;">
       <img src="../assets/img/green-home.png">
       <h3> 
         <p>Scanned</p>
       </h3>
     </div>
-    <div class="lines2">
+    <div class="lines2" style="display: none;">
       <img src="../assets/img/sweet-home.png" width="30">
       <h3> 
         <p>Parshad House</p>

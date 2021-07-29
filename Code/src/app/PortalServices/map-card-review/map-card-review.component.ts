@@ -163,7 +163,6 @@ export class MapCardReviewComponent {
     this.houseMarkerList = [];
     this.houseList = [];
     this.getAllLinesFromJson();
-    this.getParshadHouse();
     setTimeout(() => {
       this.getHouses();
     }, 2000);
@@ -300,38 +299,6 @@ export class MapCardReviewComponent {
         }
       });
   }
-  getParshadHouse() {
-    this.progressData.parshadName = "";
-    this.progressData.parshadMobile = "";
-    let dbPath =
-      "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
-    let houseInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        houseInstance.unsubscribe();
-        if (data != null) {
-          if (data["name"] != null) {
-            this.progressData.parshadName = data["name"];
-          }
-          if (data["mobile"] != null) {
-            this.progressData.parshadMobile = data["mobile"];
-          }
-          let imgUrl = this.parshadImageUrl;
-          this.parhadhouseMarker = new google.maps.Marker({
-            position: { lat: Number(data["lat"]), lng: Number(data["lng"]) },
-            map: this.map,
-            icon: {
-              url: imgUrl,
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scaledSize: new google.maps.Size(45, 30),
-            },
-          });
-        }
-      });
-  }
-
 
   setMarker(
     lat: any,
@@ -424,6 +391,19 @@ export class MapCardReviewComponent {
                 isApproved: isApproved,
               });
               this.progressData.houses = Number(this.progressData.houses) + 1;
+              let houseDetails = this.houseList.find(
+                (item) => item.cardNo == cardNo
+              );
+
+              if (houseDetails != undefined) {
+                this.plotHouses(
+                  houseDetails.markerType,
+                  houseDetails.lat,
+                  houseDetails.lng,
+                  isApproved
+                );
+              }
+/*
               let scanCardPath =
                 "HousesCollectionInfo/" +
                 this.selectedZone +
@@ -469,6 +449,8 @@ export class MapCardReviewComponent {
                     }
                   }
                 });
+
+                */
             }
           }
         });
@@ -487,7 +469,7 @@ export class MapCardReviewComponent {
         url: imgUrl,
         fillOpacity: 1,
         strokeWeight: 0,
-        scaledSize: new google.maps.Size(20, 19),
+        scaledSize: new google.maps.Size(12, 10),
       },
     });
     this.houseMarkerList.push({ marker });

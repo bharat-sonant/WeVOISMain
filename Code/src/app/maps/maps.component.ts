@@ -637,7 +637,7 @@ export class MapsComponent {
           url: imgUrl,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(20, 19)
+          scaledSize: new google.maps.Size(12, 10)
         }
       });
       this.houseMarkerList.push({ marker });
