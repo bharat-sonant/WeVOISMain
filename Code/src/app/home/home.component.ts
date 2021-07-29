@@ -1,9 +1,9 @@
-import { Component, OnInit,NgZone,PLATFORM_ID } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { inspect } from "util";
-import { FirebaseAppConfig,_firebaseAppFactory } from "angularfire2";
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: "app-home",
@@ -17,24 +17,24 @@ export class HomeComponent implements OnInit {
   portalAccessList: any[];
   userType: any;
   cityName: any;
+  db: any;
   userDetail: userDetail = {
     name: "",
   };
 
   constructor(
-    public db: AngularFireDatabase,
     private commonService: CommonService,
-    public dbFireStore: AngularFirestore,public zone:NgZone
-  ) {}
+    public dbFireStore: AngularFirestore, public fs: FirebaseService,
+  ) { }
 
   ngOnInit() {
-    this.findDatabaseSetting();
     //this.getBreakDustbin();
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
     this.commonService.getFireStoreCity();
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
@@ -61,28 +61,6 @@ export class HomeComponent implements OnInit {
 
     // }, 1000);
     //  }
-  }
-
-  findDatabaseSetting()
-  {
-    let firebase = {
-      apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-      authDomain: "dtdnavigator.firebaseapp.com",
-      databaseURL: "https://dtdreengus.firebaseio.com",
-      projectId: "dtdnavigator",
-      storageBucket: "dtdnavigator.appspot.com",
-      messagingSenderId: "381118272786",
-      //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
-    };
-    this.db.database.app.options["databaseURL"]="https://dtdreengus.firebaseio.com";
-    const newDb=new AngularFireDatabase(_firebaseAppFactory(firebase, "dtdreengus"),"dtdreengus","",PLATFORM_ID,this.zone);
-
-    let instance=newDb.list("Vehicles").valueChanges().subscribe(
-      data=>{
-        instance.unsubscribe();
-        console.log(data);
-      }
-    );
   }
 
   getBreakDustbin() {
@@ -251,7 +229,12 @@ export class HomeComponent implements OnInit {
             if (localStorage.getItem("officeAppUserId") != null) {
               this.accessList.push({
                 name: userAccessList[i]["name"],
-                url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ userAccessList[i]["url"],
+                url:
+                  "/" +
+                  this.cityName +
+                  "/" +
+                  userAccessList[i]["pageId"] +
+                  userAccessList[i]["url"],
                 isShow: this.isShow,
                 position: userAccessList[i]["position"],
                 img: userAccessList[i]["img"],
@@ -261,7 +244,12 @@ export class HomeComponent implements OnInit {
           } else {
             this.accessList.push({
               name: userAccessList[i]["name"],
-              url: "/" + this.cityName +"/"+userAccessList[i]["pageId"]+ userAccessList[i]["url"],
+              url:
+                "/" +
+                this.cityName +
+                "/" +
+                userAccessList[i]["pageId"] +
+                userAccessList[i]["url"],
               isShow: this.isShow,
               position: userAccessList[i]["position"],
               img: userAccessList[i]["img"],
