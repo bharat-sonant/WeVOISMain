@@ -34,8 +34,7 @@
    justify-content: center;
 }
 .absolute{
-   position: fixed;
-   bottom: 20px;
+  height: calc(100vh - 200px);
 }
 .half-circle {
    width: 400px;
@@ -414,4 +413,44 @@ i{
    padding-left: 0px!important;
 }
 
+}
+
+
+.animated-text{
+  color: #0ba118;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background: #fff;
+  padding: 0px 40px;
+  height: 60px;
+  overflow: hidden;
+  font-weight: bold;
+  font-family: cursive;
+}
+
+.line{
+  text-align: center;
+  font-size: 40px;
+  line-height: 60px;
+}
+
+.line:first-child{
+  animation: anim 4s infinite;
+}
+
+@keyframes anim {
+  0%{
+    margin-top: 0;
+  }
+  33%{
+    margin-top: -15px;
+  }
+  66%{
+    margin-top: -60px;
+  }
+  100%{
+    margin-top: -120px;
+  }
 }
