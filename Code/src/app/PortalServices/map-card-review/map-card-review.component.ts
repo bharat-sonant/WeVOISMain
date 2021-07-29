@@ -469,7 +469,7 @@ export class MapCardReviewComponent {
         url: imgUrl,
         fillOpacity: 1,
         strokeWeight: 0,
-        scaledSize: new google.maps.Size(12, 10),
+        scaledSize: new google.maps.Size(16, 15),
       },
     });
     this.houseMarkerList.push({ marker });
