@@ -69,6 +69,7 @@ import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
+import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -152,6 +153,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'sikar/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'sikar/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'sikar/map-card-review', component: MapCardReviewComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -226,6 +228,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'sikar/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'sikar/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'sikar/:id/map-card-review', component: MapCardReviewComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -300,6 +303,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'reengus/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'reengus/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'reengus/map-card-review', component: MapCardReviewComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -374,6 +378,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'reengus/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'reengus/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'reengus/:id/map-card-review', component: MapCardReviewComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -448,6 +453,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'test/ward-survey-summary', component: WardSurveySummaryComponent },
     { path: 'test/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'test/map-card-review', component: MapCardReviewComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -522,6 +528,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'test/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'test/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'test/:id/map-card-review', component: MapCardReviewComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -596,6 +603,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'demo/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'demo/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'demo/map-card-review', component: MapCardReviewComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -670,4 +678,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: 'demo/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: 'demo/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'demo/:id/map-card-review', component: MapCardReviewComponent },
 ]; 

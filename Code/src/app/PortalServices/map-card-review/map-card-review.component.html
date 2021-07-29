@@ -1,0 +1,74 @@
+<section class="header">
+    <div class="row no-gutters">
+      <div class="col-md-2">
+        <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+          [(ngModel)]="selectedZone">
+          <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+            {{zone.zoneName}}
+          </option>
+        </select>
+  
+      </div>
+      <div class="col-md-7" style="padding-top: 20px; padding-left: 30px;;">
+       
+      </div>
+      <div id="houseCount" class="col-md-3 text-right total-house">
+        <div>
+  
+        </div>
+        <div class="fix-home">
+          <div class="float-l" style="margin-left: 10px;">
+            <i class="fas fa-home"></i> <span class="house"> {{progressData.houses}}</span><br>
+            <h6>Total House</h6>
+          </div>
+          <div class="float-r">
+            <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
+            <h6>Scanned House</h6>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+  <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+  
+  <div id="houseDetail" class="line-details-box-house">
+    <div class="lines" style="border-bottom: 1px dotted lightgray;">
+      <img src="../assets/img/blue-home.png">
+      <h3> 
+        <p>Phase 1</p>
+      </h3>
+    </div>
+    <div class="lines2" style="border-bottom: 1px dotted lightgray; ">
+      <img src="../assets/img/purple-home.png" width="17">
+      <h3> 
+        <p>Phase 1 (Approved)</p>
+      </h3>
+    </div>
+    <div class="lines" style="border-bottom: 1px dotted lightgray;">
+      <img src="../assets/img/red-home.png">
+      <h3> 
+        <p>Phase 2 </p>
+      </h3>
+    </div>
+    <div class="lines2" style="border-bottom: 1px dotted lightgray;">
+      <img src="../assets/img/yellow-home.png" width="17">
+      <h3> 
+        <p>Phase 2 (Approved)</p>
+      </h3>
+    </div>
+    <div class="lines">
+      <img src="../assets/img/green-home.png">
+      <h3> 
+        <p>Scanned</p>
+      </h3>
+    </div>
+    <div class="lines2">
+      <img src="../assets/img/sweet-home.png" width="30">
+      <h3> 
+        <p>Parshad House</p>
+      </h3>
+    </div>
+  </div>
