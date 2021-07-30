@@ -19,6 +19,7 @@ export class CommonService {
   ) {}
 
   notificationInterval: any;
+  fsDb:any;
 
   getAllZones() {
     return JSON.parse(localStorage.getItem("zones"));
@@ -284,7 +285,7 @@ export class CommonService {
   }
 
   getKmlPathFromStorage(wardName: any) {
-    this.db
+    this.fsDb
       .object("Defaults/KmlBoundary/storagePathUrl")
       .valueChanges()
       .subscribe((path) => {
@@ -615,9 +616,7 @@ export class CommonService {
       return "#60c2ff";
     }
   }
-
-  getActiveZones() {}
-
+  
   getHrs(minutes: any) {
     let totalHrs = (minutes / 60).toString().split(".");
 
@@ -724,7 +723,7 @@ export class CommonService {
   chkUserExpiryDate() {
     let userKey = localStorage.getItem("userKey");
     if (userKey != null) {
-      let User = this.db
+      let User = this.fsDb
         .object("Users/" + userKey + "/expiryDate")
         .valueChanges()
         .subscribe((data) => {
@@ -750,7 +749,7 @@ export class CommonService {
     let userID = localStorage.getItem("userID");
     let userKey = localStorage.getItem("userKey");
     if (userKey != null) {
-      let User = this.db
+      let User = this.fsDb
         .object("Users/" + userKey + "/expiryDate")
         .valueChanges()
         .subscribe((data) => {
@@ -901,7 +900,7 @@ export class CommonService {
       );
       if (employeeData == undefined) {
         let employeeDbPath = "Employees/" + employeeId + "/GeneralDetails";
-        let employee = this.db
+        let employee = this.fsDb
           .object(employeeDbPath)
           .valueChanges()
           .subscribe((data) => {
@@ -996,9 +995,9 @@ export class CommonService {
   }
 
   chkUserPageAccess(pageURL: any, city: any) {
-    if (this.setTodayDate() != localStorage.getItem("loginDate")) {
-      window.location.href = "/portal-access";
-    }
+    //if (this.setTodayDate() != localStorage.getItem("loginDate")) {
+    //  window.location.href = "/portal-access";
+    //}
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
       let value = "/" + city + "/home";
@@ -1027,20 +1026,20 @@ export class CommonService {
 
   //#region  all local storage
 
-  setLocalStorageData(cityName: any) {
+  setLocalStorageData(newDb: any) {
+    this.fsDb=newDb;
     this.setPortalPages();
     this.setWebPortalUsers();
-    this.setZones();
-    this.setFixedLoctions();
-    this.setVehicle();
-    this.setDustbin();
-    
+    this.setZones(newDb);
+    this.setFixedLoctions(newDb);
+    this.setVehicle(newDb);
+    this.setDustbin(newDb);    
   }
 
-  setFixedLoctions() {
+  setFixedLoctions(newDb:any) {
     let fixedLocation = [];
     let dbLocationPath = "Defaults/GeoLocations/FixedLocations";
-    let locationDetail = this.db
+    let locationDetail = newDb
       .list(dbLocationPath)
       .valueChanges()
       .subscribe((locationPath) => {
@@ -1058,10 +1057,10 @@ export class CommonService {
       });
   }
 
-  setVehicle() {
+  setVehicle(newDb:any) {
     let vehicleList = [];
     let dbPath = "Vehicles";
-    let vehicleInstance = this.db
+    let vehicleInstance = newDb
       .object(dbPath)
       .valueChanges()
       .subscribe((vehicle) => {
@@ -1083,10 +1082,10 @@ export class CommonService {
       });
   }
 
-  setDustbin() {
+  setDustbin(newDb:any) {
     let dustbinList = [];
     let dbPath = "DustbinData/DustbinDetails";
-    let dustbinInstance = this.db
+    let dustbinInstance = newDb
       .object(dbPath)
       .valueChanges()
       .subscribe((dustbin) => {
@@ -1129,10 +1128,10 @@ export class CommonService {
       });
   }
 
-  setZones() {
+  setZones(newDb:any) {
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
-    let wardDetail = this.db
+    let wardDetail = newDb
       .list(dbPath)
       .valueChanges()
       .subscribe((data) => {

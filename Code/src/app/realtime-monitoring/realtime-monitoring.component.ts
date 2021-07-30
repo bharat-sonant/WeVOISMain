@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../services/common/user.service';
 import { HtmlAstPath, LiteralArrayExpr } from '@angular/compiler';
 import { resolveNgModuleDep } from '@angular/core/src/view/ng_module';
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: 'app-realtime-monitoring',
@@ -19,12 +20,13 @@ import { resolveNgModuleDep } from '@angular/core/src/view/ng_module';
 })
 export class RealtimeMonitoringComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase,
+  constructor(public fs: FirebaseService,
     public httpService: HttpClient,
     private mapService: MapService,
     private commonService: CommonService,
     private toastr: ToastrService, public usrService: UserService, private actRoute: ActivatedRoute, private modalService: NgbModal) { }
 
+    db:any;
   public selectedZone: any;
   zoneList: any[] = [];
   toDayDate: any;
@@ -175,6 +177,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     //this.commonService.setCityData();
@@ -203,7 +206,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (localStorage.getItem('userType') == "External User") {
       $('#divRemark').hide();
     }
-    this.commonService.chkUserPermission("Monitoring");
+    //this.commonService.chkUserPermission("Monitoring");
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split('-')[1]) - 1);
     this.currentYear = new Date().getFullYear();
     this.allZones = this.mapService.getZones(this.toDayDate);

@@ -23,6 +23,7 @@ let firebase = {
     storageBucket: "dtdnavigator.appspot.com",
     messagingSenderId: "381118272786",
 };
+/*
 let city = localStorage.getItem('cityName');
 
 if (city == 'sikar') {
@@ -66,7 +67,7 @@ else if (city == 'demo') {
     messagingSenderId: "381118272786",
   };
 }
-
+*/
 
 @NgModule({
   imports: [

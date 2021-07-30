@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
-    this.commonService.chkUserExpiryDate();
+    //this.commonService.chkUserExpiryDate();
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
     if (localStorage.getItem("isCityChange") == "yes") {

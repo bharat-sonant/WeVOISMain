@@ -7,6 +7,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 //services
 import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
@@ -41,6 +42,7 @@ export class SidebarComponent implements OnInit {
   accessList: any[];
   portalAccessList: any[];
   userType: any;
+  db: any;
   userDetail: userDetail = {
     name: "",
     homeLink: "/home",
@@ -48,7 +50,7 @@ export class SidebarComponent implements OnInit {
   menuItems: any[];
 
   constructor(
-    public db: AngularFireDatabase,
+    public fb: FirebaseService,
     private modalService: NgbModal,
     public httpService: HttpClient,
     private mapService: MapService,
@@ -78,8 +80,14 @@ export class SidebarComponent implements OnInit {
     //  ) {
     //    window.location.href = "/portal-access";
     //  }
-   // }
+    // }
+
+    this.setDefault();
+  }
+
+  setDefault() {
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fb.getDatabaseByCity(this.cityName);
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
       $("#liCity").show();
@@ -90,8 +98,8 @@ export class SidebarComponent implements OnInit {
 
     this.userid = localStorage.getItem("userID");
     if (localStorage.getItem("isCityChange") == "yes") {
-      localStorage.setItem("isCityChange","no");
-      this.commonService.setLocalStorageData(this.cityName);
+      localStorage.setItem("isCityChange", "no");
+      this.commonService.setLocalStorageData(this.db);
       setTimeout(() => {
         this.commonService.setNotificationPermissions(this.userid);
       }, 2000);
@@ -179,8 +187,12 @@ export class SidebarComponent implements OnInit {
   changeCity(cityName: any) {
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
-    this.getUserAccess();
-    window.location.href = "/" + cityName + "/home";
+    this.setDefault();
+
+    this.closeMapModel();
+    this.router.navigate(["/" + cityName + "/home"]);
+    //this.getUserAccess();
+   // window.location.href = "/" + cityName + "/home";
   }
 
   getGeoSurfing() {

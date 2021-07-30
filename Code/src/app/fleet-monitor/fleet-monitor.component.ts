@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 
 //services
 import { CommonService } from '../services/common/common.service';
+import { FirebaseService } from "../firebase.service";
 import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 
@@ -20,8 +21,9 @@ export class FleetMonitorComponent {
 
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
+  db:any;
 
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   public bounds: any;
@@ -54,9 +56,9 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
-    this.commonService.chkUserPermission("Vehicle Monitoring");
     this.todayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1]) - 1);

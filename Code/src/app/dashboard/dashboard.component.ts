@@ -4,6 +4,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { formatDate } from '@angular/common';
 import { interval } from 'rxjs';
 import { CommonService } from '../services/common/common.service';
+import { FirebaseService } from "../firebase.service";
 import { MapService } from '../services/map/map.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -36,7 +37,8 @@ export class DashboardComponent implements OnInit {
   public lineBigDashboardChartData: Array<any>;
   public lineBigDashboardChartOptions: any;
   public lineBigDashboardChartLabels: Array<any>;
-  public lineBigDashboardChartColors: Array<any>
+  public lineBigDashboardChartColors: Array<any>;
+  db:any;
 
   dashboardData: dashboardSummary =
     {
@@ -46,9 +48,10 @@ export class DashboardComponent implements OnInit {
       wasteCollected: '0'
     };
 
-  constructor(public db: AngularFireDatabase, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs:FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));    
     this.todayDate = this.commonService.setTodayDate();//"2019-07-24";
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
