@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-ward-survey-summary",
@@ -9,7 +10,7 @@ import { CommonService } from "../../services/common/common.service";
 })
 export class WardSurveySummaryComponent implements OnInit {
   constructor(
-    public db: AngularFireDatabase,
+    public fs:FirebaseService,
     private commonService: CommonService
   ) {}
 
@@ -18,8 +19,10 @@ export class WardSurveySummaryComponent implements OnInit {
   wardProgressListShow: any[] = [];
   wardList: any[] = [];
   cityName: any;
+  db:any;
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(
       window.location.href,

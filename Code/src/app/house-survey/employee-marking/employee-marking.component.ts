@@ -4,6 +4,7 @@ import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
+import { FirebaseService } from "../../firebase.service";
 import { HtmlAstPath, identifierModuleUrl } from "@angular/compiler";
 
 @Component({
@@ -14,7 +15,7 @@ import { HtmlAstPath, identifierModuleUrl } from "@angular/compiler";
 export class EmployeeMarkingComponent implements OnInit {
   constructor(
     private router: Router,
-    public db: AngularFireDatabase,
+    public fs:FirebaseService,
     private commonService: CommonService,
     private modalService: NgbModal,
     private mapService: MapService
@@ -34,8 +35,10 @@ export class EmployeeMarkingComponent implements OnInit {
     wardNo: "",
   };
   isFirst = true;
+  db:any;
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.getZoneList();
     this.getEmployee();
   }

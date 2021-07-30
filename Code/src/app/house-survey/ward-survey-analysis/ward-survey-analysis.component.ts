@@ -10,6 +10,7 @@ import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-ward-survey-analysis",
@@ -20,7 +21,7 @@ export class WardSurveyAnalysisComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(
-    public db: AngularFireDatabase,
+    public fs:FirebaseService,
     public af: AngularFireModule,
     public httpService: HttpClient,
     private actRoute: ActivatedRoute,
@@ -56,6 +57,7 @@ export class WardSurveyAnalysisComponent {
   previousLine: any;
   centerPoint: any;
   houseMarker: any[] = [];
+  db:any;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -68,6 +70,7 @@ export class WardSurveyAnalysisComponent {
   };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(
       window.location.href,
