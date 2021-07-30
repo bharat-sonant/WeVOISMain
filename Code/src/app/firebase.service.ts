@@ -13,6 +13,7 @@ export class FirebaseService {
   
   getDatabaseByCity(city: any) {
     let databaseName="";
+    let databaseURL="";
     
     if (city == 'sikar') {
       this.fireBase = {
@@ -24,6 +25,7 @@ export class FirebaseService {
         messagingSenderId: "381118272786"
       };
       databaseName="dtdnavigator";
+      databaseURL="https://dtdnavigator.firebaseio.com";
     }
     else if (city == 'reengus') {
       this.fireBase = {
@@ -36,6 +38,7 @@ export class FirebaseService {
         //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
       };
       databaseName="dtdreengus";
+      databaseURL= "https://dtdreengus.firebaseio.com";
     }
     else if (city == 'test') {
       this.fireBase = {
@@ -47,6 +50,7 @@ export class FirebaseService {
         messagingSenderId: "381118272786"
       };
       databaseName="dtdnavigatortesting";
+      databaseURL= "https://dtdnavigatortesting.firebaseio.com";
     }
     else if (city == 'demo') {
       this.fireBase = {
@@ -58,12 +62,13 @@ export class FirebaseService {
         messagingSenderId: "381118272786",
       };
       databaseName="dtdjaipur";
+      databaseURL= "https://dtdjaipur.firebaseio.com";
     }
     
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
       databaseName,
-      "",
+      databaseURL,
       PLATFORM_ID,
       this.zone
     );

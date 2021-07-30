@@ -7,7 +7,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 //services
 import { CommonService } from "../../services/common/common.service";
-import { FirebaseService } from "../../firebase.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
@@ -42,21 +41,20 @@ export class SidebarComponent implements OnInit {
   accessList: any[];
   portalAccessList: any[];
   userType: any;
-  db:any;
   userDetail: userDetail = {
     name: "",
     homeLink: "/home",
   };
   menuItems: any[];
 
-  constructor(    
+  constructor(
+    public db: AngularFireDatabase,
     private modalService: NgbModal,
     public httpService: HttpClient,
     private mapService: MapService,
     private commonService: CommonService,
     private toastr: ToastrService,
-    public router: Router,
-    public fs:FirebaseService,
+    public router: Router
   ) {}
 
   zoneList: any[];
@@ -82,7 +80,6 @@ export class SidebarComponent implements OnInit {
     //  }
    // }
     this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
       $("#liCity").show();

@@ -1,12 +1,11 @@
-import { Injectable, NgZone, PLATFORM_ID } from "@angular/core";
+import { LineCardMappingComponent } from "./../../line-card-mapping/line-card-mapping.component";
+import { Injectable } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { environment } from "../../../environments/environment";
 import { data } from "jquery";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { FirebaseAppConfig, _firebaseAppFactory } from "angularfire2";
-import { FirebaseService } from "../../firebase.service";
 
 @Injectable({
   providedIn: "root",
@@ -15,14 +14,11 @@ export class CommonService {
   constructor(
     private router: Router,
     public dbFireStore: AngularFirestore,
-    public fs:FirebaseService,
-    private toastr: ToastrService,
-    public zone: NgZone
+    public db: AngularFireDatabase,
+    private toastr: ToastrService
   ) {}
 
   notificationInterval: any;
-  fireBase: any;
-  db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
 
   getAllZones() {
     return JSON.parse(localStorage.getItem("zones"));
@@ -1004,14 +1000,9 @@ export class CommonService {
       window.location.href = "/portal-access";
     }
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
-    console.log(urlCity);
     if (city != urlCity) {
-      urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
-
-      if (city != urlCity) {
-        let value = "/" + city + "/home";
-        this.router.navigate([value], { replaceUrl: true });
-      }
+      let value = "/" + city + "/home";
+      this.router.navigate([value], { replaceUrl: true });
     }
     let pageId = pageURL.split(city)[1].split("/")[1];
     let accessList = JSON.parse(localStorage.getItem("userAccessList"));
@@ -1043,6 +1034,7 @@ export class CommonService {
     this.setFixedLoctions();
     this.setVehicle();
     this.setDustbin();
+    
   }
 
   setFixedLoctions() {
@@ -1374,62 +1366,4 @@ export class CommonService {
   }
 
   //#endregion
-
-  getDatabaseByCity(city: any) {
-    let databaseName="";
-    
-    if (city == 'sikar') {
-      this.fireBase = {
-        apiKey: "AIzaSyA1ZU5hI7Fho0B4ZJO2w8-fsCKMbq95m4c",
-        authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdnavigator.firebaseio.com",
-        projectId: "dtdnavigator",
-        storageBucket: "dtdnavigator.appspot.com",
-        messagingSenderId: "381118272786"
-      };
-      databaseName="dtdnavigator";
-    }
-    else if (city == 'reengus') {
-      this.fireBase = {
-        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-        authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdreengus.firebaseio.com",
-        projectId: "dtdnavigator",
-        storageBucket: "dtdnavigator.appspot.com",
-        messagingSenderId: "381118272786",
-        //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
-      };
-      databaseName="dtdreengus";
-    }
-    else if (city == 'test') {
-      this.fireBase = {
-        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-        authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdnavigatortesting.firebaseio.com",
-        projectId: "dtdnavigator",
-        storageBucket: "dtdnavigator.appspot.com",
-        messagingSenderId: "381118272786"
-      };
-      databaseName="dtdnavigatortesting";
-    }
-    else if (city == 'demo') {
-      this.fireBase = {
-        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-        authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdjaipur.firebaseio.com",
-        projectId: "dtdnavigator",
-        storageBucket: "dtdnavigator.appspot.com",
-        messagingSenderId: "381118272786",
-      };
-      databaseName="dtdjaipur";
-    }
-    
-    return new AngularFireDatabase(
-      _firebaseAppFactory(this.fireBase, databaseName),
-      databaseName,
-      "",
-      PLATFORM_ID,
-      this.zone
-    );
-  }
 }
