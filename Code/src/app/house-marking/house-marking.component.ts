@@ -9,6 +9,7 @@ import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: "app-house-marking",
@@ -25,7 +26,8 @@ export class HouseMarkingComponent {
     private actRoute: ActivatedRoute,
     private mapService: MapService,
     private router: Router,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private modalService: NgbModal
   ) {}
   db: any;
   public selectedZone: any;
@@ -55,6 +57,7 @@ export class HouseMarkingComponent {
   previousLine: any;
   centerPoint: any;
   houseMarker: any[] = [];
+  markerList: any[];
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -63,6 +66,9 @@ export class HouseMarkingComponent {
     approvedLines: "0",
     markerImgURL: "../assets/img/img-not-available-01.jpg",
     houseType: "",
+    alreadyCardCount: 0,
+    alreadyCardLineCount: 0,
+    alreadyCard:"",
   };
 
   ngOnInit() {
@@ -88,7 +94,7 @@ export class HouseMarkingComponent {
       this.setMaps();
       this.setKml();
       this.onSubmit();
-    }, 2000);
+    }, 3000);
   }
 
   getCurrentLineNo(event: any) {
@@ -196,6 +202,30 @@ export class HouseMarkingComponent {
     this.getTotalMarkers();
   }
 
+  getTotalAlreadyCard() {
+    this.markerData.alreadyCardCount = 0;
+    if (this.wardLines != null) {
+      for (let i = 1; i <= this.wardLines; i++) {
+        let dbPath =
+          "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + i;
+        let markerInstance = this.db
+          .list(dbPath)
+          .valueChanges()
+          .subscribe((data) => {
+            markerInstance.unsubscribe();
+            for (let j = 0; j < data.length - 1; j++) {
+              if (data[j]["alreadyInstalled"] != null) {
+                if (data[j]["alreadyInstalled"] == true) {
+                  this.markerData.alreadyCardCount =
+                    this.markerData.alreadyCardCount + 1;
+                }
+              }
+            }
+          });
+      }
+    }
+  }
+
   getTotalMarkers() {
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
@@ -276,6 +306,7 @@ export class HouseMarkingComponent {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
+          this.getTotalAlreadyCard();
           this.markerData.totalLines = lineCount.toString();
           for (let i = 1; i <= Number(lineCount); i++) {
             let wardLines = this.db
@@ -308,6 +339,8 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.markerList = [];
+    this.markerData.alreadyCardLineCount = 0;
     this.houseMarker = [];
     let dbPath =
       "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
@@ -322,7 +355,49 @@ export class HouseMarkingComponent {
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
               let imageName = data[i]["image"];
+              let city=this.cityName.charAt(0).toUpperCase() +this.cityName.slice(1);
+
+              let imageUrl="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+              city +
+              "%2FMarkingSurveyImages%2F" +
+              this.selectedZone +
+              "%2F" +
+              this.lineNo +
+              "%2F" +
+              imageName +
+              "?alt=media";
               let type = data[i]["houseType"];
+              let alreadyInstalled = "नहीं";
+
+              if (data[i]["alreadyInstalled"] == true) {
+                this.markerData.alreadyCardLineCount =
+                  this.markerData.alreadyCardLineCount + 1;
+                alreadyInstalled = "हाँ";
+              }
+              let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
+             let houseInstance1 = this.db
+                .object(dbPath1)
+                .valueChanges()
+                .subscribe((data) => {
+                  houseInstance1.unsubscribe();
+                  if (data != null) {
+                    let houseType = data.toString().split("(")[0];
+                    this.markerList.push({
+                      i:i+1,
+                      lat: lat,
+                      lng: lng,
+                      alreadyInstalled: alreadyInstalled,
+                      imageName: imageName,
+                      type: houseType,
+                      imageUrl:imageUrl
+                    });
+                  }
+                });
+                let alreadyCard="";
+                if(alreadyInstalled=="हाँ"){
+                  alreadyCard="(कार्ड पहले से ही स्थापित है) ";
+                }
+              
               let dbPath = "Defaults/FinalHousesType/" + type + "/name";
               let houseInstance = this.db
                 .object(dbPath)
@@ -339,7 +414,8 @@ export class HouseMarkingComponent {
                       houseType,
                       imageName,
                       "marker",
-                      lineNo
+                      lineNo,
+                      alreadyCard
                     );
                   }
                 });
@@ -347,6 +423,26 @@ export class HouseMarkingComponent {
           }
         }
       });
+  }
+
+  showLineDetail(content:any) {
+    if (this.markerList.length > 0) {
+        this.modalService.open(content, { size: 'lg' });
+        let windowHeight = $(window).height();
+        let height = 870;
+        let width = 500;
+        height = (windowHeight * 90) / 100;
+        let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+        let divHeight = (height - 26) + "px";
+        $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+        $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+        $('div .modal-dialog-centered').css("margin-top", marginTop);
+        $('#divStatus').css("height", divHeight);
+    }
+  }
+  
+  closeModel() {
+    this.modalService.dismissAll();
   }
 
   getMarkerIcon(type: any) {
@@ -427,7 +523,8 @@ export class HouseMarkingComponent {
               lineNo.toString(),
               "",
               "lineNo",
-              lineNo
+              lineNo,
+              ""
             );
           }
         }
@@ -441,7 +538,8 @@ export class HouseMarkingComponent {
     markerLabel: any,
     imageName: any,
     type: any,
-    lineNo: any
+    lineNo: any,
+    alreadyCard:any
   ) {
     if (type == "lineNo") {
       let marker = new google.maps.Marker({
@@ -495,6 +593,7 @@ export class HouseMarkingComponent {
           "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
+        markerDetail.alreadyCard=alreadyCard;
       });
 
       this.houseMarker.push({ marker });
@@ -504,6 +603,8 @@ export class HouseMarkingComponent {
   //#region Line Marking Status
 
   getNextPrevious(type: any) {
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    element.checked = false;
     this.markerData.houseType = "";
     this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     let lineNo = $("#txtLineNo").val();
@@ -728,4 +829,7 @@ export class markerDetail {
   approvedLines: string;
   markerImgURL: string;
   houseType: string;
+  alreadyCardCount: number;
+  alreadyCardLineCount: number;
+  alreadyCard:string;
 }

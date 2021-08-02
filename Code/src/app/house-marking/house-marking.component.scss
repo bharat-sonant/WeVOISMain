@@ -505,7 +505,7 @@ background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
 position: absolute;
 right: -1px;
-top: 450px;
+top: 500px;
 border: 1px solid #80bd7b;
 
 }
@@ -519,7 +519,7 @@ background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
 position: absolute;
 right: -1px;
-top: 150px;
+top: 200px;
 border: 1px solid #80bd7b;
 padding: 10px;
 }
@@ -654,6 +654,103 @@ font-weight: bold;
 padding-top: 18px;
 margin: 0px;
 }
+
+
+.img-close{
+    position: relative;
+    z-index: 10;                
+    width:25px;
+    cursor: pointer;
+    }
+
+    /**************************Table Start***************************/
+.table-bg{
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    }
+    .table-header{
+    height: 40px;
+    margin-top: 15px;
+    text-align: center;
+    // border-bottom: 5px solid #dcdcdc;
+    background-color: #fff;;
+    padding: 15px;
+    padding-top:8px;
+    color: #444444;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    border-radius: 0.25rem 0.25rem 0rem 0rem ;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    border: 1px solid #e2e2e2;
+    }
+    .tableFixHead {
+    overflow-y: auto;
+    //height: 65vh!important;
+    overflow-x: hidden;
+    }
+    .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1;
+    color: #000;
+    }
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+    .table-btn{
+      height: 42px;
+      text-transform:uppercase;
+      font-size: 12px;
+      margin-top: 15px;
+      font-weight: bold;
+      font-weight: normal;
+    }
+    .table-btn:hover{
+      background-color: #12be21!important;
+    }
+    thead th{
+    font-size:14px;
+    color: rgb(56, 56, 56);
+    font-weight: bold;
+    }
+    table td{
+    padding: 12px 12px !important;
+    font-size: 12px;
+    font-weight: bold;
+    color: #707070;
+    }
+    .tableFixHead a{
+    color: #000;
+    }
+    // .tableFixHead::-webkit-scrollbar{
+    // display: none; 
+    // }
+    .tableFixHeadDetail {
+    overflow-y: auto;
+    height: 226px;
+    margin-top: 10px;
+    }
+    .tableFixHeadDetail thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    }
+    .tableFixHeadDetail a{
+    color: #000;
+    }
+    .tableFixHeadDetail::-webkit-scrollbar{
+    display: none; 
+    }
+    .img-close{
+    position: relative;
+    z-index: 10;                
+    width:25px;
+    cursor: pointer;
+    }
+    /**************************Table End***************************/
 
 
 

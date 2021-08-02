@@ -1,32 +1,36 @@
 /// <reference types="@types/googlemaps" />
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { HttpClient } from '@angular/common/http';
-import { CommonService } from '../services/common/common.service';
-import { MapService } from '../services/map/map.service';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import { HttpClient } from "@angular/common/http";
+import { CommonService } from "../services/common/common.service";
+import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute, Router } from "@angular/router";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserService } from '../services/common/user.service';
-import { HtmlAstPath, LiteralArrayExpr } from '@angular/compiler';
-import { resolveNgModuleDep } from '@angular/core/src/view/ng_module';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { UserService } from "../services/common/user.service";
+import { HtmlAstPath, LiteralArrayExpr } from "@angular/compiler";
+import { resolveNgModuleDep } from "@angular/core/src/view/ng_module";
 import { FirebaseService } from "../firebase.service";
 
 @Component({
-  selector: 'app-realtime-monitoring',
-  templateUrl: './realtime-monitoring.component.html',
-  styleUrls: ['./realtime-monitoring.component.scss']
+  selector: "app-realtime-monitoring",
+  templateUrl: "./realtime-monitoring.component.html",
+  styleUrls: ["./realtime-monitoring.component.scss"],
 })
 export class RealtimeMonitoringComponent implements OnInit {
-
-  constructor(public fs: FirebaseService,
+  constructor(
+    public fs: FirebaseService,
     public httpService: HttpClient,
     private mapService: MapService,
     private commonService: CommonService,
-    private toastr: ToastrService, public usrService: UserService, private actRoute: ActivatedRoute, private modalService: NgbModal) { }
+    private toastr: ToastrService,
+    public usrService: UserService,
+    private actRoute: ActivatedRoute,
+    private modalService: NgbModal
+  ) {}
 
-    db:any;
+  db: any;
   public selectedZone: any;
   zoneList: any[] = [];
   toDayDate: any;
@@ -75,7 +79,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   employeeDetail: any[] = [];
   garageDutyList: any[] = [];
 
-  @ViewChild('gmap', null) gmap: any;
+  @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
   marker = new google.maps.Marker();
@@ -94,44 +98,43 @@ export class RealtimeMonitoringComponent implements OnInit {
   allMarkers: any[] = [];
   cityName: any;
 
-  workerDetails: WorkderDetails =
-    {
-      speed: '0',
-      totalKM: '0',
-      totalTime: '0 hr 0 min',
-      wardTime: '0 hr 0 min',
-      vehicleNo: '',
-      driverName: '',
-      driverMobile: '',
-      helperName: '',
-      helperMobile: '',
-      wardNo: '',
-      wardName: '',
-      startTime: "---",
-      endTime: "---",
-      haltTime: '0:00',
-      currentHaltTime: '0:00',
-      wardKM: '0',
-      driverImageUrl: '../../assets/img/internal-user.png',
-      helperImageUrl: '../../assets/img/internal-user.png',
-      totalWard: '0',
-      completedWard: '0',
-      activeWard: '0',
-      inActiveWard: '0',
-      stopWard: '0',
-      totalLines: '0',
-      completedLines: '0',
-      skippedLines: '0',
-      applicationStatus: '---',
-      lastUpdateTime: '',
-      wardReachTime: '---',
-      currentLine: '0',
-      vehicleCurrentLocation: '---',
-      tripCount: '0',
-      totalUnAssignedVehicle: '0',
-      peopleAtWork: '0',
-      garageWorkDutyCount: '0'
-    };
+  workerDetails: WorkderDetails = {
+    speed: "0",
+    totalKM: "0",
+    totalTime: "0 hr 0 min",
+    wardTime: "0 hr 0 min",
+    vehicleNo: "",
+    driverName: "",
+    driverMobile: "",
+    helperName: "",
+    helperMobile: "",
+    wardNo: "",
+    wardName: "",
+    startTime: "---",
+    endTime: "---",
+    haltTime: "0:00",
+    currentHaltTime: "0:00",
+    wardKM: "0",
+    driverImageUrl: "../../assets/img/internal-user.png",
+    helperImageUrl: "../../assets/img/internal-user.png",
+    totalWard: "0",
+    completedWard: "0",
+    activeWard: "0",
+    inActiveWard: "0",
+    stopWard: "0",
+    totalLines: "0",
+    completedLines: "0",
+    skippedLines: "0",
+    applicationStatus: "---",
+    lastUpdateTime: "",
+    wardReachTime: "---",
+    currentLine: "0",
+    vehicleCurrentLocation: "---",
+    tripCount: "0",
+    totalUnAssignedVehicle: "0",
+    peopleAtWork: "0",
+    garageWorkDutyCount: "0",
+  };
 
   // Time Graph
 
@@ -147,11 +150,10 @@ export class RealtimeMonitoringComponent implements OnInit {
   maxDistance: any[];
   days: number;
 
-  graphHeaderData: graphHeaders =
-    {
-      date: '',
-      workprogress: '0'
-    };
+  graphHeaderData: graphHeaders = {
+    date: "",
+    workprogress: "0",
+  };
 
   public lineBigDashboardChartType: any;
   public gradientStroke: any;
@@ -162,7 +164,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   public lineBigDashboardChartData: Array<any>;
   public lineBigDashboardChartOptions: any;
   public lineBigDashboardChartLabels: any;
-  public lineBigDashboardChartColors: Array<any>
+  public lineBigDashboardChartColors: Array<any>;
   public graphMaxValue: number;
   public stepSize: number;
 
@@ -175,13 +177,17 @@ export class RealtimeMonitoringComponent implements OnInit {
   wardInInfo: any;
   dutyStatusList: any[];
 
-
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
-    this.cityName = localStorage.getItem('cityName');
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(
+      window.location.href,
+      localStorage.getItem("cityName")
+    );
+    this.cityName = localStorage.getItem("cityName");
     //this.commonService.setCityData();
-    let element = <HTMLAnchorElement>document.getElementById("wardProgressLink");
+    let element = <HTMLAnchorElement>(
+      document.getElementById("wardProgressLink")
+    );
     element.href = this.cityName + "/ward-monitoring-report";
     this.bounds = new google.maps.LatLngBounds();
     this.toDayDate = this.commonService.setTodayDate();
@@ -189,25 +195,26 @@ export class RealtimeMonitoringComponent implements OnInit {
     let lineStatusDate = localStorage.getItem("lineStatusDate");
     if (lineStatusDate != null) {
       if (this.toDayDate != lineStatusDate) {
-        localStorage.setItem('lineStatusDate', this.toDayDate);
-        localStorage.setItem('wardLineStorage', null);
-        localStorage.setItem('employeeDetail', null);
+        localStorage.setItem("lineStatusDate", this.toDayDate);
+        localStorage.setItem("wardLineStorage", null);
+        localStorage.setItem("employeeDetail", null);
       }
-    }
-    else {
-      localStorage.setItem('lineStatusDate', this.toDayDate);
-      localStorage.setItem('wardLineStorage', null);
-      localStorage.setItem('employeeDetail', null);
+    } else {
+      localStorage.setItem("lineStatusDate", this.toDayDate);
+      localStorage.setItem("wardLineStorage", null);
+      localStorage.setItem("employeeDetail", null);
     }
 
     this.zoneList = [];
     this.firstData = false;
-    this.userId = localStorage.getItem('userID');
-    if (localStorage.getItem('userType') == "External User") {
-      $('#divRemark').hide();
+    this.userId = localStorage.getItem("userID");
+    if (localStorage.getItem("userType") == "External User") {
+      $("#divRemark").hide();
     }
     //this.commonService.chkUserPermission("Monitoring");
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split('-')[1]) - 1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(
+      Number(this.toDayDate.toString().split("-")[1]) - 1
+    );
     this.currentYear = new Date().getFullYear();
     this.allZones = this.mapService.getZones(this.toDayDate);
     this.minHalt = 5;
@@ -250,13 +257,27 @@ export class RealtimeMonitoringComponent implements OnInit {
   setWorkNotStarted() {
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
-      this.db.list("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails").valueChanges().subscribe(
-        workerData => {
+      this.db
+        .list(
+          "WasteCollectionInfo/" +
+            element["zoneNo"] +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/WorkerDetails"
+        )
+        .valueChanges()
+        .subscribe((workerData) => {
           if (workerData.length == 0) {
-            this.db.object('RealTimeDetails/WardDetails/' + element["zoneNo"]).set({
-              activityStatus: 'workNotStarted',
-              isOnDuty: 'no'
-            });
+            this.db
+              .object("RealTimeDetails/WardDetails/" + element["zoneNo"])
+              .set({
+                activityStatus: "workNotStarted",
+                isOnDuty: "no",
+              });
           }
         });
     }
@@ -270,14 +291,13 @@ export class RealtimeMonitoringComponent implements OnInit {
         let checkBoxElement = <HTMLInputElement>document.getElementById(chkId);
         let textBoxElement = <HTMLInputElement>document.getElementById(txtId);
         let className = textBoxElement.className;
-        $('#' + txtId).removeClass(className);
+        $("#" + txtId).removeClass(className);
         if (checkBoxElement.checked == true) {
           textBoxElement.readOnly = false;
-          $('#' + txtId).addClass("remark-active");
-        }
-        else {
+          $("#" + txtId).addClass("remark-active");
+        } else {
           textBoxElement.readOnly = true;
-          $('#' + txtId).addClass("remark-de-active");
+          $("#" + txtId).addClass("remark-de-active");
         }
       }
     }
@@ -286,13 +306,27 @@ export class RealtimeMonitoringComponent implements OnInit {
   setWardCompleted() {
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
-      this.db.object("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary/dutyOutTime").valueChanges().subscribe(
-        dutyOutTime => {
+      this.db
+        .object(
+          "WasteCollectionInfo/" +
+            element["zoneNo"] +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/Summary/dutyOutTime"
+        )
+        .valueChanges()
+        .subscribe((dutyOutTime) => {
           if (dutyOutTime != undefined) {
-            this.db.object('RealTimeDetails/WardDetails/' + element["zoneNo"]).set({
-              activityStatus: 'completed',
-              isOnDuty: 'no'
-            });
+            this.db
+              .object("RealTimeDetails/WardDetails/" + element["zoneNo"])
+              .set({
+                activityStatus: "completed",
+                isOnDuty: "no",
+              });
           }
 
           /*
@@ -382,8 +416,10 @@ export class RealtimeMonitoringComponent implements OnInit {
 */
 
   getWardsStatusWise() {
-    let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe(
-      data => {
+    let getRealTimeWardDetails = this.db
+      .object("RealTimeDetails/WardDetails")
+      .valueChanges()
+      .subscribe((data) => {
         let activeWard = 0;
         let inActiveWard = 0;
         let stoppedWard = 0;
@@ -402,20 +438,117 @@ export class RealtimeMonitoringComponent implements OnInit {
           if (this.firstData == false) {
             if (status == "active") {
               activeWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "active", shortIndex: index, displayOrder: 2, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: 'white', iconName: 'fas fa-caret-right active-ward', progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic });
+              this.zoneList.push({
+                zoneNo: zoneNo,
+                zoneName: zoneName,
+                status: "active",
+                shortIndex: index,
+                displayOrder: 2,
+                totalLines: 0,
+                completedLines: 0,
+                skippedLines: 0,
+                workPer: "0%",
+                workPerShow: "0",
+                borderClass: "",
+                bgColor: "white",
+                iconName: "fas fa-caret-right active-ward",
+                progressClass: "progress progress-float",
+                wardKM: "0.00",
+                wardTime: "0.00",
+                dutyOnTime: "---",
+                dutyOffTime: "---",
+                wardReachTime: "---",
+                driverId: "0",
+                helperId: "0",
+                vehicleNo: "",
+                isMic: isMic,
+              });
             } else if (status == "stopped") {
               stoppedWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "stopped", shortIndex: index, displayOrder: 1, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: 'white', iconName: 'fas fa-caret-right stop-indication', progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic });
+              this.zoneList.push({
+                zoneNo: zoneNo,
+                zoneName: zoneName,
+                status: "stopped",
+                shortIndex: index,
+                displayOrder: 1,
+                totalLines: 0,
+                completedLines: 0,
+                skippedLines: 0,
+                workPer: "0%",
+                workPerShow: "0",
+                borderClass: "",
+                bgColor: "white",
+                iconName: "fas fa-caret-right stop-indication",
+                progressClass: "progress progress-float",
+                wardKM: "0.00",
+                wardTime: "0.00",
+                dutyOnTime: "---",
+                dutyOffTime: "---",
+                wardReachTime: "---",
+                driverId: "0",
+                helperId: "0",
+                vehicleNo: "",
+                isMic: isMic,
+              });
             } else if (status == "completed") {
               completedWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "completed", shortIndex: index, displayOrder: 3, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: '#95e495', iconName: 'fas fa-caret-right active-ward', progressClass: "progress progress-float-completed", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic });
-            } else if (status = "workNotStarted") {
+              this.zoneList.push({
+                zoneNo: zoneNo,
+                zoneName: zoneName,
+                status: "completed",
+                shortIndex: index,
+                displayOrder: 3,
+                totalLines: 0,
+                completedLines: 0,
+                skippedLines: 0,
+                workPer: "0%",
+                workPerShow: "0",
+                borderClass: "",
+                bgColor: "#95e495",
+                iconName: "fas fa-caret-right active-ward",
+                progressClass: "progress progress-float-completed",
+                wardKM: "0.00",
+                wardTime: "0.00",
+                dutyOnTime: "---",
+                dutyOffTime: "---",
+                wardReachTime: "---",
+                driverId: "0",
+                helperId: "0",
+                vehicleNo: "",
+                isMic: isMic,
+              });
+            } else if ((status = "workNotStarted")) {
               inActiveWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "notStarted", shortIndex: index, displayOrder: 4, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: 'rgb(221 225 221)', iconName: 'fas fa-caret-right inactive-ward', progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic });
+              this.zoneList.push({
+                zoneNo: zoneNo,
+                zoneName: zoneName,
+                status: "notStarted",
+                shortIndex: index,
+                displayOrder: 4,
+                totalLines: 0,
+                completedLines: 0,
+                skippedLines: 0,
+                workPer: "0%",
+                workPerShow: "0",
+                borderClass: "",
+                bgColor: "rgb(221 225 221)",
+                iconName: "fas fa-caret-right inactive-ward",
+                progressClass: "progress progress-float",
+                wardKM: "0.00",
+                wardTime: "0.00",
+                dutyOnTime: "---",
+                dutyOffTime: "---",
+                wardReachTime: "---",
+                driverId: "0",
+                helperId: "0",
+                vehicleNo: "",
+                isMic: isMic,
+              });
             }
-          }
-          else {
-            let zoneDetails = this.zoneList.find(item => item.zoneNo == zoneNo);
+          } else {
+            let zoneDetails = this.zoneList.find(
+              (item) => item.zoneNo == zoneNo
+            );
             if (zoneDetails != undefined) {
               zoneDetails.zoneNo = zoneNo;
               zoneDetails.zoneName = zoneName;
@@ -429,8 +562,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 zoneDetails.iconName = "fas fa-caret-right active-ward";
                 zoneDetails.borderClass = "progress-bar  progress-success";
                 zoneDetails.progressClass = "progress progress-float";
-              }
-              else if (status == "stopped") {
+              } else if (status == "stopped") {
                 stoppedWard++;
                 zoneDetails.status = "stopped";
                 zoneDetails.displayOrder = 1;
@@ -438,8 +570,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 zoneDetails.iconName = "fas fa-caret-right stop-indication";
                 zoneDetails.borderClass = "progress-bar  progress-success";
                 zoneDetails.progressClass = "progress progress-float";
-              }
-              else if (status == "completed") {
+              } else if (status == "completed") {
                 completedWard++;
                 zoneDetails.status = "completed";
                 zoneDetails.displayOrder = 3;
@@ -447,8 +578,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 zoneDetails.iconName = "fas fa-caret-right active-ward";
                 zoneDetails.borderClass = "completed-ward";
                 zoneDetails.progressClass = "progress progress-float-completed";
-              }
-              else if (status == "workNotStarted") {
+              } else if (status == "workNotStarted") {
                 inActiveWard++;
                 zoneDetails.status = "notStarted";
                 zoneDetails.displayOrder = 4;
@@ -460,10 +590,14 @@ export class RealtimeMonitoringComponent implements OnInit {
               if (this.selectedZone == zoneNo) {
                 if (zoneDetails.status != "stopped") {
                   this.workerDetails.currentHaltTime = "0:00";
-                }
-                else {
+                } else {
                   if (this.todayHaltList.length > 0) {
-                    this.workerDetails.currentHaltTime = this.commonService.getHrs(this.todayHaltList[this.todayHaltList.length - 1]["duration"]);
+                    this.workerDetails.currentHaltTime =
+                      this.commonService.getHrs(
+                        this.todayHaltList[this.todayHaltList.length - 1][
+                          "duration"
+                        ]
+                      );
                   }
                 }
               }
@@ -475,10 +609,14 @@ export class RealtimeMonitoringComponent implements OnInit {
           this.workerDetails.completedWard = completedWard.toString();
           this.workerDetails.totalWard = totalWard.toString();
           if (this.firstData == false) {
-            let totalLineData = this.db.object('WardLines/' + zoneNo).valueChanges().subscribe(
-              totalLines => {
+            let totalLineData = this.db
+              .object("WardLines/" + zoneNo)
+              .valueChanges()
+              .subscribe((totalLines) => {
                 let wardNo = zoneNo;
-                let zoneDetails = this.zoneList.find(item => item.zoneNo == wardNo);
+                let zoneDetails = this.zoneList.find(
+                  (item) => item.zoneNo == wardNo
+                );
                 if (zoneDetails != undefined) {
                   zoneDetails.totalLines = totalLines;
                   this.getWardDetail(wardNo);
@@ -488,15 +626,22 @@ export class RealtimeMonitoringComponent implements OnInit {
           }
         }
 
-        this.zoneList = this.commonService.transform(this.zoneList, 'shortIndex');
-        this.zoneList = this.commonService.transform(this.zoneList, 'displayOrder');
+        this.zoneList = this.commonService.transform(
+          this.zoneList,
+          "shortIndex"
+        );
+        this.zoneList = this.commonService.transform(
+          this.zoneList,
+          "displayOrder"
+        );
         if (this.firstData == false) {
           this.selectedZone = this.zoneList[0]["zoneNo"];
           this.workerDetails.wardNo = this.zoneList[0]["zoneNo"];
           if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
-            this.workerDetails.wardName = "Market " + this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
-          }
-          else {
+            this.workerDetails.wardName =
+              "Market " +
+              this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
+          } else {
             this.workerDetails.wardName = "WARD " + this.selectedZone;
           }
           //this.getAssignedWardList();
@@ -512,40 +657,53 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardDetail(zoneNo: any) {
-    let dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/Summary';
-    let summaryDataUpate = this.db.object(dbPath).valueChanges().subscribe(
-      summaryData => {
+    let dbPath =
+      "WasteCollectionInfo/" +
+      zoneNo +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate +
+      "/Summary";
+    let summaryDataUpate = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((summaryData) => {
         if (summaryData != null) {
-          let zoneDetails = this.zoneList.find(item => item.zoneNo == zoneNo);
+          let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
           if (zoneDetails != undefined) {
             if (summaryData["workPercentage"] != null) {
               zoneDetails.workPer = summaryData["workPercentage"] + "%";
               zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
               if (zoneDetails.status == "completed")
                 zoneDetails.borderClass = "completed-ward";
-              else
-                zoneDetails.borderClass = "progress-bar  progress-success";
+              else zoneDetails.borderClass = "progress-bar  progress-success";
             }
             if (summaryData["dutyInTime"] != null) {
               zoneDetails.dutyOnTime = summaryData["dutyInTime"];
-            }
-            else {
+            } else {
               zoneDetails.dutyOnTime = "---";
             }
             if (summaryData["dutyOutTime"] != null) {
               zoneDetails.dutyOffTime = summaryData["dutyOutTime"];
-            }
-            else {
+            } else {
               zoneDetails.dutyOffTime = "---";
             }
             if (summaryData["wardReachedOn"] != null) {
-              zoneDetails.wardReachTime = this.commonService.tConvert(summaryData["wardReachedOn"]);
+              zoneDetails.wardReachTime = this.commonService.tConvert(
+                summaryData["wardReachedOn"]
+              );
             }
             if (summaryData["wardCoveredDistance"] != null) {
-              zoneDetails.wardKM = (parseFloat(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
+              zoneDetails.wardKM = (
+                parseFloat(summaryData["wardCoveredDistance"]) / 1000
+              ).toFixed(2);
             }
             if (summaryData["vehicleCurrentLocation"] != null) {
-              zoneDetails.vehicleCurrentLocation = summaryData["vehicleCurrentLocation"];
+              zoneDetails.vehicleCurrentLocation =
+                summaryData["vehicleCurrentLocation"];
             }
             if (summaryData["trip"] != null) {
               zoneDetails.tripCount = summaryData["trip"];
@@ -557,18 +715,40 @@ export class RealtimeMonitoringComponent implements OnInit {
               zoneDetails.skippedLines = summaryData["skippedLines"];
             }
             if (zoneDetails.driverId == "0") {
-              dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails/driver';
-              let driverDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-                driverData => {
+              dbPath =
+                "WasteCollectionInfo/" +
+                zoneNo +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate +
+                "/WorkerDetails/driver";
+              let driverDataInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((driverData) => {
                   driverDataInstance.unsubscribe();
                   if (driverData != null) {
                     zoneDetails.driverId = driverData;
                   }
                 });
 
-              dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails/driverName';
-              let driverNameInstance = this.db.object(dbPath).valueChanges().subscribe(
-                driverData => {
+              dbPath =
+                "WasteCollectionInfo/" +
+                zoneNo +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate +
+                "/WorkerDetails/driverName";
+              let driverNameInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((driverData) => {
                   driverNameInstance.unsubscribe();
                   if (driverData != null) {
                     zoneDetails.driverName = driverData;
@@ -576,17 +756,39 @@ export class RealtimeMonitoringComponent implements OnInit {
                 });
             }
             if (zoneDetails.helperId == "0") {
-              dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails/helper';
-              let helperDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-                helperData => {
+              dbPath =
+                "WasteCollectionInfo/" +
+                zoneNo +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate +
+                "/WorkerDetails/helper";
+              let helperDataInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((helperData) => {
                   helperDataInstance.unsubscribe();
                   if (helperData != null) {
                     zoneDetails.helperId = helperData;
                   }
                 });
-              dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails/helperName';
-              let helperNameInstance = this.db.object(dbPath).valueChanges().subscribe(
-                helperData => {
+              dbPath =
+                "WasteCollectionInfo/" +
+                zoneNo +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate +
+                "/WorkerDetails/helperName";
+              let helperNameInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((helperData) => {
                   helperNameInstance.unsubscribe();
                   if (helperData != null) {
                     zoneDetails.helperName = helperData;
@@ -594,9 +796,20 @@ export class RealtimeMonitoringComponent implements OnInit {
                 });
             }
             if (zoneDetails.vehicleNo == "") {
-              dbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/WorkerDetails/vehicle';
-              let vehicleDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-                vehicleData => {
+              dbPath =
+                "WasteCollectionInfo/" +
+                zoneNo +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate +
+                "/WorkerDetails/vehicle";
+              let vehicleDataInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((vehicleData) => {
                   vehicleDataInstance.unsubscribe();
                   if (vehicleData != null) {
                     zoneDetails.vehicleNo = vehicleData;
@@ -608,22 +821,24 @@ export class RealtimeMonitoringComponent implements OnInit {
                 this.workerDetails.wardReachTime = summaryData["wardReachedOn"];
               }
               if (summaryData["wardCoveredDistance"] != null) {
-                this.workerDetails.wardKM = (parseFloat(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
+                this.workerDetails.wardKM = (
+                  parseFloat(summaryData["wardCoveredDistance"]) / 1000
+                ).toFixed(2);
               }
               if (summaryData["trip"] != null) {
                 this.workerDetails.tripCount = summaryData["trip"];
               }
               if (summaryData["completedLines"] != null) {
-                this.workerDetails.completedLines = summaryData["completedLines"];
+                this.workerDetails.completedLines =
+                  summaryData["completedLines"];
               }
               if (summaryData["skippedLines"] != null) {
                 this.workerDetails.skippedLines = summaryData["skippedLines"];
               }
               if (summaryData["vehicleCurrentLocation"] == "Ward In") {
-                $('#vehicleStatusH3').css("color", "green");
-              }
-              else {
-                $('#vehicleStatusH3').css("color", "red");
+                $("#vehicleStatusH3").css("color", "green");
+              } else {
+                $("#vehicleStatusH3").css("color", "red");
               }
               this.workerDetails.totalLines = zoneDetails.totalLines;
               setTimeout(() => {
@@ -644,8 +859,10 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getCurrentLine() {
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + this.selectedZone).valueChanges().subscribe(
-      lastLine => {
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         lastLineDone.unsubscribe();
         if (lastLine != null) {
           this.workerDetails.currentLine = (Number(lastLine) + 1).toString();
@@ -657,23 +874,24 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.startTime = "---";
     this.workerDetails.endTime = "---";
     this.workerDetails.totalTime = "0 hr 0 min";
-    let zoneDetails = this.zoneList.find(item => item.zoneNo == zoneNo);
+    let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetails != undefined) {
       let startTime = zoneDetails.dutyOnTime;
-      let startList = startTime.split(',');
+      let startList = startTime.split(",");
       if (startList.length > 1) {
-        $('#dutyDetail').show();
-      }
-      else {
-        $('#dutyDetail').hide();
+        $("#dutyDetail").show();
+      } else {
+        $("#dutyDetail").hide();
       }
 
       let sTime = this.commonService.tConvert(startList[startList.length - 1]);
       this.workerDetails.startTime = sTime;
 
       if (zoneDetails.wardReachTime != "---") {
-        let reachOnList = zoneDetails.wardReachTime.split(',');
-        let rTime = this.commonService.tConvert(reachOnList[reachOnList.length - 1]);
+        let reachOnList = zoneDetails.wardReachTime.split(",");
+        let rTime = this.commonService.tConvert(
+          reachOnList[reachOnList.length - 1]
+        );
         this.workerDetails.wardReachTime = rTime;
       }
 
@@ -682,16 +900,15 @@ export class RealtimeMonitoringComponent implements OnInit {
         let dat1 = new Date(this.toDayDate + " " + startTime);
         let dat2 = new Date();
         let totalMinutes = this.commonService.timeDifferenceMin(dat2, dat1);
-        this.workerDetails.totalTime = this.commonService.getHrsFull(totalMinutes);
-      }
-      else {
+        this.workerDetails.totalTime =
+          this.commonService.getHrsFull(totalMinutes);
+      } else {
         let endTime = zoneDetails.dutyOffTime;
-        let endList = endTime.split(',');
+        let endList = endTime.split(",");
         if (endList[startList.length - 1] != null) {
           let eTime = this.commonService.tConvert(endList[endList.length - 1]);
           this.workerDetails.endTime = eTime;
-        }
-        else {
+        } else {
           this.workerDetails.endTime = "---";
         }
 
@@ -704,17 +921,19 @@ export class RealtimeMonitoringComponent implements OnInit {
               let dat1 = new Date(this.toDayDate + " " + startMinutes);
               let dat2 = new Date();
               totalMinutes += this.commonService.timeDifferenceMin(dat2, dat1);
-            }
-            else {
+            } else {
               let dat1 = new Date(this.toDayDate + " " + startMinutes);
               let dat2 = new Date(this.toDayDate + " " + endMinutes);
               totalMinutes += this.commonService.timeDifferenceMin(dat2, dat1);
             }
           }
-          this.workerDetails.totalTime = this.commonService.getHrsFull(totalMinutes);
+          this.workerDetails.totalTime =
+            this.commonService.getHrsFull(totalMinutes);
         }
       }
-      let element = <HTMLAnchorElement>document.getElementById("routeTrackingLink");
+      let element = <HTMLAnchorElement>(
+        document.getElementById("routeTrackingLink")
+      );
       element.href = this.cityName + "/route-tracking/" + zoneNo;
       element = <HTMLAnchorElement>document.getElementById("mapsLink");
       element.href = this.cityName + "/maps/" + zoneNo;
@@ -722,11 +941,24 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getDistanceCovered(zoneNo: any) {
-    let dbPath = "LocationHistory/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/TotalCoveredDistance";
-    let distanceCovered = this.db.object(dbPath).valueChanges().subscribe(
-      distanceData => {
+    let dbPath =
+      "LocationHistory/" +
+      zoneNo +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate +
+      "/TotalCoveredDistance";
+    let distanceCovered = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((distanceData) => {
         if (distanceData != null) {
-          this.workerDetails.totalKM = (parseFloat(distanceData.toString()) / 1000).toFixed(2);
+          this.workerDetails.totalKM = (
+            parseFloat(distanceData.toString()) / 1000
+          ).toFixed(2);
         }
         distanceCovered.unsubscribe();
       });
@@ -735,33 +967,52 @@ export class RealtimeMonitoringComponent implements OnInit {
   // Employee Detail
 
   getEmployeeData() {
-    let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+    let zoneDetails = this.zoneList.find(
+      (item) => item.zoneNo == this.selectedZone
+    );
     if (zoneDetails != undefined) {
-      let driverList = zoneDetails.driverId.toString().split(',');
-      let helperList = zoneDetails.helperId.toString().split(',');
-      let vehicleList = zoneDetails.vehicleNo.toString().split(',');
+      let driverList = zoneDetails.driverId.toString().split(",");
+      let helperList = zoneDetails.helperId.toString().split(",");
+      let vehicleList = zoneDetails.vehicleNo.toString().split(",");
       this.employeeDetail = JSON.parse(localStorage.getItem("employee"));
       if (this.employeeDetail != null) {
-        let driverDetails = this.employeeDetail.find(item => item.userName == driverList[driverList.length - 1]);
+        let driverDetails = this.employeeDetail.find(
+          (item) => item.userName == driverList[driverList.length - 1]
+        );
         if (driverDetails != undefined) {
-          this.workerDetails.driverName = driverDetails.name != null ? (driverDetails.name.toUpperCase()) : "Not Assigned";
-          this.workerDetails.driverMobile = driverDetails.mobile != null ? (driverDetails.mobile) : "---";
-          this.workerDetails.driverImageUrl = driverDetails.profilePhotoURL != null && driverDetails.profilePhotoURL != "" ? (driverDetails.profilePhotoURL) : "../../assets/img/internal-user.png";
-        }
-        else {
+          this.workerDetails.driverName =
+            driverDetails.name != null
+              ? driverDetails.name.toUpperCase()
+              : "Not Assigned";
+          this.workerDetails.driverMobile =
+            driverDetails.mobile != null ? driverDetails.mobile : "---";
+          this.workerDetails.driverImageUrl =
+            driverDetails.profilePhotoURL != null &&
+            driverDetails.profilePhotoURL != ""
+              ? driverDetails.profilePhotoURL
+              : "../../assets/img/internal-user.png";
+        } else {
           this.getEmployee(driverList[driverList.length - 1], "driver");
         }
-        let helperDetails = this.employeeDetail.find(item => item.userName == helperList[helperList.length - 1]);
+        let helperDetails = this.employeeDetail.find(
+          (item) => item.userName == helperList[helperList.length - 1]
+        );
         if (helperDetails != undefined) {
-          this.workerDetails.helperName = helperDetails.name != null ? (helperDetails.name.toUpperCase()) : "Not Assigned";
-          this.workerDetails.helperMobile = helperDetails.mobile != null ? (helperDetails.mobile) : "---";
-          this.workerDetails.helperImageUrl = helperDetails.profilePhotoURL != null && helperDetails.profilePhotoURL != "" ? (helperDetails.profilePhotoURL) : "../../assets/img/internal-user.png";
-        }
-        else {
+          this.workerDetails.helperName =
+            helperDetails.name != null
+              ? helperDetails.name.toUpperCase()
+              : "Not Assigned";
+          this.workerDetails.helperMobile =
+            helperDetails.mobile != null ? helperDetails.mobile : "---";
+          this.workerDetails.helperImageUrl =
+            helperDetails.profilePhotoURL != null &&
+            helperDetails.profilePhotoURL != ""
+              ? helperDetails.profilePhotoURL
+              : "../../assets/img/internal-user.png";
+        } else {
           this.getEmployee(helperList[helperList.length - 1], "helper");
         }
-      }
-      else {
+      } else {
         this.getEmployee(driverList[driverList.length - 1], "driver");
         this.getEmployee(helperList[helperList.length - 1], "helper");
       }
@@ -773,14 +1024,29 @@ export class RealtimeMonitoringComponent implements OnInit {
   getEmployee(empId: any, empType: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       if (empType == "driver") {
-        this.workerDetails.driverName = employee["name"] != null ? (employee["name"].toUpperCase()) : "Not Assigned";
-        this.workerDetails.driverMobile = employee["mobile"] != null ? (employee["mobile"]) : "---";
-        this.workerDetails.driverImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-      }
-      else {
-        this.workerDetails.helperName = employee["name"] != null ? (employee["name"].toUpperCase()) : "Not Assigned";
-        this.workerDetails.helperMobile = employee["mobile"] != null ? (employee["mobile"]) : "---";
-        this.workerDetails.helperImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
+        this.workerDetails.driverName =
+          employee["name"] != null
+            ? employee["name"].toUpperCase()
+            : "Not Assigned";
+        this.workerDetails.driverMobile =
+          employee["mobile"] != null ? employee["mobile"] : "---";
+        this.workerDetails.driverImageUrl =
+          employee["profilePhotoURL"] != null &&
+          employee["profilePhotoURL"] != ""
+            ? employee["profilePhotoURL"]
+            : "../../assets/img/internal-user.png";
+      } else {
+        this.workerDetails.helperName =
+          employee["name"] != null
+            ? employee["name"].toUpperCase()
+            : "Not Assigned";
+        this.workerDetails.helperMobile =
+          employee["mobile"] != null ? employee["mobile"] : "---";
+        this.workerDetails.helperImageUrl =
+          employee["profilePhotoURL"] != null &&
+          employee["profilePhotoURL"] != ""
+            ? employee["profilePhotoURL"]
+            : "../../assets/img/internal-user.png";
       }
     });
   }
@@ -789,12 +1055,14 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.startTime = "---";
     this.workerDetails.endTime = "---";
     this.workerDetails.wardReachTime = "---";
-    this.workerDetails.tripCount = '0';
+    this.workerDetails.tripCount = "0";
     this.workerDetails.vehicleCurrentLocation = "---";
-    this.workerDetails.tripCount = '0';
+    this.workerDetails.tripCount = "0";
     this.employeeDetail = [];
 
-    let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+    let zoneDetails = this.zoneList.find(
+      (item) => item.zoneNo == this.selectedZone
+    );
     if (zoneDetails != undefined) {
       //this.workerDetails.startTime = zoneDetails.dutyOnTime;
       //this.workerDetails.endTime = zoneDetails.dutyOffTime;
@@ -821,7 +1089,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getVehicleStatus();
   }
 
-
   getWardInTime() {
     if (this.wardInInfo != undefined) {
       this.wardInInfo.unsubscribe();
@@ -830,38 +1097,61 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.vehicleCurrentLocation = "---";
     this.workerDetails.tripCount = "0";
     this.totalMinutesInWard = 0;
-    let dbPath = "GeoGraphicallySurfingHistory/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "";
-    this.wardInInfo = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let dbPath =
+      "GeoGraphicallySurfingHistory/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate +
+      "";
+    this.wardInInfo = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         // geoInstance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             let tripCount = 0;
-            let vehicleLocation = data[keyArray[keyArray.length - 1]].replace("-in", "").replace("-out", "");
+            let vehicleLocation = data[keyArray[keyArray.length - 1]]
+              .replace("-in", "")
+              .replace("-out", "");
             if (vehicleLocation != "ward") {
-              let dbLocationPath = "Defaults/GeoLocations/FixedLocations/" + vehicleLocation + "/name";
-              let locationDetail = this.db.object(dbLocationPath).valueChanges().subscribe(
-                locationPath => {
+              let dbLocationPath =
+                "Defaults/GeoLocations/FixedLocations/" +
+                vehicleLocation +
+                "/name";
+              let locationDetail = this.db
+                .object(dbLocationPath)
+                .valueChanges()
+                .subscribe((locationPath) => {
                   locationDetail.unsubscribe();
                   if (locationPath != null) {
-                    this.workerDetails.vehicleCurrentLocation = locationPath.toString() + " " + data[keyArray[keyArray.length - 1]].replace(vehicleLocation + "-", "");
+                    this.workerDetails.vehicleCurrentLocation =
+                      locationPath.toString() +
+                      " " +
+                      data[keyArray[keyArray.length - 1]].replace(
+                        vehicleLocation + "-",
+                        ""
+                      );
                   }
                   if (this.workerDetails.vehicleCurrentLocation == "ward in") {
-                    $('#vehicleStatusH3').css("color", "green");
-                  }
-                  else {
-                    $('#vehicleStatusH3').css("color", "red");
+                    $("#vehicleStatusH3").css("color", "green");
+                  } else {
+                    $("#vehicleStatusH3").css("color", "red");
                   }
                 });
-            }
-            else {
-              this.workerDetails.vehicleCurrentLocation = data[keyArray[keyArray.length - 1]].replace("-", " ");
+            } else {
+              this.workerDetails.vehicleCurrentLocation = data[
+                keyArray[keyArray.length - 1]
+              ].replace("-", " ");
               if (this.workerDetails.vehicleCurrentLocation == "ward in") {
-                $('#vehicleStatusH3').css("color", "green");
-              }
-              else {
-                $('#vehicleStatusH3').css("color", "red");
+                $("#vehicleStatusH3").css("color", "green");
+              } else {
+                $("#vehicleStatusH3").css("color", "red");
               }
             }
 
@@ -869,25 +1159,31 @@ export class RealtimeMonitoringComponent implements OnInit {
               let index = keyArray[i];
               let remark = data[index];
               if (remark == "ward-in" && i < keyArray.length - 1) {
-                this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
-              }
-              else if (remark == "ward-in" && i == keyArray.length - 1) {
+                this.getWardIn(
+                  data,
+                  keyArray,
+                  i,
+                  i + 1,
+                  this.totalMinutesInWard
+                );
+              } else if (remark == "ward-in" && i == keyArray.length - 1) {
                 let dat1 = new Date(this.toDayDate + " " + index);
                 let dat2 = new Date();
-                this.totalMinutesInWard = this.totalMinutesInWard + this.commonService.timeDifferenceMin(dat2, dat1);
-                this.workerDetails.wardTime = this.commonService.getHrsFull((this.totalMinutesInWard));
+                this.totalMinutesInWard =
+                  this.totalMinutesInWard +
+                  this.commonService.timeDifferenceMin(dat2, dat1);
+                this.workerDetails.wardTime = this.commonService.getHrsFull(
+                  this.totalMinutesInWard
+                );
               }
 
               if (remark == "collectionPoint1-in") {
                 tripCount = tripCount + 1;
-              }
-              else if (remark == "collectionPoint2-in") {
+              } else if (remark == "collectionPoint2-in") {
                 tripCount = tripCount + 1;
-              }
-              else if (remark == "dumpingYard-in") {
+              } else if (remark == "dumpingYard-in") {
                 tripCount = tripCount + 1;
-              }
-              else if (remark == "plant-in") {
+              } else if (remark == "plant-in") {
                 tripCount = tripCount + 1;
               }
             }
@@ -897,20 +1193,33 @@ export class RealtimeMonitoringComponent implements OnInit {
       });
   }
 
-  getWardIn(data: any, keyArray: any, index: any, nextIndex: any, totalMinutes: any) {
-    if (data[keyArray[nextIndex]] == "ward-out" || data[keyArray[nextIndex]] == "office-in") {
+  getWardIn(
+    data: any,
+    keyArray: any,
+    index: any,
+    nextIndex: any,
+    totalMinutes: any
+  ) {
+    if (
+      data[keyArray[nextIndex]] == "ward-out" ||
+      data[keyArray[nextIndex]] == "office-in"
+    ) {
       let dat1 = new Date(this.toDayDate + " " + keyArray[index]);
       let dat2 = new Date(this.toDayDate + " " + keyArray[nextIndex]);
-      this.totalMinutesInWard = totalMinutes + this.commonService.timeDifferenceMin(dat2, dat1);
-      this.workerDetails.wardTime = this.commonService.getHrsFull((this.totalMinutesInWard));
-    }
-    else if (nextIndex == keyArray.length - 1) {
+      this.totalMinutesInWard =
+        totalMinutes + this.commonService.timeDifferenceMin(dat2, dat1);
+      this.workerDetails.wardTime = this.commonService.getHrsFull(
+        this.totalMinutesInWard
+      );
+    } else if (nextIndex == keyArray.length - 1) {
       let dat1 = new Date(this.toDayDate + " " + keyArray[index]);
       let dat2 = new Date();
-      this.totalMinutesInWard = totalMinutes + this.commonService.timeDifferenceMin(dat2, dat1);
-      this.workerDetails.wardTime = this.commonService.getHrsFull((this.totalMinutesInWard));
-    }
-    else {
+      this.totalMinutesInWard =
+        totalMinutes + this.commonService.timeDifferenceMin(dat2, dat1);
+      this.workerDetails.wardTime = this.commonService.getHrsFull(
+        this.totalMinutesInWard
+      );
+    } else {
       nextIndex = nextIndex + 1;
       if (nextIndex < keyArray.length) {
         this.getWardIn(data, keyArray, index, nextIndex, totalMinutes);
@@ -919,7 +1228,9 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardProgress() {
-    let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+    let zoneDetails = this.zoneList.find(
+      (item) => item.zoneNo == this.selectedZone
+    );
     if (zoneDetails != undefined) {
       if (zoneDetails.completedLines != null) {
         this.workerDetails.completedLines = zoneDetails.completedLines;
@@ -933,11 +1244,14 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
   }
 
-  // Remarks 
+  // Remarks
 
   saveRemarks() {
     if ($("#drpRemark").val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select remark topic !!!");
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select remark topic !!!"
+      );
       return;
     }
 
@@ -946,66 +1260,92 @@ export class RealtimeMonitoringComponent implements OnInit {
       return;
     }
 
-    this.$Key = $('#key').val();
-    this.category = $('#drpRemark').val();
-    this.remark = $('#txtRemark').val();
+    this.$Key = $("#key").val();
+    this.category = $("#drpRemark").val();
+    this.remark = $("#txtRemark").val();
     let time = new Date().toLocaleTimeString();
     let image = "";
     if (this.category == "1") {
       image = "t-vehicle.png";
-    }
-    else if (this.category == "2") {
+    } else if (this.category == "2") {
       image = "device-issue.png";
-    }
-    else if (this.category == "3") {
+    } else if (this.category == "3") {
       image = "location-issue.png";
-    }
-    else if (this.category == "4") {
+    } else if (this.category == "4") {
       image = "fast-working.png";
-    }
-    else if (this.category == "5") {
+    } else if (this.category == "5") {
       image = "halt.png";
-    }
-    else if (this.category == "6") {
+    } else if (this.category == "6") {
       image = "general-halt.png";
     }
 
-    let dbPath = 'Remarks/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate;
+    let dbPath =
+      "Remarks/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
     const remark = {
       $Key: this.$Key,
       userId: this.userId,
       category: this.category,
       remark: this.remark,
       time: time,
-      image: image
+      image: image,
     };
 
     if (this.$Key == "0") {
       this.usrService.addRemarks(remark, dbPath);
-      this.commonService.setAlertMessage("success", "Remark added successfully !!!");
-    }
-    else {
+      this.commonService.setAlertMessage(
+        "success",
+        "Remark added successfully !!!"
+      );
+    } else {
       this.usrService.UpdateRemarks(remark, dbPath);
-      this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
+      this.commonService.setAlertMessage(
+        "success",
+        "Remark updated successfully !!!"
+      );
     }
     $("#drpRemark").val("0");
     $("#txtRemark").val("");
-    $('#key').val("0");
+    $("#key").val("0");
   }
 
   getRemarks(wardNo: any) {
-    $('#key').val("0");
+    $("#key").val("0");
     this.remarkList = [];
-    let dbPath = 'Remarks/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate;
-    let remarkData = this.db.object(dbPath).valueChanges().subscribe(
-      Data => {
+    let dbPath =
+      "Remarks/" +
+      wardNo +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
+    let remarkData = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((Data) => {
         if (wardNo == this.selectedZone) {
           this.remarkList = [];
           if (Data != null) {
             var keyArray = Object.keys(Data);
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
-              this.remarkList.push({ key: index, topic: Data[index]["category"], remark: Data[index]["remark"], time: Data[index]["time"], image: Data[index]["image"], loginId: this.userId, userId: Data[index]["userId"] });
+              this.remarkList.push({
+                key: index,
+                topic: Data[index]["category"],
+                remark: Data[index]["remark"],
+                time: Data[index]["time"],
+                image: Data[index]["image"],
+                loginId: this.userId,
+                userId: Data[index]["userId"],
+              });
             }
           }
         }
@@ -1014,20 +1354,39 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getFixedGeoLocation() {
-    this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));;
+    this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));
     if (this.fixdGeoLocations != null) {
       if (this.fixdGeoLocations.length > 0) {
         for (let i = 0; i < this.fixdGeoLocations.length; i++) {
           let Lat = this.fixdGeoLocations[i]["lat"];
           let Lng = this.fixdGeoLocations[i]["lng"];
-          let markerURL = "../../../assets/img/" + this.fixdGeoLocations[i]["img"];
+          let markerURL =
+            "../../../assets/img/" + this.fixdGeoLocations[i]["img"];
           var markerLabel = "";
-          let contentString = '<b>' + this.fixdGeoLocations[i]["name"] + '</b>: ' + this.fixdGeoLocations[i]["address"];
+          let contentString =
+            "<b>" +
+            this.fixdGeoLocations[i]["name"] +
+            "</b>: " +
+            this.fixdGeoLocations[i]["address"];
           let scaledHeight = 50;
           let scaledWidth = 50;
           let point1 = 0;
           let point2 = 0;
-          this.setMarker(0, Lat, Lng, markerURL, "", contentString, this.mapHalt, scaledHeight, scaledWidth, point1, point2, false, "fixed");
+          this.setMarker(
+            0,
+            Lat,
+            Lng,
+            markerURL,
+            "",
+            contentString,
+            this.mapHalt,
+            scaledHeight,
+            scaledWidth,
+            point1,
+            point2,
+            false,
+            "fixed"
+          );
         }
       }
     }
@@ -1042,49 +1401,81 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.haltInfoData != undefined) {
       this.haltInfoData.unsubscribe();
     }
-    let haltInfoPath = 'HaltInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate;
-    this.haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
-      haltData => {
+    let haltInfoPath =
+      "HaltInfo/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
+    this.haltInfoData = this.db
+      .list(haltInfoPath)
+      .valueChanges()
+      .subscribe((haltData) => {
         this.todayHaltList = [];
         if (haltData != undefined) {
-
           let totalBreak = 0;
           this.workerDetails.currentHaltTime = "0:00";
 
           if (haltData.length > 0) {
-
             for (let index = 0; index < haltData.length; index++) {
-
               if (haltData[index]["haltType"] != "network-off") {
                 if (haltData[index]["location"] != null) {
-                  let latlng = haltData[index]["location"].split(':')[1].split(',');
+                  let latlng = haltData[index]["location"]
+                    .split(":")[1]
+                    .split(",");
                   let lt = $.trim(latlng[0]).replace("(", "");
                   let lg = $.trim(latlng[1]).replace(")", "");
-                  let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
+                  let duration =
+                    haltData[index]["duration"] != undefined
+                      ? haltData[index]["duration"]
+                      : 0;
                   if (duration > this.minHalt) {
                     totalBreak += duration;
                   }
-                  let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+                  let zoneDetails = this.zoneList.find(
+                    (item) => item.zoneNo == this.selectedZone
+                  );
                   if (zoneDetails != undefined) {
-
-                    this.workerDetails.haltTime = this.commonService.getHrs(totalBreak);
+                    this.workerDetails.haltTime =
+                      this.commonService.getHrs(totalBreak);
 
                     let breakBGColor = this.getMarkerName(duration);
-                    $('#totalHaltH3').css("color", this.commonService.getHrs(totalBreak));
+                    $("#totalHaltH3").css(
+                      "color",
+                      this.commonService.getHrs(totalBreak)
+                    );
                     let activeClass = "halt-data-theme";
                     if (this.todayHaltList.length == 0) {
                       activeClass = "halt-data-theme active";
                     }
-                    this.todayHaltList.push({ time: haltData[index]["startTime"], duration: duration, type: haltData[index]["haltType"], location: haltData[index]["locality"], lat: lt, lng: lg, breakBGColor: breakBGColor, activeClass: activeClass });
+                    this.todayHaltList.push({
+                      time: haltData[index]["startTime"],
+                      duration: duration,
+                      type: haltData[index]["haltType"],
+                      location: haltData[index]["locality"],
+                      lat: lt,
+                      lng: lg,
+                      breakBGColor: breakBGColor,
+                      activeClass: activeClass,
+                    });
                     if (index == haltData.length - 1) {
                       if (zoneDetails.status == "stopped") {
-                        let lastDuration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-                        this.workerDetails.currentHaltTime = this.commonService.getHrs(lastDuration);
-                        $('#currentHaltH3').css("color", this.getMarkerName(duration));
-                      }
-                      else {
+                        let lastDuration =
+                          haltData[index]["duration"] != undefined
+                            ? haltData[index]["duration"]
+                            : 0;
+                        this.workerDetails.currentHaltTime =
+                          this.commonService.getHrs(lastDuration);
+                        $("#currentHaltH3").css(
+                          "color",
+                          this.getMarkerName(duration)
+                        );
+                      } else {
                         this.workerDetails.currentHaltTime = "0:00";
-                        $('#currentHaltH3').css("color", this.getMarkerName(0));
+                        $("#currentHaltH3").css("color", this.getMarkerName(0));
                       }
                     }
                   }
@@ -1100,15 +1491,20 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   setMapHalt() {
     let mapProp = this.commonService.mapForHaltReport();
-    this.mapHalt = new google.maps.Map(document.getElementById("haltMap"), mapProp);
+    this.mapHalt = new google.maps.Map(
+      document.getElementById("haltMap"),
+      mapProp
+    );
   }
 
   setKmlHalt(wardNo: string) {
-    this.db.object('Defaults/KmlBoundary/' + wardNo).valueChanges().subscribe(
-      wardPath => {
+    this.db
+      .object("Defaults/KmlBoundary/" + wardNo)
+      .valueChanges()
+      .subscribe((wardPath) => {
         new google.maps.KmlLayer({
           url: wardPath.toString(),
-          map: this.mapHalt
+          map: this.mapHalt,
         });
       });
   }
@@ -1119,7 +1515,9 @@ export class RealtimeMonitoringComponent implements OnInit {
       markerColor = "green";
     } else if (breakTime > 10 && breakTime <= 20) {
       markerColor = "orange";
-    } else { markerColor = "red"; }
+    } else {
+      markerColor = "red";
+    }
 
     return markerColor;
   }
@@ -1132,9 +1530,16 @@ export class RealtimeMonitoringComponent implements OnInit {
         let lt = this.todayHaltList[index]["lat"];
         let lg = this.todayHaltList[index]["lng"];
 
-        let markerURL = "../../../assets/img/" + this.getMarkerName(this.todayHaltList[index]["duration"]) + ".svg";
+        let markerURL =
+          "../../../assets/img/" +
+          this.getMarkerName(this.todayHaltList[index]["duration"]) +
+          ".svg";
         var markerLabel = this.todayHaltList[index]["duration"];
-        let contentString = 'Start Time : ' + this.todayHaltList[index]["time"] + ' <br/> Break Time : ' + this.todayHaltList[index]["duration"];
+        let contentString =
+          "Start Time : " +
+          this.todayHaltList[index]["time"] +
+          " <br/> Break Time : " +
+          this.todayHaltList[index]["duration"];
         let scaledHeight = 50;
         let scaledWidth = 50;
         let point1 = 25;
@@ -1147,28 +1552,46 @@ export class RealtimeMonitoringComponent implements OnInit {
           point1 = 45;
           point2 = 50;
         }
-        this.setMarker(0, lt, lg, markerURL, markerLabel, contentString, this.mapHalt, scaledHeight, scaledWidth, point1, point2, isAnimation, "halt");
-
+        this.setMarker(
+          0,
+          lt,
+          lg,
+          markerURL,
+          markerLabel,
+          contentString,
+          this.mapHalt,
+          scaledHeight,
+          scaledWidth,
+          point1,
+          point2,
+          isAnimation,
+          "halt"
+        );
       }
     }
   }
 
-  // open model 
+  // open model
   openMapModelHalt(contentHalt) {
-    this.modalService.open(contentHalt, { size: 'lg' });
+    this.modalService.open(contentHalt, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
     let height = (windowHeight * 90) / 100;
     let width = (windowWidth * 90) / 100;
-    let mapHeight = (height - 80) + "px";
-    let divHeight = (height - 80) + "px";
+    let mapHeight = height - 80 + "px";
+    let divHeight = height - 80 + "px";
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
 
-    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", "26px");
-    $('#haltMap').css("height", mapHeight)
-    $('#divSequence').css("height", divHeight);
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#haltMap").css("height", mapHeight);
+    $("#divSequence").css("height", divHeight);
 
     this.setMapHalt();
     setTimeout(() => {
@@ -1199,17 +1622,58 @@ export class RealtimeMonitoringComponent implements OnInit {
         let lg = this.todayHaltList[i]["lng"];
         if (i == index) {
           this.todayHaltList[i]["activeClass"] = "halt-data-theme active";
-          let markerURL = "../../../assets/img/" + this.getMarkerName(this.todayHaltList[i]["duration"]) + ".svg";
+          let markerURL =
+            "../../../assets/img/" +
+            this.getMarkerName(this.todayHaltList[i]["duration"]) +
+            ".svg";
           var markerLabel = this.todayHaltList[i]["duration"];
-          let contentString = 'Start Time : ' + this.todayHaltList[i]["time"] + ' <br/> Break Time : ' + this.todayHaltList[i]["duration"];
-          this.setMarker(i, lt, lg, markerURL, markerLabel, contentString, this.mapHalt, height, height, point1, point2, true, "haltShow");
-        }
-        else {
+          let contentString =
+            "Start Time : " +
+            this.todayHaltList[i]["time"] +
+            " <br/> Break Time : " +
+            this.todayHaltList[i]["duration"];
+          this.setMarker(
+            i,
+            lt,
+            lg,
+            markerURL,
+            markerLabel,
+            contentString,
+            this.mapHalt,
+            height,
+            height,
+            point1,
+            point2,
+            true,
+            "haltShow"
+          );
+        } else {
           this.todayHaltList[i]["activeClass"] = "halt-data-theme";
-          let markerURL = "../../../assets/img/" + this.getMarkerName(this.todayHaltList[i]["duration"]) + ".svg";
+          let markerURL =
+            "../../../assets/img/" +
+            this.getMarkerName(this.todayHaltList[i]["duration"]) +
+            ".svg";
           var markerLabel = this.todayHaltList[i]["duration"];
-          let contentString = 'Start Time : ' + this.todayHaltList[i]["time"] + ' <br/> Break Time : ' + this.todayHaltList[i]["duration"];
-          this.setMarker(i, lt, lg, markerURL, markerLabel, contentString, this.mapHalt, height, height, point1, point2, false, "haltShow");
+          let contentString =
+            "Start Time : " +
+            this.todayHaltList[i]["time"] +
+            " <br/> Break Time : " +
+            this.todayHaltList[i]["duration"];
+          this.setMarker(
+            i,
+            lt,
+            lg,
+            markerURL,
+            markerLabel,
+            contentString,
+            this.mapHalt,
+            height,
+            height,
+            point1,
+            point2,
+            false,
+            "haltShow"
+          );
         }
       }
     }
@@ -1220,27 +1684,31 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.wardNo = wardNo;
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");
-    }
-    else {
+    } else {
       this.workerDetails.wardName = "WARD " + this.selectedZone;
     }
     this.fillWardDetail();
   }
 
-  // open model 
+  // open model
   openMapModelRemark(content: any, id: any) {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 290;
     let width = 350;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", "26px");
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
     if (this.remarkList.length > 0) {
-      $('#drpRemark').val(this.remarkList[id]["topic"]);
-      $('#txtRemark').val(this.remarkList[id]["remark"]);
-      $('#key').val(this.remarkList[id]["key"]);
+      $("#drpRemark").val(this.remarkList[id]["topic"]);
+      $("#txtRemark").val(this.remarkList[id]["remark"]);
+      $("#key").val(this.remarkList[id]["key"]);
     }
   }
 
@@ -1251,9 +1719,19 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.application != null) {
       this.application.unsubscribe();
     }
-    let applicationPath = 'NavigatorEventsTracking/Date/' + driverID + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate;
-    this.application = this.db.object(applicationPath).valueChanges().subscribe(
-      applicationData => {
+    let applicationPath =
+      "NavigatorEventsTracking/Date/" +
+      driverID +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
+    this.application = this.db
+      .object(applicationPath)
+      .valueChanges()
+      .subscribe((applicationData) => {
         if (applicationData != null) {
           this.applicationDataList = [];
           let applicationArray = Object.entries(applicationData);
@@ -1261,16 +1739,21 @@ export class RealtimeMonitoringComponent implements OnInit {
             let status = applicationArray[index][1];
             let time = applicationArray[index][0];
 
-            time = time.split(":")[0] + ":" + time.split(":")[1] + ":" + time.split(":")[2];
+            time =
+              time.split(":")[0] +
+              ":" +
+              time.split(":")[1] +
+              ":" +
+              time.split(":")[2];
 
             this.applicationDataList.push({ time: time, status: status });
           }
-          this.workerDetails.applicationStatus = this.applicationDataList[0]["status"];
+          this.workerDetails.applicationStatus =
+            this.applicationDataList[0]["status"];
           if (this.applicationDataList[0]["status"] == "Opened") {
-            $('#appStatusH3').css("color", "#000");
-          }
-          else {
-            $('#appStatusH3').css("color", "red");
+            $("#appStatusH3").css("color", "#000");
+          } else {
+            $("#appStatusH3").css("color", "red");
           }
         }
         //application.unsubscribe();
@@ -1281,9 +1764,19 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getVehicleStatus() {
     this.vehicleStstusList = [];
-    let dbPath = 'GeoGraphicallySurfingHistory/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate;
-    let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let dbPath =
+      "GeoGraphicallySurfingHistory/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
+    let vehicleStatusInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         vehicleStatusInstance.unsubscribe();
         if (data != null) {
           this.vehicleStstusList = [];
@@ -1293,7 +1786,12 @@ export class RealtimeMonitoringComponent implements OnInit {
               let index = keyArray[i];
               let time = index;
               let status = data[index];
-              time = time.split(":")[0] + ":" + time.split(":")[1] + ":" + time.split(":")[2];
+              time =
+                time.split(":")[0] +
+                ":" +
+                time.split(":")[1] +
+                ":" +
+                time.split(":")[2];
               this.vehicleStstusList.push({ time: time, status: status });
             }
           }
@@ -1302,49 +1800,64 @@ export class RealtimeMonitoringComponent implements OnInit {
       });
   }
 
-  // open model 
+  // open model
   openMapModel(content: any) {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 870;
     let width = 350;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = (height - 26) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", marginTop);
-    $('#divStatus').css("height", divHeight);
+    let divHeight = height - 26 + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
   }
 
   openVehicleStatusModel(content: any) {
-    if (this.workerDetails.vehicleCurrentLocation != '---') {
-      this.modalService.open(content, { size: 'lg' });
+    if (this.workerDetails.vehicleCurrentLocation != "---") {
+      this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 870;
       let width = 350;
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      let divHeight = (height - 26) + "px";
-      $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-      $('div .modal-dialog-centered').css("margin-top", marginTop);
-      $('#divStatus').css("height", divHeight);
+      let divHeight = height - 26 + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
     }
   }
 
   openDutyModel(content: any) {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 325;
     let width = 550;
     //height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = (height - 26) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", marginTop);
-    $('#divStatus').css("height", divHeight);
+    let divHeight = height - 26 + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
     this.getDutyOnOff();
   }
 
@@ -1387,7 +1900,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
     }
   }
-  
+
   getReachOnTime(reachTime: any) {
     let dat1 = new Date(this.toDayDate + " " + reachTime);
     for (let i = 0; i < this.dutyStatusList.length; i++) {
@@ -1401,7 +1914,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         } else {
           if (this.dutyStatusList[i]["dutyOff"] == "---") {
             this.dutyStatusList[i]["reachOn"] =
-            this.commonService.tConvert(reachTime);
+              this.commonService.tConvert(reachTime);
           } else {
             let endDate = new Date(
               this.toDayDate + " " + this.dutyStatusList[i]["dutyOff"]
@@ -1425,13 +1938,15 @@ export class RealtimeMonitoringComponent implements OnInit {
   // Application Detail
 
   getUnassignedVehicle() {
-    let vehiclePath = 'Vehicles';
+    let vehiclePath = "Vehicles";
     this.unAssignedVehicle = [];
     if (this.vehicle != null) {
       this.vehicle.unsubscribe();
     }
-    this.vehicle = this.db.object(vehiclePath).valueChanges().subscribe(
-      vehicleData => {
+    this.vehicle = this.db
+      .object(vehiclePath)
+      .valueChanges()
+      .subscribe((vehicleData) => {
         this.unAssignedVehicle = [];
         if (vehicleData != null) {
           let vehicleArray = Object.entries(vehicleData);
@@ -1443,9 +1958,19 @@ export class RealtimeMonitoringComponent implements OnInit {
               // if (vehicleName != "TestVehicle") {
               total += 1;
               this.workerDetails.totalUnAssignedVehicle = total.toString();
-              let dbPath = "VehicleNotAssignedReasons/" + vehicleName + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
-              let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
-                data => {
+              let dbPath =
+                "VehicleNotAssignedReasons/" +
+                vehicleName +
+                "/" +
+                this.currentYear +
+                "/" +
+                this.currentMonthName +
+                "/" +
+                this.toDayDate;
+              let vehicleInstance = this.db
+                .object(dbPath)
+                .valueChanges()
+                .subscribe((data) => {
                   vehicleInstance.unsubscribe();
                   let reason = "";
                   let textAreaClass = "remark-de-active";
@@ -1457,8 +1982,17 @@ export class RealtimeMonitoringComponent implements OnInit {
                     textAreaClass = "remark-active";
                     isChecked = true;
                   }
-                  this.unAssignedVehicle.push({ name: vehicleName, total: 0, reason: reason, entryId: userId, userId: this.userId, textAreaClass: textAreaClass, isChecked: isChecked });
-                  this.unAssignedVehicle[0]["total"] = this.unAssignedVehicle.length;
+                  this.unAssignedVehicle.push({
+                    name: vehicleName,
+                    total: 0,
+                    reason: reason,
+                    entryId: userId,
+                    userId: this.userId,
+                    textAreaClass: textAreaClass,
+                    isChecked: isChecked,
+                  });
+                  this.unAssignedVehicle[0]["total"] =
+                    this.unAssignedVehicle.length;
                 });
             }
           }
@@ -1467,28 +2001,32 @@ export class RealtimeMonitoringComponent implements OnInit {
       });
   }
 
-  // open model 
+  // open model
   openMapModelVehicle(contentVehicle: any) {
     this.getUnassignedVehicle();
-    this.modalService.open(contentVehicle, { size: 'lg' });
+    this.modalService.open(contentVehicle, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 880;
     let width = 570;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2);
-    let divHeight = (height - 150) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px");
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", "29px");
-    $('#divVehicle').css("height", divHeight);
+    let divHeight = height - 150 + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px");
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "29px");
+    $("#divVehicle").css("height", divHeight);
   }
 
   saveVehicleReason() {
     if (this.unAssignedVehicle != null) {
       for (let i = 0; i < this.unAssignedVehicle.length; i++) {
         let vehicle = this.unAssignedVehicle[i]["name"];
-        let userId = this.unAssignedVehicle[i]["entryId"]
-        let reason = $('#txtVehicle' + i).val();
+        let userId = this.unAssignedVehicle[i]["entryId"];
+        let reason = $("#txtVehicle" + i).val();
         let chkId = "chk" + i;
         let element = <HTMLInputElement>document.getElementById(chkId);
         let updatedBy = this.userId;
@@ -1498,16 +2036,26 @@ export class RealtimeMonitoringComponent implements OnInit {
           updatedBy = null;
         }
 
-        let dbPath = "VehicleNotAssignedReasons/" + vehicle + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
+        let dbPath =
+          "VehicleNotAssignedReasons/" +
+          vehicle +
+          "/" +
+          this.currentYear +
+          "/" +
+          this.currentMonthName +
+          "/" +
+          this.toDayDate;
         this.db.object(dbPath).update({
           reason: reason,
           userId: userId,
-          updatedBy: updatedBy
+          updatedBy: updatedBy,
         });
-
       }
       // this.getUnassignedVehicle();
-      this.commonService.setAlertMessage("success", "Vehicle Not Assigned Reason Added Successfully !!!");
+      this.commonService.setAlertMessage(
+        "success",
+        "Vehicle Not Assigned Reason Added Successfully !!!"
+      );
     }
   }
 
@@ -1516,7 +2064,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getDate(days: any) {
-    let displayDate = new Date(new Date(this.todayDate).getTime() - (Number(days) * 1000 * 60 * 60 * 24)).toDateString().slice(4, 20);
+    let displayDate = new Date(
+      new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24
+    )
+      .toDateString()
+      .slice(4, 20);
     let month = displayDate.split(" ")[0];
     let day = displayDate.split(" ")[1];
     let year = displayDate.split(" ")[2];
@@ -1524,24 +2076,30 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getFormattedDate(days: any) {
-    let date = new Date(new Date(this.toDayDate).getTime() - (Number(days) * 1000 * 60 * 60 * 24));
+    let date = new Date(
+      new Date(this.toDayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24
+    );
     let day = new Date(date).getDate().toString();
     let month = (new Date(date).getMonth() + 1).toString();
 
     let year = new Date(date).getFullYear().toString();
-    if (day.length == 1) { day = "0" + day; }
-    if (month.length == 1) { month = "0" + month; }
+    if (day.length == 1) {
+      day = "0" + day;
+    }
+    if (month.length == 1) {
+      month = "0" + month;
+    }
     return year + "-" + month + "-" + day;
   }
 
   initGrpahProperties() {
     this.chartColor = "#ececec";
-    this.lineBigDashboardChartType = 'line';
+    this.lineBigDashboardChartType = "line";
     this.canvas = document.getElementById("bigDashboardChart");
     if (this.canvas != null) {
       this.ctx = this.canvas.getContext("2d");
       this.gradientStroke = this.ctx.createLinearGradient(500, 0, 100, 0);
-      this.gradientStroke.addColorStop(0, '#80b6f4');
+      this.gradientStroke.addColorStop(0, "#80b6f4");
       this.gradientStroke.addColorStop(1, this.chartColor);
       this.gradientFill = this.ctx.createLinearGradient(0, 200, 0, 50);
       this.gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
@@ -1555,7 +2113,7 @@ export class RealtimeMonitoringComponent implements OnInit {
           pointBackgroundColor: "#fff",
           pointHoverBackgroundColor: "#2c2c2c",
           pointHoverBorderColor: this.chartColor,
-        }
+        },
       ];
     }
   }
@@ -1567,52 +2125,79 @@ export class RealtimeMonitoringComponent implements OnInit {
     //this.clearAllOnMap();
     let wardLocalStorage = JSON.parse(localStorage.getItem("wardLineStorage"));
     if (wardLocalStorage != null) {
-      let wardDetails = wardLocalStorage.find(item => item.ward == this.selectedZone);
+      let wardDetails = wardLocalStorage.find(
+        (item) => item.ward == this.selectedZone
+      );
       if (wardDetails != undefined) {
         this.wardLineStatus = wardDetails.data;
         this.workerDetails.lastUpdateTime = wardDetails.time;
-        //this.setMap();       
+        //this.setMap();
         //this.setKml();
         this.clearAllOnMap();
         this.getLinesFromJson();
         this.getGrpahDataTodayAndLastFiveDays(15);
-      }
-      else {
+      } else {
         this.getWardLineStatus();
       }
-    }
-    else {
+    } else {
       this.getWardLineStatus();
     }
   }
 
   getWardLineStatus() {
-    let dbPath = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/LineStatus';
-    let wardLineData = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let dbPath =
+      "WasteCollectionInfo/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate +
+      "/LineStatus";
+    let wardLineData = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         this.graphHeaderData.date = this.getDate(0);
         this.graphHeaderData.workprogress = "0";
         this.wardLineStatus = data;
-        let time = new Date().toTimeString().split(' ')[0].split(':')[0] + ":" + new Date().toTimeString().split(' ')[0].split(':')[1];
-        let wardLocalStorage = JSON.parse(localStorage.getItem("wardLineStorage"));
+        let time =
+          new Date().toTimeString().split(" ")[0].split(":")[0] +
+          ":" +
+          new Date().toTimeString().split(" ")[0].split(":")[1];
+        let wardLocalStorage = JSON.parse(
+          localStorage.getItem("wardLineStorage")
+        );
         if (wardLocalStorage != null) {
-          let wardDetails = wardLocalStorage.find(item => item.ward == this.selectedZone);
+          let wardDetails = wardLocalStorage.find(
+            (item) => item.ward == this.selectedZone
+          );
           if (wardDetails != undefined) {
             wardDetails.time = time;
             wardDetails.data = this.wardLineStatus;
             this.workerDetails.lastUpdateTime = wardDetails.time;
-          }
-          else {
-            wardLocalStorage.push({ ward: this.selectedZone, time: time, data: data });
+          } else {
+            wardLocalStorage.push({
+              ward: this.selectedZone,
+              time: time,
+              data: data,
+            });
             this.workerDetails.lastUpdateTime = time;
           }
-        }
-        else {
+        } else {
           wardLocalStorage = [];
-          wardLocalStorage.push({ ward: this.selectedZone, time: time, data: data });
+          wardLocalStorage.push({
+            ward: this.selectedZone,
+            time: time,
+            data: data,
+          });
           this.workerDetails.lastUpdateTime = time;
         }
-        localStorage.setItem('wardLineStorage', JSON.stringify(wardLocalStorage));
+        localStorage.setItem(
+          "wardLineStorage",
+          JSON.stringify(wardLocalStorage)
+        );
         this.initTimeDistance();
         this.drawWorkProgress();
         //this.setMap();
@@ -1641,8 +2226,13 @@ export class RealtimeMonitoringComponent implements OnInit {
             if (this.wardLineStatus[keyArray[i]] != null) {
               let startTime = this.wardLineStatus[keyArray[i]]["start-time"];
               let endTime = this.wardLineStatus[keyArray[i]]["end-time"];
-              let lineDistance = this.wardLineStatus[keyArray[i]]["line-distance"];
-              this.graphData.push({ startTime: startTime, endTime: endTime, lineDistance: lineDistance });
+              let lineDistance =
+                this.wardLineStatus[keyArray[i]]["line-distance"];
+              this.graphData.push({
+                startTime: startTime,
+                endTime: endTime,
+                lineDistance: lineDistance,
+              });
             }
           }
         }
@@ -1658,9 +2248,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.drawWorkProgress();
         this.getData(interval, this.time, this.distance, this.toDayDate);
       }, 2000);
-
-    }
-    else {
+    } else {
       setTimeout(() => {
         this.initTimeDistance();
         this.drawWorkProgress();
@@ -1678,17 +2266,21 @@ export class RealtimeMonitoringComponent implements OnInit {
         pointRadius: 5,
         fill: true,
         borderWidth: 1,
-        data: this.distance
-      }
+        data: this.distance,
+      },
     ];
     this.lineBigDashboardChartLabels = this.time;
   }
 
-  getDataNull(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
-
+  getDataNull(
+    interval: any,
+    timeCollection: any[],
+    distanceCollection: any[],
+    date: any
+  ) {
     this.maxDistance = [];
     let intervalInMinutes = interval;
-    let timePeriod = (100 / (60 / intervalInMinutes)) / 100;
+    let timePeriod = 100 / (60 / intervalInMinutes) / 100;
 
     let distanceCovered = 0;
     let timeInterval = 0;
@@ -1710,16 +2302,22 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.graphOptions();
   }
 
-  getData(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
-
+  getData(
+    interval: any,
+    timeCollection: any[],
+    distanceCollection: any[],
+    date: any
+  ) {
     this.maxDistance = [];
     let lineCompleted = 0;
     if (this.graphData.length > 0) {
-
-      this.graphData = this.commonService.transformNumeric(this.graphData, 'startTime');
+      this.graphData = this.commonService.transformNumeric(
+        this.graphData,
+        "startTime"
+      );
 
       let intervalInMinutes = interval;
-      let timePeriod = (100 / (60 / intervalInMinutes)) / 100;
+      let timePeriod = 100 / (60 / intervalInMinutes) / 100;
 
       let distanceCovered = 0;
       let timeInterval = 0;
@@ -1735,13 +2333,17 @@ export class RealtimeMonitoringComponent implements OnInit {
         intervalStart = endTime;
       }
 
-      let intervalEnd = new Date(new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() + intervalInMinutes * 60000);
+      let intervalEnd = new Date(
+        new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() +
+          intervalInMinutes * 60000
+      );
 
       for (let index = 0; index < this.graphData.length; index++) {
-
         let lineDistance = this.graphData[index]["lineDistance"];
 
-        let lineEndTime = new Date(this.getFormattedDate(0) + " " + this.graphData[index]["endTime"]);
+        let lineEndTime = new Date(
+          this.getFormattedDate(0) + " " + this.graphData[index]["endTime"]
+        );
 
         if (this.graphData[index]["endTime"] == undefined) {
           break;
@@ -1766,16 +2368,20 @@ export class RealtimeMonitoringComponent implements OnInit {
           if (index > 0) {
             index--;
             if (distanceCovered == 0) {
-              intervalEnd = new Date((intervalEnd).getTime() + intervalInMinutes * 60000);
+              intervalEnd = new Date(
+                intervalEnd.getTime() + intervalInMinutes * 60000
+              );
             } else {
-
-              intervalEnd = new Date((intervalEnd).getTime() + intervalInMinutes * 60000);
+              intervalEnd = new Date(
+                intervalEnd.getTime() + intervalInMinutes * 60000
+              );
             }
-          }
-          else {
+          } else {
             index--;
             if (distanceCovered == 0) {
-              intervalEnd = new Date((intervalEnd).getTime() + intervalInMinutes * 60000);
+              intervalEnd = new Date(
+                intervalEnd.getTime() + intervalInMinutes * 60000
+              );
             }
           }
           distanceCovered = 0;
@@ -1795,10 +2401,17 @@ export class RealtimeMonitoringComponent implements OnInit {
 
       this.maxDistance.push(Math.max.apply(null, this.distance));
 
-      let zoneDetails = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+      let zoneDetails = this.zoneList.find(
+        (item) => item.zoneNo == this.selectedZone
+      );
       if (zoneDetails != undefined) {
         if (this.days == 2) {
-          this.graphHeaderData.workprogress = ((Number(lineCompleted) / Number(zoneDetails.totalLines)) * 100).toFixed(2).toString();
+          this.graphHeaderData.workprogress = (
+            (Number(lineCompleted) / Number(zoneDetails.totalLines)) *
+            100
+          )
+            .toFixed(2)
+            .toString();
         }
       }
     }
@@ -1809,27 +2422,25 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setStepSizeandMaxValue(value: any) {
-    this.stepSize = Math.ceil((Number(value) / 5) / 100) * 100;
+    this.stepSize = Math.ceil(Number(value) / 5 / 100) * 100;
     this.graphMaxValue = Number(this.stepSize) * 5;
   }
 
   graphOptions() {
-
     this.lineBigDashboardChartOptions = {
-
       layout: {
         padding: {
           left: 15,
           right: 30,
           top: 15,
-          bottom: 10
-        }
+          bottom: 10,
+        },
       },
       maintainAspectRatio: false,
       tooltips: {
-        backgroundColor: '#fff',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
+        backgroundColor: "#fff",
+        titleFontColor: "#333",
+        bodyFontColor: "#666",
         bodySpacing: 4,
         xPadding: 12,
         mode: "nearest",
@@ -1838,51 +2449,58 @@ export class RealtimeMonitoringComponent implements OnInit {
         title: "wow",
         callbacks: {
           label: function (tooltipItem, data) {
-
-            return + Number(tooltipItem.yLabel) + " meter covered" + " & Line Completed :" + data.labels[tooltipItem.index].split("~")[1];;
-          }
-        }
+            return (
+              +Number(tooltipItem.yLabel) +
+              " meter covered" +
+              " & Line Completed :" +
+              data.labels[tooltipItem.index].split("~")[1]
+            );
+          },
+        },
       },
       legend: {
         position: "bottom",
         fillStyle: "#FFF",
-        display: false
+        display: false,
       },
       scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: "rgba(255,255,255,0.4)",
-            fontStyle: "bold",
-            beginAtZero: true,
-            maxTicksLimit: 50,
-            padding: 10,
-            stepSize: this.stepSize,
-            max: this.graphMaxValue
+        yAxes: [
+          {
+            ticks: {
+              fontColor: "rgba(255,255,255,0.4)",
+              fontStyle: "bold",
+              beginAtZero: true,
+              maxTicksLimit: 50,
+              padding: 10,
+              stepSize: this.stepSize,
+              max: this.graphMaxValue,
+            },
+            gridLines: {
+              drawTicks: true,
+              drawBorder: false,
+              display: true,
+              color: "rgba(255,255,255,0.1)",
+              zeroLineColor: "transparent",
+            },
           },
-          gridLines: {
-            drawTicks: true,
-            drawBorder: false,
-            display: true,
-            color: "rgba(255,255,255,0.1)",
-            zeroLineColor: "transparent"
-          }
-        }],
-        xAxes: [{
-          gridLines: {
-            zeroLineColor: "transparent",
-            display: false
+        ],
+        xAxes: [
+          {
+            gridLines: {
+              zeroLineColor: "transparent",
+              display: false,
+            },
+            ticks: {
+              padding: 10,
+              fontColor: "rgba(255,255,255,0.4)",
+              fontStyle: "bold",
+              callback: function (value) {
+                return value.toString().split("~")[0];
+              },
+            },
           },
-          ticks: {
-            padding: 10,
-            fontColor: "rgba(255,255,255,0.4)",
-            fontStyle: "bold",
-            callback: function (value) {
-              return value.toString().split("~")[0];
-            }
-          },
-
-        }]
-      }
+        ],
+      },
     };
   }
 
@@ -1899,11 +2517,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setKml() {
-    this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
-      wardPath => {
+    this.db
+      .object("Defaults/KmlBoundary/" + this.selectedZone)
+      .valueChanges()
+      .subscribe((wardPath) => {
         let marker = new google.maps.KmlLayer({
           url: wardPath.toString(),
-          map: this.map
+          map: this.map,
         });
         this.zoneKML.push({ marker });
       });
@@ -1912,35 +2532,44 @@ export class RealtimeMonitoringComponent implements OnInit {
   showVehicleMovement() {
     //let dbPath="RealTimeDetails/WardDetails/"+this.selectedZone;
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
-    this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    this.vehicleLocationInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         if (data != undefined) {
-          dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
-          let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
-            statusData => {
+          dbPath =
+            "RealTimeDetails/WardDetails/" +
+            this.selectedZone +
+            "/activityStatus";
+          let statusInstance = this.db
+            .object(dbPath)
+            .valueChanges()
+            .subscribe((statusData) => {
               statusInstance.unsubscribe();
               let statusId = statusData.toString();
               let vehicleIcon;
               if (this.workerDetails.vehicleNo.includes("TRACTOR")) {
-                vehicleIcon = '../assets/img/active-tractormdpi.png';
-                if (statusId == 'completed') {
-                  vehicleIcon = '../assets/img/disabled-tractormdpi.png';
-                } else if (statusId == 'stopped') {
-                  vehicleIcon = '../assets/img/stop-tractormdpi.png';
+                vehicleIcon = "../assets/img/active-tractormdpi.png";
+                if (statusId == "completed") {
+                  vehicleIcon = "../assets/img/disabled-tractormdpi.png";
+                } else if (statusId == "stopped") {
+                  vehicleIcon = "../assets/img/stop-tractormdpi.png";
                 }
-              }
-              else {
-                vehicleIcon = '../assets/img/tipper-green.png';
-                if (statusId == 'completed') {
-                  vehicleIcon = '../assets/img/tipper-gray.png';
-                } else if (statusId == 'stopped') {
-                  vehicleIcon = '../assets/img/tipper-red.png';
+              } else {
+                vehicleIcon = "../assets/img/tipper-green.png";
+                if (statusId == "completed") {
+                  vehicleIcon = "../assets/img/tipper-gray.png";
+                } else if (statusId == "stopped") {
+                  vehicleIcon = "../assets/img/tipper-red.png";
                 }
               }
               let location = data.toString().split(",");
               this.marker.setMap(null);
               this.marker = new google.maps.Marker({
-                position: { lat: Number(location[0]), lng: Number(location[1]) },
+                position: {
+                  lat: Number(location[0]),
+                  lng: Number(location[1]),
+                },
                 map: this.map,
                 icon: vehicleIcon,
               });
@@ -1951,18 +2580,20 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getLinesFromJson() {
-
     this.setKml();
     if (this.wardLines != undefined) {
       this.wardLines.unsubscribe();
     }
-    this.wardLines = this.db.object('Defaults/WardLines/' + this.selectedZone).valueChanges().subscribe(
-      zoneLine => {
+    this.wardLines = this.db
+      .object("Defaults/WardLines/" + this.selectedZone)
+      .valueChanges()
+      .subscribe((zoneLine) => {
         var linePath = [];
         for (let i = 1; i < 2000; i++) {
-
           var line = zoneLine[i];
-          if (line == undefined) { break; }
+          if (line == undefined) {
+            break;
+          }
           var path = [];
           for (let j = 0; j < line.points.length; j++) {
             path.push({ lat: line.points[j][0], lng: line.points[j][1] });
@@ -1977,28 +2608,55 @@ export class RealtimeMonitoringComponent implements OnInit {
       });
   }
 
-
   plotLinesOnMap() {
     if (this.allLines.length > 0) {
       let latLngArray = [];
       latLngArray = this.allLines[0]["latlng"];
       let lat = latLngArray[0]["lat"];
       let lng = latLngArray[0]["lng"];
-      let startIcon = '../assets/img/start-point.svg';
-      let contentString = 'Ward Start';
+      let startIcon = "../assets/img/start-point.svg";
+      let contentString = "Ward Start";
       let scaledHeight = 25;
       let scaledWidth = 31;
       let point1 = 0;
       let point2 = 0;
 
-      this.setMarker(0, lat, lng, startIcon, "", contentString, this.map, scaledHeight, scaledWidth, point1, point2, false, "map");
+      this.setMarker(
+        0,
+        lat,
+        lng,
+        startIcon,
+        "",
+        contentString,
+        this.map,
+        scaledHeight,
+        scaledWidth,
+        point1,
+        point2,
+        false,
+        "map"
+      );
 
       latLngArray = this.allLines[this.allLines.length - 1]["latlng"];
       lat = latLngArray[latLngArray.length - 1]["lat"];
       lng = latLngArray[latLngArray.length - 1]["lng"];
-      startIcon = '../assets/img/end-point.svg';
-      contentString = 'Ward End';
-      this.setMarker(0, lat, lng, startIcon, "", contentString, this.map, scaledHeight, scaledWidth, point1, point2, false, "map");
+      startIcon = "../assets/img/end-point.svg";
+      contentString = "Ward End";
+      this.setMarker(
+        0,
+        lat,
+        lng,
+        startIcon,
+        "",
+        contentString,
+        this.map,
+        scaledHeight,
+        scaledWidth,
+        point1,
+        point2,
+        false,
+        "map"
+      );
     }
 
     for (let index = 0; index < this.allLines.length; index++) {
@@ -2016,7 +2674,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       let line = new google.maps.Polyline({
         path: latlng,
         strokeColor: this.commonService.getLineColor(status),
-        strokeWeight: 2
+        strokeWeight: 2,
       });
 
       this.polylines[index] = line;
@@ -2025,27 +2683,45 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.showVehicleMovement();
   }
 
-  setMarker(i: any, lat: any, lng: any, markerURL: any, markerLabel: any, contentString: any, map: any, scaledHeight: any, scaledWidth: any, point1: any, point2: any, isAnimation: any, type: any) {
-
+  setMarker(
+    i: any,
+    lat: any,
+    lng: any,
+    markerURL: any,
+    markerLabel: any,
+    contentString: any,
+    map: any,
+    scaledHeight: any,
+    scaledWidth: any,
+    point1: any,
+    point2: any,
+    isAnimation: any,
+    type: any
+  ) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: map,
-      label: { text: ' ' + markerLabel + ' ', color: "white", fontSize: "12px", fontWeight: "bold" },
+      label: {
+        text: " " + markerLabel + " ",
+        color: "white",
+        fontSize: "12px",
+        fontWeight: "bold",
+      },
       icon: {
         url: markerURL,
         fillOpacity: 1,
         strokeWeight: 0,
         scaledSize: new google.maps.Size(scaledHeight, scaledWidth),
         origin: new google.maps.Point(0, 0),
-        labelOrigin: new google.maps.Point(point1, point2)
-      }
+        labelOrigin: new google.maps.Point(point1, point2),
+      },
     });
 
     let infowindowEnd = new google.maps.InfoWindow({
-      content: contentString
+      content: contentString,
     });
 
-    marker.addListener('click', function () {
+    marker.addListener("click", function () {
       infowindowEnd.open(map, marker);
     });
 
@@ -2060,22 +2736,30 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
 
     this.allMarkers.push({ marker });
-
-
   }
 
   getpeopleAtWork() {
-    let peopleAtWork = this.db.object('RealTimeDetails/peopleOnWork').valueChanges().subscribe(
-      data => {
+    let peopleAtWork = this.db
+      .object("RealTimeDetails/peopleOnWork")
+      .valueChanges()
+      .subscribe((data) => {
         this.workerDetails.peopleAtWork = data.toString();
       });
   }
 
   getGarageWorkDutyOn() {
     this.garageDutyList = [];
-    let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
-    let garageInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let dbPath =
+      "DailyWorkDetail/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.toDayDate;
+    let garageInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         garageInstance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -2085,47 +2769,85 @@ export class RealtimeMonitoringComponent implements OnInit {
               for (let j = 1; j <= 5; j++) {
                 if (data[empId]["task" + j] != null) {
                   if (data[empId]["task" + j]["task"] == "GarageWork") {
-
                     let dutyOnTime = "";
-                    let dutyOffTime = ""
-                    if (Object.keys(data[empId]["task" + j + ""]["in-out"])[0] != null) {
-                      dutyOnTime = this.commonService.tConvert(Object.keys(data[empId]["task" + j + ""]["in-out"])[0]);
-                      let removeSecond = dutyOnTime.split(' ');
-                      dutyOnTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                    let dutyOffTime = "";
+                    if (
+                      Object.keys(data[empId]["task" + j + ""]["in-out"])[0] !=
+                      null
+                    ) {
+                      dutyOnTime = this.commonService.tConvert(
+                        Object.keys(data[empId]["task" + j + ""]["in-out"])[0]
+                      );
+                      let removeSecond = dutyOnTime.split(" ");
+                      dutyOnTime =
+                        removeSecond[0].slice(0, -3) + " " + removeSecond[1];
                     }
-                    if (Object.keys(data[empId]["task" + j + ""]["in-out"])[1] != null) {
-                      dutyOffTime = this.commonService.tConvert(Object.keys(data[empId]["task" + j + ""]["in-out"])[1]);
-                      let removeSecond = dutyOffTime.split(' ');
-                      dutyOffTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                    if (
+                      Object.keys(data[empId]["task" + j + ""]["in-out"])[1] !=
+                      null
+                    ) {
+                      dutyOffTime = this.commonService.tConvert(
+                        Object.keys(data[empId]["task" + j + ""]["in-out"])[1]
+                      );
+                      let removeSecond = dutyOffTime.split(" ");
+                      dutyOffTime =
+                        removeSecond[0].slice(0, -3) + " " + removeSecond[1];
                     }
                     if (this.garageDutyList.length == 0) {
                       this.workerDetails.garageWorkDutyCount = "1";
-                      this.garageDutyList.push({ empId: empId, name: "", dutyOnTime: dutyOnTime, dutyOffTime: dutyOffTime, mobile: "", designation: "" });
-                    }
-                    else {
-                      let empDetails = this.garageDutyList.find(item => item.empId == empId);
+                      this.garageDutyList.push({
+                        empId: empId,
+                        name: "",
+                        dutyOnTime: dutyOnTime,
+                        dutyOffTime: dutyOffTime,
+                        mobile: "",
+                        designation: "",
+                      });
+                    } else {
+                      let empDetails = this.garageDutyList.find(
+                        (item) => item.empId == empId
+                      );
                       if (empDetails != undefined) {
-                        empDetails.dutyOnTime = empDetails.dutyOnTime + " <br/> " + dutyOnTime;
-                        empDetails.dutyOffTime = empDetails.dutyOffTime + " <br/> " + dutyOffTime;
-                      }
-                      else {
-                        this.workerDetails.garageWorkDutyCount = (Number(this.workerDetails.garageWorkDutyCount) + 1).toString();
-                        this.garageDutyList.push({ empId: empId, name: "", dutyOnTime: dutyOnTime, dutyOffTime: dutyOffTime, mobile: "", designation: "" });
+                        empDetails.dutyOnTime =
+                          empDetails.dutyOnTime + " <br/> " + dutyOnTime;
+                        empDetails.dutyOffTime =
+                          empDetails.dutyOffTime + " <br/> " + dutyOffTime;
+                      } else {
+                        this.workerDetails.garageWorkDutyCount = (
+                          Number(this.workerDetails.garageWorkDutyCount) + 1
+                        ).toString();
+                        this.garageDutyList.push({
+                          empId: empId,
+                          name: "",
+                          dutyOnTime: dutyOnTime,
+                          dutyOffTime: dutyOffTime,
+                          mobile: "",
+                          designation: "",
+                        });
                       }
                     }
-                    this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                      let empDetails = this.garageDutyList.find(item => item.empId == empId);
-                      if (empDetails != undefined) {
-                        empDetails.name = employee["name"];
-                        empDetails.mobile = employee["mobile"];
-                        if (employee["designation"] == "Transportation Executive") {
-                          empDetails.designation = "driver";
+                    this.commonService
+                      .getEmplyeeDetailByEmployeeId(empId)
+                      .then((employee) => {
+                        let empDetails = this.garageDutyList.find(
+                          (item) => item.empId == empId
+                        );
+                        if (empDetails != undefined) {
+                          empDetails.name = employee["name"];
+                          empDetails.mobile = employee["mobile"];
+                          if (
+                            employee["designation"] ==
+                            "Transportation Executive"
+                          ) {
+                            empDetails.designation = "driver";
+                          } else if (
+                            employee["designation"].toString().trim() ==
+                            "Service Excecutive"
+                          ) {
+                            empDetails.designation = "helper";
+                          }
                         }
-                        else if (employee["designation"].toString().trim() == "Service Excecutive") {
-                          empDetails.designation = "helper";
-                        }
-                      }
-                    });
+                      });
                   }
                 }
               }
@@ -2137,17 +2859,21 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   openMapModelGarage(content: any) {
     //this.getUnassignedVehicle();
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 880;
     let width = 570;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2);
-    let divHeight = (height - 90) + "px";
-    $('div .modal-content').parent().css("max-width", "" + width + "px");
-    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-    $('div .modal-dialog-centered').css("margin-top", "29px");
-    $('#divVehicle').css("height", divHeight);
+    let divHeight = height - 90 + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px");
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "29px");
+    $("#divVehicle").css("height", divHeight);
   }
 }
 
@@ -2182,7 +2908,7 @@ export class WorkderDetails {
   lastUpdateTime: string;
   wardReachTime: string;
   currentLine: string;
-  vehicleCurrentLocation: string
+  vehicleCurrentLocation: string;
   tripCount: string;
   totalUnAssignedVehicle: string;
   peopleAtWork: string;

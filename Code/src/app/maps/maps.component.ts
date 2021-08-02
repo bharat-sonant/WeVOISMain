@@ -461,7 +461,7 @@ console.log(this.parhadhouseMarker);
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
-          for (let i = 1; i < Number(lineCount); i++) {
+          for (let i = 1; i <= Number(lineCount); i++) {
             let wardLines = this.db
               .list(
                 "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points"
