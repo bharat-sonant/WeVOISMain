@@ -181,6 +181,28 @@ db:any;
       });
   }
 
+  showAllMarkers()
+  {
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+      this.houseMarker=[];
+    }
+    let element=<HTMLInputElement>document.getElementById("chkAll");
+    if(element.checked==true){
+      for(let i=0;i<=this.wardLines;i++){
+        this.getMarkedHouses(i);
+      }
+    }
+    else
+    {
+      this.getMarkedHouses(this.lineNo);
+    }
+  }
+
+
+
   clearAllOnMap() {
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
@@ -598,6 +620,12 @@ db:any;
   }
 
   saveData() {
+    let element=<HTMLInputElement>document.getElementById("chkAll");
+    if(element.checked==true){
+      this.commonService.setAlertMessage("error","Please remove check from show all markers for approve this line!!!");
+      return;
+    }
+
     let lineNo = $("#txtLineNo").val();
     let lineStatus = $("#btnSave").html();
     let status = "";

@@ -10,7 +10,7 @@
       </select>
     </div>
     <div class="col-md-6" style="padding-top: 0px; padding-left: 10px;;">
-     <h1 class="ward-header"> Hosue Marking</h1>
+      <h1 class="ward-header"> Hosue Marking</h1>
     </div>
 
     <div id="houseCount" class="col-md-3 text-right total-house">
@@ -19,7 +19,8 @@
       </div>
       <div class="fix-home">
         <div class="float-l" style="margin-left: 10px; margin-top: 12px;">
-          <i class="fas fa-check-circle"></i>  <span class="house"><span style="color: #1fda2f;" > {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
+          <i class="fas fa-check-circle"></i> <span class="house"><span style="color: #1fda2f;">
+              {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
           <h6>Approved Lines</h6>
         </div>
         <div class="float-r">
@@ -27,7 +28,7 @@
           <h6>Total Marker</h6>
         </div>
       </div>
-      
+
     </div>
 
   </div>
@@ -40,19 +41,25 @@
 
   <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
     <div class="row" style="padding-top: 10px; text-align: center;">
-        <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
-        <button (click)="getNextPrevious('pre');" class="btn-hvr" 
-        style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 9px!important;">
+      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
+        <button (click)="getNextPrevious('pre');" class="btn-hvr"
+          style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 9px!important;">
           << </button>
             <input id="txtLineNo" type="text" (keyup)="getCurrentLineNo($event);" autocomplete="off"
-            style="width: 105px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;" value="1" />
-            <button (click)="getNextPrevious('next');" class="btn-hvr" 
-            style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;"> >>
-      </button>
-            <button (click)="getLineDetail();" class="show-btn" title="Show" 
-            style="background-color: #888; padding: 10px; display: none; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important"> Show </button>
-          </div>
-
+              style="width: 105px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+              value="1" />
+            <button (click)="getNextPrevious('next');" class="btn-hvr"
+              style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+              >>
+            </button>
+            <button (click)="getLineDetail();" class="show-btn" title="Show"
+              style="background-color: #888; padding: 10px; display: none; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important">
+              Show </button>
+      </div>
+      <div class="col-md-12">
+        <span style="padding-top: 10px;font-size: 12px">
+          <input type="checkbox" id="chkAll" (change)="showAllMarkers();"> Show All Markers</span>
+      </div>
       <div class="col-md-6" style="padding-top: 10px; display: none;">
         <div class="row">
           <div class="col-md-12" style="padding-left: 15px;font-size: 12px;">
@@ -67,36 +74,38 @@
         </div>
       </div>
 
-      <div class="col-md-12" >
+      <div class="col-md-12">
         <div class="row" style="margin-left:0px; margin-right:0px;">
           <div class="col-md-6 mt-12 marker-section">
-            <h3>{{markerData.totalLineMarkers}}<br/>
-           <span > Markers</span> </h3>
+            <h3>{{markerData.totalLineMarkers}}<br />
+              <span> Markers</span>
+            </h3>
 
           </div>
           <div class="col-md-6 pl-0 ml-21">
-            <button id="btnSave" class="btn btn-success"  (click)="saveData();" style="width:100px; background:#0ba118!important;">Approve Line</button>
+            <button id="btnSave" class="btn btn-success" (click)="saveData();"
+              style="width:100px; background:#0ba118!important;">Approve Line</button>
           </div>
         </div>
-       
+
       </div>
     </div>
   </div>
 
 
   <div class="image-box">
-    <div id="divLoader" class="loaderClass" >
+    <div id="divLoader" class="loaderClass">
       <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-  </div>
+    </div>
     <div class="row">
       <div class="col-md-12 house-type">
-       <h3> {{markerData.houseType}}</h3>
+        <h3> {{markerData.houseType}}</h3>
       </div>
       <div class="col-md-12">
         <div class="main-box">
           <a href="{{markerData.markerImgURL}}" target="_blank">
-          <img id="markingImg" [src]="markerData.markerImgURL" style="height:222px; width: 274px;" />
-        </a>
+            <img id="markingImg" [src]="markerData.markerImgURL" style="height:222px; width: 274px;" />
+          </a>
         </div>
       </div>
     </div>
@@ -121,7 +130,7 @@
           </div>
           <div class="all-details">
             <h6>
-              <p>व्यसायिक दूकान, प्रतिष्ठान, खान-पान <br/> के स्थान,व्यावसायिक परिसर </p>
+              <p>व्यसायिक दूकान, प्रतिष्ठान, खान-पान <br /> के स्थान,व्यावसायिक परिसर </p>
             </h6>
           </div>
         </div>
@@ -131,7 +140,7 @@
           </div>
           <div class="all-details">
             <h6>
-              <p>लघु एवं कुटीर उद्योग, गोदाम, कोल्ड<br/> स्टोरेज </p>
+              <p>लघु एवं कुटीर उद्योग, गोदाम, कोल्ड<br /> स्टोरेज </p>
             </h6>
           </div>
         </div>
@@ -152,7 +161,7 @@
           </div>
           <div class="all-details">
             <h6>
-              <p>गेस्ट हाउस, छात्रावास/हॉस्टल, होटल व <br/> रेस्ट्रोरेंट</p>
+              <p>गेस्ट हाउस, छात्रावास/हॉस्टल, होटल व <br /> रेस्ट्रोरेंट</p>
             </h6>
           </div>
         </div>
@@ -190,6 +199,7 @@
     </div>
   </div>
 
-    <button id="btnAssign" class="btn btn-success assign-button"  (click)="assignUrl();" style="background:#0ba118!important;">Assign this ward 
-      <span><i class="far fa-hand-point-right"></i></span> 
-    </button>
+  <button id="btnAssign" class="btn btn-success assign-button" (click)="assignUrl();"
+    style="background:#0ba118!important;">Assign this ward
+    <span><i class="far fa-hand-point-right"></i></span>
+  </button>
