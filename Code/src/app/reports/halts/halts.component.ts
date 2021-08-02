@@ -29,6 +29,7 @@ export class HaltsComponent {
   db:any;
   zoneList: any[];
   selectedDate: any;
+  toDayDate:any;
   public selectedZone: any;
   marker = new google.maps.Marker();
   haltInfo: any[];
@@ -66,6 +67,7 @@ export class HaltsComponent {
     }
     this.cityName = localStorage.getItem("cityName");
     this.bounds = new google.maps.LatLngBounds();
+    this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.setTodayDate();
     $("#txtDate").val(this.selectedDate);
     this.currentMonth = this.commonService.getCurrentMonthName(
@@ -561,6 +563,21 @@ export class HaltsComponent {
 
   setDate(filterVal: any) {
     this.selectedDate = filterVal;
+    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
+      this.selectedDate = this.toDayDate;
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select current or previos date!!!"
+      );
+      this.selectedDate=this.toDayDate;
+      $('#txtDate').val(this.selectedDate);
+      //return;
+    }
+    this.currentMonth = this.commonService.getCurrentMonthName(
+      new Date(this.selectedDate).getMonth()
+    );
+    console.log(this.currentMonth);
+    this.currentYear = this.selectedDate.split("-")[0];
     this.getHaltList();
   }
 

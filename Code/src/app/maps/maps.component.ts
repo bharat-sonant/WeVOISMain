@@ -336,11 +336,10 @@ export class MapsComponent {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
-    this.selectedDate = this.toDayDate;
-    this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.toDayDate).getMonth()
+      new Date(this.selectedDate).getMonth()
     );
+    this.currentYear = this.selectedDate.split("-")[0];
     $("#txtDate").val(this.selectedDate);
     this.clearAllOnMap();
     this.clearProgressData();
@@ -364,11 +363,11 @@ export class MapsComponent {
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
+    this.getParshadHouse();
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
     $("#houseCount").hide();
     $("#houseDetail").hide();
-    this.getParshadHouse();
   }
 
   setDate(filterVal: any, type: string) {
@@ -396,9 +395,9 @@ export class MapsComponent {
       new Date(this.selectedDate).getMonth()
     );
     this.currentYear = this.selectedDate.split("-")[0];
+    this.selectedZone = this.activeZone;    
     this.clearProgressData();
     this.clearAllOnMap();
-    this.selectedZone = this.activeZone;
     this.polylines = [];
     this.houseMarkerList = [];
     this.houseList = [];
@@ -419,6 +418,14 @@ export class MapsComponent {
   }
 
   clearAllOnMap() {
+    
+    if (this.zoneKML != null) {
+      this.zoneKML.setMap(null);
+    }
+console.log(this.parhadhouseMarker);
+    if (this.parhadhouseMarker != null) {
+      this.parhadhouseMarker.setMap(null);
+    }
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
         this.allMatkers[i]["marker"].setMap(null);
@@ -432,13 +439,6 @@ export class MapsComponent {
       this.houseMarkerList = [];
     }
 
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-    }
-
-    if (this.parhadhouseMarker != null) {
-      this.parhadhouseMarker.setMap(null);
-    }
 
     if (this.marker != null) {
       this.marker.setMap(null);
@@ -554,6 +554,9 @@ export class MapsComponent {
       });
   }
   getParshadHouse() {
+    if (this.parhadhouseMarker != null) {
+      this.parhadhouseMarker.setMap(null);
+    }
     this.progressData.parshadName = "";
     this.progressData.parshadMobile = "";
     let dbPath =
@@ -571,7 +574,7 @@ export class MapsComponent {
             this.progressData.parshadMobile = data["mobile"];
           }
           let imgUrl = this.parshadImageUrl;
-          this.parhadhouseMarker = new google.maps.Marker({
+          let marker = new google.maps.Marker({
             position: { lat: Number(data["lat"]), lng: Number(data["lng"]) },
             map: this.map,
             icon: {
@@ -581,6 +584,8 @@ export class MapsComponent {
               scaledSize: new google.maps.Size(45, 30),
             },
           });
+          
+          this.allMatkers.push({ marker });
         }
       });
   }
