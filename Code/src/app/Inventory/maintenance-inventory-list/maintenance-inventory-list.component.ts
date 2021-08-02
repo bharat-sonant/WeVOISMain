@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { Router } from '@angular/router';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-maintenance-inventory-list',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class MaintenanceInventoryListComponent implements OnInit {
 
-  constructor(private router: Router,public db: AngularFireDatabase, private commonService: CommonService) { }
+  constructor(private router: Router,public fs: FirebaseService, private commonService: CommonService) { }
 
   toDayDate: any;
   selectedMonth: any;
@@ -22,12 +23,14 @@ export class MaintenanceInventoryListComponent implements OnInit {
   partList: any = [];
   totalAmount: any = 0;
   cityName:any;
+  db:any;
   costData: costDatail =
     {
       totalAmount: "0.00"
     }
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName=localStorage.getItem('cityName');
     this.userId = localStorage.getItem('userID');

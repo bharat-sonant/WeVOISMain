@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { CommonService } from "../services/common/common.service";
 
 @Component({
   selector: "app-portal-access",
@@ -6,7 +7,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./portal-access.component.scss"],
 })
 export class PortalAccessComponent implements OnInit {
-  constructor() {}
+  constructor(private commonService: CommonService) {}
   cityList: any[] = [];
   ngOnInit() {
     $(".navbar-toggler").hide();
@@ -20,9 +21,16 @@ export class PortalAccessComponent implements OnInit {
   }
 
   getCity(city: any) {
-    localStorage.setItem("cityName", city);
-    localStorage.setItem("isCityChange", "yes");
-    let path = city + "/login";
-    window.location.href = path;
+    if(city=="sikar" || city=="test"){
+      localStorage.setItem("cityName", city);
+      localStorage.setItem("isCityChange", "yes");
+      let path = city + "/login";
+      window.location.href = path;
+    }
+    else
+    {
+      this.commonService.setAlertMessage("error","Sorry! we will start soon on "+city);
+    }
+    
   }
 }

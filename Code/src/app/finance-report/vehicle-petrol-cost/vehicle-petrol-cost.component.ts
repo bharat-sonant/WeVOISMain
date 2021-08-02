@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-vehicle-petrol-cost',
@@ -9,7 +10,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class VehiclePetrolCostComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService) { }
   selectedMonth: any;
   public selectedYear: any;
   selectedCircle: any;
@@ -18,6 +19,7 @@ export class VehiclePetrolCostComponent implements OnInit {
   yearList: any[] = [];
   toDayDate: any;
   userList: any[] = [];
+  db:any;
 
   costData: costDatail =
     {
@@ -56,6 +58,7 @@ export class VehiclePetrolCostComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

@@ -2,6 +2,7 @@ import { createOfflineCompileUrlResolver, getUrlScheme } from '@angular/compiler
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-ward-reach-cost',
@@ -10,7 +11,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class WardReachCostComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -24,6 +25,7 @@ export class WardReachCostComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   yearList: any[] = [];
+  db:any;
 
   costData: costDatail =
     {
@@ -63,6 +65,7 @@ export class WardReachCostComponent implements OnInit {
 
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

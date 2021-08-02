@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../../services/common/user.service';
 import { MapService } from '../../services/map/map.service';
 import { HttpClient } from '@angular/common/http';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-dustbin-report',
@@ -16,7 +17,7 @@ export class DustbinReportComponent implements OnInit {
 
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, public usrService: UserService, private modalService: NgbModal, public toastr: ToastrService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, public usrService: UserService, private modalService: NgbModal, public toastr: ToastrService, private commonService: CommonService) { }
   selectedMonth: any;
   public selectedYear: any;
   public selectedZone: any;
@@ -52,8 +53,10 @@ export class DustbinReportComponent implements OnInit {
   pickedDustbin: any;
   preSelectedMarker: any;
   highPriority: any;
+  db:any;
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.userId = localStorage.getItem('userID');
     this.toDayDate = this.commonService.setTodayDate();

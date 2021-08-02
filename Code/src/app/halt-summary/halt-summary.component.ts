@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //services
 import { CommonService } from '../services/common/common.service';
+import { FirebaseService } from "../firebase.service";
 import { MapService } from '../services/map/map.service';
 
 import * as CanvasJS from '../../assets/canvasjs.min';
@@ -21,7 +22,7 @@ import { parse } from 'querystring';
   styleUrls: ['./halt-summary.component.scss']
 })
 export class HaltSummaryComponent implements OnInit {
-  constructor(public db: AngularFireDatabase, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   zoneList: any[];
   selectedDate: any;
   currentMonth: any;
@@ -44,6 +45,7 @@ export class HaltSummaryComponent implements OnInit {
   driveySalary: any;
   halperSalary: any;
   totalSalary: any;
+  db:any;
 
   public map: google.maps.Map;
   marker = new google.maps.Marker();
@@ -132,6 +134,7 @@ export class HaltSummaryComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     $('#divG').hide();
     $('#divTbl').show();

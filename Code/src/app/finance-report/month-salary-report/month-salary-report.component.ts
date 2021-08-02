@@ -5,6 +5,7 @@ import { data } from 'jquery';
 import { parse } from 'querystring';
 import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-month-salary-report',
@@ -13,7 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class MonthSalaryReportComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -31,6 +32,7 @@ export class MonthSalaryReportComponent implements OnInit {
   penaltyArray: any[] = [];
   yearList: any[] = [];
   OtherList: any[];
+  db:any
 
   costData: costDatail =
     {
@@ -170,6 +172,7 @@ export class MonthSalaryReportComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 import { ActivatedRoute, Router } from "@angular/router";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-portal-services',
@@ -12,7 +13,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class PortalServicesComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private router: Router, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
+  constructor(public fs: FirebaseService, private router: Router, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
   toDayDate: any;
   yearList: any[] = [];
   zoneList: any[];
@@ -20,7 +21,9 @@ export class PortalServicesComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   userId: any;
+  db:any;
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.userId = localStorage.getItem("userID");
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();

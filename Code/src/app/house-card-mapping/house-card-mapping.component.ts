@@ -8,6 +8,7 @@ import { interval } from 'rxjs';
 //services
 import { CommonService } from '../services/common/common.service';
 import { MapService } from '../services/map/map.service';
+import { FirebaseService } from "../firebase.service";
 import * as $ from "jquery";
 
 //import undefined = require('firebase/empty-import');
@@ -23,7 +24,7 @@ export class HouseCardMappingComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -38,9 +39,11 @@ export class HouseCardMappingComponent {
   previousScannedCard: any[];
   todayScannedCard: any[];
   allCards: any[];
+  db:any;
 
   ngOnInit() {
 
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     //this.setHeight();

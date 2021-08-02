@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
+import { FirebaseService } from "../firebase.service";
 import {
   ActivatedRoute,
   Router,
@@ -16,7 +17,7 @@ import {
 export class CmsComponent implements OnInit {
   accessList: any[];
   constructor(
-    public db: AngularFireDatabase,
+    public fs:FirebaseService,
     private commonService: CommonService,
     public actRoute: ActivatedRoute,
     public router: Router
@@ -25,8 +26,10 @@ export class CmsComponent implements OnInit {
   isShow = false;
   userid: any;
   cityName: any;
+  db:any;
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.userid = localStorage.getItem("userID");
     const id = this.actRoute.snapshot.paramMap.get("id");

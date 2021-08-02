@@ -10,6 +10,7 @@ import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-map-card-review",
@@ -21,14 +22,14 @@ export class MapCardReviewComponent {
   public map: google.maps.Map;
 
   constructor(
-    public db: AngularFireDatabase,
+    public fs: FirebaseService,
     public af: AngularFireModule,
     public httpService: HttpClient,
     private actRoute: ActivatedRoute,
     private mapService: MapService,
     private commonService: CommonService
   ) {}
-
+db:any;
   public selectedZone: any;
   zoneList: any[];
   marker = new google.maps.Marker();
@@ -89,6 +90,7 @@ export class MapCardReviewComponent {
   };
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(

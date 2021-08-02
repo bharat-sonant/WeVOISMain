@@ -8,6 +8,7 @@ import { CommonService } from '../services/common/common.service';
 import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 import { Router } from '@angular/router';
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: 'app-dustbin-monitoring',
@@ -19,7 +20,7 @@ export class DustbinMonitoringComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private router: Router, public db: AngularFireDatabase, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(private router: Router, public fs:FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   selectedDate: any;
@@ -67,8 +68,10 @@ export class DustbinMonitoringComponent {
   assignedDustbinUrl: any;
   defaultDustbinUrl: any;
   cityName:any;
+  db:any;
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();

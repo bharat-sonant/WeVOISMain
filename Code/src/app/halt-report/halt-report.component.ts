@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //services
 import { CommonService } from '../services/common/common.service';
+import { FirebaseService } from "../firebase.service";
 import { MapService } from '../services/map/map.service';
 
 
@@ -25,7 +26,7 @@ export class HaltReportComponent implements OnInit {
 
   public map: google.maps.Map;
 
-  constructor(public db: AngularFireDatabase, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   zoneList: any[];
   selectedDate: any;
   currentMonth: any;
@@ -35,6 +36,7 @@ export class HaltReportComponent implements OnInit {
   minHalt: number;
   haltListDriver: any[];
   haltMonthlyListDriver: any[];
+  db:any;
 
   headerData: headerDetail =
     {
@@ -43,6 +45,7 @@ export class HaltReportComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 201);
     this.selectedDate = this.commonService.setTodayDate();

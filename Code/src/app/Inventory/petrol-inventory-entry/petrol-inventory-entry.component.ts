@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { ToastrService } from "ngx-toastr"; // Alert message using NGX toastr
 import { ActivatedRoute, Router } from "@angular/router";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-petrol-inventory-entry",
@@ -16,7 +17,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
     private storage: AngularFireStorage,
     public http: HttpClient,
     private router: Router,
-    public db: AngularFireDatabase,
+    public fs: FirebaseService,
     public httpService: HttpClient,
     public toastr: ToastrService,
     private actRoute: ActivatedRoute,
@@ -39,7 +40,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
   vehicleLastMeterReading: any;
   preDate: any;
   preSlipImage: any;
-
+  db: any;
   cityName: any;
   base64Image: any;
 
@@ -50,6 +51,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.preDate = null;

@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 //services
 import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-halts",
@@ -20,11 +21,12 @@ export class HaltsComponent {
   public map: google.maps.Map;
   constructor(
     private router: Router,
-    public db: AngularFireDatabase,
+    public fs:FirebaseService,
     private mapService: MapService,
     private commonService: CommonService,
     private modalService: NgbModal
   ) {}
+  db:any;
   zoneList: any[];
   selectedDate: any;
   public selectedZone: any;
@@ -54,6 +56,7 @@ export class HaltsComponent {
   };
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(
       window.location.href,
       localStorage.getItem("cityName")

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-remark-report',
@@ -10,7 +11,7 @@ import { MapService } from '../../services/map/map.service';
 })
 export class RemarkReportComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public db: AngularFireDatabase, private mapService: MapService) { }
+  constructor(private commonService: CommonService, public fs: FirebaseService, private mapService: MapService) { }
 
 
   public selectedZone: any;
@@ -21,8 +22,10 @@ export class RemarkReportComponent implements OnInit {
   currentMonthName: any;
   currentYear: any;
   filterList: any[] = [];
+  db:any;
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);

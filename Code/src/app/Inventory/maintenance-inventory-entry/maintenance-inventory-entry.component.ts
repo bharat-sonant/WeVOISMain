@@ -6,6 +6,7 @@ import { CommonService } from '../../services/common/common.service';
 import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 import { ActivatedRoute, Router } from "@angular/router";
 import { AnonymousSubject } from 'rxjs/internal/Subject';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-maintenance-inventory-entry',
@@ -14,7 +15,7 @@ import { AnonymousSubject } from 'rxjs/internal/Subject';
 })
 export class MaintenanceInventoryEntryComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, private http: HttpClient, private router: Router, public db: AngularFireDatabase, public httpService: HttpClient, public toastr: ToastrService, private actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(private storage: AngularFireStorage, private http: HttpClient, private router: Router, public fs: FirebaseService, public httpService: HttpClient, public toastr: ToastrService, private actRoute: ActivatedRoute, private commonService: CommonService) { }
   selectedFile: File;
   partFilterList: any[] = [];
   partAllList: any[] = [];
@@ -32,8 +33,10 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   sno: any = 0;
   partNo: any = 0;
   cityName:any;
+  db:any;
 
   ngOnInit() {
+    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
    // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName=localStorage.getItem('cityName');
     const id = this.actRoute.snapshot.paramMap.get('id');

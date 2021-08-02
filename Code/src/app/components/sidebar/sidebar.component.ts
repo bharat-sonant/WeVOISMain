@@ -185,12 +185,17 @@ export class SidebarComponent implements OnInit {
   }
 
   changeCity(cityName: any) {
+    if(cityName=="sikar" || cityName=="test"){
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
-
     this.closeMapModel();
     this.router.navigate(["/" + cityName + "/home"]);
+    }
+    else
+    {
+      this.commonService.setAlertMessage("error","Sorry! we will start soon on "+cityName);
+    }
     //this.getUserAccess();
    // window.location.href = "/" + cityName + "/home";
   }

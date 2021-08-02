@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 //services
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
-import { MapService } from '../services/map/map.service';
+import { MapService } from '../services/map/map.service'; 
 import * as $ from "jquery";
 
 @Component({

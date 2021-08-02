@@ -1,26 +1,25 @@
-
-import { Component, ViewChild } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { HttpClient } from '@angular/common/http';
-import { interval } from 'rxjs';
-import { CommonService } from '../services/common/common.service';
-import { MapService } from '../services/map/map.service';
+import { Component, ViewChild } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import { HttpClient } from "@angular/common/http";
+import { interval } from "rxjs";
+import { CommonService } from "../services/common/common.service";
+import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from "ngx-toastr";
+import { FirebaseService } from "../firebase.service";
 
 @Component({
-  selector: 'app-multiple-maps',
-  templateUrl: './multiple-maps.component.html',
-  styleUrls: ['./multiple-maps.component.scss']
+  selector: "app-multiple-maps",
+  templateUrl: "./multiple-maps.component.html",
+  styleUrls: ["./multiple-maps.component.scss"],
 })
 export class MultipleMapsComponent {
-
-  @ViewChild('gmapWard1', null) gmapWard1: any;
-  @ViewChild('gmapWard2', null) gmapWard2: any;
-  @ViewChild('gmapWard3', null) gmapWard3: any;
-  @ViewChild('gmapWard4', null) gmapWard4: any;
-  @ViewChild('gmapMarketRoute1', null) gmapMarketRoute1: any;
-  @ViewChild('gmapMarketRoute2', null) gmapMarketRoute2: any;
+  @ViewChild("gmapWard1", null) gmapWard1: any;
+  @ViewChild("gmapWard2", null) gmapWard2: any;
+  @ViewChild("gmapWard3", null) gmapWard3: any;
+  @ViewChild("gmapWard4", null) gmapWard4: any;
+  @ViewChild("gmapMarketRoute1", null) gmapMarketRoute1: any;
+  @ViewChild("gmapMarketRoute2", null) gmapMarketRoute2: any;
   public mapWard1: google.maps.Map;
   public mapWard2: google.maps.Map;
   public mapWard3: google.maps.Map;
@@ -65,10 +64,10 @@ export class MultipleMapsComponent {
   allLinesMarketRoute2: any[];
   toDayDate: any;
   lineDrawnDetails: any[];
-  prevNowPlaying:any;
+  prevNowPlaying: any;
   currentMonthName: any;
   currentYear: any;
-  cityName:any;
+  cityName: any;
 
   markerWard1 = new google.maps.Marker();
   markerWard2 = new google.maps.Marker();
@@ -76,31 +75,61 @@ export class MultipleMapsComponent {
   markerWard4 = new google.maps.Marker();
   markerMarketRoute1 = new google.maps.Marker();
   markerMarketRoute2 = new google.maps.Marker();
-
-  constructor(public db: AngularFireDatabase, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  db: any;
+  constructor(
+    public fs: FirebaseService,
+    public httpService: HttpClient,
+    private mapService: MapService,
+    private commonService: CommonService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
-    this.cityName=localStorage.getItem('cityName');
-    let element=<HTMLAnchorElement>document.getElementById("homeLink");
-    element.href="/"+this.cityName+"/home";
-    $('.navbar-toggler').hide();
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(
+      window.location.href,
+      localStorage.getItem("cityName")
+    );
+    this.cityName = localStorage.getItem("cityName");
+    let element = <HTMLAnchorElement>document.getElementById("homeLink");
+    element.href = "/" + this.cityName + "/home";
+    $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
 
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
-    
+    this.currentMonthName = this.commonService.getCurrentMonthName(
+      new Date(this.toDayDate).getMonth()
+    );
+
     //this.commonService.hideLeftMenu();
     // Init Maps
     let mapProperties = this.commonService.initMapProperties();
-    this.mapWard1 = new google.maps.Map(this.gmapWard1.nativeElement, mapProperties);
-    this.mapWard2 = new google.maps.Map(this.gmapWard2.nativeElement, mapProperties);
-    this.mapWard3 = new google.maps.Map(this.gmapWard3.nativeElement, mapProperties);
-    this.mapWard4 = new google.maps.Map(this.gmapWard4.nativeElement, mapProperties);
-    this.mapMarketRoute1 = new google.maps.Map(this.gmapMarketRoute1.nativeElement, mapProperties);
-    this.mapMarketRoute2 = new google.maps.Map(this.gmapMarketRoute2.nativeElement, mapProperties);
+    this.mapWard1 = new google.maps.Map(
+      this.gmapWard1.nativeElement,
+      mapProperties
+    );
+    this.mapWard2 = new google.maps.Map(
+      this.gmapWard2.nativeElement,
+      mapProperties
+    );
+    this.mapWard3 = new google.maps.Map(
+      this.gmapWard3.nativeElement,
+      mapProperties
+    );
+    this.mapWard4 = new google.maps.Map(
+      this.gmapWard4.nativeElement,
+      mapProperties
+    );
+    this.mapMarketRoute1 = new google.maps.Map(
+      this.gmapMarketRoute1.nativeElement,
+      mapProperties
+    );
+    this.mapMarketRoute2 = new google.maps.Map(
+      this.gmapMarketRoute2.nativeElement,
+      mapProperties
+    );
 
     // init Mp Boundries
     this.setMapBoundary("1", this.mapWard1);
@@ -111,12 +140,36 @@ export class MultipleMapsComponent {
     this.setMapBoundary("MarketRoute2", this.mapMarketRoute2);
 
     // show Vehicle on Map
-    this.showVehicleMovement("1", this.vehicleStatusInstance, this.vehicleLocationInstance);
-    this.showVehicleMovement("2", this.vehicleStatusInstance1, this.vehicleLocationInstance1);
-    this.showVehicleMovement("3", this.vehicleStatusInstance2, this.vehicleLocationInstance2);
-    this.showVehicleMovement("4", this.vehicleStatusInstance3, this.vehicleLocationInstance3);
-    this.showVehicleMovement("MarketRoute1", this.vehicleStatusInstance4, this.vehicleLocationInstance4);
-    this.showVehicleMovement("MarketRoute2", this.vehicleStatusInstance5, this.vehicleLocationInstance5);
+    this.showVehicleMovement(
+      "1",
+      this.vehicleStatusInstance,
+      this.vehicleLocationInstance
+    );
+    this.showVehicleMovement(
+      "2",
+      this.vehicleStatusInstance1,
+      this.vehicleLocationInstance1
+    );
+    this.showVehicleMovement(
+      "3",
+      this.vehicleStatusInstance2,
+      this.vehicleLocationInstance2
+    );
+    this.showVehicleMovement(
+      "4",
+      this.vehicleStatusInstance3,
+      this.vehicleLocationInstance3
+    );
+    this.showVehicleMovement(
+      "MarketRoute1",
+      this.vehicleStatusInstance4,
+      this.vehicleLocationInstance4
+    );
+    this.showVehicleMovement(
+      "MarketRoute2",
+      this.vehicleStatusInstance5,
+      this.vehicleLocationInstance5
+    );
 
     // Show Lines on Map
     this.getLinesFromJson("1");
@@ -126,27 +179,47 @@ export class MultipleMapsComponent {
     this.getLinesFromJson("MarketRoute1");
     this.getLinesFromJson("MarketRoute2");
 
-    let screenRefresh = this.db.object('Settings/portal-multiple-map-screen-refresh-time').valueChanges().subscribe(
-      timeId => {
+    let screenRefresh = this.db
+      .object("Settings/portal-multiple-map-screen-refresh-time")
+      .valueChanges()
+      .subscribe((timeId) => {
         screenRefresh.unsubscribe();
         this.screenRefreshTime = timeId;
-        this.prevNowPlaying=localStorage.getItem("multipleMap");
-        if(this.prevNowPlaying) {
+        this.prevNowPlaying = localStorage.getItem("multipleMap");
+        if (this.prevNowPlaying) {
           clearInterval(this.prevNowPlaying);
-      }
-      this.prevNowPlaying= setInterval(() => {
-          $('#divWait').show();
+        }
+        this.prevNowPlaying = setInterval(() => {
+          $("#divWait").show();
           setTimeout(() => {
-            $('#divWait').hide();
+            $("#divWait").hide();
           }, 3000);
           // Init Maps
           let mapProperties = this.commonService.initMapProperties();
-          this.mapWard1 = new google.maps.Map(this.gmapWard1.nativeElement, mapProperties);
-          this.mapWard2 = new google.maps.Map(this.gmapWard2.nativeElement, mapProperties);
-          this.mapWard3 = new google.maps.Map(this.gmapWard3.nativeElement, mapProperties);
-          this.mapWard4 = new google.maps.Map(this.gmapWard4.nativeElement, mapProperties);
-          this.mapMarketRoute1 = new google.maps.Map(this.gmapMarketRoute1.nativeElement, mapProperties);
-          this.mapMarketRoute2 = new google.maps.Map(this.gmapMarketRoute2.nativeElement, mapProperties);
+          this.mapWard1 = new google.maps.Map(
+            this.gmapWard1.nativeElement,
+            mapProperties
+          );
+          this.mapWard2 = new google.maps.Map(
+            this.gmapWard2.nativeElement,
+            mapProperties
+          );
+          this.mapWard3 = new google.maps.Map(
+            this.gmapWard3.nativeElement,
+            mapProperties
+          );
+          this.mapWard4 = new google.maps.Map(
+            this.gmapWard4.nativeElement,
+            mapProperties
+          );
+          this.mapMarketRoute1 = new google.maps.Map(
+            this.gmapMarketRoute1.nativeElement,
+            mapProperties
+          );
+          this.mapMarketRoute2 = new google.maps.Map(
+            this.gmapMarketRoute2.nativeElement,
+            mapProperties
+          );
 
           // init Mp Boundries
           this.setMapBoundary("1", this.mapWard1);
@@ -157,12 +230,36 @@ export class MultipleMapsComponent {
           this.setMapBoundary("MarketRoute2", this.mapMarketRoute2);
           // show Vehicle on Map
 
-          this.showVehicleMovement("1", this.vehicleStatusInstance, this.vehicleLocationInstance);
-          this.showVehicleMovement("2", this.vehicleStatusInstance1, this.vehicleLocationInstance1);
-          this.showVehicleMovement("3", this.vehicleStatusInstance2, this.vehicleLocationInstance2);
-          this.showVehicleMovement("4", this.vehicleStatusInstance3, this.vehicleLocationInstance3);
-          this.showVehicleMovement("MarketRoute1", this.vehicleStatusInstance4, this.vehicleLocationInstance4);
-          this.showVehicleMovement("MarketRoute2", this.vehicleStatusInstance5, this.vehicleLocationInstance5);
+          this.showVehicleMovement(
+            "1",
+            this.vehicleStatusInstance,
+            this.vehicleLocationInstance
+          );
+          this.showVehicleMovement(
+            "2",
+            this.vehicleStatusInstance1,
+            this.vehicleLocationInstance1
+          );
+          this.showVehicleMovement(
+            "3",
+            this.vehicleStatusInstance2,
+            this.vehicleLocationInstance2
+          );
+          this.showVehicleMovement(
+            "4",
+            this.vehicleStatusInstance3,
+            this.vehicleLocationInstance3
+          );
+          this.showVehicleMovement(
+            "MarketRoute1",
+            this.vehicleStatusInstance4,
+            this.vehicleLocationInstance4
+          );
+          this.showVehicleMovement(
+            "MarketRoute2",
+            this.vehicleStatusInstance5,
+            this.vehicleLocationInstance5
+          );
           // Show Lines on Map
 
           this.getLinesFromJson("1");
@@ -173,50 +270,69 @@ export class MultipleMapsComponent {
           this.getLinesFromJson("MarketRoute2");
         }, this.screenRefreshTime);
 
-        localStorage.setItem("multipleMap",this.prevNowPlaying);
+        localStorage.setItem("multipleMap", this.prevNowPlaying);
       });
   }
 
   setMapBoundary(selectedZone: any, map: any) {
-    this.db.object('Defaults/KmlBoundary/' + selectedZone).valueChanges().subscribe(
-      wardPath => {
+    this.db
+      .object("Defaults/KmlBoundary/" + selectedZone)
+      .valueChanges()
+      .subscribe((wardPath) => {
         new google.maps.KmlLayer({
           url: wardPath.toString(),
-          map: map
+          map: map,
         });
       });
   }
 
-  showVehicleMovement(selectedZone: any, vehicleStatusInstance: any, vehicleLocationInstance: any) {
-
+  showVehicleMovement(
+    selectedZone: any,
+    vehicleStatusInstance: any,
+    vehicleLocationInstance: any
+  ) {
     if (vehicleStatusInstance != undefined) {
       vehicleStatusInstance.unsubscribe();
     }
 
-    vehicleStatusInstance = this.db.object('CurrentLocationInfo/' + selectedZone + '/StatusId').valueChanges().subscribe(
-      statusId => {
+    vehicleStatusInstance = this.db
+      .object("CurrentLocationInfo/" + selectedZone + "/StatusId")
+      .valueChanges()
+      .subscribe((statusId) => {
         if (statusId != undefined) {
           if (vehicleLocationInstance != undefined) {
             vehicleLocationInstance.unsubscribe();
           }
 
-          vehicleLocationInstance = this.db.object('CurrentLocationInfo/' + selectedZone + '/CurrentLoc/location').valueChanges().subscribe(
-            data => {
-
+          vehicleLocationInstance = this.db
+            .object(
+              "CurrentLocationInfo/" + selectedZone + "/CurrentLoc/location"
+            )
+            .valueChanges()
+            .subscribe((data) => {
               if (data != undefined) {
-                let vehicleIcon = '../assets/img/tipper-green.png';
-                if (statusId == '3') {
-                  vehicleIcon = '../assets/img/tipper-gray.png';
-                } else if (statusId == '2') {
-                  vehicleIcon = '../assets/img/tipper-red.png';
+                let vehicleIcon = "../assets/img/tipper-green.png";
+                if (statusId == "3") {
+                  vehicleIcon = "../assets/img/tipper-gray.png";
+                } else if (statusId == "2") {
+                  vehicleIcon = "../assets/img/tipper-red.png";
                 }
 
-                let location = data.toString().split(":")[1].replace('(', '').replace(')', '').replace(' ', '').split(",");
+                let location = data
+                  .toString()
+                  .split(":")[1]
+                  .replace("(", "")
+                  .replace(")", "")
+                  .replace(" ", "")
+                  .split(",");
 
                 if (selectedZone == "1") {
                   this.markerWard1.setMap(null);
                   this.markerWard1 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapWard1,
                     icon: vehicleIcon,
                   });
@@ -224,7 +340,10 @@ export class MultipleMapsComponent {
                 if (selectedZone == "2") {
                   this.markerWard2.setMap(null);
                   this.markerWard2 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapWard2,
                     icon: vehicleIcon,
                   });
@@ -232,7 +351,10 @@ export class MultipleMapsComponent {
                 if (selectedZone == "3") {
                   this.markerWard3.setMap(null);
                   this.markerWard3 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapWard3,
                     icon: vehicleIcon,
                   });
@@ -240,7 +362,10 @@ export class MultipleMapsComponent {
                 if (selectedZone == "4") {
                   this.markerWard4.setMap(null);
                   this.markerWard4 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapWard4,
                     icon: vehicleIcon,
                   });
@@ -248,7 +373,10 @@ export class MultipleMapsComponent {
                 if (selectedZone == "MarketRoute1") {
                   this.markerMarketRoute1.setMap(null);
                   this.markerMarketRoute1 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapMarketRoute1,
                     icon: vehicleIcon,
                   });
@@ -256,7 +384,10 @@ export class MultipleMapsComponent {
                 if (selectedZone == "MarketRoute2") {
                   this.markerMarketRoute2.setMap(null);
                   this.markerMarketRoute2 = new google.maps.Marker({
-                    position: { lat: Number(location[0]), lng: Number(location[1]) },
+                    position: {
+                      lat: Number(location[0]),
+                      lng: Number(location[1]),
+                    },
                     map: this.mapMarketRoute2,
                     icon: vehicleIcon,
                   });
@@ -268,12 +399,16 @@ export class MultipleMapsComponent {
   }
 
   getLinesFromJson(selectedZone: any) {
-    let wardLines = this.db.object('Defaults/WardLines/' + selectedZone).valueChanges().subscribe(
-      zoneLine => {
+    let wardLines = this.db
+      .object("Defaults/WardLines/" + selectedZone)
+      .valueChanges()
+      .subscribe((zoneLine) => {
         var linePath = [];
         for (let i = 1; i < 2000; i++) {
           var line = zoneLine[i];
-          if (line == undefined) { break; }
+          if (line == undefined) {
+            break;
+          }
           var path = [];
           for (let j = 0; j < line.points.length; j++) {
             path.push({ lat: line.points[j][0], lng: line.points[j][1] });
@@ -309,37 +444,50 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap(selectedZone: any) {
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesWard1 = [];
         for (let index = 0; index < this.allLinesWard1.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesWard1[index] != undefined) {
                 this.polylinesWard1[index].setMap(null);
               }
 
-              let lineData = this.allLinesWard1.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesWard1.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
                 this.polylinesWard1[index] = line;
                 this.polylinesWard1[index].setMap(this.mapWard1);
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
                 lastLineDone.unsubscribe();
@@ -350,31 +498,43 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap1(selectedZone: any) {
-
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesWard2 = [];
         for (let index = 0; index < this.allLinesWard2.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesWard2[index] != undefined) {
                 this.polylinesWard2[index].setMap(null);
               }
 
-              let lineData = this.allLinesWard2.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesWard2.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
 
                 this.polylinesWard2[index] = line;
@@ -382,7 +542,7 @@ export class MultipleMapsComponent {
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
 
@@ -394,31 +554,43 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap2(selectedZone: any) {
-
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesWard3 = [];
         for (let index = 0; index < this.allLinesWard3.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesWard3[index] != undefined) {
                 this.polylinesWard3[index].setMap(null);
               }
 
-              let lineData = this.allLinesWard3.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesWard3.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
 
                 this.polylinesWard3[index] = line;
@@ -426,7 +598,7 @@ export class MultipleMapsComponent {
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
 
@@ -438,31 +610,43 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap3(selectedZone: any) {
-
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesWard4 = [];
         for (let index = 0; index < this.allLinesWard4.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesWard4[index] != undefined) {
                 this.polylinesWard4[index].setMap(null);
               }
 
-              let lineData = this.allLinesWard4.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesWard4.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
 
                 this.polylinesWard4[index] = line;
@@ -470,7 +654,7 @@ export class MultipleMapsComponent {
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
 
@@ -482,31 +666,43 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap4(selectedZone: any) {
-
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesMarketRoute1 = [];
         for (let index = 0; index < this.allLinesMarketRoute1.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesMarketRoute1[index] != undefined) {
                 this.polylinesMarketRoute1[index].setMap(null);
               }
 
-              let lineData = this.allLinesMarketRoute1.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesMarketRoute1.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
 
                 this.polylinesMarketRoute1[index] = line;
@@ -514,7 +710,7 @@ export class MultipleMapsComponent {
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
 
@@ -526,31 +722,43 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap5(selectedZone: any) {
-
-    let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + selectedZone).valueChanges().subscribe(
-      lastLine => {
-
+    let lastLineDone = this.db
+      .object("WasteCollectionInfo/LastLineCompleted/" + selectedZone)
+      .valueChanges()
+      .subscribe((lastLine) => {
         this.polylinesMarketRoute2 = [];
         for (let index = 0; index < this.allLinesMarketRoute2.length; index++) {
-
           let lineNo = index + 1;
-          let dbPathLineStatus = 'WasteCollectionInfo/' + selectedZone + '/'+this.currentYear+'/'+this.currentMonthName+'/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
+          let dbPathLineStatus =
+            "WasteCollectionInfo/" +
+            selectedZone +
+            "/" +
+            this.currentYear +
+            "/" +
+            this.currentMonthName +
+            "/" +
+            this.toDayDate +
+            "/LineStatus/" +
+            lineNo +
+            "/Status";
 
-          let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
-            status => {
-
+          let lineStatus = this.db
+            .object(dbPathLineStatus)
+            .valueChanges()
+            .subscribe((status) => {
               if (this.polylinesMarketRoute2[index] != undefined) {
                 this.polylinesMarketRoute2[index].setMap(null);
               }
 
-              let lineData = this.allLinesMarketRoute2.find(item => item.lineNo == lineNo);
+              let lineData = this.allLinesMarketRoute2.find(
+                (item) => item.lineNo == lineNo
+              );
 
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
-                  strokeWeight: 2
+                  strokeWeight: 2,
                 });
 
                 this.polylinesMarketRoute2[index] = line;
@@ -558,7 +766,7 @@ export class MultipleMapsComponent {
 
                 let checkMarkerDetails = status != null ? true : false;
 
-                if (status != null || Number(lastLine) == (lineNo - 1)) {
+                if (status != null || Number(lastLine) == lineNo - 1) {
                   checkMarkerDetails = true;
                 }
 
