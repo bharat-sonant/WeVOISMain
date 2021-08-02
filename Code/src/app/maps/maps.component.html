@@ -1,6 +1,13 @@
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-2">
+    <div class="col-md-9">
+      <button class="btn btn-primary " (click)="setDate('','previous');">
+        << 
+      </button>
+      <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+      <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;"> 
+        >>
+      </button>
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option value="0" >
@@ -10,12 +17,10 @@
           ngSelected="zone.zoneNo == selectedZone?'selected':''">
           {{zone.zoneName}}
         </option>
-      </select>
-
-    </div>
-    <div class="col-md-7" style="padding-top: 20px; padding-left: 30px;;">
+      </select>&nbsp;&nbsp;
       <input id="isHouse" type="checkbox" (change)="onHouseSubmit();" /><span id="showHouseLabel"> Show Houses</span>
     </div>
+    
     <div id="houseCount" class="col-md-3 text-right total-house" style=" display: none;">
       <div>
 

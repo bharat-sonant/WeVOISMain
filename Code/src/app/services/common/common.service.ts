@@ -6,6 +6,7 @@ import { ToastrService } from "ngx-toastr";
 import { environment } from "../../../environments/environment";
 import { data } from "jquery";
 import { AngularFirestore } from "@angular/fire/firestore";
+import { FirebaseService } from "../../firebase.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,12 +15,13 @@ export class CommonService {
   constructor(
     private router: Router,
     public dbFireStore: AngularFirestore,
+    public fs: FirebaseService,
     public db: AngularFireDatabase,
     private toastr: ToastrService
   ) {}
 
   notificationInterval: any;
-  fsDb:any;
+  fsDb: any;
 
   getAllZones() {
     return JSON.parse(localStorage.getItem("zones"));
@@ -616,7 +618,7 @@ export class CommonService {
       return "#60c2ff";
     }
   }
-  
+
   getHrs(minutes: any) {
     let totalHrs = (minutes / 60).toString().split(".");
 
@@ -899,6 +901,7 @@ export class CommonService {
         (item) => item.userName == employeeId
       );
       if (employeeData == undefined) {
+        this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
         let employeeDbPath = "Employees/" + employeeId + "/GeneralDetails";
         let employee = this.fsDb
           .object(employeeDbPath)
@@ -1027,16 +1030,16 @@ export class CommonService {
   //#region  all local storage
 
   setLocalStorageData(newDb: any) {
-    this.fsDb=newDb;
+    this.fsDb = newDb;
     this.setPortalPages();
     this.setWebPortalUsers();
     this.setZones(newDb);
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
-    this.setDustbin(newDb);    
+    this.setDustbin(newDb);
   }
 
-  setFixedLoctions(newDb:any) {
+  setFixedLoctions(newDb: any) {
     let fixedLocation = [];
     let dbLocationPath = "Defaults/GeoLocations/FixedLocations";
     let locationDetail = newDb
@@ -1057,7 +1060,7 @@ export class CommonService {
       });
   }
 
-  setVehicle(newDb:any) {
+  setVehicle(newDb: any) {
     let vehicleList = [];
     let dbPath = "Vehicles";
     let vehicleInstance = newDb
@@ -1082,7 +1085,7 @@ export class CommonService {
       });
   }
 
-  setDustbin(newDb:any) {
+  setDustbin(newDb: any) {
     let dustbinList = [];
     let dbPath = "DustbinData/DustbinDetails";
     let dustbinInstance = newDb
@@ -1128,7 +1131,7 @@ export class CommonService {
       });
   }
 
-  setZones(newDb:any) {
+  setZones(newDb: any) {
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
     let wardDetail = newDb

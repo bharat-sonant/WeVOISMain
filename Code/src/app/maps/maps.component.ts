@@ -68,6 +68,7 @@ export class MapsComponent {
   zoneKML: any;
   parhadhouseMarker: any;
   allMatkers: any[] = [];
+  selectedDate: any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -98,6 +99,8 @@ export class MapsComponent {
       $("#showHouseLabel").hide();
     }
     this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.toDayDate;
+    $("#txtDate").val(this.toDayDate);
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.toDayDate).getMonth()
@@ -121,30 +124,36 @@ export class MapsComponent {
     });
   }
 
+  clearProgressData() {
+    this.progressData.completedLines = 0;
+    this.progressData.coveredLength = "0";
+    this.progressData.currentLine = 0;
+    this.progressData.driverImageUrl = this.defaultImageUrl;
+    this.progressData.driverMobile = "";
+    this.progressData.driverName = "";
+    this.progressData.helperImageUrl = this.defaultImageUrl;
+    this.progressData.helperMobile = "";
+    this.progressData.helperName = "";
+    this.progressData.parshadMobile = "";
+    this.progressData.parshadName = "";
+    this.progressData.pendingLines = 0;
+    this.progressData.skippedLines = 0;
+    this.progressData.totalLines = 0;
+  }
+
   getZones() {
     return new Promise((resolve) => {
       this.zoneList = [];
       let allZones = this.mapService.getZones(this.toDayDate);
-      let getRealTimeWardDetails = this.db
-        .object("RealTimeDetails/WardDetails")
-        .valueChanges()
-        .subscribe((data) => {
-          getRealTimeWardDetails.unsubscribe();
-          for (let index = 1; index < allZones.length; index++) {
-            let zoneNo = allZones[index]["zoneNo"];
-            let zoneName = allZones[index]["zoneName"];
-            let status = data[zoneNo]["activityStatus"];
-            let zoneDetails = this.zoneList.find(
-              (item) => item.zoneNo == zoneNo
-            );
-            if (zoneDetails == undefined) {
-              if (status != "workNotStarted") {
-                this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-              }
-            }
-          }
-          resolve(true);
-        });
+      for (let index = 1; index < allZones.length; index++) {
+        let zoneNo = allZones[index]["zoneNo"];
+        let zoneName = allZones[index]["zoneName"];
+        let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+        if (zoneDetails == undefined) {
+          this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+        }
+      }
+      resolve(true);
     });
   }
 
@@ -157,20 +166,25 @@ export class MapsComponent {
       "/" +
       this.currentMonthName +
       "/" +
-      this.toDayDate +
+      this.selectedDate +
       "/WorkerDetails";
     let workDetails = this.db
       .object(workDetailsPath)
       .valueChanges()
       .subscribe((workerData) => {
         workDetails.unsubscribe();
-        if (workerData != null) {
+
+        if (workerData != undefined) {
           let driverList = workerData["driver"].toString().split(",");
           let helperList = workerData["helper"].toString().split(",");
           let driverId = driverList[driverList.length - 1].trim();
           let helperId = helperList[helperList.length - 1].trim();
           this.getEmployee(driverId, "driver");
           this.getEmployee(helperId, "helper");
+        }
+        else
+        {
+          this.commonService.setAlertMessage("success","No work assign selected zone on selected date!!!");
         }
       });
   }
@@ -229,14 +243,16 @@ export class MapsComponent {
     if (this.workerDetails != null) {
       this.workerDetails.unsubscribe();
     }
-    this.lastLineInstance = this.db
-      .object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((lastLine) => {
-        if (lastLine != null) {
-          this.progressData.currentLine = Number(lastLine) + 1;
-        }
-      });
+    if (this.selectedDate == this.toDayDate) {
+      this.lastLineInstance = this.db
+        .object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone)
+        .valueChanges()
+        .subscribe((lastLine) => {
+          if (lastLine != null) {
+            this.progressData.currentLine = Number(lastLine) + 1;
+          }
+        });
+    }
     let totalLineData = this.db
       .object("WardLines/" + this.selectedZone)
       .valueChanges()
@@ -250,7 +266,7 @@ export class MapsComponent {
           "/" +
           this.currentMonthName +
           "/" +
-          this.toDayDate +
+          this.selectedDate +
           "/Summary";
         this.progressData.totalLines = Number(totalLines);
         this.workerDetails = this.db
@@ -320,7 +336,14 @@ export class MapsComponent {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
+    this.selectedDate = this.toDayDate;
+    this.currentYear = new Date().getFullYear();
+    this.currentMonthName = this.commonService.getCurrentMonthName(
+      new Date(this.toDayDate).getMonth()
+    );
+    $("#txtDate").val(this.selectedDate);
     this.clearAllOnMap();
+    this.clearProgressData();
     this.activeZone = filterVal;
     // this.setMaps();
     this.setKml();
@@ -334,11 +357,60 @@ export class MapsComponent {
     this.polylines = [];
     this.houseMarkerList = [];
     this.houseList = [];
-    this.showVehicleMovement();
+    if (this.selectedDate == this.toDayDate) {
+      this.showVehicleMovement();
+    }
     this.getAllLinesFromJson();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
+    let element = <HTMLInputElement>document.getElementById("isHouse");
+    element.checked = false;
+    $("#houseCount").hide();
+    $("#houseDetail").hide();
+    this.getParshadHouse();
+  }
+
+  setDate(filterVal: any, type: string) {
+    if (type == "current") {
+      this.selectedDate = filterVal;
+    } else if (type == "next") {
+      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
+      this.selectedDate = nextDate;
+    } else if (type == "previous") {
+      let previousDate = this.commonService.getPreviousDate(
+        $("#txtDate").val(),
+        1
+      );
+      this.selectedDate = previousDate;
+    }
+    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
+      this.selectedDate = this.toDayDate;
+      this.commonService.setAlertMessage(
+        "error",
+        "Please select current or previos date!!!"
+      );
+    }
+    $("#txtDate").val(this.selectedDate);
+    this.currentMonthName = this.commonService.getCurrentMonthName(
+      new Date(this.selectedDate).getMonth()
+    );
+    this.currentYear = this.selectedDate.split("-")[0];
+    this.clearProgressData();
+    this.clearAllOnMap();
+    this.selectedZone = this.activeZone;
+    this.polylines = [];
+    this.houseMarkerList = [];
+    this.houseList = [];
+    if (this.selectedDate == this.toDayDate) {
+      this.showVehicleMovement();
+    }
+
+    this.setKml();
+    this.getAllLinesFromJson();
+    this.getProgressDetail();
+    this.getEmployeeData();
+    this.getParshadHouse();
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
     $("#houseCount").hide();
@@ -359,12 +431,15 @@ export class MapsComponent {
       }
       this.houseMarkerList = [];
     }
+
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
     }
+
     if (this.parhadhouseMarker != null) {
       this.parhadhouseMarker.setMap(null);
     }
+
     if (this.marker != null) {
       this.marker.setMap(null);
     }
@@ -436,7 +511,7 @@ export class MapsComponent {
       "/" +
       this.currentMonthName +
       "/" +
-      this.toDayDate +
+      this.selectedDate +
       "/LineStatus/" +
       lineNo +
       "/Status";
@@ -444,6 +519,7 @@ export class MapsComponent {
       .object(dbPathLineStatus)
       .valueChanges()
       .subscribe((status) => {
+        lineStatus.unsubscribe();
         if (wardNo == this.selectedZone) {
           if (this.polylines[index] != undefined) {
             this.polylines[index].setMap(null);
