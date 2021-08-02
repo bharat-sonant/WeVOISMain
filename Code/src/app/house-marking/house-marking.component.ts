@@ -395,7 +395,7 @@ export class HouseMarkingComponent {
                 });
                 let alreadyCard="";
                 if(alreadyInstalled=="हाँ"){
-                  alreadyCard="(कार्ड पहले से ही स्थापित है) ";
+                  alreadyCard="(कार्ड पहले से लगा हुआ है) ";
                 }
               
               let dbPath = "Defaults/FinalHousesType/" + type + "/name";
