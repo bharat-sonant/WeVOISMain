@@ -27,7 +27,7 @@ export class HouseMarkingComponent {
     private router: Router,
     private commonService: CommonService
   ) {}
-db:any;
+  db: any;
   public selectedZone: any;
   zoneList: any[];
   marker = new google.maps.Marker();
@@ -66,7 +66,7 @@ db:any;
   };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(
       window.location.href,
@@ -81,12 +81,14 @@ db:any;
     this.previousLine = "1";
     this.setHeight();
     this.getZones();
-    this.selectedZone = this.zoneList[1]["zoneNo"];
-    this.activeZone = this.zoneList[1]["zoneNo"];
-    this.getLineApprove();
-    this.setMaps();
-    this.setKml();
-    this.onSubmit();
+    setTimeout(() => {
+      this.selectedZone = this.zoneList[0]["zoneNo"];
+      this.activeZone = this.zoneList[0]["zoneNo"];
+      this.getLineApprove();
+      this.setMaps();
+      this.setKml();
+      this.onSubmit();
+    }, 2000);
   }
 
   getCurrentLineNo(event: any) {
@@ -96,7 +98,36 @@ db:any;
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList = [];
+
+    let dbPath = "Defaults/CircleWiseWards/Circle1";
+    let zoneInstance = this.db
+      .list(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        zoneInstance.unsubscribe();
+        console.log(data);
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let zoneNo = data[i];
+            let zoneName = data[i];
+            if (data[i].toString().includes("mkt1")) {
+              zoneName = "Market 1";
+            } else if (data[i].toString().includes("mkt2")) {
+              zoneName = "Market 2";
+            } else if (data[i].toString().includes("mkt3")) {
+              zoneName = "Market 3";
+            } else if (data[i].toString().includes("mkt4")) {
+              zoneName = "Market 4";
+            } else {
+              zoneName = "Ward " + data[i];
+            }
+            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+          }
+        }
+      });
+
+    //this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
   setHeight() {
@@ -152,8 +183,8 @@ db:any;
   }
 
   onSubmit() {
-    this.markerData.houseType="";
-    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
+    this.markerData.houseType = "";
+    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     this.selectedZone = this.activeZone;
     this.polylines = [];
     if (this.houseMarker.length > 0) {
@@ -181,27 +212,22 @@ db:any;
       });
   }
 
-  showAllMarkers()
-  {
+  showAllMarkers() {
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {
         this.houseMarker[i]["marker"].setMap(null);
       }
-      this.houseMarker=[];
+      this.houseMarker = [];
     }
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    if(element.checked==true){
-      for(let i=0;i<=this.wardLines;i++){
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    if (element.checked == true) {
+      for (let i = 0; i <= this.wardLines; i++) {
         this.getMarkedHouses(i);
       }
-    }
-    else
-    {
+    } else {
       this.getMarkedHouses(this.lineNo);
     }
   }
-
-
 
   clearAllOnMap() {
     if (this.allMatkers.length > 0) {
@@ -478,8 +504,8 @@ db:any;
   //#region Line Marking Status
 
   getNextPrevious(type: any) {
-    this.markerData.houseType="";
-    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
+    this.markerData.houseType = "";
+    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     let lineNo = $("#txtLineNo").val();
     if (lineNo == "") {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
@@ -569,7 +595,6 @@ db:any;
   }
 
   getLineApprove() {
-    
     let dbPath =
       "EntityMarkingData/MarkedHouses/" +
       this.selectedZone +
@@ -581,17 +606,15 @@ db:any;
       .valueChanges()
       .subscribe((data) => {
         countInstance.unsubscribe();
-        let element=<HTMLButtonElement>document.getElementById("btnSave");
+        let element = <HTMLButtonElement>document.getElementById("btnSave");
         if (data != null) {
           $("#btnSave").css("background", "#0ba118");
-          element.disabled=false;
+          element.disabled = false;
           this.markerData.totalLineMarkers = data.toString();
-        }
-        else
-        {
+        } else {
           this.markerData.totalLineMarkers = "0";
           $("#btnSave").css("background", "#626262");
-          element.disabled=true;
+          element.disabled = true;
         }
       });
     dbPath =
@@ -620,9 +643,12 @@ db:any;
   }
 
   saveData() {
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    if(element.checked==true){
-      this.commonService.setAlertMessage("error","Please remove check from show all markers for approve this line!!!");
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    if (element.checked == true) {
+      this.commonService.setAlertMessage(
+        "error",
+        "Please remove check from show all markers for approve this line!!!"
+      );
       return;
     }
 
@@ -679,7 +705,6 @@ db:any;
         setTimeout(() => {
           this.getApprovedLines();
         }, 200);
-
       });
 
     this.commonService.setAlertMessage(
