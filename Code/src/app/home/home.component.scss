@@ -418,8 +418,8 @@ i{
 
 .animated-text{
   color: #0ba118;
-  position: absolute;
-  top: 50%;
+  position: fixed;
+  top: 83%;
   left: 50%;
   transform: translate(-50%,-50%);
   background: #fff;
@@ -427,7 +427,7 @@ i{
   height: 60px;
   overflow: hidden;
   font-weight: bold;
-  font-family: cursive;
+  font-family: serif;
 }
 
 .line{

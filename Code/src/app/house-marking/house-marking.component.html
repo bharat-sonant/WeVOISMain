@@ -81,16 +81,6 @@
 
       <div class="col-md-12">
         <div class="row" style="margin-left:0px; margin-right:0px;">
-          <div class="col-md-6 mt-12 marker-section">
-            <h3>{{markerData.totalLineMarkers}}<br />
-              <span> Markers</span>
-            </h3>
-          </div>
-          <div class="col-md-6 mt-12 marker-section">
-            <h3>{{markerData.alreadyCardLineCount}}<br />
-              <span> Aready Card</span>
-            </h3>
-          </div>
           <div class="col-md-12 pl-0 ml-21">
             <button id="btnSave" class="btn btn-success" (click)="saveData();"
               style="width:100px; background:#0ba118!important;">Approve Line</button>
@@ -126,6 +116,27 @@
   <div class="driver-helper-box">
     <div class="row">
       <div class="col-md-12">
+          <div class="main-box">
+              <div class="designation">
+                <h5> {{markerData.totalLineMarkers}} </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>Markers</p>
+                </h6>
+              </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                  <h5> {{markerData.alreadyCardLineCount}} </h5>
+                </div>
+                <div class="all-details">
+                  <h6>
+                    <p>Already Card</p>
+                  </h6>
+                </div>
+              </div>
+
         <div class="main-box">
           <div class="designation">
             <h5> <img src="../assets/img/marking-house.svg"> </h5>
