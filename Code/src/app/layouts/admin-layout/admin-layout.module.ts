@@ -77,6 +77,7 @@ import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/em
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
 import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
+import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
 
 
 @NgModule({
@@ -159,7 +160,8 @@ import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map
     EmployeeMarkingComponent,
     WardSurveyAnalysisComponent,
     WardSurveySummaryComponent,
-    MapCardReviewComponent
+    MapCardReviewComponent,
+    WardMarkingSummaryComponent
   ]
 })
 

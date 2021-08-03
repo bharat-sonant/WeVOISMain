@@ -1001,10 +1001,14 @@ export class CommonService {
     //if (this.setTodayDate() != localStorage.getItem("loginDate")) {
     //  window.location.href = "/portal-access";
     //}
+    console.log(pageURL);
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
-      let value = "/" + city + "/home";
-      this.router.navigate([value], { replaceUrl: true });
+      urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
+      if (city != urlCity) {
+        let value = "/" + city + "/home";
+        this.router.navigate([value], { replaceUrl: true });
+      }
     }
     let pageId = pageURL.split(city)[1].split("/")[1];
     let accessList = JSON.parse(localStorage.getItem("userAccessList"));

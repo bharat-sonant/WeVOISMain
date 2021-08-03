@@ -3,24 +3,22 @@ import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 
+
 @Component({
-  selector: "app-ward-survey-summary",
-  templateUrl: "./ward-survey-summary.component.html",
-  styleUrls: ["./ward-survey-summary.component.scss"],
+  selector: 'app-ward-marking-summary',
+  templateUrl: './ward-marking-summary.component.html',
+  styleUrls: ['./ward-marking-summary.component.scss']
 })
-export class WardSurveySummaryComponent implements OnInit {
-  constructor(
-    public fs:FirebaseService,
-    private commonService: CommonService
-  ) {}
+export class WardMarkingSummaryComponent implements OnInit {
 
-  selectedCircle: any;
-  wardProgressList: any[] = [];
-  wardProgressListShow: any[] = [];
-  wardList: any[] = [];
-  cityName: any;
-  db:any;
-
+  constructor(public fs:FirebaseService,
+    private commonService: CommonService) { }
+    selectedCircle: any;
+    wardProgressList: any[] = [];
+    wardProgressListShow: any[] = [];
+    wardList: any[] = [];
+    cityName: any;
+    db:any;
   ngOnInit() {
     this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
@@ -32,6 +30,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.selectedCircle = "Circle1";
   }
 
+  
   getWards() {
     let dbPath = "Defaults/CircleWiseWards";
     let circleWiseWard = this.db
@@ -88,12 +87,10 @@ export class WardSurveySummaryComponent implements OnInit {
       if (circleWardList.length > 0) {
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
-          let url = this.cityName + "/13B2/ward-survey-analysis/" + wardNo;
+          let url = this.cityName + "/13A3/house-marking/" + wardNo;
           this.wardProgressList.push({
             wardNo: wardNo,
             markers: 0,
-            surveyed: 0,
-            percentage: 0,
             url: url,
           });
           this.getWardSummary(i, wardNo);
@@ -115,29 +112,8 @@ export class WardSurveySummaryComponent implements OnInit {
         if (data != null) {
           let markers = Number(data);
           this.wardProgressList[index]["markers"] = markers;
-          dbPath = "EntitySurveyData/TotalHouseCount/" + wardNo;
-          let surveyedInstance = this.db
-            .object(dbPath)
-            .valueChanges()
-            .subscribe((data) => {
-              surveyedInstance.unsubscribe();
-              if (data != null) {
-                let surveyed = Number(data);
-                this.wardProgressList[index]["surveyed"] = surveyed;
-                
-                let percentage =
-                  (surveyed * 100) /
-                  Number(this.wardProgressList[index]["markers"]);
-                  if(percentage%1==0){
-                    this.wardProgressList[index]["percentage"] = percentage.toFixed(0);
-                  }
-                  else
-                  {
-                    this.wardProgressList[index]["percentage"] = percentage.toFixed(2);
-                  }                
-              }
-            });
         }
       });
   }
+
 }
