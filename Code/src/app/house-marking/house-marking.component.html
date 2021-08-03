@@ -59,11 +59,11 @@
               style="background-color: #888; padding: 10px; display: none; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important">
               Show </button>
       </div>
-      <div class="col-md-12">
-        <span style="padding-top: 10px;font-size: 12px">
-          <input type="checkbox" id="chkAll" (change)="showAllMarkers();"> Show All Markers</span> | <span
-          style="padding-top: 10px;font-size: 12px; cursor: pointer;" (click)="showLineDetail(contentLineMarkers);">
-          View Detail</span>
+      <div class="col-md-12 text-left ml-10">
+        <span style="padding-top: 10px;font-size: 11px">
+          <input type="checkbox" id="chkAll" (change)="showAllMarkers();" style="vertical-align: middle;"> Show All Markers</span> | <span
+          style="padding-top: 10px;font-size: 11px; cursor: pointer;" (click)="showLineDetail(contentLineMarkers);">
+          <i class="fas fa-eye"></i> View Detail</span>
       </div>
       <div class="col-md-6" style="padding-top: 10px; display: none;">
         <div class="row">
@@ -79,14 +79,9 @@
         </div>
       </div>
 
-      <div class="col-md-12">
-        <div class="row" style="margin-left:0px; margin-right:0px;">
-          <div class="col-md-12 pl-0 ml-21">
-            <button id="btnSave" class="btn btn-success" (click)="saveData();"
+      <div class="col-md-12 pl-5 pr-46">
+            <button id="btnSave" class="btn btn-success w-100" (click)="saveData();"
               style="width:100px; background:#0ba118!important;">Approve Line</button>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
