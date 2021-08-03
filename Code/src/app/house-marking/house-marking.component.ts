@@ -88,8 +88,14 @@ export class HouseMarkingComponent {
     this.setHeight();
     this.getZones();
     setTimeout(() => {
-      this.selectedZone = this.zoneList[0]["zoneNo"];
-      this.activeZone = this.zoneList[0]["zoneNo"];
+      const id = this.actRoute.snapshot.paramMap.get("id1");
+      if (id != null) {
+        this.selectedZone = id.trim();
+        this.activeZone = id.trim();
+      } else {
+        this.selectedZone = this.zoneList[0]["zoneNo"];
+        this.activeZone = this.zoneList[0]["zoneNo"];
+      }
       this.getLineApprove();
       this.setMaps();
       this.setKml();
@@ -456,7 +462,7 @@ export class HouseMarkingComponent {
                           imageName: imageName,
                           type: houseType,
                           imageUrl: imageUrl,
-                          status:status
+                          status: status,
                         });
                       }
                     });
@@ -498,9 +504,9 @@ export class HouseMarkingComponent {
     if (this.markerList.length > 0) {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let windowWidth=$(window).width();
+      let windowWidth = $(window).width();
       let height = 870;
-      let width = windowWidth-300;
+      let width = windowWidth - 300;
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       let divHeight = height - 26 + "px";
