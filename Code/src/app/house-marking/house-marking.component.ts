@@ -9,7 +9,7 @@ import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-house-marking",
@@ -68,7 +68,7 @@ export class HouseMarkingComponent {
     houseType: "",
     alreadyCardCount: 0,
     alreadyCardLineCount: 0,
-    alreadyCard:"",
+    alreadyCard: "",
   };
 
   ngOnInit() {
@@ -172,8 +172,30 @@ export class HouseMarkingComponent {
       });
   }
 
-  changeZoneSelection(filterVal: any) {
+  clearAllData()
+  {
     this.markerData.totalMarkers = "0";
+    this.markerData.alreadyCardCount=0;
+    this.markerData.alreadyCard="";
+    this.markerData.alreadyCardLineCount=0;
+    this.markerData.approvedLines="0";
+    this.markerData.houseType="";
+    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
+    this.markerData.totalLineMarkers="0";
+    this.markerData.totalLines="0";
+  }
+
+  clearLineData(){
+    this.markerData.alreadyCard="";
+    this.markerData.alreadyCardLineCount=0;
+    this.markerData.houseType="";
+    this.markerData.markerImgURL="../assets/img/img-not-available-01.jpg";
+    this.markerData.totalLineMarkers="0";
+  }
+
+  changeZoneSelection(filterVal: any) {
+    this.clearAllData();
+    
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
@@ -199,31 +221,25 @@ export class HouseMarkingComponent {
       }
     }
     this.getAllLinesFromJson();
-    this.getTotalMarkers();
+    this.getTotalMarkers();    
+    this.getTotalAlreadyCard();
   }
 
   getTotalAlreadyCard() {
     this.markerData.alreadyCardCount = 0;
-    if (this.wardLines != null) {
-      for (let i = 1; i <= this.wardLines; i++) {
-        let dbPath =
-          "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + i;
-        let markerInstance = this.db
-          .list(dbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            markerInstance.unsubscribe();
-            for (let j = 0; j < data.length - 1; j++) {
-              if (data[j]["alreadyInstalled"] != null) {
-                if (data[j]["alreadyInstalled"] == true) {
-                  this.markerData.alreadyCardCount =
-                    this.markerData.alreadyCardCount + 1;
-                }
-              }
-            }
-          });
-      }
-    }
+    let dbPath =
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
+      this.selectedZone +
+      "/alreadyInstalled";
+    let alreadyInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        alreadyInstance.unsubscribe();
+        if (data != null) {
+          this.markerData.alreadyCardCount = Number(data);
+        }
+      });
   }
 
   getTotalMarkers() {
@@ -306,7 +322,6 @@ export class HouseMarkingComponent {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
-          this.getTotalAlreadyCard();
           this.markerData.totalLines = lineCount.toString();
           for (let i = 1; i <= Number(lineCount); i++) {
             let wardLines = this.db
@@ -339,6 +354,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.clearLineData();
     this.markerList = [];
     this.markerData.alreadyCardLineCount = 0;
     this.houseMarker = [];
@@ -355,17 +371,19 @@ export class HouseMarkingComponent {
               let lat = data[i]["latLng"].split(",")[0];
               let lng = data[i]["latLng"].split(",")[1];
               let imageName = data[i]["image"];
-              let city=this.cityName.charAt(0).toUpperCase() +this.cityName.slice(1);
+              let city =
+                this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
 
-              let imageUrl="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-              city +
-              "%2FMarkingSurveyImages%2F" +
-              this.selectedZone +
-              "%2F" +
-              this.lineNo +
-              "%2F" +
-              imageName +
-              "?alt=media";
+              let imageUrl =
+                "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                city +
+                "%2FMarkingSurveyImages%2F" +
+                this.selectedZone +
+                "%2F" +
+                this.lineNo +
+                "%2F" +
+                imageName +
+                "?alt=media";
               let type = data[i]["houseType"];
               let alreadyInstalled = "नहीं";
 
@@ -375,7 +393,7 @@ export class HouseMarkingComponent {
                 alreadyInstalled = "हाँ";
               }
               let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-             let houseInstance1 = this.db
+              let houseInstance1 = this.db
                 .object(dbPath1)
                 .valueChanges()
                 .subscribe((data) => {
@@ -383,21 +401,21 @@ export class HouseMarkingComponent {
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
                     this.markerList.push({
-                      i:i+1,
+                      i: i + 1,
                       lat: lat,
                       lng: lng,
                       alreadyInstalled: alreadyInstalled,
                       imageName: imageName,
                       type: houseType,
-                      imageUrl:imageUrl
+                      imageUrl: imageUrl,
                     });
                   }
                 });
-                let alreadyCard="";
-                if(alreadyInstalled=="हाँ"){
-                  alreadyCard="(कार्ड पहले से लगा हुआ है) ";
-                }
-              
+              let alreadyCard = "";
+              if (alreadyInstalled == "हाँ") {
+                alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
+              }
+
               let dbPath = "Defaults/FinalHousesType/" + type + "/name";
               let houseInstance = this.db
                 .object(dbPath)
@@ -425,22 +443,27 @@ export class HouseMarkingComponent {
       });
   }
 
-  showLineDetail(content:any) {
+  showLineDetail(content: any) {
     if (this.markerList.length > 0) {
-        this.modalService.open(content, { size: 'lg' });
-        let windowHeight = $(window).height();
-        let height = 870;
-        let width = 500;
-        height = (windowHeight * 90) / 100;
-        let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-        let divHeight = (height - 26) + "px";
-        $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-        $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
-        $('div .modal-dialog-centered').css("margin-top", marginTop);
-        $('#divStatus').css("height", divHeight);
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 870;
+      let width = 500;
+      height = (windowHeight * 90) / 100;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      let divHeight = height - 26 + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
     }
   }
-  
+
   closeModel() {
     this.modalService.dismissAll();
   }
@@ -539,7 +562,7 @@ export class HouseMarkingComponent {
     imageName: any,
     type: any,
     lineNo: any,
-    alreadyCard:any
+    alreadyCard: any
   ) {
     if (type == "lineNo") {
       let marker = new google.maps.Marker({
@@ -593,7 +616,7 @@ export class HouseMarkingComponent {
           "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
-        markerDetail.alreadyCard=alreadyCard;
+        markerDetail.alreadyCard = alreadyCard;
       });
 
       this.houseMarker.push({ marker });
@@ -831,5 +854,5 @@ export class markerDetail {
   houseType: string;
   alreadyCardCount: number;
   alreadyCardLineCount: number;
-  alreadyCard:string;
+  alreadyCard: string;
 }
