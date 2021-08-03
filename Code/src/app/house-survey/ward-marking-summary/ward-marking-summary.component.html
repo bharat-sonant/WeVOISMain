@@ -35,7 +35,7 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                >
+                                           style="cursor: pointer;" (click)="getMarkingDetail(data.wardNo,i);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
@@ -64,12 +64,55 @@
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
-                    
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <h5> <b> </b></h5>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{markerData.totalLines}}</span> <br>
+                                    Total Lines
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body" style="padding: 3px 11px 15px 0px;">
                     <div class="row">
 
                         <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
+                                            <table class="table"
+                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                                <thead>
+                                                    <th style="border-right:1px solid #dee2e6; width:30%;">Line No.</th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:70%;">Markers</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of lineMarkerList; let i=index">
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.lineNo}}</td>
+                                                        <td class="border-right"
+                                                            style="border-right:1px solid #dee2e6;">
+                                                            {{data.markers}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
