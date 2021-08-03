@@ -1,6 +1,6 @@
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-3">
+    <div class="col-md-4">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option value="0">
@@ -12,26 +12,24 @@
         </option>
       </select>
     </div>
-    <div class="col-md-6" style="padding-top: 0px; padding-left: 10px;;">
+    <div class="col-md-4" style="padding-top: 0px; padding-left: 10px;;">
       <h1 class="ward-header"> Marker Approval</h1>
     </div>
 
-    <div id="houseCount" class="col-md-3 text-right total-house">
-      <div style="position: absolute;
-      margin-right: 400px;
-      width: 200px;
-      margin-top: 11px;">
-        <i class="fas fa-check-circle"></i> <span class="house"><span style="color: #1fda2f;">
+    <div class="col-md-4 text-right total-house" id="houseCount">
+
+      <div class="fix-home">
+              <div class="float-first" style="margin-left: 10px; margin-top: 12px;">
+                  <i class="fas fa-vr-cardboard"></i> <span class="house"><span style="color: #1fda2f;">
             {{markerData.alreadyCardCount}}</span></span><br>
         <h6>Already Card Count</h6>
       </div>
-      <div class="fix-home">
-        <div class="float-l" style="margin-left: 10px; margin-top: 12px;">
+        <div class="float-second" style="margin-left: 10px; margin-top: 12px;">
           <i class="fas fa-check-circle"></i> <span class="house"><span style="color: #1fda2f;">
               {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
           <h6>Approved Lines</h6>
         </div>
-        <div class="float-r">
+        <div class="float-third">
           <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
           <h6>Total Marker</h6>
         </div>

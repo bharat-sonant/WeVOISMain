@@ -59,13 +59,17 @@ font-size: 18px;
 color: #1fda2f;
 font-size: 18px;
 }
+.fa-vr-cardboard{
+    color: #1fda2f;
+font-size: 18px;
+}
 .float-l{
 float: left;
 width: 160px;
 }
 .float-r{
-float: right;
-width: calc(100% - 190px);
+float: left;
+width: 160px;
 margin-right: 20px;
 }
 
@@ -484,18 +488,22 @@ margin: 0px;
 }
 
 
+
 .fix-home{
-width: 250px;
-float: right;
+    float: right;
+    margin-right: 15px;
 }
-.float-l{
-float: left;
-width: 115px;
+.float-first{
+    width: 125px;
+    float: left;
 }
-.float-r{
-float: right;
-width: calc(250px - 145px);
-margin-right: 20px;
+.float-second{
+    width: 95px;
+    float: left;
+}
+.float-third{
+    width: 95px;
+    float: left;
 }
 
 .assign-button{
