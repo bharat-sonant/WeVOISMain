@@ -3,8 +3,7 @@
     <div class="col-md-3">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
-        <option  value="0"
-         >
+        <option value="0">
           --Select Zone--
         </option>
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -23,8 +22,8 @@
       width: 200px;
       margin-top: 11px;">
         <i class="fas fa-check-circle"></i> <span class="house"><span style="color: #1fda2f;">
-          {{markerData.alreadyCardCount}}</span></span><br>
-      <h6>Already Card Count</h6>
+            {{markerData.alreadyCardCount}}</span></span><br>
+        <h6>Already Card Count</h6>
       </div>
       <div class="fix-home">
         <div class="float-l" style="margin-left: 10px; margin-top: 12px;">
@@ -64,7 +63,9 @@
       </div>
       <div class="col-md-12">
         <span style="padding-top: 10px;font-size: 12px">
-          <input type="checkbox" id="chkAll" (change)="showAllMarkers();"> Show All Markers</span> | <span style="padding-top: 10px;font-size: 12px; cursor: pointer;" (click)="showLineDetail(contentLineMarkers);"> View Detail</span>
+          <input type="checkbox" id="chkAll" (change)="showAllMarkers();"> Show All Markers</span> | <span
+          style="padding-top: 10px;font-size: 12px; cursor: pointer;" (click)="showLineDetail(contentLineMarkers);">
+          View Detail</span>
       </div>
       <div class="col-md-6" style="padding-top: 10px; display: none;">
         <div class="row">
@@ -110,7 +111,7 @@
     <div class="row">
       <div class="col-md-12 house-type">
         <h3> {{markerData.houseType}}
-          <br/>
+          <br />
           {{markerData.alreadyCard}}
         </h3>
       </div>
@@ -217,44 +218,32 @@
     <span><i class="far fa-hand-point-right"></i></span>
   </button>
 
-  
-<!--Vehicle Status Start-->
-<ng-template #contentLineMarkers>
-  <div style="width: 100%;text-align: right;float: left;">
 
-    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+  <!--Vehicle Status Start-->
+  <ng-template #contentLineMarkers>
+    <div style="width: 100%;text-align: right;float: left;">
 
-  </div>
-  <div class="modal-body" style="float: left;margin-top:-38px; ">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="dth">
-          <div class="table-bg">
-            <div id="divStatus" class="tableFixHead">
-              <table class="table table-hover" style="margin-bottom: 0px;">
-                <thead>
-                  <tr>
-                    <th scope="col" class="text-left" style="width: 75%;">House Detail </th>
-                    <th scope="col" class="text-left" style="width: 25%;">Image</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let dt of markerList">
-                    <td class="text-left border-left" style="vertical-align: top;">House Type : {{dt.type}}<br/>
-                      Already Card : {{dt.alreadyInstalled}} </td>
-                    <td class="text-left">
-                      <a href="{{dt.imageUrl}}" target="_blank">
-                        <img [src]="dt.imageUrl" style="height:100px; width: 100px;" />
-                      </a>
-                       </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+      <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body" style="margin-top:-38px; ">
+      <div class="row">
+        <div class="col-md-3" *ngFor="let dt of markerList">
+          <div style="width:100%">
+            <a href="{{dt.imageUrl}}" target="_blank">
+              <img [src]="dt.imageUrl" style="height:150px; width: 100%;" />
+            </a>
+          </div>
+          <div style="width:100%; font-size: 12px;">
+            House Type : {{dt.type}}<br />
+            Already Card : {{dt.alreadyInstalled}}<br />
+           <span [hidden]="dt.status==''"> status:{{dt.status}}<br/></span>
+            <button class="btn btn-success" (click)="saveMarkerStatus(dt.index);"
+              style="width:100px; background:#0ba118!important;">Reject</button>
           </div>
         </div>
+
       </div>
     </div>
-  </div>
-</ng-template>
-<!--Vehicle Status End-->
+  </ng-template>
+  <!--Vehicle Status End-->
