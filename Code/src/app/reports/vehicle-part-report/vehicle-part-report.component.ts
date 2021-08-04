@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 import { NgbDatepickerNavigation } from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation';
 
+import { FirebaseService } from "../../firebase.service";
 @Component({
   selector: 'app-vehicle-part-report',
   templateUrl: './vehicle-part-report.component.html',
@@ -14,7 +15,7 @@ import { NgbDatepickerNavigation } from '@ng-bootstrap/ng-bootstrap/datepicker/d
 })
 export class VehiclePartReportComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private modalService: NgbModal, public toastr: ToastrService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private modalService: NgbModal, public toastr: ToastrService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
   toDayDate: any;
   selectedMonth: any;
   selectedYear: any;
@@ -26,8 +27,10 @@ export class VehiclePartReportComponent implements OnInit {
   isOnLoad = false;
   dateDataListStore: any[];
   dateDataList: any[];
+  db:any;
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.dateDataList = [];
     this.dateDataListStore = [];

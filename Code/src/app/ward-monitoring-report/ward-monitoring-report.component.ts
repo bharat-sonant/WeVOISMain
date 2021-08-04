@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../services/common/common.service';
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: 'app-ward-monitoring-report',
@@ -9,7 +10,7 @@ import { CommonService } from '../services/common/common.service';
 })
 export class WardMonitoringReportComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService) { }
 
   toDayDate: any;
   selectDate: any;
@@ -19,8 +20,10 @@ export class WardMonitoringReportComponent implements OnInit {
   wardProgressList: any[] = [];
   wardProgressListShow: any[] = [];
   wardList: any[] = [];
+  db:any;
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
    // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.getWards();
     this.selectedCircle = "Circle1";

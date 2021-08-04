@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-ward-trip-analysis",
@@ -10,7 +11,7 @@ import { CommonService } from "../../services/common/common.service";
 export class WardTripAnalysisComponent implements OnInit {
   constructor(
     private commonService: CommonService,
-    public db: AngularFireDatabase
+    public fs: FirebaseService
   ) {}
   tripList: any[];
   zoneList: any[];
@@ -37,8 +38,9 @@ export class WardTripAnalysisComponent implements OnInit {
     remark: "",
     filledStatus: "",
   };
-
+db:any;
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(
       window.location.href,
       localStorage.getItem("cityName")

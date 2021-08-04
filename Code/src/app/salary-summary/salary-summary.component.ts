@@ -4,6 +4,7 @@ import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import * as $ from "jquery";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { FirebaseService } from "../firebase.service";
 
 //services
 import { CommonService } from "../services/common/common.service";
@@ -16,7 +17,7 @@ import * as CanvasJS from "../../assets/canvasjs.min";
 })
 export class SalarySummaryComponent implements OnInit {
   constructor(
-    public db: AngularFireDatabase,
+    public fs: FirebaseService,
     private commonService: CommonService,
     private modalService: NgbModal
   ) { }
@@ -29,7 +30,7 @@ export class SalarySummaryComponent implements OnInit {
   yearList: any;
 
   public selectedYear: any;
-
+db:any;
   monthSalaryListShow: any[] = [];
   salaryData: salaryDetail = {
     totalSalary: "0.00",
@@ -37,6 +38,7 @@ export class SalarySummaryComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(
       window.location.href,
       localStorage.getItem("cityName")

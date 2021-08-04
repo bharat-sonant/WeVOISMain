@@ -3,6 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-vehicle-report',
@@ -12,7 +13,7 @@ import { of } from 'rxjs';
 
 export class VehicleReportComponent implements OnInit {
 
-  constructor(public db: AngularFireDatabase, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -20,7 +21,9 @@ export class VehicleReportComponent implements OnInit {
   vehicleDataList: any[] = [];
   vehicleDetailList: any[];
   yearList: any[];
+  db:any;
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

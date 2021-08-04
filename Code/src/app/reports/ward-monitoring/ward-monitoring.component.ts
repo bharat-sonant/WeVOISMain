@@ -15,6 +15,7 @@ import * as CanvasJS from '../../../assets/canvasjs.min';
 import * as html2canvas from "html2canvas";
 import * as jspdf from "jspdf";
 import * as $ from "jquery";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-ward-monitoring',
@@ -57,10 +58,12 @@ export class WardMonitoringComponent {
   polylines = [];
   currentMonthName: any;
   currentYear: any;
+  db:any;
 
-  constructor(public db: AngularFireDatabase, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);

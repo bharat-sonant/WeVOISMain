@@ -11,6 +11,7 @@ import * as $ from "jquery";
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Conditional } from '@angular/compiler';
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: 'app-route-tracking',
@@ -22,8 +23,8 @@ export class RouteTrackingComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public db: AngularFireDatabase, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
-
+  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+db:any;
   public selectedZone: any;
   zoneList: any[];
   marker = new google.maps.Marker();
@@ -83,6 +84,7 @@ export class RouteTrackingComponent {
     };
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.setSpeed(Number($('#ddlSpeed').val()));
     $('#btnPre').show();
