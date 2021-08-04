@@ -542,7 +542,7 @@ export class HouseMarkingComponent {
   getMarkerIcon(type: any) {
     let url = "../assets/img/final-marker-2.svg";
     if (type == 1 || type == 19) {
-      url = "../assets/img/marking-house.svg";
+      url = "../assets/img/marking-house.png";
     } else if (
       type == 2 ||
       type == 3 ||
@@ -553,19 +553,19 @@ export class HouseMarkingComponent {
       type == 10 ||
       type == 20
     ) {
-      url = "../assets/img/marking-shop.svg";
+      url = "../assets/img/marking-shop.png";
     } else if (type == 14 || type == 15) {
-      url = "../assets/img/marking-warehouse.svg";
+      url = "../assets/img/marking-warehouse.png";
     } else if (type == 21 || type == 22) {
-      url = "../assets/img/marking-institute.svg";
+      url = "../assets/img/marking-institute.png";
     } else if (type == 4 || type == 5) {
-      url = "../assets/img/marking-hotel.svg";
+      url = "../assets/img/marking-hotel.png";
     } else if (type == 16 || type == 17) {
-      url = "../assets/img/marking-mela.svg";
+      url = "../assets/img/marking-mela.png";
     } else if (type == 18) {
-      url = "../assets/img/marking-thela.svg";
+      url = "../assets/img/marking-thela.png";
     } else if (type == 11 || type == 12 || type == 13) {
-      url = "../assets/img/marking-hospital.svg";
+      url = "../assets/img/marking-hospital.png";
     }
     return url;
   }
@@ -663,7 +663,7 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          scaledSize: new google.maps.Size(27, 27),
+         // scaledSize: new google.maps.Size(27, 27),
           origin: new google.maps.Point(0, 0),
         },
       });
