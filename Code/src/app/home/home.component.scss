@@ -34,7 +34,10 @@
    justify-content: center;
 }
 .absolute{
-  height: calc(100vh - 200px);
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .half-circle {
    width: 400px;
