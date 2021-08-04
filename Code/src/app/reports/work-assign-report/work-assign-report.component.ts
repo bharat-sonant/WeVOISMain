@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-work-assign-report',
@@ -10,13 +11,15 @@ import { MapService } from '../../services/map/map.service';
 })
 export class WorkAssignReportComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public db: AngularFireDatabase, private mapService: MapService) { }
+  constructor(private commonService: CommonService, public fs: FirebaseService, private mapService: MapService) { }
 
   workList: any[] = [];
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
+  db:any;
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);

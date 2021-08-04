@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { CommonService } from '../../services/common/common.service';
-import { MapService } from '../../services/map/map.service';
-import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
+import { Component, OnInit } from "@angular/core";
+import { AngularFireDatabase } from "angularfire2/database";
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
+import { ToastrService } from "ngx-toastr"; // Alert message using NGX toastr
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
 
 @Component({
-  selector: 'app-portal-services',
-  templateUrl: './portal-services.component.html',
-  styleUrls: ['./portal-services.component.scss']
+  selector: "app-portal-services",
+  templateUrl: "./portal-services.component.html",
+  styleUrls: ["./portal-services.component.scss"],
 })
 export class PortalServicesComponent implements OnInit {
-
-  constructor(public fs: FirebaseService, private router: Router, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
+  constructor(
+    public fs: FirebaseService,
+    private router: Router,
+    public toastr: ToastrService,
+    private commonService: CommonService,
+    private mapService: MapService
+  ) {}
   toDayDate: any;
   yearList: any[] = [];
   zoneList: any[];
@@ -21,11 +26,14 @@ export class PortalServicesComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   userId: any;
-  db:any;
+  db: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.userId = localStorage.getItem("userID");
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(
+      window.location.href,
+      localStorage.getItem("cityName")
+    );
     this.toDayDate = this.commonService.setTodayDate();
     this.getUserAccess();
   }
@@ -34,25 +42,35 @@ export class PortalServicesComponent implements OnInit {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["pageId"] == "8A" &&
-        userAccessList[i]["userId"] == this.userId) {
-          $('#divLineCard').show();
+        if (
+          userAccessList[i]["pageId"] == "8A" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divLineCard").show();
         }
-        if (userAccessList[i]["pageId"] == "8B" &&
-        userAccessList[i]["userId"] == this.userId) {
-          $('#divWorkPercentage').show();
+        if (
+          userAccessList[i]["pageId"] == "8B" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divWorkPercentage").show();
         }
-        if (userAccessList[i]["pageId"] == "8C" &&
-        userAccessList[i]["userId"] == this.userId) {
-          $('#divReachCost').show();
+        if (
+          userAccessList[i]["pageId"] == "8C" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divReachCost").show();
         }
-        if (userAccessList[i]["pageId"] == "8D" &&
-        userAccessList[i]["userId"] == this.userId) {
-          $('#divTaskMasters').show();
+        if (
+          userAccessList[i]["pageId"] == "8D" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divTaskMasters").show();
         }
-        if (userAccessList[i]["pageId"] == "8E" &&
-        userAccessList[i]["userId"] == this.userId) {
-          $('#divMapReview').show();
+        if (
+          userAccessList[i]["pageId"] == "8E" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divMapReview").show();
         }
       }
       this.getSalary();
@@ -63,11 +81,14 @@ export class PortalServicesComponent implements OnInit {
 
   getSalary() {
     let dbPath = "Settings/Salary";
-    let salaryData = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let salaryData = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
         this.driverSalary = data["driver_salary_per_hour"];
         this.halperSalary = data["helper_salary_per_hour"];
-        this.totalSalary = parseFloat(this.driverSalary) + parseFloat(this.halperSalary);
+        this.totalSalary =
+          parseFloat(this.driverSalary) + parseFloat(this.halperSalary);
         salaryData.unsubscribe();
       });
   }
@@ -80,7 +101,7 @@ export class PortalServicesComponent implements OnInit {
 
   getYear() {
     this.yearList = [];
-    let year = parseInt(this.toDayDate.split('-')[0]);
+    let year = parseInt(this.toDayDate.split("-")[0]);
     for (let i = year - 10; i <= year; i++) {
       if (i >= 2019) {
         this.yearList.push({ year: i });
@@ -89,26 +110,26 @@ export class PortalServicesComponent implements OnInit {
   }
 
   setWardDutyDataAll() {
-    let month = $('#ddlMonth').val();
-    let year = $('#ddlYear').val();
-    let ward = $('#ddlZone').val();
+    let month = $("#ddlMonth").val();
+    let year = $("#ddlYear").val();
+    let ward = $("#ddlZone").val();
     if (month == "0") {
-      this.toastr.error("Please Select Month !!!", '', {
+      this.toastr.error("Please Select Month !!!", "", {
         timeOut: 2000,
         enableHtml: true,
         closeButton: true,
         toastClass: "alert alert-danger alert-with-icon",
-        positionClass: 'toast-bottom-right'
+        positionClass: "toast-bottom-right",
       });
       return;
     }
     if (year == "0") {
-      this.toastr.error("Please Select Year !!!", '', {
+      this.toastr.error("Please Select Year !!!", "", {
         timeOut: 2000,
         enableHtml: true,
         closeButton: true,
         toastClass: "alert alert-danger alert-with-icon",
-        positionClass: 'toast-bottom-right'
+        positionClass: "toast-bottom-right",
       });
       return;
     }
@@ -119,8 +140,7 @@ export class PortalServicesComponent implements OnInit {
       setTimeout(() => {
         this.showAlert();
       }, 6000);
-    }
-    else {
+    } else {
       this.setWardDutyData(ward, year, month);
       setTimeout(() => {
         this.showAlert();
@@ -136,28 +156,65 @@ export class PortalServicesComponent implements OnInit {
     }
 
     for (let j = 1; j <= rowTo; j++) {
-      let monthDate = year + '-' + month + '-' + (j < 10 ? '0' : '') + j;
-      let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split('-')[1]) - 1);
-      let workDetailsPath = 'WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/WorkerDetails/driver';
-      let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
-        workerData => {
+      let monthDate = year + "-" + month + "-" + (j < 10 ? "0" : "") + j;
+      let monthName = this.commonService.getCurrentMonthName(
+        parseInt(monthDate.split("-")[1]) - 1
+      );
+      let workDetailsPath =
+        "WasteCollectionInfo/" +
+        zoneNo +
+        "/" +
+        year +
+        "/" +
+        monthName +
+        "/" +
+        monthDate +
+        "/WorkerDetails/driver";
+      let workDetails = this.db
+        .object(workDetailsPath)
+        .valueChanges()
+        .subscribe((workerData) => {
           workDetails.unsubscribe();
           if (workerData != null) {
             let driverId = workerData;
-            let driverPath = 'Employees/' + driverId + '/GeneralDetails';
-            let drivers = this.db.object(driverPath).valueChanges().subscribe(
-              driverData => {
+            let driverPath = "Employees/" + driverId + "/GeneralDetails";
+            let drivers = this.db
+              .object(driverPath)
+              .valueChanges()
+              .subscribe((driverData) => {
                 drivers.unsubscribe();
                 if (driverData != null) {
-                  this.db.object('WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/WorkerDetails').update({
-                    "driverName": driverData["name"]
-                  });
+                  this.db
+                    .object(
+                      "WasteCollectionInfo/" +
+                        zoneNo +
+                        "/" +
+                        year +
+                        "/" +
+                        monthName +
+                        "/" +
+                        monthDate +
+                        "/WorkerDetails"
+                    )
+                    .update({
+                      driverName: driverData["name"],
+                    });
                 }
               });
 
-            let dbPath = 'DailyWorkDetail/' + year + '/' + monthName + '/' + monthDate + '/' + driverId;
-            let monthSalaryInfo = this.db.object(dbPath).valueChanges().subscribe(
-              data => {
+            let dbPath =
+              "DailyWorkDetail/" +
+              year +
+              "/" +
+              monthName +
+              "/" +
+              monthDate +
+              "/" +
+              driverId;
+            let monthSalaryInfo = this.db
+              .object(dbPath)
+              .valueChanges()
+              .subscribe((data) => {
                 if (data != null) {
                   monthSalaryInfo.unsubscribe();
                   let startTime = "";
@@ -166,10 +223,15 @@ export class PortalServicesComponent implements OnInit {
                       if (data["task" + i + ""]["task"] == zoneNo) {
                         if (data["task" + i + ""]["in-out"] != null) {
                           if (startTime == "") {
-                            startTime = this.commonService.tConvert(Object.keys(data["task" + i + ""]["in-out"])[0]);
-                            let removeSecond = startTime.split(' ');
-                            startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                            startTime = this.commonService.convert24(startTime)
+                            startTime = this.commonService.tConvert(
+                              Object.keys(data["task" + i + ""]["in-out"])[0]
+                            );
+                            let removeSecond = startTime.split(" ");
+                            startTime =
+                              removeSecond[0].slice(0, -3) +
+                              " " +
+                              removeSecond[1];
+                            startTime = this.commonService.convert24(startTime);
                           }
                         }
                       }
@@ -179,45 +241,93 @@ export class PortalServicesComponent implements OnInit {
                     //   this.db.object('WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/Summary').update({
                     //      "dutyInTime": startTime
                     //    });
-                    let dbPathLine = 'WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/LineStatus';
-                    let LineInfo = this.db.list(dbPathLine).valueChanges().subscribe(
-                      lineData => {
+                    let dbPathLine =
+                      "WasteCollectionInfo/" +
+                      zoneNo +
+                      "/" +
+                      year +
+                      "/" +
+                      monthName +
+                      "/" +
+                      monthDate +
+                      "/LineStatus";
+                    let LineInfo = this.db
+                      .list(dbPathLine)
+                      .valueChanges()
+                      .subscribe((lineData) => {
                         LineInfo.unsubscribe();
                         if (lineData != null) {
-
                           let lineStatus = lineData;
                           if (lineStatus.length > 0) {
                             let reachTime = "";
                             let timeLineStatus = [];
                             for (let p = 1; p < lineStatus.length - 1; p++) {
                               if (lineStatus[p] != null) {
-                                if (lineStatus[p]["start-time"] != "undefined" && lineStatus[p]["start-time"] != null) {
+                                if (
+                                  lineStatus[p]["start-time"] != "undefined" &&
+                                  lineStatus[p]["start-time"] != null
+                                ) {
                                   let sTime = lineStatus[p]["start-time"];
-                                  timeLineStatus.push({ startTime: lineStatus[p]["start-time"], position: parseFloat(sTime.split(":")[0] + "." + sTime.split(":")[1]) });
+                                  timeLineStatus.push({
+                                    startTime: lineStatus[p]["start-time"],
+                                    position: parseFloat(
+                                      sTime.split(":")[0] +
+                                        "." +
+                                        sTime.split(":")[1]
+                                    ),
+                                  });
                                   //lineStatus[p]["position"] = parseFloat(sTime.split(":")[0] + "." + sTime.split(":")[1]);
                                 }
                               }
                             }
-                            timeLineStatus = this.commonService.transform(timeLineStatus, 'position');
-                            if (timeLineStatus[0]["startTime"] != "undefined" && timeLineStatus[0]["startTime"] != null) {
+                            timeLineStatus = this.commonService.transform(
+                              timeLineStatus,
+                              "position"
+                            );
+                            if (
+                              timeLineStatus[0]["startTime"] != "undefined" &&
+                              timeLineStatus[0]["startTime"] != null
+                            ) {
                               reachTime = timeLineStatus[0]["startTime"];
-                              let removeSecond = reachTime.split(' ');
-                              reachTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                              reachTime = this.commonService.convert24(reachTime);
+                              let removeSecond = reachTime.split(" ");
+                              reachTime =
+                                removeSecond[0].slice(0, -3) +
+                                " " +
+                                removeSecond[1];
+                              reachTime =
+                                this.commonService.convert24(reachTime);
                             }
                             if (reachTime != "") {
                               let date1 = "2020-12-11 " + reachTime;
                               let date2 = "2020-12-11 " + startTime;
-                              let duration = this.commonService.timeDifferenceMin(new Date(date1), new Date(date2));
-                              let cost = ((Number(duration) / 60) * this.totalSalary).toFixed(2);
-                              this.db.object('WasteCollectionInfo/' + zoneNo + '/' + year + '/' + monthName + '/' + monthDate + '/Summary').update({
-                                "wardReachedOn": reachTime,
-                                "wardReachingDuration": duration,
-                                "wardReachingCost": cost
-                              });
+                              let duration =
+                                this.commonService.timeDifferenceMin(
+                                  new Date(date1),
+                                  new Date(date2)
+                                );
+                              let cost = (
+                                (Number(duration) / 60) *
+                                this.totalSalary
+                              ).toFixed(2);
+                              this.db
+                                .object(
+                                  "WasteCollectionInfo/" +
+                                    zoneNo +
+                                    "/" +
+                                    year +
+                                    "/" +
+                                    monthName +
+                                    "/" +
+                                    monthDate +
+                                    "/Summary"
+                                )
+                                .update({
+                                  wardReachedOn: reachTime,
+                                  wardReachingDuration: duration,
+                                  wardReachingCost: cost,
+                                });
                             }
                           }
-
                         }
                       });
                   }
@@ -229,12 +339,12 @@ export class PortalServicesComponent implements OnInit {
   }
 
   showAlert() {
-    this.toastr.error("Updated Successfully !!!", '', {
+    this.toastr.error("Updated Successfully !!!", "", {
       timeOut: 2000,
       enableHtml: true,
       closeButton: true,
       toastClass: "alert alert-info alert-with-icon",
-      positionClass: 'toast-bottom-right'
+      positionClass: "toast-bottom-right",
     });
   }
 
@@ -242,5 +352,4 @@ export class PortalServicesComponent implements OnInit {
     url = localStorage.getItem("cityName") + url;
     this.router.navigate([url]);
   }
-
 }

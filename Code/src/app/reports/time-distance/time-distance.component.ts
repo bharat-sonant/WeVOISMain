@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { HttpClient } from '@angular/common/http';
 import * as $ from "jquery";
+import { FirebaseService } from "../../firebase.service";
 
 
 @Component({
@@ -87,10 +88,12 @@ export class TimeDistanceComponent implements OnInit {
   public stepSize: number;
 
   endInterval: any;
+  db:any;
 
-  constructor(public db: AngularFireDatabase, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.todayDate = this.commonService.setTodayDate();
     this.zoneList = this.mapService.getZones(this.todayDate);
