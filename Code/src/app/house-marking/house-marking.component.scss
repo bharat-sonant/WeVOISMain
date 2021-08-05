@@ -790,33 +790,72 @@ padding-left: 5px!important;
     padding: 5px;
     border: 1px solid lightgray;
 }
-.main-para{
+
+.main-tag{
+    background: #ededed;  
+}
+.f-left{
     width: 100%;
-    padding: 10px;
-    background: #ededed;
-    margin-top: 5px;
-    border-radius: 5px;
-}
-.main-para .title{
-    width: 100px;
     float: left;
+    border-bottom: 1px solid #e6e6e6;
+    padding:5px 5px;
 }
-.main-para h3{
-    margin: 0px!important;
+.f-left p{
+    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: 87px;
+    font-weight: normal;
     color:#707070;
-    text-align: left;
+}
+.f-right{
+    margin-right: 4px;
+    float:right;
+}
+.f-left h3{
     font-size: 12px;
-}
-.spn-tag{
-    float: right;
-}
-.main-text{
-    width: calc(100% - 100px);
-}
-.main-text h3{
-    margin-left: 10px;
-    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: calc(100% - 87px);
+    font-weight: normal;
     color:#333;
-    margin: 0px!important;
+    text-transform: capitalize;
+    margin-top: 1px!important;
 }
 
+
+/******************************Custom Scrollbar Start*********************************/
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent; 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+  }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent; 
+    -webkit-box-shadow: transparent; 
+  }
+  
+  :hover::-webkit-scrollbar {
+    width: 8px;
+  }
+  /* Track */
+  :hover::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+  }
+  /* Handle */
+  :hover::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120; 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+  }
+  /******************************Custom Scrollbar End*********************************/

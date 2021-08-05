@@ -233,35 +233,22 @@
     <div class="modal-body" style="margin-top:-20px; ">
       <div class="content-scroll">
       <div class="row">
-        <div class="col-md-3" *ngFor="let dt of markerList">
+        <div class="col-md-2" *ngFor="let dt of markerList">
           <div style="width:100%">
             <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" style="height:150px; width: 100%;" />
+              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
             </a>
           </div>
-          <div class="main-para" style="width:100%; font-size: 12px;">
-            <div class="title">
-              <h3> House Type <span class="spn-tag">:</span> </h3>
+          <div class="main-tag">
+            <div class="f-left">
+              <p>Already Card <span class="f-right"> :</span></p>   
+              <h3>  {{dt.alreadyInstalled}} </h3>
             </div>
-            <div class="main-text">
-              <h3>
-              {{dt.type}}
-            </h3>
-            </div>
-            <div class="title">
-                <h3> Already Card <span class="spn-tag">:</span> </h3>
-              </div>
-              <div class="main-text">
-                <h3>
-                    {{dt.alreadyInstalled}}
-              </h3>
-              </div>
-           <span [hidden]="dt.status==''"> status:{{dt.status}}<br/></span>
-            <button class="btn btn-success" (click)="saveMarkerStatus(dt.index);"
-              style="width:100px; background:#0ba118!important;"  [hidden]="dt.status!=''">Reject</button>
           </div>
+          <span [hidden]="dt.status==''"> status:{{dt.status}}<br/></span>
           <button class="btn btn-success" (click)="saveMarkerStatus(dt.index);"
-          style="width:100px; background:#0ba118!important;">Reject</button>
+            style="width:100px; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>
+
         </div>
       </div>
 
