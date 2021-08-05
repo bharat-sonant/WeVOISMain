@@ -778,8 +778,45 @@ padding-left: 5px!important;
 
 
 
-
-
-
-
+.modal-body{
+    padding: 20px;
+}
+.content-scroll{
+    height: 595px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.content-scroll img{
+    padding: 5px;
+    border: 1px solid lightgray;
+}
+.main-para{
+    width: 100%;
+    padding: 10px;
+    background: #ededed;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+.main-para .title{
+    width: 100px;
+    float: left;
+}
+.main-para h3{
+    margin: 0px!important;
+    color:#707070;
+    text-align: left;
+    font-size: 12px;
+}
+.spn-tag{
+    float: right;
+}
+.main-text{
+    width: calc(100% - 100px);
+}
+.main-text h3{
+    margin-left: 10px;
+    font-size: 12px;
+    color:#333;
+    margin: 0px!important;
+}
 
