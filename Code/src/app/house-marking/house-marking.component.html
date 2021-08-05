@@ -243,7 +243,7 @@
             Already Card : {{dt.alreadyInstalled}}<br />
            <span [hidden]="dt.status==''"> status:{{dt.status}}<br/></span>
             <button class="btn btn-success" (click)="saveMarkerStatus(dt.index);"
-              style="width:100px; background:#0ba118!important;">Reject</button>
+              style="width:100px; background:#0ba118!important;"  [hidden]="dt.status!=''">Reject</button>
           </div>
         </div>
 

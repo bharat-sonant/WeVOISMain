@@ -575,6 +575,29 @@ export class HouseMarkingComponent {
             });
         });
 
+        let totalinstanceReject1 = this.db
+        .object(
+          "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
+            date +
+            "/totalRejected"
+        )
+        .valueChanges()
+        .subscribe((totalCount) => {
+          totalinstanceReject1.unsubscribe();
+          let total = 1;
+          if (totalCount != null) {
+            total = Number(totalCount) + 1;
+          }
+          this.db
+            .object(
+              "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
+                date
+            )
+            .update({
+              totalRejected: total,
+            });
+        });
+
       ////  employee wise rejected
      let totalinstance2 = this.db
         .object(
@@ -601,6 +624,29 @@ export class HouseMarkingComponent {
             )
             .update({
               rejected: total,
+            });
+        });
+
+        let totalinstanceRejected2 = this.db
+        .object(
+          "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
+            userId +
+            "/totalRejected"
+        )
+        .valueChanges()
+        .subscribe((totalCount) => {
+          totalinstanceRejected2.unsubscribe();
+          let total = 1;
+          if (totalCount != null) {
+            total = Number(totalCount) + 1;
+          }
+          this.db
+            .object(
+              "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
+                userId
+            )
+            .update({
+              totalRejected: total,
             });
         });
 
@@ -633,6 +679,30 @@ export class HouseMarkingComponent {
             });
         });
 
+        let totalinstanceRejected3 = this.db
+        .object(
+          "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
+            date +
+            
+            "/totalRejected"
+        )
+        .valueChanges()
+        .subscribe((totalCount) => {
+          totalinstanceRejected3.unsubscribe();
+          let total = 1;
+          if (totalCount != null) {
+            total = Number(totalCount) + 1;
+          }
+          this.db
+            .object(
+              "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
+                date
+            )
+            .update({
+              totalRejected: total,
+            });
+        });
+
       //// ward ward wise rejected
      let totalinstance4 = this.db
         .object(
@@ -657,6 +727,7 @@ export class HouseMarkingComponent {
               rejected: total,
             });
         });
+        
     }
   }
 
