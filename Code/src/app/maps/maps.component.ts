@@ -69,6 +69,7 @@ export class MapsComponent {
   parhadhouseMarker: any;
   allMatkers: any[] = [];
   selectedDate: any;
+  userType:any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -93,10 +94,11 @@ export class MapsComponent {
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
-    let userType = localStorage.getItem("userType");
-    if (userType == "External User") {
-      $("#isHouse").hide();
-      $("#showHouseLabel").hide();
+    this.userType = localStorage.getItem("userType");
+    if (this.userType == "External User") {
+      $("#divInternal").hide();
+      //$("#isHouse").hide();
+     // $("#showHouseLabel").hide();
     }
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -422,7 +424,6 @@ export class MapsComponent {
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
     }
-console.log(this.parhadhouseMarker);
     if (this.parhadhouseMarker != null) {
       this.parhadhouseMarker.setMap(null);
     }
@@ -732,8 +733,6 @@ console.log(this.parhadhouseMarker);
       this.progressData.scanedHouses = 0;
       for (let i = 1; i <= this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
-        let object = this.db.database.ref(housePath).child("key");
-
         let houseInstance = this.db
           .list(housePath)
           .valueChanges()
@@ -771,58 +770,57 @@ console.log(this.parhadhouseMarker);
                   }
                 }
                 */
-
-                this.houseList.push({
-                  markerType: markerType,
-                  lat: lat,
-                  lng: lng,
-                  cardNo: cardNo,
-                  isApproved: isApproved,
-                });
                 this.progressData.houses = Number(this.progressData.houses) + 1;
                 let scanCardPath =
                   "HousesCollectionInfo/" +
                   this.selectedZone +
                   "/" +
-                  this.toDayDate +
+                  this.currentYear +
+                  "/" +
+                  this.currentMonthName +
+                  "/" +
+                  this.selectedDate +
                   "/" +
                   i +
                   "/" +
-                  rfId +
-                  "/scan-time";
+                  cardNo +
+                  "/scanBy";
                 let scanInfo = this.db
                   .object(scanCardPath)
                   .valueChanges()
-                  .subscribe((scanTime) => {
+                  .subscribe((scanBy) => {
                     scanInfo.unsubscribe();
-                    if (scanTime != null) {
-                      this.progressData.scanedHouses =
-                        Number(this.progressData.scanedHouses) + 1;
-                      let houseDetails = this.houseList.find(
-                        (item) => item.cardNo == cardNo
-                      );
-                      if (houseDetails != undefined) {
-                        houseDetails.markerType = "green";
-                        this.plotHouses(
-                          houseDetails.markerType,
-                          houseDetails.lat,
-                          houseDetails.lng,
-                          isApproved
-                        );
+                    let isScaned = false;
+                    if (this.userType == "External User") {
+                      console.log(scanBy);
+                      if (scanBy != undefined) {
+                        this.progressData.scanedHouses =
+                          Number(this.progressData.scanedHouses) + 1;
+                        markerType = "green";
                       }
+                      this.getHouseMarkers(
+                        markerType,
+                        lat,
+                        lng,
+                        cardNo,
+                        isApproved
+                      );
                     } else {
-                      let houseDetails = this.houseList.find(
-                        (item) => item.cardNo == cardNo
-                      );
-
-                      if (houseDetails != undefined) {
-                        this.plotHouses(
-                          houseDetails.markerType,
-                          houseDetails.lat,
-                          houseDetails.lng,
-                          isApproved
-                        );
+                      if (scanBy != null) {
+                        if (scanBy != "-1") {
+                          this.progressData.scanedHouses =
+                            Number(this.progressData.scanedHouses) + 1;
+                         markerType = "green";
+                        }
+                        
                       }
+                      this.getHouseMarkers(
+                        markerType,
+                        lat,
+                        lng,
+                        cardNo,
+                        isApproved
+                      );
                     }
                   });
               }
@@ -831,6 +829,31 @@ console.log(this.parhadhouseMarker);
       }
       resolve(true);
     });
+  }
+
+  getHouseMarkers(
+    markerType: any,
+    lat: any,
+    lng: any,
+    cardNo: any,
+    isApproved: any
+  ) {
+    this.houseList.push({
+      markerType: markerType,
+      lat: lat,
+      lng: lng,
+      cardNo: cardNo,
+      isApproved: isApproved,
+    });
+    let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
+    if (houseDetails != undefined) {
+      this.plotHouses(
+        houseDetails.markerType,
+        houseDetails.lat,
+        houseDetails.lng,
+        isApproved
+      );
+    }
   }
 
   plotHouses(markerType: string, lat: any, lng: any, isApproved: any) {
