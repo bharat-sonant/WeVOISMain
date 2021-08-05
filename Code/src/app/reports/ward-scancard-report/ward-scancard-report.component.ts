@@ -196,6 +196,7 @@ export class WardScancardReportComponent implements OnInit {
       new Date(this.selectedDate).getMonth()
     );
     let year = this.selectedDate.split("-")[0];
+
     let dbPath =
       "HousesCollectionInfo/" +
       wardNo +
@@ -211,34 +212,33 @@ export class WardScancardReportComponent implements OnInit {
       .subscribe((data) => {
         scannedHouseInstance.unsubscribe();
         if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let lineNo = keyArray[i];
-            let obj = data[lineNo];
-            let keyArrayCard = Object.keys(obj);
-            for (let j = 0; j < keyArrayCard.length; j++) {
-              let cardNo = keyArrayCard[j];
-              let scanTime = obj[cardNo]["scanTime"];
-              let scanBy = obj[cardNo]["scanBy"];
-              let employeePath = "Employees/" + scanBy + "/GeneralDetails";
-              let employeeInstance = this.db
-                .object(employeePath)
-                .valueChanges()
-                .subscribe((data) => {
-                  employeeInstance.unsubscribe();
-                  let name="";
-                  if(data!=null){
-                    name=data["name"];
+          let employeePath =
+            "WasteCollectionInfo/"+wardNo+"/"+year+"/"+monthName+"/"+this.selectedDate+"/WorkerDetails/helperName";
+          let employeeInstance = this.db
+            .object(employeePath)
+            .valueChanges()
+            .subscribe((empData) => {
+              employeeInstance.unsubscribe();
+              if (empData != null) {
+                let name = empData;
+                let keyArray = Object.keys(data);
+                for (let i = 0; i < keyArray.length; i++) {
+                  let lineNo = keyArray[i];
+                  let obj = data[lineNo];
+                  let keyArrayCard = Object.keys(obj);
+                  for (let j = 0; j < keyArrayCard.length; j++) {
+                    let cardNo = keyArrayCard[j];
+                    let scanTime = obj[cardNo]["scanTime"];
+                    this.wardScaanedList.push({
+                      lineNo: lineNo,
+                      cardNo: cardNo,
+                      time: scanTime,
+                      name: name,
+                    });
                   }
-                  this.wardScaanedList.push({
-                    lineNo: lineNo,
-                    cardNo: cardNo,
-                    time: scanTime,
-                    name: name,
-                  });
-                });
-            }
-          }
+                }
+              }
+            });
         }
       });
   }
