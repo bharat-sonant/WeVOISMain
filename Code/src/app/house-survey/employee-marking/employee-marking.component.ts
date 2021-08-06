@@ -105,7 +105,7 @@ export class EmployeeMarkingComponent implements OnInit {
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
       empId +
-      "/total";
+      "/totalMarked";
     let markerInstance = this.db
       .object(dbPath)
       .valueChanges()

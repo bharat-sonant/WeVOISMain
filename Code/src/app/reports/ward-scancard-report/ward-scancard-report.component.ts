@@ -75,7 +75,7 @@ export class WardScancardReportComponent implements OnInit {
 
   changeCircleSelection(filterVal: any) {
     this.selectedCircle = filterVal;
-    this.isFirst=true;
+    this.isFirst = true;
     this.onSubmit();
   }
 
@@ -214,7 +214,15 @@ export class WardScancardReportComponent implements OnInit {
         scannedHouseInstance.unsubscribe();
         if (data != null) {
           let employeePath =
-            "WasteCollectionInfo/"+wardNo+"/"+year+"/"+monthName+"/"+this.selectedDate+"/WorkerDetails/helperName";
+            "WasteCollectionInfo/" +
+            wardNo +
+            "/" +
+            year +
+            "/" +
+            monthName +
+            "/" +
+            this.selectedDate +
+            "/WorkerDetails/helperName";
           let employeeInstance = this.db
             .object(employeePath)
             .valueChanges()
@@ -230,12 +238,27 @@ export class WardScancardReportComponent implements OnInit {
                   for (let j = 0; j < keyArrayCard.length; j++) {
                     let cardNo = keyArrayCard[j];
                     let scanTime = obj[cardNo]["scanTime"];
-                    this.wardScaanedList.push({
-                      lineNo: lineNo,
-                      cardNo: cardNo,
-                      time: scanTime,
-                      name: name,
-                    });
+                    let dbPath="Houses/"+wardNo+"/"+lineNo+"/"+cardNo+"";
+                    let cardInstance=this.db.object(dbPath).valueChanges().subscribe(
+                      cardData=>{
+                        cardInstance.unsubscribe();
+                        let rfId="";
+                        let personName="";
+                        if(cardData!=null){
+                          rfId=cardData["rfid"];
+                          personName=cardData["name"];
+                        }
+                        this.wardScaanedList.push({
+                          lineNo: lineNo,
+                          cardNo: cardNo,
+                          time: scanTime,
+                          name: name,
+                          rfId:rfId,
+                          personName:personName
+                        });
+                      }
+                    );
+                   
                   }
                 }
               }

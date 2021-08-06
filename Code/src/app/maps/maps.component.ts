@@ -1,3 +1,4 @@
+import { markerDatail } from "./../house-survey/ward-marking-summary/ward-marking-summary.component";
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -69,7 +70,8 @@ export class MapsComponent {
   parhadhouseMarker: any;
   allMatkers: any[] = [];
   selectedDate: any;
-  userType:any;
+  userType: any;
+  isWardChange: true;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -98,7 +100,7 @@ export class MapsComponent {
     if (this.userType == "External User") {
       $("#divInternal").hide();
       //$("#isHouse").hide();
-     // $("#showHouseLabel").hide();
+      // $("#showHouseLabel").hide();
     }
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -183,10 +185,11 @@ export class MapsComponent {
           let helperId = helperList[helperList.length - 1].trim();
           this.getEmployee(driverId, "driver");
           this.getEmployee(helperId, "helper");
-        }
-        else
-        {
-          this.commonService.setAlertMessage("success","No work assign selected zone on selected date!!!");
+        } else {
+          this.commonService.setAlertMessage(
+            "success",
+            "No work assign selected zone on selected date!!!"
+          );
         }
       });
   }
@@ -354,10 +357,17 @@ export class MapsComponent {
   }
 
   onSubmit() {
+    if (this.houseList.length > 0) {
+      for (let i = 0; i < this.houseList.length; i++) {
+        let scanInstance = this.houseList[i]["scanInstance"];
+        scanInstance.unsubscribe();
+      }
+    }
+    this.houseList=[];
     this.selectedZone = this.activeZone;
     this.polylines = [];
     this.houseMarkerList = [];
-    this.houseList = [];
+    //this.houseList = [];
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
     }
@@ -373,6 +383,13 @@ export class MapsComponent {
   }
 
   setDate(filterVal: any, type: string) {
+    if (this.houseList.length > 0) {
+      for (let i = 0; i < this.houseList.length; i++) {
+        let scanInstance = this.houseList[i]["scanInstance"];
+        scanInstance.unsubscribe();
+      }
+    }
+    this.houseList=[];
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -397,12 +414,12 @@ export class MapsComponent {
       new Date(this.selectedDate).getMonth()
     );
     this.currentYear = this.selectedDate.split("-")[0];
-    this.selectedZone = this.activeZone;    
+    this.selectedZone = this.activeZone;
     this.clearProgressData();
     this.clearAllOnMap();
     this.polylines = [];
     this.houseMarkerList = [];
-    this.houseList = [];
+    //this.houseList = [];
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
     }
@@ -420,7 +437,6 @@ export class MapsComponent {
   }
 
   clearAllOnMap() {
-    
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
     }
@@ -439,7 +455,6 @@ export class MapsComponent {
       }
       this.houseMarkerList = [];
     }
-
 
     if (this.marker != null) {
       this.marker.setMap(null);
@@ -520,7 +535,7 @@ export class MapsComponent {
       .object(dbPathLineStatus)
       .valueChanges()
       .subscribe((status) => {
-        lineStatus.unsubscribe();
+        //lineStatus.unsubscribe();
         if (wardNo == this.selectedZone) {
           if (this.polylines[index] != undefined) {
             this.polylines[index].setMap(null);
@@ -585,7 +600,7 @@ export class MapsComponent {
               scaledSize: new google.maps.Size(45, 30),
             },
           });
-          
+
           this.allMatkers.push({ marker });
         }
       });
@@ -603,6 +618,10 @@ export class MapsComponent {
       $("#isHouse").prop("disabled", true);
       $("#houseCount").show();
       $("#houseDetail").hide();
+      // this.progressData.houses = 0;
+      //  this.progressData.scanedHouses = 0;
+      // this.getHouses();
+      $("#isHouse").prop("disabled", false);
       if (this.houseList.length == 0) {
         let element = <HTMLInputElement>document.getElementById("isHouse");
         if (element.checked == true) {
@@ -635,6 +654,40 @@ export class MapsComponent {
           $("#isHouse").prop("disabled", false);
         }
       }
+      /*
+      if (this.houseList.length == 0) {
+        let element = <HTMLInputElement>document.getElementById("isHouse");
+        if (element.checked == true) {
+          $("#isHouse").prop("disabled", true);
+          this.getHouses().then(() => {
+            $("#isHouse").prop("disabled", false);
+          });
+        }
+      } else {
+        for (let i = 0; i < this.houseList.length; i++) {
+          let imgUrl =
+            "../assets/img/" + this.houseList[i]["markerType"] + "-home.png";
+          // if (this.houseList[i]["isApproved"] == "yes") {
+          //   imgUrl = this.approvedHomeLocationURL;
+          //  }
+          let marker = new google.maps.Marker({
+            position: {
+              lat: Number(this.houseList[i]["lat"]),
+              lng: Number(this.houseList[i]["lng"]),
+            },
+            map: this.map,
+            icon: {
+              url: imgUrl,
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scaledSize: new google.maps.Size(20, 19),
+            },
+          });
+          this.houseMarkerList.push({ marker });
+          $("#isHouse").prop("disabled", false);
+        }
+      }
+      */
     } else {
       $("#isHouse").prop("disabled", false);
       $("#houseCount").hide();
@@ -770,59 +823,16 @@ export class MapsComponent {
                   }
                 }
                 */
+                this.houseList.push({
+                  markerType: markerType,
+                  lat: lat,
+                  lng: lng,
+                  cardNo: cardNo,
+                  isApproved: isApproved,
+                });
+
                 this.progressData.houses = Number(this.progressData.houses) + 1;
-                let scanCardPath =
-                  "HousesCollectionInfo/" +
-                  this.selectedZone +
-                  "/" +
-                  this.currentYear +
-                  "/" +
-                  this.currentMonthName +
-                  "/" +
-                  this.selectedDate +
-                  "/" +
-                  i +
-                  "/" +
-                  cardNo +
-                  "/scanBy";
-                let scanInfo = this.db
-                  .object(scanCardPath)
-                  .valueChanges()
-                  .subscribe((scanBy) => {
-                    scanInfo.unsubscribe();
-                    let isScaned = false;
-                    if (this.userType == "External User") {
-                      console.log(scanBy);
-                      if (scanBy != undefined) {
-                        this.progressData.scanedHouses =
-                          Number(this.progressData.scanedHouses) + 1;
-                        markerType = "green";
-                      }
-                      this.getHouseMarkers(
-                        markerType,
-                        lat,
-                        lng,
-                        cardNo,
-                        isApproved
-                      );
-                    } else {
-                      if (scanBy != null) {
-                        if (scanBy != "-1") {
-                          this.progressData.scanedHouses =
-                            Number(this.progressData.scanedHouses) + 1;
-                         markerType = "green";
-                        }
-                        
-                      }
-                      this.getHouseMarkers(
-                        markerType,
-                        lat,
-                        lng,
-                        cardNo,
-                        isApproved
-                      );
-                    }
-                  });
+                this.getScanedCard(i, cardNo, markerType);
               }
             }
           });
@@ -831,32 +841,56 @@ export class MapsComponent {
     });
   }
 
-  getHouseMarkers(
-    markerType: any,
-    lat: any,
-    lng: any,
-    cardNo: any,
-    isApproved: any
-  ) {
-    this.houseList.push({
-      markerType: markerType,
-      lat: lat,
-      lng: lng,
-      cardNo: cardNo,
-      isApproved: isApproved,
-    });
-    let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
-    if (houseDetails != undefined) {
-      this.plotHouses(
-        houseDetails.markerType,
-        houseDetails.lat,
-        houseDetails.lng,
-        isApproved
-      );
-    }
+  getScanedCard(lineNo: any, cardNo: any, markerType: any) {
+    let scanCardPath =
+      "HousesCollectionInfo/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.selectedDate +
+      "/" +
+      lineNo +
+      "/" +
+      cardNo +
+      "/scanBy";
+    let scanInfo = this.db
+      .object(scanCardPath)
+      .valueChanges()
+      .subscribe((scanBy) => {
+        let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
+        if (houseDetails != undefined) {
+          // scanInfo.unsubscribe();
+          if (this.userType == "External User") {
+            if (scanBy != undefined) {
+              this.progressData.scanedHouses =
+                Number(this.progressData.scanedHouses) + 1;
+              markerType = "green";
+            }
+          } else {
+            if (scanBy != null) {
+              if (scanBy != "-1") {
+                this.progressData.scanedHouses =
+                  Number(this.progressData.scanedHouses) + 1;
+                markerType = "green";
+              }
+            }
+          }
+
+          houseDetails.markerType = markerType;
+          houseDetails.scanInstance = scanInfo;
+          this.plotHouses(
+            houseDetails.markerType,
+            houseDetails.lat,
+            houseDetails.lng
+          );
+        }
+      });
   }
 
-  plotHouses(markerType: string, lat: any, lng: any, isApproved: any) {
+  plotHouses(markerType: string, lat: any, lng: any) {
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
       let imgUrl = "../assets/img/" + markerType + "-home.png";
