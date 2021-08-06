@@ -129,10 +129,12 @@ export class EmployeeMarkingComponent implements OnInit {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length - 1; i++) {
               let index = keyArray[i];
+              if(data[index]["marked"]!=null){
               if (index == wardNo) {
-                this.markerData.totalWardMarking = data[index];
+                this.markerData.totalWardMarking = data[index]["marked"];
               }
-              this.markerWardList.push({ wardNo: index, markers: data[index] });
+              this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
+            }
             }
           }
         }
@@ -153,12 +155,14 @@ export class EmployeeMarkingComponent implements OnInit {
               if (list.length > 0) {
                 for (let j = 0; j < list.length; j++) {
                   if (list[j] == empId) {
+                    if(data[index][list[j]]["marked"]!=null){
                     this.markerData.totalDays =
                       Number(this.markerData.totalDays) + 1;
                     this.markerList.push({
                       date: index,
-                      markers: data[index][list[j]],
+                      markers: data[index][list[j]]["marked"],
                     });
+                  }
                   }
                 }
               }
