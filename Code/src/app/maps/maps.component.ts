@@ -654,40 +654,6 @@ export class MapsComponent {
           $("#isHouse").prop("disabled", false);
         }
       }
-      /*
-      if (this.houseList.length == 0) {
-        let element = <HTMLInputElement>document.getElementById("isHouse");
-        if (element.checked == true) {
-          $("#isHouse").prop("disabled", true);
-          this.getHouses().then(() => {
-            $("#isHouse").prop("disabled", false);
-          });
-        }
-      } else {
-        for (let i = 0; i < this.houseList.length; i++) {
-          let imgUrl =
-            "../assets/img/" + this.houseList[i]["markerType"] + "-home.png";
-          // if (this.houseList[i]["isApproved"] == "yes") {
-          //   imgUrl = this.approvedHomeLocationURL;
-          //  }
-          let marker = new google.maps.Marker({
-            position: {
-              lat: Number(this.houseList[i]["lat"]),
-              lng: Number(this.houseList[i]["lng"]),
-            },
-            map: this.map,
-            icon: {
-              url: imgUrl,
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scaledSize: new google.maps.Size(20, 19),
-            },
-          });
-          this.houseMarkerList.push({ marker });
-          $("#isHouse").prop("disabled", false);
-        }
-      }
-      */
     } else {
       $("#isHouse").prop("disabled", false);
       $("#houseCount").hide();
@@ -850,9 +816,7 @@ export class MapsComponent {
       "/" +
       this.currentMonthName +
       "/" +
-      this.selectedDate +
-      "/" +
-      lineNo +
+      this.selectedDate +      
       "/" +
       cardNo +
       "/scanBy";
@@ -872,6 +836,7 @@ export class MapsComponent {
           } else {
             if (scanBy != null) {
               if (scanBy != "-1") {
+                console.log("scanBy")
                 this.progressData.scanedHouses =
                   Number(this.progressData.scanedHouses) + 1;
                 markerType = "green";
@@ -881,6 +846,9 @@ export class MapsComponent {
 
           houseDetails.markerType = markerType;
           houseDetails.scanInstance = scanInfo;
+          if(this.selectedDate!=this.toDayDate){
+            scanInfo.unsubscribe();
+          }
           this.plotHouses(
             houseDetails.markerType,
             houseDetails.lat,

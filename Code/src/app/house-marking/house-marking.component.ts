@@ -111,7 +111,6 @@ export class HouseMarkingComponent {
 
   getZones() {
     this.zoneList = [];
-
     let dbPath = "Defaults/CircleWiseWards/Circle1";
     let zoneInstance = this.db
       .list(dbPath)
@@ -257,7 +256,7 @@ export class HouseMarkingComponent {
       .subscribe((data) => {
         totalInstance.unsubscribe();
         if (data != null) {
-          this.markerData.totalMarkers = data["total"].toString();
+          this.markerData.totalMarkers = data["marked"].toString();
         }
       });
   }
