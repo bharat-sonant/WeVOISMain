@@ -75,6 +75,7 @@ export class WardScancardReportComponent implements OnInit {
 
   changeCircleSelection(filterVal: any) {
     this.selectedCircle = filterVal;
+    this.isFirst=true;
     this.onSubmit();
   }
 
