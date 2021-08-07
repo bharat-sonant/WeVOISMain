@@ -72,6 +72,9 @@ export class MapsComponent {
   selectedDate: any;
   userType: any;
   isWardChange: true;
+  isFirst: any;
+  currentMarker: any;
+  cardInstance: any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -357,13 +360,17 @@ export class MapsComponent {
   }
 
   onSubmit() {
+    if (this.cardInstance != null) {
+      this.cardInstance.unsubscribe();
+    }
+    this.isFirst = true;
     if (this.houseList.length > 0) {
       for (let i = 0; i < this.houseList.length; i++) {
         let scanInstance = this.houseList[i]["scanInstance"];
         scanInstance.unsubscribe();
       }
     }
-    this.houseList=[];
+    this.houseList = [];
     this.selectedZone = this.activeZone;
     this.polylines = [];
     this.houseMarkerList = [];
@@ -389,7 +396,7 @@ export class MapsComponent {
         scanInstance.unsubscribe();
       }
     }
-    this.houseList=[];
+    this.houseList = [];
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -750,6 +757,9 @@ export class MapsComponent {
       this.houseList = [];
       this.progressData.houses = 0;
       this.progressData.scanedHouses = 0;
+      let index = 0;
+      
+      this.getRecentCardDetail();
       for (let i = 1; i <= this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
         let houseInstance = this.db
@@ -776,29 +786,20 @@ export class MapsComponent {
                   }
                 }
                 let markerType = "red";
-                /*
-                if (houseData[j]["phaseNo"] == "1") {
-                  markerType = "blue";
-                  if (isApproved == "yes") {
-                    markerType = "purple"
-                  }
+                if (this.houseList.length > 0) {
+                  index = index + 1;
                 }
-                else {
-                  if (isApproved == "yes") {
-                    markerType = "yellow";
-                  }
-                }
-                */
                 this.houseList.push({
+                  index: index,
                   markerType: markerType,
                   lat: lat,
                   lng: lng,
                   cardNo: cardNo,
                   isApproved: isApproved,
+                  isActive: false,
                 });
-
                 this.progressData.houses = Number(this.progressData.houses) + 1;
-                this.getScanedCard(i, cardNo, markerType);
+                this.getScanedCard(cardNo, markerType, index);
               }
             }
           });
@@ -807,7 +808,7 @@ export class MapsComponent {
     });
   }
 
-  getScanedCard(lineNo: any, cardNo: any, markerType: any) {
+  getScanedCard(cardNo: any, markerType: any, index: any) {
     let scanCardPath =
       "HousesCollectionInfo/" +
       this.selectedZone +
@@ -816,7 +817,7 @@ export class MapsComponent {
       "/" +
       this.currentMonthName +
       "/" +
-      this.selectedDate +      
+      this.selectedDate +
       "/" +
       cardNo +
       "/scanBy";
@@ -832,39 +833,111 @@ export class MapsComponent {
               this.progressData.scanedHouses =
                 Number(this.progressData.scanedHouses) + 1;
               markerType = "green";
+              this.showMessage(cardNo);
             }
           } else {
             if (scanBy != null) {
               if (scanBy != "-1") {
-                console.log("scanBy")
+                console.log("scanBy");
                 this.progressData.scanedHouses =
                   Number(this.progressData.scanedHouses) + 1;
                 markerType = "green";
               }
             }
           }
-
           houseDetails.markerType = markerType;
           houseDetails.scanInstance = scanInfo;
-          if(this.selectedDate!=this.toDayDate){
+          if (this.selectedDate != this.toDayDate) {
             scanInfo.unsubscribe();
           }
-          this.plotHouses(
-            houseDetails.markerType,
-            houseDetails.lat,
-            houseDetails.lng
-          );
+          if (this.houseMarkerList.length == 0) {
+            this.plotHouses(
+              houseDetails.markerType,
+              houseDetails.lat,
+              houseDetails.lng,
+              cardNo
+            );
+          } else {
+            for (let i = 0; i < this.houseMarkerList.length; i++) {
+              if (this.houseMarkerList[i]["cardNo"] == cardNo) {
+                this.houseMarkerList[i]["marker"].setMap(null);
+                i = this.houseMarkerList.length;
+              }
+            }
+            this.plotHouses(
+              houseDetails.markerType,
+              houseDetails.lat,
+              houseDetails.lng,
+              cardNo
+            );
+          }
         }
       });
   }
 
-  plotHouses(markerType: string, lat: any, lng: any) {
+  getRecentCardDetail() {
+    let dbPath =
+      "HousesCollectionInfo/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.selectedDate +
+      "/recentScanned/cardNo";
+      console.log(dbPath);
+    this.cardInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        console.log(data);
+        if (data != null) {
+          this.showMessage(data);
+        }
+      });
+  }
+
+  showMessage(cardNo: any) {
+    let dbPath = "CardWardMapping/" + cardNo;
+    console.log(dbPath);
+    let mapInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        mapInstance.unsubscribe();
+        if (data != null) {
+          console.log(data);
+          let lineNo = data["line"];
+          let ward = data["ward"];
+          dbPath = "Houses/" + ward + "/" + lineNo + "/" + cardNo;
+          console.log(dbPath);
+          let houseInstance = this.db
+            .object(dbPath)
+            .valueChanges()
+            .subscribe((dataHouse) => {
+              console.log(dataHouse);
+              houseInstance.unsubscribe();
+              if (dataHouse != null) {
+                let name = dataHouse["name"];
+                let time = dataHouse["lastScanTime"].split(" ")[1];
+                let message =
+                  name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
+                this.commonService.setAlertMessage("success", message);
+              }
+            });
+        }
+      });
+  }
+
+  plotHouses(markerType: string, lat: any, lng: any, cardNo: any) {
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
       let imgUrl = "../assets/img/" + markerType + "-home.png";
       // if (isApproved == "yes") {
       //   imgUrl = this.approvedHomeLocationURL;
       //  }
+
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
         map: this.map,
@@ -875,7 +948,9 @@ export class MapsComponent {
           scaledSize: new google.maps.Size(16, 15),
         },
       });
-      this.houseMarkerList.push({ marker });
+      if (markerType == "green") {
+      }
+      this.houseMarkerList.push({ cardNo: cardNo, marker: marker });
     }
   }
 }
