@@ -827,7 +827,7 @@ export class MapsComponent {
       .subscribe((scanBy) => {
         let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
         if (houseDetails != undefined) {
-          // scanInfo.unsubscribe();
+          scanInfo.unsubscribe();
           if (this.userType == "External User") {
             if (scanBy != undefined) {
               this.progressData.scanedHouses =
@@ -849,6 +849,13 @@ export class MapsComponent {
           if (this.selectedDate != this.toDayDate) {
             scanInfo.unsubscribe();
           }
+          this.plotHouses(
+            houseDetails.markerType,
+            houseDetails.lat,
+            houseDetails.lng,
+            cardNo
+          );
+          /*
           if (this.houseMarkerList.length == 0) {
             this.plotHouses(
               houseDetails.markerType,
@@ -870,6 +877,7 @@ export class MapsComponent {
               cardNo
             );
           }
+          */
         }
       });
   }
@@ -885,18 +893,56 @@ export class MapsComponent {
       "/" +
       this.selectedDate +
       "/recentScanned";
-    console.log(dbPath);
     this.cardInstance = this.db
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
-        console.log(data);
         if (data != null) {
           if (this.userType == "External User") {
             this.showMessage(data["cardNo"]);
+            for (let i = 0; i < this.houseMarkerList.length; i++) {
+              if (this.houseMarkerList[i]["cardNo"] == data["cardNo"]) {
+                this.houseMarkerList[i]["marker"].setMap(null);
+                let cardDetail = this.houseList.find(
+                  (item) => item.cardNo == data["cardNo"]
+                );
+                if (cardDetail != null) {
+                  this.progressData.scanedHouses =
+                    Number(this.progressData.scanedHouses) + 1;
+                    cardDetail.markerType="green";
+                  this.plotHouses(
+                    "green",
+                    cardDetail.lat,
+                    cardDetail.lng,
+                    cardDetail.cardNo
+                  );
+                }
+                i = this.houseMarkerList.length;
+              }
+            }
           } else {
             if (data["scanBy"] != "-1") {
               this.showMessage(data["cardNo"]);
+              for (let i = 0; i < this.houseMarkerList.length; i++) {
+                if (this.houseMarkerList[i]["cardNo"] == data["cardNo"]) {
+                  this.houseMarkerList[i]["marker"].setMap(null);
+                  let cardDetail = this.houseList.find(
+                    (item) => item.cardNo == data["cardNo"]
+                  );
+                  if (cardDetail != null) {
+                    this.progressData.scanedHouses =
+                      Number(this.progressData.scanedHouses) + 1;
+                      cardDetail.markerType="green";
+                    this.plotHouses(
+                      "green",
+                      cardDetail.lat,
+                      cardDetail.lng,
+                      cardDetail.cardNo
+                    );
+                  }
+                  i = this.houseMarkerList.length;
+                }
+              }
             }
           }
         }
@@ -905,23 +951,19 @@ export class MapsComponent {
 
   showMessage(cardNo: any) {
     let dbPath = "CardWardMapping/" + cardNo;
-    console.log(dbPath);
     let mapInstance = this.db
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
         mapInstance.unsubscribe();
         if (data != null) {
-          console.log(data);
           let lineNo = data["line"];
           let ward = data["ward"];
           dbPath = "Houses/" + ward + "/" + lineNo + "/" + cardNo;
-          console.log(dbPath);
           let houseInstance = this.db
             .object(dbPath)
             .valueChanges()
             .subscribe((dataHouse) => {
-              console.log(dataHouse);
               houseInstance.unsubscribe();
               if (dataHouse != null) {
                 let name = dataHouse["name"];
