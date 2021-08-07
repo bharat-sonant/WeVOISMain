@@ -363,13 +363,6 @@ export class MapsComponent {
     if (this.cardInstance != null) {
       this.cardInstance.unsubscribe();
     }
-    this.isFirst = true;
-    if (this.houseList.length > 0) {
-      for (let i = 0; i < this.houseList.length; i++) {
-        let scanInstance = this.houseList[i]["scanInstance"];
-        scanInstance.unsubscribe();
-      }
-    }
     this.houseList = [];
     this.selectedZone = this.activeZone;
     this.polylines = [];
@@ -390,13 +383,10 @@ export class MapsComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    if (this.houseList.length > 0) {
-      for (let i = 0; i < this.houseList.length; i++) {
-        let scanInstance = this.houseList[i]["scanInstance"];
-        scanInstance.unsubscribe();
-      }
-    }
     this.houseList = [];
+    if(this.cardInstance!=null){
+      this.cardInstance.unsubscribe();
+    }
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -618,7 +608,7 @@ export class MapsComponent {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
         this.houseMarkerList[i]["marker"].setMap(null);
       }
-      this.houseMarkerList = [];
+      //this.houseMarkerList = [];
     }
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
@@ -657,6 +647,9 @@ export class MapsComponent {
               scaledSize: new google.maps.Size(20, 19),
             },
           });
+          if (this.houseList[i]["isActive"] == true) {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+          }
           this.houseMarkerList.push({ marker });
           $("#isHouse").prop("disabled", false);
         }
@@ -669,7 +662,7 @@ export class MapsComponent {
         for (let i = 0; i < this.houseMarkerList.length; i++) {
           this.houseMarkerList[i]["marker"].setMap(null);
         }
-        this.houseMarkerList = [];
+        //this.houseMarkerList = [];
       }
     }
   }
@@ -759,7 +752,6 @@ export class MapsComponent {
       this.progressData.scanedHouses = 0;
       let index = 0;
 
-      this.getRecentCardDetail();
       for (let i = 1; i <= this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
         let houseInstance = this.db
@@ -799,16 +791,22 @@ export class MapsComponent {
                   isActive: false,
                 });
                 this.progressData.houses = Number(this.progressData.houses) + 1;
-                this.getScanedCard(cardNo, markerType, index);
+                this.getScanedCard(cardNo, markerType);
               }
             }
           });
+      }
+      if (this.selectedDate == this.toDayDate) {
+        setTimeout(() => {
+          this.isFirst = true;
+          this.getRecentCardDetail();
+        }, 3000);
       }
       resolve(true);
     });
   }
 
-  getScanedCard(cardNo: any, markerType: any, index: any) {
+  getScanedCard(cardNo: any, markerType: any) {
     let scanCardPath =
       "HousesCollectionInfo/" +
       this.selectedZone +
@@ -837,7 +835,6 @@ export class MapsComponent {
           } else {
             if (scanBy != null) {
               if (scanBy != "-1") {
-                console.log("scanBy");
                 this.progressData.scanedHouses =
                   Number(this.progressData.scanedHouses) + 1;
                 markerType = "green";
@@ -845,39 +842,13 @@ export class MapsComponent {
             }
           }
           houseDetails.markerType = markerType;
-          houseDetails.scanInstance = scanInfo;
-          if (this.selectedDate != this.toDayDate) {
-            scanInfo.unsubscribe();
-          }
           this.plotHouses(
             houseDetails.markerType,
             houseDetails.lat,
             houseDetails.lng,
-            cardNo
+            cardNo,
+            false
           );
-          /*
-          if (this.houseMarkerList.length == 0) {
-            this.plotHouses(
-              houseDetails.markerType,
-              houseDetails.lat,
-              houseDetails.lng,
-              cardNo
-            );
-          } else {
-            for (let i = 0; i < this.houseMarkerList.length; i++) {
-              if (this.houseMarkerList[i]["cardNo"] == cardNo) {
-                this.houseMarkerList[i]["marker"].setMap(null);
-                i = this.houseMarkerList.length;
-              }
-            }
-            this.plotHouses(
-              houseDetails.markerType,
-              houseDetails.lat,
-              houseDetails.lng,
-              cardNo
-            );
-          }
-          */
         }
       });
   }
@@ -897,56 +868,96 @@ export class MapsComponent {
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
+        if (this.selectedDate != this.toDayDate) {
+          this.cardInstance.unsubscribe();
+        }
         if (data != null) {
           if (this.userType == "External User") {
             this.showMessage(data["cardNo"]);
-            for (let i = 0; i < this.houseMarkerList.length; i++) {
-              if (this.houseMarkerList[i]["cardNo"] == data["cardNo"]) {
-                this.houseMarkerList[i]["marker"].setMap(null);
-                let cardDetail = this.houseList.find(
-                  (item) => item.cardNo == data["cardNo"]
-                );
-                if (cardDetail != null) {
-                  this.progressData.scanedHouses =
-                    Number(this.progressData.scanedHouses) + 1;
-                    cardDetail.markerType="green";
-                  this.plotHouses(
-                    "green",
-                    cardDetail.lat,
-                    cardDetail.lng,
-                    cardDetail.cardNo
-                  );
-                }
-                i = this.houseMarkerList.length;
-              }
-            }
+            this.setMarkerCurrent(data["cardNo"]);
           } else {
             if (data["scanBy"] != "-1") {
+              this.setMarkerCurrent(data["cardNo"]);
               this.showMessage(data["cardNo"]);
-              for (let i = 0; i < this.houseMarkerList.length; i++) {
-                if (this.houseMarkerList[i]["cardNo"] == data["cardNo"]) {
-                  this.houseMarkerList[i]["marker"].setMap(null);
-                  let cardDetail = this.houseList.find(
-                    (item) => item.cardNo == data["cardNo"]
-                  );
-                  if (cardDetail != null) {
-                    this.progressData.scanedHouses =
-                      Number(this.progressData.scanedHouses) + 1;
-                      cardDetail.markerType="green";
-                    this.plotHouses(
-                      "green",
-                      cardDetail.lat,
-                      cardDetail.lng,
-                      cardDetail.cardNo
-                    );
-                  }
-                  i = this.houseMarkerList.length;
-                }
-              }
             }
           }
         }
       });
+  }
+
+  setMarkerCurrent(cardNo: any) {
+    let element = <HTMLInputElement>document.getElementById("isHouse");
+
+    if (this.currentMarker != null) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        if (this.houseMarkerList[i]["cardNo"] == this.currentMarker) {
+          this.houseMarkerList[i]["marker"].setMap(null);
+          let cardDetail = this.houseList.find(
+            (item) => item.cardNo == this.currentMarker
+          );
+          if (cardDetail != null) {
+            cardDetail.markerType = "green";
+            cardDetail.isActive = false;
+            if (element.checked == true) {
+              let imgUrl =
+                "../assets/img/" + cardDetail.markerType + "-home.png";
+
+              let marker = new google.maps.Marker({
+                position: {
+                  lat: Number(cardDetail.lat),
+                  lng: Number(cardDetail.lng),
+                },
+                map: this.map,
+                icon: {
+                  url: imgUrl,
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scaledSize: new google.maps.Size(16, 15),
+                },
+              });
+              this.houseMarkerList[i]["marker"] = marker;
+            }
+          }
+          i = this.houseMarkerList.length;
+        }
+      }
+    }
+    for (let i = 0; i < this.houseMarkerList.length; i++) {
+      if (this.houseMarkerList[i]["cardNo"] == cardNo) {
+        this.houseMarkerList[i]["marker"].setMap(null);
+        let cardDetail = this.houseList.find((item) => item.cardNo == cardNo);
+        if (cardDetail != null) {
+          if (this.isFirst == false) {
+            this.progressData.scanedHouses =
+              Number(this.progressData.scanedHouses) + 1;
+          }
+          this.isFirst = false;
+          cardDetail.markerType = "green";
+          cardDetail.isActive = true;
+          if (element.checked == true) {
+            let imgUrl = "../assets/img/" + cardDetail.markerType + "-home.png";
+
+            let marker = new google.maps.Marker({
+              position: {
+                lat: Number(cardDetail.lat),
+                lng: Number(cardDetail.lng),
+              },
+              map: this.map,
+              icon: {
+                url: imgUrl,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scaledSize: new google.maps.Size(16, 15),
+              },
+            });
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            this.houseMarkerList[i]["marker"] = marker;
+          }
+        }
+        i = this.houseMarkerList.length;
+      }
+    }
+    this.currentMarker = cardNo;
   }
 
   showMessage(cardNo: any) {
@@ -977,7 +988,13 @@ export class MapsComponent {
       });
   }
 
-  plotHouses(markerType: string, lat: any, lng: any, cardNo: any) {
+  plotHouses(
+    markerType: string,
+    lat: any,
+    lng: any,
+    cardNo: any,
+    isActive: any
+  ) {
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
       let imgUrl = "../assets/img/" + markerType + "-home.png";
@@ -995,7 +1012,9 @@ export class MapsComponent {
           scaledSize: new google.maps.Size(16, 15),
         },
       });
-      if (markerType == "green") {
+
+      if (isActive == true) {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
       }
       this.houseMarkerList.push({ cardNo: cardNo, marker: marker });
     }

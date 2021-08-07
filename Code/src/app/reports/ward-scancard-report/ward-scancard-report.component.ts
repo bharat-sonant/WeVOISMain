@@ -1,7 +1,8 @@
 import { AngularFireObject } from "angularfire2/database";
 /// <reference types="@types/googlemaps" />
+import * as jsPDF from "jspdf"; 
 
-import { Component, ViewChild, OnInit } from "@angular/core";
+import { Component, ViewChild, ElementRef , OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
@@ -25,7 +26,7 @@ export class WardScancardReportComponent implements OnInit {
     private actRoute: ActivatedRoute,
     private commonService: CommonService
   ) {}
-
+  @ViewChild("content", null) content: ElementRef;
   wardList: any[];
   selectedCircle: any;
   selectedDate: any;
@@ -41,6 +42,24 @@ export class WardScancardReportComponent implements OnInit {
     $("#txtDate").val(this.selectedDate);
     this.getWards();
   }
+
+  SavePDF(): void {  
+    let content=this.content.nativeElement;  
+    let doc = new jsPDF();  
+    let _elementHandlers =  
+    {  
+      '#editor':function(element,renderer){  
+        return true;  
+      }  
+    };  
+    doc.fromHTML(content.innerHTML,15,15,{  
+  
+      'width':190,  
+      'elementHandlers':_elementHandlers  
+    });  
+  
+    doc.save('test.pdf');  
+  }  
 
   getWards() {
     this.wardList = [];
@@ -211,7 +230,6 @@ export class WardScancardReportComponent implements OnInit {
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
-        
         scannedHouseInstance.unsubscribe();
         if (data != null) {
           let employeePath =
@@ -233,33 +251,54 @@ export class WardScancardReportComponent implements OnInit {
                 let name = empData;
                 let keyArray = Object.keys(data);
                 for (let i = 0; i < keyArray.length; i++) {
-                  let lineNo = keyArray[i];
-                  let obj = data[lineNo];
-                  let keyArrayCard = Object.keys(obj);
-                  for (let j = 0; j < keyArrayCard.length; j++) {
-                    let cardNo = keyArrayCard[j];
-                    let scanTime = obj[cardNo]["scanTime"];
-                    let dbPath="Houses/"+wardNo+"/"+lineNo+"/"+cardNo+"";
-                    let cardInstance=this.db.object(dbPath).valueChanges().subscribe(
-                      cardData=>{
-                        cardInstance.unsubscribe();
-                        let rfId="";
-                        let personName="";
-                        if(cardData!=null){
-                          rfId=cardData["rfid"];
-                          personName=cardData["name"];
+                  let cardNo = keyArray[i];
+
+                  if (
+                    cardNo != "ImagesData" &&
+                    cardNo != "recentScanned" &&
+                    cardNo != "totalScanned"
+                  ) {
+                    console.log(cardNo);
+                    let scanTime = data[cardNo]["scanTime"];
+                    let dbPath = "CardWardMapping/" + cardNo;
+                    let mapInstance = this.db
+                      .object(dbPath)
+                      .valueChanges()
+                      .subscribe((mapData) => {
+                        mapInstance.unsubscribe();
+                        if (mapData != null) {
+                          let line = mapData["line"];
+                          let ward = mapData["ward"];
+                          dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+                          let houseInstance = this.db
+                            .object(dbPath)
+                            .valueChanges()
+                            .subscribe((houseData) => {
+                              houseInstance.unsubscribe();
+                              let rfId = "";
+                              let personName = "";
+                              if (houseData != null) {
+                                rfId = houseData["rfid"];
+                                personName = houseData["name"];
+                              }
+                              this.wardScaanedList.push({
+                                cardNo: cardNo,
+                                time: scanTime,
+                                name: name,
+                                rfId: rfId,
+                                personName: personName,
+                              });
+                            });
+                        } else {
+                          this.wardScaanedList.push({
+                            cardNo: cardNo,
+                            time: scanTime,
+                            name: name,
+                            rfId: "",
+                            personName: "",
+                          });
                         }
-                        this.wardScaanedList.push({
-                          lineNo: lineNo,
-                          cardNo: cardNo,
-                          time: scanTime,
-                          name: name,
-                          rfId:rfId,
-                          personName:personName
-                        });
-                      }
-                    );
-                   
+                      });
                   }
                 }
               }

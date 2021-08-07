@@ -18,7 +18,7 @@
                     </select>
         </div>
         <div class="col-md-6" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-
+<button (click)="SavePDF();" style="display: none;" >download pdf</button>
         </div>
     </div>
 </section>
@@ -32,14 +32,14 @@
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
                                     <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important; font-size: 10px;">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
+                                            <th style="border-right:1px solid #dee2e6; width:5%; ">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Houses</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
-                                                Sacnned</th>
+                                                Sacned</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardDataList; let i=index"
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>-->
-                <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px;">
                     <div class="row">
 
                         <div class="col-md-12">
