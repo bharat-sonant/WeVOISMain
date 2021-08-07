@@ -211,6 +211,7 @@ export class WardScancardReportComponent implements OnInit {
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
+        
         scannedHouseInstance.unsubscribe();
         if (data != null) {
           let employeePath =

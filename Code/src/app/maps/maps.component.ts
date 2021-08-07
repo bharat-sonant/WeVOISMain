@@ -758,7 +758,7 @@ export class MapsComponent {
       this.progressData.houses = 0;
       this.progressData.scanedHouses = 0;
       let index = 0;
-      
+
       this.getRecentCardDetail();
       for (let i = 1; i <= this.wardLines; i++) {
         let housePath = "Houses/" + this.selectedZone + "/" + i;
@@ -833,7 +833,6 @@ export class MapsComponent {
               this.progressData.scanedHouses =
                 Number(this.progressData.scanedHouses) + 1;
               markerType = "green";
-              this.showMessage(cardNo);
             }
           } else {
             if (scanBy != null) {
@@ -885,15 +884,21 @@ export class MapsComponent {
       this.currentMonthName +
       "/" +
       this.selectedDate +
-      "/recentScanned/cardNo";
-      console.log(dbPath);
+      "/recentScanned";
+    console.log(dbPath);
     this.cardInstance = this.db
       .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
         console.log(data);
         if (data != null) {
-          this.showMessage(data);
+          if (this.userType == "External User") {
+            this.showMessage(data["cardNo"]);
+          } else {
+            if (data["scanBy"] != "-1") {
+              this.showMessage(data["cardNo"]);
+            }
+          }
         }
       });
   }
