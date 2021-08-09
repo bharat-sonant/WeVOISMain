@@ -444,6 +444,7 @@ export class MapsComponent {
 
   setDate(filterVal: any, type: string) {
     //this.houseList = [];
+    this.isFirst=true;
     if(this.notScanInstance!=null){
       this.notScanInstance.unsubscribe();
     }
@@ -1000,6 +1001,10 @@ export class MapsComponent {
               this.showMessage(data["cardNo"], data["scanTime"]);
             }
           }
+        }
+        else
+        {
+          this.isFirst=false;
         }
       });
   }
