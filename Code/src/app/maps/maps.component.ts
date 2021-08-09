@@ -1,4 +1,3 @@
-import { markerDatail } from "./../house-survey/ward-marking-summary/ward-marking-summary.component";
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -79,8 +78,8 @@ export class MapsComponent {
   cardInstance: any;
   showAllScanedCard: any;
   cardNotScanedList: any[];
-  cityName:any;
-  notScanInstance:any;
+  cityName: any;
+  notScanInstance: any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -104,6 +103,7 @@ export class MapsComponent {
   };
 
   ngOnInit() {
+    localStorage.setItem("houseList",null);
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
@@ -417,7 +417,7 @@ export class MapsComponent {
   }
 
   onSubmit() {
-    if(this.notScanInstance!=null){
+    if (this.notScanInstance != null) {
       this.notScanInstance.unsubscribe();
     }
     if (this.cardInstance != null) {
@@ -444,8 +444,8 @@ export class MapsComponent {
 
   setDate(filterVal: any, type: string) {
     //this.houseList = [];
-    this.isFirst=true;
-    if(this.notScanInstance!=null){
+    this.isFirst = true;
+    if (this.notScanInstance != null) {
       this.notScanInstance.unsubscribe();
     }
     if (this.cardInstance != null) {
@@ -490,13 +490,11 @@ export class MapsComponent {
         this.progressData.scanedHouses = 0;
         this.getScanedCard(this.houseList[i]["cardNo"], "red");
         // $("#isHouse").prop("disabled", false);
-        
       }
-      if(this.selectedDate==this.toDayDate){
+      if (this.selectedDate == this.toDayDate) {
         setTimeout(() => {
           this.getRecentCardDetail();
         }, 2000);
-        
       }
       this.getCardNotScaned();
     }
@@ -819,50 +817,40 @@ export class MapsComponent {
       this.progressData.houses = 0;
       this.progressData.scanedHouses = 0;
       let index = 0;
+      let houseLocalList = JSON.parse(localStorage.getItem("houseList"));
+      if (houseLocalList == null) {
+        this.getLocalStorageHouse();
+      } else {
+        let houseList = houseLocalList.filter(
+          (item) => item.ward == this.selectedZone
+        );
+        if (houseList.length == 0) {
+          this.getLocalStorageHouse();
+        }
+        else
+        {
+          for(let i=0;i<houseList.length;i++){
+            let lat = houseList[i]["lat"];
+              let lng = houseList[i]["lng"];
+              let cardNo = houseList[i]["cardNo"];
+              let isApproved = "no";
+              
+              let markerType = "red";
 
-      for (let i = 1; i <= this.wardLines; i++) {
-        let housePath = "Houses/" + this.selectedZone + "/" + i;
-        let houseInstance = this.db
-          .list(housePath)
-          .valueChanges()
-          .subscribe((houseData) => {
-            houseInstance.unsubscribe();
-            if (houseData.length > 0) {
-              for (let j = 0; j < houseData.length; j++) {
-                let lat = houseData[j]["latLng"]
-                  .replace("(", "")
-                  .replace(")", "")
-                  .split(",")[0];
-                let lng = houseData[j]["latLng"]
-                  .replace("(", "")
-                  .replace(")", "")
-                  .split(",")[1];
-                let cardNo = houseData[j]["cardNo"];
-                let rfId = houseData[j]["rfid"];
-                let isApproved = "no";
-                if (houseData[j]["isApproved"] != null) {
-                  if (houseData[j]["isApproved"] == "yes") {
-                    isApproved = "yes";
-                  }
-                }
-                let markerType = "red";
-                if (this.houseList.length > 0) {
-                  index = index + 1;
-                }
-                this.houseList.push({
-                  index: index,
-                  markerType: markerType,
-                  lat: lat,
-                  lng: lng,
-                  cardNo: cardNo,
-                  isApproved: isApproved,
-                  isActive: false,
-                });
-                this.progressData.houses = Number(this.progressData.houses) + 1;
-                this.getScanedCard(cardNo, markerType);
-              }
-            }
-          });
+              this.houseList.push({
+                wardNo: this.selectedZone,
+                markerType: markerType,
+                lat: lat,
+                lng: lng,
+                cardNo: cardNo,
+                isApproved: isApproved,
+                isActive: false,
+              });
+              this.progressData.houses = Number(this.progressData.houses) + 1;
+              this.getScanedCard(cardNo, markerType);
+
+          }
+        }
       }
       if (this.selectedDate == this.toDayDate) {
         setTimeout(() => {
@@ -872,6 +860,85 @@ export class MapsComponent {
       }
       resolve(true);
     });
+  }
+
+  getLocalStorageHouse() {
+    for (let i = 1; i <= this.wardLines; i++) {
+      let housePath = "Houses/" + this.selectedZone + "/" + i;
+      let houseInstance = this.db
+        .list(housePath)
+        .valueChanges()
+        .subscribe((houseData) => {
+          houseInstance.unsubscribe();
+          if (houseData.length > 0) {
+            for (let j = 0; j < houseData.length; j++) {
+              let lat = houseData[j]["latLng"]
+                .replace("(", "")
+                .replace(")", "")
+                .split(",")[0];
+              let lng = houseData[j]["latLng"]
+                .replace("(", "")
+                .replace(")", "")
+                .split(",")[1];
+              let cardNo = houseData[j]["cardNo"];
+              let rfId = houseData[j]["rfid"];
+              let name = houseData[j]["name"];
+              let ward = this.selectedZone;
+              let line = houseData[j]["line"];
+              let isApproved = "no";
+              if (houseData[j]["isApproved"] != null) {
+                if (houseData[j]["isApproved"] == "yes") {
+                  isApproved = "yes";
+                }
+              }
+              let markerType = "red";
+
+              this.houseList.push({
+                wardNo: this.selectedZone,
+                markerType: markerType,
+                lat: lat,
+                lng: lng,
+                cardNo: cardNo,
+                isApproved: isApproved,
+                isActive: false,
+              });
+              let houseLocalList = JSON.parse(
+                localStorage.getItem("houseList")
+              );
+              if (houseLocalList == null) {
+                houseLocalList = [];
+                houseLocalList.push({
+                  ward: ward,
+                  name: name,
+                  cardNo: cardNo,
+                  rfId: rfId,
+                  line: line,
+                  lat: lat,
+                  lng: lng,
+                });
+              } else {
+                let houseDetail = houseLocalList.find(
+                  (item) => item.cardNo == cardNo && item.ward==this.selectedZone
+                );
+                if (houseDetail == undefined) {
+                  houseLocalList.push({
+                    ward: ward,
+                    name: name,
+                    cardNo: cardNo,
+                    rfId: rfId,
+                    line: line,
+                    lat: lat,
+                    lng: lng,
+                  });
+                }
+              }
+              this.progressData.houses = Number(this.progressData.houses) + 1;
+              this.getScanedCard(cardNo, markerType);
+              localStorage.setItem("houseList", JSON.stringify(houseLocalList));
+            }
+          }
+        });
+    }
   }
 
   getCardNotScaned() {
@@ -890,32 +957,34 @@ export class MapsComponent {
       .list(dbPath)
       .valueChanges()
       .subscribe((data) => {
-       // notScanInstance.unsubscribe();
-       if(this.selectedDate!=this.toDayDate)
-       {
-         this.notScanInstance.unsubscribe();
-       }
+        // notScanInstance.unsubscribe();
+        if (this.selectedDate != this.toDayDate) {
+          this.notScanInstance.unsubscribe();
+        }
         if (data.length > 0) {
           let count = 0;
           let city =
-                    this.cityName.charAt(0).toUpperCase() +
-                    this.cityName.slice(1);
+            this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
           for (let i = 0; i < data.length; i++) {
             if (data[i]["cardImage"] != null) {
               let imageUrl =
-                    "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-                    city +
-                    "%2FHousesCollectionImagesData%2F" +
-                    this.selectedZone +
-                    "%2F" +
-                    this.currentYear +"%2F" +
-                    this.currentMonthName +
-                    "%2F" +
-                    this.selectedDate +
-                    "%2F" +
-                    data[i]["cardImage"] +
-                    "?alt=media";
-              let time = data[i]["scanTime"].split(':')[0]+":"+data[i]["scanTime"].split(':')[1];
+                "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                city +
+                "%2FHousesCollectionImagesData%2F" +
+                this.selectedZone +
+                "%2F" +
+                this.currentYear +
+                "%2F" +
+                this.currentMonthName +
+                "%2F" +
+                this.selectedDate +
+                "%2F" +
+                data[i]["cardImage"] +
+                "?alt=media";
+              let time =
+                data[i]["scanTime"].split(":")[0] +
+                ":" +
+                data[i]["scanTime"].split(":")[1];
               this.cardNotScanedList.push({ imageUrl: imageUrl, time: time });
               count++;
             }
@@ -926,7 +995,7 @@ export class MapsComponent {
   }
 
   getScanedCard(cardNo: any, markerType: any) {
-    this.cardNotScanedList=[];
+    this.cardNotScanedList = [];
     let scanCardPath =
       "HousesCollectionInfo/" +
       this.selectedZone +
@@ -993,7 +1062,7 @@ export class MapsComponent {
         }
         if (data != null) {
           if (this.showAllScanedCard == true) {
-            this.showMessage(data["cardNo"],data["scanTime"]);
+            this.showMessage(data["cardNo"], data["scanTime"]);
             this.setMarkerCurrent(data["cardNo"]);
           } else {
             if (data["scanBy"] != "-1") {
@@ -1001,10 +1070,8 @@ export class MapsComponent {
               this.showMessage(data["cardNo"], data["scanTime"]);
             }
           }
-        }
-        else
-        {
-          this.isFirst=false;
+        } else {
+          this.isFirst = false;
         }
       });
   }
@@ -1084,7 +1151,7 @@ export class MapsComponent {
     this.currentMarker = cardNo;
   }
 
-  showMessage(cardNo: any, scanTime:any) {
+  showMessage(cardNo: any, scanTime: any) {
     let dbPath = "CardWardMapping/" + cardNo;
     let mapInstance = this.db
       .object(dbPath)
@@ -1113,7 +1180,11 @@ export class MapsComponent {
                   time = time.split(":")[0] + ":" + time.split(":")[1];
                   let message =
                     name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
-                  this.commonService.setAlertMessageWithLeftPosition("success", message,"alert alert-houses alert-with-icon");
+                  this.commonService.setAlertMessageWithLeftPosition(
+                    "success",
+                    message,
+                    "alert alert-houses alert-with-icon"
+                  );
                 }
               }
             });

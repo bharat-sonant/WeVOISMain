@@ -42,6 +42,7 @@ export class LogoutComponent implements OnInit {
     localStorage.setItem('notificationPickDustbins', "0");
     localStorage.setItem('notificationGeoSurfing', "0");
     localStorage.setItem('isTaskManager', "0");
+    localStorage.setItem("houseList", null);
     if (this.commonService.notificationInterval != null) {
       this.commonService.notificationInterval.unsubscribe();
     }
