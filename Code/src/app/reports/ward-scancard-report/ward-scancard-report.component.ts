@@ -308,11 +308,11 @@ export class WardScancardReportComponent implements OnInit {
                     cardNo != "recentScanned" &&
                     cardNo != "totalScanned"
                   ) {
-                    console.log(cardNo);
                     let scanTime =
                       data[cardNo]["scanTime"].split(":")[0] +
                       ":" +
                       data[cardNo]["scanTime"].split(":")[1];
+                      let date=Number(new Date(this.selectedDate+" "+ scanTime).getTime())/10000;
                     let dbPath = "CardWardMapping/" + cardNo;
                     let mapInstance = this.db
                       .object(dbPath)
@@ -340,6 +340,7 @@ export class WardScancardReportComponent implements OnInit {
                                 name: name,
                                 rfId: rfId,
                                 personName: personName,
+                                sno:Number(date)
                               });
                             });
                         } else {
@@ -349,14 +350,17 @@ export class WardScancardReportComponent implements OnInit {
                             name: name,
                             rfId: "",
                             personName: "",
+                            sno:Number(date)
                           });
                         }
-                        this.wardScaanedList = this.wardScaanedList.sort(
-                          (a:any, b:any) => (b.time < a.time ? 1 : -1)
-                        );
                       });
                   }
                 }
+                setTimeout(() => {
+                  this.wardScaanedList = this.wardScaanedList.sort(
+                    (a, b) => (Number(b.sno) < Number(a.sno) ? 1 : -1)
+                  );
+                }, 2000);
               }
             });
         }
