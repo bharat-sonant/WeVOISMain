@@ -28,7 +28,9 @@
 
     
     &.alert-houses{
-        background-color: lighten($orange-color, 5%);
+        background-color: lighten(#0d4d13, 5%);
+        height: 80px!important;
+        width:250px!important;
     }
 
     

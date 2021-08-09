@@ -991,7 +991,7 @@ export class CommonService {
   setAlertMessageWithLeftPosition(type: any, message: any, cssClass: any) {
     if (type == "error") {
       this.toastr.error(message, "", {
-        timeOut: 6000,
+        timeOut: 600000,
         enableHtml: true,
         closeButton: true,
         toastClass: cssClass,
@@ -999,7 +999,7 @@ export class CommonService {
       });
     } else {
       this.toastr.error(message, "", {
-        timeOut: 6000,
+        timeOut: 600000,
         enableHtml: true,
         closeButton: true,
         toastClass: cssClass,

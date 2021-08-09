@@ -1183,7 +1183,7 @@ export class MapsComponent {
                   this.commonService.setAlertMessageWithLeftPosition(
                     "success",
                     message,
-                    "alert alert-houses alert-with-icon"
+                    "alert alert-houses "
                   );
                 }
               }
