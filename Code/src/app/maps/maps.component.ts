@@ -12,6 +12,7 @@ import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-maps",
@@ -28,7 +29,8 @@ export class MapsComponent {
     public httpService: HttpClient,
     private actRoute: ActivatedRoute,
     private mapService: MapService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private modalService: NgbModal
   ) {}
   db: any;
   public selectedZone: any;
@@ -75,6 +77,9 @@ export class MapsComponent {
   isFirst: any;
   currentMarker: any;
   cardInstance: any;
+  showAllScanedCard: any;
+  cardNotScanedList: any[];
+  cityName:any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -94,16 +99,21 @@ export class MapsComponent {
     scanedHouses: 0,
     parshadName: "",
     parshadMobile: "",
+    cardNotScaned: 0,
   };
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.userType = localStorage.getItem("userType");
     if (this.userType == "External User") {
       $("#divInternal").hide();
+      this.showAllScanedCard = true;
       //$("#isHouse").hide();
       // $("#showHouseLabel").hide();
+    } else {
+      this.showAllScanedCard = false;
     }
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -129,6 +139,52 @@ export class MapsComponent {
         this.onSubmit();
       }
     });
+  }
+
+  showCardDetail(content: any) {
+    if (this.cardNotScanedList.length > 0) {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let windowWidth = $(window).width();
+      let height = 870;
+      let width = windowWidth - 300;
+      height = (windowHeight * 90) / 100;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      let divHeight = height - 26 + "px";
+      $("div .modal-content")
+        .parent()
+        .css("max-width", "" + width + "px")
+        .css("margin-top", marginTop);
+      $("div .modal-content")
+        .css("height", height + "px")
+        .css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  showAllMarkers() {
+    if (this.showAllScanedCard == true) {
+      this.showAllScanedCard = false;
+    } else {
+      this.showAllScanedCard = true;
+    }
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        this.houseMarkerList[i]["marker"].setMap(null);
+      }
+      //this.houseMarkerList = [];
+    }
+    if (this.houseList.length > 0) {
+      for (let i = 0; i < this.houseList.length; i++) {
+        this.progressData.scanedHouses = 0;
+        this.getScanedCard(this.houseList[i]["cardNo"], "red");
+      }
+    }
   }
 
   clearProgressData() {
@@ -383,8 +439,8 @@ export class MapsComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    this.houseList = [];
-    if(this.cardInstance!=null){
+    //this.houseList = [];
+    if (this.cardInstance != null) {
       this.cardInstance.unsubscribe();
     }
     if (type == "current") {
@@ -421,6 +477,16 @@ export class MapsComponent {
       this.showVehicleMovement();
     }
 
+    if (this.houseList.length > 0) {
+      for (let i = 0; i < this.houseList.length; i++) {
+        this.progressData.scanedHouses = 0;
+        this.getScanedCard(this.houseList[i]["cardNo"], "red");
+        // $("#isHouse").prop("disabled", false);
+      }
+      this.getCardNotScaned();
+    }
+
+    /*
     this.setKml();
     this.getAllLinesFromJson();
     this.getProgressDetail();
@@ -431,6 +497,7 @@ export class MapsComponent {
     $("#houseCount").hide();
     $("#houseDetail").hide();
     this.getParshadHouse();
+*/
   }
 
   clearAllOnMap() {
@@ -610,6 +677,7 @@ export class MapsComponent {
       }
       //this.houseMarkerList = [];
     }
+    this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
       $("#isHouse").prop("disabled", true);
@@ -625,33 +693,18 @@ export class MapsComponent {
           $("#isHouse").prop("disabled", true);
           this.getHouses().then(() => {
             $("#isHouse").prop("disabled", false);
+            this.getCardNotScaned();
           });
         }
       } else {
         for (let i = 0; i < this.houseList.length; i++) {
-          let imgUrl =
-            "../assets/img/" + this.houseList[i]["markerType"] + "-home.png";
-          // if (this.houseList[i]["isApproved"] == "yes") {
-          //   imgUrl = this.approvedHomeLocationURL;
-          //  }
-          let marker = new google.maps.Marker({
-            position: {
-              lat: Number(this.houseList[i]["lat"]),
-              lng: Number(this.houseList[i]["lng"]),
-            },
-            map: this.map,
-            icon: {
-              url: imgUrl,
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scaledSize: new google.maps.Size(20, 19),
-            },
-          });
-          if (this.houseList[i]["isActive"] == true) {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-          }
-          this.houseMarkerList.push({ marker });
+          this.progressData.scanedHouses = 0;
+          this.getScanedCard(
+            this.houseList[i]["cardNo"],
+            this.houseList[i]["markerType"]
+          );
           $("#isHouse").prop("disabled", false);
+          this.getCardNotScaned();
         }
       }
     } else {
@@ -806,7 +859,55 @@ export class MapsComponent {
     });
   }
 
+  getCardNotScaned() {
+    this.progressData.cardNotScaned = 0;
+    let dbPath =
+      "HousesCollectionInfo/" +
+      this.selectedZone +
+      "/" +
+      this.currentYear +
+      "/" +
+      this.currentMonthName +
+      "/" +
+      this.selectedDate +
+      "/ImagesData";
+    let notScanInstance = this.db
+      .list(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        notScanInstance.unsubscribe();
+        if (data.length > 0) {
+          let count = 0;
+          let city =
+                    this.cityName.charAt(0).toUpperCase() +
+                    this.cityName.slice(1);
+          for (let i = 0; i < data.length; i++) {
+            if (data[i]["cardImage"] != null) {
+              let imageUrl =
+                    "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                    city +
+                    "%2FHousesCollectionImagesData%2F" +
+                    this.selectedZone +
+                    "%2F" +
+                    this.currentYear +"%2F" +
+                    this.currentMonthName +
+                    "%2F" +
+                    this.selectedDate +
+                    "%2F" +
+                    data[i]["cardImage"] +
+                    "?alt=media";
+              let time = data[i]["scanTime"].split(':')[0]+":"+data[i]["scanTime"].split(':')[1];
+              this.cardNotScanedList.push({ imageUrl: imageUrl, time: time });
+              count++;
+            }
+          }
+          this.progressData.cardNotScaned = count;
+        }
+      });
+  }
+
   getScanedCard(cardNo: any, markerType: any) {
+    this.cardNotScanedList=[];
     let scanCardPath =
       "HousesCollectionInfo/" +
       this.selectedZone +
@@ -826,7 +927,7 @@ export class MapsComponent {
         let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
         if (houseDetails != undefined) {
           scanInfo.unsubscribe();
-          if (this.userType == "External User") {
+          if (this.showAllScanedCard == true) {
             if (scanBy != undefined) {
               this.progressData.scanedHouses =
                 Number(this.progressData.scanedHouses) + 1;
@@ -872,7 +973,7 @@ export class MapsComponent {
           this.cardInstance.unsubscribe();
         }
         if (data != null) {
-          if (this.userType == "External User") {
+          if (this.showAllScanedCard == true) {
             this.showMessage(data["cardNo"]);
             this.setMarkerCurrent(data["cardNo"]);
           } else {
@@ -979,9 +1080,18 @@ export class MapsComponent {
               if (dataHouse != null) {
                 let name = dataHouse["name"];
                 let time = dataHouse["lastScanTime"].split(" ")[1];
-                let message =
-                  name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
-                this.commonService.setAlertMessage("success", message);
+                let notificationTime = new Date(this.toDayDate + " " + time);
+                let currentTime = new Date();
+                let timeDiff = this.commonService.timeDifferenceMin(
+                  currentTime,
+                  notificationTime
+                );
+                if (timeDiff < 3) {
+                  time = time.split(":")[0] + ":" + time.split(":")[1];
+                  let message =
+                    name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
+                  this.commonService.setAlertMessageWithLeftPosition("success", message,"alert alert-houses alert-with-icon");
+                }
               }
             });
         }
@@ -1039,4 +1149,5 @@ export class progressDetail {
   scanedHouses: number;
   parshadName: string;
   parshadMobile: string;
+  cardNotScaned: number;
 }

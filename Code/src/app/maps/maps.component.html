@@ -22,16 +22,19 @@
     </div>
     
     <div id="houseCount" class="col-md-3 text-right total-house" style=" display: none;">
-      <div>
-
-      </div>
+      
       <div class="fix-home">
-        <div class="float-l" style="margin-left: 10px;">
-          <i class="fas fa-home"></i> <span class="house"> {{progressData.houses}}</span><br>
+        <div class="float-first" style="margin-left: 10px; margin-top: 12px;">
+          <i class="fas fa-vr-cardboard" style="cursor: pointer;" (click)="showCardDetail(contentCardNotScaned);"></i> <span class="house"><span style="color: #1fda2f;">
+              {{progressData.cardNotScaned}}</span></span><br>
+          <h6>Card Not Scaned</h6>
+        </div>
+        <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+          <i class="fas fa-home" ></i> <span class="house"> {{progressData.houses}}</span><br>
           <h6>Total House</h6>
         </div>
-        <div class="float-r">
-          <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
+        <div class="float-third">
+          <i class="fas fa-house-damage" style="cursor: pointer;" (click)="showAllMarkers();"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
           <h6>Scanned House</h6>
         </div>
       </div>
@@ -103,10 +106,10 @@
       </div>
       <div class="main-box">
         <div class="designation">
-        <h5> P </h5>
+        <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
       </div>
       <div class="all-details">
-        <h6>{{progressData.parshadName}} <br> 
+        <h6>{{progressData.parshadName}} (पार्षद)<br> 
         <p>{{progressData.parshadMobile}}</p> </h6>
       </div>
       </div>
@@ -187,3 +190,33 @@
     </h3>
   </div>
 </div>
+
+ <!--Vehicle Status Start-->
+ <ng-template #contentCardNotScaned>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+  </div>
+  <div class="modal-body" style="margin-top:-20px; ">
+    <div class="content-scroll">
+    <div class="row">
+      <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
+        <div style="width:100%">
+          <a href="{{dt.imageUrl}}" target="_blank">
+            <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+          </a>
+        </div>
+        <div class="main-tag">
+          <div class="f-left">
+            <p>Scan Time <span class="f-right"> :</span></p>   
+            <h3>  {{dt.time}} </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+</ng-template>
+<!--Vehicle Status End-->

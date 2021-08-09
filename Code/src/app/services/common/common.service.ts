@@ -988,6 +988,26 @@ export class CommonService {
     }
   }
 
+  setAlertMessageWithLeftPosition(type: any, message: any, cssClass: any) {
+    if (type == "error") {
+      this.toastr.error(message, "", {
+        disableTimeOut: true,
+        enableHtml: true,
+        closeButton: true,
+        toastClass: cssClass,
+        positionClass: "toast-bottom-left",
+      });
+    } else {
+      this.toastr.error(message, "", {
+        disableTimeOut: true,
+        enableHtml: true,
+        closeButton: true,
+        toastClass: cssClass,
+        positionClass: "toast-bottom-left",
+      });
+    }
+  }
+
   replaceAll(value: any, replaceFrom: any, replaceTo: any) {
     let returnValue = "";
     let valueList = value.split(replaceFrom);

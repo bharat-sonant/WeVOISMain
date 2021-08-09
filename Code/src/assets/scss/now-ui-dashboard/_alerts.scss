@@ -27,6 +27,11 @@
     }
 
     
+    &.alert-houses{
+        background-color: lighten($orange-color, 5%);
+    }
+
+    
     &.alert-lineskip{
         background-color: #e97272;
     }
