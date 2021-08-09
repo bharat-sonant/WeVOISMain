@@ -34,23 +34,21 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important; font-size: 10px;">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:5%; ">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
-                                                Houses</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
-                                                Sacned</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
+                                                Routing Length(km)</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
+                                                Covered Length(km)</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardDataList; let i=index"
                                                 style="cursor: pointer;" (click)="getScanDetail(data.wardNo,i);">
-                                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
-                                                    {{data.houses}}</td>
+                                                    {{data.wardLength}}</td>
                                                 <td class="text-right">
-                                                    {{data.scanned}}
+                                                    {{data.wardCoveredLength}}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -105,7 +103,7 @@
                                                         <th class="border-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">Name</th>
                                                     <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Scaneed By
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Scaned By
                                                     </th>
                                                 </thead>
                                                 <tbody>

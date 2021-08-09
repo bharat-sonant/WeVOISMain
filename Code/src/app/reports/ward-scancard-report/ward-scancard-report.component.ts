@@ -1,8 +1,8 @@
 import { AngularFireObject } from "angularfire2/database";
 /// <reference types="@types/googlemaps" />
-import * as jsPDF from "jspdf"; 
+import * as jsPDF from "jspdf";
 
-import { Component, ViewChild, ElementRef , OnInit } from "@angular/core";
+import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
@@ -43,23 +43,21 @@ export class WardScancardReportComponent implements OnInit {
     this.getWards();
   }
 
-  SavePDF(): void {  
-    let content=this.content.nativeElement;  
-    let doc = new jsPDF();  
-    let _elementHandlers =  
-    {  
-      '#editor':function(element,renderer){  
-        return true;  
-      }  
-    };  
-    doc.fromHTML(content.innerHTML,15,15,{  
-  
-      'width':190,  
-      'elementHandlers':_elementHandlers  
-    });  
-  
-    doc.save('test.pdf');  
-  }  
+  SavePDF(): void {
+    let content = this.content.nativeElement;
+    let doc = new jsPDF();
+    let _elementHandlers = {
+      "#editor": function (element, renderer) {
+        return true;
+      },
+    };
+    doc.fromHTML(content.innerHTML, 15, 15, {
+      width: 190,
+      elementHandlers: _elementHandlers,
+    });
+
+    doc.save("test.pdf");
+  }
 
   getWards() {
     this.wardList = [];
@@ -109,10 +107,62 @@ export class WardScancardReportComponent implements OnInit {
           wardNo: circleWardList[i]["wardNo"],
           houses: 0,
           scanned: 0,
+          wardLength: 0,
+          wardCoveredLength: 0,
         });
       }
-      this.getHouseSummary();
+      this.getWardLength();
+      //this.getHouseSummary();
     }
+  }
+
+  getWardLength() {
+    if (this.wardDataList.length > 0) {
+      for (let i = 0; i < this.wardDataList.length; i++) {
+        let wardLenghtPath =
+          "WardRouteLength/" + this.wardDataList[i]["wardNo"];
+        let wardLengthDetails = this.db
+          .object(wardLenghtPath)
+          .valueChanges()
+          .subscribe((wardLengthData) => {
+            wardLengthDetails.unsubscribe();
+            if (wardLengthData != null) {
+              let wardLength = (
+                parseFloat(wardLengthData.toString()) / 1000
+              ).toFixed(2);
+              this.wardDataList[i]["wardLength"] = Number(wardLength);
+            }
+            this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
+          });
+      }
+    }
+  }
+
+  getCoveredLength(index, wardNo) {
+    let monthName = this.commonService.getCurrentMonthName(
+      new Date(this.selectedDate).getMonth()
+    );
+    let year = this.selectedDate.split("-")[0];
+    let dbPath =
+      "WasteCollectionInfo/" +
+      wardNo +
+      "/" +
+      year +
+      "/" +
+      monthName +
+      "/" +
+      this.selectedDate +
+      "/Summary/wardCoveredDistance";
+    let instance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        instance.unsubscribe();
+        if (data != null) {
+          let wardLength = (parseFloat(data.toString()) / 1000).toFixed(2);
+          this.wardDataList[index]["wardCoveredLength"] = Number(wardLength);
+        }
+      });
   }
 
   getHouseSummary() {
@@ -202,7 +252,7 @@ export class WardScancardReportComponent implements OnInit {
       );
     }
     $("#txtDate").val(this.selectedDate);
-    this.getHouseSummary();
+    this.getWardLength();
   }
 
   getScanDetail(wardNo: any, index: any) {
@@ -259,7 +309,10 @@ export class WardScancardReportComponent implements OnInit {
                     cardNo != "totalScanned"
                   ) {
                     console.log(cardNo);
-                    let scanTime = data[cardNo]["scanTime"];
+                    let scanTime =
+                      data[cardNo]["scanTime"].split(":")[0] +
+                      ":" +
+                      data[cardNo]["scanTime"].split(":")[1];
                     let dbPath = "CardWardMapping/" + cardNo;
                     let mapInstance = this.db
                       .object(dbPath)
@@ -298,6 +351,9 @@ export class WardScancardReportComponent implements OnInit {
                             personName: "",
                           });
                         }
+                        this.wardScaanedList = this.wardScaanedList.sort(
+                          (a:any, b:any) => (b.time < a.time ? 1 : -1)
+                        );
                       });
                   }
                 }

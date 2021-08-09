@@ -80,6 +80,7 @@ export class MapsComponent {
   showAllScanedCard: any;
   cardNotScanedList: any[];
   cityName:any;
+  notScanInstance:any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -416,6 +417,9 @@ export class MapsComponent {
   }
 
   onSubmit() {
+    if(this.notScanInstance!=null){
+      this.notScanInstance.unsubscribe();
+    }
     if (this.cardInstance != null) {
       this.cardInstance.unsubscribe();
     }
@@ -440,6 +444,9 @@ export class MapsComponent {
 
   setDate(filterVal: any, type: string) {
     //this.houseList = [];
+    if(this.notScanInstance!=null){
+      this.notScanInstance.unsubscribe();
+    }
     if (this.cardInstance != null) {
       this.cardInstance.unsubscribe();
     }
@@ -482,6 +489,13 @@ export class MapsComponent {
         this.progressData.scanedHouses = 0;
         this.getScanedCard(this.houseList[i]["cardNo"], "red");
         // $("#isHouse").prop("disabled", false);
+        
+      }
+      if(this.selectedDate==this.toDayDate){
+        setTimeout(() => {
+          this.getRecentCardDetail();
+        }, 2000);
+        
       }
       this.getCardNotScaned();
     }
@@ -871,11 +885,15 @@ export class MapsComponent {
       "/" +
       this.selectedDate +
       "/ImagesData";
-    let notScanInstance = this.db
+    this.notScanInstance = this.db
       .list(dbPath)
       .valueChanges()
       .subscribe((data) => {
-        notScanInstance.unsubscribe();
+       // notScanInstance.unsubscribe();
+       if(this.selectedDate!=this.toDayDate)
+       {
+         this.notScanInstance.unsubscribe();
+       }
         if (data.length > 0) {
           let count = 0;
           let city =
@@ -974,12 +992,12 @@ export class MapsComponent {
         }
         if (data != null) {
           if (this.showAllScanedCard == true) {
-            this.showMessage(data["cardNo"]);
+            this.showMessage(data["cardNo"],data["scanTime"]);
             this.setMarkerCurrent(data["cardNo"]);
           } else {
             if (data["scanBy"] != "-1") {
               this.setMarkerCurrent(data["cardNo"]);
-              this.showMessage(data["cardNo"]);
+              this.showMessage(data["cardNo"], data["scanTime"]);
             }
           }
         }
@@ -1061,7 +1079,7 @@ export class MapsComponent {
     this.currentMarker = cardNo;
   }
 
-  showMessage(cardNo: any) {
+  showMessage(cardNo: any, scanTime:any) {
     let dbPath = "CardWardMapping/" + cardNo;
     let mapInstance = this.db
       .object(dbPath)
@@ -1079,7 +1097,7 @@ export class MapsComponent {
               houseInstance.unsubscribe();
               if (dataHouse != null) {
                 let name = dataHouse["name"];
-                let time = dataHouse["lastScanTime"].split(" ")[1];
+                let time = scanTime;
                 let notificationTime = new Date(this.toDayDate + " " + time);
                 let currentTime = new Date();
                 let timeDiff = this.commonService.timeDifferenceMin(
