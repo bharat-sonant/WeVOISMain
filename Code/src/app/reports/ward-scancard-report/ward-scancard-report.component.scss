@@ -156,7 +156,8 @@
   }
   
 .active{
-  background-color: #f3f3f3;
+  background-color: #75c778!important;
+  color: #fff!important;
 }
   
   .fa-expand-showgraph {
@@ -456,5 +457,21 @@ label{
   font-size: 12px;
 }
 
+.progress{
+  background: #d4dde6;
+  }
+  .progress-success{
+  background-color: #b2fcb9 !important;
+  font-size: 11px;
+  font-family: verdana;
+  color: #000;
+  }
+  
+.progress-float{
+  float: right;
+  width: calc(100% - 69px);
+  border:1px solid #0ba118;
+  background-color: #fff;
+  }
 
 

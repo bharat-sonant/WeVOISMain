@@ -1,6 +1,7 @@
 import { AngularFireObject } from "angularfire2/database";
 /// <reference types="@types/googlemaps" />
 import * as jsPDF from "jspdf";
+import 'jspdf-autotable';
 
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
@@ -45,18 +46,19 @@ export class WardScancardReportComponent implements OnInit {
 
   SavePDF(): void {
     let content = this.content.nativeElement;
-    let doc = new jsPDF();
-    let _elementHandlers = {
-      "#editor": function (element, renderer) {
-        return true;
-      },
-    };
-    doc.fromHTML(content.innerHTML, 15, 15, {
-      width: 190,
-      elementHandlers: _elementHandlers,
-    });
+   // let doc = new jsPDF();
+   // let _elementHandlers = {
+   //   "#editor": function (element, renderer) {
+   //     return false;
+   //   },
+   // };
+   // doc.fromHTML(content.innerHTML, 5, 5, {
+   //   width: 400,
+      
+     // elementHandlers: _elementHandlers,
+   // });
 
-    doc.save("test.pdf");
+   // doc.save("test.pdf");
   }
 
   getWards() {
@@ -84,7 +86,7 @@ export class WardScancardReportComponent implements OnInit {
             }
           }
         }
-        this.selectedCircle = "Circle1";
+        this.selectedCircle = "Circle2";
         this.onSubmit();
         circleWiseWard.unsubscribe();
       });
@@ -109,6 +111,7 @@ export class WardScancardReportComponent implements OnInit {
           scanned: 0,
           wardLength: 0,
           wardCoveredLength: 0,
+          workPer:0
         });
       }
       this.getWardLength();
@@ -131,9 +134,16 @@ export class WardScancardReportComponent implements OnInit {
                 parseFloat(wardLengthData.toString()) / 1000
               ).toFixed(2);
               this.wardDataList[i]["wardLength"] = Number(wardLength);
+              this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
             }
-            this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
+            
           });
+          if (i == 0) {
+            this.getScanDetail(this.wardDataList[i]["wardNo"], i);
+            setTimeout(() => {
+              $("#tr0").addClass("active");
+            }, 600);
+          }
       }
     }
   }
@@ -159,8 +169,11 @@ export class WardScancardReportComponent implements OnInit {
       .subscribe((data) => {
         instance.unsubscribe();
         if (data != null) {
-          let wardLength = (parseFloat(data.toString()) / 1000).toFixed(2);
-          this.wardDataList[index]["wardCoveredLength"] = Number(wardLength);
+          let wardCoveredLength = (parseFloat(data.toString()) / 1000).toFixed(2);
+          this.wardDataList[index]["wardCoveredLength"] = Number(wardCoveredLength);
+          let wardLength=this.wardDataList[index]["wardLength"];
+          let workPercentage=(Number(wardCoveredLength)/wardLength)*100;
+          this.wardDataList[index]["workPer"]=workPercentage.toFixed(0)+"%";
         }
       });
   }
