@@ -103,7 +103,7 @@ export class MapsComponent {
   };
 
   ngOnInit() {
-    localStorage.setItem("houseList",null);
+    localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
@@ -111,6 +111,8 @@ export class MapsComponent {
     if (this.userType == "External User") {
       $("#divInternal").hide();
       this.showAllScanedCard = true;
+      $("#DivNotSacnned").hide();
+      $("#DivExternal").css("cursor", "none");
       //$("#isHouse").hide();
       // $("#showHouseLabel").hide();
     } else {
@@ -169,21 +171,23 @@ export class MapsComponent {
   }
 
   showAllMarkers() {
-    if (this.showAllScanedCard == true) {
-      this.showAllScanedCard = false;
-    } else {
-      this.showAllScanedCard = true;
-    }
-    if (this.houseMarkerList.length > 0) {
-      for (let i = 0; i < this.houseMarkerList.length; i++) {
-        this.houseMarkerList[i]["marker"].setMap(null);
+    if (this.userType != "External User") {
+      if (this.showAllScanedCard == true) {
+        this.showAllScanedCard = false;
+      } else {
+        this.showAllScanedCard = true;
       }
-      //this.houseMarkerList = [];
-    }
-    if (this.houseList.length > 0) {
-      for (let i = 0; i < this.houseList.length; i++) {
-        this.progressData.scanedHouses = 0;
-        this.getScanedCard(this.houseList[i]["cardNo"], "red");
+      if (this.houseMarkerList.length > 0) {
+        for (let i = 0; i < this.houseMarkerList.length; i++) {
+          this.houseMarkerList[i]["marker"].setMap(null);
+        }
+        //this.houseMarkerList = [];
+      }
+      if (this.houseList.length > 0) {
+        for (let i = 0; i < this.houseList.length; i++) {
+          this.progressData.scanedHouses = 0;
+          this.getScanedCard(this.houseList[i]["cardNo"], "red");
+        }
       }
     }
   }
@@ -480,13 +484,11 @@ export class MapsComponent {
     this.clearAllOnMap();
     this.polylines = [];
     this.houseMarkerList = [];
-    this.cardNotScanedList=[];
+    this.cardNotScanedList = [];
     //this.houseList = [];
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
-    }
-    else
-    {
+    } else {
       this.marker.setMap(null);
     }
 
@@ -833,29 +835,26 @@ export class MapsComponent {
         );
         if (houseList.length == 0) {
           this.getLocalStorageHouse();
-        }
-        else
-        {
-          for(let i=0;i<houseList.length;i++){
+        } else {
+          for (let i = 0; i < houseList.length; i++) {
             let lat = houseList[i]["lat"];
-              let lng = houseList[i]["lng"];
-              let cardNo = houseList[i]["cardNo"];
-              let isApproved = "no";
-              
-              let markerType = "red";
+            let lng = houseList[i]["lng"];
+            let cardNo = houseList[i]["cardNo"];
+            let isApproved = "no";
 
-              this.houseList.push({
-                wardNo: this.selectedZone,
-                markerType: markerType,
-                lat: lat,
-                lng: lng,
-                cardNo: cardNo,
-                isApproved: isApproved,
-                isActive: false,
-              });
-              this.progressData.houses = Number(this.progressData.houses) + 1;
-              this.getScanedCard(cardNo, markerType);
+            let markerType = "red";
 
+            this.houseList.push({
+              wardNo: this.selectedZone,
+              markerType: markerType,
+              lat: lat,
+              lng: lng,
+              cardNo: cardNo,
+              isApproved: isApproved,
+              isActive: false,
+            });
+            this.progressData.houses = Number(this.progressData.houses) + 1;
+            this.getScanedCard(cardNo, markerType);
           }
         }
       }
@@ -925,7 +924,8 @@ export class MapsComponent {
                 });
               } else {
                 let houseDetail = houseLocalList.find(
-                  (item) => item.cardNo == cardNo && item.ward==this.selectedZone
+                  (item) =>
+                    item.cardNo == cardNo && item.ward == this.selectedZone
                 );
                 if (houseDetail == undefined) {
                   houseLocalList.push({

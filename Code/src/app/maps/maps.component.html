@@ -24,7 +24,7 @@
     <div id="houseCount" class="col-md-3 text-right total-house" style=" display: none;">
       
       <div class="fix-home">
-        <div class="float-first" style="margin-left: 10px; margin-top: 12px;">
+        <div id="DivNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
           <i class="fas fa-vr-cardboard" style="cursor: pointer;" (click)="showCardDetail(contentCardNotScaned);"></i> <span class="house"><span style="color: #1fda2f;">
               {{progressData.cardNotScaned}}</span></span><br>
           <h6>Card Not Scaned</h6>
@@ -34,7 +34,7 @@
           <h6>Total House</h6>
         </div>
         <div class="float-third">
-          <i class="fas fa-house-damage" style="cursor: pointer;" (click)="showAllMarkers();"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
+          <i id="DivExternal" class="fas fa-house-damage" style="cursor: pointer;" (click)="showAllMarkers();"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
           <h6>Scanned House</h6>
         </div>
       </div>
