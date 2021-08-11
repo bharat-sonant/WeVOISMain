@@ -151,7 +151,7 @@ export class MapsComponent {
       let width = windowWidth - 300;
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      let divHeight = height - 26 + "px";
+      let divHeight = height - 50 + "px";
       $("div .modal-content")
         .parent()
         .css("max-width", "" + width + "px")
@@ -480,9 +480,14 @@ export class MapsComponent {
     this.clearAllOnMap();
     this.polylines = [];
     this.houseMarkerList = [];
+    this.cardNotScanedList=[];
     //this.houseList = [];
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
+    }
+    else
+    {
+      this.marker.setMap(null);
     }
 
     if (this.houseList.length > 0) {
@@ -499,12 +504,14 @@ export class MapsComponent {
       this.getCardNotScaned();
     }
 
-    /*
     this.setKml();
     this.getAllLinesFromJson();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getParshadHouse();
+
+    /*
+    
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
     $("#houseCount").hide();
