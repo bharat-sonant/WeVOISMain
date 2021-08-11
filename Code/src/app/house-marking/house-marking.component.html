@@ -231,7 +231,7 @@
 
     </div>
     <div class="modal-body" style="margin-top:-20px; ">
-      <div class="content-scroll">
+      <div id="divStatus" class="content-scroll">
       <div class="row">
         <div class="col-md-2" *ngFor="let dt of markerList">
           <div style="width:100%">
@@ -241,13 +241,18 @@
           </div>
           <div class="main-tag">
             <div class="f-left">
+              <h3 style="width: 100%;">  {{dt.type}} </h3><br/>
               <p>Already Card <span class="f-right"> :</span></p>   
-              <h3>  {{dt.alreadyInstalled}} </h3>
+              <h3>  {{dt.alreadyInstalled}} </h3><br/>
+              <span [hidden]="dt.status==''" ><p>Status <span class="f-right"> :</span></p>   
+              <h3>  {{dt.status}} </h3></span>
             </div>
           </div>
-          <span [hidden]="dt.status==''"> status:{{dt.status}}<br/></span>
-          <button class="btn btn-success" (click)="saveMarkerStatus(dt.index);"
-            style="width:100px; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>
+
+          <button class="btn btn-success" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);"
+            style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
+            <button class="btn btn-danger" [hidden]="dt.status==''" (click)="removeMarker(dt.index);"
+            style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
 
         </div>
       </div>
