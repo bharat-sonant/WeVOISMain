@@ -426,7 +426,7 @@
   }
   .table-scroll{
     padding: 0px;
-    height: 74vh;
+    height: 88vh;
     overflow: hidden;
     overflow-y: scroll;
   }
@@ -472,6 +472,26 @@ label{
   width: calc(100% - 69px);
   border:1px solid #0ba118;
   background-color: #fff;
+  }
+
+  
+.loaderClass{
+  display: none; 
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background-color: lightgray;
+  opacity: 0.5; 
+  margin-left: -11px; margin-top: -10px;
+  }
+  
+  
+  .imgLoader{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); 
   }
 
 

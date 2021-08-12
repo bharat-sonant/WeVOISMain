@@ -1,10 +1,10 @@
-import { AngularFireObject } from "angularfire2/database";
+
 /// <reference types="@types/googlemaps" />
 import * as jsPDF from "jspdf";
 import "jspdf-autotable";
 
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 import { interval } from "rxjs";
@@ -27,6 +27,9 @@ export class WardScancardReportComponent implements OnInit {
     private actRoute: ActivatedRoute,
     private commonService: CommonService
   ) {}
+  usersRef: AngularFireList<any>;    // Reference to Users data list, its an Observable
+  userRef: AngularFireObject<any>; 
+
   wardList: any[];
   selectedCircle: any;
   selectedDate: any;
@@ -43,18 +46,104 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    //this.checkCards();
+
+    this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.selectedDate);
     this.getWards();
   }
 
+  checkCards() {
+    let dbPath = "WardLines";
+    let wardInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((wardData) => {
+        wardInstance.unsubscribe();
+        if (wardData != null) {
+          let wardKeyArray = Object.keys(wardData);
+          if (wardKeyArray.length > 0) {
+            // for (let i = 0; i < wardKeyArray.length; i++) {
+            // let wardInex = wardKeyArray[i];
+            //  let wardLines = wardData[wardInex];
+            let datalist=[];
+            for (let j = 1; j <= 53; j++) {
+              let dbPath1 = "Defaults/WardLines/30/" + j + "/Houses";
+              let houseInstance = this.db
+                .list(dbPath1)
+                .valueChanges()
+                .subscribe((houseData) => {
+                  houseInstance.unsubscribe();
+                  if (houseData.length > 0) {
+                    for (let k = 0; k < houseData.length; k++) {
+                      if (houseData[k]["Basicinfo"] != null) {
+                        if (houseData[k]["Basicinfo"]["CardNumber"] != null) {
+                          let cardNo = houseData[k]["Basicinfo"]["CardNumber"];
+
+                          let dbPath2 = "CardWardMapping/" + cardNo;
+                          let mapInstance = this.db
+                            .object(dbPath2)
+                            .valueChanges()
+                            .subscribe((mapData) => {
+                              mapInstance.unsubscribe();
+                              if (mapData != null) {
+                                let ward = mapData["ward"];
+                                let line = mapData["line"];
+                                let dbPath3 =
+                                  "Houses/" + ward + "/" + line + "/" + cardNo;
+                                let housesInstance = this.db
+                                  .object(dbPath3)
+                                  .valueChanges()
+                                  .subscribe((data) => {
+                                    housesInstance.unsubscribe();
+                                    if (data == null) {
+                                      console.log(
+                                        "ward " +
+                                          ward +
+                                          " line " +
+                                          line +
+                                          " cardno " +
+                                          cardNo
+                                      );
+                                      const hdata={
+                                        cardNo: cardNo
+                                      }
+                                      
+                                      this.db.list("HouseNotFoundHSC/"+ward+"/"+line+"/").push(hdata);
+                                    }
+                                    else
+                                    {
+                                      console.log("not");
+                                    }
+                                  });
+                              }
+                            });
+                        }
+                      }
+                    }
+                  }
+                });
+            }
+            // }
+          }
+        }
+      });
+  }
+  
+
+  showLoder() {
+    $("#divLoader").show();
+    setTimeout(() => {
+      $("#divLoader").hide();
+    }, 4000);
+  }
+
   SavePDF(type: any) {
     if (type == "detail") {
       this.generateDetailPdf();
-    }
-    else
-    {
+    } else {
       this.generatePdf();
     }
   }
@@ -75,8 +164,20 @@ export class WardScancardReportComponent implements OnInit {
       var pageWidth =
         pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
 
+      let monthName = this.commonService.getCurrentMonthShortName(
+        Number(this.selectedDate.split("-")[1]) - 1
+      );
       let title =
-        "Ward " + this.wardScaanedList[0]["wardNo"] + " Card Scan Report";
+        " Card Scan Report - Ward " +
+        this.wardScaanedList[0]["wardNo"] +
+        " [" +
+        this.selectedDate.split("-")[2] +
+        " " +
+        monthName +
+        " " +
+        this.selectedDate.split("-")[0] +
+        "]";
+
       pdf.text(title, pageWidth / 2, 8, { align: "center" });
       pdf.setFont("helvetica");
       pdf.setFontType("italic");
@@ -111,8 +212,18 @@ export class WardScancardReportComponent implements OnInit {
       var pdf = new jsPDF();
       var pageWidth =
         pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
+      let monthName = this.commonService.getCurrentMonthShortName(
+        Number(this.selectedDate.split("-")[1]) - 1
+      );
+      let title =
+        " Card Scan Report  [" +
+        this.selectedDate.split("-")[2] +
+        " " +
+        monthName +
+        " " +
+        this.selectedDate.split("-")[0] +
+        "]";
 
-      let title = "Card Scan Report";
       pdf.text(title, pageWidth / 2, 8, { align: "center" });
       pdf.setFont("helvetica");
       pdf.setFontType("italic");
@@ -160,6 +271,7 @@ export class WardScancardReportComponent implements OnInit {
           }
         }
         this.selectedCircle = "Circle2";
+
         this.onSubmit();
         circleWiseWard.unsubscribe();
       });
@@ -344,6 +456,7 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   getScanDetail(wardNo: any, index: any) {
+    this.showLoder();
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {
@@ -405,6 +518,9 @@ export class WardScancardReportComponent implements OnInit {
                         new Date(this.selectedDate + " " + scanTime).getTime()
                       ) / 10000;
                     let dbPath = "CardWardMapping/" + cardNo;
+                    if (cardNo == "SIKA71048") {
+                      console.log(dbPath);
+                    }
                     let mapInstance = this.db
                       .object(dbPath)
                       .valueChanges()
@@ -413,7 +529,11 @@ export class WardScancardReportComponent implements OnInit {
                         if (mapData != null) {
                           let line = mapData["line"];
                           let ward = mapData["ward"];
+
                           dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+                          if (cardNo == "SIKA71048") {
+                            console.log(dbPath);
+                          }
                           let houseInstance = this.db
                             .object(dbPath)
                             .valueChanges()
@@ -435,16 +555,6 @@ export class WardScancardReportComponent implements OnInit {
                                 sno: Number(date),
                               });
                             });
-                        } else {
-                          this.wardScaanedList.push({
-                            wardNo: wardNo,
-                            cardNo: cardNo,
-                            time: scanTime,
-                            name: name,
-                            rfId: "",
-                            personName: "",
-                            sno: Number(date),
-                          });
                         }
                       });
                   }
