@@ -1,7 +1,7 @@
 import { AngularFireObject } from "angularfire2/database";
 /// <reference types="@types/googlemaps" />
 import * as jsPDF from "jspdf";
-import 'jspdf-autotable';
+import "jspdf-autotable";
 
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
@@ -27,7 +27,6 @@ export class WardScancardReportComponent implements OnInit {
     private actRoute: ActivatedRoute,
     private commonService: CommonService
   ) {}
-  @ViewChild("content", null) content: ElementRef;
   wardList: any[];
   selectedCircle: any;
   selectedDate: any;
@@ -36,6 +35,12 @@ export class WardScancardReportComponent implements OnInit {
   wardScaanedList: any;
   isFirst = true;
   db: any;
+
+  header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
+  headerWard = [["Ward No.", "Routing Length(km)", "Covered Length(km)"]];
+
+  tableData = [[]];
+
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
@@ -44,21 +49,89 @@ export class WardScancardReportComponent implements OnInit {
     this.getWards();
   }
 
-  SavePDF(): void {
-    let content = this.content.nativeElement;
-   // let doc = new jsPDF();
-   // let _elementHandlers = {
-   //   "#editor": function (element, renderer) {
-   //     return false;
-   //   },
-   // };
-   // doc.fromHTML(content.innerHTML, 5, 5, {
-   //   width: 400,
-      
-     // elementHandlers: _elementHandlers,
-   // });
+  SavePDF(type: any) {
+    if (type == "detail") {
+      this.generateDetailPdf();
+    }
+    else
+    {
+      this.generatePdf();
+    }
+  }
 
-   // doc.save("test.pdf");
+  generateDetailPdf() {
+    this.tableData = [];
+    if (this.wardScaanedList.length > 0) {
+      for (let i = 0; i < this.wardScaanedList.length; i++) {
+        let tableArray = [];
+        tableArray.push(this.wardScaanedList[i]["cardNo"]);
+        tableArray.push(this.wardScaanedList[i]["personName"]);
+        tableArray.push(this.wardScaanedList[i]["rfId"]);
+        tableArray.push(this.wardScaanedList[i]["time"]);
+        tableArray.push(this.wardScaanedList[i]["name"]);
+        this.tableData.push(tableArray);
+      }
+      var pdf = new jsPDF();
+      var pageWidth =
+        pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
+
+      let title =
+        "Ward " + this.wardScaanedList[0]["wardNo"] + " Card Scan Report";
+      pdf.text(title, pageWidth / 2, 8, { align: "center" });
+      pdf.setFont("helvetica");
+      pdf.setFontType("italic");
+      pdf.setFontSize(5);
+      pdf.setTextColor(99);
+
+      (pdf as any).autoTable({
+        head: this.header,
+        body: this.tableData,
+        theme: "grid",
+      });
+
+      // Open PDF document in browser's new tab
+      pdf.output("dataurlnewwindow");
+
+      // Download PDF doc
+      let fileName = this.wardScaanedList[0]["wardNo"] + ".pdf";
+      pdf.save(fileName);
+    }
+  }
+
+  generatePdf() {
+    this.tableData = [];
+    if (this.wardDataList.length > 0) {
+      for (let i = 0; i < this.wardDataList.length; i++) {
+        let tableArray = [];
+        tableArray.push(this.wardDataList[i]["wardNo"]);
+        tableArray.push(this.wardDataList[i]["wardLength"]);
+        tableArray.push(this.wardDataList[i]["wardCoveredLength"]);
+        this.tableData.push(tableArray);
+      }
+      var pdf = new jsPDF();
+      var pageWidth =
+        pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
+
+      let title = "Card Scan Report";
+      pdf.text(title, pageWidth / 2, 8, { align: "center" });
+      pdf.setFont("helvetica");
+      pdf.setFontType("italic");
+      pdf.setFontSize(5);
+      pdf.setTextColor(99);
+
+      (pdf as any).autoTable({
+        head: this.headerWard,
+        body: this.tableData,
+        theme: "grid",
+      });
+
+      // Open PDF document in browser's new tab
+      pdf.output("dataurlnewwindow");
+
+      // Download PDF doc
+      let fileName = "CardScanReport.pdf";
+      pdf.save(fileName);
+    }
   }
 
   getWards() {
@@ -111,7 +184,7 @@ export class WardScancardReportComponent implements OnInit {
           scanned: 0,
           wardLength: 0,
           wardCoveredLength: 0,
-          workPer:0
+          workPer: 0,
         });
       }
       this.getWardLength();
@@ -136,14 +209,13 @@ export class WardScancardReportComponent implements OnInit {
               this.wardDataList[i]["wardLength"] = Number(wardLength);
               this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
             }
-            
           });
-          if (i == 0) {
-            this.getScanDetail(this.wardDataList[i]["wardNo"], i);
-            setTimeout(() => {
-              $("#tr0").addClass("active");
-            }, 600);
-          }
+        if (i == 0) {
+          this.getScanDetail(this.wardDataList[i]["wardNo"], i);
+          setTimeout(() => {
+            $("#tr0").addClass("active");
+          }, 600);
+        }
       }
     }
   }
@@ -169,11 +241,14 @@ export class WardScancardReportComponent implements OnInit {
       .subscribe((data) => {
         instance.unsubscribe();
         if (data != null) {
-          let wardCoveredLength = (parseFloat(data.toString()) / 1000).toFixed(2);
-          this.wardDataList[index]["wardCoveredLength"] = Number(wardCoveredLength);
-          let wardLength=this.wardDataList[index]["wardLength"];
-          let workPercentage=(Number(wardCoveredLength)/wardLength)*100;
-          this.wardDataList[index]["workPer"]=workPercentage.toFixed(0)+"%";
+          let wardCoveredLength = (parseFloat(data.toString()) / 1000).toFixed(
+            2
+          );
+          this.wardDataList[index]["wardCoveredLength"] =
+            Number(wardCoveredLength);
+          let wardLength = this.wardDataList[index]["wardLength"];
+          let workPercentage = (Number(wardCoveredLength) / wardLength) * 100;
+          this.wardDataList[index]["workPer"] = workPercentage.toFixed(0) + "%";
         }
       });
   }
@@ -325,7 +400,10 @@ export class WardScancardReportComponent implements OnInit {
                       data[cardNo]["scanTime"].split(":")[0] +
                       ":" +
                       data[cardNo]["scanTime"].split(":")[1];
-                      let date=Number(new Date(this.selectedDate+" "+ scanTime).getTime())/10000;
+                    let date =
+                      Number(
+                        new Date(this.selectedDate + " " + scanTime).getTime()
+                      ) / 10000;
                     let dbPath = "CardWardMapping/" + cardNo;
                     let mapInstance = this.db
                       .object(dbPath)
@@ -348,30 +426,32 @@ export class WardScancardReportComponent implements OnInit {
                                 personName = houseData["name"];
                               }
                               this.wardScaanedList.push({
+                                wardNo: wardNo,
                                 cardNo: cardNo,
                                 time: scanTime,
                                 name: name,
                                 rfId: rfId,
                                 personName: personName,
-                                sno:Number(date)
+                                sno: Number(date),
                               });
                             });
                         } else {
                           this.wardScaanedList.push({
+                            wardNo: wardNo,
                             cardNo: cardNo,
                             time: scanTime,
                             name: name,
                             rfId: "",
                             personName: "",
-                            sno:Number(date)
+                            sno: Number(date),
                           });
                         }
                       });
                   }
                 }
                 setTimeout(() => {
-                  this.wardScaanedList = this.wardScaanedList.sort(
-                    (a, b) => (Number(b.sno) < Number(a.sno) ? 1 : -1)
+                  this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                    Number(b.sno) < Number(a.sno) ? 1 : -1
                   );
                 }, 2000);
               }
