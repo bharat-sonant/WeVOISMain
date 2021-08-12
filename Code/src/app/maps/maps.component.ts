@@ -1,3 +1,4 @@
+import { LineCardMappingComponent } from "./../line-card-mapping/line-card-mapping.component";
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -948,7 +949,7 @@ export class MapsComponent {
     }
   }
 
-  getCardNotScaned() {
+  getCardNotScanned() {
     this.progressData.cardNotScaned = 0;
     let dbPath =
       "HousesCollectionInfo/" +
@@ -961,44 +962,123 @@ export class MapsComponent {
       this.selectedDate +
       "/ImagesData";
     this.notScanInstance = this.db
-      .list(dbPath)
+      .object(dbPath)
       .valueChanges()
       .subscribe((data) => {
         // notScanInstance.unsubscribe();
         if (this.selectedDate != this.toDayDate) {
           this.notScanInstance.unsubscribe();
         }
-        if (data.length > 0) {
+        if (data != null) {
           let count = 0;
+          this.cardNotScanedList = [];
           let city =
             this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
-          for (let i = 0; i < data.length; i++) {
-            if (data[i]["cardImage"] != null) {
-              let imageUrl =
-                "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-                city +
-                "%2FHousesCollectionImagesData%2F" +
-                this.selectedZone +
-                "%2F" +
-                this.currentYear +
-                "%2F" +
-                this.currentMonthName +
-                "%2F" +
-                this.selectedDate +
-                "%2F" +
-                data[i]["cardImage"] +
-                "?alt=media";
-              let time =
-                data[i]["scanTime"].split(":")[0] +
-                ":" +
-                data[i]["scanTime"].split(":")[1];
-              this.cardNotScanedList.push({ imageUrl: imageUrl, time: time });
-              count++;
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            if (lineNo != "totalCount") {
+              let obj = data[lineNo];
+              let keyArrayLine = Object.keys(obj);
+              if (keyArrayLine.length > 0) {
+                for (let j = 0; j < keyArrayLine.length; j++) {
+                  let index = keyArrayLine[j];
+                  if (obj[index]["cardImage"] != null) {
+                    let imageUrl =
+                      "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                      city +
+                      "%2FHousesCollectionImagesData%2F" +
+                      this.selectedZone +
+                      "%2F" +
+                      this.currentYear +
+                      "%2F" +
+                      this.currentMonthName +
+                      "%2F" +
+                      this.selectedDate +
+                      "%2F" +
+                      lineNo +
+                      "%2F" +
+                      obj[index]["cardImage"] +
+                      "?alt=media";
+                    let time =
+                      obj[index]["scanTime"].split(":")[0] +
+                      ":" +
+                      obj[index]["scanTime"].split(":")[1];
+                    this.cardNotScanedList.push({
+                      imageUrl: imageUrl,
+                      time: time,
+                      lineNo: lineNo,
+                    });
+                    count++;
+                  }
+                }
+              }
             }
           }
           this.progressData.cardNotScaned = count;
         }
       });
+  }
+
+  getCardNotScaned() {
+    let oldDate = new Date("2021-08-12");
+    let currentDate = new Date(this.selectedDate);
+    if (currentDate >= oldDate) {
+      this.getCardNotScanned();
+    } else {
+      this.progressData.cardNotScaned = 0;
+      let dbPath =
+        "HousesCollectionInfo/" +
+        this.selectedZone +
+        "/" +
+        this.currentYear +
+        "/" +
+        this.currentMonthName +
+        "/" +
+        this.selectedDate +
+        "/ImagesData";
+      this.notScanInstance = this.db
+        .list(dbPath)
+        .valueChanges()
+        .subscribe((data) => {
+          // notScanInstance.unsubscribe();
+          if (this.selectedDate != this.toDayDate) {
+            this.notScanInstance.unsubscribe();
+          }
+          this.cardNotScanedList = [];
+
+          if (data.length > 0) {
+            let count = 0;
+            let city =
+              this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
+            for (let i = 0; i < data.length; i++) {
+              if (data[i]["cardImage"] != null) {
+                let imageUrl =
+                  "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                  city +
+                  "%2FHousesCollectionImagesData%2F" +
+                  this.selectedZone +
+                  "%2F" +
+                  this.currentYear +
+                  "%2F" +
+                  this.currentMonthName +
+                  "%2F" +
+                  this.selectedDate +
+                  "%2F" +
+                  data[i]["cardImage"] +
+                  "?alt=media";
+                let time =
+                  data[i]["scanTime"].split(":")[0] +
+                  ":" +
+                  data[i]["scanTime"].split(":")[1];
+                this.cardNotScanedList.push({ imageUrl: imageUrl, time: time });
+                count++;
+              }
+            }
+            this.progressData.cardNotScaned = count;
+          }
+        });
+    }
   }
 
   getScanedCard(cardNo: any, markerType: any) {
