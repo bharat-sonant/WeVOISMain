@@ -544,16 +544,17 @@ export class WardScancardReportComponent implements OnInit {
                               if (houseData != null) {
                                 rfId = houseData["rfid"];
                                 personName = houseData["name"];
+                                this.wardScaanedList.push({
+                                  wardNo: wardNo,
+                                  cardNo: cardNo,
+                                  time: scanTime,
+                                  name: name,
+                                  rfId: rfId,
+                                  personName: personName,
+                                  sno: Number(date),
+                                });
                               }
-                              this.wardScaanedList.push({
-                                wardNo: wardNo,
-                                cardNo: cardNo,
-                                time: scanTime,
-                                name: name,
-                                rfId: rfId,
-                                personName: personName,
-                                sno: Number(date),
-                              });
+                              
                             });
                         }
                       });
