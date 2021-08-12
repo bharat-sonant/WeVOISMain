@@ -54,6 +54,7 @@ export class HaltsComponent {
     helperName: "---",
     helperMobile: "---",
     totalBreakHours: "00:00",
+    wardHalt:"00.00"
   };
 
   ngOnInit() {
@@ -94,6 +95,8 @@ export class HaltsComponent {
   getHaltList() {
     this.haltList = [];
     this.haltDataInfo = [];
+    this.haltDetails.wardHalt="00.00";
+    let totalWardHalts=0;
     if (this.zoneList.length > 0) {
       for (let i = 1; i < this.zoneList.length; i++) {
         let haltInfoPath =
@@ -166,6 +169,8 @@ export class HaltsComponent {
             if (totalBreak == 0) {
               displayIndex = 2;
             }
+            totalWardHalts=totalWardHalts+totalBreak;
+            this.haltDetails.wardHalt=this.commonService.getHrs(totalWardHalts);
             this.haltList.push({
               zoneNo: zoneNo,
               zoneName: zoneName,
@@ -702,4 +707,5 @@ export class haltDetail {
   helperName: string;
   helperMobile: string;
   totalBreakHours: string;
+  wardHalt:string;
 }
