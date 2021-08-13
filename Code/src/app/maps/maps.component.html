@@ -17,7 +17,7 @@
               {{zone.zoneName}}
             </option>
           </select>&nbsp;&nbsp;
-          <input id="isHouse" type="checkbox" (change)="onHouseSubmit();" /><span id="showHouseLabel"> Show
+          <input id="isHouse" type="checkbox" (change)="showHouse();" /><span id="showHouseLabel"> Show
             Houses</span>
     </div>
 
@@ -129,7 +129,7 @@
   </div>
   <div class="lines2">
     <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
-      <p>Current Ward Length</p>
+      <p>Covered Ward Length</p>
     </h3>
   </div>
   <div id="divInternal">

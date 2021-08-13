@@ -991,7 +991,7 @@ export class CommonService {
   setAlertMessageWithLeftPosition(type: any, message: any, cssClass: any) {
     if (type == "error") {
       this.toastr.error(message, "", {
-        timeOut: 600000,
+        timeOut: 6000,
         enableHtml: true,
         closeButton: true,
         toastClass: cssClass,
@@ -999,7 +999,7 @@ export class CommonService {
       });
     } else {
       this.toastr.error(message, "", {
-        timeOut: 600000,
+        timeOut: 6000,
         enableHtml: true,
         closeButton: true,
         toastClass: cssClass,
@@ -1162,8 +1162,9 @@ export class CommonService {
       .list(dbPath)
       .valueChanges()
       .subscribe((data) => {
+        wardDetail.unsubscribe();
         if (data.length > 0) {
-          letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
+          letestZone.push({ zoneNo: "0", zoneName: "-- Select --",wardLines:0 });
           for (let index = 0; index < data.length; index++) {
             if (
               !data[index].toString().includes("Test") &&
@@ -1177,49 +1178,99 @@ export class CommonService {
               data[index] != "SecondHelper" &&
               data[index] != "ThirdHelper"
             ) {
-              if (data[index].toString().includes("mkt")) {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName:
-                    "Market " + data[index].toString().replace("mkt", ""),
+              let wardLineCount = newDb
+                .object("WardLines/" + data[index] + "")
+                .valueChanges()
+                .subscribe((lineCount) => {
+                  wardLineCount.unsubscribe();
+                  if (lineCount != null) {
+                    let wardLines = Number(lineCount);
+
+                    if (data[index].toString().includes("mkt")) {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName:
+                          "Market " + data[index].toString().replace("mkt", ""),
+                        wardLines: wardLines,
+                      });
+                    } else if (
+                      data[index].toString().includes("MarketRoute1")
+                    ) {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Market 1",
+                        wardLines: wardLines,
+                      });
+                    } else if (
+                      data[index].toString().includes("MarketRoute2")
+                    ) {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Market 2",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 1",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste1") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 2",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste2") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 3",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste4") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 4",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste5") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 5",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "WetWaste6") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Wet 6",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "CompactorTracking1") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "CompactorTracking1",
+                        wardLines: wardLines,
+                      });
+                    } else if (data[index].toString() == "CompactorTracking2") {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "CompactorTracking2",
+                        wardLines: wardLines,
+                      });
+                    } else {
+                      letestZone.push({
+                        zoneNo: data[index],
+                        zoneName: "Ward " + data[index],
+                        wardLines: wardLines,
+                      });
+                    }
+                  }
+                  localStorage.setItem("latest-zones", JSON.stringify(letestZone));
                 });
-              } else if (data[index].toString().includes("MarketRoute1")) {
-                letestZone.push({ zoneNo: data[index], zoneName: "Market 1" });
-              } else if (data[index].toString().includes("MarketRoute2")) {
-                letestZone.push({ zoneNo: data[index], zoneName: "Market 2" });
-              } else if (data[index].toString() == "WetWaste") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 1" });
-              } else if (data[index].toString() == "WetWaste1") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 2" });
-              } else if (data[index].toString() == "WetWaste2") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 3" });
-              } else if (data[index].toString() == "WetWaste4") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 4" });
-              } else if (data[index].toString() == "WetWaste5") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 5" });
-              } else if (data[index].toString() == "WetWaste6") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 6" });
-              } else if (data[index].toString() == "CompactorTracking1") {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking1",
-                });
-              } else if (data[index].toString() == "CompactorTracking2") {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking2",
-                });
-              } else {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "Ward " + data[index],
-                });
-              }
             }
           }
-          localStorage.setItem("latest-zones", JSON.stringify(letestZone));
-        }
-        wardDetail.unsubscribe();
+         
+        }       
       });
   }
 
