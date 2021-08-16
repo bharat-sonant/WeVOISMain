@@ -72,6 +72,12 @@ export class PortalServicesComponent implements OnInit {
         ) {
           $("#divMapReview").show();
         }
+        if (
+          userAccessList[i]["pageId"] == "8F" &&
+          userAccessList[i]["userId"] == this.userId
+        ) {
+          $("#divLineMarker").show();
+        }
       }
       this.getSalary();
       this.getYear();

@@ -77,11 +77,11 @@
 }
 .caret-select{
    margin-top: 0px!important; 
-   padding:10px 15px;
+   padding:6px 10px;
    border-radius: 5px;
    border:none!important;
    width: 97%;
-   font-size: 12px;
+   font-size: 10px;
 }
 .caret-select:focus{
    outline: none!important;
@@ -90,18 +90,18 @@ button:focus-visible{
    outline: none!important;
 }
 .btn-update{
-border-width: 2px;
-font-weight: 400;
-font-size: 0.8571em;
-line-height: 1.35em;
-border: none;
-margin: 0px 1px;
-border-radius: 0.1875rem;
-padding: 8px 21px;
-cursor: pointer;
-background-color: #2dbd23;
-color: #FFFFFF;
-text-transform: uppercase;
+   border-width: 2px;
+   font-weight: 400;
+   font-size: 0.8571em;
+   line-height: 1.35em;
+   border: none;
+   margin: 0px 5px 5px -4px;
+   border-radius: 0.1875rem;
+   padding: 6px 9px;
+   cursor: pointer;
+   background-color: #2dbd23;
+   color: #FFFFFF;
+   text-transform: uppercase;
 }
 
 .heading{

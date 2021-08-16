@@ -14,6 +14,14 @@
         </div>
         </div>
        </div>
+       <div id="divLineMarker"    class="col-md-2" style="padding-left: 17px; padding-right: 8px; padding-top: 25px; display: none;">
+        <div class="more-cards rainbow" (click)="goToPage('/8F/line-marker-mapping');">
+          <div class="vertical">
+          <i class="now-ui-icons location_pin" style="font-weight: bold;"></i> <br>
+          <h3>Line Marker Mapping</h3>
+        </div>
+        </div>
+       </div>
        <div id="divWorkPercentage"  class="col-md-2" style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
         <div class="more-cards rainbow"  (click)="goToPage('/8B/ward-work-percentage');">
           <div class="vertical">
@@ -38,11 +46,11 @@
         </div>
         </div>
        </div>
-      <div id="divReachCost" class="col-md-4" style="display: none;">
+      <div id="divReachCost" class="col-md-2" style="display: none;">
         <div class="dashboard-widgets-update">
           <div class="heading">Ward Reach Cost Data</div>
           <div class="row" style="padding:10px; margin-top: 4px;">
-            <div class="col-md-4" style="padding-left: 18px; padding-right: 5px;">
+            <div class="col-md-6" style="padding-left: 10px; padding-right: 5px;">
               <select id="ddlMonth" class="caret-select">
                 <option value="0">Month</option>
                 <option value="01">January</option>
@@ -59,20 +67,21 @@
                 <option value="12">December</option>
               </select>
             </div>
-            <div class="col-md-4" style="padding-left: 10px; padding-right: 5px;">
+            <div class="col-md-6" style="padding-left: 10px; padding-right: 10px;">
               <select id="ddlYear" class="caret-select">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList">{{yer.year}}</option>
               </select>
             </div>
-            <div class="col-md-4" style="padding-left: 5px; padding-right: 18px;">
+            
+          </div>
+          <div class="row" style="padding:3px;">
+            <div class="col-md-6" style="padding-left: 18px; padding-right: 0px;">
               <select id="ddlZone" class="caret-select">
                 <option value="{{zone.zoneNo}}" *ngFor="let zone of zoneList">{{zone.zoneName}}</option>
               </select>
             </div>
-          </div>
-          <div class="row" style="padding:3px;">
-            <div class="col-md-12">
+            <div class="col-md-6" style="padding-left: 10px; padding-right: 0px;">
               <button class="btn-update" (click)="setWardDutyDataAll();">Update</button>
             </div>
           </div>

@@ -378,6 +378,7 @@ export class MapsComponent {
         "error",
         "Please select current or previos date!!!"
       );
+      return;
     }
     $("#txtDate").val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(

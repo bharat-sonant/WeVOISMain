@@ -73,6 +73,7 @@ import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
 import { WardHaltReportComponent } from '../../reports/ward-halt-report/ward-halt-report.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
+import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -161,6 +162,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'sikar/ward-halt-report', component: WardHaltReportComponent },
     { path: 'sikar/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'sikar/line-marker-mapping', component: LineMarkerMappingComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -240,6 +242,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'sikar/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'sikar/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'sikar/:id/line-marker-mapping', component: LineMarkerMappingComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -319,6 +322,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'reengus/ward-halt-report', component: WardHaltReportComponent },
     { path: 'reengus/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'reengus/line-marker-mapping', component: LineMarkerMappingComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -398,6 +402,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'reengus/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'reengus/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'reengus/:id/line-marker-mapping', component: LineMarkerMappingComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -477,6 +482,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'test/ward-halt-report', component: WardHaltReportComponent },
     { path: 'test/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'test/line-marker-mapping', component: LineMarkerMappingComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -556,6 +562,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'test/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'test/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'test/:id/line-marker-mapping', component: LineMarkerMappingComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -635,6 +642,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'demo/ward-halt-report', component: WardHaltReportComponent },
     { path: 'demo/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'demo/line-marker-mapping', component: LineMarkerMappingComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -714,4 +722,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: 'demo/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'demo/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'demo/:id/line-marker-mapping', component: LineMarkerMappingComponent },
 ]; 
