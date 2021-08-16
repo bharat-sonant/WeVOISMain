@@ -60,13 +60,13 @@
             <option value={{task.id}} *ngFor="let task of taskFilterList">
               {{task.name}}</option>
           </select>
-          
+
           <input id="txtDate" class="caret-select-vehicle custom-date-input" type="date" (change)="getTaskList();"
             style="height: 38px; width: 140px; padding-left: 10px; margin-right: 8px;" />
           <button class="fa-expand-showgraph" (click)="resetAllFilter();" title="Reset All Filter"><i
               class="fas fa-sync-alt"></i></button>
           <span class="indication"><i class="fas fa-caret-left"></i></span>
-          <span class="data"> <i class="far fa-clock"></i> {{taskData.totalMinutes}} min
+          <span class="data"> <i class="far fa-clock"></i> {{taskData.totalMinutes}} hour
           </span>
 
         </div>
@@ -85,6 +85,7 @@
                       <th style="border-right:1px solid #dee2e6">Category</th>
                       <th style="border-right:1px solid #dee2e6">Module</th>
                       <th style="border-right:1px solid #dee2e6">Task Description</th>
+                      <th style="border-right:1px solid #dee2e6">Task Status</th>
                       <th style="border-right:1px solid #dee2e6">Time</th>
                       <th style="padding-right: 20px;">Action</th>
                     </thead>
@@ -95,7 +96,7 @@
                           {{data.name}}</td>
                         <td style="border-right:1px solid #dee2e6; width:8%;">
                           {{data.date}}</td>
-                        
+
 
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.project}}</td>
@@ -104,6 +105,7 @@
                         <td style="border-right:1px solid #dee2e6; width:10%;">
                           {{data.task}}</td>
                         <td style="border-right:1px solid #dee2e6; width:24%">{{data.description}}</td>
+                        <td style="border-right:1px solid #dee2e6; width:10%">{{data.status}}</td>
                         <td class="text-right" style="border-right:1px solid #dee2e6; width:5%;">
                           {{data.timeInMinutes}} hour</td>
                         <td class="text-center" style="padding-right: 20px;width:8%">
@@ -115,7 +117,8 @@
                             <i class="far fa-edit" (click)="openModel(contentTask,data.key,'task')" title="Edit Entry"
                               style="cursor:pointer !important; font-size: 14px;color: royalblue;"
                               [hidden]="data.userId!=data.createdBy"></i>&nbsp;&nbsp;
-                            <i class="far fa-trash-alt" title="Remove Entry" (click)="openModel(contentConfirmation,data.key,'deleteTask')" 
+                            <i class="far fa-trash-alt" title="Remove Entry"
+                              (click)="openModel(contentConfirmation,data.key,'deleteTask')"
                               style="cursor:pointer !important; font-size: 14px;color: red;"
                               [hidden]="data.userId!=data.createdBy"></i>
                           </span>
@@ -142,24 +145,24 @@
 <!--Delete Confirmation Start-->
 <ng-template #contentConfirmation>
   <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete?</h5>
-          </div>
-          <div class="modal-body">
-              <input type="hidden" id="deleteId" value="0" />
-              <div class="row">
-              <div class="col-md-6">
-                  <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmDelete()">
-                      Confirm</button>
-              </div>
-              <div class="col-md-6">
-                  <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
-                      Cancel</button>
-              </div>
-          </div>
-          </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete?</h5>
       </div>
+      <div class="modal-body">
+        <input type="hidden" id="deleteId" value="0" />
+        <div class="row">
+          <div class="col-md-6">
+            <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmDelete()">
+              Confirm</button>
+          </div>
+          <div class="col-md-6">
+            <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+              Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-template>
 <!--Delete Confirmation End-->
@@ -184,6 +187,16 @@
             <option value={{main.mainCat}} *ngFor="let main of mainList">
               {{main.mainCat}}</option>
           </select>
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fas fa-tasks" aria-hidden="true"></i>
+          </span>
+        </div>
+
+
+        <div class="wrap-input-effects" required>
+          <input id="txtDate1" class="input-green custom-date-input" type="date"
+             />
           <span class="focus-input"></span>
           <span class="symbol-input">
             <i class="fas fa-tasks" aria-hidden="true"></i>
@@ -232,7 +245,8 @@
           </span>
         </div>
         <textarea id="txtDescription" placeholder="Task description" style="height: 140px!important;"></textarea>
-        <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveTask();" />
+        <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+          (click)="saveTask();" />
       </div>
     </div>
   </div>

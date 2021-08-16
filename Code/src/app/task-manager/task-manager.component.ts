@@ -12,6 +12,8 @@ import { AngularFirestore } from "@angular/fire/firestore";
   styleUrls: ["./task-manager.component.scss"],
 })
 export class TaskManagerComponent implements OnInit {
+  
+  
   constructor(
     private router: Router,
     public db: AngularFireDatabase,
@@ -20,6 +22,8 @@ export class TaskManagerComponent implements OnInit {
     private modalService: NgbModal
   ) {}
   toDayDate: any;
+  date1:any;
+  getDate:any;
   selectedMonth: any;
   public selectedYear: any;
   yearList: any[] = [];
@@ -44,7 +48,7 @@ export class TaskManagerComponent implements OnInit {
   isFirst: any;
   isTaskManager: any;
   taskData: taskDatail = {
-    totalMinutes: "0",
+   totalMinutes: "0",
   };
 
   ngOnInit() {
@@ -65,6 +69,7 @@ export class TaskManagerComponent implements OnInit {
     $("#ddlMonth").val(this.selectedMonth);
     $("#ddlYear").val(this.selectedYear);
     $("#txtDate").val(this.toDayDate);
+    
     this.fillDropdown();
     setTimeout(() => {
       this.fillUsers();
@@ -278,6 +283,7 @@ export class TaskManagerComponent implements OnInit {
         "-" +
         date.toString().split("-")[0];
     }
+   
     if (month != "0") {
       month = this.commonService.getCurrentMonthName(Number(month) - 1);
     }
@@ -296,6 +302,7 @@ export class TaskManagerComponent implements OnInit {
         if (date != "") {
           query = query.where("date", "==", date);
         }
+        
         if (year != "0") {
           query = query.where("year", "==", year);
         }
@@ -316,6 +323,7 @@ export class TaskManagerComponent implements OnInit {
       });
 
     filterRef.get().subscribe((ss) => {
+     
       let todayDate = (date =
         this.toDayDate.toString().split("-")[2] +
         "-" +
@@ -327,6 +335,7 @@ export class TaskManagerComponent implements OnInit {
       ss.forEach(function (doc) {
         i = i + 1;
         totalMinutes += Number(doc.data()["timeInMinutes"]);
+      
         userTaskLists.push({
           sno: i,
           key: doc.id,
@@ -388,14 +397,17 @@ export class TaskManagerComponent implements OnInit {
             taskFor: userTaskLists[i]["taskFor"],
           });
         }
+        
       }
       this.userTaskList = this.commonService.transformNumeric(
         this.userTaskList,
         "date"
+
       );
+      console.log(this.userTaskList)
     });
   }
-
+ 
   resetAllFilter() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedMonth = this.toDayDate.split("-")[1];
@@ -411,10 +423,12 @@ export class TaskManagerComponent implements OnInit {
   }
 
   openModel(content: any, id: any, type: any) {
+    
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     if (type == "task") {
-      let height = 500;
+      $("#txtDate1").val(this.toDayDate);
+      let height = 550;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content")
@@ -519,9 +533,11 @@ export class TaskManagerComponent implements OnInit {
   }
 
   saveTask() {
+    
     let key = $("#key").val();
     let status = $("#status").val();
     let remark = $("#remark").val();
+    
     if ($("#drpFor").val() == "0") {
       this.commonService.setAlertMessage("error", "Please select Task For");
       return;
@@ -553,26 +569,32 @@ export class TaskManagerComponent implements OnInit {
       return;
     }
     let category = $("#drpCategory").val();
-    let date =
-      this.toDayDate.split("-")[2] +
-      "-" +
-      this.toDayDate.split("-")[1] +
-      "-" +
-      this.toDayDate.split("-")[0];
+    let date1=$("#txtDate1").val();
+    
+    if (date1 != "") {
+      date1 =
+        date1.toString().split("-")[2] +
+        "-" +
+        date1.toString().split("-")[1] +
+        "-" +
+        date1.toString().split("-")[0];
+    }
+    
+     
     let description = $("#txtDescription").val();
     let empID = this.empID;
     let month = this.commonService.getCurrentMonthName(
-      Number(this.toDayDate.toString().split("-")[1]) - 1
+      Number(date1.toString().split("-")[1]) - 1
     );
     let taskFor = $("#drpFor").val();
     let project = $("#drpProject").val();
     let task = $("#drpTask").val();
     let timeInMinutes = $("#estmateTime").val();
-    let year = this.toDayDate.toString().split("-")[0];
+    let year = date1.toString().split("-")[2];
     const data = {
       taskFor: taskFor,
       category: category,
-      date: date,
+      date: date1,
       description: description,
       empID: empID,
       month: month,
@@ -637,6 +659,7 @@ export class TaskManagerComponent implements OnInit {
     setTimeout(() => {
       this.getTaskList();
     }, 200);
+    
   }
 
   //#region Task Status
