@@ -150,15 +150,16 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                         });
                       }
                       if (i == 0) {
-                        this.getServeyorDetail(index, 0);
-                        setTimeout(() => {
-                          $("#tr0").addClass("active");
-                        }, 600);
+                                               
                       }
                     });
                 }
               }
             }
+            setTimeout(() => {
+              $("#tr0").addClass("active");
+              this.getServeyorDetail(this.assignedList[0]["userId"], 0); 
+            }, 1000);
           }
         }
       });

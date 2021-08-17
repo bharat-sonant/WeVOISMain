@@ -169,7 +169,7 @@ export class WardSurveyAnalysisComponent {
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
       this.selectedZone +
-      "/total";
+      "/marked";
     let totalInstance = this.db
       .object(dbPath)
       .valueChanges()
