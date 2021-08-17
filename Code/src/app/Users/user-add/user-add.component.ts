@@ -117,9 +117,11 @@ export class UserAddComponent implements OnInit {
           if (this.userRecord.length == 0) {
             this.usrid = 1;
           } else {
-            var sorted = this.userRecord.sort();
+            this.userRecord=this.commonService.transform(this.userRecord,"userId");
+           // var sorted = this.userRecord.sort();
             this.usrid =
               this.userRecord[this.userRecord.length - 1]["userId"] + 1;
+              console.log(this.usrid);
           }
         });
     }

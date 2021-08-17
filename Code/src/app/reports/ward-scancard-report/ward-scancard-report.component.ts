@@ -40,7 +40,7 @@ export class WardScancardReportComponent implements OnInit {
   db: any;
 
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
-  headerWard = [["Ward No.", "Routing Length(km)", "Covered Length(km)"]];
+  headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
 
   tableData = [[]];
 
@@ -499,7 +499,8 @@ export class WardScancardReportComponent implements OnInit {
             .subscribe((empData) => {
               employeeInstance.unsubscribe();
               if (empData != null) {
-                let name = empData;
+                let name = empData.split(',')[0];
+
                 let keyArray = Object.keys(data);
                 for (let i = 0; i < keyArray.length; i++) {
                   let cardNo = keyArray[i];

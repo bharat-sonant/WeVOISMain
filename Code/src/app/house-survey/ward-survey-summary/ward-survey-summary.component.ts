@@ -106,7 +106,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
       wardNo +
-      "/total";
+      "/marked";
     let markerInstance = this.db
       .object(dbPath)
       .valueChanges()

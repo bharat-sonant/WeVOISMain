@@ -38,7 +38,7 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of userList; let i=index"
-                                                style="cursor: pointer;"
+                                                style="cursor: pointer;" class="{{data.trClass}}"
                                                 (click)="getMarkerDetail(data.empId, data.wardNo,i);">
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
