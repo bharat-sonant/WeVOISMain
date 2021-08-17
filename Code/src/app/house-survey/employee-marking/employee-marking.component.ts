@@ -15,11 +15,11 @@ import { HtmlAstPath, identifierModuleUrl } from "@angular/compiler";
 export class EmployeeMarkingComponent implements OnInit {
   constructor(
     private router: Router,
-    public fs:FirebaseService,
+    public fs: FirebaseService,
     private commonService: CommonService,
     private modalService: NgbModal,
     private mapService: MapService
-  ) {}
+  ) { }
 
   userList: any[];
   markerList: any[];
@@ -35,10 +35,10 @@ export class EmployeeMarkingComponent implements OnInit {
     wardNo: "",
   };
   isFirst = true;
-  db:any;
+  db: any;
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.getZoneList();
     this.getEmployee();
   }
@@ -63,6 +63,10 @@ export class EmployeeMarkingComponent implements OnInit {
               let index = keyArray[i];
               let name = data[index]["name"];
               let wardNo = data[index]["assignedWard"];
+              let trClass = "";
+              if (data[index]["isActive"] == false) {
+                trClass = "in-active";
+              }
               this.userList.push({
                 empId: Number(index),
                 name: name,
@@ -70,11 +74,17 @@ export class EmployeeMarkingComponent implements OnInit {
                 phone: data[index]["phone"],
                 isActive: data[index]["isActive"],
                 password: data[index]["password"],
+                trClass: trClass
               });
               if (i == 0) {
                 this.getMarkerDetail(index, wardNo, 0);
                 setTimeout(() => {
-                  $("#tr0").addClass("active");
+                  if (this.userList[0]["isActive"] == true) {
+                    $("#tr0").addClass("active");
+                  }
+                  else {
+                    $("#tr0").addClass("in-active");
+                  }
                 }, 600);
               }
             }
@@ -129,12 +139,12 @@ export class EmployeeMarkingComponent implements OnInit {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length - 1; i++) {
               let index = keyArray[i];
-              if(data[index]["marked"]!=null){
-              if (index == wardNo) {
-                this.markerData.totalWardMarking = data[index]["marked"];
+              if (data[index]["marked"] != null) {
+                if (index == wardNo) {
+                  this.markerData.totalWardMarking = data[index]["marked"];
+                }
+                this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
               }
-              this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
-            }
             }
           }
         }
@@ -155,14 +165,14 @@ export class EmployeeMarkingComponent implements OnInit {
               if (list.length > 0) {
                 for (let j = 0; j < list.length; j++) {
                   if (list[j] == empId) {
-                    if(data[index][list[j]]["marked"]!=null){
-                    this.markerData.totalDays =
-                      Number(this.markerData.totalDays) + 1;
-                    this.markerList.push({
-                      date: index,
-                      markers: data[index][list[j]]["marked"],
-                    });
-                  }
+                    if (data[index][list[j]]["marked"] != null) {
+                      this.markerData.totalDays =
+                        Number(this.markerData.totalDays) + 1;
+                      this.markerList.push({
+                        date: index,
+                        markers: data[index][list[j]]["marked"],
+                      });
+                    }
                   }
                 }
               }
@@ -183,15 +193,20 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   setActiveClass(index: any) {
+    console.log(index);
     for (let i = 0; i < this.userList.length; i++) {
       let id = "tr" + i;
       let element = <HTMLElement>document.getElementById(id);
       let className = element.className;
       if (className != null) {
-        $("#tr" + i).removeClass(className);
+        if (className != "in-active") {
+          $("#tr" + i).removeClass(className);
+        }
       }
       if (i == index) {
-        $("#tr" + i).addClass("active");
+        if (this.userList[i]["isActive"] == true) {
+          $("#tr" + i).addClass("active");
+        }
       }
     }
   }
