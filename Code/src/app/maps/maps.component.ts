@@ -903,6 +903,7 @@ export class MapsComponent {
       } else {
         for (let i = 0; i < this.houseList.length; i++) {
           this.progressData.scanedHouses = 0;
+          this.progressData.houses=this.houseList.length;
           this.getScanedCard(
             this.houseList[i]["cardNo"],
             this.houseList[i]["markerType"]

@@ -301,7 +301,8 @@ align-items: center;
 .main-box{
     width: 100%;
     float: left;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;    
+    height: 55px;
 }
 .main-box .designation{
     width: 50px;
