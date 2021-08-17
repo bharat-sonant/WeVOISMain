@@ -278,6 +278,7 @@ margin: 0px!important;
 /*************New Work CSS*****************/
 .driver-helper-box{
 width: 270px;
+min-height: 100px;
 background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
 position: absolute;
@@ -300,11 +301,7 @@ align-items: center;
 .main-box{
     width: 100%;
     float: left;
-<<<<<<< HEAD
-    border-bottom: 1px solid lightgray;
-=======
     border-bottom: 1px solid lightgray;    
->>>>>>> 4c82fc84b3e60dbc1c9db2be14864b8e00fef323
     height: 55px;
 }
 .main-box .designation{
