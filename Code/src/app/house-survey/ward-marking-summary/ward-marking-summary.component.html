@@ -16,7 +16,7 @@
                 <div class="float-first" style="margin-left: 10px; margin-top: 0px;">
                     <i class="fas fa-vr-cardboard"></i> <span class="house"><span style="color: #1fda2f;">
                             {{markerData.totalAlreadyCard}}</span></span><br>
-                    <h6>Already Card Count</h6>
+                    <h6>Already Installed</h6>
                 </div>
                 <div class="float-third">
                     <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
@@ -30,7 +30,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -40,12 +40,11 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
-                                                Already Installed Card</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">Ward</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:30%;">
                                                 Markers</th>
-                                            <th class="text-center" style="width:15%; display: none;"></th>
+                                                <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
+                                                    Already Installed</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
@@ -53,13 +52,9 @@
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
-                                                    {{data.alreadyInstalled}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.markers}}</td>
-                                                <td class="text-center" style="display: none;">
-                                                    <a href="{{data.url}}" target="_blank">
-                                                        <i class="far fa-eye" style="font-size: 20px;"></i></a>
-                                                </td>
+                                                    <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                        {{data.alreadyInstalled}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -76,7 +71,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
                     <div class="row">
@@ -108,7 +103,7 @@
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{markerData.wardInstalled}}</span> <br>
-                                    Already Card
+                                    Already Installed
                                 </h3>
                             </div>
                         </div>
@@ -125,18 +120,18 @@
                                             <table class="table"
                                                 style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:25%;">Line No.</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Line</th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Already Card
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Already Installed
                                                     </th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Markers</th>
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
                                                     <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Line Status
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Approved
                                                     </th>
 
                                                     <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Detail</th>
+                                                        style="border-right:1px solid #dee2e6; width:20%;">#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
