@@ -28,7 +28,7 @@ export class HouseMarkingComponent {
     private router: Router,
     private commonService: CommonService,
     private modalService: NgbModal
-  ) {}
+  ) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -418,7 +418,7 @@ export class HouseMarkingComponent {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
-              if (index != "ApproveStatus" && index != "marksCount") {
+              if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey") {
                 console.log(index);
                 if (data[index]["latLng"] != undefined) {
                   let lat = data[index]["latLng"].split(",")[0];
@@ -660,11 +660,11 @@ export class HouseMarkingComponent {
     let totalinstance1 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
-          date +
-          "/" +
-          userId +
-          "/" +
-          countKey
+        date +
+        "/" +
+        userId +
+        "/" +
+        countKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -681,9 +681,9 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
-                date +
-                "/" +
-                userId
+              date +
+              "/" +
+              userId
             )
             .update({
               rejected: total,
@@ -692,9 +692,9 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
-                date +
-                "/" +
-                userId
+              date +
+              "/" +
+              userId
             )
             .update({
               marked: total,
@@ -705,9 +705,9 @@ export class HouseMarkingComponent {
     let totalinstanceReject1 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
-          date +
-          "/" +
-          totalCountKey
+        date +
+        "/" +
+        totalCountKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -743,11 +743,11 @@ export class HouseMarkingComponent {
     let totalinstance2 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-          userId +
-          "/" +
-          this.selectedZone +
-          "/" +
-          countKey
+        userId +
+        "/" +
+        this.selectedZone +
+        "/" +
+        countKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -764,10 +764,10 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-                userId +
-                "/" +
-                this.selectedZone +
-                ""
+              userId +
+              "/" +
+              this.selectedZone +
+              ""
             )
             .update({
               rejected: total,
@@ -776,10 +776,10 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-                userId +
-                "/" +
-                this.selectedZone +
-                ""
+              userId +
+              "/" +
+              this.selectedZone +
+              ""
             )
             .update({
               marked: total,
@@ -790,9 +790,9 @@ export class HouseMarkingComponent {
     let totalinstanceRejected2 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-          userId +
-          "/" +
-          totalCountKey
+        userId +
+        "/" +
+        totalCountKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -809,7 +809,7 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-                userId
+              userId
             )
             .update({
               totalRejected: total,
@@ -818,7 +818,7 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-                userId
+              userId
             )
             .update({
               totalMarked: total,
@@ -830,11 +830,11 @@ export class HouseMarkingComponent {
     let totalinstance3 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-          date +
-          "/" +
-          this.selectedZone +
-          "/" +
-          countKey
+        date +
+        "/" +
+        this.selectedZone +
+        "/" +
+        countKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -851,10 +851,10 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-                date +
-                "/" +
-                this.selectedZone +
-                ""
+              date +
+              "/" +
+              this.selectedZone +
+              ""
             )
             .update({
               rejected: total,
@@ -863,10 +863,10 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-                date +
-                "/" +
-                this.selectedZone +
-                ""
+              date +
+              "/" +
+              this.selectedZone +
+              ""
             )
             .update({
               marked: total,
@@ -877,9 +877,9 @@ export class HouseMarkingComponent {
     let totalinstanceRejected3 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-          date +
-          "/" +
-          totalCountKey
+        date +
+        "/" +
+        totalCountKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -896,7 +896,7 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-                date
+              date
             )
             .update({
               totalRejected: total,
@@ -905,7 +905,7 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-                date
+              date
             )
             .update({
               totalMarked: total,
@@ -917,9 +917,9 @@ export class HouseMarkingComponent {
     let totalinstance4 = this.db
       .object(
         "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-          this.selectedZone +
-          "/" +
-          countKey
+        this.selectedZone +
+        "/" +
+        countKey
       )
       .valueChanges()
       .subscribe((totalCount) => {
@@ -936,8 +936,8 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-                this.selectedZone +
-                ""
+              this.selectedZone +
+              ""
             )
             .update({
               rejected: total,
@@ -946,8 +946,8 @@ export class HouseMarkingComponent {
           this.db
             .object(
               "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-                this.selectedZone +
-                ""
+              this.selectedZone +
+              ""
             )
             .update({
               marked: total,
