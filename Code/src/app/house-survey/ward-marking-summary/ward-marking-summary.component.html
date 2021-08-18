@@ -1,6 +1,6 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-2" style="padding-left: 18px;">
+        <div class="col-md-4" style="padding-left: 18px;">
             <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
                 style="width: 150px; display: none;">
                 <option value="Circle1" selected>Circle1</option>
@@ -8,12 +8,22 @@
                 <option value="Circle3">Circle3</option>
             </select>
         </div>
-        <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
             Ward Marking Summary
         </div>
-        <div class="col-md-2" style="padding-left: 18px;">
-            total Already Card : {{markerData.totalAlreadyCard}}
-            total Markers : {{markerData.totalMarkers}}
+        <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
+            <div class="fix-home">
+                <div class="float-first" style="margin-left: 10px; margin-top: 0px;">
+                    <i class="fas fa-vr-cardboard"></i> <span class="house"><span style="color: #1fda2f;">
+                            {{markerData.totalAlreadyCard}}</span></span><br>
+                    <h6>Already Card Count</h6>
+                </div>
+                <div class="float-third">
+                    <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
+                    <h6>Total Marker</h6>
+                </div>
+            </div>
+
 
         </div>
     </div>
@@ -82,7 +92,7 @@
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{markerData.wardApprovedLines}}</span> <br>
-                                   Approved Lines
+                                    Approved Lines
                                 </h3>
                             </div>
                         </div>
@@ -117,36 +127,42 @@
                                                 <thead>
                                                     <th style="border-right:1px solid #dee2e6; width:25%;">Line No.</th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Already Card</th>
+                                                        style="border-right:1px solid #dee2e6; width:25%;">Already Card
+                                                    </th>
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:25%;">Markers</th>
-                                                        <th class="text-center"
-                                                            style="border-right:1px solid #dee2e6; width:25%;">Line Status</th>
-                                                            
-                                                        <th class="text-center"
+                                                    <th class="text-center"
+                                                        style="border-right:1px solid #dee2e6; width:25%;">Line Status
+                                                    </th>
+
+                                                    <th class="text-center"
                                                         style="border-right:1px solid #dee2e6; width:25%;">Detail</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
                                                             {{data.lineNo}}</td>
-                                                            <td class="text-right"
-                                                                style="border-right:1px solid #dee2e6;">
-                                                                {{data.alreadyCard}}</td>
-                                                        <td class="text-right"
-                                                            style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                            {{data.alreadyCard}}</td>
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.markers}}</td>
-                                                        <td class="text-center"
-                                                        style="border-right:1px solid #dee2e6;">
-                                                        <span [hidden]="data.markers==0">
-                                                        <i class="fas fa-check" style="font-size: 18px; color: green;" [hidden]="data.isApproved==false"></i>
-                                                        <i class="fas fa-times" style="font-size: 18px; color: red;" [hidden]="data.isApproved==true"></i>
-                                                    </span>
-                                                    </td>
-                                                    <td class="text-center" style="border-right:1px solid #dee2e6;">
-                                                       
-                                                            <i class="far fa-eye" style="font-size: 20px; cursor: pointer;" [hidden]="data.markers==0" (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
-                                                    </td>
+                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+                                                            <span [hidden]="data.markers==0">
+                                                                <i class="fas fa-check"
+                                                                    style="font-size: 18px; color: green;"
+                                                                    [hidden]="data.isApproved==false"></i>
+                                                                <i class="fas fa-times"
+                                                                    style="font-size: 18px; color: red;"
+                                                                    [hidden]="data.isApproved==true"></i>
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+
+                                                            <i class="far fa-eye"
+                                                                style="font-size: 20px; cursor: pointer;"
+                                                                [hidden]="data.markers==0"
+                                                                (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -169,41 +185,47 @@
 </div>
 
 
-  <!--Vehicle Status Start-->
-  <ng-template #contentLineMarkers>
+<!--Vehicle Status Start-->
+<ng-template #contentLineMarkers>
     <div style="width: 100%;text-align: right;float: left;">
 
-      <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
     <div class="modal-body" style="margin-top:-20px; ">
-      <div id="divStatus" class="content-scroll">
-      <div class="row">
-        <div class="col-md-2" *ngFor="let dt of markerDetailList">
-          <div style="width:100%">
-            <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
-            </a>
-          </div>
-          <div class="main-tag">
-            <div class="f-left">
-              <h3 style="width: 100%;">  {{dt.type}} </h3><br/>
-              <p>Already Card <span class="f-right"> :</span></p>   
-              <h3>  {{dt.alreadyInstalled}} </h3><br/>
-              <span [hidden]="dt.status==''" ><p>Status <span class="f-right"> :</span></p>   
-              <h3>  {{dt.status}} </h3></span>
-            </div>
-          </div>
+        <div id="divStatus" class="content-scroll">
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of markerDetailList">
+                    <div style="width:100%">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 style="width: 100%;"> {{dt.type}} </h3><br />
+                            <p>Already Card <span class="f-right"> :</span></p>
+                            <h3> {{dt.alreadyInstalled}} </h3><br />
+                            <span [hidden]="dt.status==''">
+                                <p>Status <span class="f-right"> :</span></p>
+                                <h3> {{dt.status}} </h3>
+                            </span>
+                        </div>
+                    </div>
 
-          <button class="btn btn-success" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);"
-            style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
-            <button class="btn btn-danger" [hidden]="dt.status==''" (click)="removeMarker(dt.index);"
-            style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
+                    <button class="btn btn-success" [hidden]="dt.status==''"
+                        (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);"
+                        style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+                        [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
+                    <button class="btn btn-danger" [hidden]="dt.status==''"
+                        (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index);"
+                        style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+                        [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
+
+                </div>
+            </div>
 
         </div>
-      </div>
-
-      </div>
     </div>
-  </ng-template>
-  <!--Vehicle Status End-->
+</ng-template>
+<!--Vehicle Status End-->

@@ -437,5 +437,93 @@ label{
   cursor: pointer;
   }
 
+  .modal-body{
+    padding: 20px;
+}
+.content-scroll{
+    height: 595px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.content-scroll img{
+    padding: 5px;
+    border: 1px solid lightgray;
+}
+
+.main-tag{
+    background: #ededed;  
+}
+.f-left{
+    width: 100%;
+    float: left;
+    //border-bottom: 1px solid #e6e6e6;
+    padding:5px 5px;
+}
+.f-left p{
+    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: 87px;
+    font-weight: normal;
+    color:#707070;
+}
+.f-right{
+    margin-right: 4px;
+    float:right;
+}
+.f-left h3{
+    font-size: 12px;
+    margin:0px!important;
+    float: left;
+    width: calc(100% - 87px);
+    font-weight: normal;
+    color:#333;
+    text-transform: capitalize;
+    margin-top: 1px!important;
+}
+
+
+.fix-home{
+  float: right;
+  margin-right: 15px;
+  }
+  .float-first{
+  width: 125px;
+  float: left;
+  }
+  .float-second{
+  width: 95px;
+  float: left;
+  }
+  .float-third{
+  width: 95px;
+  float: left;
+  }
+
+  .total-house .fa-home{
+    margin-top: 15px;
+    color: #8dbaff;
+    font-size: 18px;
+    }
+    .total-house h6{
+    font-size: 8px;
+    font-weight: normal!important;
+    letter-spacing: 0.5px;
+    }
+
+    
+.house{
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  }
+  
+.total-house .fa-house-damage{
+  margin-top: 0px;
+  color: #1fda2f;
+  font-size: 18px;
+  }
+
+
 
 
