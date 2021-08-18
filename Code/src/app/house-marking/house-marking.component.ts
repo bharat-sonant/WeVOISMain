@@ -535,7 +535,7 @@ export class HouseMarkingComponent {
     this.modalService.dismissAll();
   }
 
-  removeMarker(markerNo: any) {
+  removeMarker(markerNo: any,alreadyCard:any) {
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
@@ -635,6 +635,27 @@ export class HouseMarkingComponent {
                 }
               }
               this.markerList = newMarkerList;
+            }
+
+            
+            if (alreadyCard == "हाँ") {
+              let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/alreadyInstalled";
+              let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
+                alreadyData => {
+                  alreadyInstance.unsubscribe();
+                  let total = 0;
+                  if (alreadyData != null) {
+                    total = Number(alreadyData) - 1;
+                  }
+                  this.markerData.alreadyCardCount = this.markerData.alreadyCardCount - 1;
+                  this.markerData.alreadyCardLineCount = this.markerData.alreadyCardLineCount - 1;
+                  this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/").update({ alreadyInstalled: total });
+                  let wardDetail = this.markerList.find((item) => item.index == markerNo);
+                  if (wardDetail != undefined) {
+                    wardDetail.alreadyInstalled = Number(wardDetail.alreadyInstalled) - 1;
+                  }
+                }
+              );
             }
 
             this.updateCount(date, userId, "remove");

@@ -242,7 +242,7 @@
 
           <button class="btn btn-success" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);"
             style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
-            <button class="btn btn-danger" [hidden]="dt.status==''" (click)="removeMarker(dt.index);"
+            <button class="btn btn-danger" [hidden]="dt.status==''" (click)="removeMarker(dt.index,dt.alreadyInstalled);"
             style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"  [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
 
         </div>
