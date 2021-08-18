@@ -23,8 +23,6 @@
                     <h6>Total Marker</h6>
                 </div>
             </div>
-
-
         </div>
     </div>
 </section>
@@ -122,16 +120,16 @@
                                                 <thead>
                                                     <th style="border-right:1px solid #dee2e6; width:20%;">Line</th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Already Installed
+                                                        style="border-right:1px solid #dee2e6; width:30%;">Already Installed
                                                     </th>
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
                                                     <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Approved
+                                                        style="border-right:1px solid #dee2e6; width:15%;">Approved
                                                     </th>
 
                                                     <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">#</th>
+                                                        style="border-right:1px solid #dee2e6; width:15%;">#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
@@ -213,7 +211,7 @@
                         style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
                         [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
                     <button class="btn btn-danger" [hidden]="dt.status==''"
-                        (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index);"
+                        (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);"
                         style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
                         [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
 

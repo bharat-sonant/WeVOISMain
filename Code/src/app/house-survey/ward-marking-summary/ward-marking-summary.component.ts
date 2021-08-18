@@ -169,10 +169,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     }
     this.lineMarkerList = [];
     this.markerList = [];
-    this.markerData.totalLines="0";
-    this.markerData.wardApprovedLines=0;
-    this.markerData.wardInstalled=0;
-    this.markerData.wardMarkers=0;
+    this.markerData.totalLines = "0";
+    this.markerData.wardApprovedLines = 0;
+    this.markerData.wardInstalled = 0;
+    this.markerData.wardMarkers = 0;
     let wardLineCount = this.db
       .object("WardLines/" + wardNo + "")
       .valueChanges()
@@ -182,7 +182,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.wardLines = Number(lineCount);
           this.markerData.totalLines = this.wardLines;
           for (let i = 1; i <= this.wardLines; i++) {
-            this.lineMarkerList.push({ lineNo: i, markers: 0, isApproved: false,alreadyCard:0 });
+            this.lineMarkerList.push({ lineNo: i, markers: 0, isApproved: false, alreadyCard: 0 });
             let dbPath =
               "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i;
             let houseInstance = this.db
@@ -194,7 +194,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   let lineNo = i;
                   let isApproved = false;
                   let markers = 0;
-                  let alreadyCard=0;
+                  let alreadyCard = 0;
 
                   let keyArray = Object.keys(data);
                   if (keyArray.length > 0) {
@@ -219,7 +219,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               this.markerData.wardInstalled =
                                 this.markerData.wardInstalled + 1;
                               alreadyInstalled = "हाँ";
-                              alreadyCard=alreadyCard+1;
+                              alreadyCard = alreadyCard + 1;
                             }
                             let imageName = data[index]["image"];
                             let userId = data[index]["userId"];
@@ -252,8 +252,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                                 if (data != null) {
                                   let houseType = data.toString().split("(")[0];
                                   this.markerList.push({
-                                    wardNo:wardNo,
-                                    lineNo:lineNo,
+                                    wardNo: wardNo,
+                                    lineNo: lineNo,
                                     index: index,
                                     alreadyInstalled: alreadyInstalled,
                                     imageName: imageName,
@@ -269,13 +269,13 @@ export class WardMarkingSummaryComponent implements OnInit {
                         }
                       }
                     }
-                    let lineDetail=this.lineMarkerList.find(item=>item.lineNo==lineNo);
-                    if(lineDetail!=undefined){
-                      lineDetail.markers=markers;
-                      lineDetail.alreadyCard=alreadyCard;
-                      lineDetail.isApproved=isApproved;
+                    let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+                    if (lineDetail != undefined) {
+                      lineDetail.markers = markers;
+                      lineDetail.alreadyCard = alreadyCard;
+                      lineDetail.isApproved = isApproved;
                     }
-                    
+
                   }
                 }
               });
@@ -283,8 +283,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         }
       });
   }
-  
-  removeMarker(wardNo:any,lineNo:any, markerNo: any) {
+
+  removeMarker(wardNo: any, lineNo: any, markerNo: any, alreadyCard: any) {
+
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
@@ -339,7 +340,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                 markerCountInstance.unsubscribe();
                 if (data != null) {
                   let marksCount = Number(data) - 1;
-                  this.markerData.wardMarkers = 
+                  this.markerData.wardMarkers =
                     Number(this.markerData.totalMarkers) - 1;
                   dbPath =
                     "EntityMarkingData/MarkedHouses/" +
@@ -353,16 +354,45 @@ export class WardMarkingSummaryComponent implements OnInit {
                 }
               });
 
-            
+            this.markerData.totalMarkers = Number(this.markerData.totalMarkers) - 1;
+            let wardDetail = this.wardProgressList.find(item => item.wardNo == wardNo);
+            if (wardDetail != undefined) {
+              wardDetail.markers = Number(wardDetail.markers) - 1;
+            }
+            let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.markers = Number(lineDetail.markers) - 1;
+            }
+
+
+
             let newMarkerList = [];
 
-            if (this.markerList.length > 0) {
-              for (let i = 0; i < this.markerList.length; i++) {
-                if (this.markerList[i]["index"] != markerNo) {
+            if (this.markerDetailList.length > 0) {
+              for (let i = 0; i < this.markerDetailList.length; i++) {
+                if (this.markerDetailList[i]["index"] != markerNo) {
                   newMarkerList.push({
+                    wardNo: this.markerDetailList[i]["wardNo"],
+                    lineNo: this.markerDetailList[i]["lineNo"],
+                    index: this.markerDetailList[i]["index"],
+                    alreadyInstalled: this.markerDetailList[i]["alreadyInstalled"],
+                    imageName: this.markerDetailList[i]["imageName"],
+                    type: this.markerDetailList[i]["houseType"],
+                    imageUrl: this.markerDetailList[i]["imageUrl"],
+                    status: this.markerDetailList[i]["status"],
+                    userId: this.markerDetailList[i]["userId"],
+                    date: this.markerDetailList[i]["date"],
+                  });
+                }
+              }
+              this.markerDetailList = newMarkerList;
+              newMarkerList = [];
+              for (let i = 0; i < this.markerList.length; i++) {
+                if (this.markerList[i]["index"] != markerNo || this.markerList[i]["lineNo"] != lineNo) {
+                  newMarkerList.push({
+                    wardNo: this.markerList[i]["wardNo"],
+                    lineNo: this.markerList[i]["lineNo"],
                     index: this.markerList[i]["index"],
-                    lat: this.markerList[i]["lat"],
-                    lng: this.markerList[i]["lng"],
                     alreadyInstalled: this.markerList[i]["alreadyInstalled"],
                     imageName: this.markerList[i]["imageName"],
                     type: this.markerList[i]["houseType"],
@@ -376,7 +406,30 @@ export class WardMarkingSummaryComponent implements OnInit {
               this.markerList = newMarkerList;
             }
 
-            this.updateCount(wardNo,date, userId, "remove");
+            if (alreadyCard == "हाँ") {
+              let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/alreadyInstalled";
+              let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
+                alreadyData => {
+                  alreadyInstance.unsubscribe();
+                  let total = 0;
+                  if (alreadyData != null) {
+                    total = Number(alreadyData) - 1;
+                  }
+                  this.markerData.totalAlreadyCard = this.markerData.totalAlreadyCard - 1;
+                  this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/").update({ alreadyInstalled: total });
+                  let wardDetail = this.wardProgressList.find(item => item.wardNo == wardNo);
+                  if (wardDetail != undefined) {
+                    wardDetail.alreadyInstalled = Number(wardDetail.alreadyInstalled) - 1;
+                  }
+                  let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+                  if (lineDetail != undefined) {
+                    lineDetail.alreadyCard = Number(lineDetail.alreadyCard) - 1;
+                  }
+                }
+              );
+            }
+
+            this.updateCount(wardNo, date, userId, "remove");
 
             this.commonService.setAlertMessage(
               "success",
@@ -385,9 +438,9 @@ export class WardMarkingSummaryComponent implements OnInit {
           }
         });
     }
-  }  
+  }
 
-  saveMarkerStatus(wardNo:any, lineNo:any, markerNo: any) {
+  saveMarkerStatus(wardNo: any, lineNo: any, markerNo: any) {
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
@@ -404,7 +457,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         status: "Reject",
       });
 
-      this.updateCount(wardNo,date, userId, "reject");
+      this.updateCount(wardNo, date, userId, "reject");
 
       this.commonService.setAlertMessage(
         "success",
@@ -413,7 +466,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     }
   }
 
-  updateCount(wardNo:any, date: any, userId: any, type: any) {
+  updateCount(wardNo: any, date: any, userId: any, type: any) {
     let countKey = "rejected";
     let totalCountKey = "totalRejected";
     if (type != "reject") {
@@ -725,7 +778,8 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
-    this.markerDetailList=[];
+    console.log("fdfsdsdg")
+    this.markerDetailList = [];
     if (this.markerList.length > 0) {
       this.markerDetailList = this.markerList.filter((item) => item.lineNo == lineNo)
       {
