@@ -65,6 +65,17 @@
           style="padding-top: 10px;font-size: 11px; cursor: pointer;" (click)="showLineDetail(contentLineMarkers);">
           <i class="fas fa-eye"></i> View Detail</span>
       </div>
+
+      <div class="col-md-6 markers" style="border-right: 1px solid lightgray;padding-left: 30px;">
+        <h5> {{markerData.totalLineMarkers}} </h5>
+        <p>Markers</p>
+      </div>
+      <div class="col-md-6 markers" style="padding-right:30px;"> 
+        <h5> {{markerData.alreadyCardLineCount}} </h5>
+        <p>Already Card</p>
+      </div>
+
+
       <div class="col-md-6" style="padding-top: 10px; display: none;">
         <div class="row">
           <div class="col-md-12" style="padding-left: 15px;font-size: 12px;">
@@ -101,7 +112,7 @@
       <div class="col-md-12">
         <div class="main-box">
           <a href="{{markerData.markerImgURL}}" target="_blank">
-            <img id="markingImg" [src]="markerData.markerImgURL" style="height:222px; width: 274px;" />
+            <img id="markingImg" [src]="markerData.markerImgURL" style="height:165px; width: 274px;" />
           </a>
         </div>
       </div>
@@ -111,26 +122,6 @@
   <div class="driver-helper-box">
     <div class="row">
       <div class="col-md-12">
-          <div class="main-box">
-              <div class="designation">
-                <h5> {{markerData.totalLineMarkers}} </h5>
-              </div>
-              <div class="all-details">
-                <h6>
-                  <p>Markers</p>
-                </h6>
-              </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                  <h5> {{markerData.alreadyCardLineCount}} </h5>
-                </div>
-                <div class="all-details">
-                  <h6>
-                    <p>Already Card</p>
-                  </h6>
-                </div>
-              </div>
 
         <div class="main-box">
           <div class="designation">
