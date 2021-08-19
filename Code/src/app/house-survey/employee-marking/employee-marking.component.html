@@ -8,8 +8,8 @@
 
         </div>
         <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Manage Surveyor 
-    [For Marking]
+            Manage Surveyor
+            [For Marking]
         </div>
         <div class="col-md-2"></div>
     </div>
@@ -48,19 +48,20 @@
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right">
-                                                    <i class="fas fa-map-marked-alt" 
-                                                        (click)="openModel(contentWard,data.empId,'ward');"
-                                                        title="Assign Ward"
-                                                        style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:8px;"></i>
-                                                    <i class="far fa-times-circle" 
-                                                        (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                        title="Remove Assignment"
-                                                        style="cursor:pointer !important; font-size: 14px;color: red;margin-right:8px;"></i>
-                                                    <i class="far fa-edit"
-                                                        (click)="openModel(contentEmployee,data.empId,'update');"
-                                                        title="Edit Entry"
-                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
-
+                                                    <span [hidden]="data.isActive==false">
+                                                        <i class="fas fa-map-marked-alt"
+                                                            (click)="openModel(contentWard,data.empId,'ward');"
+                                                            title="Assign Ward"
+                                                            style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:8px;"></i>
+                                                        <i class="far fa-times-circle"
+                                                            (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                            title="Remove Assignment"
+                                                            style="cursor:pointer !important; font-size: 14px;color: red;margin-right:8px;"></i>
+                                                        <i class="far fa-edit"
+                                                            (click)="openModel(contentEmployee,data.empId,'update');"
+                                                            title="Edit Entry"
+                                                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
+                                                    </span>
                                                 </td>
                                             </tr>
 
