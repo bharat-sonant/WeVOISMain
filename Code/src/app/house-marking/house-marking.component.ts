@@ -69,6 +69,7 @@ export class HouseMarkingComponent {
     alreadyCardCount: 0,
     alreadyCardLineCount: 0,
     alreadyCard: "",
+    lastScanTime: ""
   };
 
   ngOnInit() {
@@ -226,6 +227,19 @@ export class HouseMarkingComponent {
     this.getAllLinesFromJson();
     this.getTotalMarkers();
     this.getTotalAlreadyCard();
+    this.getLastScanTime();
+  }
+
+  getLastScanTime() {
+    let dbPath = "EntityMarkingData/LastScanTime/Ward/" + this.selectedZone;
+    let lastScanInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        lastScanInstance.unsubscribe();
+        if (data != null) {
+          this.markerData.lastScanTime = data.toString().split(':')[0]+":"+data.toString().split(':')[1];
+        }
+      }
+    );
   }
 
   getTotalAlreadyCard() {
@@ -535,7 +549,7 @@ export class HouseMarkingComponent {
     this.modalService.dismissAll();
   }
 
-  removeMarker(markerNo: any,alreadyCard:any) {
+  removeMarker(markerNo: any, alreadyCard: any) {
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
@@ -637,7 +651,7 @@ export class HouseMarkingComponent {
               this.markerList = newMarkerList;
             }
 
-            
+
             if (alreadyCard == "हाँ") {
               let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/alreadyInstalled";
               let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1391,4 +1405,5 @@ export class markerDetail {
   alreadyCardCount: number;
   alreadyCardLineCount: number;
   alreadyCard: string;
+  lastScanTime: string;
 }
