@@ -38,13 +38,13 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:15%;">Ward</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th style="border-right:1px solid #dee2e6; width:12%;">Ward</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:12%;">
                                                 Markers</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:30%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:28%;">
                                                 Already Installed</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:20%;">
-                                                Progress</th>
+                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:28%;">
+                                                Approved Lines</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Status</th>
                                         </thead>
@@ -59,7 +59,7 @@
                                                     {{data.alreadyInstalled}}</td>
 
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
-                                                    {{data.approvedLines}} out of {{data.wardLines}}</td>
+                                                    {{data.approvedLines}} / {{data.wardLines}}</td>
                                                 <td class="text-left {{data.cssClass}}" style="border-right:1px solid #dee2e6">
                                                     {{data.status}}</td>
                                             </tr>
