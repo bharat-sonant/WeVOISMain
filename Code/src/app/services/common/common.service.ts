@@ -18,7 +18,7 @@ export class CommonService {
     public fs: FirebaseService,
     public db: AngularFireDatabase,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   notificationInterval: any;
   fsDb: any;
@@ -723,27 +723,18 @@ export class CommonService {
   }
 
   chkUserExpiryDate() {
-    let userKey = localStorage.getItem("userKey");
-    if (userKey != null) {
-      let User = this.fsDb
-        .object("Users/" + userKey + "/expiryDate")
-        .valueChanges()
-        .subscribe((data) => {
-          User.unsubscribe();
-          if (data != null) {
-            if (new Date(this.setTodayDate()) >= new Date(data.toString())) {
-              this.router.navigate(["/login"]);
-              localStorage.setItem("loginStatus", "Fail");
-              this.toastr.error("Account Not Activate !!!", "", {
-                timeOut: 60000,
-                enableHtml: true,
-                closeButton: true,
-                toastClass: "alert alert-danger alert-with-icon",
-                positionClass: "toast-bottom-right",
-              });
-            }
-          }
+    if (localStorage.getItem("expiryDate") != null) {
+      if (new Date(this.setTodayDate()) >= new Date(localStorage.getItem("expiryDate"))) {
+        this.router.navigate(["/login"]);
+        localStorage.setItem("loginStatus", "Fail");
+        this.toastr.error("Account Not Activate !!!", "", {
+          timeOut: 60000,
+          enableHtml: true,
+          closeButton: true,
+          toastClass: "alert alert-danger alert-with-icon",
+          positionClass: "toast-bottom-right",
         });
+      }
     }
   }
 
@@ -1018,10 +1009,7 @@ export class CommonService {
   }
 
   chkUserPageAccess(pageURL: any, city: any) {
-    //if (this.setTodayDate() != localStorage.getItem("loginDate")) {
-    //  window.location.href = "/portal-access";
-    //}
-    console.log(pageURL);
+    
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
       urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
@@ -1155,7 +1143,7 @@ export class CommonService {
       });
   }
 
-  
+
   setZones(newDb: any) {
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
