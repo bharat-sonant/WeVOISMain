@@ -106,12 +106,16 @@ export class WardMarkingSummaryComponent implements OnInit {
             wardNo: wardNo,
             markers: 0,
             url: url,
-            alreadyInstalled: 0
+            alreadyInstalled: 0,
+            wardLines: 0,
+            approvedLines: 0,
+            status: "Not started",
+            cssClass:"not-start"
           });
 
           if (i == 0) {
-            this.getMarkingDetail(wardNo, 0);
             setTimeout(() => {
+              this.getMarkingDetail(wardNo, 0);
               $("#tr0").addClass("active");
             }, 600);
           }
@@ -122,6 +126,16 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getWardSummary(index: any, wardNo: any) {
+    let wardLineCount = this.db
+      .object("WardLines/" + wardNo + "")
+      .valueChanges()
+      .subscribe((lineCount) => {
+        wardLineCount.unsubscribe();
+        if (lineCount != null) {
+          this.wardLines = Number(lineCount);
+          this.wardProgressList[index]["wardLines"] = this.wardLines;
+        }
+      });
     let dbPath =
       "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
       wardNo;
@@ -140,6 +154,20 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.wardProgressList[index]["markers"] = markers;
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
           this.markerData.totalMarkers = this.markerData.totalMarkers + markers;
+          let approved = 0;
+          if (data["approved"] != null) {
+            approved = Number(data["approved"]);
+            this.wardProgressList[index]["approvedLines"] = approved;
+            if(approved==Number(this.wardProgressList[index]["wardLines"])){
+              this.wardProgressList[index]["status"]="Marking done";
+              this.wardProgressList[index]["cssClass"]="marking-done";
+            }
+            else
+            {
+              this.wardProgressList[index]["status"]="In progress";
+              this.wardProgressList[index]["cssClass"]="in-progress";
+            }
+          }
         }
       });
   }
@@ -173,115 +201,110 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.markerData.wardApprovedLines = 0;
     this.markerData.wardInstalled = 0;
     this.markerData.wardMarkers = 0;
-    let wardLineCount = this.db
-      .object("WardLines/" + wardNo + "")
-      .valueChanges()
-      .subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          this.wardLines = Number(lineCount);
-          this.markerData.totalLines = this.wardLines;
-          for (let i = 1; i <= this.wardLines; i++) {
-            this.lineMarkerList.push({ lineNo: i, markers: 0, isApproved: false, alreadyCard: 0 });
-            let dbPath =
-              "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i;
-            let houseInstance = this.db
-              .object(dbPath)
-              .valueChanges()
-              .subscribe((data) => {
-                houseInstance.unsubscribe();
-                if (data != null) {
-                  let lineNo = i;
-                  let isApproved = false;
-                  let markers = 0;
-                  let alreadyCard = 0;
+    let wardDetail = this.wardProgressList.find(item => item.wardNo == wardNo);
+    if (wardDetail != undefined) {
+      this.markerData.totalLines = wardDetail.wardLines;
+      this.markerData.wardApprovedLines = wardDetail.approvedLines;
+      this.markerData.wardInstalled = wardDetail.alreadyInstalled;
+      this.markerData.wardMarkers = wardDetail.markers;
 
-                  let keyArray = Object.keys(data);
-                  if (keyArray.length > 0) {
-                    for (let j = 0; j < keyArray.length; j++) {
-                      let index = keyArray[j];
-                      if (index == "ApproveStatus") {
-                        if (data[index]["status"] == "Confirm") {
-                          this.markerData.wardApprovedLines = this.markerData.wardApprovedLines + 1;
-                          isApproved = true;
+      for (let i = 1; i <= wardDetail.wardLines; i++) {
+        this.lineMarkerList.push({ lineNo: i, markers: 0, isApproved: false, alreadyCard: 0 });
+        let dbPath =
+          "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i;
+        let houseInstance = this.db
+          .object(dbPath)
+          .valueChanges()
+          .subscribe((data) => {
+            houseInstance.unsubscribe();
+            if (data != null) {
+              let lineNo = i;
+              let isApproved = false;
+              let markers = 0;
+              let alreadyCard = 0;
+
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let index = keyArray[j];
+                  if (index == "ApproveStatus") {
+                    if (data[index]["status"] == "Confirm") {
+                      isApproved = true;
+                    }
+                  }
+                  else if (index == "marksCount") {
+                    markers = Number(data[index]);
+                  }
+                  else {
+                    if (index != "lastMarkerKey") {
+                      let lineNo = i;
+                      let alreadyInstalled = "नहीं";
+                      if (data[index]["latLng"] != undefined) {
+                        if (data[index]["alreadyInstalled"] == true) {
+                          alreadyInstalled = "हाँ";
+                          alreadyCard = alreadyCard + 1;
                         }
-                      }
-                      else if (index == "marksCount") {
-                        this.markerData.wardMarkers = this.markerData.wardMarkers + Number(data[index]);
-                        markers = Number(data[index]);
-                      }
-                      else {
-                        if (index != "lastMarkerKey") {
-                          let lineNo = i;
-                          let alreadyInstalled = "नहीं";
-                          if (data[index]["latLng"] != undefined) {
-                            if (data[index]["alreadyInstalled"] == true) {
-                              this.markerData.wardInstalled =
-                                this.markerData.wardInstalled + 1;
-                              alreadyInstalled = "हाँ";
-                              alreadyCard = alreadyCard + 1;
-                            }
-                            let imageName = data[index]["image"];
-                            let userId = data[index]["userId"];
-                            let date = data[index]["date"].split(" ")[0];
-                            let status = "";
-                            if (data[index]["status"] != null) {
-                              status = data[index]["status"];
-                            }
-                            let city =
-                              this.cityName.charAt(0).toUpperCase() +
-                              this.cityName.slice(1);
+                        let imageName = data[index]["image"];
+                        let userId = data[index]["userId"];
+                        let date = data[index]["date"].split(" ")[0];
+                        let status = "";
+                        if (data[index]["status"] != null) {
+                          status = data[index]["status"];
+                        }
+                        let city =
+                          this.cityName.charAt(0).toUpperCase() +
+                          this.cityName.slice(1);
 
-                            let imageUrl =
-                              "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-                              city +
-                              "%2FMarkingSurveyImages%2F" +
-                              wardNo +
-                              "%2F" +
-                              i +
-                              "%2F" +
-                              imageName +
-                              "?alt=media";
-                            let type = data[index]["houseType"];
-                            let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-                            let houseInstance1 = this.db
-                              .object(dbPath1)
-                              .valueChanges()
-                              .subscribe((data) => {
-                                houseInstance1.unsubscribe();
-                                if (data != null) {
-                                  let houseType = data.toString().split("(")[0];
-                                  this.markerList.push({
-                                    wardNo: wardNo,
-                                    lineNo: lineNo,
-                                    index: index,
-                                    alreadyInstalled: alreadyInstalled,
-                                    imageName: imageName,
-                                    type: houseType,
-                                    imageUrl: imageUrl,
-                                    status: status,
-                                    userId: userId,
-                                    date: date,
-                                  });
-                                }
+                        let imageUrl =
+                          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                          city +
+                          "%2FMarkingSurveyImages%2F" +
+                          wardNo +
+                          "%2F" +
+                          i +
+                          "%2F" +
+                          imageName +
+                          "?alt=media";
+                        let type = data[index]["houseType"];
+                        let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
+                        let houseInstance1 = this.db
+                          .object(dbPath1)
+                          .valueChanges()
+                          .subscribe((data) => {
+                            houseInstance1.unsubscribe();
+                            if (data != null) {
+                              let houseType = data.toString().split("(")[0];
+                              this.markerList.push({
+                                wardNo: wardNo,
+                                lineNo: lineNo,
+                                index: index,
+                                alreadyInstalled: alreadyInstalled,
+                                imageName: imageName,
+                                type: houseType,
+                                imageUrl: imageUrl,
+                                status: status,
+                                userId: userId,
+                                date: date,
                               });
-                          }
-                        }
+                            }
+                          });
                       }
                     }
-                    let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
-                    if (lineDetail != undefined) {
-                      lineDetail.markers = markers;
-                      lineDetail.alreadyCard = alreadyCard;
-                      lineDetail.isApproved = isApproved;
-                    }
-
                   }
                 }
-              });
-          }
-        }
-      });
+                let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+                if (lineDetail != undefined) {
+                  lineDetail.markers = markers;
+                  lineDetail.alreadyCard = alreadyCard;
+                  lineDetail.isApproved = isApproved;
+                }
+
+              }
+            }
+          });
+      }
+    }
+
   }
 
   removeMarker(wardNo: any, lineNo: any, markerNo: any, alreadyCard: any) {

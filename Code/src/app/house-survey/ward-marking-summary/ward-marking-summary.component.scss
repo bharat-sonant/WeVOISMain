@@ -399,7 +399,7 @@
   }
   .table-scroll{
     padding: 0px;
-    height: 74vh;
+    height: 83vh;
     overflow: hidden;
     overflow-y: scroll;
   }
@@ -522,6 +522,31 @@ label{
   margin-top: 0px;
   color: #1fda2f;
   font-size: 18px;
+  }
+
+  .not-start{
+    color: red;
+  }
+  .marking-done{
+    color: green;
+  }
+  .in-progress{
+    color: #000;
+  }
+
+  .btn-cancel{
+    border-width: 2px;
+    font-weight: 400;
+    font-size: 0.8571em;
+    line-height: 1.35em;
+    height: 35px;
+    border: none;
+    margin: 10px 1px;
+    border-radius: 0.1875rem;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #888;
+    color: #FFFFFF;
   }
 
 
