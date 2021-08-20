@@ -109,7 +109,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             alreadyInstalled: 0,
             wardLines: 0,
             approvedLines: 0,
-            status: "Not started",
+            status: "",
             cssClass:"not-start"
           });
 
