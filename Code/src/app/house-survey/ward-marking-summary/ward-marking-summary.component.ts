@@ -801,7 +801,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
-    console.log("fdfsdsdg")
     this.markerDetailList = [];
     if (this.markerList.length > 0) {
       this.markerDetailList = this.markerList.filter((item) => item.lineNo == lineNo)
