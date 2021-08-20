@@ -74,6 +74,7 @@ import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-sum
 import { WardHaltReportComponent } from '../../reports/ward-halt-report/ward-halt-report.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
+import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -163,6 +164,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/ward-halt-report', component: WardHaltReportComponent },
     { path: 'sikar/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'sikar/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'sikar/vehicle-assigned', component: VehicleAssignedComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -243,6 +245,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'sikar/:id/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'sikar/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'sikar/:id/vehicle-assigned', component: VehicleAssignedComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -323,6 +326,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/ward-halt-report', component: WardHaltReportComponent },
     { path: 'reengus/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'reengus/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'reengus/vehicle-assigned', component: VehicleAssignedComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -403,6 +407,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'reengus/:id/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'reengus/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'reengus/:id/vehicle-assigned', component: VehicleAssignedComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -483,6 +488,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/ward-halt-report', component: WardHaltReportComponent },
     { path: 'test/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'test/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'test/vehicle-assigned', component: VehicleAssignedComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -563,6 +569,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'test/:id/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'test/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'test/:id/vehicle-assigned', component: VehicleAssignedComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -643,6 +650,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/ward-halt-report', component: WardHaltReportComponent },
     { path: 'demo/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'demo/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'demo/vehicle-assigned', component: VehicleAssignedComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -723,4 +731,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/ward-halt-report', component: WardHaltReportComponent },
     { path: 'demo/:id/ward-scancard-report', component: WardScancardReportComponent },
     { path: 'demo/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'demo/:id/vehicle-assigned', component: VehicleAssignedComponent },
 ]; 

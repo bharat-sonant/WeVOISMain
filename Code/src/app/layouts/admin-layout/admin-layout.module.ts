@@ -81,6 +81,7 @@ import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-sum
 import { WardHaltReportComponent } from '../../reports/ward-halt-report/ward-halt-report.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
+import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 
 @NgModule({
   imports: [
@@ -166,7 +167,8 @@ import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-map
     WardMarkingSummaryComponent,
     WardHaltReportComponent,
     WardScancardReportComponent,
-    LineMarkerMappingComponent
+    LineMarkerMappingComponent,
+    VehicleAssignedComponent
   ]
 })
 

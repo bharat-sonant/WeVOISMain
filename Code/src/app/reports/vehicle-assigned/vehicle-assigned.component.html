@@ -1,0 +1,64 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  </div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-6" style="padding-left: 18px;
+        margin-top: -15px;">
+            <button class="btn btn-primary " (click)="setDate('','previous');">
+                << </button>
+                    <input id="txtDate" class="date-input" type="date"
+                        (change)="setDate($event.target.value,'current')">
+                    <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
+                        >>
+                    </button>
+                    
+        </div>
+        <div class="col-md-6" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+           
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-3" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table"
+                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important; font-size: 10px;">
+                                        <thead>
+                                            <th style="border-right:1px solid #dee2e6; width:30%;">S No.</th>
+                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:70%;">
+                                                Vehicle</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of assignedVehicleList; let i=index"
+                                                >
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{i+1}}</td>
+                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                    {{data.vehicle}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                style="padding-top: 20vh; display: none;">
+                                <div class="form-group">
+                                    <h5>No data available</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9" style="padding-left: 7px;padding-right:0px;">
+        </div>
+    </div>
+</div>

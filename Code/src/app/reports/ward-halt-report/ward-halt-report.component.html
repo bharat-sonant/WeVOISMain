@@ -1,45 +1,33 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-6" style="padding-left: 18px;">
-
-            <select class="caret-select" id="ddlYear" 
-            style="width: 150px;" >
-            <option value="0">Year</option>
-            <option value={{yer.year}} *ngFor="let yer of yearList"
-                ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
-        </select>
-        <select class="caret-select" id="ddlMonth" (
-            style="width: 150px;">
-            <option value="0">Month</option>
-            <option value="01">January</option>
-            <option value="02">February</option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-        </select>
-        <select class="caret-select" id="ddlZone" 
-            style="width: 150px;">
-            <option value="Circle1" selected>Circle1</option>
-            <option value="Circle2">Circle2</option>
-            <option value="Circle3">Circle3</option>
-            <option value="Others">Others</option>
-        </select>
+        <div class="col-md-6" style="padding-left: 18px;
+        margin-top: -15px;">
+            <button class="btn btn-primary " (click)="setDate('','previous');">
+                << </button>
+                    <input id="txtDate" class="date-input" type="date"
+                        (change)="setDate($event.target.value,'current')">
+                    <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
+                        >>
+                    </button>
+                    &nbsp;
+                    <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
+                        style="width: 150px;">
+                        <!-- <option value="Circle1" selected>Circle1</option>-->
+                        <option value="Circle2" selected>Circle2</option>
+                        <option value="Circle3">Circle3</option>
+                    </select>
         </div>
         <div class="col-md-6" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Ward Wise Halt
+           
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -47,15 +35,32 @@
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
                                     <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important; font-size: 10px;">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
-                                            <th class="text-center" style="width:15%;"></th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
+                                                Ward Length(km)</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
+                                                Covered Length(km)
+                                                <i class="far fa-file-pdf"  style="float: right; font-size: 20px; color:#f96332; margin-left: 10px; cursor: pointer;" (click)="SavePDF('main');"></i></th>
                                         </thead>
                                         <tbody>
-                                           
+                                            <tr id="tr{{i}}" *ngFor="let data of wardDataList; let i=index"
+                                                style="cursor: pointer;" (click)="getScanDetail(data.wardNo,i);">
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.wardNo}}</td>
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                    {{data.wardLength}}</td>
+                                                <td class="text-right">
+                                                    <div class="progress progress-float"
+                                                        style="text-align: right!important; float: left;">
+                                                        <div class="progress-bar  progress-success" role="progressbar"
+                                                            [style.width]="data.workPer" aria-valuenow="25"
+                                                            aria-valuemin="0" aria-valuemax="100">{{data.workPer}}</div>
+                                                    </div>
+                                                    {{data.wardCoveredLength}}
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -71,24 +76,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden;">
-                <div class="card-header custom-header">
-                    <div class="row">
-                        <div class="col-md-6 text-left">
-                            <h5> <b> </b></h5>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"></span> <br>
-                                    Total Lines
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -99,12 +90,33 @@
                                             <table class="table"
                                                 style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:30%;">Line No.</th>
                                                     <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:70%;">Markers</th>
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Card No.</th>
+                                                        <th class="border-right"
+                                                            style="border-right:1px solid #dee2e6; width:20%;">Name</th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">RFID</th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Time</th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Scaned By
+                                                        <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; cursor: pointer;" (click)="SavePDF('detail');"></i>
+                                                    </th>
                                                 </thead>
                                                 <tbody>
-                                                    
+                                                    <tr *ngFor="let data of wardScaanedList; let i=index">
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.cardNo}}</td>
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.personName}}</td>
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.rfId}}</td>
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.time}}
+                                                        </td>
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.name}}</td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -124,7 +136,3 @@
         </div>
     </div>
 </div>
-
-
-
-
