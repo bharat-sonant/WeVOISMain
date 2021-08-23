@@ -45,6 +45,9 @@
                                                     <button class="btn btn-primary" (click)="setDate('','next');"> >>
                                                     </button>
                                         </div>
+                                        <div class="col-md-12" style="width: 100%; display: flex;">
+                                           <h6>Trips {{tripData.tripCount}}</h6>
+                                        </div>
                                         <div class="col-md-12">
                                             <select class="caret-select" id="ddlTrip"
                                                 (change)="getTripData($event.target.value)">

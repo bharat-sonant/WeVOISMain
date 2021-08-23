@@ -12,7 +12,7 @@ export class WardTripAnalysisComponent implements OnInit {
   constructor(
     private commonService: CommonService,
     public fs: FirebaseService
-  ) {}
+  ) { }
   tripList: any[];
   zoneList: any[];
   selectedDate: any;
@@ -37,8 +37,9 @@ export class WardTripAnalysisComponent implements OnInit {
     imageUrl: "",
     remark: "",
     filledStatus: "",
+    tripCount: 0
   };
-db:any;
+  db: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(
@@ -101,11 +102,13 @@ db:any;
             let iconClass = "fas fa-ellipsis-h";
             let divClass = "address md-background";
             let tripList = [];
+            let tripCount = 0;
             if (data != null) {
               iconClass = "fas fa-check-double";
               divClass = "address";
               let keyArray = Object.keys(data);
               if (keyArray.length > 0) {
+                tripCount = keyArray.length;
                 for (let j = 0; j < keyArray.length; j++) {
                   let tripID = keyArray[j];
                   let driverId = data[tripID]["driverId"];
@@ -152,6 +155,7 @@ db:any;
                         analysisBy: analysisBy,
                         remark: remark,
                         imageName: imageName,
+
                       });
                     });
                 }
@@ -161,6 +165,7 @@ db:any;
                   divClass: divClass,
                   iconClass: iconClass,
                   tripList: tripList,
+                  tripCount: tripCount
                 });
               }
             } else {
@@ -170,10 +175,20 @@ db:any;
                 divClass: divClass,
                 iconClass: iconClass,
                 tripList: tripList,
+                tripCount: tripCount
               });
             }
             if (this.allZoneList.length - 1 == this.zoneList.length) {
-              this.getTripZoneData(this.zoneList[0]["zoneNo"]);
+              setTimeout(() => {
+                let tripFilter = this.zoneList.filter((item) => item.tripCount > 0);
+                if (tripFilter.length > 0) {
+                  tripFilter[0]["divClass"] = "address md-background-active";
+                  this.getTripZoneData(tripFilter[0]["zoneNo"]);
+                  this.tripList = tripFilter[0]["tripList"];
+                  this.getTripData(this.tripList[0]["tripId"]);
+                }
+              }, 600);
+
             }
           });
       }
@@ -219,6 +234,7 @@ db:any;
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetails != undefined) {
       this.tripList = zoneDetails.tripList;
+      this.tripData.tripCount = zoneDetails.tripCount;
       if (this.tripList.length > 0) {
         this.getTripData(this.tripList[0]["tripId"]);
       } else {
@@ -226,6 +242,20 @@ db:any;
           "error",
           "No trips are available for analysis on selected date !!!"
         );
+      }
+      this.setActiveWard(zoneNo);
+    }
+  }
+
+  setActiveWard(zoneNo: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        if (this.zoneList[i]["divClass"] == "address md-background-active") {
+          this.zoneList[i]["divClass"] = "address";
+        }
+        if (zoneNo == this.zoneList[i]["zoneNo"]) {
+          this.zoneList[i]["divClass"] = "address md-background-active";
+        }
       }
     }
   }
@@ -427,4 +457,5 @@ export class tripDetail {
   imageUrl: string;
   remark: string;
   filledStatus: string;
+  tripCount: number
 }
