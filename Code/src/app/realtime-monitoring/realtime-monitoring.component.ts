@@ -674,6 +674,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (summaryData != null) {
           let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
           if (zoneDetails != undefined) {
+            console.log(zoneDetails);
             if (summaryData["workPercentage"] != null) {
               zoneDetails.workPer = summaryData["workPercentage"] + "%";
               zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
@@ -1068,6 +1069,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       //this.workerDetails.endTime = zoneDetails.dutyOffTime;
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
       this.workerDetails.wardKM = zoneDetails.wardKM;
+      this.workerDetails.tripCount = zoneDetails.tripCount;
     }
     this.time = [];
     this.distance = [];
@@ -1095,7 +1097,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
     this.workerDetails.wardTime = "0 hr 0 min";
     this.workerDetails.vehicleCurrentLocation = "---";
-    this.workerDetails.tripCount = "0";
+   // this.workerDetails.tripCount = "0";
     this.totalMinutesInWard = 0;
     let dbPath =
       "GeoGraphicallySurfingHistory/" +
@@ -1187,7 +1189,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 tripCount = tripCount + 1;
               }
             }
-            this.workerDetails.tripCount = tripCount.toString();
+            //this.workerDetails.tripCount = tripCount.toString();
           }
         }
       });

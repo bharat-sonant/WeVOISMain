@@ -110,7 +110,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             wardLines: 0,
             approvedLines: 0,
             status: "",
-            cssClass:"not-start"
+            cssClass: "not-start"
           });
 
           if (i == 0) {
@@ -158,14 +158,13 @@ export class WardMarkingSummaryComponent implements OnInit {
           if (data["approved"] != null) {
             approved = Number(data["approved"]);
             this.wardProgressList[index]["approvedLines"] = approved;
-            if(approved==Number(this.wardProgressList[index]["wardLines"])){
-              this.wardProgressList[index]["status"]="Marking done";
-              this.wardProgressList[index]["cssClass"]="marking-done";
+            if (approved == Number(this.wardProgressList[index]["wardLines"])) {
+              this.wardProgressList[index]["status"] = "Marking done";
+              this.wardProgressList[index]["cssClass"] = "marking-done";
             }
-            else
-            {
-              this.wardProgressList[index]["status"]="In progress";
-              this.wardProgressList[index]["cssClass"]="in-progress";
+            else {
+              this.wardProgressList[index]["status"] = "In progress";
+              this.wardProgressList[index]["cssClass"] = "in-progress";
             }
           }
         }
@@ -190,6 +189,11 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   getMarkingDetail(wardNo: any, listIndex: any) {
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 1000);
+
     if (this.isFirst == false) {
       this.setActiveClass(listIndex);
     } else {
@@ -203,6 +207,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.markerData.wardMarkers = 0;
     let wardDetail = this.wardProgressList.find(item => item.wardNo == wardNo);
     if (wardDetail != undefined) {
+
       this.markerData.totalLines = wardDetail.wardLines;
       this.markerData.wardApprovedLines = wardDetail.approvedLines;
       this.markerData.wardInstalled = wardDetail.alreadyInstalled;
@@ -218,6 +223,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           .subscribe((data) => {
             houseInstance.unsubscribe();
             if (data != null) {
+              
               let lineNo = i;
               let isApproved = false;
               let markers = 0;

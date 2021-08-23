@@ -320,7 +320,7 @@ export class SidebarComponent implements OnInit {
       this.toDayDate +
       "/Summary";
     this.db.object(dbPath).update({
-      trip: tripCount,
+     // trip: tripCount,
       vehicleCurrentLocation: lastWardStatus,
     });
   }

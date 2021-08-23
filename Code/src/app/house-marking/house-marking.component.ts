@@ -88,7 +88,18 @@ export class HouseMarkingComponent {
     this.previousLine = "1";
     this.setHeight();
     this.getZones();
-    setTimeout(() => {
+  }
+
+  getCurrentLineNo(event: any) {
+    if (event.key == "Enter") {
+      this.getLineDetail();
+    }
+  }
+
+  getZones() {
+    this.zoneList = JSON.parse(localStorage.getItem("markerZone"));
+    //this.zoneList=null;
+    if (this.zoneList != null) {
       const id = this.actRoute.snapshot.paramMap.get("id1");
       if (id != null) {
         this.selectedZone = id.trim();
@@ -101,42 +112,48 @@ export class HouseMarkingComponent {
       this.setMaps();
       this.setKml();
       this.onSubmit();
-    }, 3000);
-  }
-
-  getCurrentLineNo(event: any) {
-    if (event.key == "Enter") {
-      this.getLineDetail();
     }
-  }
-
-  getZones() {
-    this.zoneList = [];
-    let dbPath = "Defaults/CircleWiseWards/Circle1";
-    let zoneInstance = this.db
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        zoneInstance.unsubscribe();
-        if (data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            let zoneNo = data[i];
-            let zoneName = data[i];
-            if (data[i].toString().includes("mkt1")) {
-              zoneName = "Market 1";
-            } else if (data[i].toString().includes("mkt2")) {
-              zoneName = "Market 2";
-            } else if (data[i].toString().includes("mkt3")) {
-              zoneName = "Market 3";
-            } else if (data[i].toString().includes("mkt4")) {
-              zoneName = "Market 4";
-            } else {
-              zoneName = "Ward " + data[i];
+    else {
+      this.zoneList = [];
+      let dbPath = "Defaults/CircleWiseWards/Circle1";
+      let zoneInstance = this.db
+        .list(dbPath)
+        .valueChanges()
+        .subscribe((data) => {
+          zoneInstance.unsubscribe();
+          if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              let zoneNo = data[i];
+              let zoneName = data[i];
+              if (data[i].toString().includes("mkt1")) {
+                zoneName = "Market 1";
+              } else if (data[i].toString().includes("mkt2")) {
+                zoneName = "Market 2";
+              } else if (data[i].toString().includes("mkt3")) {
+                zoneName = "Market 3";
+              } else if (data[i].toString().includes("mkt4")) {
+                zoneName = "Market 4";
+              } else {
+                zoneName = "Ward " + data[i];
+              }
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
             }
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+            localStorage.setItem("markerZone", JSON.stringify(this.zoneList));
+            const id = this.actRoute.snapshot.paramMap.get("id1");
+            if (id != null) {
+              this.selectedZone = id.trim();
+              this.activeZone = id.trim();
+            } else {
+              this.selectedZone = this.zoneList[0]["zoneNo"];
+              this.activeZone = this.zoneList[0]["zoneNo"];
+            }
+            this.getLineApprove();
+            this.setMaps();
+            this.setKml();
+            this.onSubmit();
           }
-        }
-      });
+        });
+    }
 
     //this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
@@ -236,7 +253,7 @@ export class HouseMarkingComponent {
       data => {
         lastScanInstance.unsubscribe();
         if (data != null) {
-          this.markerData.lastScanTime = data.toString().split(':')[0]+":"+data.toString().split(':')[1];
+          this.markerData.lastScanTime = data.toString().split(':')[0] + ":" + data.toString().split(':')[1];
         }
       }
     );
