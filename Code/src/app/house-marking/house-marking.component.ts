@@ -73,6 +73,7 @@ export class HouseMarkingComponent {
   };
 
   ngOnInit() {
+    //localStorage.setItem("wardKMList", null);
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(
@@ -183,15 +184,34 @@ export class HouseMarkingComponent {
   }
 
   setKml() {
-    this.db
-      .object("Defaults/KmlBoundary/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((wardPath) => {
+    let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
+    if (wardKMLList == null) {
+      this.commonService.getWardKML(this.db, this.selectedZone)
+        .then((wardPath) => {
+          this.zoneKML = new google.maps.KmlLayer({
+            url: wardPath.toString(),
+            map: this.map,
+          });
+        });
+    }
+    else {
+      let wardKML = wardKMLList.find(item => item.wardNo == this.selectedZone);
+      if (wardKML != undefined) {
         this.zoneKML = new google.maps.KmlLayer({
-          url: wardPath.toString(),
+          url: wardKML.kmlUrl.toString(),
           map: this.map,
         });
-      });
+      }
+      else {
+        this.commonService.getWardKML(this.db, this.selectedZone)
+        .then((wardPath) => {
+          this.zoneKML = new google.maps.KmlLayer({
+            url: wardPath.toString(),
+            map: this.map,
+          });
+        });
+      }
+    }
   }
 
   clearAllData() {
@@ -241,9 +261,8 @@ export class HouseMarkingComponent {
         this.houseMarker[i]["marker"].setMap(null);
       }
     }
-    this.getAllLinesFromJson();
     this.getTotalMarkers();
-    this.getTotalAlreadyCard();
+    this.getAllLinesFromJson();
     this.getLastScanTime();
   }
 
@@ -259,22 +278,6 @@ export class HouseMarkingComponent {
     );
   }
 
-  getTotalAlreadyCard() {
-    this.markerData.alreadyCardCount = 0;
-    let dbPath =
-      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone +
-      "/alreadyInstalled";
-    let alreadyInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        alreadyInstance.unsubscribe();
-        if (data != null) {
-          this.markerData.alreadyCardCount = Number(data);
-        }
-      });
-  }
 
   getTotalMarkers() {
     let dbPath =
@@ -288,6 +291,8 @@ export class HouseMarkingComponent {
         totalInstance.unsubscribe();
         if (data != null) {
           this.markerData.totalMarkers = data["marked"].toString();
+          this.markerData.alreadyCardCount=data["alreadyInstalled"].toString();
+          this.markerData.approvedLines=data["approved"].toString();
         }
       });
   }
@@ -395,42 +400,60 @@ export class HouseMarkingComponent {
     this.markerData.totalLines = "0";
     this.lines = [];
     this.polylines = [];
-    let wardLineCount = this.db
-      .object("WardLines/" + this.selectedZone + "")
-      .valueChanges()
-      .subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          this.wardLines = Number(lineCount);
-          this.markerData.totalLines = lineCount.toString();
-          for (let i = 1; i <= Number(lineCount); i++) {
-            let wardLines = this.db
-              .list(
-                "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points"
-              )
-              .valueChanges()
-              .subscribe((zoneData) => {
-                wardLines.unsubscribe();
-                if (zoneData.length > 0) {
-                  let lineData = zoneData;
-                  var latLng = [];
-                  for (let j = 0; j < lineData.length; j++) {
-                    latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-                  }
-                  this.lines.push({
-                    lineNo: i,
-                    latlng: latLng,
-                    color: "#87CEFA",
-                  });
-                  this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-                  if (this.lineNo == i.toString()) {
-                    this.getMarkedHouses(i);
-                  }
-                }
-              });
+    let wardLineList = JSON.parse(localStorage.getItem("wardLineList"));
+    if (wardLineList == null) {
+      this.commonService.getWardLines(this.db, this.selectedZone)
+        .then((wardLines) => {
+          this.wardLines = Number(wardLines);
+          this.markerData.totalLines = this.wardLines.toString();
+          this.getWardLines(wardLines);
+        });
+    }
+    else {
+      let lineDetail = wardLineList.find(item => item.wardNo == this.selectedZone);
+      if (lineDetail != undefined) {
+        this.wardLines = Number(lineDetail.wardLines);
+        this.markerData.totalLines = lineDetail.wardLines.toString();
+        this.getWardLines(lineDetail.wardLines);
+      }
+      else {
+        this.commonService.getWardLines(this.db, this.selectedZone)
+          .then((wardLines) => {
+            this.wardLines = Number(wardLines);
+            this.markerData.totalLines = this.wardLines.toString();
+            this.getWardLines(wardLines);
+          });
+      }
+    }
+  }
+
+  getWardLines(lineCount: any) {
+    for (let i = 1; i <= Number(lineCount); i++) {
+      let wardLines = this.db
+        .list(
+          "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points"
+        )
+        .valueChanges()
+        .subscribe((zoneData) => {
+          wardLines.unsubscribe();
+          if (zoneData.length > 0) {
+            let lineData = zoneData;
+            var latLng = [];
+            for (let j = 0; j < lineData.length; j++) {
+              latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
+            }
+            this.lines.push({
+              lineNo: i,
+              latlng: latLng,
+              color: "#87CEFA",
+            });
+            this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+            if (this.lineNo == i.toString()) {
+              this.getMarkedHouses(i);
+            }
           }
-        }
-      });
+        });
+    }
   }
 
   getMarkedHouses(lineNo: any) {

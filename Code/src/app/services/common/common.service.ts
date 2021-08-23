@@ -1009,7 +1009,7 @@ export class CommonService {
   }
 
   chkUserPageAccess(pageURL: any, city: any) {
-    
+
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
       urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
@@ -1039,6 +1039,32 @@ export class CommonService {
     return city;
   }
 
+  getWardLines(newDb: any, wardNo: any) {
+    return new Promise((resolve) => {
+      let wardLineCount = newDb
+        .object("WardLines/" + wardNo + "")
+        .valueChanges()
+        .subscribe((lineCount) => {
+          wardLineCount.unsubscribe();
+          if (lineCount != null) {
+            resolve(lineCount);
+          }
+        });
+    });
+  }
+
+  getWardKML(newDb: any, wardNo: any) {
+    return new Promise((resolve) => {
+      newDb
+        .object("Defaults/KmlBoundary/" + wardNo)
+        .valueChanges()
+        .subscribe((wardPath) => {
+          resolve(wardPath);
+        });
+    });
+  }
+
+
   //#region  all local storage
 
   setLocalStorageData(newDb: any) {
@@ -1049,6 +1075,39 @@ export class CommonService {
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
     this.setDustbin(newDb);
+    this.setWardLines(newDb);
+    this.setMarkerZone(newDb);
+    this.setWardKML(newDb);
+  }
+
+  setMarkerZone(newDb: any) {
+    let zoneList = [];
+    let dbPath = "Defaults/CircleWiseWards/Circle1";
+    let zoneInstance = newDb
+      .list(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        zoneInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let zoneNo = data[i];
+            let zoneName = data[i];
+            if (data[i].toString().includes("mkt1")) {
+              zoneName = "Market 1";
+            } else if (data[i].toString().includes("mkt2")) {
+              zoneName = "Market 2";
+            } else if (data[i].toString().includes("mkt3")) {
+              zoneName = "Market 3";
+            } else if (data[i].toString().includes("mkt4")) {
+              zoneName = "Market 4";
+            } else {
+              zoneName = "Ward " + data[i];
+            }
+            zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+          }
+          localStorage.setItem("markerZone", JSON.stringify(zoneList));
+        }
+      });
   }
 
   setFixedLoctions(newDb: any) {
@@ -1141,6 +1200,48 @@ export class CommonService {
           localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         }
       });
+  }
+
+  setWardKML(newDb: any) {
+    let dbPath = "Defaults/KmlBoundary/";
+    let wardLinesInstance = newDb.object(dbPath).valueChanges().subscribe(
+      data => {
+        wardLinesInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          let wardLineList = [];
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let wardNo = keyArray[i];
+              let kmlUrl = data[wardNo];
+              wardLineList.push({ wardNo: wardNo, kmlUrl: kmlUrl });
+            }
+            localStorage.setItem("wardKMList", JSON.stringify(wardLineList));
+          }
+        }
+      }
+    );
+  }
+
+  setWardLines(newDb: any) {
+    let dbPath = "WardLines";
+    let wardLinesInstance = newDb.object(dbPath).valueChanges().subscribe(
+      data => {
+        wardLinesInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          let wardLineList = [];
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let wardNo = keyArray[i];
+              let wardLines = data[wardNo];
+              wardLineList.push({ wardNo: wardNo, wardLines: wardLines });
+            }
+            localStorage.setItem("wardLineList", JSON.stringify(wardLineList));
+          }
+        }
+      }
+    );
   }
 
 
