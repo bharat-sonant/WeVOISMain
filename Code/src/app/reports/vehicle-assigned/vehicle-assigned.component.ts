@@ -81,8 +81,8 @@ export class VehicleAssignedComponent implements OnInit {
             let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
             if (vehicleDetail == undefined) {
               this.assignedVehicleList.push({ vehicle: vehicle });
+              this.assignedVehicleList=this.commonService.transformNumeric(this.assignedVehicleList,"vehicle");
             }
-
           }
         }
       }
@@ -109,6 +109,7 @@ export class VehicleAssignedComponent implements OnInit {
                       let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
                       if (vehicleDetail == undefined) {
                         this.assignedVehicleList.push({ vehicle: vehicle });
+                        this.assignedVehicleList=this.commonService.transformNumeric(this.assignedVehicleList,"vehicle");
                       }
                     }
                   }
