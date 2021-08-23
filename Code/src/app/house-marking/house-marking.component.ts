@@ -73,12 +73,12 @@ export class HouseMarkingComponent {
   };
 
   ngOnInit() {
-    //localStorage.setItem("wardKMList", null);
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+
     this.commonService.chkUserPageAccess(
       window.location.href,
-      localStorage.getItem("cityName")
+      this.cityName
     );
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
@@ -99,64 +99,14 @@ export class HouseMarkingComponent {
 
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("markerZone"));
-    //this.zoneList=null;
     if (this.zoneList != null) {
-      const id = this.actRoute.snapshot.paramMap.get("id1");
-      if (id != null) {
-        this.selectedZone = id.trim();
-        this.activeZone = id.trim();
-      } else {
-        this.selectedZone = this.zoneList[0]["zoneNo"];
-        this.activeZone = this.zoneList[0]["zoneNo"];
-      }
+      this.selectedZone = this.zoneList[0]["zoneNo"];
+      this.activeZone = this.zoneList[0]["zoneNo"];
       this.getLineApprove();
       this.setMaps();
       this.setKml();
       this.onSubmit();
     }
-    else {
-      this.zoneList = [];
-      let dbPath = "Defaults/CircleWiseWards/Circle1";
-      let zoneInstance = this.db
-        .list(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          zoneInstance.unsubscribe();
-          if (data.length > 0) {
-            for (let i = 0; i < data.length; i++) {
-              let zoneNo = data[i];
-              let zoneName = data[i];
-              if (data[i].toString().includes("mkt1")) {
-                zoneName = "Market 1";
-              } else if (data[i].toString().includes("mkt2")) {
-                zoneName = "Market 2";
-              } else if (data[i].toString().includes("mkt3")) {
-                zoneName = "Market 3";
-              } else if (data[i].toString().includes("mkt4")) {
-                zoneName = "Market 4";
-              } else {
-                zoneName = "Ward " + data[i];
-              }
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-            }
-            localStorage.setItem("markerZone", JSON.stringify(this.zoneList));
-            const id = this.actRoute.snapshot.paramMap.get("id1");
-            if (id != null) {
-              this.selectedZone = id.trim();
-              this.activeZone = id.trim();
-            } else {
-              this.selectedZone = this.zoneList[0]["zoneNo"];
-              this.activeZone = this.zoneList[0]["zoneNo"];
-            }
-            this.getLineApprove();
-            this.setMaps();
-            this.setKml();
-            this.onSubmit();
-          }
-        });
-    }
-
-    //this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
   setHeight() {
@@ -185,30 +135,12 @@ export class HouseMarkingComponent {
 
   setKml() {
     let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
-    if (wardKMLList == null) {
-      this.commonService.getWardKML(this.db, this.selectedZone)
-        .then((wardPath) => {
-          this.zoneKML = new google.maps.KmlLayer({
-            url: wardPath.toString(),
-            map: this.map,
-          });
-        });
-    }
-    else {
+    if (wardKMLList != null) {
       let wardKML = wardKMLList.find(item => item.wardNo == this.selectedZone);
       if (wardKML != undefined) {
         this.zoneKML = new google.maps.KmlLayer({
           url: wardKML.kmlUrl.toString(),
           map: this.map,
-        });
-      }
-      else {
-        this.commonService.getWardKML(this.db, this.selectedZone)
-        .then((wardPath) => {
-          this.zoneKML = new google.maps.KmlLayer({
-            url: wardPath.toString(),
-            map: this.map,
-          });
         });
       }
     }
@@ -291,8 +223,8 @@ export class HouseMarkingComponent {
         totalInstance.unsubscribe();
         if (data != null) {
           this.markerData.totalMarkers = data["marked"].toString();
-          this.markerData.alreadyCardCount=data["alreadyInstalled"].toString();
-          this.markerData.approvedLines=data["approved"].toString();
+          this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
+          this.markerData.approvedLines = data["approved"].toString();
         }
       });
   }
@@ -401,28 +333,12 @@ export class HouseMarkingComponent {
     this.lines = [];
     this.polylines = [];
     let wardLineList = JSON.parse(localStorage.getItem("wardLineList"));
-    if (wardLineList == null) {
-      this.commonService.getWardLines(this.db, this.selectedZone)
-        .then((wardLines) => {
-          this.wardLines = Number(wardLines);
-          this.markerData.totalLines = this.wardLines.toString();
-          this.getWardLines(wardLines);
-        });
-    }
-    else {
+    if (wardLineList != null) {
       let lineDetail = wardLineList.find(item => item.wardNo == this.selectedZone);
       if (lineDetail != undefined) {
         this.wardLines = Number(lineDetail.wardLines);
         this.markerData.totalLines = lineDetail.wardLines.toString();
         this.getWardLines(lineDetail.wardLines);
-      }
-      else {
-        this.commonService.getWardLines(this.db, this.selectedZone)
-          .then((wardLines) => {
-            this.wardLines = Number(wardLines);
-            this.markerData.totalLines = this.wardLines.toString();
-            this.getWardLines(wardLines);
-          });
       }
     }
   }
