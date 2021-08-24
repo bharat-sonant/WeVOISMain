@@ -206,6 +206,9 @@ export class HouseMarkingComponent {
         if (data != null) {
           this.markerData.lastScanTime = data.toString().split(':')[0] + ":" + data.toString().split(':')[1];
         }
+        else {
+          this.markerData.lastScanTime = "";
+        }
       }
     );
   }
@@ -624,6 +627,20 @@ export class HouseMarkingComponent {
                   if (wardDetail != undefined) {
                     wardDetail.alreadyInstalled = Number(wardDetail.alreadyInstalled) - 1;
                   }
+                }
+              );
+
+              dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/alreadyInstalledCount";
+              let alreadyLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+                alreadyLineData => {
+                  alreadyLineInstance.unsubscribe();
+                  let total = 0;
+                  if (alreadyLineData != null) {
+                    total = Number(alreadyLineData) - 1;
+                  }
+
+                  this.db.object("EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/").update({ alreadyInstalledCount: total });
+
                 }
               );
             }

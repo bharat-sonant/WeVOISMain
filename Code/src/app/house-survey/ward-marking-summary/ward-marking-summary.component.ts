@@ -4,6 +4,7 @@ import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
   selector: "app-ward-marking-summary",
@@ -117,7 +118,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             setTimeout(() => {
               this.getMarkingDetail(wardNo, 0);
               $("#tr0").addClass("active");
-            }, 600);
+            }, 1000);
           }
           this.getWardSummary(i, wardNo);
         }
@@ -152,6 +153,10 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.markerData.totalAlreadyCard = this.markerData.totalAlreadyCard + alreadyInstalled;
           }
           this.wardProgressList[index]["markers"] = markers;
+          if (markers > 0) {
+            this.wardProgressList[index]["status"] = "In progress";
+            this.wardProgressList[index]["cssClass"] = "in-progress";
+          }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
           this.markerData.totalMarkers = this.markerData.totalMarkers + markers;
           let approved = 0;
@@ -161,10 +166,6 @@ export class WardMarkingSummaryComponent implements OnInit {
             if (approved == Number(this.wardProgressList[index]["wardLines"])) {
               this.wardProgressList[index]["status"] = "Marking done";
               this.wardProgressList[index]["cssClass"] = "marking-done";
-            }
-            else {
-              this.wardProgressList[index]["status"] = "In progress";
-              this.wardProgressList[index]["cssClass"] = "in-progress";
             }
           }
         }
@@ -214,108 +215,65 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardMarkers = wardDetail.markers;
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
-        this.lineMarkerList.push({ lineNo: i, markers: 0, isApproved: false, alreadyCard: 0 });
-        let dbPath =
-          "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i;
-        let houseInstance = this.db
-          .object(dbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            houseInstance.unsubscribe();
-            if (data != null) {
-              
-              let lineNo = i;
-              let isApproved = false;
-              let markers = 0;
-              let alreadyCard = 0;
-
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let index = keyArray[j];
-                  if (index == "ApproveStatus") {
-                    if (data[index]["status"] == "Confirm") {
-                      isApproved = true;
-                    }
-                  }
-                  else if (index == "marksCount") {
-                    markers = Number(data[index]);
-                  }
-                  else {
-                    if (index != "lastMarkerKey") {
-                      let lineNo = i;
-                      let alreadyInstalled = "नहीं";
-                      if (data[index]["latLng"] != undefined) {
-                        if (data[index]["alreadyInstalled"] == true) {
-                          alreadyInstalled = "हाँ";
-                          alreadyCard = alreadyCard + 1;
-                        }
-                        let imageName = data[index]["image"];
-                        let userId = data[index]["userId"];
-                        let date = data[index]["date"].split(" ")[0];
-                        let status = "";
-                        if (data[index]["status"] != null) {
-                          status = data[index]["status"];
-                        }
-                        let city =
-                          this.cityName.charAt(0).toUpperCase() +
-                          this.cityName.slice(1);
-
-                        let imageUrl =
-                          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-                          city +
-                          "%2FMarkingSurveyImages%2F" +
-                          wardNo +
-                          "%2F" +
-                          i +
-                          "%2F" +
-                          imageName +
-                          "?alt=media";
-                        let type = data[index]["houseType"];
-                        let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-                        let houseInstance1 = this.db
-                          .object(dbPath1)
-                          .valueChanges()
-                          .subscribe((data) => {
-                            houseInstance1.unsubscribe();
-                            if (data != null) {
-                              let houseType = data.toString().split("(")[0];
-                              this.markerList.push({
-                                wardNo: wardNo,
-                                lineNo: lineNo,
-                                index: index,
-                                alreadyInstalled: alreadyInstalled,
-                                imageName: imageName,
-                                type: houseType,
-                                imageUrl: imageUrl,
-                                status: status,
-                                userId: userId,
-                                date: date,
-                              });
-                            }
-                          });
-                      }
-                    }
-                  }
-                }
-                let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
-                if (lineDetail != undefined) {
-                  lineDetail.markers = markers;
-                  lineDetail.alreadyCard = alreadyCard;
-                  lineDetail.isApproved = isApproved;
-                }
-
-              }
-            }
-          });
+        this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, isApproved: false, alreadyCard: 0 });
+        this.getLineStatus(wardNo, i);
+        this.getLineMarkers(wardNo, i);
+        this.getLineAlreadyCard(wardNo, i);
       }
     }
+  }
 
+  getLineAlreadyCard(wardNo: any, lineNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/alreadyInstalledCount";
+    let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
+      alreadyData => {
+        alreadyInstance.unsubscribe();
+        if (alreadyData != null) {
+          let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            lineDetail.alreadyCard = Number(alreadyData);
+          }
+        }
+      }
+    );
+  }
+
+  getLineMarkers(wardNo: any, lineNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/marksCount";
+    let markedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markedData => {
+        markedInstance.unsubscribe();
+        if (markedData != null) {
+          let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            lineDetail.markers = Number(markedData);
+
+          }
+        }
+      }
+    );
+  }
+
+  getLineStatus(wardNo: any, lineNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus/status";
+    let approvedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      approveData => {
+        approvedInstance.unsubscribe();
+        if (approveData != null) {
+          if (approveData == "Confirm") {
+            let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.isApproved = true;
+            }
+          }
+        }
+      }
+    );
   }
 
   removeMarker(wardNo: any, lineNo: any, markerNo: any, alreadyCard: any) {
 
-    let markerDatails = this.markerList.find((item) => item.index == markerNo);
+    let markerDatails = this.markerDetailList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
@@ -415,24 +373,6 @@ export class WardMarkingSummaryComponent implements OnInit {
                 }
               }
               this.markerDetailList = newMarkerList;
-              newMarkerList = [];
-              for (let i = 0; i < this.markerList.length; i++) {
-                if (this.markerList[i]["index"] != markerNo || this.markerList[i]["lineNo"] != lineNo) {
-                  newMarkerList.push({
-                    wardNo: this.markerList[i]["wardNo"],
-                    lineNo: this.markerList[i]["lineNo"],
-                    index: this.markerList[i]["index"],
-                    alreadyInstalled: this.markerList[i]["alreadyInstalled"],
-                    imageName: this.markerList[i]["imageName"],
-                    type: this.markerList[i]["houseType"],
-                    imageUrl: this.markerList[i]["imageUrl"],
-                    status: this.markerList[i]["status"],
-                    userId: this.markerList[i]["userId"],
-                    date: this.markerList[i]["date"],
-                  });
-                }
-              }
-              this.markerList = newMarkerList;
             }
 
             if (alreadyCard == "हाँ") {
@@ -456,6 +396,17 @@ export class WardMarkingSummaryComponent implements OnInit {
                   }
                 }
               );
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/alreadyInstalledCount";
+              let alreadyLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+                alreadyLineData => {
+                  alreadyLineInstance.unsubscribe();
+                  let total = 0;
+                  if (alreadyLineData != null) {
+                    total = Number(alreadyLineData) - 1;
+                  }
+                  this.db.object("EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/").update({ alreadyInstalledCount: total });
+                }
+              );
             }
 
             this.updateCount(wardNo, date, userId, "remove");
@@ -470,7 +421,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   saveMarkerStatus(wardNo: any, lineNo: any, markerNo: any) {
-    let markerDatails = this.markerList.find((item) => item.index == markerNo);
+    let markerDatails = this.markerDetailList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
@@ -805,39 +756,102 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   //#endregion
 
+  getLineDetail(wardNo: any, lineNo: any) {
+    this.markerDetailList = [];
+    let dbPath =
+      "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    let houseInstance = this.db
+      .object(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        houseInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (data[index]["latLng"] != null) {
+                let alreadyInstalled = "नहीं";
+                if (data[index]["alreadyInstalled"] == true) {
+                  alreadyInstalled = "हाँ";
+                }
+                let imageName = data[index]["image"];
+                let userId = data[index]["userId"];
+                let date = data[index]["date"].split(" ")[0];
+                let status = "";
+                if (data[index]["status"] != null) {
+                  status = data[index]["status"];
+                }
+                let city =
+                  this.cityName.charAt(0).toUpperCase() +
+                  this.cityName.slice(1);
+
+                let imageUrl =
+                  "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+                  city +
+                  "%2FMarkingSurveyImages%2F" +
+                  wardNo +
+                  "%2F" +
+                  lineNo +
+                  "%2F" +
+                  imageName +
+                  "?alt=media";
+                let type = data[index]["houseType"];
+                let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
+                let houseInstance1 = this.db
+                  .object(dbPath1)
+                  .valueChanges()
+                  .subscribe((data) => {
+                    houseInstance1.unsubscribe();
+                    if (data != null) {
+                      let houseType = data.toString().split("(")[0];
+                      this.markerDetailList.push({
+                        wardNo: wardNo,
+                        lineNo: lineNo,
+                        index: index,
+                        alreadyInstalled: alreadyInstalled,
+                        imageName: imageName,
+                        type: houseType,
+                        imageUrl: imageUrl,
+                        status: status,
+                        userId: userId,
+                        date: date,
+                      });
+                    }
+                  });
+              }
+            }
+          }
+        }
+      });
+  }
+
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
     this.markerDetailList = [];
-    if (this.markerList.length > 0) {
-      this.markerDetailList = this.markerList.filter((item) => item.lineNo == lineNo)
-      {
-        this.modalService.open(content, { size: "lg" });
-        let windowHeight = $(window).height();
-        let windowWidth = $(window).width();
-        let height = 870;
-        let width = windowWidth - 300;
-        height = (windowHeight * 90) / 100;
-        let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-        let divHeight = height - 50 + "px";
-        $("div .modal-content")
-          .parent()
-          .css("max-width", "" + width + "px")
-          .css("margin-top", marginTop);
-        $("div .modal-content")
-          .css("height", height + "px")
-          .css("width", "" + width + "px");
-        $("div .modal-dialog-centered").css("margin-top", marginTop);
-        $("#divStatus").css("height", divHeight);
-      }
-    }
-
+    this.getLineDetail(wardNo, lineNo);
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 870;
+    let width = windowWidth - 300;
+    height = (windowHeight * 90) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 50 + "px";
+    $("div .modal-content")
+      .parent()
+      .css("max-width", "" + width + "px")
+      .css("margin-top", marginTop);
+    $("div .modal-content")
+      .css("height", height + "px")
+      .css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
   }
 
   closeModel() {
     this.modalService.dismissAll();
   }
-
-
 }
 export class markerDatail {
   totalLines: string;
