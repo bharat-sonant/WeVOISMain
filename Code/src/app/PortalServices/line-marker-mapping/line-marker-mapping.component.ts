@@ -1,3 +1,4 @@
+import { AngularFireObject } from 'angularfire2/database';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -108,7 +109,7 @@ export class LineMarkerMappingComponent {
   loadData() {
     $('#divLoader').show();
     setTimeout(() => {
-      $('#divLoader').hide();      
+      $('#divLoader').hide();
     }, 2000);
     this.clearAllOnMap();
     this.getAllLinesFromJson();
@@ -385,7 +386,7 @@ export class LineMarkerMappingComponent {
     }
     $('#divLoader').show();
     setTimeout(() => {
-      $('#divLoader').hide();      
+      $('#divLoader').hide();
     }, 1000);
     let currentLine = 1;
     let lineNo = this.previousLine;
@@ -496,6 +497,51 @@ export class LineMarkerMappingComponent {
             this.db.object(dbPath).update({ marksCount: newMarksCount });
           }
         );
+
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus/status";
+        let perLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+          preData => {
+            let approveCount = 0;
+            perLineInstance.unsubscribe();
+            if (preData != null) {
+              if (preData == "Confirm") {
+                approveCount = approveCount + 1;
+              }
+            }
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+            this.db.object(dbPath).update({status:"Reject"});
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus/status";
+            let newLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+              newData => {
+                newLineInstance.unsubscribe();
+                if (newData != null) {
+                  if (newData == "Confirm") {
+                    approveCount = approveCount + 1;
+                  }
+                }
+                dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus";
+                this.db.object(dbPath).update({status:"Reject"});
+
+                dbPath="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+this.selectedZone+"/approved";
+                let approvedInstance=this.db.object(dbPath).valueChanges().subscribe(
+                  approvedData=>{
+                    approvedInstance.unsubscribe();
+                    let total=0;
+                    if(approvedData!=null){
+                      total=Number(approvedData)-approveCount;
+                    }
+                    dbPath="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+this.selectedZone;
+                    this.db.object(dbPath).update({approved:total});
+                  }
+                );
+
+
+
+              });
+          }
+        );
+
+
       }
     );
   }
