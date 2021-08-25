@@ -101,7 +101,6 @@ export class HouseMarkingComponent {
     this.zoneList = JSON.parse(localStorage.getItem("markerZone"));
     if (this.zoneList != null) {
       this.selectedZone = this.zoneList[0]["zoneNo"];
-      this.activeZone = this.zoneList[0]["zoneNo"];
       this.getLineApprove();
       this.setMaps();
       this.setKml();
@@ -173,12 +172,10 @@ export class HouseMarkingComponent {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
     this.clearAllOnMap();
-    this.activeZone = filterVal;
     this.setKml();
     this.onSubmit();
     this.lineNo = 1;
     this.previousLine = 1;
-    this.selectedZone = this.activeZone;
     $("#txtLineNo").val(this.lineNo);
     this.getLineApprove();
   }
@@ -186,7 +183,6 @@ export class HouseMarkingComponent {
   onSubmit() {
     this.markerData.houseType = "";
     this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
-    this.selectedZone = this.activeZone;
     this.polylines = [];
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {

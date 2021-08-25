@@ -138,7 +138,7 @@
         <p>Total Lines</p>
       </h3>
     </div>
-    <div class="lines2" style="border-top: 1px dotted lightgray;">
+    <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;" (click)="showSkipLineDetail(contentSkipLines)">
       <h3>{{progressData.skippedLines}}
         <p>Skipped Lines</p>
       </h3>
@@ -196,7 +196,7 @@
   </div>
 </div>
 
-<!--Vehicle Status Start-->
+<!--Card Not Scan Start-->
 <ng-template #contentCardNotScaned>
   <div style="width: 100%;text-align: right;float: left;">
 
@@ -229,4 +229,39 @@
     </div>
   </div>
 </ng-template>
-<!--Vehicle Status End-->
+<!--Card Not Scan End-->
+
+
+  <!--Skip lines Start-->
+  <ng-template #contentSkipLines>
+    <div style="width: 100%;text-align: right;float: left;">
+
+      <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body" style="margin-top:-20px; ">
+      <div id="divStatus" class="content-scroll">
+        <div class="row">
+          <div class="col-md-2" *ngFor="let dt of skipLineList">
+            <div style="width:100%">
+              <a href="{{dt.imageUrl}}" target="_blank">
+                <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+              </a>
+            </div>
+            <div class="main-tag">
+              <div class="f-left">
+                
+                <p>Reason <span class="f-right"> :</span></p>
+                <h3> {{dt.reason}} </h3><br />
+                <span [hidden]="dt.status==''">
+                  <p>Time <span class="f-right"> :</span></p>
+                  <h3> {{dt.time}} </h3>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <!--Skip lines End-->

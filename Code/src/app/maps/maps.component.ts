@@ -89,6 +89,7 @@ export class MapsComponent {
   wardLineInstanceList: any[] = [];
   totalWardHouse: any;
   totalScannedHouse: any;
+  skipLineList:any[];
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -882,7 +883,7 @@ export class MapsComponent {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
         this.houseMarkerList[i]["marker"].setMap(null);
       }
-      this.houseMarkerList=[];
+      this.houseMarkerList = [];
     }
     this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
@@ -903,7 +904,7 @@ export class MapsComponent {
       } else {
         for (let i = 0; i < this.houseList.length; i++) {
           this.progressData.scanedHouses = 0;
-          this.progressData.houses=this.houseList.length;
+          this.progressData.houses = this.houseList.length;
           this.getScanedCard(
             this.houseList[i]["cardNo"],
             this.houseList[i]["markerType"]
@@ -925,7 +926,7 @@ export class MapsComponent {
     if (this.selectedDate == this.toDayDate) {
       setTimeout(() => {
         this.isFirst = true;
-        if(this.cardInstance!=null){
+        if (this.cardInstance != null) {
           this.cardInstance.unsubscribe();
         }
         this.getRecentCardDetail();
@@ -1132,7 +1133,7 @@ export class MapsComponent {
   }
 
   getCardNotScaned() {
-    this.cardNotScanedList=[];
+    this.cardNotScanedList = [];
     let oldDate = new Date("2021-08-12");
     let currentDate = new Date(this.selectedDate);
     if (currentDate >= oldDate) {
@@ -1266,9 +1267,9 @@ export class MapsComponent {
             this.setMarkerCurrent(data["cardNo"]);
           } else {
             if (data["scanBy"] != "-1") {
-              if (data["isShowMessage"] == "yes") {                
-              this.showMessage(data["cardNo"], data["scanTime"]);
-              }              
+              if (data["isShowMessage"] == "yes") {
+                this.showMessage(data["cardNo"], data["scanTime"]);
+              }
               this.setMarkerCurrent(data["cardNo"]);
             }
           }
@@ -1420,6 +1421,51 @@ export class MapsComponent {
       }
       this.houseMarkerList.push({ cardNo: cardNo, marker: marker });
     }
+  }
+
+  showSkipLineDetail(content: any) {
+    this.skipLineList=[];
+    let dbPath = "SkipCaptureImage/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+    let skipLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        skipLineInstance.unsubscribe();
+        if (data != null) {
+          console.log(data);
+          let keyArray=Object.keys(data);
+          if(keyArray.length>0)
+          {
+            for(let i=0;i<keyArray.length;i++){
+              let index=keyArray[i];
+              let imageUrl=data[index]["imageUrl"];
+              let time=data[index]["time"];
+              let reason=data[index]["reason"];
+              this.skipLineList.push({lineNo:index,imageUrl:imageUrl,time:time,reason:reason})
+            }
+          }
+          this.modalService.open(content, { size: "lg" });
+          let windowHeight = $(window).height();
+          let windowWidth = $(window).width();
+          let height = 870;
+          let width = windowWidth - 300;
+          height = (windowHeight * 90) / 100;
+          let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+          let divHeight = height - 50 + "px";
+          $("div .modal-content")
+            .parent()
+            .css("max-width", "" + width + "px")
+            .css("margin-top", marginTop);
+          $("div .modal-content")
+            .css("height", height + "px")
+            .css("width", "" + width + "px");
+          $("div .modal-dialog-centered").css("margin-top", marginTop);
+          $("#divStatus").css("height", divHeight);
+        }
+        else {
+          this.commonService.setAlertMessage("error","No Skipped Lines!!!");
+        }
+      }
+    );
+
   }
 }
 
