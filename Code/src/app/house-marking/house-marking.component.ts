@@ -1,13 +1,10 @@
 import { Component, ViewChild } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
-import { interval } from "rxjs";
 //services
 import { CommonService } from "../services/common/common.service";
-import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
@@ -19,33 +16,15 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class HouseMarkingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(
-    public fs: FirebaseService,
-    public af: AngularFireModule,
-    public httpService: HttpClient,
-    private actRoute: ActivatedRoute,
-    private mapService: MapService,
-    private router: Router,
-    private commonService: CommonService,
-    private modalService: NgbModal
-  ) { }
+  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
   marker = new google.maps.Marker();
-  previousLat: any;
-  previousLng: any;
   allLines: any[];
-  activeZone: any;
   polylines = [];
-  currentLat: any;
-  currentLng: any;
-  lineDrawnDetails: any[];
-  wardStartUrl = "../assets/img/go-image.png";
-  wardEndUrl = "../assets/img/end-image.png";
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   lines: any[] = [];
-  lastLineInstance: any;
   wardLines: any;
   zoneKML: any;
   allMatkers: any[] = [];
@@ -72,21 +51,9 @@ export class HouseMarkingComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      this.cityName
-    );
-    
-    this.lineNo = "1";
-    this.previousLine = "1";
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
     this.getZones();
-  }
-
-  getCurrentLineNo(event: any) {
-    if (event.key == "Enter") {
-      this.getLineDetail();
-    }
   }
 
   getZones() {
@@ -97,53 +64,22 @@ export class HouseMarkingComponent {
     }
   }
 
-  clearAllData() {
-    this.markerData.totalMarkers = "0";
-    this.markerData.alreadyCardCount = 0;
-    this.markerData.alreadyCard = "";
-    this.markerData.alreadyCardLineCount = 0;
-    this.markerData.approvedLines = "0";
-    this.markerData.houseType = "";
-    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
-    this.markerData.totalLineMarkers = "0";
-    this.markerData.totalLines = "0";
-  }
-
-  clearLineData() {
-    this.markerData.alreadyCard = "";
-    this.markerData.alreadyCardLineCount = 0;
-    this.markerData.houseType = "";
-    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
-    this.markerData.totalLineMarkers = "0";
-  }
-
   changeZoneSelection(filterVal: any) {
-    this.clearAllData();
-
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
     }
+    this.clearAllData();
     this.clearAllOnMap();
     this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
     this.getWardDetail();
-    this.lineNo = 1;
-    this.previousLine = 1;
-    $("#txtLineNo").val(this.lineNo);
-    this.getLineApprove();
   }
 
   getWardDetail() {
-    this.markerData.houseType = "";
-    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
-    this.polylines = [];
-    if (this.houseMarker.length > 0) {
-      for (let i = 0; i < this.houseMarker.length; i++) {
-        this.houseMarker[i]["marker"].setMap(null);
-      }
-    }
     this.getTotalMarkers();
     this.getAllLinesFromJson();
     this.getLastScanTime();
+    this.getLineApprove();
   }
 
   getLastScanTime() {
@@ -164,8 +100,7 @@ export class HouseMarkingComponent {
   }
 
   getTotalMarkers() {
-    let dbPath =
-      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "";
+    let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "";
     let totalInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalInstance.unsubscribe();
       if (data != null) {
@@ -222,24 +157,6 @@ export class HouseMarkingComponent {
     });
   }
 
-  clearAllOnMap() {
-    if (this.allMatkers.length > 0) {
-      for (let i = 0; i < this.allMatkers.length; i++) {
-        this.allMatkers[i]["marker"].setMap(null);
-      }
-      this.allMatkers = [];
-    }
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-    }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
-      }
-    }
-    this.polylines = [];
-  }
-
   getApprovedLines() {
     this.markerData.approvedLines = "0";
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
@@ -252,10 +169,6 @@ export class HouseMarkingComponent {
   }
 
   getAllLinesFromJson() {
-    this.getApprovedLines();
-    this.markerData.totalLines = "0";
-    this.lines = [];
-    this.polylines = [];
     let wardLineList = JSON.parse(localStorage.getItem("wardLineList"));
     if (wardLineList != null) {
       let lineDetail = wardLineList.find(item => item.wardNo == this.selectedZone);
@@ -288,9 +201,6 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
-    this.markerList = [];
-    this.markerData.alreadyCardLineCount = 0;
-    this.houseMarker = [];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
@@ -299,8 +209,7 @@ export class HouseMarkingComponent {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
-            if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey") {
-
+            if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey" && index != "alreadyInstalledCount") {
               if (data[index]["latLng"] != undefined) {
                 let lat = data[index]["latLng"].split(",")[0];
                 let lng = data[index]["latLng"].split(",")[1];
@@ -416,7 +325,6 @@ export class HouseMarkingComponent {
             }
           }
           let newMarkerList = [];
-
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
@@ -425,7 +333,6 @@ export class HouseMarkingComponent {
             }
             this.markerList = newMarkerList;
           }
-
 
           if (alreadyCard == "हाँ") {
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/alreadyInstalled";
@@ -459,9 +366,7 @@ export class HouseMarkingComponent {
             );
           }
           this.updateCount(date, userId, "remove");
-          this.commonService.setAlertMessage(
-            "success",
-            "Marker deleted successfully !!!"
+          this.commonService.setAlertMessage("success", "Marker deleted successfully !!!"
           );
         }
       });
@@ -475,7 +380,6 @@ export class HouseMarkingComponent {
       countKey = "marked";
       totalCountKey = "totalMarked";
     }
-
     //// employee date wise rejected
     let totalinstance1 = this.db.object("EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date + "/" + userId + "/" + countKey).valueChanges().subscribe((totalCount) => {
       totalinstance1.unsubscribe();
@@ -608,13 +512,8 @@ export class HouseMarkingComponent {
       markerDatails.status = "Reject";
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
       this.db.object(dbPath).update({ status: "Reject", });
-
       this.updateCount(date, userId, "reject");
-
-      this.commonService.setAlertMessage(
-        "success",
-        "Marker rejected succfuly !!!"
-      );
+      this.commonService.setAlertMessage("success", "Marker rejected succfuly !!!");
     }
   }
 
@@ -641,7 +540,6 @@ export class HouseMarkingComponent {
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
-
     if (wardNo == this.selectedZone) {
       if (this.polylines[index] != undefined) {
         this.polylines[index].setMap(null);
@@ -664,20 +562,9 @@ export class HouseMarkingComponent {
       if (userType == "Internal User") {
         let lat = latlng[0]["lat"];
         let lng = latlng[0]["lng"];
-        this.setMarker(
-          lat,
-          lng,
-          this.invisibleImageUrl,
-          lineNo.toString(),
-          "",
-          "lineNo",
-          lineNo,
-          "",
-          ""
-        );
+        this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo", lineNo, "", "");
       }
     }
-
   }
 
   setMarker(lat: any, lng: any, markerURL: any, markerLabel: any, imageName: any, type: any, lineNo: any, alreadyCard: any, markerNo: any) {
@@ -709,7 +596,6 @@ export class HouseMarkingComponent {
           url: markerURL,
           fillOpacity: 1,
           strokeWeight: 0,
-          // scaledSize: new google.maps.Size(27, 27),
           origin: new google.maps.Point(0, 0),
         },
       });
@@ -729,8 +615,6 @@ export class HouseMarkingComponent {
       this.houseMarker.push({ markerNo: markerNo, marker: marker });
     }
   }
-
-  //#region Line Marking Status
 
   getNextPrevious(type: any) {
     this.clearLineData();
@@ -797,25 +681,25 @@ export class HouseMarkingComponent {
     this.getMarkedHouses(this.lineNo);
   }
 
-  getLineDetail() {
-    let lineNo = $("#txtLineNo").val();
-    if (lineNo == "") {
-      this.commonService.setAlertMessage("error", "Please enter line no. !!!");
-      return;
-    }
-    if (Number(lineNo) <= this.wardLines) {
-      this.lineNo = lineNo;
-      this.getLineApprove();
-      this.getHouseLineData();
-    } else {
-      this.commonService.setAlertMessage(
-        "error",
-        "Line no. not exist in ward !!!"
-      );
-      this.lineNo = 1;
-      $("#txtLineNo").val(this.lineNo);
-      this.getLineApprove();
-      this.getHouseLineData();
+  getCurrentLineNo(event: any) {
+    if (event.key == "Enter") {
+      let lineNo = $("#txtLineNo").val();
+      if (lineNo == "") {
+        this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+        return;
+      }
+      this.clearLineData();
+      if (Number(lineNo) <= this.wardLines) {
+        this.lineNo = lineNo;
+        this.getLineApprove();
+        this.getHouseLineData();
+      } else {
+        this.commonService.setAlertMessage("error", "Line no. not exist in ward !!!");
+        this.lineNo = 1;
+        $("#txtLineNo").val(this.lineNo);
+        this.getLineApprove();
+        this.getHouseLineData();
+      }
     }
   }
 
@@ -840,7 +724,6 @@ export class HouseMarkingComponent {
     dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       approveInstance.unsubscribe();
-
       if (data != null) {
         if (data["status"] == "Confirm") {
           $("#btnSave").html("Reject Line");
@@ -856,10 +739,7 @@ export class HouseMarkingComponent {
   saveData() {
     let element = <HTMLInputElement>document.getElementById("chkAll");
     if (element.checked == true) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please remove check from show all markers for approve this line!!!"
-      );
+      this.commonService.setAlertMessage("error", "Please remove check from show all markers for approve this line!!!");
       return;
     }
 
@@ -882,7 +762,6 @@ export class HouseMarkingComponent {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     const data = {
       status: status,
-      //remark: remark,
     };
     this.db.object(dbPath).update(data);
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
@@ -903,18 +782,60 @@ export class HouseMarkingComponent {
       }, 200);
     });
 
-    this.commonService.setAlertMessage(
-      "success",
-      "Line approve status updated !!!"
-    );
+    this.commonService.setAlertMessage("success", "Line approve status updated !!!");
   }
-
-  //#endregion
 
   assignSurveyor() {
     this.router.navigate([
       "/" + this.cityName + "/13B/house-marking-assignment",
     ]);
+  }
+
+  clearAllOnMap() {
+    this.lines = [];
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+    }
+    if (this.allMatkers.length > 0) {
+      for (let i = 0; i < this.allMatkers.length; i++) {
+        this.allMatkers[i]["marker"].setMap(null);
+      }
+      this.allMatkers = [];
+    }
+    if (this.zoneKML != null) {
+      this.zoneKML.setMap(null);
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
+    this.polylines = [];
+  }
+
+  clearAllData() {
+    this.lineNo = 1;
+    this.previousLine = 1;
+    $("#txtLineNo").val(this.lineNo);
+    this.markerData.totalMarkers = "0";
+    this.markerData.alreadyCardCount = 0;
+    this.markerData.alreadyCard = "";
+    this.markerData.alreadyCardLineCount = 0;
+    this.markerData.approvedLines = "0";
+    this.markerData.houseType = "";
+    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
+    this.markerData.totalLineMarkers = "0";
+    this.markerData.totalLines = "0";
+  }
+
+  clearLineData() {
+    this.markerData.alreadyCard = "";
+    this.markerData.alreadyCardLineCount = 0;
+    this.markerData.houseType = "";
+    this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
+    this.markerData.totalLineMarkers = "0";
   }
 }
 export class markerDetail {
