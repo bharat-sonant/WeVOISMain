@@ -27,7 +27,6 @@ export class WardMonitoringReportComponent implements OnInit {
    // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.getWards();
     this.selectedCircle = "Circle1";
-    //this.commonService.chkUserPermission("Ward Monitoring Report");
     this.toDayDate = this.commonService.setTodayDate();
     this.selectDate = this.toDayDate;
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());

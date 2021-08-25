@@ -26,13 +26,15 @@ export class PortalServicesComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   userId: any;
+  cityName:any;
   db: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
     this.commonService.chkUserPageAccess(
       window.location.href,
-      localStorage.getItem("cityName")
+      this.cityName
     );
     this.toDayDate = this.commonService.setTodayDate();
     this.getUserAccess();
@@ -44,37 +46,37 @@ export class PortalServicesComponent implements OnInit {
       for (let i = 0; i < userAccessList.length; i++) {
         if (
           userAccessList[i]["pageId"] == "8A" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divLineCard").show();
         }
         if (
           userAccessList[i]["pageId"] == "8B" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divWorkPercentage").show();
         }
         if (
           userAccessList[i]["pageId"] == "8C" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divReachCost").show();
         }
         if (
           userAccessList[i]["pageId"] == "8D" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divTaskMasters").show();
         }
         if (
           userAccessList[i]["pageId"] == "8E" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divMapReview").show();
         }
         if (
           userAccessList[i]["pageId"] == "8F" &&
-          userAccessList[i]["userId"] == this.userId
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
         ) {
           $("#divLineMarker").show();
         }

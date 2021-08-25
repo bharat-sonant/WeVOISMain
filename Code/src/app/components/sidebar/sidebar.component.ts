@@ -185,19 +185,12 @@ export class SidebarComponent implements OnInit {
   }
 
   changeCity(cityName: any) {
-    if(cityName=="sikar" || cityName=="test"){
+    
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
     this.closeMapModel();
     this.router.navigate(["/" + cityName + "/home"]);
-    }
-    else
-    {
-      this.commonService.setAlertMessage("error","Sorry! we will start soon on "+cityName);
-    }
-    //this.getUserAccess();
-   // window.location.href = "/" + cityName + "/home";
   }
 
   getGeoSurfing() {
@@ -810,7 +803,7 @@ export class SidebarComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 270;
-    let width = 500;
+    let width = 650;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content")
       .parent()
@@ -825,32 +818,33 @@ export class SidebarComponent implements OnInit {
     let classNameSikar = elementSikar.className;
     let elementReengus = <HTMLElement>document.getElementById("reengusBox");
     let classNameReengus = elementReengus.className;
-    let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
-    let classNameJaipur = elementJaipur.className;
+    let elementShahpura = <HTMLElement>document.getElementById("shahpuraBox");
+    let classNameShahpura = elementShahpura.className;
     let elementDemo = <HTMLElement>document.getElementById("demoBox");
     let classNameDemo = elementDemo.className;
     $("#sikarBox").removeClass(classNameSikar);
     $("#reengusBox").removeClass(classNameReengus);
-    $("#jaipurBox").removeClass(classNameJaipur);
+    $("#shahpuraBox").removeClass(classNameShahpura);
+    $("#demoBox").removeClass(classNameDemo);
     if (this.cityName == "sikar") {
       $("#sikarBox").addClass("login-box active-box");
       $("#reengusBox").addClass("login-box");
-      $("#jaipurBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box");
       $("#demoBox").addClass("login-box");
     } else if (this.cityName == "reengus") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box active-box");
-      $("#jaipurBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box");
       $("#demoBox").addClass("login-box");
-    } else if (this.cityName == "test") {
+    } else if (this.cityName == "shahpura") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      $("#jaipurBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box active-box");
       $("#demoBox").addClass("login-box");
     } else if (this.cityName == "demo") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      $("#jaipurBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box");
       $("#demoBox").addClass("login-box active-box");
     }
     for (let i = 0; i < this.accessCity.length; i++) {
@@ -858,8 +852,8 @@ export class SidebarComponent implements OnInit {
         $("#sikarBox").show();
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
-      } else if (this.accessCity[i]["city"] == "test") {
-        $("#jaipurBox").hide();
+      } else if (this.accessCity[i]["city"] == "shahpura") {
+        $("#shahpuraBox").show();
       } else if (this.accessCity[i]["city"] == "demo") {
         $("#demoBox").show();
       }

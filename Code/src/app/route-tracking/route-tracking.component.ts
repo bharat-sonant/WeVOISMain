@@ -90,7 +90,6 @@ db:any;
     $('#btnPre').show();
     $('#btnReset').hide();
     this.getMinmumMaximumDistance();
-    // this.commonService.chkUserPermission("Route Tracking");
     this.toDayDate = this.commonService.setTodayDate();
     if (this.toDayDate.split('-')[2] == "01") {
       localStorage.setItem("routeMonthDetail", null);

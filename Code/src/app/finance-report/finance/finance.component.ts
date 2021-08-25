@@ -18,7 +18,6 @@ export class FinanceComponent implements OnInit {
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.userid = localStorage.getItem('userID');
-    //this.commonService.chkUserPermission("Finance Report");
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
     this.getUserAccess();

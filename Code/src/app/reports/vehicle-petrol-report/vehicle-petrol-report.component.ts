@@ -242,9 +242,11 @@ export class VehiclePetrolReportComponent implements OnInit {
         }
 
         $("#divLoader").hide();
+        if(this.vehiclePetrolList.length>0){
         setTimeout(() => {
           this.getVehicleDetail(this.vehiclePetrolList[0]["vehicle"], 0);
         }, 1000);
+      }
       }, 12000);
     }
   }
