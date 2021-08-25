@@ -100,12 +100,7 @@ export class HouseMarkingComponent {
     this.zoneList = JSON.parse(localStorage.getItem("markerZone"));
     if (this.zoneList != null) {
       this.selectedZone = 0;
-     // this.getLineApprove();
-     // this.setMaps();
-      this.map=this.commonService.setMap(this.gmap);
-     // this.zoneKML=this.commonService.setKML(this.selectedZone,this.map);
-      //this.setKml();
-     // this.getWardDetail();
+      this.map = this.commonService.setMap(this.gmap);
     }
   }
 
@@ -135,8 +130,8 @@ export class HouseMarkingComponent {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
-    this.clearAllOnMap();    
-    this.zoneKML=this.commonService.setKML(this.selectedZone,this.map);
+    this.clearAllOnMap();
+    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
     this.getWardDetail();
     this.lineNo = 1;
     this.previousLine = 1;
@@ -163,7 +158,7 @@ export class HouseMarkingComponent {
     let lastScanInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         lastScanInstance.unsubscribe();
-        if (data != null) {          
+        if (data != null) {
           $('#divLastUpdate').show();
           this.markerData.lastScanTime = data.toString().split(':')[0] + ":" + data.toString().split(':')[1];
         }
@@ -175,23 +170,17 @@ export class HouseMarkingComponent {
     );
   }
 
-
   getTotalMarkers() {
     let dbPath =
-      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone +
-      "";
-    let totalInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        totalInstance.unsubscribe();
-        if (data != null) {
-          this.markerData.totalMarkers = data["marked"].toString();
-          this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
-          this.markerData.approvedLines = data["approved"].toString();
-        }
-      });
+      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "";
+    let totalInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      totalInstance.unsubscribe();
+      if (data != null) {
+        this.markerData.totalMarkers = data["marked"].toString();
+        this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
+        this.markerData.approvedLines = data["approved"].toString();
+      }
+    });
   }
 
   showAllMarkers() {
@@ -212,49 +201,32 @@ export class HouseMarkingComponent {
   }
 
   showMarkers(lineNo: any) {
-    let dbPath =
-      "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let houseInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        houseInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (data[index]["latLng"] != undefined) {
-                let lat = data[index]["latLng"].split(",")[0];
-                let lng = data[index]["latLng"].split(",")[1];
-                let type = data[index]["houseType"];
-                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                let houseInstance = this.db
-                  .object(dbPath)
-                  .valueChanges()
-                  .subscribe((data) => {
-                    houseInstance.unsubscribe();
-                    if (data != null) {
-                      let houseType = data.toString().split("(")[0];
-                      let markerURL = this.getMarkerIcon(type);
-                      this.setMarker(
-                        lat,
-                        lng,
-                        markerURL,
-                        houseType,
-                        "",
-                        "marker",
-                        lineNo,
-                        "",
-                        index
-                      );
-                    }
-                  });
-              }
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (data[index]["latLng"] != undefined) {
+              let lat = data[index]["latLng"].split(",")[0];
+              let lng = data[index]["latLng"].split(",")[1];
+              let type = data[index]["houseType"];
+              let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+              let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+                houseInstance.unsubscribe();
+                if (data != null) {
+                  let houseType = data.toString().split("(")[0];
+                  let markerURL = this.getMarkerIcon(type);
+                  this.setMarker(lat, lng, markerURL, houseType, "", "marker", lineNo, "", index);
+                }
+              });
             }
           }
         }
-      });
+      }
+    });
   }
 
   clearAllOnMap() {
@@ -277,19 +249,13 @@ export class HouseMarkingComponent {
 
   getApprovedLines() {
     this.markerData.approvedLines = "0";
-    let dbPath =
-      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone +
-      "/approved";
-    let approvedInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        approvedInstance.unsubscribe();
-        if (data != null) {
-          this.markerData.approvedLines = data.toString();
-        }
-      });
+    let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
+    let approvedInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      approvedInstance.unsubscribe();
+      if (data != null) {
+        this.markerData.approvedLines = data.toString();
+      }
+    });
   }
 
   getAllLinesFromJson() {
@@ -310,30 +276,21 @@ export class HouseMarkingComponent {
 
   getWardLines(lineCount: any) {
     for (let i = 1; i <= Number(lineCount); i++) {
-      let wardLines = this.db
-        .list(
-          "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points"
-        )
-        .valueChanges()
-        .subscribe((zoneData) => {
-          wardLines.unsubscribe();
-          if (zoneData.length > 0) {
-            let lineData = zoneData;
-            var latLng = [];
-            for (let j = 0; j < lineData.length; j++) {
-              latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-            }
-            this.lines.push({
-              lineNo: i,
-              latlng: latLng,
-              color: "#87CEFA",
-            });
-            this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-            if (this.lineNo == i.toString()) {
-              this.getMarkedHouses(i);
-            }
+      let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
+        wardLines.unsubscribe();
+        if (zoneData.length > 0) {
+          let lineData = zoneData;
+          var latLng = [];
+          for (let j = 0; j < lineData.length; j++) {
+            latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
           }
-        });
+          this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA", });
+          this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+          if (this.lineNo == i.toString()) {
+            this.getMarkedHouses(i);
+          }
+        }
+      });
     }
   }
 
@@ -341,107 +298,65 @@ export class HouseMarkingComponent {
     this.markerList = [];
     this.markerData.alreadyCardLineCount = 0;
     this.houseMarker = [];
-    let dbPath =
-      "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let houseInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        houseInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey") {
-                
-                if (data[index]["latLng"] != undefined) {
-                  let lat = data[index]["latLng"].split(",")[0];
-                  let lng = data[index]["latLng"].split(",")[1];
-                  let imageName = data[index]["image"];
-                  let userId = data[index]["userId"];
-                  let date = data[index]["date"].split(" ")[0];
-                  let status = "";
-                  if (data[index]["status"] != null) {
-                    status = data[index]["status"];
-                  }
-                  let city =
-                    this.cityName.charAt(0).toUpperCase() +
-                    this.cityName.slice(1);
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey") {
 
-                  let imageUrl =
-                    "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-                    city +
-                    "%2FMarkingSurveyImages%2F" +
-                    this.selectedZone +
-                    "%2F" +
-                    this.lineNo +
-                    "%2F" +
-                    imageName +
-                    "?alt=media";
-                  let type = data[index]["houseType"];
-                  let alreadyInstalled = "नहीं";
-
-                  if (data[index]["alreadyInstalled"] == true) {
-                    this.markerData.alreadyCardLineCount =
-                      this.markerData.alreadyCardLineCount + 1;
-                    alreadyInstalled = "हाँ";
-                  }
-                  let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-                  let houseInstance1 = this.db
-                    .object(dbPath1)
-                    .valueChanges()
-                    .subscribe((data) => {
-                      houseInstance1.unsubscribe();
-                      if (data != null) {
-                        let houseType = data.toString().split("(")[0];
-                        this.markerList.push({
-                          index: index,
-                          lat: lat,
-                          lng: lng,
-                          alreadyInstalled: alreadyInstalled,
-                          imageName: imageName,
-                          type: houseType,
-                          imageUrl: imageUrl,
-                          status: status,
-                          userId: userId,
-                          date: date,
-                        });
-                      }
-                    });
-                  let alreadyCard = "";
-                  if (alreadyInstalled == "हाँ") {
-                    alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
-                  }
-
-                  let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                  let houseInstance = this.db
-                    .object(dbPath)
-                    .valueChanges()
-                    .subscribe((data) => {
-                      houseInstance.unsubscribe();
-                      if (data != null) {
-                        let houseType = data.toString().split("(")[0];
-                        let markerURL = this.getMarkerIcon(type);
-                        this.setMarker(
-                          lat,
-                          lng,
-                          markerURL,
-                          houseType,
-                          imageName,
-                          "marker",
-                          lineNo,
-                          alreadyCard,
-                          index
-                        );
-                      }
-                    });
+              if (data[index]["latLng"] != undefined) {
+                let lat = data[index]["latLng"].split(",")[0];
+                let lng = data[index]["latLng"].split(",")[1];
+                let imageName = data[index]["image"];
+                let userId = data[index]["userId"];
+                let date = data[index]["date"].split(" ")[0];
+                let status = "";
+                if (data[index]["status"] != null) {
+                  status = data[index]["status"];
                 }
+                let city = this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
+
+                let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+                let type = data[index]["houseType"];
+                let alreadyInstalled = "नहीं";
+
+                if (data[index]["alreadyInstalled"] == true) {
+                  this.markerData.alreadyCardLineCount =
+                    this.markerData.alreadyCardLineCount + 1;
+                  alreadyInstalled = "हाँ";
+                }
+                let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
+                let houseInstance1 = this.db.object(dbPath1).valueChanges().subscribe((data) => {
+                  houseInstance1.unsubscribe();
+                  if (data != null) {
+                    let houseType = data.toString().split("(")[0];
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, });
+                  }
+                });
+                let alreadyCard = "";
+                if (alreadyInstalled == "हाँ") {
+                  alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
+                }
+
+                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+                  houseInstance.unsubscribe();
+                  if (data != null) {
+                    let houseType = data.toString().split("(")[0];
+                    let markerURL = this.getMarkerIcon(type);
+                    this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+                  }
+                });
               }
             }
           }
         }
-      });
+      }
+    });
   }
 
   showLineDetail(content: any) {
@@ -454,13 +369,8 @@ export class HouseMarkingComponent {
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       let divHeight = height - 50 + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
     }
@@ -495,12 +405,8 @@ export class HouseMarkingComponent {
             markerCountInstance.unsubscribe();
             if (data != null) {
               let marksCount = Number(data) - 1;
-              this.markerData.totalMarkers = (
-                Number(this.markerData.totalMarkers) - 1
-              ).toString();
-              this.markerData.totalLineMarkers = (
-                Number(this.markerData.totalLineMarkers) - 1
-              ).toString();
+              this.markerData.totalMarkers = (Number(this.markerData.totalMarkers) - 1).toString();
+              this.markerData.totalLineMarkers = (Number(this.markerData.totalLineMarkers) - 1).toString();
               dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
               const data1 = {
                 marksCount: marksCount,
@@ -521,18 +427,7 @@ export class HouseMarkingComponent {
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({
-                  index: this.markerList[i]["index"],
-                  lat: this.markerList[i]["lat"],
-                  lng: this.markerList[i]["lng"],
-                  alreadyInstalled: this.markerList[i]["alreadyInstalled"],
-                  imageName: this.markerList[i]["imageName"],
-                  type: this.markerList[i]["houseType"],
-                  imageUrl: this.markerList[i]["imageUrl"],
-                  status: this.markerList[i]["status"],
-                  userId: this.markerList[i]["userId"],
-                  date: this.markerList[i]["date"],
-                });
+                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], });
               }
             }
             this.markerList = newMarkerList;
@@ -566,15 +461,11 @@ export class HouseMarkingComponent {
                 if (alreadyLineData != null) {
                   total = Number(alreadyLineData) - 1;
                 }
-
                 this.db.object("EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/").update({ alreadyInstalledCount: total });
-
               }
             );
           }
-
           this.updateCount(date, userId, "remove");
-
           this.commonService.setAlertMessage(
             "success",
             "Marker deleted successfully !!!"
@@ -610,258 +501,110 @@ export class HouseMarkingComponent {
       }
     });
 
-    let totalinstanceReject1 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" +
-        date +
-        "/" +
-        totalCountKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstanceReject1.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstanceReject1 = this.db.object("EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date + "/" + totalCountKey).valueChanges().subscribe((totalCount) => {
+      totalinstanceReject1.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date
-            )
-            .update({
-              totalRejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date
-            )
-            .update({
-              totalMarked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date).update({ totalRejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/DateWise/" + date).update({ totalMarked: total, });
+      }
+    });
 
     ////  employee wise rejected
-    let totalinstance2 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-        userId +
-        "/" +
-        this.selectedZone +
-        "/" +
-        countKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstance2.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstance2 = this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId + "/" + this.selectedZone + "/" + countKey).valueChanges().subscribe((totalCount) => {
+      totalinstance2.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-              userId +
-              "/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              rejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-              userId +
-              "/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              marked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId + "/" + this.selectedZone + "").update({ rejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId + "/" + this.selectedZone + "").update({ marked: total, });
+      }
+    });
 
-    let totalinstanceRejected2 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-        userId +
-        "/" +
-        totalCountKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstanceRejected2.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstanceRejected2 = this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId + "/" + totalCountKey).valueChanges().subscribe((totalCount) => {
+      totalinstanceRejected2.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-              userId
-            )
-            .update({
-              totalRejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" +
-              userId
-            )
-            .update({
-              totalMarked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId).update({ totalRejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + userId).update({ totalMarked: total, });
+      }
+    });
 
     //// ward date wise rejected
-    let totalinstance3 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-        date +
-        "/" +
-        this.selectedZone +
-        "/" +
-        countKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstance3.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstance3 = this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date + "/" + this.selectedZone + "/" + countKey).valueChanges().subscribe((totalCount) => {
+      totalinstance3.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-              date +
-              "/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              rejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-              date +
-              "/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              marked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date + "/" + this.selectedZone + "").update({ rejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date + "/" + this.selectedZone + "").update({ marked: total, });
+      }
+    });
 
-    let totalinstanceRejected3 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-        date +
-        "/" +
-        totalCountKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstanceRejected3.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstanceRejected3 = this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date + "/" + totalCountKey).valueChanges().subscribe((totalCount) => {
+      totalinstanceRejected3.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-              date
-            )
-            .update({
-              totalRejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" +
-              date
-            )
-            .update({
-              totalMarked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date).update({ totalRejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/" + date).update({ totalMarked: total, });
+      }
+    });
 
     //// ward ward wise rejected
-    let totalinstance4 = this.db
-      .object(
-        "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-        this.selectedZone +
-        "/" +
-        countKey
-      )
-      .valueChanges()
-      .subscribe((totalCount) => {
-        totalinstance4.unsubscribe();
-        let total = 1;
-        if (totalCount != null) {
-          if (type == "reject") {
-            total = Number(totalCount) + 1;
-          } else {
-            total = Number(totalCount) - 1;
-          }
-        }
+    let totalinstance4 = this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/" + countKey).valueChanges().subscribe((totalCount) => {
+      totalinstance4.unsubscribe();
+      let total = 1;
+      if (totalCount != null) {
         if (type == "reject") {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              rejected: total,
-            });
+          total = Number(totalCount) + 1;
         } else {
-          this.db
-            .object(
-              "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-              this.selectedZone +
-              ""
-            )
-            .update({
-              marked: total,
-            });
+          total = Number(totalCount) - 1;
         }
-      });
+      }
+      if (type == "reject") {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "").update({ rejected: total, });
+      } else {
+        this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "").update({ marked: total, });
+      }
+    });
   }
 
   saveMarkerStatus(markerNo: any) {
@@ -870,16 +613,8 @@ export class HouseMarkingComponent {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
-      let dbPath =
-        "EntityMarkingData/MarkedHouses/" +
-        this.selectedZone +
-        "/" +
-        this.lineNo +
-        "/" +
-        markerNo;
-      this.db.object(dbPath).update({
-        status: "Reject",
-      });
+      let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
+      this.db.object(dbPath).update({ status: "Reject", });
 
       this.updateCount(date, userId, "reject");
 
@@ -894,16 +629,7 @@ export class HouseMarkingComponent {
     let url = "../assets/img/final-marker-2.svg";
     if (type == 1 || type == 19) {
       url = "../assets/img/marking-house.png";
-    } else if (
-      type == 2 ||
-      type == 3 ||
-      type == 6 ||
-      type == 7 ||
-      type == 8 ||
-      type == 9 ||
-      type == 10 ||
-      type == 20
-    ) {
+    } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
       url = "../assets/img/marking-shop.png";
     } else if (type == 14 || type == 15) {
       url = "../assets/img/marking-warehouse.png";
@@ -928,8 +654,7 @@ export class HouseMarkingComponent {
         this.polylines[index].setMap(null);
       }
       let strokeWeight = 2;
-      let lineColor = "";
-      let status="";
+      let status = "";
       if (lineNo == this.lineNo) {
         strokeWeight = 5;
         status = "requestedLine";
@@ -962,17 +687,7 @@ export class HouseMarkingComponent {
 
   }
 
-  setMarker(
-    lat: any,
-    lng: any,
-    markerURL: any,
-    markerLabel: any,
-    imageName: any,
-    type: any,
-    lineNo: any,
-    alreadyCard: any,
-    markerNo: any
-  ) {
+  setMarker(lat: any, lng: any, markerURL: any, markerLabel: any, imageName: any, type: any, lineNo: any, alreadyCard: any, markerNo: any) {
     if (type == "lineNo") {
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
@@ -1013,16 +728,7 @@ export class HouseMarkingComponent {
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL =
-          "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-          city +
-          "%2FMarkingSurveyImages%2F" +
-          wardNo +
-          "%2F" +
-          lineNo +
-          "%2F" +
-          imageName +
-          "?alt=media";
+        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1121,57 +827,37 @@ export class HouseMarkingComponent {
   }
 
   assignUrl() {
-    window.open(
-      "/" + this.cityName + "/13B/house-marking-assignment",
-      "_blank"
-    );
+    window.open("/" + this.cityName + "/13B/house-marking-assignment", "_blank");
   }
 
   getLineApprove() {
-    let dbPath =
-      "EntityMarkingData/MarkedHouses/" +
-      this.selectedZone +
-      "/" +
-      this.lineNo +
-      "/marksCount";
-    let countInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        countInstance.unsubscribe();
-        let element = <HTMLButtonElement>document.getElementById("btnSave");
-        if (data != null) {
-          $("#btnSave").css("background", "#0ba118");
-          element.disabled = false;
-          this.markerData.totalLineMarkers = data.toString();
-        } else {
-          $("#btnSave").css("background", "#626262");
-          element.disabled = true;
-        }
-      });
-    dbPath =
-      "EntityMarkingData/MarkedHouses/" +
-      this.selectedZone +
-      "/" +
-      this.lineNo +
-      "/ApproveStatus";
-    let approveInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        approveInstance.unsubscribe();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
+    let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      countInstance.unsubscribe();
+      let element = <HTMLButtonElement>document.getElementById("btnSave");
+      if (data != null) {
+        $("#btnSave").css("background", "#0ba118");
+        element.disabled = false;
+        this.markerData.totalLineMarkers = data.toString();
+      } else {
+        $("#btnSave").css("background", "#626262");
+        element.disabled = true;
+      }
+    });
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      approveInstance.unsubscribe();
 
-        if (data != null) {
-          //  $("#txtReamrk").val(data["remark"]);
-          if (data["status"] == "Confirm") {
-            $("#btnSave").html("Reject Line");
-          } else {
-            $("#btnSave").html("Approve Line");
-          }
+      if (data != null) {
+        if (data["status"] == "Confirm") {
+          $("#btnSave").html("Reject Line");
         } else {
           $("#btnSave").html("Approve Line");
         }
-      });
+      } else {
+        $("#btnSave").html("Approve Line");
+      }
+    });
   }
 
   saveData() {
@@ -1200,44 +886,29 @@ export class HouseMarkingComponent {
       return;
     }
     this.lineNo = lineNo;
-    let dbPath =
-      "EntityMarkingData/MarkedHouses/" +
-      this.selectedZone +
-      "/" +
-      this.lineNo +
-      "/ApproveStatus";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     const data = {
       status: status,
       //remark: remark,
     };
     this.db.object(dbPath).update(data);
-    dbPath =
-      "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-      this.selectedZone +
-      "/approved";
-    let approvedInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((dataCount) => {
-        approvedInstance.unsubscribe();
-        let approvedCount = 1;
-        if (dataCount != null) {
-          if (status == "Confirm") {
-            approvedCount = Number(dataCount) + 1;
-          } else {
-            approvedCount = Number(dataCount) - 1;
-          }
+    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
+    let approvedInstance = this.db.object(dbPath).valueChanges().subscribe((dataCount) => {
+      approvedInstance.unsubscribe();
+      let approvedCount = 1;
+      if (dataCount != null) {
+        if (status == "Confirm") {
+          approvedCount = Number(dataCount) + 1;
+        } else {
+          approvedCount = Number(dataCount) - 1;
         }
-        dbPath =
-          "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" +
-          this.selectedZone;
-        this.db.object(dbPath).update({
-          approved: approvedCount,
-        });
-        setTimeout(() => {
-          this.getApprovedLines();
-        }, 200);
-      });
+      }
+      dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone;
+      this.db.object(dbPath).update({ approved: approvedCount, });
+      setTimeout(() => {
+        this.getApprovedLines();
+      }, 200);
+    });
 
     this.commonService.setAlertMessage(
       "success",
