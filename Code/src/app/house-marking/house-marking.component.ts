@@ -38,12 +38,9 @@ export class HouseMarkingComponent {
   allLines: any[];
   activeZone: any;
   polylines = [];
-  toDayDate: any;
   currentLat: any;
   currentLng: any;
   lineDrawnDetails: any[];
-  currentMonthName: any;
-  currentYear: any;
   wardStartUrl = "../assets/img/go-image.png";
   wardEndUrl = "../assets/img/end-image.png";
   invisibleImageUrl = "../assets/img/invisible-location.svg";
@@ -79,11 +76,7 @@ export class HouseMarkingComponent {
       window.location.href,
       this.cityName
     );
-    this.toDayDate = this.commonService.setTodayDate();
-    this.currentYear = new Date().getFullYear();
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.toDayDate).getMonth()
-    );
+    
     this.lineNo = "1";
     this.previousLine = "1";
     this.commonService.setMapHeight();

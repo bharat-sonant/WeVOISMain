@@ -211,7 +211,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (localStorage.getItem("userType") == "External User") {
       $("#divRemark").hide();
     }
-    //this.commonService.chkUserPermission("Monitoring");
     this.currentMonthName = this.commonService.getCurrentMonthName(
       Number(this.toDayDate.toString().split("-")[1]) - 1
     );
@@ -829,6 +828,10 @@ export class RealtimeMonitoringComponent implements OnInit {
               if (summaryData["trip"] != null) {
                 this.workerDetails.tripCount = summaryData["trip"];
               }
+              else
+              {
+                this.workerDetails.tripCount = "0";
+              }
               if (summaryData["completedLines"] != null) {
                 this.workerDetails.completedLines =
                   summaryData["completedLines"];
@@ -1058,7 +1061,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.wardReachTime = "---";
     this.workerDetails.tripCount = "0";
     this.workerDetails.vehicleCurrentLocation = "---";
-    this.workerDetails.tripCount = "0";
     this.employeeDetail = [];
 
     let zoneDetails = this.zoneList.find(
@@ -1069,7 +1071,13 @@ export class RealtimeMonitoringComponent implements OnInit {
       //this.workerDetails.endTime = zoneDetails.dutyOffTime;
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
       this.workerDetails.wardKM = zoneDetails.wardKM;
+      if(zoneDetails.tripCount!=null){
       this.workerDetails.tripCount = zoneDetails.tripCount;
+      }
+      else
+      {
+        this.workerDetails.tripCount = "0";
+      }
     }
     this.time = [];
     this.distance = [];
@@ -1097,7 +1105,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
     this.workerDetails.wardTime = "0 hr 0 min";
     this.workerDetails.vehicleCurrentLocation = "---";
-   // this.workerDetails.tripCount = "0";
     this.totalMinutesInWard = 0;
     let dbPath =
       "GeoGraphicallySurfingHistory/" +
@@ -1189,7 +1196,6 @@ export class RealtimeMonitoringComponent implements OnInit {
                 tripCount = tripCount + 1;
               }
             }
-            //this.workerDetails.tripCount = tripCount.toString();
           }
         }
       });
