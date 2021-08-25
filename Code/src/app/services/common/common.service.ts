@@ -1481,5 +1481,43 @@ export class CommonService {
     }
   }
 
+  zoneKML: any;
+
+  setKML(zoneNo: any, map: any) {
+    let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
+    if (wardKMLList != null) {
+      let wardKML = wardKMLList.find(item => item.wardNo == zoneNo);
+      if (wardKML != undefined) {
+        this.zoneKML = new google.maps.KmlLayer({
+          url: wardKML.kmlUrl.toString(),
+          map: map,
+        });
+      }
+    }
+    return this.zoneKML;
+  }
+
+  setMapHeight() {
+    $(".navbar-toggler").show();
+    $("#divMap").css("height", $(window).height() - 80);
+  }
+
+  map:any;
+  setMap(gmap:any)
+  {
+    var mapstyle = new google.maps.StyledMapType([
+      {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }],
+      },
+    ]);
+    let mapProp = this.initMapProperties();
+    this.map = new google.maps.Map(gmap.nativeElement, mapProp);
+    this.map.mapTypes.set("styled_map", mapstyle);
+    this.map.setMapTypeId("styled_map");
+    return this.map;
+  }
+
   //#endregion
 }

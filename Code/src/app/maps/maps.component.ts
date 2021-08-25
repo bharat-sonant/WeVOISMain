@@ -89,7 +89,7 @@ export class MapsComponent {
   wardLineInstanceList: any[] = [];
   totalWardHouse: any;
   totalScannedHouse: any;
-  skipLineList:any[];
+  skipLineList: any[];
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -1424,22 +1424,21 @@ export class MapsComponent {
   }
 
   showSkipLineDetail(content: any) {
-    this.skipLineList=[];
+    this.skipLineList = [];
     let dbPath = "SkipCaptureImage/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     let skipLineInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         skipLineInstance.unsubscribe();
         if (data != null) {
           console.log(data);
-          let keyArray=Object.keys(data);
-          if(keyArray.length>0)
-          {
-            for(let i=0;i<keyArray.length;i++){
-              let index=keyArray[i];
-              let imageUrl=data[index]["imageUrl"];
-              let time=data[index]["time"];
-              let reason=data[index]["reason"];
-              this.skipLineList.push({lineNo:index,imageUrl:imageUrl,time:time,reason:reason})
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let imageUrl = data[index]["imageUrl"];
+              let time = data[index]["time"];
+              let reason = data[index]["reason"];
+              this.skipLineList.push({ lineNo: index, imageUrl: imageUrl, time: time, reason: reason })
             }
           }
           this.modalService.open(content, { size: "lg" });
@@ -1461,7 +1460,7 @@ export class MapsComponent {
           $("#divStatus").css("height", divHeight);
         }
         else {
-          this.commonService.setAlertMessage("error","No Skipped Lines!!!");
+          this.commonService.setAlertMessage("error", "No Skipped Lines!!!");
         }
       }
     );

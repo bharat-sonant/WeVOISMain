@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     public db: AngularFireDatabase,
     public dbFireStore: AngularFirestore
-  ) {}
+  ) { }
   userId: any;
   userName: any = "admin";
   expiryDate: any;
@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   dustbinList: any[];
   fixdGeoLocations: any[];
   cityName: any;
-  toDayDate:any;
+  toDayDate: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
   }
 
   doLogin() {
-    localStorage.setItem('loginDate',this.toDayDate);
+    localStorage.setItem("loginDate", this.toDayDate);
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
@@ -63,9 +63,9 @@ export class LoginComponent implements OnInit {
       if (userDetails.officeAppUserId != 0) {
         localStorage.setItem("officeAppUserId", userDetails.officeAppUserId);
       }
-     // if (userDetails.accessCity != "") {
-     //   localStorage.setItem("accessCity", userDetails.accessCity);
-    //  }
+      // if (userDetails.accessCity != "") {
+      //   localStorage.setItem("accessCity", userDetails.accessCity);
+      //  }
       if (userDetails.isTaskManager != 0) {
         localStorage.setItem("isTaskManager", userDetails.isTaskManager);
       } else {
@@ -90,10 +90,7 @@ export class LoginComponent implements OnInit {
         userDetails.notificationGeoSurfing
       );
       if (this.expiryDate != null) {
-        if (
-          new Date(this.commonService.setTodayDate()) <
-          new Date(this.expiryDate)
-        ) {
+        if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           setTimeout(() => {
             window.location.href = this.cityName + "/home";
