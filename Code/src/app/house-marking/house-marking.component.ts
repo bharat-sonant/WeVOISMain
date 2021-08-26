@@ -77,7 +77,7 @@ export class HouseMarkingComponent {
 
   getWardDetail() {
     this.getTotalMarkers();
-    this.getAllLinesFromJson();
+    this.getWardLineCount();
     this.getLastScanTime();
     this.getLineApprove();
   }
@@ -168,14 +168,14 @@ export class HouseMarkingComponent {
     });
   }
 
-  getAllLinesFromJson() {
-    let wardLineList = JSON.parse(localStorage.getItem("wardLineList"));
-    if (wardLineList != null) {
-      let lineDetail = wardLineList.find(item => item.wardNo == this.selectedZone);
-      if (lineDetail != undefined) {
-        this.wardLines = Number(lineDetail.wardLines);
-        this.markerData.totalLines = lineDetail.wardLines.toString();
-        this.getWardLines(lineDetail.wardLines);
+  getWardLineCount() {
+    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
+    if (wardLineCountList != null) {
+      let lineCount = wardLineCountList.find(item => item.wardNo == this.selectedZone);
+      if (lineCount != undefined) {
+        this.wardLines = Number(lineCount.lineCount);
+        this.markerData.totalLines = lineCount.lineCount.toString();
+        this.getWardLines(lineCount.lineCount);
       }
     }
   }

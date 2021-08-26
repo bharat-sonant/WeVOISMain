@@ -846,14 +846,14 @@ export class CommonService {
         wardLinesInstance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
-          let wardLineList = [];
+          let wardLineCountList = [];
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNo = keyArray[i];
-              let wardLines = data[wardNo];
-              wardLineList.push({ wardNo: wardNo, wardLines: wardLines });
+              let lineCount = data[wardNo];
+              wardLineCountList.push({ wardNo: wardNo, lineCount: lineCount });
             }
-            localStorage.setItem("wardLineList", JSON.stringify(wardLineList));
+            localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
           }
         }
       }
