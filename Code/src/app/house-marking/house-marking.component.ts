@@ -25,7 +25,7 @@ export class HouseMarkingComponent {
   polylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   lines: any[] = [];
-  wardLines: any;
+  wardLineCount: any;
   zoneKML: any;
   allMatkers: any[] = [];
   lineNo: any;
@@ -120,7 +120,7 @@ export class HouseMarkingComponent {
     }
     let element = <HTMLInputElement>document.getElementById("chkAll");
     if (element.checked == true) {
-      for (let i = 1; i <= this.wardLines; i++) {
+      for (let i = 1; i <= this.wardLineCount; i++) {
         this.showMarkers(i);
       }
     } else {
@@ -173,7 +173,7 @@ export class HouseMarkingComponent {
     if (wardLineCountList != null) {
       let lineCount = wardLineCountList.find(item => item.wardNo == this.selectedZone);
       if (lineCount != undefined) {
-        this.wardLines = Number(lineCount.lineCount);
+        this.wardLineCount = Number(lineCount.lineCount);
         this.markerData.totalLines = lineCount.lineCount.toString();
         this.getWardLines(lineCount.lineCount);
       }
@@ -636,7 +636,7 @@ export class HouseMarkingComponent {
         this.getHouseLineData();
       }
     } else if (type == "next") {
-      if (Number(lineNo) < this.wardLines) {
+      if (Number(lineNo) < this.wardLineCount) {
         this.lineNo = Number(lineNo) + 1;
         $("#txtLineNo").val(this.lineNo);
         this.getLineApprove();
@@ -681,7 +681,7 @@ export class HouseMarkingComponent {
     this.getMarkedHouses(this.lineNo);
   }
 
-  getCurrentLineNo(event: any) {
+  getCurrentLineDetail(event: any) {
     if (event.key == "Enter") {
       let lineNo = $("#txtLineNo").val();
       if (lineNo == "") {
@@ -689,7 +689,7 @@ export class HouseMarkingComponent {
         return;
       }
       this.clearLineData();
-      if (Number(lineNo) <= this.wardLines) {
+      if (Number(lineNo) <= this.wardLineCount) {
         this.lineNo = lineNo;
         this.getLineApprove();
         this.getHouseLineData();

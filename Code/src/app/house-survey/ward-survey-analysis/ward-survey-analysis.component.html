@@ -43,20 +43,17 @@
     <div class="row" style="padding-top: 10px; text-align: center;">
       <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
         <div class="border-bottom">
-        <button (click)="getNextPrevious('pre');" class="btn-hvr"
-          style="background-color: #888;font-size: 12px; width:32px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
-          << </button>
-            <input id="txtLineNo" type="text"
-              style="width: 50px;border: 1px solid lightgray;border-radius: 5px; padding: 6px; text-align: center; font-weight: bold;"
-              value="1" />
-            <button (click)="getNextPrevious('next');" class="btn-hvr"
-              style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:32px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
-              >>
-            </button>
-            <button (click)="getLineDetail();" class="show-btn" title="Show"
-              style="background-color: #888; padding: 10px; font-size: 12px;color: #fff; border-radius: 5px; cursor: pointer;width: 60px;margin-left: 0px!important">
-              Show </button>
-            </div>
+          <button (click)="getNextPrevious('pre');" class="btn-hvr"
+            style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
+            << </button>
+              <input id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
+                style="width: 100px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+                value="1" />
+              <button (click)="getNextPrevious('next');" class="btn-hvr"
+                style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+                >>
+              </button>
+        </div>
       </div>
       <div class="col-md-12 total-house" style="margin-top: -10px;">
         <div class="fix-home">
@@ -65,7 +62,7 @@
               {{progressData.totalWardMarkers}}</span><br>
             <h6>Total Marker</h6>
           </div>
-          <div class="float-r">
+          <div id="divLineScannedCount" class="float-r" (click)="progressData.totalWardSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
               {{progressData.totalWardSurveyed}}</span><br>
             <h6>Surveyed Marker</h6>
@@ -77,24 +74,58 @@
   </div>
 
 
-  <div id="divCardDetail" class="image-box" >
+  <div id="divCardDetail" class="image-box" style="display: none;">
     <div id="divLoader" class="loaderClass">
       <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
     </div>
     <div class="row">
       <div class="col-md-12">
         <div class="f-left">
-          <p>Card No. <span class="f-right"> :</span></p>   
-          <h3>  {{progressData.cardNo}} </h3>
+          <p>Card No. <span class="f-right"> :</span></p>
+          <h3> {{progressData.cardNo}} </h3>
         </div>
         <div class="f-left">
-            <p>Card Type <span class="f-right"> :</span></p>
-            <h3> {{progressData.cardType}} </h3>
-          </div>
-          <div class="f-left">
-              <p>Name <span class="f-right"> :</span></p>
-              <h3> {{progressData.name}} </h3>
-            </div>
+          <p>Card Type <span class="f-right"> :</span></p>
+          <h3> {{progressData.cardType}} </h3>
+        </div>
+        <div class="f-left">
+          <p>Name <span class="f-right"> :</span></p>
+          <h3> {{progressData.name}} </h3>
+        </div>
       </div>
     </div>
   </div>
+
+  
+  <!--Surveyed Markers Start-->
+  <ng-template #contentLineMarkers>
+    <div style="width: 100%;text-align: right;float: left;">
+
+      <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body" style="margin-top:-20px; ">
+      <div id="divStatus" class="content-scroll">
+        <div class="row">
+          <div class="col-md-2" *ngFor="let dt of scannedCardList">
+            <div style="width:100%">
+              <a href="{{dt.imageURL}}" target="_blank">
+                <img [src]="dt.imageURL" style="height:100%; width: 100%;" />
+              </a>
+            </div>
+            <div class="main-tag">
+              <div class="f-left">
+                <h3 style="width: 100%;"> {{dt.name}} </h3><br />
+                
+                <h3 style="font-weight: bold;"> {{dt.cardNo}} </h3><br />
+                
+                <h3> {{dt.surveyDate}} </h3><br />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>
+  <!--Surveyed Markers End-->
