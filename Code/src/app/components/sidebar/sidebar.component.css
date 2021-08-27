@@ -1,5 +1,5 @@
 .sidebar-wrapper {
-height: calc(100% - 155px);
+height: calc(100% - 50px);
 width: 78px;
 overflow: hidden;
 z-index: 1000;

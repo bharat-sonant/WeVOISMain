@@ -12,22 +12,23 @@
     <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;;">
 
     </div>
-    <div class="col-md-5" style="padding-top: 20px; padding-left: 30px;;">
+    <div class="col-md-4" style="padding-top: 20px; padding-left: 30px;;">
 
     </div>
 
-    <div id="houseCount" class="col-md-3 text-right total-house">
-      <div>
-
-      </div>
+    <div id="houseCount" class="col-md-4 text-right total-house">
       <div class="fix-home">
-        <div class="float-l" style="margin-left: 10px;">
+        <div class="float-first" style="margin-left: 10px;">
           <i class="fas fa-home" style="color:red;"></i> <span class="house"> {{progressData.totalMarkers}}</span><br>
           <h6>Total Marker</h6>
         </div>
-        <div class="float-r">
+        <div class="float-second">
           <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalSurveyed}}</span><br>
           <h6>Surveyed Marker</h6>
+        </div>
+        <div class="float-third">
+          <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalRevisit}}</span><br>
+          <h6>Revisit Request</h6>
         </div>
       </div>
     </div>
@@ -59,13 +60,24 @@
         <div class="fix-home">
           <div class="float-l">
             <i class="fas fa-home" style="color:red;"></i> <span class="house" style="color: #000;">
-              {{progressData.totalWardMarkers}}</span><br>
+              {{progressData.totalLineMarkers}}</span><br>
             <h6>Total Marker</h6>
           </div>
-          <div id="divLineScannedCount" class="float-r" (click)="progressData.totalWardSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
+          <div id="divLineScannedCount" class="float-r"
+            (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
-              {{progressData.totalWardSurveyed}}</span><br>
+              {{progressData.totalLineSurveyed}}</span><br>
             <h6>Surveyed Marker</h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 total-house" style="margin-top: -10px;">
+        <div class="fix-home">
+          <div id="divLineRevisitCount" class="float-l"
+            (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'Revisit')">
+            <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
+              {{progressData.totalLineRevisit}}</span><br>
+            <h6>Revisit Request</h6>
           </div>
         </div>
       </div>
@@ -96,7 +108,7 @@
     </div>
   </div>
 
-  
+
   <!--Surveyed Markers Start-->
   <ng-template #contentLineMarkers>
     <div style="width: 100%;text-align: right;float: left;">
@@ -116,9 +128,9 @@
             <div class="main-tag">
               <div class="f-left">
                 <h3 style="width: 100%;"> {{dt.name}} </h3><br />
-                
+
                 <h3 style="font-weight: bold;"> {{dt.cardNo}} </h3><br />
-                
+
                 <h3> {{dt.surveyDate}} </h3><br />
               </div>
             </div>
@@ -129,3 +141,45 @@
     </div>
   </ng-template>
   <!--Surveyed Markers End-->
+
+  <!--Revisit Start-->
+
+  <ng-template #contentRevisit>
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div style="width: 100%;text-align: right;float: left;">
+          <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
+              <div id="divSequence" class="scrollable-halt">
+                <div class="halt-data-theme" *ngFor="let dt of revisitSurveyList, let i=index">
+                  <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <p><i class="fas fa-house-damage" style="color: green;"></i> {{dt.houseType}}</p>
+                  </div>
+                  <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <p><i class="fas fa-user-tie"></i> {{dt.name}}</p>
+                  </div>
+                  <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <p><i class="fas fa-registered" style="color: red;"></i> {{dt.reason}}</p>
+                  </div>
+                  <div class="work-stop-address">
+                    <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}}</p>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            <div class="col-md-9 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
+              <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
+                <div id="revisitMap" style="width:100%; "></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <!--Revisit End-->

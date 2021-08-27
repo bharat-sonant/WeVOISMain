@@ -17,6 +17,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class WardSurveyAnalysisComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
+  public mapRevisit: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   public selectedZone: any;
@@ -35,15 +36,18 @@ export class WardSurveyAnalysisComponent {
   houseMarker: any[] = [];
   db: any;
   scannedCardList: any[];
+  revisitSurveyList: any[];
 
   progressData: progressDetail = {
     totalMarkers: 0,
     totalSurveyed: 0,
-    totalWardMarkers: 0,
-    totalWardSurveyed: 0,
+    totalLineMarkers: 0,
+    totalLineSurveyed: 0,
     cardNo: "",
     cardType: "",
     name: "",
+    totalRevisit: 0,
+    totalLineRevisit: 0
   };
 
   ngOnInit() {
@@ -92,6 +96,16 @@ export class WardSurveyAnalysisComponent {
         this.progressData.totalSurveyed = Number(data);
       }
     });
+
+    dbPath = "EntitySurveyData/TotalRevisitRequest/" + this.selectedZone;
+    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        revisitInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.totalRevisit = Number(data);
+        }
+      }
+    );
   }
 
   getCurrentLineDetail(event: any) {
@@ -147,35 +161,6 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  getMarkedHouses(lineNo: any) {
-    this.clearLineData();
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let houseInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
-      houseInstance.unsubscribe();
-      if (data.length > 0) {
-        console.log(data);
-        for (let i = 0; i < data.length - 1; i++) {
-          if (data[i]["latLng"] != undefined) {
-            this.progressData.totalWardMarkers++;
-            let markerURL = "../assets/img/red-home.png";
-            let lat = data[i]["latLng"].split(",")[0];
-            let lng = data[i]["latLng"].split(",")[1];
-            let cardNo = "";
-            if (data[i]["isSurveyed"] != null) {
-              if (data[i]["isSurveyed"] == "yes") {
-                this.progressData.totalWardSurveyed++;
-                markerURL = "../assets/img/green-home.png";
-                cardNo = data[i]["cardNumber"];
-                $('#divLineScannedCount').css("cursor","pointer");
-              }
-            }
-            this.setMarker(lat, lng, markerURL, null, cardNo, "marker", lineNo);
-          }
-        }
-      }
-    });
-  }
-
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     if (wardNo == this.selectedZone) {
       if (this.polylines[index] != undefined) {
@@ -199,73 +184,115 @@ export class WardSurveyAnalysisComponent {
       if (userType == "Internal User") {
         let lat = latlng[0]["lat"];
         let lng = latlng[0]["lng"];
-        this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo", lineNo);
+        this.setMarkerForLineNo(lat, lng, this.invisibleImageUrl, lineNo.toString(), this.map, "MainMap");
       }
     }
   }
 
-  setMarker(lat: any, lng: any, markerURL: any, markerLabel: any, cardNo: any, type: any, lineNo: any) {
-    if (type == "lineNo") {
-      let marker = new google.maps.Marker({
-        position: { lat: Number(lat), lng: Number(lng) },
-        map: this.map,
-        icon: {
-          url: markerURL,
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scaledSize: new google.maps.Size(30, 40),
-          origin: new google.maps.Point(0, 0),
-        },
-        label: {
-          text: markerLabel,
-          color: "#000",
-          fontSize: "10px",
-          fontWeight: "bold",
-        },
-      });
-
-      this.allMarkers.push({ marker });
-    } else {
-      let marker = new google.maps.Marker({
-        position: { lat: Number(lat), lng: Number(lng) },
-        map: this.map,
-        icon: {
-          url: markerURL,
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scaledSize: new google.maps.Size(15, 15),
-          origin: new google.maps.Point(0, 0),
-        },
-      });
-      if (cardNo != "") {
-        let wardNo = this.selectedZone;
-        let progressData = this.progressData;
-        let db = this.db;
-        marker.addListener("click", function () {
-          $("#divLoader").show();
-          setTimeout(() => {
-            $("#divLoader").hide();
-          }, 600);
-          let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
-          let houseInstance = db.object(dbPath).valueChanges().subscribe((data) => {
-            houseInstance.unsubscribe();
-            if (data != null) {
-              $("#divCardDetail").show();
-              progressData.cardNo = data["cardNo"];
-              progressData.cardType = data["cardType"];
-              progressData.name = data["name"];
+  getMarkedHouses(lineNo: any) {
+    this.clearLineData();
+    this.getRevisitRequest();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
+      if (data.length > 0) {
+        for (let i = 0; i < data.length - 1; i++) {
+          if (data[i]["latLng"] != undefined) {
+            this.progressData.totalLineMarkers++;
+            let markerURL = "../assets/img/red-home.png";
+            let lat = data[i]["latLng"].split(",")[0];
+            let lng = data[i]["latLng"].split(",")[1];
+            let cardNo = "";
+            if (data[i]["isSurveyed"] != null) {
+              if (data[i]["isSurveyed"] == "yes") {
+                this.progressData.totalLineSurveyed++;
+                markerURL = "../assets/img/green-home.png";
+                cardNo = data[i]["cardNumber"];
+                $('#divLineScannedCount').css("cursor", "pointer");
+              }
             }
-          });
-        });
-      } else {
-        marker.addListener("click", function () {
-          $("#divCardDetail").hide();
-        });
+            this.setMarkerForHouse(lat, lng, markerURL, cardNo, lineNo, this.map);
+          }
+        }
       }
-      this.houseMarker.push({ marker });
+    });
+  }
+
+  getRevisitRequest() {
+    let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
+    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        revisitInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.totalLineRevisit = Number(data);
+          $('#divLineRevisitCount').css("cursor", "pointer");
+        }
+      }
+    );
+  }
+
+  setMarkerForLineNo(lat: any, lng: any, markerURL: any, markerLabel: any, map: any, type: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: map,
+      icon: {
+        url: markerURL,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(30, 40),
+        origin: new google.maps.Point(0, 0),
+      },
+      label: {
+        text: markerLabel,
+        color: "#000",
+        fontSize: "10px",
+        fontWeight: "bold",
+      },
+    });
+    if (type == "MainMap") {
+      this.allMarkers.push({ marker });
     }
   }
 
+  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, lineNo: any, map: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: map,
+      icon: {
+        url: markerURL,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(15, 15),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    if (cardNo != "") {
+      let wardNo = this.selectedZone;
+      let progressData = this.progressData;
+      let db = this.db;
+      marker.addListener("click", function () {
+        $("#divLoader").show();
+        setTimeout(() => {
+          $("#divLoader").hide();
+        }, 600);
+        let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
+        let houseInstance = db.object(dbPath).valueChanges().subscribe((data) => {
+          houseInstance.unsubscribe();
+          if (data != null) {
+            $("#divCardDetail").show();
+            progressData.cardNo = data["cardNo"];
+            progressData.cardType = data["cardType"];
+            progressData.name = data["name"];
+          }
+        });
+      });
+    } else {
+      marker.addListener("click", function () {
+        $("#divCardDetail").hide();
+      });
+    }
+    this.houseMarker.push({ marker });
+  }
 
   getNextPrevious(type: any) {
     let lineNo = $("#txtLineNo").val();
@@ -313,7 +340,6 @@ export class WardSurveyAnalysisComponent {
     this.polylines[Number(this.lineNo) - 1].setMap(null);
     firstLine = this.lines.find((item) => item.lineNo == Number(this.lineNo));
     this.centerPoint = firstLine.latlng[0];
-    console.log(this.centerPoint);
     line = new google.maps.Polyline({
       path: firstLine.latlng,
       strokeColor: this.commonService.getLineColor("requestedLine"),
@@ -339,7 +365,7 @@ export class WardSurveyAnalysisComponent {
               let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
               let date = data[i]["createdDate"].split(' ')[0];
               let time = data[i]["createdDate"].split(' ')[1];
-              let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0]+" "+time.split(':')[0]+":"+time.split(':')[1];
+              let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
               this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate });
             }
           }
@@ -352,20 +378,100 @@ export class WardSurveyAnalysisComponent {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
-    let height = 870;
-    let width = windowWidth - 300;
-    height = (windowHeight * 90) / 100;
+    let height = (windowHeight * 90) / 100;
+    let width = (windowWidth * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 50 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divStatus").css("height", divHeight);
     if (type == "ScannedCard") {
+      let divHeight = height - 50 + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
       this.getScannedCard();
+    }
+    else {
+      let mapHeight = height - 80 + "px";
+      let divHeight = height - 80 + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      $("#revisitMap").css("height", mapHeight);
+      $("#divSequence").css("height", divHeight);
+      this.mapRevisit = this.commonService.setMapById("revisitMap");
+      setTimeout(() => {
+        this.commonService.setKML(this.selectedZone, this.mapRevisit);
+        let revisitPolyLine = [];
+        for (let i = 0; i < this.lines.length; i++) {
+          let strokeWeight = 2;
+          let status = "";
+          let lineNo = this.lines[i]["lineNo"];
+          if (lineNo == this.lineNo) {
+            strokeWeight = 5;
+            status = "requestedLine";
+          }
+          let line = new google.maps.Polyline({
+            path: this.lines[i]["latlng"],
+            strokeColor: this.commonService.getLineColor(status),
+            strokeWeight: strokeWeight,
+          });
+          revisitPolyLine[i] = line;
+          revisitPolyLine[i].setMap(this.mapRevisit);
+          let userType = localStorage.getItem("userType");
+          if (userType == "Internal User") {
+            let lat = this.lines[i]["latlng"][0]["lat"];
+            let lng = this.lines[i]["latlng"][0]["lng"];
+            this.setMarkerForLineNo(lat, lng, this.invisibleImageUrl, lineNo.toString(), this.mapRevisit, "RevisitMap");
+          }
+        }
+        this.getRevisitLineRequest();
+      }, 200);
     }
   }
 
+  getRevisitLineRequest() {
+    if (this.revisitSurveyList.length == 0) {
+      let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + this.lineNo;
+      let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          revisitInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (index != "lineRevisitCount") {
+                this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
+                let date = data[index]["date"].split(' ')[0];
+                let time = data[index]["date"].split(' ')[1];
+                let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                let type = data[index]["houseType"];
+                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
+                  houseInstance.unsubscribe();
+                  if (houseData != null) {
+                    let houseType = houseData.toString().split("(")[0];
+                    this.revisitSurveyList.push({ name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
+                  }
+                });
+              }
+            }
+          }
+        }
+      );
+    }
+    else {
+      for (let i = 0; i < this.revisitSurveyList.length; i++) {
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
+      }
+    }
+  }
+
+  setMapHalt() {
+    let mapProp = this.commonService.mapForHaltReport();
+    this.mapRevisit = new google.maps.Map(
+      document.getElementById("revisitMap"),
+      mapProp
+    );
+  }
 
   closeModel() {
     this.modalService.dismissAll();
@@ -386,33 +492,27 @@ export class WardSurveyAnalysisComponent {
         this.polylines[i].setMap(null);
       }
     }
-    if (this.houseMarker.length > 0) {
-      for (let i = 0; i < this.houseMarker.length; i++) {
-        this.houseMarker[i]["marker"].setMap(null);
-      }
-    }
-    this.houseMarker = [];
-    this.scannedCardList = [];
+    this.lines = [];
     this.lineNo = 1;
     this.previousLine = 1;
     $("#txtLineNo").val(this.lineNo);
     this.polylines = [];
-    this.progressData.cardNo = "";
-    this.progressData.cardType = "";
-    this.progressData.name = "";
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
-    $('#divCardDetail').hide();
+    this.progressData.totalRevisit = 0;
+    this.clearLineData();
   }
 
   clearLineData() {
-    this.progressData.totalWardMarkers = 0;
-    this.progressData.totalWardSurveyed = 0;
+    this.progressData.totalLineMarkers = 0;
+    this.progressData.totalLineSurveyed = 0;
+    this.progressData.totalLineRevisit = 0;
     this.progressData.cardNo = "";
     this.progressData.cardType = "";
     this.progressData.name = "";
     $("#divCardDetail").hide();
-    $('#divLineScannedCount').css("cursor","text");
+    $('#divLineScannedCount').css("cursor", "text");
+    $('#divLineRevisitCount').css("cursor", "text");
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {
         this.houseMarker[i]["marker"].setMap(null);
@@ -420,16 +520,18 @@ export class WardSurveyAnalysisComponent {
     }
     this.houseMarker = [];
     this.scannedCardList = [];
+    this.revisitSurveyList = [];
   }
-
 }
 
 export class progressDetail {
   totalMarkers: number;
   totalSurveyed: number;
-  totalWardMarkers: number;
-  totalWardSurveyed: number;
+  totalLineMarkers: number;
+  totalLineSurveyed: number;
   cardNo: string;
   cardType: string;
   name: string;
+  totalRevisit: number;
+  totalLineRevisit: number;
 }

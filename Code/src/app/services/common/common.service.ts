@@ -1134,5 +1134,13 @@ export class CommonService {
     return this.map;
   }
 
+  setMapById(mapId:any) {
+    let mapProp = this.mapForHaltReport();
+   return new google.maps.Map(
+      document.getElementById(mapId),
+      mapProp
+    );
+  }
+
   //#endregion
 }
