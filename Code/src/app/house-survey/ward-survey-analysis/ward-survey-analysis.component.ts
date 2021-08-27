@@ -353,20 +353,22 @@ export class WardSurveyAnalysisComponent {
   }
 
   getScannedCard() {
+    console.log(this.scannedCardList);
     if (this.scannedCardList.length == 0) {
       let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo;
       let scannedCardInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
           scannedCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
-
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
-              let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
-              let date = data[i]["createdDate"].split(' ')[0];
-              let time = data[i]["createdDate"].split(' ')[1];
-              let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-              this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate });
+              if (data[i]["createdDate"] != null) {
+                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
+                let date = data[i]["createdDate"].split(' ')[0];
+                let time = data[i]["createdDate"].split(' ')[1];
+                let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate });
+              }
             }
           }
         }
