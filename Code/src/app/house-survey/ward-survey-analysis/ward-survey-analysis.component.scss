@@ -493,7 +493,7 @@ margin: 0px;
 
 // image box
 .image-box{
-    width: 225px;
+    width: 300px;
     min-height: 50px;
     border-radius: 5px;
     background-color: #ffffff;
@@ -501,8 +501,11 @@ margin: 0px;
     box-shadow: 0 1px 5px 1px #0000005e;
     position: absolute;
     right: -1px;
-    top: 180px;
+    top: 120px;
     border: 1px solid #80bd7b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     }
 
     .house-card-box{
@@ -560,7 +563,7 @@ margin: 0px;
 .f-left{
     width: 100%;
     float: left;
-    border-bottom: 1px solid #e6e6e6;
+    
     padding:12px 15px;
 }
 .f-left p{
