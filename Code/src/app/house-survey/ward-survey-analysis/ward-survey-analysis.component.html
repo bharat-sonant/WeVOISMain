@@ -27,7 +27,7 @@
           <h6>Surveyed Marker</h6>
         </div>
         <div class="float-third">
-          <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalRevisit}}</span><br>
+          <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house"> {{progressData.totalRevisit}}</span><br>
           <h6>Revisit Request</h6>
         </div>
       </div>
@@ -42,13 +42,13 @@
 <div class="house-card-box">
   <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
     <div class="row" style="padding-top: 10px; text-align: center;">
-      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
+      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
         <div class="border-bottom">
           <button (click)="getNextPrevious('pre');" class="btn-hvr"
             style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
             << </button>
               <input id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
-                style="width: 100px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+                style="width: 170px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
                 value="1" />
               <button (click)="getNextPrevious('next');" class="btn-hvr"
                 style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
@@ -61,26 +61,20 @@
           <div class="float-l">
             <i class="fas fa-home" style="color:red;"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineMarkers}}</span><br>
-            <h6>Total Marker</h6>
           </div>
-          <div id="divLineScannedCount" class="float-r"
+          <div id="divLineScannedCount" class="float-l"
             (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineSurveyed}}</span><br>
-            <h6>Surveyed Marker</h6>
           </div>
+          <div id="divLineRevisitCount" class="float-l" style="border-right:none!important;"
+          (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'Revisit')">
+          <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
+            {{progressData.totalLineRevisit}}</span><br>
+        </div>
         </div>
       </div>
-      <div class="col-md-12 total-house" style="margin-top: -10px;">
-        <div class="fix-home">
-          <div id="divLineRevisitCount" class="float-l"
-            (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'Revisit')">
-            <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
-              {{progressData.totalLineRevisit}}</span><br>
-            <h6>Revisit Request</h6>
-          </div>
-        </div>
-      </div>
+
 
     </div>
   </div>

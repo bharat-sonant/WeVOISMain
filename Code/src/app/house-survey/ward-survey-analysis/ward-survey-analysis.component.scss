@@ -32,7 +32,8 @@ margin-left:20px!important;
     
     .total-house .fa-home{
         margin-top: 15px;
-        color: #8dbaff;
+        color: #8dbaff;  
+    margin-bottom: 7px;
         font-size: 18px;
     }
     .total-house h6{
@@ -41,7 +42,7 @@ margin-left:20px!important;
         letter-spacing: 0.5px;
     }
     .house{
-        font-size: 18px;
+        font-size: 15px;
         font-weight: bold;
         color: #fff;
     }
@@ -49,13 +50,14 @@ margin-left:20px!important;
         margin-top: 15px;
         color: #1fda2f;
         font-size: 18px;
+        margin-bottom: 7px;
     }
     .float-l{
         float: left;
-        width: 160px;
+        width: 100px;
     }
     .float-r{
-        float: right;
+        float: left;
         width: calc(100% - 190px);
         margin-right: 20px;
     }
@@ -504,7 +506,7 @@ margin: 0px;
     }
 
     .house-card-box{
-        width: 225px;
+        width: 300px;
     min-height: 105px;
     background-color: #ffffff;
     position: fixed;
@@ -594,8 +596,9 @@ margin: 0px;
 }
 .house-card-box .float-l{
     float: left;
-    width: 125px;
+    width: 99px;
     padding: 0px 15px;
+    border-right: 1px solid lightgray;
 }
 .house-card-box .float-r{
     float: left;
@@ -668,3 +671,50 @@ button:focus{
     font-weight: normal;
     text-align: justify;
   }
+
+
+.content-scroll{
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+
+
+
+
+/******************************Custom Scrollbar Start*********************************/
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent; 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+  }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent; 
+    -webkit-box-shadow: transparent; 
+  }
+  
+  :hover::-webkit-scrollbar {
+    width: 8px;
+  }
+  /* Track */
+  :hover::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+  }
+  /* Handle */
+  :hover::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120; 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+  }
+  /******************************Custom Scrollbar End*********************************/
