@@ -89,34 +89,24 @@ export class VehicleAssignedComponent implements OnInit {
     );
 
     // ward assign vehicle
-    for (let i = 1; i <= 3; i++) {
-      let circle = "Circle" + i;
-      dbPath = "Defaults/CircleWiseWards/" + circle;
-      let wardInstance = this.db.list(dbPath).valueChanges().subscribe(
-        wardData => {
-          wardInstance.unsubscribe();
-          if (wardData.length > 0) {
-            for (let j = 0; j < wardData.length; j++) {
-              let wardNo = wardData[j];
-              dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
-              let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
-                data => {
-                  vehicleInstance.unsubscribe();
-                  if (data != null) {
-                    let vehicles = data.toString().split(',');
-                    for (let k = 0; k < vehicles.length; k++) {
-                      let vehicle = vehicles[k];
-                      let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
-                      if (vehicleDetail == undefined) {
-                        this.assignedVehicleList.push({ vehicle: vehicle });
-                        this.assignedVehicleList=this.commonService.transformNumeric(this.assignedVehicleList,"vehicle");
-                      }
-                    }
-                  }
-                }
-              );
+    let zoneList=JSON.parse(localStorage.getItem("latest-zones"));
+    
+    for (let j = 1; j < zoneList.length; j++) {
+      let wardNo = zoneList[j]["zoneNo"];
+      dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
+      let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          vehicleInstance.unsubscribe();
+          if (data != null) {
+            let vehicles = data.toString().split(',');
+            for (let k = 0; k < vehicles.length; k++) {
+              let vehicle = vehicles[k];
+              let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
+              if (vehicleDetail == undefined) {
+                this.assignedVehicleList.push({ vehicle: vehicle });
+                this.assignedVehicleList=this.commonService.transformNumeric(this.assignedVehicleList,"vehicle");
+              }
             }
-
           }
         }
       );
