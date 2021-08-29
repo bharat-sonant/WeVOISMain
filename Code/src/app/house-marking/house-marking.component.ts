@@ -201,6 +201,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.markerList=[];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
