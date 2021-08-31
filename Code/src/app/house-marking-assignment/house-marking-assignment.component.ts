@@ -12,13 +12,7 @@ import { FirebaseService } from "../firebase.service";
   styleUrls: ["./house-marking-assignment.component.scss"],
 })
 export class HouseMarkingAssignmentComponent implements OnInit {
-  constructor(
-    private router: Router,
-    public fs:FirebaseService,
-    private commonService: CommonService,
-    private modalService: NgbModal,
-    private mapService: MapService
-  ) {}
+  constructor(private router: Router, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -42,9 +36,9 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     name: "",
     wardNo: "",
   };
-  db:any;
+  db: any;
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.getZoneList();
     this.getAssignedList();
   }
@@ -80,28 +74,25 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.houseData.wardNo = userDetail.wardNo;
     }
     this.dbPath = "EntitySurveyData/SurveyDateWise/" + userId;
-    let instance = this.db
-      .object(this.dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        instance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (index == "totalCount") {
-                this.houseData.totalSurveyed = data[index];
-              } else {
-                this.lineMarkerList.push({
-                  date: index,
-                  surveyed: data[index],
-                });
-              }
+    let instance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+      instance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (index == "totalCount") {
+              this.houseData.totalSurveyed = data[index];
+            } else {
+              this.lineMarkerList.push({
+                date: index,
+                surveyed: data[index],
+              });
             }
           }
         }
-      });
+      }
+    });
   }
 
   //#endregion
@@ -112,57 +103,63 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     this.assignedList = [];
     this.userList = [];
     this.dbPath = "Surveyors";
-    let userInstance = this.db
-      .object(this.dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        userInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length - 1; i++) {
-              let index = keyArray[i];
-              let name = data[index]["name"];
-              let loginId = data[index]["pin"];
-              if (data[index]["status"] == "2") {
-                if (data[index]["surveyor-type"] == "Surveyor") {
-                  this.dbPath = "SurveyorsCuurentAssignment/" + index;
-                  let assignInstance = this.db
-                    .object(this.dbPath)
-                    .valueChanges()
-                    .subscribe((dataSurvey) => {
-                      assignInstance.unsubscribe();
-                      if (dataSurvey != null) {
-                        this.assignedList.push({
-                          userId: index,
-                          name: name,
-                          wardNo: dataSurvey["ward"],
-                          lines: dataSurvey["line"],
-                          loginId: loginId,
-                        });
-                      } else {
-                        this.assignedList.push({
-                          userId: index,
-                          name: name,
-                          wardNo: "",
-                          lines: "",
-                          loginId: loginId,
-                        });
+    let userInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+      userInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length - 1; i++) {
+            let index = keyArray[i];
+            let name = data[index]["name"];
+            let loginId = data[index]["pin"];
+            if (data[index]["status"] == "2") {
+              if (data[index]["surveyor-type"] == "Surveyor") {
+                this.dbPath = "SurveyorsCuurentAssignment/" + index;
+                let assignInstance = this.db.object(this.dbPath).valueChanges().subscribe((dataSurvey) => {
+                  assignInstance.unsubscribe();
+                  if (dataSurvey != null) {
+                    let linelist = dataSurvey["line"].split(',');
+                    let lines = "";
+                    if (linelist.length > 0) {
+                      for (let l = 0; l < linelist.length; l++) {
+                        if (lines == "") {
+                          lines = linelist[l];
+                        }
+                        else {
+                          lines = lines + ", " + linelist[l];
+                        }
                       }
-                      if (i == 0) {
-                                               
-                      }
+                    }
+                    this.assignedList.push({
+                      userId: index,
+                      name: name,
+                      wardNo: dataSurvey["ward"],
+                      lines: lines,
+                      loginId: loginId,
                     });
-                }
+                  } else {
+                    this.assignedList.push({
+                      userId: index,
+                      name: name,
+                      wardNo: "",
+                      lines: "",
+                      loginId: loginId,
+                    });
+                  }
+                  if (i == 0) {
+
+                  }
+                });
               }
             }
-            setTimeout(() => {
-              $("#tr0").addClass("active");
-              this.getServeyorDetail(this.assignedList[0]["userId"], 0); 
-            }, 1000);
           }
+          setTimeout(() => {
+            $("#tr0").addClass("active");
+            this.getServeyorDetail(this.assignedList[0]["userId"], 0);
+          }, 1000);
         }
-      });
+      }
+    });
   }
 
   getLines(wardNo: any) {
@@ -222,10 +219,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }
       }
       if (isChecked == false) {
-        this.commonService.setAlertMessage(
-          "error",
-          "Plese select at least one line !!!"
-        );
+        this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
         return;
       }
       const data = {
@@ -236,10 +230,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.dbPath = "SurveyorsCuurentAssignment/" + userId;
       this.db.object(this.dbPath).update(data);
       this.lineList = [];
-      this.commonService.setAlertMessage(
-        "success",
-        "Lines assigned successfully !!"
-      );
+      this.commonService.setAlertMessage("success", "Lines assigned successfully !!");
       let userDetail = this.assignedList.find((item) => item.userId == userId);
       if (userDetail != undefined) {
         userDetail.wardNo = wardNo;
@@ -275,13 +266,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       let height = 500;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id != "0") {
         $("#key").val(id);
@@ -323,13 +309,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       let height = 170;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id != "0") {
         $("#deleteId").val(id);

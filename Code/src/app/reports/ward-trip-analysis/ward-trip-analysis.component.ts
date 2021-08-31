@@ -9,10 +9,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./ward-trip-analysis.component.scss"],
 })
 export class WardTripAnalysisComponent implements OnInit {
-  constructor(
-    private commonService: CommonService,
-    public fs: FirebaseService
-  ) { }
+  constructor(private commonService: CommonService, public fs: FirebaseService) { }
   tripList: any[];
   zoneList: any[];
   selectedDate: any;
@@ -39,13 +36,12 @@ export class WardTripAnalysisComponent implements OnInit {
     filledStatus: "",
     tripCount: 0
   };
+  cityName: any;
   db: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefaultValues();
     this.getPendingAnalysis();
     this.getWardTrips();
@@ -85,90 +81,67 @@ export class WardTripAnalysisComponent implements OnInit {
       for (let i = 1; i < this.allZoneList.length; i++) {
         let zoneNo = this.allZoneList[i]["zoneNo"];
         let zoneName = this.allZoneList[i]["zoneName"];
-        this.dbPath =
-          "WardTrips/" +
-          this.currentYear +
-          "/" +
-          this.currentMonthName +
-          "/" +
-          this.selectedDate +
-          "/" +
-          zoneNo;
-        let tripInstance = this.db
-          .object(this.dbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            tripInstance.unsubscribe();
-            let iconClass = "fas fa-ellipsis-h";
-            let divClass = "address md-background";
-            let tripList = [];
-            let tripCount = 0;
-            if (data != null) {
-              iconClass = "fas fa-check-double";
-              divClass = "address";
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                tripCount = keyArray.length;
-                for (let j = 0; j < keyArray.length; j++) {
-                  let tripID = keyArray[j];
-                  let driverId = data[tripID]["driverId"];
-                  let driverName = "";
-                  let driverMobile = "";
-                  let time = data[tripID]["time"];
-                  let filledStatus = "";
-                  let analysisAt = "";
-                  let analysisBy = "";
-                  let remark = "";
-                  let imageName = "";
-                  if (data[tripID]["filledStatus"] != null) {
-                    filledStatus = data[tripID]["filledStatus"];
-                  }
-                  if (data[tripID]["analysisAt"] != null) {
-                    analysisAt = data[tripID]["analysisAt"];
-                  }
-                  if (data[tripID]["analysisBy"] != null) {
-                    analysisBy = data[tripID]["analysisBy"];
-                  }
-                  if (data[tripID]["remark"] != null) {
-                    remark = data[tripID]["remark"];
-                  }
-                  if (data[tripID]["imageName"] != null) {
-                    imageName = data[tripID]["imageName"];
-                  }
-                  this.commonService
-                    .getEmplyeeDetailByEmployeeId(driverId)
-                    .then((employee) => {
-                      driverName =
-                        employee["name"] != null
-                          ? employee["name"].toUpperCase()
-                          : "---";
-                      driverMobile =
-                        employee["mobile"] != null ? employee["mobile"] : "---";
-                      tripList.push({
-                        tripId: tripID,
-                        tripName: "trip " + tripID,
-                        driverName: driverName,
-                        driverMobile: driverMobile,
-                        time: time,
-                        filledStatus: filledStatus,
-                        analysisAt: analysisAt,
-                        analysisBy: analysisBy,
-                        remark: remark,
-                        imageName: imageName,
-
-                      });
-                    });
+        this.dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + zoneNo;
+        let tripInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+          tripInstance.unsubscribe();
+          let iconClass = "fas fa-ellipsis-h";
+          let divClass = "address md-background";
+          let tripList = [];
+          let tripCount = 0;
+          if (data != null) {
+            iconClass = "fas fa-check-double";
+            divClass = "address";
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              tripCount = keyArray.length;
+              for (let j = 0; j < keyArray.length; j++) {
+                let tripID = keyArray[j];
+                let driverId = data[tripID]["driverId"];
+                let driverName = "";
+                let driverMobile = "";
+                let time = data[tripID]["time"];
+                let filledStatus = "";
+                let analysisAt = "";
+                let analysisBy = "";
+                let remark = "";
+                let imageName = "";
+                if (data[tripID]["filledStatus"] != null) {
+                  filledStatus = data[tripID]["filledStatus"];
                 }
-                this.zoneList.push({
-                  zoneNo: zoneNo,
-                  zoneName: zoneName,
-                  divClass: divClass,
-                  iconClass: iconClass,
-                  tripList: tripList,
-                  tripCount: tripCount
+                if (data[tripID]["analysisAt"] != null) {
+                  analysisAt = data[tripID]["analysisAt"];
+                }
+                if (data[tripID]["analysisBy"] != null) {
+                  analysisBy = data[tripID]["analysisBy"];
+                }
+                if (data[tripID]["remark"] != null) {
+                  remark = data[tripID]["remark"];
+                }
+                if (data[tripID]["imageName"] != null) {
+                  imageName = data[tripID]["imageName"];
+                }
+                this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+                  driverName =
+                    employee["name"] != null
+                      ? employee["name"].toUpperCase()
+                      : "---";
+                  driverMobile =
+                    employee["mobile"] != null ? employee["mobile"] : "---";
+                  tripList.push({
+                    tripId: tripID,
+                    tripName: "trip " + tripID,
+                    driverName: driverName,
+                    driverMobile: driverMobile,
+                    time: time,
+                    filledStatus: filledStatus,
+                    analysisAt: analysisAt,
+                    analysisBy: analysisBy,
+                    remark: remark,
+                    imageName: imageName,
+
+                  });
                 });
               }
-            } else {
               this.zoneList.push({
                 zoneNo: zoneNo,
                 zoneName: zoneName,
@@ -178,19 +151,29 @@ export class WardTripAnalysisComponent implements OnInit {
                 tripCount: tripCount
               });
             }
-            if (this.allZoneList.length - 1 == this.zoneList.length) {
-              setTimeout(() => {
-                let tripFilter = this.zoneList.filter((item) => item.tripCount > 0);
-                if (tripFilter.length > 0) {
-                  tripFilter[0]["divClass"] = "address md-background-active";
-                  this.getTripZoneData(tripFilter[0]["zoneNo"]);
-                  this.tripList = tripFilter[0]["tripList"];
-                  this.getTripData(this.tripList[0]["tripId"]);
-                }
-              }, 600);
+          } else {
+            this.zoneList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              divClass: divClass,
+              iconClass: iconClass,
+              tripList: tripList,
+              tripCount: tripCount
+            });
+          }
+          if (this.allZoneList.length - 1 == this.zoneList.length) {
+            setTimeout(() => {
+              let tripFilter = this.zoneList.filter((item) => item.tripCount > 0);
+              if (tripFilter.length > 0) {
+                tripFilter[0]["divClass"] = "address md-background-active";
+                this.getTripZoneData(tripFilter[0]["zoneNo"]);
+                this.tripList = tripFilter[0]["tripList"];
+                this.getTripData(this.tripList[0]["tripId"]);
+              }
+            }, 600);
 
-            }
-          });
+          }
+        });
       }
     }
   }
@@ -238,10 +221,7 @@ export class WardTripAnalysisComponent implements OnInit {
       if (this.tripList.length > 0) {
         this.getTripData(this.tripList[0]["tripId"]);
       } else {
-        this.commonService.setAlertMessage(
-          "error",
-          "No trips are available for analysis on selected date !!!"
-        );
+        this.commonService.setAlertMessage("error", "No trips are available for analysis on selected date !!!");
       }
       this.setActiveWard(zoneNo);
     }
@@ -276,22 +256,7 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.remark = tripDetails.remark;
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
-      this.tripData.imageUrl =
-        "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
-        this.commonService.getFireStoreCity() +
-        "%2FWardTrips%2F" +
-        this.currentYear +
-        "%2F" +
-        this.currentMonthName +
-        "%2F" +
-        this.selectedDate +
-        "%2F" +
-        this.selectedZone +
-        "%2F" +
-        this.selectedTrip +
-        "%2F" +
-        tripDetails.imageName +
-        "?alt=media";
+      this.tripData.imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media";
 
       this.setFilledStatus();
       this.setTripAnalysis();
@@ -378,18 +343,7 @@ export class WardTripAnalysisComponent implements OnInit {
   }
 
   saveTripAnalysis() {
-    let dbPath =
-      "WardTrips/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.selectedDate +
-      "/" +
-      this.selectedZone +
-      "/" +
-      this.selectedTrip +
-      "";
+    let dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedZone + "/" + this.selectedTrip + "";
     this.db.object(dbPath).update({
       filledStatus: this.filledStatus,
       analysisAt: this.commonService.getTodayDateTime(),
@@ -399,10 +353,7 @@ export class WardTripAnalysisComponent implements OnInit {
     this.updatePendingAnalysis();
     this.updateTripAndDetails();
     this.setTripAnalysis();
-    this.commonService.setAlertMessage(
-      "success",
-      "Data has been added successfully."
-    );
+    this.commonService.setAlertMessage("success", "Data has been added successfully.");
   }
 
   updateTripAndDetails() {
@@ -420,15 +371,12 @@ export class WardTripAnalysisComponent implements OnInit {
 
   updatePendingAnalysis() {
     if (this.tripDetail.analysisAt == "") {
-      let pendingCountPath = this.db
-        .object("WardTrips/TotalTripAnalysisPending")
-        .valueChanges()
-        .subscribe((pedingCount) => {
-          pendingCountPath.unsubscribe();
-          this.db.object("WardTrips").update({
-            TotalTripAnalysisPending: Number(pedingCount) - 1,
-          });
+      let pendingCountPath = this.db.object("WardTrips/TotalTripAnalysisPending").valueChanges().subscribe((pedingCount) => {
+        pendingCountPath.unsubscribe();
+        this.db.object("WardTrips").update({
+          TotalTripAnalysisPending: Number(pedingCount) - 1,
         });
+      });
     }
   }
 

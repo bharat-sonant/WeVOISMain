@@ -1,0 +1,112 @@
+<section class="dustbin-analysis">
+    <div id="divLoader" class="loaderClass">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div id="ImageLoader" class="loaderClass-no-bg">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div class="container-fluid no-gutters">
+        <div class="row">
+            
+            <div class="col-md-12 desk-hide">
+                <div class="header">
+                    <h3 class="header-text">Log Book Analysis
+                    </h3>
+                </div>
+            </div>
+            <div class="col-md-12 mob-20" style="padding-right: 0px; padding-left: 28px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12 pr-0" style="margin-top: 10px;">
+                                <div class="top">
+                                    <div class="row" style="margin-top:-10px;">
+                                        <div class="col-md-12" style="width: 100%; display: flex;">
+                                            <button class="btn btn-primary " (click)="setDate('','previous');">
+                                                << </button>
+                                                    <input id="txtDate" class="date-input" type="date"
+                                                        (change)="setDate($event.target.value,'current')">
+                                                    <button class="btn btn-primary" (click)="setDate('','next');"> >>
+                                                    </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-10 pr-0">
+                                <div class="dustbin-card">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="float">
+                                                <div class="fleft">
+                                                    <h6> <img src="../../../assets/img/man.png"> &nbsp;
+                                                         {{logBookData.driver}}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="float">
+                                                <div class="fleft">
+                                                    <h6> <i class="fas fa-mobile-alt" style="font-size: 20px;
+                                                        color: green;"></i>
+                                                        &nbsp;&nbsp;{{logBookData.driverMobile}}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="float" style="border-bottom:0px solid red;">
+                                                <div class="fleft">
+                                                    <h6> <i class="fas fa-edit"  style="font-size: 16px;
+                                                        color: red;"></i>
+                                                        &nbsp; {{logBookData.reason}}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mob-mid" style="padding-right: 50px; padding-left: 10px; padding-bottom: 20px;">
+                        <div class="row">
+                            <div class="col-md-12 mob-hide">
+                                <div class="header">
+                                    <h3 class="header-text">Log Book Analysis                                       
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mob-res" style="margin-top: -40px;">
+                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                    data-interval="false">
+                                    <div class="carousel-inner">
+                                        <div id="slide1" class="carousel-item active">
+                                            <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{logBookData.imageUrl}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 desk-right mob-bottom">
+                        <div class="scroll-list">
+                            <div id="filter{{i}}" class="{{data.divClass}}"
+                                *ngFor="let data of zoneList ; let i=index"
+                                (click)="data.iconClass!='fas fa-ellipsis-h' && getLogBookDetail(data.zoneNo);">
+                                <i class="{{data.iconClass}}"></i>
+                                <div style="width: 76%; float: left;">
+                                    <div class="address-text">
+                                        <h6>
+                                            {{data.zoneName}}
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

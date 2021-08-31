@@ -57,7 +57,7 @@ export class SidebarComponent implements OnInit {
     private commonService: CommonService,
     private toastr: ToastrService,
     public router: Router
-  ) {}
+  ) { }
 
   zoneList: any[];
   toDayDate: any;
@@ -185,7 +185,7 @@ export class SidebarComponent implements OnInit {
   }
 
   changeCity(cityName: any) {
-    
+
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
@@ -313,7 +313,7 @@ export class SidebarComponent implements OnInit {
       this.toDayDate +
       "/Summary";
     this.db.object(dbPath).update({
-     // trip: tripCount,
+      // trip: tripCount,
       vehicleCurrentLocation: lastWardStatus,
     });
   }
@@ -760,10 +760,10 @@ export class SidebarComponent implements OnInit {
               element.addEventListener("click", (e) => {
                 this.getPage(
                   "/" +
-                    this.cityName +
-                    "/" +
-                    userAccessList[i]["pageId"] +
-                    userAccessList[i]["url"]
+                  this.cityName +
+                  "/" +
+                  userAccessList[i]["pageId"] +
+                  userAccessList[i]["url"]
                 );
               });
             }
@@ -779,10 +779,10 @@ export class SidebarComponent implements OnInit {
               element.addEventListener("click", (e) => {
                 this.getPage(
                   "/" +
-                    this.cityName +
-                    "/" +
-                    userAccessList[i]["pageId"] +
-                    userAccessList[i]["url"]
+                  this.cityName +
+                  "/" +
+                  userAccessList[i]["pageId"] +
+                  userAccessList[i]["url"]
                 );
               });
             }
@@ -846,7 +846,13 @@ export class SidebarComponent implements OnInit {
       $("#reengusBox").addClass("login-box");
       $("#shahpuraBox").addClass("login-box");
       $("#demoBox").addClass("login-box active-box");
+    } else if (this.cityName == "test") {
+      $("#sikarBox").addClass("login-box");
+      $("#reengusBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box");
+      $("#demoBox").addClass("login-box");
     }
+
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "sikar") {
         $("#sikarBox").show();
