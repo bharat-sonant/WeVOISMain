@@ -1,3 +1,4 @@
+import { progressDetail } from './../../PortalServices/map-card-review/map-card-review.component';
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
@@ -25,6 +26,7 @@ export class WardSurveySummaryComponent implements OnInit {
     totalLines: 0,
     totalMarkers: 0,
     totalSurveyed: 0,
+    totalRevisit:0,
     wardMarkers: 0,
     wardSurveyed: 0,
     wardRevisit: 0,
@@ -81,6 +83,8 @@ export class WardSurveySummaryComponent implements OnInit {
   clearAll() {
     this.wardProgressList = [];
     this.lineSurveyList = [];
+    this.surveyData.totalMarkers=0;
+    this.surveyData.totalSurveyed=0;
   }
 
   changeCircleSelection(filterVal: any) {
@@ -121,11 +125,13 @@ export class WardSurveySummaryComponent implements OnInit {
       markerInstance.unsubscribe();
       if (data != null) {
         this.wardProgressList[index]["markers"] = Number(data);
+        this.surveyData.totalMarkers=this.surveyData.totalMarkers+Number(data);
         dbPath = "EntitySurveyData/TotalHouseCount/" + wardNo;
         let surveyedInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
           surveyedInstance.unsubscribe();
           if (data != null) {
             this.wardProgressList[index]["surveyed"] = Number(data);
+            this.surveyData.totalSurveyed=this.surveyData.totalSurveyed+Number(data);
             this.wardProgressList[index]["status"] = "In Progress";
             if (Number(this.wardProgressList[index]["markers"]) == Number(data)) {
               this.wardProgressList[index]["status"] = "Survey Done";
@@ -140,6 +146,7 @@ export class WardSurveySummaryComponent implements OnInit {
       revisitInstance.unsubscribe();
       if (data != null) {
         this.wardProgressList[index]["revisit"] = Number(data);
+        this.surveyData.totalRevisit=this.surveyData.totalRevisit+Number(data);
       }
     });
   }
@@ -266,13 +273,8 @@ export class WardSurveySummaryComponent implements OnInit {
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 50 + "px";
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
     $("#divStatus").css("height", divHeight);
   }
@@ -306,6 +308,7 @@ export class surveyDatail {
   totalLines: number;
   totalMarkers: number;
   totalSurveyed: number;
+  totalRevisit:number;
   wardMarkers: number;
   wardSurveyed: number;
   wardRevisit: number;

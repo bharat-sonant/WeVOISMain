@@ -8,10 +8,24 @@
                 <option value="Circle3">Circle3</option>
             </select>
         </div>
-        <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-6" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
             Ward Survey Summary
         </div>
-        <div class="col-md-2" style="padding-left: 18px;">
+        <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
+            <div class="fix-home">
+                <div class="float-first" >
+                  <i class="fas fa-home" style="color:red;"></i> <span class="house"> {{surveyData.totalMarkers}}</span><br>
+                  <h6>Total Marker</h6>
+                </div>
+                <div class="float-second">
+                  <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
+                  <h6>Surveyed Marker</h6>
+                </div>
+                <div class="float-third">
+                  <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house"> {{surveyData.totalRevisit}}</span><br>
+                  <h6>Revisit Request</h6>
+                </div>
+              </div>
 
         </div>
     </div>

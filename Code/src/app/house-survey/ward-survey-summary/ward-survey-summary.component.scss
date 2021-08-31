@@ -486,4 +486,49 @@ label{
 
 
 
+.fix-home{
+  float: right;
+  margin-right: 15px;
+  }
+  .float-first{
+  width: 130px;
+  float: left;
+  padding-right: 10px;
+  }
+  .float-second{
+  width: 95px;
+  float: left;
+  }
+  .float-third{
+  width: 95px;
+  float: left;
+  }
+
+  .total-house .fa-home{
+    margin-top: 2px;
+    color: #8dbaff;
+    font-size: 18px;
+    }
+    .total-house h6{
+    font-size: 8px;
+    font-weight: normal!important;
+    letter-spacing: 0.5px;
+    }
+
+    
+.house{
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  }
+  
+.total-house .fa-house-damage{
+  margin-top: 0px;
+  color: #1fda2f;
+  font-size: 18px;
+  }
+
+
+
+
 
