@@ -1,9 +1,7 @@
-import { progressDetail } from './../../PortalServices/map-card-review/map-card-review.component';
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 
 @Component({
   selector: "app-ward-survey-summary",
