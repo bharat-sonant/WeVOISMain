@@ -122,7 +122,7 @@ export class VehicleAssignedComponent implements OnInit {
         let list = vehicleDetail.driverDetail;
         let driverDetail = list.find(item => item.driver == driver);
         if (driverDetail == undefined) {
-          list.push({ driver: driver, driverMobile: driverMobile })
+          list.push({ driver: driver, driverMobile: driverMobile });
         }
       }
     });
@@ -145,8 +145,9 @@ export class VehicleAssignedComponent implements OnInit {
       this.selectedDate = this.toDayDate;
       this.commonService.setAlertMessage(
         "error",
-        "Please select current or previos date!!!"
+        "Please select current or previous date!!!"
       );
+      return;
     }
     $("#txtDate").val(this.selectedDate);
     this.getAssignedVehicle();
