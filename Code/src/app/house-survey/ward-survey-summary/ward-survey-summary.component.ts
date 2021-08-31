@@ -83,6 +83,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.lineSurveyList = [];
     this.surveyData.totalMarkers=0;
     this.surveyData.totalSurveyed=0;
+    this.surveyData.totalRevisit=0;
   }
 
   changeCircleSelection(filterVal: any) {
@@ -166,6 +167,9 @@ export class WardSurveySummaryComponent implements OnInit {
   clearWardDetailData() {
     this.wardLineCount = 0;
     this.surveyData.totalLines = 0;
+    this.surveyData.wardMarkers=0;
+    this.surveyData.wardRevisit=0;
+    this.surveyData.wardSurveyed=0;
     this.lineSurveyList = [];
   }
 
