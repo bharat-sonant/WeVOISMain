@@ -124,6 +124,10 @@ export class LogBookComponent implements OnInit {
   }
 
   getLogBookDetail(zoneNo: any) {
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 1000);
     this.clearDetailData();
     let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
     if (zoneDetail != undefined) {
