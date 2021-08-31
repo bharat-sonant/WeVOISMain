@@ -4,7 +4,7 @@
             <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
                 style="width: 150px; display: none;">
                 <option value="Circle1" selected>Circle1</option>
-                <option value="Circle2" >Circle2</option>
+                <option value="Circle2">Circle2</option>
                 <option value="Circle3">Circle3</option>
             </select>
         </div>
@@ -12,7 +12,7 @@
             Ward Survey Summary
         </div>
         <div class="col-md-2" style="padding-left: 18px;">
-            
+
         </div>
     </div>
 </section>
@@ -28,31 +28,27 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
-                                            <th class="text-right"  style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                                Markers</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Surveyed</th>
-                                            <th  class="text-right" style="border-right:1px solid #dee2e6; width:25%;">
-                                                Percentage</th>
-                                            <th class="text-center" style="width:15%;"></th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                                Revisit</th>
+                                            <th class="text-center" style="width:20%;">Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                >
-                                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
+                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"  (click)="getSurveyDetail(data.wardNo,i);">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
-                                                    <td class="text-right" style="border-right:1px solid #dee2e6">
-                                                        {{data.markers}}</td>
-                                                <td  class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                    {{data.markers}}</td>
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.surveyed}}</td>
-                                                <td  class="text-right"
-                                                    style="border-right:1px solid #dee2e6;">
-                                                    {{data.percentage}} %</td>
+                                                <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                    {{data.revisit}} </td>
                                                 <td class="text-center">
-                                                    <a href="{{data.url}}" target="_blank">
-                                                    <i class="far fa-eye" style="font-size: 20px;"></i></a>
+                                                    {{data.status}}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -73,12 +69,96 @@
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
-                    
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.totalLines}}</span> <br>
+                                    Lines
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.wardMarkers}}</span> <br>
+                                    Markers
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br>
+                                    Surveyed
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.wardRevisit}}</span> <br>
+                                    Revisit
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body" style="padding: 3px 11px 15px 0px;">
                     <div class="row">
 
                         <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
+                                            <table class="table"
+                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                                <thead>
+                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Line</th>
+                                                    <th class="text-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
+                                                    <th class="text-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Surveyed
+                                                    </th>
+                                                    <th class="text-center"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Revisit
+                                                    </th>
+
+                                                    <th class="text-center"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">#</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of lineSurveyList; let i=index">
+                                                        <td style="border-right:1px solid #dee2e6">
+                                                            {{data.lineNo}}</td>
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                            {{data.markers}}</td>
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                            {{data.survyed}}</td>
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                            {{data.revisit}}</td>
+                                                        
+                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+
+                                                            <i class="far fa-eye"
+                                                                style="font-size: 20px; cursor: pointer;"
+                                                                [hidden]="data.survyed==0"
+                                                                (click)="showLineDetail(contentLineSurveyed,data.wardNo,data.lineNo);"></i>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -87,4 +167,34 @@
     </div>
 </div>
 
+<!--Vehicle Status Start-->
+<ng-template #contentLineSurveyed>
+    <div style="width: 100%;text-align: right;float: left;">
 
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body" style="margin-top:-20px; ">
+        <div id="divStatus" class="content-scroll">
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of surveyedDetailList">
+                    <div style="width:100%">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 style="width: 100%;"> {{dt.cardType}} </h3><br />
+                            
+                            <h3><b> {{dt.cardNo}} </b></h3><br />
+                            <h3> {{dt.name}} </h3><br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-template>
+<!--Vehicle Status End-->
