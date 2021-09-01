@@ -311,6 +311,7 @@
     overflow: hidden;
     display: grid;
     align-items: center;
+    margin-bottom: 10px;
   }
   .inner-data{
     padding: 6px 10px;
@@ -778,18 +779,19 @@
     border-radius: 5px;
     overflow: hidden;
     justify-content: center;
+    margin-bottom: 10px;
   }
-  // .data-1{
-  //   float: left;
-  //   width: 33.33%;
-  // }
+   .data-1{
+     float: left;
+     width: 50%;
+   }
   .data-2{
     float: left;
-    width: 33.33%;
+    width: 50%;
   }
   .data-3{
     float:left;
-    width: 33.34%;
+    width: 100%;
   }
   label{
     font-size: 12px;

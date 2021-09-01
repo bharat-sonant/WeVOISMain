@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs';
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
@@ -34,7 +35,8 @@ export class WardTripAnalysisComponent implements OnInit {
     imageUrl: "",
     remark: "",
     filledStatus: "",
-    tripCount: 0
+    tripCount: 0,
+    wasteCollection: 0
   };
   cityName: any;
   db: any;
@@ -105,6 +107,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 let analysisBy = "";
                 let remark = "";
                 let imageName = "";
+                let vehicleType = data[tripID]["vehicle"].split('-')[0];
                 if (data[tripID]["filledStatus"] != null) {
                   filledStatus = data[tripID]["filledStatus"];
                 }
@@ -138,7 +141,7 @@ export class WardTripAnalysisComponent implements OnInit {
                     analysisBy: analysisBy,
                     remark: remark,
                     imageName: imageName,
-
+                    vehicleType: vehicleType
                   });
                 });
               }
@@ -214,6 +217,7 @@ export class WardTripAnalysisComponent implements OnInit {
 
   getTripZoneData(zoneNo: any) {
     this.selectedZone = zoneNo;
+    this.tripData.wasteCollection=0;
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetails != undefined) {
       this.tripList = zoneDetails.tripList;
@@ -224,6 +228,7 @@ export class WardTripAnalysisComponent implements OnInit {
         this.commonService.setAlertMessage("error", "No trips are available for analysis on selected date !!!");
       }
       this.setActiveWard(zoneNo);
+      this.getTripWasteCollection();
     }
   }
 
@@ -242,6 +247,7 @@ export class WardTripAnalysisComponent implements OnInit {
 
   getTripData(index: any) {
     this.selectedTrip = index;
+
     $("#ddlTrip").val(this.selectedTrip);
     let tripDetails = this.tripList.find((item) => item.tripId == index);
     if (tripDetails != undefined) {
@@ -264,6 +270,23 @@ export class WardTripAnalysisComponent implements OnInit {
       setTimeout(function () {
         $("#ImageLoader").hide();
       }, 1000);
+    }
+  }
+
+  getTripWasteCollection() {
+    if (this.tripList.length > 0) {
+      for (let i = 0; i < this.tripList.length; i++) {
+        let vehicle = this.tripList[i]["vehicleType"];
+        this.dbPath = "Settings/WasteCollectionVehicleCapacity/" + vehicle;
+        let wasteInstance = this.db.object(this.dbPath).valueChanges().subscribe(
+          data => {
+            wasteInstance.unsubscribe();
+            if (data != null) {
+              this.tripData.wasteCollection = this.tripData.wasteCollection + Number(data);
+            }
+          }
+        );
+      }
     }
   }
 
@@ -388,6 +411,8 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.remark = "";
     this.tripData.startTime = "00:00:00";
+    this.tripData.wasteCollection = 0;
+    this.tripData.tripCount = 0;
     let element = <HTMLInputElement>document.getElementById("chkFilledStatus");
     element.checked = false;
     element = <HTMLInputElement>document.getElementById("chkRemark");
@@ -405,5 +430,6 @@ export class tripDetail {
   imageUrl: string;
   remark: string;
   filledStatus: string;
-  tripCount: number
+  tripCount: number;
+  wasteCollection: number;
 }

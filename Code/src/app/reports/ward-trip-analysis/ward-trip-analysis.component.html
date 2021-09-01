@@ -8,7 +8,7 @@
     <div class="container-fluid no-gutters">
         <div class="row">
 
-            <div class="col-md-12 desk-hide" >
+            <div class="col-md-12 desk-hide">
                 <div class="header">
                     <h3 class="header-text">Ward Trip Analysis
                         <!--
@@ -46,7 +46,7 @@
                                                     </button>
                                         </div>
                                         <div class="col-md-12" style="width: 100%; display: flex;">
-                                           <h6>Trips {{tripData.tripCount}}</h6>
+                                            <h6>Trips <span style="font-size: 14px; color: green;">{{tripData.tripCount}} </span> </h6>
                                         </div>
                                         <div class="col-md-12">
                                             <select class="caret-select" id="ddlTrip"
@@ -58,90 +58,113 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3" style="margin-top: -40px;padding-right: 5px;padding-left: 5px;">
-                                <div class="dustbin-card">
-                                            <div class="float">
-                                                <div class="fleft">
-                                                    <div class="img-left" style="width: 30px; float:left">
-                                                    <img src="../../../assets/img/man.png" >
-                                                </div>
-                                                     <h6 style=" float: left; width: calc(100% - 30px);">
-                                                        &nbsp;{{tripData.driverName}}
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                            <div class="float" style="border-bottom:0px!important">
-                                                <div class="fleft">
-                                                    <div class="img-left" style="width: 30px; float:left">
-                                                        <i class="fas fa-mobile-alt" style="font-size: 18px; color: #4aad43;"></i>
+                            <div class="col-md-12 mob-mid"
+                                style="padding-right: 40px; padding-left: 15px; padding-bottom: 20px;">
+                                <div class="row">
+                                    <div class="col-md-3 mob-res pr-0" style="margin-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="dustbin-card">
+                                                    <div class="float">
+                                                        <div class="fleft">
+                                                            <div class="img-left" style="width: 30px; float:left">
+                                                                <img src="../../../assets/img/man.png">
+                                                            </div>
+                                                            <h6 style=" float: left; width: calc(100% - 30px);">
+                                                                &nbsp;{{tripData.driverName}}
+                                                            </h6>
+                                                        </div>
                                                     </div>
-                                                    <h6 style=" float: left; width: calc(100% - 30px);">
-                                                       {{tripData.driverMobile}}
-                                                    </h6>
+                                                    <div class="float" style="border-bottom:0px!important">
+                                                        <div class="fleft">
+                                                            <div class="img-left" style="width: 30px; float:left">
+                                                                <i class="fas fa-mobile-alt"
+                                                                    style="font-size: 18px; color: #4aad43;"></i>
+                                                            </div>
+                                                            <h6 style=" float: left; width: calc(100% - 30px);">
+                                                                {{tripData.driverMobile}}
+                                                            </h6>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3" style="margin-top: -40px;padding-right: 10px;padding-left: 5px;">
-                                <div class="all-data">
-                                    <div class="data-1" >
-                                        <p class="remark-analysis">
-                                            {{tripData.startTime}}
-                                        <h5>Start Time</h5>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="all-data">
+                                                    <div class="data-1" style="border-right: 1px solid lightgray;">
+                                                        <p class="remark-analysis">
+                                                            {{tripData.wasteCollection}} Kg
+                                                        <h5>Waste Collection</h5>
+                                                    </div>
+                                                    <div class="data-2">
+                                                        <p class="pen-analysis">
+                                                            {{tripData.pendingAnalysis}}</p>
+                                                        <h5>Pending Analysis</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="all-data">
+                                                    <div class="data-3">
+                                                        <p class="remark-analysis">
+                                                            {{tripData.startTime}}
+                                                        <h5>Start Time</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="review-page">
+                                                    <div class="col-12 radio-text"
+                                                        style="border-bottom: 1px dotted lightgray;"> <input
+                                                            type="checkbox" id="chkFilledStatus" value="0"
+                                                            (click)="getSelected('chkFilledStatus');"
+                                                            style="margin-right: 5px;">
+                                                        <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
+                                                    </div>
+                                                    <div class="col-12 radio-text"> <input type="checkbox"
+                                                            id="chkRemark" value="0" (click)="getSelected('chkRemark');"
+                                                            style="margin-right: 5px;">
+                                                        <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
+                                                    </div>
+                                                    <div class="dustbin-progress"
+                                                        style="padding: 10px 0px; height: 38px;">
+                                                        <button type="button" class="btn w-100 btn-success"
+                                                            (click)="saveTripAnalysis();" style="height: 40px;">Save <i
+                                                                class="fas fa-save"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mt-10">
+                                                <div class="remark-page">
+                                                    <p class="align-self-center"
+                                                        style="color: green;margin-bottom: 0px;"><b
+                                                            [innerHTML]="tripData.analysisDetail"></b> </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 pl-0 mt-10" style="margin-top: -40px;  padding-right: 50px!important;">
-                                <div class="all-data">
-                                    <div class="data-1" >
-                                        <!-- <i class="fas fa-diagnoses" style="height: 17px;color: red;text-align: center!important;float:none!important;margin-right: 0px;"></i> -->
-                                        <p class="pen-analysis">
-                                            {{tripData.pendingAnalysis}}</p>
-                                        <h5>Pending Analysis</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mob-mid" style="padding-right: 40px; padding-left: 15px; padding-bottom: 20px;">
-                            <div class="row">
-                                <div class="col-md-3 mob-res pr-0" style="margin-top: 10px;">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                    <div class="review-page">
-                                        <div class="col-12 radio-text" style="border-bottom: 1px dotted lightgray;"> <input type="checkbox" id="chkFilledStatus"
-                                            value="0" (click)="getSelected('chkFilledStatus');" style="margin-right: 5px;">
-                                       <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
-                                   </div>
-                                   <div class="col-12 radio-text"> <input type="checkbox" id="chkRemark"
-                                           value="0" (click)="getSelected('chkRemark');" style="margin-right: 5px;">
-                                       <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
-                                   </div>
-                                   <div class="dustbin-progress" style="padding: 10px 0px; height: 38px;">                                    
-                                    <button type="button" class="btn w-100 btn-success"
-                                        (click)="saveTripAnalysis();" style="height: 40px;">Save <i class="fas fa-save"></i></button>
-                                </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mt-10">
-                                    <div class="remark-page">
-                                        <p class="align-self-center" style="color: green;margin-bottom: 0px;"><b
-                                            [innerHTML]="tripData.analysisDetail"></b> </p>
-                                    </div>
-                                </div>
-                            </div>
-                                </div>
-                                <div class="col-md-9 mob-res" style="margin-top: 10px; padding-left: 12px; padding-right: 25px;">
-                                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
-                                        data-interval="false">
-                                        <div class="carousel-inner">
-                                            <div id="slide1" class="carousel-item active">
-                                                <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
-                                                    src="{{tripData.imageUrl}}">
+                                    <div class="col-md-9 mob-res"
+                                        style="margin-top: -127px; padding-left: 12px; padding-right: 25px;">
+                                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                            data-interval="false">
+                                            <div class="carousel-inner">
+                                                <div id="slide1" class="carousel-item active">
+                                                    <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
+                                                        src="{{tripData.imageUrl}}">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
                         </div>
                     </div>
@@ -162,7 +185,7 @@
                                     <div class="progress-card">
                                         <div class="row">
                                             <div class="col-6 radio-text"> <input type="checkbox" id="chkFilledStatus"
-                                                     value="0" (click)="getSelected('chkFilledStatus');">
+                                                    value="0" (click)="getSelected('chkFilledStatus');">
                                                 <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
                                             </div>
                                             <div class="col-6 radio-text"> <input type="checkbox" id="chkRemark"
