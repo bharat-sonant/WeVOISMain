@@ -114,7 +114,6 @@ export class LogBookComponent implements OnInit {
                     if (this.selectedZone != null)
                       this.getLogBookDetail(this.selectedZone);
                   }, 600);
-
                 }
               });
           }

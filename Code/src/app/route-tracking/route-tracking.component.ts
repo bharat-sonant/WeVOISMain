@@ -835,7 +835,7 @@ db:any;
 
     for (let i = 1; i <= days; i++) {
       let monthDate = year + '-' + month + '-' + (i < 10 ? '0' : '') + i;
-      let monthShortName = this.commonService.getCurrentMonthShortName(new Date(monthDate).getMonth());
+      let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
       let day = monthDate.split("-")[2] + " " + monthShortName;
       this.monthDetail.push({ wardNo: this.selectedZone, day: day, driver: '', km: '0', hour: '', percentage: '0', monthDate: monthDate });
       if (monthDate == this.toDayDate) {
@@ -882,7 +882,7 @@ db:any;
       routePath => {
         if (routePath != null) {
           let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
-          let monthShortName = this.commonService.getCurrentMonthShortName(new Date(monthDate).getMonth());
+          let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
           let day = monthDate.split("-")[2] + " " + monthShortName;
           let totalKM: number = 0;
           var keyArray = Object.keys(routePath);

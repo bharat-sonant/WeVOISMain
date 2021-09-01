@@ -20,7 +20,7 @@ export class CommonService {
   notificationInterval: any;
   fsDb: any;
   zoneKML: any;
-  map:any;
+  map: any;
 
 
   setTodayDate() {
@@ -142,7 +142,7 @@ export class CommonService {
       fullscreenControl: false,
       streetViewControl: false,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-     
+
     };
 
     return mapProp;
@@ -339,18 +339,18 @@ export class CommonService {
   getCurrentMonthShortName(monthNumber: number) {
     var d = new Date();
     var month = new Array();
-    month[0] = "Jan";
-    month[1] = "Feb";
-    month[2] = "Mar";
-    month[3] = "Apr";
-    month[4] = "May";
-    month[5] = "Jun";
-    month[6] = "Jul";
-    month[7] = "Aug";
-    month[8] = "Sep";
-    month[9] = "Oct";
-    month[10] = "Nov";
-    month[11] = "Dec";
+    month[1] = "Jan";
+    month[2] = "Feb";
+    month[3] = "Mar";
+    month[4] = "Apr";
+    month[5] = "May";
+    month[6] = "Jun";
+    month[7] = "Jul";
+    month[8] = "Aug";
+    month[9] = "Sep";
+    month[10] = "Oct";
+    month[11] = "Nov";
+    month[12] = "Dec";
     if (monthNumber != undefined) {
       return month[monthNumber];
     } else {
@@ -698,6 +698,15 @@ export class CommonService {
 
   setMarkerZone(newDb: any) {
     let zoneList = [];
+    let wardCheckList = [];
+    if (localStorage.getItem("cityName") == "sikar") {
+      wardCheckList.push({ wardNo: "1" });
+      wardCheckList.push({ wardNo: "2" });
+      wardCheckList.push({ wardNo: "3" });
+      wardCheckList.push({ wardNo: "4" });
+      wardCheckList.push({ wardNo: "30" });
+      wardCheckList.push({ wardNo: "31" });
+    }
     let dbPath = "Defaults/CircleWiseWards/Circle1";
     let zoneInstance = newDb
       .list(dbPath)
@@ -719,7 +728,10 @@ export class CommonService {
             } else {
               zoneName = "Ward " + data[i];
             }
-            zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+            let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
+            if (wardDetail == undefined) {
+              zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+            }
           }
           localStorage.setItem("markerZone", JSON.stringify(zoneList));
         }
@@ -1097,7 +1109,7 @@ export class CommonService {
     }
   }
 
- 
+
 
   setKML(zoneNo: any, map: any) {
     let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
@@ -1118,8 +1130,7 @@ export class CommonService {
     $("#divMap").css("height", $(window).height() - 80);
   }
 
-  setMap(gmap:any)
-  {
+  setMap(gmap: any) {
     var mapstyle = new google.maps.StyledMapType([
       {
         featureType: "poi",
@@ -1134,9 +1145,9 @@ export class CommonService {
     return this.map;
   }
 
-  setMapById(mapId:any) {
+  setMapById(mapId: any) {
     let mapProp = this.mapForHaltReport();
-   return new google.maps.Map(
+    return new google.maps.Map(
       document.getElementById(mapId),
       mapProp
     );

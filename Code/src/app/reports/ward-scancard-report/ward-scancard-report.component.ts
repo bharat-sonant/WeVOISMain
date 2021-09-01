@@ -26,9 +26,9 @@ export class WardScancardReportComponent implements OnInit {
     public httpService: HttpClient,
     private actRoute: ActivatedRoute,
     private commonService: CommonService
-  ) {}
+  ) { }
   usersRef: AngularFireList<any>;    // Reference to Users data list, its an Observable
-  userRef: AngularFireObject<any>; 
+  userRef: AngularFireObject<any>;
 
   wardList: any[];
   selectedCircle: any;
@@ -68,7 +68,7 @@ export class WardScancardReportComponent implements OnInit {
             // for (let i = 0; i < wardKeyArray.length; i++) {
             // let wardInex = wardKeyArray[i];
             //  let wardLines = wardData[wardInex];
-            let datalist=[];
+            let datalist = [];
             for (let j = 1; j <= 53; j++) {
               let dbPath1 = "Defaults/WardLines/30/" + j + "/Houses";
               let houseInstance = this.db
@@ -101,20 +101,19 @@ export class WardScancardReportComponent implements OnInit {
                                     if (data == null) {
                                       console.log(
                                         "ward " +
-                                          ward +
-                                          " line " +
-                                          line +
-                                          " cardno " +
-                                          cardNo
+                                        ward +
+                                        " line " +
+                                        line +
+                                        " cardno " +
+                                        cardNo
                                       );
-                                      const hdata={
+                                      const hdata = {
                                         cardNo: cardNo
                                       }
-                                      
-                                      this.db.list("HouseNotFoundHSC/"+ward+"/"+line+"/").push(hdata);
+
+                                      this.db.list("HouseNotFoundHSC/" + ward + "/" + line + "/").push(hdata);
                                     }
-                                    else
-                                    {
+                                    else {
                                       console.log("not");
                                     }
                                   });
@@ -131,7 +130,7 @@ export class WardScancardReportComponent implements OnInit {
         }
       });
   }
-  
+
 
   showLoder() {
     $("#divLoader").show();
@@ -164,19 +163,8 @@ export class WardScancardReportComponent implements OnInit {
       var pageWidth =
         pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
 
-      let monthName = this.commonService.getCurrentMonthShortName(
-        Number(this.selectedDate.split("-")[1]) - 1
-      );
-      let title =
-        " Card Scan Report - Ward " +
-        this.wardScaanedList[0]["wardNo"] +
-        " [" +
-        this.selectedDate.split("-")[2] +
-        " " +
-        monthName +
-        " " +
-        this.selectedDate.split("-")[0] +
-        "]";
+      let monthName = this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split("-")[1]));
+      let title = " Card Scan Report - Ward " + this.wardScaanedList[0]["wardNo"] + " [" + this.selectedDate.split("-")[2] + " " + monthName + " " + this.selectedDate.split("-")[0] + "]";
 
       pdf.text(title, pageWidth / 2, 8, { align: "center" });
       pdf.setFont("helvetica");
@@ -212,17 +200,9 @@ export class WardScancardReportComponent implements OnInit {
       var pdf = new jsPDF();
       var pageWidth =
         pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
-      let monthName = this.commonService.getCurrentMonthShortName(
-        Number(this.selectedDate.split("-")[1]) - 1
+      let monthName = this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split("-")[1])
       );
-      let title =
-        " Card Scan Report  [" +
-        this.selectedDate.split("-")[2] +
-        " " +
-        monthName +
-        " " +
-        this.selectedDate.split("-")[0] +
-        "]";
+      let title = " Card Scan Report  [" + this.selectedDate.split("-")[2] + " " + monthName + " " + this.selectedDate.split("-")[0] + "]";
 
       pdf.text(title, pageWidth / 2, 8, { align: "center" });
       pdf.setFont("helvetica");
@@ -555,7 +535,7 @@ export class WardScancardReportComponent implements OnInit {
                                   sno: Number(date),
                                 });
                               }
-                              
+
                             });
                         }
                       });

@@ -87,7 +87,7 @@ db:any;
     }
     for (let i = 1; i <= currentMonth; i++) {
       let monthName = this.commonService.getCurrentMonthName(i - 1);
-      let monthShortName = this.commonService.getCurrentMonthShortName(i - 1);
+      let monthShortName = this.commonService.getCurrentMonthShortName(i);
       this.monthSalaryList.push({
         id: i,
         month: monthShortName,

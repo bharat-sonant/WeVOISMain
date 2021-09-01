@@ -29,9 +29,19 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
+  wardCheckList: any[];
   ngOnInit() {
+    this.wardCheckList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
+    if (this.cityName == "sikar") {
+      this.wardCheckList.push({ wardNo: "1" });
+      this.wardCheckList.push({ wardNo: "2" });
+      this.wardCheckList.push({ wardNo: "3" });
+      this.wardCheckList.push({ wardNo: "4" });
+      this.wardCheckList.push({ wardNo: "30" });
+      this.wardCheckList.push({ wardNo: "31" });
+    }
     this.commonService.chkUserPageAccess(
       window.location.href,
       localStorage.getItem("cityName")
@@ -92,14 +102,18 @@ export class WardMarkingSummaryComponent implements OnInit {
       if (circleWardList.length > 0) {
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
-          let url = this.cityName + "/13A3/house-marking/" + wardNo;
-          this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
+          let wardDetail = this.wardCheckList.find(item => item.wardNo == wardNo);
+          if (wardDetail == undefined) {
+            console.log(wardNo);
+            let url = this.cityName + "/13A3/house-marking/" + wardNo;
+            this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
 
-          if (i == 0) {
-            setTimeout(() => {
-              this.getMarkingDetail(wardNo, 0);
-              $("#tr0").addClass("active");
-            }, 1000);
+            if (i == 4) {
+              setTimeout(() => {
+                this.getMarkingDetail(wardNo, 0);
+                $("#tr0").addClass("active");
+              }, 1000);
+            }
           }
           this.getWardSummary(i, wardNo);
         }

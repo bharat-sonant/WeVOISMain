@@ -290,7 +290,7 @@ export class HaltSummaryComponent implements OnInit {
       let haltDate = "";
       for (let i = 1; i <= today; i++) {
         haltDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (i < 10 ? '0' : '') + i;
-        let monthName = this.commonService.getCurrentMonthName(new Date(haltDate).getMonth());
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
@@ -332,7 +332,7 @@ export class HaltSummaryComponent implements OnInit {
     for (let i = 0; i <= 7; i++) {
       let haltDat = this.commonService.getPreviousDate(this.currentDate, i);
       let dayList = "day" + (i + 1);
-      let wDate = haltDat.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDat).getMonth());
+      let wDate = haltDat.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDat.split('-')[1]));
       this.weekHaltList.push({ wDate: wDate, day: dayList, halt: "0", haltMin: 0, unApproved: "0", unApprovedMin: 0, approved: "0", approvedMin: 0, salary: "0", percent: "0", class: "fas fa-long-arrow-alt-down", percentUnApproved: "0", classUnApproved: "fas fa-long-arrow-alt-down", percentApproved: "0", classApproved: "fas fa-long-arrow-alt-down", percentSalary: "0", classSalary: "fas fa-long-arrow-alt-down" });
     }
 
@@ -343,23 +343,23 @@ export class HaltSummaryComponent implements OnInit {
       for (let index = 0; index < this.zoneList.length; index++) {
         let haltDate = this.commonService.getPreviousDate(this.currentDate, (i - 1));
         if (i == 1)
-          this.haltDataShow.date1 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date1 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 2)
-          this.haltDataShow.date2 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date2 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 3)
-          this.haltDataShow.date3 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date3 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 4)
-          this.haltDataShow.date4 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date4 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 5)
-          this.haltDataShow.date5 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date5 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 6)
-          this.haltDataShow.date6 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date6 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 7)
-          this.haltDataShow.date7 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date7 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
         if (i == 8)
-          this.haltDataShow.date7 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(new Date(haltDate).getMonth());
+          this.haltDataShow.date7 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
 
-        let monthName = this.commonService.getCurrentMonthName(new Date(haltDate).getMonth());
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
         let year = haltDate.split("-")[0];
 
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
@@ -490,9 +490,11 @@ export class HaltSummaryComponent implements OnInit {
     for (let index = 1; index < this.zoneList.length; index++) {
       for (let i = 7; i < 14; i++) {
         let haltDate = this.commonService.getPreviousDate(this.currentDate, i);
-        let monthName = this.commonService.getCurrentMonthName(new Date(haltDate).getMonth());
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
+        
         let year = haltDate.split("-")[0];
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
+        console.log(haltInfoPath);
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             if (haltData.length > 0) {
