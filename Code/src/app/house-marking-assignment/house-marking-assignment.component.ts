@@ -112,7 +112,11 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             let name = data[index]["name"];
             let loginId = data[index]["pin"];
+            let isActive=false;
             if (data[index]["status"] == "2") {
+              isActive=true;
+            }
+            
               if (data[index]["surveyor-type"] == "Surveyor") {
                 this.dbPath = "SurveyorsCuurentAssignment/" + index;
                 let assignInstance = this.db.object(this.dbPath).valueChanges().subscribe((dataSurvey) => {
@@ -136,6 +140,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                       wardNo: dataSurvey["ward"],
                       lines: lines,
                       loginId: loginId,
+                      isActive:isActive
                     });
                   } else {
                     this.assignedList.push({
@@ -144,14 +149,11 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                       wardNo: "",
                       lines: "",
                       loginId: loginId,
+                      isActive:isActive
                     });
                   }
-                  if (i == 0) {
-
-                  }
                 });
-              }
-            }
+              }            
           }
           setTimeout(() => {
             $("#tr0").addClass("active");

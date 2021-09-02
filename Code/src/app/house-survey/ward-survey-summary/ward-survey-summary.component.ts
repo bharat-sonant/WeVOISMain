@@ -24,7 +24,7 @@ export class WardSurveySummaryComponent implements OnInit {
     totalLines: 0,
     totalMarkers: 0,
     totalSurveyed: 0,
-    totalRevisit:0,
+    totalRevisit: 0,
     wardMarkers: 0,
     wardSurveyed: 0,
     wardRevisit: 0,
@@ -81,9 +81,9 @@ export class WardSurveySummaryComponent implements OnInit {
   clearAll() {
     this.wardProgressList = [];
     this.lineSurveyList = [];
-    this.surveyData.totalMarkers=0;
-    this.surveyData.totalSurveyed=0;
-    this.surveyData.totalRevisit=0;
+    this.surveyData.totalMarkers = 0;
+    this.surveyData.totalSurveyed = 0;
+    this.surveyData.totalRevisit = 0;
   }
 
   changeCircleSelection(filterVal: any) {
@@ -124,13 +124,13 @@ export class WardSurveySummaryComponent implements OnInit {
       markerInstance.unsubscribe();
       if (data != null) {
         this.wardProgressList[index]["markers"] = Number(data);
-        this.surveyData.totalMarkers=this.surveyData.totalMarkers+Number(data);
+        this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(data);
         dbPath = "EntitySurveyData/TotalHouseCount/" + wardNo;
         let surveyedInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
           surveyedInstance.unsubscribe();
           if (data != null) {
             this.wardProgressList[index]["surveyed"] = Number(data);
-            this.surveyData.totalSurveyed=this.surveyData.totalSurveyed+Number(data);
+            this.surveyData.totalSurveyed = this.surveyData.totalSurveyed + Number(data);
             this.wardProgressList[index]["status"] = "In Progress";
             if (Number(this.wardProgressList[index]["markers"]) == Number(data)) {
               this.wardProgressList[index]["status"] = "Survey Done";
@@ -145,7 +145,7 @@ export class WardSurveySummaryComponent implements OnInit {
       revisitInstance.unsubscribe();
       if (data != null) {
         this.wardProgressList[index]["revisit"] = Number(data);
-        this.surveyData.totalRevisit=this.surveyData.totalRevisit+Number(data);
+        this.surveyData.totalRevisit = this.surveyData.totalRevisit + Number(data);
       }
     });
   }
@@ -167,9 +167,9 @@ export class WardSurveySummaryComponent implements OnInit {
   clearWardDetailData() {
     this.wardLineCount = 0;
     this.surveyData.totalLines = 0;
-    this.surveyData.wardMarkers=0;
-    this.surveyData.wardRevisit=0;
-    this.surveyData.wardSurveyed=0;
+    this.surveyData.wardMarkers = 0;
+    this.surveyData.wardRevisit = 0;
+    this.surveyData.wardSurveyed = 0;
     this.lineSurveyList = [];
   }
 
@@ -244,6 +244,7 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     }
   }
+
   getSurvedData(wardNo: any, lineNo: any) {
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
     let survedHouseInstance = this.db.list(dbPath).valueChanges().subscribe(
@@ -310,7 +311,7 @@ export class surveyDatail {
   totalLines: number;
   totalMarkers: number;
   totalSurveyed: number;
-  totalRevisit:number;
+  totalRevisit: number;
   wardMarkers: number;
   wardSurveyed: number;
   wardRevisit: number;

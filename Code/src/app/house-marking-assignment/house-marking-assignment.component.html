@@ -1,7 +1,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-            Surveyor Assignment 
+            Surveyor Assignment
         </div>
     </div>
 </section>
@@ -20,9 +20,9 @@
                                             <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Login ID</th>
-                                            <th  style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th style="border-right:1px solid #dee2e6; width:15%;">
                                                 Assigned</th>
-                                            <th  style="border-right:1px solid #dee2e6; width:25%;">
+                                            <th style="border-right:1px solid #dee2e6; width:25%;">
                                                 Line No.</th>
                                             <th class="text-right" style="width:15%;">Action</th>
                                         </thead>
@@ -32,22 +32,25 @@
                                                 <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.name}}</td>
-                                                    <td style="border-right:1px solid #dee2e6">
-                                                        {{data.loginId}}</td>
-                                                <td  style="border-right:1px solid #dee2e6">
+                                                <td style="border-right:1px solid #dee2e6">
+                                                    {{data.loginId}}</td>
+                                                <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
-                                                <td 
-                                                    style="border-right:1px solid #dee2e6;">
+                                                <td style="border-right:1px solid #dee2e6;">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
-                                                    <i class="fas fa-map-marked-alt"
-                                                        (click)="openModel(contentAssign,data.userId,'update');"
-                                                        title="Edit Assignment"
-                                                        style="cursor:pointer !important; font-size: 14px;color: #0ba118;"></i>
-                                                    <i class="far fa-times-circle" 
-                                                        (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                                        title="Remove Entry"
-                                                        style="cursor:pointer !important; font-size: 14px;color: red; margin-left: 10px;"></i>
+                                                    <span [hidden]="data.isActive==true"
+                                                        style="color: red;">Inactive</span>
+                                                    <span [hidden]="data.isActive==false">
+                                                        <i class="fas fa-map-marked-alt"
+                                                            (click)="openModel(contentAssign,data.userId,'update');"
+                                                            title="Edit Assignment"
+                                                            style="cursor:pointer !important; font-size: 14px;color: #0ba118;"></i>
+                                                        <i class="far fa-times-circle"
+                                                            (click)="openModel(contentConfirmation,data.userId,'delete')"
+                                                            title="Remove Entry"
+                                                            style="cursor:pointer !important; font-size: 14px;color: red; margin-left: 10px;"></i>
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>
