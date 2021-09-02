@@ -353,7 +353,6 @@ export class WardSurveyAnalysisComponent {
   }
 
   getScannedCard() {
-    console.log(this.scannedCardList);
     if (this.scannedCardList.length == 0) {
       let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo;
       let scannedCardInstance = this.db.list(dbPath).valueChanges().subscribe(
@@ -367,7 +366,7 @@ export class WardSurveyAnalysisComponent {
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate });
+                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate,mobile:data[i]["mobile"] });
               }
             }
           }

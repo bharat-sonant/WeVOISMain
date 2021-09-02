@@ -100,22 +100,24 @@ export class WardMarkingSummaryComponent implements OnInit {
         (item) => item.circle == this.selectedCircle
       );
       if (circleWardList.length > 0) {
+        let k=0;
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
           let wardDetail = this.wardCheckList.find(item => item.wardNo == wardNo);
           if (wardDetail == undefined) {
-            console.log(wardNo);
             let url = this.cityName + "/13A3/house-marking/" + wardNo;
             this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
 
-            if (i == 4) {
+            if (k == 0) {
               setTimeout(() => {
                 this.getMarkingDetail(wardNo, 0);
                 $("#tr0").addClass("active");
               }, 1000);
             }
+            this.getWardSummary(k, wardNo);
+            k++;
           }
-          this.getWardSummary(i, wardNo);
+          
         }
       }
     }

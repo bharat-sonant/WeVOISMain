@@ -201,7 +201,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
-    this.markerList=[];
+    this.markerList = [];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
@@ -218,6 +218,13 @@ export class HouseMarkingComponent {
                 let userId = data[index]["userId"];
                 let date = data[index]["date"].split(" ")[0];
                 let status = "";
+                if (data[index]["cardNumber"] != null) {
+                  status = "Surveyed";
+                }
+                if (data[index]["revisitKey"] != null) {
+                  status = "Revisit";
+                }
+
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }

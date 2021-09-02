@@ -28,6 +28,7 @@ export class WardSurveySummaryComponent implements OnInit {
     wardMarkers: 0,
     wardSurveyed: 0,
     wardRevisit: 0,
+    wardAlreadyCard: 0,
   };
 
   ngOnInit() {
@@ -105,6 +106,7 @@ export class WardSurveySummaryComponent implements OnInit {
             surveyed: 0,
             revisit: 0,
             status: "",
+            already:0
           });
           if (i == 0) {
             setTimeout(() => {
@@ -140,6 +142,14 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
+    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/alreadyInstalled";
+    let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      alreadyInstance.unsubscribe();
+      if (data != null) {
+        this.wardProgressList[index]["already"] = Number(data);
+      }
+    });
+
     dbPath = "EntitySurveyData/TotalRevisitRequest/" + wardNo;
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       revisitInstance.unsubscribe();
@@ -170,6 +180,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardMarkers = 0;
     this.surveyData.wardRevisit = 0;
     this.surveyData.wardSurveyed = 0;
+    this.surveyData.wardAlreadyCard=0;
     this.lineSurveyList = [];
   }
 
@@ -196,9 +207,10 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardMarkers = wardSummary.markers;
           this.surveyData.wardRevisit = wardSummary.revisit;
           this.surveyData.wardSurveyed = wardSummary.surveyed;
+          this.surveyData.wardAlreadyCard=wardSummary.already;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, survyed: 0, revisit: 0, wardNo: wardNo });
+          this.lineSurveyList.push({ lineNo: i, markers: 0,alreadyCard:0, survyed: 0, revisit: 0, wardNo: wardNo });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -236,6 +248,19 @@ export class WardSurveySummaryComponent implements OnInit {
                 let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                 if (lineDetail != undefined) {
                   lineDetail.revisit = Number(data);
+                }
+              }
+            }
+          );
+
+          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/alreadyInstalledCount";
+          let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
+            alreadyData => {
+              alreadyInstance.unsubscribe();
+              if (alreadyData != null) {
+                let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                if (lineDetail != undefined) {
+                  lineDetail.alreadyCard = Number(alreadyData);
                 }
               }
             }
@@ -315,4 +340,5 @@ export class surveyDatail {
   wardMarkers: number;
   wardSurveyed: number;
   wardRevisit: number;
+  wardAlreadyCard: number;
 }

@@ -24,7 +24,9 @@
                                                 Assigned</th>
                                             <th style="border-right:1px solid #dee2e6; width:25%;">
                                                 Line No.</th>
-                                            <th class="text-right" style="width:15%;">Action</th>
+                                            <th class="text-right" style="width:15%;">
+                                                <input id="chkAll" type="checkbox" (change)="showAll();" />
+                                                Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of assignedList; let i=index"

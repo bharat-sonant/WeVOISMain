@@ -18,6 +18,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   public selectedYear: any;
   yearList: any[] = [];
   assignedList: any[] = [];
+  surveyorList: any[] = [];
   userId: any;
   WardList: any[] = [];
   vehicleAllList: any[] = [];
@@ -101,6 +102,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   getAssignedList() {
     this.assignedList = [];
+    this.surveyorList = [];
     this.userList = [];
     this.dbPath = "Surveyors";
     let userInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
@@ -112,48 +114,68 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             let name = data[index]["name"];
             let loginId = data[index]["pin"];
-            let isActive=false;
+            let isActive = false;
             if (data[index]["status"] == "2") {
-              isActive=true;
+              isActive = true;
             }
-            
-              if (data[index]["surveyor-type"] == "Surveyor") {
-                this.dbPath = "SurveyorsCuurentAssignment/" + index;
-                let assignInstance = this.db.object(this.dbPath).valueChanges().subscribe((dataSurvey) => {
-                  assignInstance.unsubscribe();
-                  if (dataSurvey != null) {
-                    let linelist = dataSurvey["line"].split(',');
-                    let lines = "";
-                    if (linelist.length > 0) {
-                      for (let l = 0; l < linelist.length; l++) {
-                        if (lines == "") {
-                          lines = linelist[l];
-                        }
-                        else {
-                          lines = lines + ", " + linelist[l];
-                        }
+
+            if (data[index]["surveyor-type"] == "Surveyor") {
+              this.dbPath = "SurveyorsCuurentAssignment/" + index;
+              let assignInstance = this.db.object(this.dbPath).valueChanges().subscribe((dataSurvey) => {
+                assignInstance.unsubscribe();
+                if (dataSurvey != null) {
+                  let linelist = dataSurvey["line"].split(',');
+                  let lines = "";
+                  if (linelist.length > 0) {
+                    for (let l = 0; l < linelist.length; l++) {
+                      if (lines == "") {
+                        lines = linelist[l];
+                      }
+                      else {
+                        lines = lines + ", " + linelist[l];
                       }
                     }
+                  }
+                  this.surveyorList.push({
+                    userId: index,
+                    name: name,
+                    wardNo: dataSurvey["ward"],
+                    lines: lines,
+                    loginId: loginId,
+                    isActive: isActive
+                  });
+                  if (isActive == true) {
                     this.assignedList.push({
                       userId: index,
                       name: name,
                       wardNo: dataSurvey["ward"],
                       lines: lines,
                       loginId: loginId,
-                      isActive:isActive
+                      isActive: isActive
                     });
-                  } else {
+                  }
+                } else {
+                  this.surveyorList.push({
+                    userId: index,
+                    name: name,
+                    wardNo: "",
+                    lines: "",
+                    loginId: loginId,
+                    isActive: isActive
+                  });
+                  if (isActive == true) {
                     this.assignedList.push({
                       userId: index,
                       name: name,
                       wardNo: "",
                       lines: "",
                       loginId: loginId,
-                      isActive:isActive
+                      isActive: isActive
                     });
                   }
-                });
-              }            
+                }
+              });
+            }
           }
           setTimeout(() => {
             $("#tr0").addClass("active");
@@ -162,6 +184,17 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }
       }
     });
+  }
+
+  showAll() {
+    this.assignedList = [];
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    if (element.checked == true) {
+      this.assignedList = this.surveyorList;
+    }
+    else {
+      this.assignedList = this.surveyorList.filter((item) => item.isActive == true);
+    }
   }
 
   getLines(wardNo: any) {

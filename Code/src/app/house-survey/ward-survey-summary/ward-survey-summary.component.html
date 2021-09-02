@@ -13,19 +13,21 @@
         </div>
         <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
             <div class="fix-home">
-                <div class="float-first" >
-                  <i class="fas fa-home" style="color:red;"></i> <span class="house"> {{surveyData.totalMarkers}}</span><br>
-                  <h6>Total Marker</h6>
+                <div class="float-first">
+                    <i class="fas fa-home" style="color:red;"></i> <span class="house">
+                        {{surveyData.totalMarkers}}</span><br>
+                    <h6>Total Marker</h6>
                 </div>
                 <div class="float-second">
-                  <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
-                  <h6>Surveyed Marker</h6>
+                    <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
+                    <h6>Surveyed Marker</h6>
                 </div>
                 <div class="float-third">
-                  <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house"> {{surveyData.totalRevisit}}</span><br>
-                  <h6>Revisit Request</h6>
+                    <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house">
+                        {{surveyData.totalRevisit}}</span><br>
+                    <h6>Revisit Request</h6>
                 </div>
-              </div>
+            </div>
 
         </div>
     </div>
@@ -45,6 +47,7 @@
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Markers</th>
+
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Surveyed</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
@@ -52,11 +55,13 @@
                                             <th class="text-center" style="width:20%;">Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"  (click)="getSurveyDetail(data.wardNo,i);">
+                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
+                                                (click)="getSurveyDetail(data.wardNo,i);">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.markers}}</td>
+
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.surveyed}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6;">
@@ -133,9 +138,12 @@
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
                                                     <th class="text-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">
+                                                        Already Installed</th>
+                                                    <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">Surveyed
                                                     </th>
-                                                    <th class="text-center"
+                                                    <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">Revisit
                                                     </th>
 
@@ -148,11 +156,13 @@
                                                             {{data.lineNo}}</td>
                                                         <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.markers}}</td>
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                            {{data.alreadyCard}}</td>
                                                         <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.survyed}}</td>
                                                         <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.revisit}}</td>
-                                                        
+
                                                         <td class="text-center" style="border-right:1px solid #dee2e6;">
 
                                                             <i class="far fa-eye"
@@ -200,7 +210,7 @@
                     <div class="main-tag">
                         <div class="f-left">
                             <h3 style="width: 100%;"> {{dt.cardType}} </h3><br />
-                            
+
                             <h3><b> {{dt.cardNo}} </b></h3><br />
                             <h3> {{dt.name}} </h3><br />
                         </div>
