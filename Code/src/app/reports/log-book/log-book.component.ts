@@ -20,6 +20,7 @@ export class LogBookComponent implements OnInit {
   db: any;
   dbPath: any;
   cityName: any;
+  isFirst: any = true;
   logBookData: logBookDetail = {
     imageUrl: this.imageNotAvailablePath,
     reason: "",
@@ -46,6 +47,7 @@ export class LogBookComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
+    this.isFirst = true;
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -90,7 +92,6 @@ export class LogBookComponent implements OnInit {
               iconClass = "fas fa-check-double";
               divClass = "address";
               image = data;
-              this.selectedZone = zoneNo;
             }
             this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, image: image, iconClass: iconClass, divClass: divClass, reason: "" });
             this.dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/logBookImageNotCaptureReason";
@@ -109,11 +110,21 @@ export class LogBookComponent implements OnInit {
                     zoneDetail.reason = reason;
                   }
                 }
+
                 if (this.allZoneList.length - 1 == this.zoneList.length) {
+
                   setTimeout(() => {
-                    if (this.selectedZone != null)
-                      this.getLogBookDetail(this.selectedZone);
-                  }, 600);
+                    for (let index = 0; index < this.zoneList.length; index++) {
+                      if (this.isFirst == true) {
+                        if (this.zoneList[index]["divClass"] == "address") {
+                          this.isFirst = false;
+                          this.selectedZone = this.zoneList[index]["zoneNo"];
+                          this.getLogBookDetail(this.selectedZone, index);
+                          index = this.zoneList.length;
+                        }
+                      }
+                    }
+                  }, 1000);
                 }
               });
           }
@@ -122,7 +133,22 @@ export class LogBookComponent implements OnInit {
     }
   }
 
-  getLogBookDetail(zoneNo: any) {
+  setActiveWard(zoneNo: any, index: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        if (this.zoneList[i]["divClass"] == "address md-background-active") {
+          this.zoneList[i]["divClass"] = "address";
+        }
+        if (zoneNo == this.zoneList[i]["zoneNo"]) {
+          this.zoneList[i]["divClass"] = "address md-background-active";
+        }
+      }
+    }
+  }
+
+  getLogBookDetail(zoneNo: any, index: any) {
+    this.selectedZone = zoneNo;
+    this.setActiveWard(zoneNo, index);
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
@@ -142,7 +168,9 @@ export class LogBookComponent implements OnInit {
         data => {
           driverInstance.unsubscribe();
           if (data != null) {
-            this.commonService.getEmplyeeDetailByEmployeeId(data).then((employee) => {
+            let driverList = data.toString().split(',');
+            let driverId = driverList[driverList.length - 1].trim();
+            this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
               this.logBookData.driver = employee["name"];
               this.logBookData.driverMobile = employee["mobile"] != null ? employee["mobile"] : "";
             });
