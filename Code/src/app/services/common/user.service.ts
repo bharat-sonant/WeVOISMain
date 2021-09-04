@@ -4,13 +4,14 @@ import { Users } from '../../Users/users';  // Users data type interface class
 import { UserAccess } from '../../Users/users';  // Users data type interface class
 import { Remarks } from '../../Users/users';  // Users data type interface class
 import { AngularFirestore } from '@angular/fire/firestore';
+import { FirebaseService } from "../../firebase.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(public db: AngularFireDatabase,public dbFireStore: AngularFirestore) { }
+  constructor(public fs: FirebaseService,public dbFireStore: AngularFirestore) { }
 
   usersRef: AngularFireList<any>;    // Reference to Users data list, its an Observable
   userRef: AngularFireObject<any>;   // Reference to Users object, its an Observable too
@@ -36,13 +37,17 @@ export class UserService {
 
   // Fetch Single User Object
   GetUser(id: string) {
-    this.userRef = this.db.object('users/' + id);
+    
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.userRef = db.object('users/' + id);
     return this.userRef;
   }
 
   // Fetch Users List
   GetUsersList() {
-    this.usersRef = this.db.list('users');
+    
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.usersRef = db.list('users');
     return this.usersRef;
   }
 
@@ -54,7 +59,9 @@ export class UserService {
 
   // Create User
   AddUserAccess(useraccess: UserAccess) {
-    this.accesssRef = this.db.list('/UserAccess');
+    
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.accesssRef = db.list('/UserAccess');
     this.accesssRef.push({
       userId: useraccess.userId,
       pageID: useraccess.pageID
@@ -63,7 +70,8 @@ export class UserService {
 
   // Delete User Object
   DeleteUserAccess(id: string) {
-    this.userRef = this.db.object('/UserAccess/' + id);
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.userRef = db.object('/UserAccess/' + id);
     this.userRef.remove();
   }
 
@@ -71,7 +79,8 @@ export class UserService {
   //#region remarks
 
   addRemarks(remark: Remarks, path: any) {
-    this.remarksRef = this.db.list(path);
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.remarksRef = db.list(path);
     this.remarksRef.push({
       userId: remark.userId,
       category: remark.category,
@@ -82,7 +91,8 @@ export class UserService {
   }
 
   UpdateRemarks(remark: Remarks, path: any) {
-    this.userRef = this.db.object('/' + path + '/' + remark.$Key);
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.userRef = db.object('/' + path + '/' + remark.$Key);
     this.userRef.update({
       userId: remark.userId,
       category: remark.category,
@@ -97,7 +107,8 @@ export class UserService {
   //#region remarks
 
   addPlan(plan: DustbinPlans, path: any) {
-    this.plansRef = this.db.list(path);
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.plansRef = db.list(path);
     this.plansRef.push({
       bins: plan.bins,
       createdAt: plan.createdAt,
@@ -118,7 +129,8 @@ export class UserService {
   }
 
   UpdatePlan(plan: DustbinPlans, path: any) {
-    this.planRef = this.db.object('/' + path + '/' + plan.$Key);
+    let db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.planRef = db.object('/' + path + '/' + plan.$Key);
     this.planRef.update({
       bins: plan.bins,
       createdAt: plan.createdAt,

@@ -26,8 +26,10 @@
           <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalSurveyed}}</span><br>
           <h6>Surveyed Marker</h6>
         </div>
-        <div id="divLineScannedCount"  class="float-third" (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'Revisit')">
-          <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house"> {{progressData.totalRevisit}}</span><br>
+        <div id="divLineScannedCount" class="float-third"
+          (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'Revisit')">
+          <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house">
+            {{progressData.totalRevisit}}</span><br>
           <h6>Revisit Request</h6>
         </div>
       </div>
@@ -65,11 +67,10 @@
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineSurveyed}}</span><br>
           </div>
-          <div class="float-l" style="border-right:none!important;"
-          >
-          <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
-            {{progressData.totalLineRevisit}}</span><br>
-        </div>
+          <div class="float-l" style="border-right:none!important;">
+            <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
+              {{progressData.totalLineRevisit}}</span><br>
+          </div>
         </div>
       </div>
 
@@ -86,7 +87,22 @@
       <div class="col-md-12 text-center">
         <div class="f-left">
           <h3> {{progressData.cardNo}} / {{progressData.cardType}} / {{progressData.name}}
-            </h3>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="divRevisitDetail" class="image-box" style="display: none;">
+    <div id="divLoaderRevisit" class="loaderClass">
+      <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-left">
+        <div class="f-left">
+          <h3> {{progressData.revisitHouseType}} <br /> {{progressData.revisitName}} <br />
+            {{progressData.revisitReason}}<br />
+            {{progressData.revisitDate}}
+          </h3>
         </div>
       </div>
     </div>
@@ -154,7 +170,7 @@
                     <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}}</p>
                   </div>
                 </div>
-                
+
               </div>
             </div>
             <div class="col-md-9 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">

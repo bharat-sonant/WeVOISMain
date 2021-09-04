@@ -47,7 +47,11 @@ export class WardSurveyAnalysisComponent {
     cardType: "",
     name: "",
     totalRevisit: 0,
-    totalLineRevisit: 0
+    totalLineRevisit: 0,
+    revisitHouseType: "",
+    revisitName: "",
+    revisitReason: "",
+    revisitDate: ""
   };
 
   ngOnInit() {
@@ -204,20 +208,23 @@ export class WardSurveyAnalysisComponent {
             let lat = data[i]["latLng"].split(",")[0];
             let lng = data[i]["latLng"].split(",")[1];
             let cardNo = "";
+            let revisitKey = "";
             if (data[i]["cardNumber"] != null) {
-
               markerURL = "../assets/img/green-home.png";
               cardNo = data[i]["cardNumber"];
               $('#divLineScannedCount').css("cursor", "pointer");
-
             }
-            this.setMarkerForHouse(lat, lng, markerURL, cardNo, lineNo, this.map);
+            else if (data[i]["revisitKey"] != null) {
+              markerURL = "../assets/img/purple-home.png";
+              revisitKey = data[i]["revisitKey"];
+              $('#divLineScannedCount').css("cursor", "pointer");
+            }
+            this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, lineNo, this.map);
           }
         }
       }
     });
   }
-
 
   getLineSurveyed() {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
@@ -268,7 +275,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, lineNo: any, map: any) {
+  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, lineNo: any, map: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: map,
@@ -294,15 +301,52 @@ export class WardSurveyAnalysisComponent {
           houseInstance.unsubscribe();
           if (data != null) {
             $("#divCardDetail").show();
+            $("#divRevisitDetail").hide();
             progressData.cardNo = data["cardNo"];
             progressData.cardType = data["cardType"];
             progressData.name = data["name"];
           }
         });
       });
-    } else {
+    } else if (revisitKey != "") {
+      let wardNo = this.selectedZone;
+      let progressData = this.progressData;
+      let db = this.db;
+      marker.addListener("click", function () {
+        $("#divLoaderRevisit").show();
+        setTimeout(() => {
+          $("#divLoaderRevisit").hide();
+        }, 600);
+        let dbPath = "EntitySurveyData/RevisitRequest/" + wardNo + "/" + lineNo + "/" + revisitKey;
+        let revisitInstance = db.object(dbPath).valueChanges().subscribe((data) => {
+          revisitInstance.unsubscribe();
+          if (data != null) {
+            let date = data["date"].split(' ')[0];
+            let time = data["date"].split(' ')[1];
+            let revisitDate = date.split('-')[2] + " " + CommonService.prototype.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+
+            let dbPath = "Defaults/FinalHousesType/" + data["houseType"] + "/name";
+            let houseInstance = db.object(dbPath).valueChanges().subscribe((houseData) => {
+              houseInstance.unsubscribe();
+              if (houseData != null) {
+                let houseType = houseData.toString().split("(")[0];
+                $("#divRevisitDetail").show();
+                $("#divCardDetail").hide();
+                progressData.revisitHouseType = houseType;
+                progressData.revisitName = data["name"];
+                progressData.revisitReason = data["reason"];
+
+                progressData.revisitDate = revisitDate;
+              }
+            });
+          }
+        });
+      });
+    }
+    else {
       marker.addListener("click", function () {
         $("#divCardDetail").hide();
+        $('#divRevisitDetail').hide();
       });
     }
     this.houseMarker.push({ marker });
@@ -457,7 +501,7 @@ export class WardSurveyAnalysisComponent {
               for (let i = 0; i < keyArray.length; i++) {
                 let index = keyArray[i];
                 if (index != "lineRevisitCount") {
-                  this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
+                  this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
                   let date = data[index]["date"].split(' ')[0];
                   let time = data[index]["date"].split(' ')[1];
                   let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
@@ -479,7 +523,7 @@ export class WardSurveyAnalysisComponent {
     }
     else {
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
-        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
       }
     }
   }
@@ -529,7 +573,12 @@ export class WardSurveyAnalysisComponent {
     this.progressData.cardNo = "";
     this.progressData.cardType = "";
     this.progressData.name = "";
+    this.progressData.revisitDate = "";
+    this.progressData.revisitHouseType = "";
+    this.progressData.revisitName = "";
+    this.progressData.revisitReason = "";
     $("#divCardDetail").hide();
+    $('#divRevisitDetail').hide();
     $('#divLineScannedCount').css("cursor", "text");
     $('#divLineRevisitCount').css("cursor", "text");
     if (this.houseMarker.length > 0) {
@@ -553,4 +602,8 @@ export class progressDetail {
   name: string;
   totalRevisit: number;
   totalLineRevisit: number;
+  revisitHouseType: string;
+  revisitName: string;
+  revisitReason: string;
+  revisitDate: string;
 }
