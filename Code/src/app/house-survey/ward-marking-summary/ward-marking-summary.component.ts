@@ -100,7 +100,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         (item) => item.circle == this.selectedCircle
       );
       if (circleWardList.length > 0) {
-        let k=0;
+        let k = 0;
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
           let wardDetail = this.wardCheckList.find(item => item.wardNo == wardNo);
@@ -117,7 +117,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.getWardSummary(k, wardNo);
             k++;
           }
-          
+
         }
       }
     }
@@ -544,12 +544,17 @@ export class WardMarkingSummaryComponent implements OnInit {
               let userId = data[index]["userId"];
               let date = data[index]["date"].split(" ")[0];
               let status = "";
+              if (data[index]["cardNumber"] != null) {
+                status = "Surveyed";
+              }
+              if (data[index]["revisitKey"] != null) {
+                status = "Revisit";
+              }
+
               if (data[index]["status"] != null) {
                 status = data[index]["status"];
               }
-              let city =
-                this.cityName.charAt(0).toUpperCase() +
-                this.cityName.slice(1);
+              let city = this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
 
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];

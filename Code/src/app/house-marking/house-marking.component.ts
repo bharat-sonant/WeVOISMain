@@ -521,7 +521,7 @@ export class HouseMarkingComponent {
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
       this.db.object(dbPath).update({ status: "Reject", });
       this.updateCount(date, userId, "reject");
-      this.commonService.setAlertMessage("success", "Marker rejected succfuly !!!");
+      this.commonService.setAlertMessage("success", "Marker rejected successfully !!!");
     }
   }
 

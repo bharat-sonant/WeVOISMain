@@ -192,6 +192,7 @@ export class WardSurveyAnalysisComponent {
   getMarkedHouses(lineNo: any) {
     this.clearLineData();
     this.getRevisitRequest();
+    this.getLineSurveyed();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
@@ -203,13 +204,12 @@ export class WardSurveyAnalysisComponent {
             let lat = data[i]["latLng"].split(",")[0];
             let lng = data[i]["latLng"].split(",")[1];
             let cardNo = "";
-            if (data[i]["isSurveyed"] != null) {
-              if (data[i]["isSurveyed"] == "yes") {
-                this.progressData.totalLineSurveyed++;
-                markerURL = "../assets/img/green-home.png";
-                cardNo = data[i]["cardNumber"];
-                $('#divLineScannedCount').css("cursor", "pointer");
-              }
+            if (data[i]["cardNumber"] != null) {
+
+              markerURL = "../assets/img/green-home.png";
+              cardNo = data[i]["cardNumber"];
+              $('#divLineScannedCount').css("cursor", "pointer");
+
             }
             this.setMarkerForHouse(lat, lng, markerURL, cardNo, lineNo, this.map);
           }
@@ -218,8 +218,22 @@ export class WardSurveyAnalysisComponent {
     });
   }
 
+
+  getLineSurveyed() {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
+    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        revisitInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.totalLineSurveyed = Number(data);
+          $('#divLineRevisitCount').css("cursor", "pointer");
+        }
+      }
+    );
+  }
+
   getRevisitRequest() {
-    let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
@@ -300,17 +314,19 @@ export class WardSurveyAnalysisComponent {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
       return;
     }
-    this.clearLineData();
     if (type == "pre") {
       if (lineNo != "1") {
         this.lineNo = Number(lineNo) - 1;
         $("#txtLineNo").val(this.lineNo);
+
+        this.clearLineData();
         this.getHouseLineData();
       }
     } else if (type == "next") {
       if (Number(lineNo) < this.wardLineCount) {
         this.lineNo = Number(lineNo) + 1;
         $("#txtLineNo").val(this.lineNo);
+        this.clearLineData();
         this.getHouseLineData();
       }
     }
@@ -366,7 +382,7 @@ export class WardSurveyAnalysisComponent {
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate,mobile:data[i]["mobile"] });
+                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"] });
               }
             }
           }
@@ -431,33 +447,35 @@ export class WardSurveyAnalysisComponent {
 
   getRevisitLineRequest() {
     if (this.revisitSurveyList.length == 0) {
-      let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + this.lineNo;
-      let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          revisitInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (index != "lineRevisitCount") {
-                this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
-                let date = data[index]["date"].split(' ')[0];
-                let time = data[index]["date"].split(' ')[1];
-                let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                let type = data[index]["houseType"];
-                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
-                  houseInstance.unsubscribe();
-                  if (houseData != null) {
-                    let houseType = houseData.toString().split("(")[0];
-                    this.revisitSurveyList.push({ name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
-                  }
-                });
+      for (let i = 0; i < this.lines.length; i++) {
+        let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + i;
+        let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            revisitInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              for (let i = 0; i < keyArray.length; i++) {
+                let index = keyArray[i];
+                if (index != "lineRevisitCount") {
+                  this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", this.mapRevisit);
+                  let date = data[index]["date"].split(' ')[0];
+                  let time = data[index]["date"].split(' ')[1];
+                  let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                  let type = data[index]["houseType"];
+                  let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+                  let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
+                    houseInstance.unsubscribe();
+                    if (houseData != null) {
+                      let houseType = houseData.toString().split("(")[0];
+                      this.revisitSurveyList.push({ name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
+                    }
+                  });
+                }
               }
             }
           }
-        }
-      );
+        );
+      }
     }
     else {
       for (let i = 0; i < this.revisitSurveyList.length; i++) {

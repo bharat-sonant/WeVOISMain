@@ -136,51 +136,25 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                       }
                     }
                   }
-                  this.surveyorList.push({
-                    userId: index,
-                    name: name,
-                    wardNo: dataSurvey["ward"],
-                    lines: lines,
-                    loginId: loginId,
-                    isActive: isActive
-                  });
+                  this.surveyorList.push({ userId: index, name: name, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({
-                      userId: index,
-                      name: name,
-                      wardNo: dataSurvey["ward"],
-                      lines: lines,
-                      loginId: loginId,
-                      isActive: isActive
-                    });
+                    this.assignedList.push({ userId: index, name: name, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   }
                 } else {
-                  this.surveyorList.push({
-                    userId: index,
-                    name: name,
-                    wardNo: "",
-                    lines: "",
-                    loginId: loginId,
-                    isActive: isActive
-                  });
+                  this.surveyorList.push({ userId: index, name: name, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({
-                      userId: index,
-                      name: name,
-                      wardNo: "",
-                      lines: "",
-                      loginId: loginId,
-                      isActive: isActive
-                    });
+                    this.assignedList.push({ userId: index, name: name, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   }
                 }
+                this.surveyorList = this.commonService.transformNumeric(this.surveyorList, "name");
+                this.assignedList = this.commonService.transformNumeric(this.assignedList, "name");
               });
             }
           }
           setTimeout(() => {
             $("#tr0").addClass("active");
             this.getServeyorDetail(this.assignedList[0]["userId"], 0);
-          }, 1000);
+          }, 2000);
         }
       }
     });
@@ -195,6 +169,10 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     else {
       this.assignedList = this.surveyorList.filter((item) => item.isActive == true);
     }
+    setTimeout(() => {
+      $("#tr0").addClass("active");
+      this.getServeyorDetail(this.assignedList[0]["userId"], 0);
+    }, 1000);
   }
 
   getLines(wardNo: any) {

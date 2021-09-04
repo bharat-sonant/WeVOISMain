@@ -49,26 +49,17 @@ export class WardSurveySummaryComponent implements OnInit {
           circledata = data[i];
           if (i == 0) {
             for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle1",
-                wardNo: circledata[j],
-              });
+              this.wardList.push({ circle: "Circle1", wardNo: circledata[j], });
             }
           }
           if (i == 1) {
             for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle2",
-                wardNo: circledata[j],
-              });
+              this.wardList.push({ circle: "Circle2", wardNo: circledata[j], });
             }
           }
           if (i == 2) {
             for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle3",
-                wardNo: circledata[j],
-              });
+              this.wardList.push({ circle: "Circle3", wardNo: circledata[j], });
             }
           }
         }
@@ -100,14 +91,7 @@ export class WardSurveySummaryComponent implements OnInit {
       if (circleWardList.length > 0) {
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
-          this.wardProgressList.push({
-            wardNo: wardNo,
-            markers: 0,
-            surveyed: 0,
-            revisit: 0,
-            status: "",
-            already:0
-          });
+          this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, status: "", already: 0 });
           if (i == 0) {
             setTimeout(() => {
               this.getSurveyDetail(wardNo, 0);
@@ -180,7 +164,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardMarkers = 0;
     this.surveyData.wardRevisit = 0;
     this.surveyData.wardSurveyed = 0;
-    this.surveyData.wardAlreadyCard=0;
+    this.surveyData.wardAlreadyCard = 0;
     this.lineSurveyList = [];
   }
 
@@ -207,10 +191,10 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardMarkers = wardSummary.markers;
           this.surveyData.wardRevisit = wardSummary.revisit;
           this.surveyData.wardSurveyed = wardSummary.surveyed;
-          this.surveyData.wardAlreadyCard=wardSummary.already;
+          this.surveyData.wardAlreadyCard = wardSummary.already;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0,alreadyCard:0, survyed: 0, revisit: 0, wardNo: wardNo });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, revisit: 0, wardNo: wardNo });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -235,12 +219,12 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
               }
               else {
-                this.getSurvedData(wardNo, i);
+                //this.getSurvedData(wardNo, i);
               }
             }
           );
 
-          dbPath = "EntitySurveyData/RevisitRequest/" + wardNo + "/" + i + "/lineRevisitCount";
+          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/lineRevisitCount";
           let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
               revisitInstance.unsubscribe();
@@ -269,27 +253,7 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     }
   }
-
-  getSurvedData(wardNo: any, lineNo: any) {
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-    let survedHouseInstance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        survedHouseInstance.unsubscribe();
-        let surveyed = 0;
-        for (let i = 0; i < data.length; i++) {
-          if (data[i]["cardNumber"] != null) {
-            surveyed++;
-          }
-        }
-        let lineDetail = this.lineSurveyList.find(item => item.lineNo == lineNo);
-        if (lineDetail != undefined) {
-          lineDetail.survyed = surveyed;
-        }
-      }
-    );
-  }
-
-
+  
   showLineDetail(content: any, wardNo: any, lineNo: any) {
     this.surveyedDetailList = [];
     this.getLineDetail(wardNo, lineNo);

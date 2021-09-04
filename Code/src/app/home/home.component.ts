@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { inspect } from "util";
 import { FirebaseService } from "../firebase.service";
 
 @Component({
@@ -32,6 +31,8 @@ export class HomeComponent implements OnInit {
     //this.setRemark();
     //this.setAllWard();
     // this.setAvailableWard();
+    //console.log("home");
+    //this.getJsonFile();
     this.commonService.getFireStoreCity();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -61,6 +62,31 @@ export class HomeComponent implements OnInit {
 
     // }, 1000);
     //  }
+  }
+
+  getJsonFile() {
+    /*
+   // let require: any
+
+    var obj = {
+      table: []
+    };
+    obj.table.push({ id: 1, square: 2 });
+    var json = JSON.stringify(obj);
+    let fsa = require('browserify-fs');
+    fsa.writeFile('myjsonfile.json', json, 'utf8');
+    fsa.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        obj = JSON.parse(data); //now it an object
+        obj.table.push({ id: 2, square: 3 }); //add some data
+        json = JSON.stringify(obj); //convert it back to json
+        fsa.writeFile('myjsonfile.json', json, 'utf8'); // write it back 
+      }
+    });
+    */
+
   }
 
   getBreakDustbin() {

@@ -26,18 +26,16 @@
           <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalSurveyed}}</span><br>
           <h6>Surveyed Marker</h6>
         </div>
-        <div class="float-third">
+        <div id="divLineScannedCount"  class="float-third" (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'Revisit')">
           <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house"> {{progressData.totalRevisit}}</span><br>
           <h6>Revisit Request</h6>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
-
 
 <div class="house-card-box">
   <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
@@ -62,13 +60,13 @@
             <i class="fas fa-home" style="color:red;"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineMarkers}}</span><br>
           </div>
-          <div id="divLineScannedCount" class="float-l"
+          <div class="float-l"
             (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineSurveyed}}</span><br>
           </div>
-          <div id="divLineRevisitCount" class="float-l" style="border-right:none!important;"
-          (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'Revisit')">
+          <div class="float-l" style="border-right:none!important;"
+          >
           <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
             {{progressData.totalLineRevisit}}</span><br>
         </div>
