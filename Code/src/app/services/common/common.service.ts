@@ -694,6 +694,7 @@ export class CommonService {
     this.setWardLines(newDb);
     this.setMarkerZone(newDb);
     this.setWardKML(newDb);
+    this.setMarkingWards(newDb);
   }
 
   setMarkerZone(newDb: any) {
@@ -870,6 +871,28 @@ export class CommonService {
         }
       }
     );
+  }
+
+  setMarkingWards(newDb: any) {
+    let markingWards = [];
+    let dbPath = "Defaults/MarkingWards";
+    let wardDetail = newDb
+      .list(dbPath)
+      .valueChanges()
+      .subscribe((data) => {
+        if (data.length > 0) {
+          markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
+          for (let index = 0; index < data.length; index++) {
+            markingWards.push({
+              zoneNo: data[index],
+              zoneName: data[index],
+            });
+
+          }
+          localStorage.setItem("markingWards", JSON.stringify(markingWards));
+        }
+        wardDetail.unsubscribe();
+      });
   }
 
 
@@ -1155,9 +1178,9 @@ export class CommonService {
 
   //#endregion
 
-  
-  getWardLineCount(zoneNo:any) {
-    let wardLines=0;
+
+  getWardLineCount(zoneNo: any) {
+    let wardLines = 0;
     let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
     if (wardLineCountList != null) {
       let lineCount = wardLineCountList.find(item => item.wardNo == zoneNo);

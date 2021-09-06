@@ -45,7 +45,8 @@ export class EmployeeMarkingComponent implements OnInit {
 
   getZoneList() {
     this.zoneList = [];
-    this.zoneList = this.mapService.getlatestZones();
+    this.zoneList=JSON.parse(localStorage.getItem("markingWards"));
+    //this.zoneList = this.mapService.getlatestZones();
   }
 
   getEmployee() {

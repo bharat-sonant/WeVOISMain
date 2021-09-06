@@ -65,7 +65,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
   }
 
   changeZoneSelection(filterVal: any) {

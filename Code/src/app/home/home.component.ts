@@ -27,6 +27,8 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     //this.getBreakDustbin();
     //this.setRemark();
     //this.setAllWard();
@@ -34,8 +36,6 @@ export class HomeComponent implements OnInit {
     //console.log("home");
     //this.getJsonFile();
     this.commonService.getFireStoreCity();
-    this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
@@ -113,8 +113,21 @@ export class HomeComponent implements OnInit {
   }
 
   setRemark() {
-    this.db.object("HouseSurveyMarking").update({
-      "1": "Tyers",
+    this.db.object("Defaults/MarkingWards").update({
+      "1": "1_34_35",
+      "2": "2_3",
+      "3": "4_5_6",
+      "4": "7_8",
+      "5": "9_21_22",
+      "6": "10_11_12_13",
+      "7": "14",
+      "8": "15_33",
+      "9": "16_17_30_32",
+      "10": "18_23_29",
+      "11": "19_25_26",
+      "12": "20_24",
+      "13": "27_28",
+      "14": "31",
     });
   }
 

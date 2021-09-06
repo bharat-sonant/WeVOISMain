@@ -57,7 +57,7 @@ export class HouseMarkingComponent {
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("markerZone"));
+    this.zoneList=JSON.parse(localStorage.getItem("markingWards"));
     if (this.zoneList != null) {
       this.selectedZone = 0;
       this.map = this.commonService.setMap(this.gmap);

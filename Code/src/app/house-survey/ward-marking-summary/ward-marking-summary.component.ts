@@ -13,7 +13,6 @@ export class WardMarkingSummaryComponent implements OnInit {
   selectedCircle: any;
   wardProgressList: any[] = [];
   wardProgressListShow: any[] = [];
-  wardList: any[] = [];
   cityName: any;
   db: any;
   isFirst = true;
@@ -29,96 +28,31 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
-  wardCheckList: any[];
   ngOnInit() {
-    this.wardCheckList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "sikar") {
-      this.wardCheckList.push({ wardNo: "1" });
-      this.wardCheckList.push({ wardNo: "2" });
-      this.wardCheckList.push({ wardNo: "3" });
-      this.wardCheckList.push({ wardNo: "4" });
-      this.wardCheckList.push({ wardNo: "30" });
-      this.wardCheckList.push({ wardNo: "31" });
-    }
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.getWards();
-    this.selectedCircle = "Circle1";
   }
+
+
 
   getWards() {
-    let dbPath = "Defaults/CircleWiseWards";
-    let circleWiseWard = this.db.list(dbPath).valueChanges().subscribe((data) => {
-      circleWiseWard.unsubscribe();
-      if (data != null) {
-        let circledata: any;
-        for (let i = 0; i < data.length; i++) {
-          circledata = data[i];
-          if (i == 0) {
-            for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle1",
-                wardNo: circledata[j],
-              });
-            }
-          }
-          if (i == 1) {
-            for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle2",
-                wardNo: circledata[j],
-              });
-            }
-          }
-          if (i == 2) {
-            for (let j = 1; j < circledata.length; j++) {
-              this.wardList.push({
-                circle: "Circle3",
-                wardNo: circledata[j],
-              });
-            }
-          }
-        }
-      }
-      this.selectedCircle = "Circle1";
-      this.onSubmit();
-    });
-  }
-
-  changeCircleSelection(filterVal: any) {
-    this.selectedCircle = filterVal;
-    this.onSubmit();
-  }
-  onSubmit() {
+    let wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
-    if (this.wardList.length > 0) {
-      let circleWardList = this.wardList.filter(
-        (item) => item.circle == this.selectedCircle
-      );
-      if (circleWardList.length > 0) {
-        let k = 0;
-        for (let i = 0; i < circleWardList.length; i++) {
-          let wardNo = circleWardList[i]["wardNo"];
-          let wardDetail = this.wardCheckList.find(item => item.wardNo == wardNo);
-          if (wardDetail == undefined) {
-            let url = this.cityName + "/13A3/house-marking/" + wardNo;
-            this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
-
-            if (k == 0) {
-              setTimeout(() => {
-                this.getMarkingDetail(wardNo, 0);
-                $("#tr0").addClass("active");
-              }, 1000);
-            }
-            this.getWardSummary(k, wardNo);
-            k++;
+    if (wardList.length > 0) {
+      for (let i = 0; i < wardList.length; i++) {
+        let wardNo = wardList[i]["zoneNo"];
+        //if (wardNo != "0") {
+          let url = this.cityName + "/13A3/house-marking/" + wardNo;
+          this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
+          if (i == 1) {
+            setTimeout(() => {
+              this.getMarkingDetail(wardNo, 1);
+              $("#tr1").addClass("active");
+            }, 1000);
           }
-
-        }
+          this.getWardSummary(i, wardNo);
+       // }
       }
     }
   }

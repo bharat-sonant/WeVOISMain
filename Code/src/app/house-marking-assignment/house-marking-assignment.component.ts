@@ -285,7 +285,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   getZoneList() {
     this.zoneList = [];
-    this.zoneList = this.mapService.getlatestZones();
+    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
   }
 
   openModel(content: any, id: any, type: any) {
