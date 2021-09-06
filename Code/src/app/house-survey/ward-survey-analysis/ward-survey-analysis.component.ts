@@ -80,7 +80,8 @@ export class WardSurveyAnalysisComponent {
   }
 
   getWardDetail() {
-    this.getWardLineCount();
+    this.wardLineCount=this.commonService.getWardLineCount(this.selectedZone);
+    this.getWardLines(this.wardLineCount);
     this.getTotalMarkers();
   }
 
@@ -133,18 +134,7 @@ export class WardSurveyAnalysisComponent {
       }
     }
   }
-
-  getWardLineCount() {
-    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
-    if (wardLineCountList != null) {
-      let lineCount = wardLineCountList.find(item => item.wardNo == this.selectedZone);
-      if (lineCount != undefined) {
-        this.wardLineCount = Number(lineCount.lineCount);
-        this.getWardLines(lineCount.lineCount);
-      }
-    }
-  }
-
+  
   getWardLines(lineCount: any) {
     for (let i = 1; i <= Number(lineCount); i++) {
       let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {

@@ -124,13 +124,9 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getWardSummary(index: any, wardNo: any) {
-    let wardLineCount = this.db.object("WardLines/" + wardNo + "").valueChanges().subscribe((lineCount) => {
-      wardLineCount.unsubscribe();
-      if (lineCount != null) {
-        this.wardLines = Number(lineCount);
-        this.wardProgressList[index]["wardLines"] = this.wardLines;
-      }
-    });
+    this.wardLines = this.commonService.getWardLineCount(wardNo);
+    this.wardProgressList[index]["wardLines"] = this.wardLines;
+
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       markerInstance.unsubscribe();

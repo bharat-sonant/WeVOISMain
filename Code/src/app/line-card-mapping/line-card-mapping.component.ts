@@ -1,7 +1,6 @@
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { HttpClient } from "@angular/common/http";
 import { FirebaseService } from "../firebase.service";
 
@@ -10,7 +9,6 @@ import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
-import { conditionallyCreateMapObjectLiteral } from "@angular/compiler/src/render3/view/util";
 
 @Component({
   selector: "app-line-card-mapping",
@@ -27,7 +25,7 @@ export class LineCardMappingComponent {
     private mapService: MapService,
     private commonService: CommonService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -69,7 +67,7 @@ export class LineCardMappingComponent {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();
@@ -87,18 +85,6 @@ export class LineCardMappingComponent {
   setMap() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-  }
-
-  setKml() {
-    this.db
-      .object("Defaults/KmlBoundary/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((wardPath) => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map,
-        });
-      });
   }
 
   getZones() {
@@ -178,82 +164,24 @@ export class LineCardMappingComponent {
     }
 
     for (let index = 0; index < this.selectedCardDetails.length; index++) {
-      const element = this.selectedCardDetails[index];
-      let cardNo = element["cardNo"];
-      let mobile = element["mobile"];
-      let surveyorId = element["surveyorId"];
-      if (element["surveyorId"] == undefined) {
-        surveyorId = "";
-      }
+      let cardNo = this.selectedCardDetails[index]["cardNo"];
+      let data = this.selectedCardDetails[index]["data"];
+      data["line"]=$("#txtNewLine").val();
 
-      let createdDate = element["createdDate"];
-      if (element["createdDate"] == undefined) {
-        createdDate = "";
-      }
+      this.db.object("Houses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/" + cardNo).set(data);
 
-      let approverId = element["approverId"];
-      if (element["approverId"] == undefined) {
-        approverId = "";
-      }
-
-      let approvingDate = element["approvingDate"];
-      if (element["approvingDate"] == undefined) {
-        approvingDate = "";
-      }
-
-      let isApproved = element["isApproved"];
-      if (element["isApproved"] == undefined) {
-        isApproved = "";
-      }
-
-      this.db
-        .object(
-          "Houses/" +
-            this.selectedZone +
-            "/" +
-            $("#txtNewLine").val() +
-            "/" +
-            cardNo
-        )
-        .set({
-          address: element["address"] == undefined ? "" : element["address"],
-          approverId: approverId,
-          approvingDate: approvingDate,
-          cardNo: element["cardNo"] == undefined ? "" : element["cardNo"],
-          cardType: element["cardType"] == undefined ? "" : element["cardType"],
-          colonyName:
-            element["colonyName"] == undefined ? "" : element["colonyName"],
-          createdDate: createdDate,
-          houseType:
-            element["houseType"] == undefined ? "" : element["houseType"],
-          isApproved: isApproved,
-          isNameCorrect:
-            element["isNameCorrect"] == undefined
-              ? ""
-              : element["isNameCorrect"],
-          latLng: element["latLng"] == undefined ? "" : element["latLng"],
-          line: $("#txtNewLine").val(),
-          mobile: element["mobile"] == undefined ? "" : element["mobile"],
-          name: element["name"] == undefined ? "" : element["name"],
-          phaseNo: element["phaseNo"] == undefined ? "" : element["phaseNo"],
-          rfid: element["rfid"] == undefined ? "" : element["rfid"],
-          surveyorId: surveyorId,
-          ward: element["ward"] == undefined ? "" : element["ward"],
-        });
-
-      let path =
-        "Houses/" + this.selectedZone + "/" + element["line"] + "/" + cardNo;
+      let path = "Houses/" + this.selectedZone + "/" + $('#txtLineNo').val() + "/" + cardNo;
       this.db.object(path).remove();
 
       // modify card ward mapping
-      this.db.object("CardWardMapping/" + element["cardNo"]).set({
+      this.db.object("CardWardMapping/" + data["cardNo"]).set({
         line: $("#txtNewLine").val(),
         ward: this.selectedZone,
       });
 
-      if (mobile != "") {
+      if (data["mobile"] != "") {
         // modify house ward mapping
-        this.db.object("HouseWardMapping/" + mobile).set({
+        this.db.object("HouseWardMapping/" + data["mobile"]).set({
           line: $("#txtNewLine").val(),
           ward: this.selectedZone,
         });
@@ -270,27 +198,25 @@ export class LineCardMappingComponent {
   }
 
   getLinesFromJson() {
-    let wardLines = this.db
-      .object("Defaults/WardLines/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((zoneLine) => {
-        wardLines.unsubscribe();
-        var linePath = [];
-        for (let i = 1; i < 10000; i++) {
-          var line = zoneLine[i];
-          if (line == undefined) {
-            break;
-          }
-          var path = [];
-          for (let j = 0; j < line.points.length; j++) {
-            path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-          }
-
-          linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+    let wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
+    let wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
+      wardLines.unsubscribe();
+      var linePath = [];
+      for (let i = 1; i <= wardLineCount; i++) {
+        var line = zoneLine[i];
+        if (line == undefined) {
+          break;
         }
-        this.allLines = linePath;
-        this.drawAllLines();
-      });
+        var path = [];
+        for (let j = 0; j < line.points.length; j++) {
+          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
+        }
+
+        linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+      }
+      this.allLines = linePath;
+      this.drawAllLines();
+    });
   }
 
   drawAllLines() {
@@ -386,35 +312,32 @@ export class LineCardMappingComponent {
       }
     }
     this.markerList = [];
-    let housesData = this.db
-      .object(housePath)
-      .valueChanges()
-      .subscribe((data) => {
-        housesData.unsubscribe();
-        if (data != null) {
-          var keyArray = Object.keys(data);
-          for (let index = 0; index < keyArray.length; index++) {
-            const cardNo = keyArray[index];
-            let cardData = data[cardNo];
-            if (cardData["latLng"] != undefined) {
-              let latLng = cardData["latLng"]
-                .toString()
-                .replace("(", "")
-                .replace(")", "")
-                .split(",");
+    let housesData = this.db.object(housePath).valueChanges().subscribe((data) => {
+      housesData.unsubscribe();
+      if (data != null) {
+        var keyArray = Object.keys(data);
+        for (let index = 0; index < keyArray.length; index++) {
+          const cardNo = keyArray[index];
+          let cardData = data[cardNo];
+          if (cardData["latLng"] != undefined) {
+            let latLng = cardData["latLng"]
+              .toString()
+              .replace("(", "")
+              .replace(")", "")
+              .split(",");
 
-              let url = "../assets/img/red-home.png";
-              if (cardData["phaseNo"] == "1") {
-                url = "../assets/img/blue-home.png";
-              }
-              this.setMarkers(latLng[0], latLng[1], url, cardData, cardNo);
+            let url = "../assets/img/red-home.png";
+            if (cardData["phaseNo"] == "1") {
+              url = "../assets/img/blue-home.png";
             }
+            this.setMarkers(latLng[0], latLng[1], url, cardData, cardNo, lineNo);
           }
         }
-      });
+      }
+    });
   }
 
-  setMarkers(lat: any, lng: any, url: any, cardData: any, cardNo: any) {
+  setMarkers(lat: any, lng: any, url: any, cardData: any, cardNo: any, lineNo: any) {
     let isSelected = false;
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -424,29 +347,12 @@ export class LineCardMappingComponent {
     });
 
     marker.addListener("click", (e) => {
-      let lineData = this.selectedCardDetails.find(
-        (item) => item.cardNo == cardNo
-      );
+      let lineData = this.selectedCardDetails.find((item) => item.cardNo == cardNo);
       if (lineData == undefined) {
         this.selectedCardDetails.push({
-          address: cardData["address"],
-          cardNo: cardData["cardNo"],
-          cardType: cardData["cardType"],
-          colonyName: cardData["colonyName"],
-          createdDate: cardData["createdDate"],
-          houseType: cardData["houseType"],
-          isNameCorrect: cardData["isNameCorrect"],
-          latLng: cardData["latLng"],
-          line: cardData["line"],
-          mobile: cardData["mobile"],
-          name: cardData["name"],
-          phaseNo: cardData["phaseNo"],
-          rfid: cardData["rfid"],
-          surveyorId: cardData["surveyorId"],
-          ward: cardData["ward"],
-          approverId: cardData["approverId"],
-          approvingDate: cardData["approvingDate"],
-          isApproved: cardData["isApproved"],
+          lineNo: lineNo,
+          cardNo: cardNo,
+          data: cardData
         });
         isSelected = true;
       } else {
@@ -474,11 +380,8 @@ export class LineCardMappingComponent {
   }
 
   setLineInfo(lineData: any, lineNo: any) {
-    let statusString =
-      '<div style="margin:10px;background-color: white;float: left;">';
-    statusString +=
-      '<div style="width: 100%;text-align:center;font-size:13px;color:black;font-weight:bold">' +
-      lineNo;
+    let statusString = '<div style="margin:10px;background-color: white;float: left;">';
+    statusString += '<div style="width: 100%;text-align:center;font-size:13px;color:black;font-weight:bold">' + lineNo;
     statusString += "</div></div>";
     var infowindow = new google.maps.InfoWindow({
       content: statusString,

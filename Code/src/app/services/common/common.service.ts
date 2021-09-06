@@ -1154,4 +1154,17 @@ export class CommonService {
   }
 
   //#endregion
+
+  
+  getWardLineCount(zoneNo:any) {
+    let wardLines=0;
+    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
+    if (wardLineCountList != null) {
+      let lineCount = wardLineCountList.find(item => item.wardNo == zoneNo);
+      if (lineCount != undefined) {
+        wardLines = Number(lineCount.lineCount);
+      }
+    }
+    return wardLines;
+  }
 }
