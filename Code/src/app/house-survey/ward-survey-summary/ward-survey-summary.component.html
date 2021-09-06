@@ -56,7 +56,7 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                (click)="getSurveyDetail(data.wardNo,i);">
+                                                (click)="getSurveyDetail(data.wardNo,i);" style="cursor: pointer;">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">

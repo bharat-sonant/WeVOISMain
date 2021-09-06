@@ -36,6 +36,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     totalSurveyed: "0",
     name: "",
     wardNo: "",
+    average:"0",
+    totalDays:"0"
   };
   db: any;
   ngOnInit() {
@@ -68,6 +70,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
+    this.houseData.average="0";
+    this.houseData.totalDays="0";
     this.lineMarkerList = [];
     let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
@@ -84,11 +88,24 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             if (index == "totalCount") {
               this.houseData.totalSurveyed = data[index];
+              this.houseData.totalDays=(keyArray.length-1).toString();
+              let average =
+                Number(this.houseData.totalSurveyed) /
+                Number(keyArray.length-1);
+              if (average % 1 == 0) {
+                this.houseData.average = average.toFixed(0);
+              } else {
+                this.houseData.average = average.toFixed(2);
+              }
+
             } else {
+              let date=new Date(index.split('-')[2]+"-"+index.split('-')[1]+"-"+index.split('-')[0])
               this.lineMarkerList.push({
-                date: index,
+                date:index,
                 surveyed: data[index],
+                dateOrder:date
               });
+              this.lineMarkerList=this.commonService.transformNumeric(this.lineMarkerList,"dateOrder");
             }
           }
         }
@@ -277,7 +294,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 500;
-      let width = 400;
+      let width = 450;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -320,7 +337,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;
-      let width = 400;
+      let width = 450;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -348,4 +365,6 @@ export class houseDatail {
   totalSurveyed: string;
   name: string;
   wardNo: string;
+  average:string;
+  totalDays:string;
 }

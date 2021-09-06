@@ -19,6 +19,7 @@ export class WardSurveySummaryComponent implements OnInit {
   wardLineCount: any;
   cityName: any;
   isFirst = true;
+  wardCheckList: any[] = [];
   db: any;
   surveyData: surveyDatail = {
     totalLines: 0,
@@ -34,6 +35,14 @@ export class WardSurveySummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    if (this.cityName == "sikar") {
+      this.wardCheckList.push({ wardNo: "1" });
+      this.wardCheckList.push({ wardNo: "2" });
+      this.wardCheckList.push({ wardNo: "3" });
+      this.wardCheckList.push({ wardNo: "4" });
+      this.wardCheckList.push({ wardNo: "30" });
+      this.wardCheckList.push({ wardNo: "31" });
+    }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getWards();
     this.selectedCircle = "Circle1";
@@ -89,16 +98,21 @@ export class WardSurveySummaryComponent implements OnInit {
         (item) => item.circle == this.selectedCircle
       );
       if (circleWardList.length > 0) {
+        let k = 0;
         for (let i = 0; i < circleWardList.length; i++) {
           let wardNo = circleWardList[i]["wardNo"];
-          this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, status: "", already: 0 });
-          if (i == 0) {
-            setTimeout(() => {
-              this.getSurveyDetail(wardNo, 0);
-              $("#tr0").addClass("active");
-            }, 1000);
+          let wardDetail = this.wardCheckList.find(item => item.wardNo == wardNo);
+          if (wardDetail == undefined) {
+            this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, status: "", already: 0 });
+            if (k == 0) {
+              setTimeout(() => {
+                this.getSurveyDetail(wardNo, 0);
+                $("#tr0").addClass("active");
+              }, 1000);
+            }
+            this.getWardSummary(k, wardNo);
+            k++;
           }
-          this.getWardSummary(i, wardNo);
         }
       }
     }
@@ -253,7 +267,7 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     }
   }
-  
+
   showLineDetail(content: any, wardNo: any, lineNo: any) {
     this.surveyedDetailList = [];
     this.getLineDetail(wardNo, lineNo);
