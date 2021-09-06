@@ -883,11 +883,57 @@ export class CommonService {
         if (data.length > 0) {
           markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
           for (let index = 0; index < data.length; index++) {
-            markingWards.push({
-              zoneNo: data[index],
-              zoneName: data[index],
-            });
-
+            if (
+              !data[index].toString().includes("Test") &&
+              data[index] != "OfficeWork" &&
+              data[index] != "FixedWages" &&
+              data[index] != "BinLifting" &&
+              data[index] != "GarageWork" &&
+              data[index] != "Compactor" &&
+              data[index] != "SegregationWork" &&
+              data[index] != "GeelaKachra" &&
+              data[index] != "SecondHelper" &&
+              data[index] != "ThirdHelper"
+            ) {
+              if (data[index].toString().includes("mkt")) {
+                markingWards.push({
+                  zoneNo: data[index],
+                  zoneName:
+                    "Market " + data[index].toString().replace("mkt", ""),
+                });
+              } else if (data[index].toString().includes("MarketRoute1")) {
+                markingWards.push({ zoneNo: data[index], zoneName: "Market 1" });
+              } else if (data[index].toString().includes("MarketRoute2")) {
+                markingWards.push({ zoneNo: data[index], zoneName: "Market 2" });
+              } else if (data[index].toString() == "WetWaste") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 1" });
+              } else if (data[index].toString() == "WetWaste1") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 2" });
+              } else if (data[index].toString() == "WetWaste2") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 3" });
+              } else if (data[index].toString() == "WetWaste4") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 4" });
+              } else if (data[index].toString() == "WetWaste5") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 5" });
+              } else if (data[index].toString() == "WetWaste6") {
+                markingWards.push({ zoneNo: data[index], zoneName: "Wet 6" });
+              } else if (data[index].toString() == "CompactorTracking1") {
+                markingWards.push({
+                  zoneNo: data[index],
+                  zoneName: "CompactorTracking1",
+                });
+              } else if (data[index].toString() == "CompactorTracking2") {
+                markingWards.push({
+                  zoneNo: data[index],
+                  zoneName: "CompactorTracking2",
+                });
+              } else {
+                markingWards.push({
+                  zoneNo: data[index],
+                  zoneName: "Ward " + data[index],
+                });
+              }
+            }
           }
           localStorage.setItem("markingWards", JSON.stringify(markingWards));
         }
