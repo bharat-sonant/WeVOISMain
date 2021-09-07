@@ -70,14 +70,14 @@ export class WardScancardSummaryComponent implements OnInit {
             }
           }
         }
-        this.selectedCircle = "Circle2";
+        this.selectedCircle = "Circle1";
         this.onSubmit();
         circleWiseWard.unsubscribe();
       });
   }
 
 
-  changeCircleSelection(filterVal: any) {    
+  changeCircleSelection(filterVal: any) {
     this.showLoder();
     this.selectedCircle = filterVal;
     this.isFirst = true;
@@ -113,47 +113,48 @@ export class WardScancardSummaryComponent implements OnInit {
       let helperInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           helperInstance.unsubscribe();
+          let helper = "";
+          let scanned = 0;
+          let notScanned = 0;
           if (data != null) {
-            let helper = "";
-            let scanned = 0;
-            let notScanned = 0;
-
             helper = data.toString();
+          }
 
-            dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
-            let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-              notScannedData => {
-                notScannedInstance.unsubscribe();
-                if (notScannedData != null) {
-                  notScanned = Number(notScannedData);
-                }
-                dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-                let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  scannedData => {
-                    scannedInstance.unsubscribe();
-                    if (scannedData != null) {
-                      let keyArray = Object.keys(scannedData);
-                      for (let j = 0; j < keyArray.length; j++) {
-                        let index = keyArray[j];
-                        if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData") {
-                          if (scannedData[index]["scanBy"] != "-1") {
-                            scanned = scanned + 1;
-                          }
+          dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
+          let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+            notScannedData => {
+              notScannedInstance.unsubscribe();
+              if (notScannedData != null) {
+                notScanned = Number(notScannedData);
+              }
+              dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
+              let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                scannedData => {
+                  scannedInstance.unsubscribe();
+                  if (scannedData != null) {
+                    let keyArray = Object.keys(scannedData);
+                    for (let j = 0; j < keyArray.length; j++) {
+                      let index = keyArray[j];
+                      if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData") {
+                        if (scannedData[index]["scanBy"] != "-1") {
+                          scanned = scanned + 1;
                         }
-                      }
-                      let detail = this.wardDataList.find(item => item.wardNo == wardNo);
-                      if (detail != undefined) {
-                        detail.helper=helper;
-                        detail.scanned=scanned;
-                        detail.notScanned=notScanned;
                       }
                     }
                   }
-                );
-              }
-            );
+                  let detail = this.wardDataList.find(item => item.wardNo == wardNo);
+                  if (detail != undefined) {
+                    detail.helper = helper;
+                    detail.scanned = scanned;
+                    detail.notScanned = notScanned;
+                  }
 
-          }
+                }
+              );
+            }
+          );
+
+
         }
       );
     }
@@ -180,7 +181,11 @@ export class WardScancardSummaryComponent implements OnInit {
       return;
     }
     $("#txtDate").val(this.selectedDate);
-    
+    for (let i = 0; i < this.wardDataList.length; i++) {
+      this.wardDataList[i]["helper"] = "";
+      this.wardDataList[i]["scanned"] = 0;
+      this.wardDataList[i]["notScanned"] = 0;
+    }
     this.getWardDetail();
   }
 
