@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
@@ -15,7 +14,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class WardScancardSummaryComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
 
   wardList: any[];
   selectedCircle: any;
@@ -35,14 +34,12 @@ export class WardScancardSummaryComponent implements OnInit {
     this.getWards();
   }
 
-
   showLoder() {
     $("#divLoader").show();
     setTimeout(() => {
       $("#divLoader").hide();
     }, 4000);
   }
-
 
   getWards() {
     this.wardList = [];
@@ -76,14 +73,12 @@ export class WardScancardSummaryComponent implements OnInit {
       });
   }
 
-
   changeCircleSelection(filterVal: any) {
     this.showLoder();
     this.selectedCircle = filterVal;
     this.isFirst = true;
     this.onSubmit();
   }
-
 
   onSubmit() {
     this.wardDataList = [];
@@ -92,12 +87,7 @@ export class WardScancardSummaryComponent implements OnInit {
       console.log(circleWardList);
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({
-            wardNo: circleWardList[i]["wardNo"],
-            scanned: 0,
-            notScanned: 0,
-            helper: ""
-          });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, helper: "" });
         }
       }
       this.getWardDetail();
@@ -148,16 +138,13 @@ export class WardScancardSummaryComponent implements OnInit {
                     detail.scanned = scanned;
                     detail.notScanned = notScanned;
                   }
-
                 }
               );
             }
           );
-
         }
       );
     }
-
   }
 
   setDate(filterVal: any, type: string) {
@@ -187,5 +174,4 @@ export class WardScancardSummaryComponent implements OnInit {
     }
     this.getWardDetail();
   }
-
 }
