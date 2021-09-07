@@ -37,6 +37,10 @@ export class WardSurveyAnalysisComponent {
   db: any;
   scannedCardList: any[];
   revisitSurveyList: any[];
+  revisitLineSurveyList: any[];
+  revisitAllSurveyList: any[];
+  revisitMarker: any[];
+  preRevisitIndex: any;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -80,7 +84,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getWardDetail() {
-    this.wardLineCount=this.commonService.getWardLineCount(this.selectedZone);
+    this.wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
     this.getWardLines(this.wardLineCount);
     this.getTotalMarkers();
   }
@@ -108,6 +112,8 @@ export class WardSurveyAnalysisComponent {
         revisitInstance.unsubscribe();
         if (data != null) {
           this.progressData.totalRevisit = Number(data);
+
+          $('#divRevisitCount').css("cursor", "pointer");
         }
       }
     );
@@ -134,7 +140,7 @@ export class WardSurveyAnalysisComponent {
       }
     }
   }
-  
+
   getWardLines(lineCount: any) {
     for (let i = 1; i <= Number(lineCount); i++) {
       let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
@@ -325,7 +331,6 @@ export class WardSurveyAnalysisComponent {
                 progressData.revisitHouseType = houseType;
                 progressData.revisitName = data["name"];
                 progressData.revisitReason = data["reason"];
-
                 progressData.revisitDate = revisitDate;
               }
             });
@@ -339,8 +344,13 @@ export class WardSurveyAnalysisComponent {
         $('#divRevisitDetail').hide();
       });
     }
+    if (map == this.mapRevisit) {
+      this.revisitMarker.push({ marker });
+    }
     this.houseMarker.push({ marker });
   }
+
+
 
   getNextPrevious(type: any) {
     let lineNo = $("#txtLineNo").val();
@@ -456,10 +466,7 @@ export class WardSurveyAnalysisComponent {
           let strokeWeight = 2;
           let status = "";
           let lineNo = this.lines[i]["lineNo"];
-          if (lineNo == this.lineNo) {
-            strokeWeight = 5;
-            status = "requestedLine";
-          }
+
           let line = new google.maps.Polyline({
             path: this.lines[i]["latlng"],
             strokeColor: this.commonService.getLineColor(status),
@@ -474,24 +481,113 @@ export class WardSurveyAnalysisComponent {
             this.setMarkerForLineNo(lat, lng, this.invisibleImageUrl, lineNo.toString(), this.mapRevisit, "RevisitMap");
           }
         }
-        this.getRevisitLineRequest();
+        if (type == "RevisitAll") {
+          this.getRevisitAllRequest();
+        }
+        else {
+          this.getRevisitLineRequest();
+        }
       }, 200);
     }
   }
 
+
+  getRevisitMarker(index: any) {
+    if (this.preRevisitIndex != -1) {
+      this.revisitMarker[this.preRevisitIndex]["marker"].setMap(null);
+      let marker = new google.maps.Marker({
+        position: { lat: Number(this.revisitSurveyList[this.preRevisitIndex]["lat"]), lng: Number(this.revisitSurveyList[this.preRevisitIndex]["lng"]) },
+        map: this.mapRevisit,
+        icon: {
+          url: "../assets/img/red-home.png",
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scaledSize: new google.maps.Size(15, 15),
+          origin: new google.maps.Point(0, 0),
+        },
+      });
+      this.revisitMarker[this.preRevisitIndex]["marker"] = marker;
+      this.revisitSurveyList[this.preRevisitIndex]["activeClass"] = "halt-data-theme";
+    }
+
+    this.revisitMarker[index]["marker"].setMap(null);
+    let marker = new google.maps.Marker({
+      position: { lat: Number(this.revisitSurveyList[index]["lat"]), lng: Number(this.revisitSurveyList[index]["lng"]) },
+      map: this.mapRevisit,
+      icon: {
+        url: "../assets/img/red-home.png",
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(15, 15),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    this.revisitMarker[index]["marker"] = marker;
+    this.preRevisitIndex = index;
+    this.revisitSurveyList[index]["activeClass"] = "halt-data-theme active";
+  }
+
   getRevisitLineRequest() {
-    if (this.revisitSurveyList.length == 0) {
+    this.revisitSurveyList = [];
+    this.revisitMarker = [];
+    this.preRevisitIndex = -1;
+    if (this.revisitLineSurveyList.length == 0) {
+      let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + this.lineNo;
+      let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          revisitInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              if (index != "lineRevisitCount") {
+                let date = data[index]["date"].split(' ')[0];
+                let time = data[index]["date"].split(' ')[1];
+                let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                let type = data[index]["houseType"];
+                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
+                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
+                  houseInstance.unsubscribe();
+                  if (houseData != null) {
+                    let houseType = houseData.toString().split("(")[0];
+                    this.revisitSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme" });
+                    this.revisitLineSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
+                    this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+                  }
+                });
+              }
+            }
+          }
+        }
+      );
+    }
+    else {
+      this.revisitSurveyList = this.revisitLineSurveyList;
+      for (let i = 0; i < this.revisitSurveyList.length; i++) {
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+      }
+    }
+
+  }
+
+  getRevisitAllRequest() {
+    this.revisitSurveyList = [];
+    this.revisitMarker = [];
+    this.preRevisitIndex = -1;
+    if (this.revisitAllSurveyList.length == 0) {
       for (let i = 0; i < this.lines.length; i++) {
-        let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + i;
+        let lineNo = this.lines[i]["lineNo"];
+        let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo;
         let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
           data => {
             revisitInstance.unsubscribe();
             if (data != null) {
               let keyArray = Object.keys(data);
-              for (let i = 0; i < keyArray.length; i++) {
-                let index = keyArray[i];
+              for (let j = 0; j < keyArray.length; j++) {
+                let index = keyArray[j];
                 if (index != "lineRevisitCount") {
-                  this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+
                   let date = data[index]["date"].split(' ')[0];
                   let time = data[index]["date"].split(' ')[1];
                   let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
@@ -501,7 +597,9 @@ export class WardSurveyAnalysisComponent {
                     houseInstance.unsubscribe();
                     if (houseData != null) {
                       let houseType = houseData.toString().split("(")[0];
-                      this.revisitSurveyList.push({ name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
+                      this.revisitSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme" });
+                      this.revisitAllSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
+                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
                     }
                   });
                 }
@@ -512,6 +610,7 @@ export class WardSurveyAnalysisComponent {
       }
     }
     else {
+      this.revisitSurveyList = this.revisitAllSurveyList;
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
         this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
       }
@@ -553,6 +652,7 @@ export class WardSurveyAnalysisComponent {
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
     this.progressData.totalRevisit = 0;
+    $('#divRevisitCount').css("cursor", "text");
     this.clearLineData();
   }
 
@@ -579,6 +679,9 @@ export class WardSurveyAnalysisComponent {
     this.houseMarker = [];
     this.scannedCardList = [];
     this.revisitSurveyList = [];
+    this.revisitLineSurveyList = [];
+    this.revisitAllSurveyList = [];
+    this.revisitMarker = [];
   }
 }
 

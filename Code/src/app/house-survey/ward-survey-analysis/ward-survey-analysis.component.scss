@@ -653,6 +653,12 @@ button:focus{
         background-color: #fcfcfc;
         border: 1px solid #0ba118;
       }
+      
+.active{
+    border-bottom: 5px solid #0ba118;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
 
       
 .scrollable-halt{

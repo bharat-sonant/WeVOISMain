@@ -9,7 +9,7 @@
         </option>
       </select>
     </div>
-    <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;;">
+    <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;">
 
     </div>
     <div class="col-md-4" style="padding-top: 20px; padding-left: 30px;;">
@@ -26,8 +26,8 @@
           <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalSurveyed}}</span><br>
           <h6>Surveyed Marker</h6>
         </div>
-        <div id="divLineScannedCount" class="float-third"
-          (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'Revisit')">
+        <div id="divRevisitCount" class="float-third"
+          (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'RevisitAll')">
           <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house">
             {{progressData.totalRevisit}}</span><br>
           <h6>Revisit Request</h6>
@@ -62,18 +62,17 @@
             <i class="fas fa-home" style="color:red;"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineMarkers}}</span><br>
           </div>
-          <div class="float-l"
+          <div  id="divLineScannedCount" class="float-l"
             (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
             <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineSurveyed}}</span><br>
           </div>
-          <div class="float-l" style="border-right:none!important;">
+          <div id="divLineRevisitCount" class="float-l" style="border-right:none!important;" (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'RevisitLine')">
             <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house" style="color: #000;">
               {{progressData.totalLineRevisit}}</span><br>
           </div>
         </div>
       </div>
-
 
     </div>
   </div>
@@ -156,7 +155,10 @@
           <div class="row">
             <div class="col-md-3" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
               <div id="divSequence" class="scrollable-halt">
-                <div class="halt-data-theme" *ngFor="let dt of revisitSurveyList, let i=index">
+                <div class="{{dt.activeClass}}" *ngFor="let dt of revisitSurveyList, let i=index"  (click)="getRevisitMarker(i);">
+                  <div [hidden]="dt.lineNo==0" class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <p><i class="fas fa-map-marker-alt"></i> Line {{dt.lineNo}}</p>
+                  </div>
                   <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
                     <p><i class="fas fa-house-damage" style="color: green;"></i> {{dt.houseType}}</p>
                   </div>
@@ -170,7 +172,6 @@
                     <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}}</p>
                   </div>
                 </div>
-
               </div>
             </div>
             <div class="col-md-9 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
