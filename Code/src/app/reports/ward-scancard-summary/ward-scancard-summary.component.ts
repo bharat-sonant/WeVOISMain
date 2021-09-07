@@ -154,7 +154,6 @@ export class WardScancardSummaryComponent implements OnInit {
             }
           );
 
-
         }
       );
     }
