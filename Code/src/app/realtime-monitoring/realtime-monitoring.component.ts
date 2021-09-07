@@ -9,8 +9,6 @@ import { ToastrService } from "ngx-toastr";
 import { ActivatedRoute, Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { UserService } from "../services/common/user.service";
-import { HtmlAstPath, LiteralArrayExpr } from "@angular/compiler";
-import { resolveNgModuleDep } from "@angular/core/src/view/ng_module";
 import { FirebaseService } from "../firebase.service";
 
 @Component({
@@ -19,16 +17,7 @@ import { FirebaseService } from "../firebase.service";
   styleUrls: ["./realtime-monitoring.component.scss"],
 })
 export class RealtimeMonitoringComponent implements OnInit {
-  constructor(
-    public fs: FirebaseService,
-    public httpService: HttpClient,
-    private mapService: MapService,
-    private commonService: CommonService,
-    private toastr: ToastrService,
-    public usrService: UserService,
-    private actRoute: ActivatedRoute,
-    private modalService: NgbModal
-  ) {}
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public usrService: UserService, private actRoute: ActivatedRoute, private modalService: NgbModal) { }
 
   db: any;
   public selectedZone: any;
@@ -178,12 +167,9 @@ export class RealtimeMonitoringComponent implements OnInit {
   dutyStatusList: any[];
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     //this.commonService.setCityData();
     let element = <HTMLAnchorElement>(
       document.getElementById("wardProgressLink")
@@ -256,29 +242,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   setWorkNotStarted() {
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
-      this.db
-        .list(
-          "WasteCollectionInfo/" +
-            element["zoneNo"] +
-            "/" +
-            this.currentYear +
-            "/" +
-            this.currentMonthName +
-            "/" +
-            this.toDayDate +
-            "/WorkerDetails"
-        )
-        .valueChanges()
-        .subscribe((workerData) => {
-          if (workerData.length == 0) {
-            this.db
-              .object("RealTimeDetails/WardDetails/" + element["zoneNo"])
-              .set({
-                activityStatus: "workNotStarted",
-                isOnDuty: "no",
-              });
-          }
-        });
+      this.db.list("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails").valueChanges().subscribe((workerData) => {
+        if (workerData.length == 0) {
+          this.db.object("RealTimeDetails/WardDetails/" + element["zoneNo"]).set({ activityStatus: "workNotStarted", isOnDuty: "no", });
+        }
+      });
     }
   }
 
@@ -305,37 +273,19 @@ export class RealtimeMonitoringComponent implements OnInit {
   setWardCompleted() {
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
-      this.db
-        .object(
-          "WasteCollectionInfo/" +
-            element["zoneNo"] +
-            "/" +
-            this.currentYear +
-            "/" +
-            this.currentMonthName +
-            "/" +
-            this.toDayDate +
-            "/Summary/dutyOutTime"
-        )
-        .valueChanges()
-        .subscribe((dutyOutTime) => {
-          if (dutyOutTime != undefined) {
-            this.db
-              .object("RealTimeDetails/WardDetails/" + element["zoneNo"])
-              .set({
-                activityStatus: "completed",
-                isOnDuty: "no",
-              });
-          }
+      this.db.object("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary/dutyOutTime").valueChanges().subscribe((dutyOutTime) => {
+        if (dutyOutTime != undefined) {
+          this.db.object("RealTimeDetails/WardDetails/" + element["zoneNo"]).set({ activityStatus: "completed", isOnDuty: "no", });
+        }
 
-          /*
-          if (workerData.length == 0) {
-            this.db.object('RealTimeDetails/WardDetails/' + element["zoneNo"]).set({
-              activityStatus: 'workNotStarted',
-              isOnDuty: 'no'
-            });
-          }*/
-        });
+        /*
+        if (workerData.length == 0) {
+          this.db.object('RealTimeDetails/WardDetails/' + element["zoneNo"]).set({
+            activityStatus: 'workNotStarted',
+            isOnDuty: 'no'
+          });
+        }*/
+      });
     }
   }
 
@@ -415,463 +365,381 @@ export class RealtimeMonitoringComponent implements OnInit {
 */
 
   getWardsStatusWise() {
-    let getRealTimeWardDetails = this.db
-      .object("RealTimeDetails/WardDetails")
-      .valueChanges()
-      .subscribe((data) => {
-        let activeWard = 0;
-        let inActiveWard = 0;
-        let stoppedWard = 0;
-        let completedWard = 0;
-        let totalWard = this.allZones.length - 1;
-        for (let index = 1; index < this.allZones.length; index++) {
-          let zoneNo = this.allZones[index]["zoneNo"];
-          let zoneName = this.allZones[index]["zoneName"].replace("Ward ", "");
-          let status = data[zoneNo]["activityStatus"];
-          let isMic = "notActive";
-          if (data[zoneNo]["micStatus"] != null) {
-            if (data[zoneNo]["micStatus"] == "disabled") {
-              isMic = "disabled";
-            }
+    let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe((data) => {
+      let activeWard = 0;
+      let inActiveWard = 0;
+      let stoppedWard = 0;
+      let completedWard = 0;
+      let totalWard = this.allZones.length - 1;
+      for (let index = 1; index < this.allZones.length; index++) {
+        let zoneNo = this.allZones[index]["zoneNo"];
+        let zoneName = this.allZones[index]["zoneName"].replace("Ward ", "");
+        let status = data[zoneNo]["activityStatus"];
+        let isMic = "notActive";
+        if (data[zoneNo]["micStatus"] != null) {
+          if (data[zoneNo]["micStatus"] == "disabled") {
+            isMic = "disabled";
           }
-          if (this.firstData == false) {
+        }
+        if (this.firstData == false) {
+          if (status == "active") {
+            activeWard++;
+            this.zoneList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              status: "active",
+              shortIndex: index,
+              displayOrder: 2,
+              totalLines: 0,
+              completedLines: 0,
+              skippedLines: 0,
+              workPer: "0%",
+              workPerShow: "0",
+              borderClass: "",
+              bgColor: "white",
+              iconName: "fas fa-caret-right active-ward",
+              progressClass: "progress progress-float",
+              wardKM: "0.00",
+              wardTime: "0.00",
+              dutyOnTime: "---",
+              dutyOffTime: "---",
+              wardReachTime: "---",
+              driverId: "0",
+              helperId: "0",
+              vehicleNo: "",
+              isMic: isMic,
+            });
+          } else if (status == "stopped") {
+            stoppedWard++;
+            this.zoneList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              status: "stopped",
+              shortIndex: index,
+              displayOrder: 1,
+              totalLines: 0,
+              completedLines: 0,
+              skippedLines: 0,
+              workPer: "0%",
+              workPerShow: "0",
+              borderClass: "",
+              bgColor: "white",
+              iconName: "fas fa-caret-right stop-indication",
+              progressClass: "progress progress-float",
+              wardKM: "0.00",
+              wardTime: "0.00",
+              dutyOnTime: "---",
+              dutyOffTime: "---",
+              wardReachTime: "---",
+              driverId: "0",
+              helperId: "0",
+              vehicleNo: "",
+              isMic: isMic,
+            });
+          } else if (status == "completed") {
+            completedWard++;
+            this.zoneList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              status: "completed",
+              shortIndex: index,
+              displayOrder: 3,
+              totalLines: 0,
+              completedLines: 0,
+              skippedLines: 0,
+              workPer: "0%",
+              workPerShow: "0",
+              borderClass: "",
+              bgColor: "#95e495",
+              iconName: "fas fa-caret-right active-ward",
+              progressClass: "progress progress-float-completed",
+              wardKM: "0.00",
+              wardTime: "0.00",
+              dutyOnTime: "---",
+              dutyOffTime: "---",
+              wardReachTime: "---",
+              driverId: "0",
+              helperId: "0",
+              vehicleNo: "",
+              isMic: isMic,
+            });
+          } else if ((status = "workNotStarted")) {
+            inActiveWard++;
+            this.zoneList.push({
+              zoneNo: zoneNo,
+              zoneName: zoneName,
+              status: "notStarted",
+              shortIndex: index,
+              displayOrder: 4,
+              totalLines: 0,
+              completedLines: 0,
+              skippedLines: 0,
+              workPer: "0%",
+              workPerShow: "0",
+              borderClass: "",
+              bgColor: "rgb(221 225 221)",
+              iconName: "fas fa-caret-right inactive-ward",
+              progressClass: "progress progress-float",
+              wardKM: "0.00",
+              wardTime: "0.00",
+              dutyOnTime: "---",
+              dutyOffTime: "---",
+              wardReachTime: "---",
+              driverId: "0",
+              helperId: "0",
+              vehicleNo: "",
+              isMic: isMic,
+            });
+          }
+        } else {
+          let zoneDetails = this.zoneList.find(
+            (item) => item.zoneNo == zoneNo
+          );
+          if (zoneDetails != undefined) {
+            zoneDetails.zoneNo = zoneNo;
+            zoneDetails.zoneName = zoneName;
+            zoneDetails.isMic = isMic;
+
             if (status == "active") {
               activeWard++;
-              this.zoneList.push({
-                zoneNo: zoneNo,
-                zoneName: zoneName,
-                status: "active",
-                shortIndex: index,
-                displayOrder: 2,
-                totalLines: 0,
-                completedLines: 0,
-                skippedLines: 0,
-                workPer: "0%",
-                workPerShow: "0",
-                borderClass: "",
-                bgColor: "white",
-                iconName: "fas fa-caret-right active-ward",
-                progressClass: "progress progress-float",
-                wardKM: "0.00",
-                wardTime: "0.00",
-                dutyOnTime: "---",
-                dutyOffTime: "---",
-                wardReachTime: "---",
-                driverId: "0",
-                helperId: "0",
-                vehicleNo: "",
-                isMic: isMic,
-              });
+              zoneDetails.status = "active";
+              zoneDetails.displayOrder = 2;
+              zoneDetails.bgColor = "white";
+              zoneDetails.iconName = "fas fa-caret-right active-ward";
+              zoneDetails.borderClass = "progress-bar  progress-success";
+              zoneDetails.progressClass = "progress progress-float";
             } else if (status == "stopped") {
               stoppedWard++;
-              this.zoneList.push({
-                zoneNo: zoneNo,
-                zoneName: zoneName,
-                status: "stopped",
-                shortIndex: index,
-                displayOrder: 1,
-                totalLines: 0,
-                completedLines: 0,
-                skippedLines: 0,
-                workPer: "0%",
-                workPerShow: "0",
-                borderClass: "",
-                bgColor: "white",
-                iconName: "fas fa-caret-right stop-indication",
-                progressClass: "progress progress-float",
-                wardKM: "0.00",
-                wardTime: "0.00",
-                dutyOnTime: "---",
-                dutyOffTime: "---",
-                wardReachTime: "---",
-                driverId: "0",
-                helperId: "0",
-                vehicleNo: "",
-                isMic: isMic,
-              });
+              zoneDetails.status = "stopped";
+              zoneDetails.displayOrder = 1;
+              zoneDetails.bgColor = "white";
+              zoneDetails.iconName = "fas fa-caret-right stop-indication";
+              zoneDetails.borderClass = "progress-bar  progress-success";
+              zoneDetails.progressClass = "progress progress-float";
             } else if (status == "completed") {
               completedWard++;
-              this.zoneList.push({
-                zoneNo: zoneNo,
-                zoneName: zoneName,
-                status: "completed",
-                shortIndex: index,
-                displayOrder: 3,
-                totalLines: 0,
-                completedLines: 0,
-                skippedLines: 0,
-                workPer: "0%",
-                workPerShow: "0",
-                borderClass: "",
-                bgColor: "#95e495",
-                iconName: "fas fa-caret-right active-ward",
-                progressClass: "progress progress-float-completed",
-                wardKM: "0.00",
-                wardTime: "0.00",
-                dutyOnTime: "---",
-                dutyOffTime: "---",
-                wardReachTime: "---",
-                driverId: "0",
-                helperId: "0",
-                vehicleNo: "",
-                isMic: isMic,
-              });
-            } else if ((status = "workNotStarted")) {
+              zoneDetails.status = "completed";
+              zoneDetails.displayOrder = 3;
+              zoneDetails.bgColor = "#95e495";
+              zoneDetails.iconName = "fas fa-caret-right active-ward";
+              zoneDetails.borderClass = "completed-ward";
+              zoneDetails.progressClass = "progress progress-float-completed";
+            } else if (status == "workNotStarted") {
               inActiveWard++;
-              this.zoneList.push({
-                zoneNo: zoneNo,
-                zoneName: zoneName,
-                status: "notStarted",
-                shortIndex: index,
-                displayOrder: 4,
-                totalLines: 0,
-                completedLines: 0,
-                skippedLines: 0,
-                workPer: "0%",
-                workPerShow: "0",
-                borderClass: "",
-                bgColor: "rgb(221 225 221)",
-                iconName: "fas fa-caret-right inactive-ward",
-                progressClass: "progress progress-float",
-                wardKM: "0.00",
-                wardTime: "0.00",
-                dutyOnTime: "---",
-                dutyOffTime: "---",
-                wardReachTime: "---",
-                driverId: "0",
-                helperId: "0",
-                vehicleNo: "",
-                isMic: isMic,
-              });
+              zoneDetails.status = "notStarted";
+              zoneDetails.displayOrder = 4;
+              zoneDetails.bgColor = "rgb(221 225 221)";
+              zoneDetails.iconName = "fas fa-caret-right inactive-ward";
+              zoneDetails.borderClass = "progress-bar  progress-success";
+              zoneDetails.progressClass = "progress progress-float";
             }
-          } else {
+            if (this.selectedZone == zoneNo) {
+              if (zoneDetails.status != "stopped") {
+                this.workerDetails.currentHaltTime = "0:00";
+              } else {
+                if (this.todayHaltList.length > 0) {
+                  this.workerDetails.currentHaltTime =
+                    this.commonService.getHrs(
+                      this.todayHaltList[this.todayHaltList.length - 1][
+                      "duration"
+                      ]
+                    );
+                }
+              }
+            }
+          }
+        }
+        this.workerDetails.inActiveWard = inActiveWard.toString();
+        this.workerDetails.stopWard = stoppedWard.toString();
+        this.workerDetails.activeWard = activeWard.toString();
+        this.workerDetails.completedWard = completedWard.toString();
+        this.workerDetails.totalWard = totalWard.toString();
+        if (this.firstData == false) {
+          let totalLineData = this.db.object("WardLines/" + zoneNo).valueChanges().subscribe((totalLines) => {
+            let wardNo = zoneNo;
             let zoneDetails = this.zoneList.find(
-              (item) => item.zoneNo == zoneNo
+              (item) => item.zoneNo == wardNo
             );
             if (zoneDetails != undefined) {
-              zoneDetails.zoneNo = zoneNo;
-              zoneDetails.zoneName = zoneName;
-              zoneDetails.isMic = isMic;
-
-              if (status == "active") {
-                activeWard++;
-                zoneDetails.status = "active";
-                zoneDetails.displayOrder = 2;
-                zoneDetails.bgColor = "white";
-                zoneDetails.iconName = "fas fa-caret-right active-ward";
-                zoneDetails.borderClass = "progress-bar  progress-success";
-                zoneDetails.progressClass = "progress progress-float";
-              } else if (status == "stopped") {
-                stoppedWard++;
-                zoneDetails.status = "stopped";
-                zoneDetails.displayOrder = 1;
-                zoneDetails.bgColor = "white";
-                zoneDetails.iconName = "fas fa-caret-right stop-indication";
-                zoneDetails.borderClass = "progress-bar  progress-success";
-                zoneDetails.progressClass = "progress progress-float";
-              } else if (status == "completed") {
-                completedWard++;
-                zoneDetails.status = "completed";
-                zoneDetails.displayOrder = 3;
-                zoneDetails.bgColor = "#95e495";
-                zoneDetails.iconName = "fas fa-caret-right active-ward";
-                zoneDetails.borderClass = "completed-ward";
-                zoneDetails.progressClass = "progress progress-float-completed";
-              } else if (status == "workNotStarted") {
-                inActiveWard++;
-                zoneDetails.status = "notStarted";
-                zoneDetails.displayOrder = 4;
-                zoneDetails.bgColor = "rgb(221 225 221)";
-                zoneDetails.iconName = "fas fa-caret-right inactive-ward";
-                zoneDetails.borderClass = "progress-bar  progress-success";
-                zoneDetails.progressClass = "progress progress-float";
-              }
-              if (this.selectedZone == zoneNo) {
-                if (zoneDetails.status != "stopped") {
-                  this.workerDetails.currentHaltTime = "0:00";
-                } else {
-                  if (this.todayHaltList.length > 0) {
-                    this.workerDetails.currentHaltTime =
-                      this.commonService.getHrs(
-                        this.todayHaltList[this.todayHaltList.length - 1][
-                          "duration"
-                        ]
-                      );
-                  }
-                }
-              }
+              zoneDetails.totalLines = totalLines;
+              this.getWardDetail(wardNo);
             }
-          }
-          this.workerDetails.inActiveWard = inActiveWard.toString();
-          this.workerDetails.stopWard = stoppedWard.toString();
-          this.workerDetails.activeWard = activeWard.toString();
-          this.workerDetails.completedWard = completedWard.toString();
-          this.workerDetails.totalWard = totalWard.toString();
-          if (this.firstData == false) {
-            let totalLineData = this.db
-              .object("WardLines/" + zoneNo)
-              .valueChanges()
-              .subscribe((totalLines) => {
-                let wardNo = zoneNo;
-                let zoneDetails = this.zoneList.find(
-                  (item) => item.zoneNo == wardNo
-                );
-                if (zoneDetails != undefined) {
-                  zoneDetails.totalLines = totalLines;
-                  this.getWardDetail(wardNo);
-                }
-                totalLineData.unsubscribe();
-              });
-          }
+            totalLineData.unsubscribe();
+          });
         }
+      }
 
-        this.zoneList = this.commonService.transform(
-          this.zoneList,
-          "shortIndex"
-        );
-        this.zoneList = this.commonService.transform(
-          this.zoneList,
-          "displayOrder"
-        );
-        if (this.firstData == false) {
-          this.selectedZone = this.zoneList[0]["zoneNo"];
-          this.workerDetails.wardNo = this.zoneList[0]["zoneNo"];
-          if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
-            this.workerDetails.wardName =
-              "Market " +
-              this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
-          } else {
-            this.workerDetails.wardName = "WARD " + this.selectedZone;
-          }
-          //this.getAssignedWardList();
-          this.initGrpahProperties();
-          this.initTimeDistance();
-          this.drawWorkProgress();
-          this.getWardProgress();
-          this.getWardLineStatus();
-          this.getVehicleStatus();
-          this.firstData = true;
+      this.zoneList = this.commonService.transform(
+        this.zoneList,
+        "shortIndex"
+      );
+      this.zoneList = this.commonService.transform(
+        this.zoneList,
+        "displayOrder"
+      );
+      if (this.firstData == false) {
+        this.selectedZone = this.zoneList[0]["zoneNo"];
+        this.workerDetails.wardNo = this.zoneList[0]["zoneNo"];
+        if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
+          this.workerDetails.wardName =
+            "Market " +
+            this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
+        } else {
+          this.workerDetails.wardName = "WARD " + this.selectedZone;
         }
-      });
+        //this.getAssignedWardList();
+        this.initGrpahProperties();
+        this.initTimeDistance();
+        this.drawWorkProgress();
+        this.getWardProgress();
+        this.getWardLineStatus();
+        this.getVehicleStatus();
+        this.firstData = true;
+      }
+    });
   }
 
   getWardDetail(zoneNo: any) {
-    let dbPath =
-      "WasteCollectionInfo/" +
-      zoneNo +
-      "/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.toDayDate +
-      "/Summary";
-    let summaryDataUpate = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((summaryData) => {
-        if (summaryData != null) {
-          let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
-          if (zoneDetails != undefined) {
-            console.log(zoneDetails);
-            if (summaryData["workPercentage"] != null) {
-              zoneDetails.workPer = summaryData["workPercentage"] + "%";
-              zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
-              if (zoneDetails.status == "completed")
-                zoneDetails.borderClass = "completed-ward";
-              else zoneDetails.borderClass = "progress-bar  progress-success";
-            }
-            if (summaryData["dutyInTime"] != null) {
-              zoneDetails.dutyOnTime = summaryData["dutyInTime"];
-            } else {
-              zoneDetails.dutyOnTime = "---";
-            }
-            if (summaryData["dutyOutTime"] != null) {
-              zoneDetails.dutyOffTime = summaryData["dutyOutTime"];
-            } else {
-              zoneDetails.dutyOffTime = "---";
-            }
+    let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary";
+    let summaryDataUpate = this.db.object(dbPath).valueChanges().subscribe((summaryData) => {
+      if (summaryData != null) {
+        let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+        if (zoneDetails != undefined) {
+          console.log(zoneDetails);
+          if (summaryData["workPercentage"] != null) {
+            zoneDetails.workPer = summaryData["workPercentage"] + "%";
+            zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
+            if (zoneDetails.status == "completed")
+              zoneDetails.borderClass = "completed-ward";
+            else zoneDetails.borderClass = "progress-bar  progress-success";
+          }
+          if (summaryData["dutyInTime"] != null) {
+            zoneDetails.dutyOnTime = summaryData["dutyInTime"];
+          } else {
+            zoneDetails.dutyOnTime = "---";
+          }
+          if (summaryData["dutyOutTime"] != null) {
+            zoneDetails.dutyOffTime = summaryData["dutyOutTime"];
+          } else {
+            zoneDetails.dutyOffTime = "---";
+          }
+          if (summaryData["wardReachedOn"] != null) {
+            zoneDetails.wardReachTime = this.commonService.tConvert(
+              summaryData["wardReachedOn"]
+            );
+          }
+          if (summaryData["wardCoveredDistance"] != null) {
+            zoneDetails.wardKM = (
+              parseFloat(summaryData["wardCoveredDistance"]) / 1000
+            ).toFixed(2);
+          }
+          if (summaryData["vehicleCurrentLocation"] != null) {
+            zoneDetails.vehicleCurrentLocation =
+              summaryData["vehicleCurrentLocation"];
+          }
+          if (summaryData["trip"] != null) {
+            zoneDetails.tripCount = summaryData["trip"];
+          }
+          if (summaryData["completedLines"] != null) {
+            zoneDetails.completedLines = summaryData["completedLines"];
+          }
+          if (summaryData["skippedLines"] != null) {
+            zoneDetails.skippedLines = summaryData["skippedLines"];
+          }
+          if (zoneDetails.driverId == "0") {
+            dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/driver";
+            let driverDataInstance = this.db.object(dbPath).valueChanges().subscribe((driverData) => {
+              driverDataInstance.unsubscribe();
+              if (driverData != null) {
+                zoneDetails.driverId = driverData;
+              }
+            });
+
+            dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/driverName";
+            let driverNameInstance = this.db.object(dbPath).valueChanges().subscribe((driverData) => {
+              driverNameInstance.unsubscribe();
+              if (driverData != null) {
+                zoneDetails.driverName = driverData;
+              }
+            });
+          }
+          if (zoneDetails.helperId == "0") {
+            dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/helper";
+            let helperDataInstance = this.db.object(dbPath).valueChanges().subscribe((helperData) => {
+              helperDataInstance.unsubscribe();
+              if (helperData != null) {
+                zoneDetails.helperId = helperData;
+              }
+            });
+            dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/helperName";
+            let helperNameInstance = this.db.object(dbPath).valueChanges().subscribe((helperData) => {
+              helperNameInstance.unsubscribe();
+              if (helperData != null) {
+                zoneDetails.helperName = helperData;
+              }
+            });
+          }
+          if (zoneDetails.vehicleNo == "") {
+            dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/vehicle";
+            let vehicleDataInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleData) => {
+              vehicleDataInstance.unsubscribe();
+              if (vehicleData != null) {
+                zoneDetails.vehicleNo = vehicleData;
+              }
+            });
+          }
+          if (zoneNo == this.selectedZone) {
             if (summaryData["wardReachedOn"] != null) {
-              zoneDetails.wardReachTime = this.commonService.tConvert(
-                summaryData["wardReachedOn"]
-              );
+              this.workerDetails.wardReachTime = summaryData["wardReachedOn"];
             }
             if (summaryData["wardCoveredDistance"] != null) {
-              zoneDetails.wardKM = (
+              this.workerDetails.wardKM = (
                 parseFloat(summaryData["wardCoveredDistance"]) / 1000
               ).toFixed(2);
             }
-            if (summaryData["vehicleCurrentLocation"] != null) {
-              zoneDetails.vehicleCurrentLocation =
-                summaryData["vehicleCurrentLocation"];
-            }
             if (summaryData["trip"] != null) {
-              zoneDetails.tripCount = summaryData["trip"];
+              this.workerDetails.tripCount = summaryData["trip"];
+            }
+            else {
+              this.workerDetails.tripCount = "0";
             }
             if (summaryData["completedLines"] != null) {
-              zoneDetails.completedLines = summaryData["completedLines"];
+              this.workerDetails.completedLines =
+                summaryData["completedLines"];
             }
             if (summaryData["skippedLines"] != null) {
-              zoneDetails.skippedLines = summaryData["skippedLines"];
+              this.workerDetails.skippedLines = summaryData["skippedLines"];
             }
-            if (zoneDetails.driverId == "0") {
-              dbPath =
-                "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/WorkerDetails/driver";
-              let driverDataInstance = this.db
-                .object(dbPath)
-                .valueChanges()
-                .subscribe((driverData) => {
-                  driverDataInstance.unsubscribe();
-                  if (driverData != null) {
-                    zoneDetails.driverId = driverData;
-                  }
-                });
-
-              dbPath =
-                "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/WorkerDetails/driverName";
-              let driverNameInstance = this.db
-                .object(dbPath)
-                .valueChanges()
-                .subscribe((driverData) => {
-                  driverNameInstance.unsubscribe();
-                  if (driverData != null) {
-                    zoneDetails.driverName = driverData;
-                  }
-                });
+            if (summaryData["vehicleCurrentLocation"] == "Ward In") {
+              $("#vehicleStatusH3").css("color", "green");
+            } else {
+              $("#vehicleStatusH3").css("color", "red");
             }
-            if (zoneDetails.helperId == "0") {
-              dbPath =
-                "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/WorkerDetails/helper";
-              let helperDataInstance = this.db
-                .object(dbPath)
-                .valueChanges()
-                .subscribe((helperData) => {
-                  helperDataInstance.unsubscribe();
-                  if (helperData != null) {
-                    zoneDetails.helperId = helperData;
-                  }
-                });
-              dbPath =
-                "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/WorkerDetails/helperName";
-              let helperNameInstance = this.db
-                .object(dbPath)
-                .valueChanges()
-                .subscribe((helperData) => {
-                  helperNameInstance.unsubscribe();
-                  if (helperData != null) {
-                    zoneDetails.helperName = helperData;
-                  }
-                });
-            }
-            if (zoneDetails.vehicleNo == "") {
-              dbPath =
-                "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/WorkerDetails/vehicle";
-              let vehicleDataInstance = this.db
-                .object(dbPath)
-                .valueChanges()
-                .subscribe((vehicleData) => {
-                  vehicleDataInstance.unsubscribe();
-                  if (vehicleData != null) {
-                    zoneDetails.vehicleNo = vehicleData;
-                  }
-                });
-            }
-            if (zoneNo == this.selectedZone) {
-              if (summaryData["wardReachedOn"] != null) {
-                this.workerDetails.wardReachTime = summaryData["wardReachedOn"];
-              }
-              if (summaryData["wardCoveredDistance"] != null) {
-                this.workerDetails.wardKM = (
-                  parseFloat(summaryData["wardCoveredDistance"]) / 1000
-                ).toFixed(2);
-              }
-              if (summaryData["trip"] != null) {
-                this.workerDetails.tripCount = summaryData["trip"];
-              }
-              else
-              {
-                this.workerDetails.tripCount = "0";
-              }
-              if (summaryData["completedLines"] != null) {
-                this.workerDetails.completedLines =
-                  summaryData["completedLines"];
-              }
-              if (summaryData["skippedLines"] != null) {
-                this.workerDetails.skippedLines = summaryData["skippedLines"];
-              }
-              if (summaryData["vehicleCurrentLocation"] == "Ward In") {
-                $("#vehicleStatusH3").css("color", "green");
-              } else {
-                $("#vehicleStatusH3").css("color", "red");
-              }
-              this.workerDetails.totalLines = zoneDetails.totalLines;
-              setTimeout(() => {
-                this.getEmployeeData();
-              }, 1500);
-              this.getDistanceCovered(zoneNo);
-              this.showHaltTime();
-              this.getWardInTime();
-              this.getRemarks(zoneNo);
-              this.getTotalTime(zoneNo);
-              this.getWardProgress();
-              this.getCurrentLine();
-              this.getVehicleStatus();
-            }
+            this.workerDetails.totalLines = zoneDetails.totalLines;
+            setTimeout(() => {
+              this.getEmployeeData();
+            }, 1500);
+            this.getDistanceCovered(zoneNo);
+            this.showHaltTime();
+            this.getWardInTime();
+            this.getRemarks(zoneNo);
+            this.getTotalTime(zoneNo);
+            this.getWardProgress();
+            this.getCurrentLine();
+            this.getVehicleStatus();
           }
         }
-      });
+      }
+    });
   }
 
   getCurrentLine() {
-    let lastLineDone = this.db
-      .object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((lastLine) => {
-        lastLineDone.unsubscribe();
-        if (lastLine != null) {
-          this.workerDetails.currentLine = (Number(lastLine) + 1).toString();
-        }
-      });
+    let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
+      lastLineDone.unsubscribe();
+      if (lastLine != null) {
+        this.workerDetails.currentLine = (Number(lastLine) + 1).toString();
+      }
+    });
   }
 
   getTotalTime(zoneNo: any) {
@@ -945,35 +813,21 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getDistanceCovered(zoneNo: any) {
-    let dbPath =
-      "LocationHistory/" +
-      zoneNo +
-      "/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.toDayDate +
-      "/TotalCoveredDistance";
-    let distanceCovered = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((distanceData) => {
-        if (distanceData != null) {
-          this.workerDetails.totalKM = (
-            parseFloat(distanceData.toString()) / 1000
-          ).toFixed(2);
-        }
-        distanceCovered.unsubscribe();
-      });
+    let dbPath = "LocationHistory/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/TotalCoveredDistance";
+    let distanceCovered = this.db.object(dbPath).valueChanges().subscribe((distanceData) => {
+      if (distanceData != null) {
+        this.workerDetails.totalKM = (
+          parseFloat(distanceData.toString()) / 1000
+        ).toFixed(2);
+      }
+      distanceCovered.unsubscribe();
+    });
   }
 
   // Employee Detail
 
   getEmployeeData() {
-    let zoneDetails = this.zoneList.find(
-      (item) => item.zoneNo == this.selectedZone
-    );
+    let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
     if (zoneDetails != undefined) {
       let driverList = zoneDetails.driverId.toString().split(",");
       let helperList = zoneDetails.helperId.toString().split(",");
@@ -984,35 +838,18 @@ export class RealtimeMonitoringComponent implements OnInit {
           (item) => item.userName == driverList[driverList.length - 1]
         );
         if (driverDetails != undefined) {
-          this.workerDetails.driverName =
-            driverDetails.name != null
-              ? driverDetails.name.toUpperCase()
-              : "Not Assigned";
-          this.workerDetails.driverMobile =
-            driverDetails.mobile != null ? driverDetails.mobile : "---";
-          this.workerDetails.driverImageUrl =
-            driverDetails.profilePhotoURL != null &&
-            driverDetails.profilePhotoURL != ""
-              ? driverDetails.profilePhotoURL
-              : "../../assets/img/internal-user.png";
+          this.workerDetails.driverName = driverDetails.name != null ? driverDetails.name.toUpperCase() : "Not Assigned";
+          this.workerDetails.driverMobile = driverDetails.mobile != null ? driverDetails.mobile : "---";
+          this.workerDetails.driverImageUrl = driverDetails.profilePhotoURL != null && driverDetails.profilePhotoURL != "" ? driverDetails.profilePhotoURL
+            : "../../assets/img/internal-user.png";
         } else {
           this.getEmployee(driverList[driverList.length - 1], "driver");
         }
-        let helperDetails = this.employeeDetail.find(
-          (item) => item.userName == helperList[helperList.length - 1]
-        );
+        let helperDetails = this.employeeDetail.find((item) => item.userName == helperList[helperList.length - 1]);
         if (helperDetails != undefined) {
-          this.workerDetails.helperName =
-            helperDetails.name != null
-              ? helperDetails.name.toUpperCase()
-              : "Not Assigned";
-          this.workerDetails.helperMobile =
-            helperDetails.mobile != null ? helperDetails.mobile : "---";
-          this.workerDetails.helperImageUrl =
-            helperDetails.profilePhotoURL != null &&
-            helperDetails.profilePhotoURL != ""
-              ? helperDetails.profilePhotoURL
-              : "../../assets/img/internal-user.png";
+          this.workerDetails.helperName = helperDetails.name != null ? helperDetails.name.toUpperCase() : "Not Assigned";
+          this.workerDetails.helperMobile = helperDetails.mobile != null ? helperDetails.mobile : "---";
+          this.workerDetails.helperImageUrl = helperDetails.profilePhotoURL != null && helperDetails.profilePhotoURL != "" ? helperDetails.profilePhotoURL : "../../assets/img/internal-user.png";
         } else {
           this.getEmployee(helperList[helperList.length - 1], "helper");
         }
@@ -1028,29 +865,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   getEmployee(empId: any, empType: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       if (empType == "driver") {
-        this.workerDetails.driverName =
-          employee["name"] != null
-            ? employee["name"].toUpperCase()
-            : "Not Assigned";
-        this.workerDetails.driverMobile =
-          employee["mobile"] != null ? employee["mobile"] : "---";
-        this.workerDetails.driverImageUrl =
-          employee["profilePhotoURL"] != null &&
-          employee["profilePhotoURL"] != ""
-            ? employee["profilePhotoURL"]
-            : "../../assets/img/internal-user.png";
+        this.workerDetails.driverName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+        this.workerDetails.driverMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+        this.workerDetails.driverImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? employee["profilePhotoURL"] : "../../assets/img/internal-user.png";
       } else {
-        this.workerDetails.helperName =
-          employee["name"] != null
-            ? employee["name"].toUpperCase()
-            : "Not Assigned";
-        this.workerDetails.helperMobile =
-          employee["mobile"] != null ? employee["mobile"] : "---";
-        this.workerDetails.helperImageUrl =
-          employee["profilePhotoURL"] != null &&
-          employee["profilePhotoURL"] != ""
-            ? employee["profilePhotoURL"]
-            : "../../assets/img/internal-user.png";
+        this.workerDetails.helperName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+        this.workerDetails.helperMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+        this.workerDetails.helperImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? employee["profilePhotoURL"] : "../../assets/img/internal-user.png";
       }
     });
   }
@@ -1071,11 +892,10 @@ export class RealtimeMonitoringComponent implements OnInit {
       //this.workerDetails.endTime = zoneDetails.dutyOffTime;
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
       this.workerDetails.wardKM = zoneDetails.wardKM;
-      if(zoneDetails.tripCount!=null){
-      this.workerDetails.tripCount = zoneDetails.tripCount;
+      if (zoneDetails.tripCount != null) {
+        this.workerDetails.tripCount = zoneDetails.tripCount;
       }
-      else
-      {
+      else {
         this.workerDetails.tripCount = "0";
       }
     }
@@ -2343,7 +2163,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
       let intervalEnd = new Date(
         new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() +
-          intervalInMinutes * 60000
+        intervalInMinutes * 60000
       );
 
       for (let index = 0; index < this.graphData.length; index++) {

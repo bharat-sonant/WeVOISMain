@@ -76,6 +76,7 @@ import { WardScancardReportComponent } from '../../reports/ward-scancard-report/
 import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
+import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -167,6 +168,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'sikar/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'sikar/log-book', component: LogBookComponent },
+    { path: 'sikar/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -249,6 +251,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'sikar/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'sikar/:id/log-book', component: LogBookComponent },
+    { path: 'sikar/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -331,6 +334,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'reengus/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'reengus/log-book', component: LogBookComponent },
+    { path: 'reengus/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -413,6 +417,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'reengus/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'reengus/:id/log-book', component: LogBookComponent },
+    { path: 'reengus/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -495,6 +500,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'shahpura/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'shahpura/log-book', component: LogBookComponent },
+    { path: 'shahpura/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -577,6 +583,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'shahpura/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'shahpura/:id/log-book', component: LogBookComponent },
+    { path: 'shahpura/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -659,6 +666,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'test/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'test/log-book', component: LogBookComponent },
+    { path: 'test/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -741,6 +749,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'test/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'test/:id/log-book', component: LogBookComponent },
+    { path: 'test/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -823,6 +832,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'demo/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'demo/log-book', component: LogBookComponent },
+    { path: 'demo/ward-scancard-summary', component: WardScancardSummaryComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -905,4 +915,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/line-marker-mapping', component: LineMarkerMappingComponent },
     { path: 'demo/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'demo/:id/log-book', component: LogBookComponent },
+    { path: 'demo/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
 ]; 
