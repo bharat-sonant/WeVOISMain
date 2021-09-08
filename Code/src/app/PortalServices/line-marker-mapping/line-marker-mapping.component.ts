@@ -10,6 +10,7 @@ import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-line-marker-mapping',
@@ -20,7 +21,7 @@ export class LineMarkerMappingComponent {
 
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   public selectedZone: any;
   db: any;
@@ -77,7 +78,6 @@ export class LineMarkerMappingComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-
   getZones() {
     this.zoneList = [];
     this.zoneList = this.mapService.getlatestZones();
@@ -100,7 +100,6 @@ export class LineMarkerMappingComponent {
     this.getAllLinesFromJson();
   }
 
-
   clearAllOnMap() {
     this.selectedZone = this.activeZone;
     if (this.houseMarker.length > 0) {
@@ -121,7 +120,6 @@ export class LineMarkerMappingComponent {
     }
     this.polylines = [];
   }
-
 
   getAllLinesFromJson() {
     this.lines = [];
@@ -318,7 +316,6 @@ export class LineMarkerMappingComponent {
 
 
   getCurrentLineNo(event: any) {
-
     if (event.key == "Enter") {
       if ($('#txtLineNo').val() != "") {
         if (isNaN(Number($('#txtLineNo').val()))) {
@@ -427,17 +424,20 @@ export class LineMarkerMappingComponent {
           lastKey = lastKey + 1;
           let markerNo = this.selectedCardDetails[i]["markerNo"];
           let data = this.selectedCardDetails[i]["data"];
+          data["image"] = lastKey + ".jpg";
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/" + lastKey;
           this.db.object(dbPath).update(data);
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
           this.db.object(dbPath).remove();
+          let oldImageName = markerNo + ".jpg";
+          let newImageName = lastKey + ".jpg";
+          this.moveImages(oldImageName, newImageName, newLineNo);
         }
         let count = this.selectedCardDetails.length;
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
         let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
           marksCount => {
             marksCountInstance.unsubscribe();
-
             if (marksCount != null) {
               marksCount = Number(marksCount) - count;
             }
@@ -460,6 +460,7 @@ export class LineMarkerMappingComponent {
             this.db.object(dbPath).update({ marksCount: newMarksCount });
           }
         );
+
 
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus/status";
         let perLineInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -502,6 +503,40 @@ export class LineMarkerMappingComponent {
         );
       }
     );
+  }
+
+  moveImages(imageName: any, newImageName: any, newLineNo: any) {
+    const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + this.lineNo + "/" + imageName;
+    const ref = this.storage.storage.app
+      .storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+    ref.getDownloadURL()
+      .then((url) => {
+        // `url` is the download URL for 'images/stars.jpg'
+
+        // This can be downloaded directly:
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+          var blob = xhr.response;
+          console.log(blob);
+          const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + newLineNo + "/" + newImageName;
+          const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+          ref1.put(blob).then((promise) => {
+            ref.delete();
+
+          });
+        };
+        xhr.open('GET', url);
+        xhr.send();
+
+        // Or inserted into an <img> element
+        // var img = document.getElementById('myimg');
+        // img.setAttribute('src', url);
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+
   }
 }
 
