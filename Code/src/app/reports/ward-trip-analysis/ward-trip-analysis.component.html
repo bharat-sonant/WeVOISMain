@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-md-3" style="margin-top: -40px;padding-right: 5px;">
                                 <div class="top">
-                                    <div class="row" style="margin-top:-10px;">
+                                    <div class="row" style="margin-top:-10px;margin-bottom: -10px;">
                                         <div class="col-md-12" style="width: 100%; display: flex;">
                                             <button class="btn btn-primary " (click)="setDate('','previous');">
                                                 << </button>
@@ -44,16 +44,6 @@
                                                         (change)="setDate($event.target.value,'current')">
                                                     <button class="btn btn-primary" (click)="setDate('','next');"> >>
                                                     </button>
-                                        </div>
-                                        <div class="col-md-12" style="width: 100%; display: flex;">
-                                            <h6>Trips <span style="font-size: 14px; color: green;">{{tripData.tripCount}} </span> </h6>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <select class="caret-select" id="ddlTrip"
-                                                (change)="getTripData($event.target.value)">
-                                                <option value="{{trip.tripId}}" *ngFor="let trip of tripList">
-                                                    {{trip.tripName}}</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -152,7 +142,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-9 mob-res"
-                                        style="margin-top: -127px; padding-left: 12px; padding-right: 25px;">
+                                        style="margin-top: -67px; padding-left: 12px; padding-right: 25px;">
                                         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
                                             data-interval="false">
                                             <div class="carousel-inner">
@@ -162,48 +152,42 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="row">
-
-
-                            <div class="col-md-12 mt-10 pr-0">
-                                <div class="dustbin-card">
-                                    <div class="row">
-
-                                    </div>
-                                </div>
-
-
-
-                                <div id="divAccess" class="col-md-12 mt-10 pl-0 pr-0">
-                                    <div class="progress-card">
                                         <div class="row">
-                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkFilledStatus"
-                                                    value="0" (click)="getSelected('chkFilledStatus');">
-                                                <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
+                                            <div class="col-md-2 pr-0">
+                                                <div class="trip-data mt-10" style="background:#0ba118;">
+                                                    <div class="data-3">
+                                                        <p class="remark-analysis" style="color:#fff;">
+                                                            {{tripData.tripCount}}
+                                                        <h5 style="color:#fff;">Total Trip</h5>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkRemark"
-                                                    value="0" (click)="getSelected('chkRemark');">
-                                                <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
+                                            <div class="col-md-10">
+                                                <div class="bg-carsouel">
+                                                    <div class="col text-center trip-summary active-trip">
+                                                        TRIP 1
+                                                    </div>
+                                                    <div class="col text-center trip-summary">
+                                                        TRIP 2
+                                                    </div>
+                                                    <div class="col text-center trip-summary">
+                                                        TRIP 3
+                                                    </div>
+                                                    <div class="col text-center trip-summary">
+                                                        TRIP 4
+                                                    </div>
+                                                   
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="dustbin-progress" style="margin-top: 5px;height: 38px;">
-                                            <p class="align-self-center" style="color: green;"><b
-                                                    [innerHTML]="tripData.analysisDetail"></b> </p>
-                                            <button type="button" class="btn btn-success"
-                                                (click)="saveTripAnalysis();">Save <i class="fas fa-save"></i></button>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
+
                         </div>
-                    </div>
+
+                </div>
 
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
