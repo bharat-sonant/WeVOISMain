@@ -8,7 +8,14 @@
     text-transform: uppercase;
     padding-top: 15px;
   }
-  
+  .card {
+    border: 0;
+    border-radius: 0.1875rem;
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    margin-bottom: 0px!important;
+  }
   .caret-select{
     margin-top: -5px!important;
      margin-right:10px!important;
