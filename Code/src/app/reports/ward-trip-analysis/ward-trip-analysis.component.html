@@ -36,30 +36,18 @@
                             </div>
                             <div class="col-md-3" style="margin-top: -40px;padding-right: 5px;">
                                 <div class="top">
-                                    <div class="row" style="margin-top:-10px;">
+                                    <div class="row" style="margin-top:-10px;margin-bottom: -10px;">
                                         <div class="col-md-12" style="width: 100%; display: flex;">
                                             <button class="btn btn-primary " (click)="setDate('','previous');">
-                                                << </button>
-                                                    <input id="txtDate" class="date-input" type="date"
-                                                        (change)="setDate($event.target.value,'current')">
+                                                << </button> <input id="txtDate" class="date-input" type="date"
+                                                    (change)="setDate($event.target.value,'current')">
                                                     <button class="btn btn-primary" (click)="setDate('','next');"> >>
                                                     </button>
-                                        </div>
-                                        <div class="col-md-12" style="width: 100%; display: flex;">
-                                            <h6>Trips <span style="font-size: 14px; color: green;">{{tripData.tripCount}} </span> </h6>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <select class="caret-select" id="ddlTrip"
-                                                (change)="getTripData($event.target.value)">
-                                                <option value="{{trip.tripId}}" *ngFor="let trip of tripList">
-                                                    {{trip.tripName}}</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 mob-mid"
-                                style="padding-right: 40px; padding-left: 15px; padding-bottom: 20px;">
+                            <div class="col-md-12 mob-mid" style="padding-right: 40px; padding-left: 15px; padding-bottom: 20px;">
                                 <div class="row">
                                     <div class="col-md-3 mob-res pr-0" style="margin-top: 10px;">
                                         <div class="row">
@@ -78,8 +66,7 @@
                                                     <div class="float" style="border-bottom:0px!important">
                                                         <div class="fleft">
                                                             <div class="img-left" style="width: 30px; float:left">
-                                                                <i class="fas fa-mobile-alt"
-                                                                    style="font-size: 18px; color: #4aad43;"></i>
+                                                                <i class="fas fa-mobile-alt" style="font-size: 18px; color: #4aad43;"></i>
                                                             </div>
                                                             <h6 style=" float: left; width: calc(100% - 30px);">
                                                                 {{tripData.driverMobile}}
@@ -95,7 +82,7 @@
                                                     <div class="data-1" style="border-right: 1px solid lightgray;">
                                                         <p class="remark-analysis">
                                                             {{tripData.wasteCollection}} Kg
-                                                        <h5>Waste Collection</h5>
+                                                            <h5>Waste Collection</h5>
                                                     </div>
                                                     <div class="data-2">
                                                         <p class="pen-analysis">
@@ -113,7 +100,7 @@
                                                     <div class="data-3">
                                                         <p class="remark-analysis">
                                                             {{tripData.startTime}}
-                                                        <h5>Start Time</h5>
+                                                            <h5>Time</h5>
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,87 +109,80 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="review-page">
-                                                    <div class="col-12 radio-text"
-                                                        style="border-bottom: 1px dotted lightgray;"> <input
-                                                            type="checkbox" id="chkFilledStatus" value="0"
-                                                            (click)="getSelected('chkFilledStatus');"
+                                                    <div class="col-12 radio-text" style="border-bottom: 1px dotted lightgray;">
+                                                        <input type="checkbox" id="chkFilledStatus" value="0" (click)="getSelected('chkFilledStatus');"
                                                             style="margin-right: 5px;">
                                                         <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
                                                     </div>
-                                                    <div class="col-12 radio-text"> <input type="checkbox"
-                                                            id="chkRemark" value="0" (click)="getSelected('chkRemark');"
-                                                            style="margin-right: 5px;">
+                                                    <div class="col-12 radio-text"> <input type="checkbox" id="chkRemark"
+                                                            value="0" (click)="getSelected('chkRemark');" style="margin-right: 5px;">
                                                         <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
                                                     </div>
-                                                    <div class="dustbin-progress"
-                                                        style="padding: 10px 0px; height: 38px;">
-                                                        <button type="button" class="btn w-100 btn-success"
-                                                            (click)="saveTripAnalysis();" style="height: 40px;">Save <i
-                                                                class="fas fa-save"></i></button>
+                                                    <div class="dustbin-progress" style="padding: 10px 0px; height: 38px;">
+                                                        <button type="button" class="btn w-100 btn-success" (click)="saveTripAnalysis();"
+                                                            style="height: 40px;">Save <i class="fas fa-save"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mt-10">
                                                 <div class="remark-page">
-                                                    <p class="align-self-center"
-                                                        style="color: green;margin-bottom: 0px;"><b
+                                                    <p class="align-self-center" style="color: green;margin-bottom: 0px;"><b
                                                             [innerHTML]="tripData.analysisDetail"></b> </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-9 mob-res"
-                                        style="margin-top: -127px; padding-left: 12px; padding-right: 25px;">
-                                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
-                                            data-interval="false">
-                                            <div class="carousel-inner">
-                                                <div id="slide1" class="carousel-item active">
-                                                    <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
-                                                        src="{{tripData.imageUrl}}">
+                                    <div class="col-md-9 mob-res" style="margin-top: -57px; padding-left: 12px; padding-right: 25px;">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                                    data-interval="false">
+                                                    <div class="carousel-inner">
+                                                        <div id="slide1" class="carousel-item active">
+                                                            <img id="slideImg1" class="rotate0 d-block img-fluid" src="{{tripData.imageUrl}}">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="row">
-
-
-                            <div class="col-md-12 mt-10 pr-0">
-                                <div class="dustbin-card">
-                                    <div class="row">
-
-                                    </div>
-                                </div>
-
-
-
-                                <div id="divAccess" class="col-md-12 mt-10 pl-0 pr-0">
-                                    <div class="progress-card">
                                         <div class="row">
-                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkFilledStatus"
-                                                    value="0" (click)="getSelected('chkFilledStatus');">
-                                                <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
+                                            <div class="col-md-2 pr-0">
+                                                <div class="trip-data mt-10" style="background:#0ba118;">
+                                                    <div class="data-3">
+                                                        <p class="remark-analysis" style="color:#fff;">
+                                                            {{tripData.tripCount}}
+                                                            <h5 style="color:#fff;">Total Trip</h5>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-6 radio-text"> <input type="checkbox" id="chkRemark"
-                                                    value="0" (click)="getSelected('chkRemark');">
-                                                <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
+                                            <div class="col-md-10" style="padding-left: 25px; padding-right: 30px;">
+                                                <div class="row mt-10" style="background-color: #fff">
+                                                        <div id="tripDiv1" class="col-md-3 text-center trip-summary active-trip"
+                                                            (click)="getTripData(1)">
+                                                            TRIP 1
+                                                        </div>
+                                                        <div id="tripDiv2" class="col-md-3 text-center trip-summary"
+                                                            (click)="getTripData(2)">
+                                                            TRIP 2
+                                                        </div>
+                                                        <div id="tripDiv3" class="col-md-3 text-center trip-summary"
+                                                            (click)="getTripData(3)">
+                                                            TRIP 3
+                                                        </div>
+                                                        <div id="tripDiv4" class="col-md-3 text-center trip-summary"
+                                                            (click)="getTripData(4)">
+                                                            TRIP 4
+                                                        </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="dustbin-progress" style="margin-top: 5px;height: 38px;">
-                                            <p class="align-self-center" style="color: green;"><b
-                                                    [innerHTML]="tripData.analysisDetail"></b> </p>
-                                            <button type="button" class="btn btn-success"
-                                                (click)="saveTripAnalysis();">Save <i class="fas fa-save"></i></button>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+
                     </div>
 
                     <div class="col-md-3 desk-right mob-bottom">

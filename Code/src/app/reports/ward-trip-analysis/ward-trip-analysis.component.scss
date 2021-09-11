@@ -404,16 +404,20 @@
   .carousel-inner img{
     height: 73vh;
   }
-  
+  .carousel-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+  }
   .carousel-item img{
-    border-radius: 5px!important;
     display: none;
-    padding: 4px;
-    background: #ebebeb;
+    padding: 5px;
+    border-radius: 5px!important;
+  }
+  .carousel{
     border: 1px double lightgray;
-    box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    border-radius: 5px!important;
   }
   .icon-box{
     height: 95px;
@@ -753,15 +757,14 @@
   
   .all-data p{
     margin: 0px;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: bold;
     font-family: "noe display", sans-serif;
   }
   .all-data h5{
     margin: 0px;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: normal;
-    letter-spacing: 1px;
     text-transform: capitalize;
   }
   .all-data{
@@ -893,3 +896,68 @@
     height: 50vh;
   }
   }
+
+
+.bg-carsouel{
+  background: #fff;
+  border-radius: 5px;
+  border:1px solid lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+.trip-summary{
+  cursor: pointer;
+  min-height: 100px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  background: #fff;
+}
+.trip-summary:hover{
+  background: #f3f3f3;
+}
+.active-trip{
+  background: #37ff481c;
+  border-bottom: 4px solid #0ba118;
+}
+.trip-data p{
+  margin: 0px;
+  font-size: 28px;
+  font-weight: bold;
+  font-family: "noe display", sans-serif;
+}
+.trip-data h5{
+  margin: 0px;
+  font-size: 12px;
+  font-weight: normal;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+}
+.trip-data{
+  width: 100%;
+  padding: 6px 10px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid lightgray;
+  box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+  -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+  -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+  min-height: 103px;
+  border-radius: 5px;
+  overflow: hidden;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
