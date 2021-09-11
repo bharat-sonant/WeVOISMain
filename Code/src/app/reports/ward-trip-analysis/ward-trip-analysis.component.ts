@@ -259,11 +259,11 @@ export class WardTripAnalysisComponent implements OnInit {
       let className=element.className;
       $('#tripDiv'+i).removeClass(className);
       if(i==index){
-        $('#tripDiv'+i).addClass("col text-center trip-summary active-trip");
+        $('#tripDiv'+i).addClass("col-md-3 text-center trip-summary active-trip");
       }
       else
       {
-        $('#tripDiv'+i).addClass("col text-center trip-summary");
+        $('#tripDiv'+i).addClass("col-md-3 text-center trip-summary");
       }
     }
 

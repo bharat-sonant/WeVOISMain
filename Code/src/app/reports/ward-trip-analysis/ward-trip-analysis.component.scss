@@ -404,16 +404,20 @@
   .carousel-inner img{
     height: 73vh;
   }
-  
+  .carousel-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+  }
   .carousel-item img{
-    border-radius: 5px!important;
     display: none;
-    padding: 4px;
-    background: #ebebeb;
+    padding: 5px;
+    border-radius: 5px!important;
+  }
+  .carousel{
     border: 1px double lightgray;
-    box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    -webkit-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
-    -moz-box-shadow: -1px 2px 16px -11px rgba(0,0,0,0.75);
+    border-radius: 5px!important;
   }
   .icon-box{
     height: 95px;
@@ -912,13 +916,13 @@
   align-items: center;
   font-weight: bold;
   font-size: 16px;
-  width: 25%;
+  background: #fff;
 }
 .trip-summary:hover{
   background: #f3f3f3;
 }
 .active-trip{
-  background: #f3f3f3;
+  background: #37ff481c;
   border-bottom: 4px solid #0ba118;
 }
 .trip-data p{
