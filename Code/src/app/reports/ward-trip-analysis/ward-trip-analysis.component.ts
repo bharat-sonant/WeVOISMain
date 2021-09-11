@@ -216,13 +216,20 @@ export class WardTripAnalysisComponent implements OnInit {
   }
 
   getTripZoneData(zoneNo: any) {
+    for (let i = 1; i <= 5; i++) {
+      $('#tripDiv' + i).hide();
+    }
     this.selectedZone = zoneNo;
-    this.tripData.wasteCollection=0;
+    this.tripData.wasteCollection = 0;
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetails != undefined) {
       this.tripList = zoneDetails.tripList;
       this.tripData.tripCount = zoneDetails.tripCount;
+
       if (this.tripList.length > 0) {
+        for (let i = 1; i <= zoneDetails.tripCount; i++) {
+          $('#tripDiv' + i).show();
+        }
         this.getTripData(this.tripList[0]["tripId"]);
       } else {
         this.commonService.setAlertMessage("error", "No trips are available for analysis on selected date !!!");
@@ -247,8 +254,19 @@ export class WardTripAnalysisComponent implements OnInit {
 
   getTripData(index: any) {
     this.selectedTrip = index;
+    for (let i = 1; i <= Number(this.tripData.tripCount); i++) {
+      let element=<HTMLDivElement>document.getElementById("tripDiv"+i);
+      let className=element.className;
+      $('#tripDiv'+i).removeClass(className);
+      if(i==index){
+        $('#tripDiv'+i).addClass("col text-center trip-summary active-trip");
+      }
+      else
+      {
+        $('#tripDiv'+i).addClass("col text-center trip-summary");
+      }
+    }
 
-    $("#ddlTrip").val(this.selectedTrip);
     let tripDetails = this.tripList.find((item) => item.tripId == index);
     if (tripDetails != undefined) {
       if (tripDetails.imageName != this.imageNotAvailablePath) {

@@ -1,4 +1,4 @@
-import { AngularFireObject } from 'angularfire2/database';
+import { AngularFireObject, AngularFireList } from 'angularfire2/database';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -11,6 +11,7 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
+import { ObjectUnsubscribedError } from 'rxjs';
 
 @Component({
   selector: 'app-line-marker-mapping',
@@ -48,13 +49,14 @@ export class LineMarkerMappingComponent {
     totalMarkerOnLine: 0,
   };
 
+  oldMarkerList: any[];
+  newMarkerList: any[];
+  plansRef: AngularFireList<any>;
+
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.lineNo = 1;
     this.previousLine = 1;
     this.allMarkers = [];
@@ -80,7 +82,7 @@ export class LineMarkerMappingComponent {
 
   getZones() {
     this.zoneList = [];
-    this.zoneList = this.mapService.getlatestZones();
+    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
   }
 
   changeZoneSelection(filterVal: any) {
@@ -507,8 +509,7 @@ export class LineMarkerMappingComponent {
 
   moveImages(imageName: any, newImageName: any, newLineNo: any) {
     const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + this.lineNo + "/" + imageName;
-    const ref = this.storage.storage.app
-      .storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
     ref.getDownloadURL()
       .then((url) => {
         // `url` is the download URL for 'images/stars.jpg'
@@ -516,9 +517,13 @@ export class LineMarkerMappingComponent {
         // This can be downloaded directly:
         var xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
+        // xhr.setRequestHeader("Access-Control-Allow-Origin","*");
+        // xhr.setRequestHeader('Connection', 'close');
+
+
+
         xhr.onload = (event) => {
           var blob = xhr.response;
-          console.log(blob);
           const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + newLineNo + "/" + newImageName;
           const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
           ref1.put(blob).then((promise) => {
@@ -527,13 +532,14 @@ export class LineMarkerMappingComponent {
           });
         };
         xhr.open('GET', url);
-        xhr.send();
 
+        xhr.send();
         // Or inserted into an <img> element
         // var img = document.getElementById('myimg');
         // img.setAttribute('src', url);
       })
       .catch((error) => {
+        console.log(error);
         // Handle any errors
       });
 

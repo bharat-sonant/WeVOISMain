@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12 mob-mid"
-                                style="padding-right: 40px; padding-left: 15px;">
+                                style="padding-right: 40px; padding-left: 15px; padding-bottom: 20px;">
                                 <div class="row">
                                     <div class="col-md-3 mob-res pr-0" style="margin-top: 10px;">
                                         <div class="row">
@@ -103,7 +103,7 @@
                                                     <div class="data-3">
                                                         <p class="remark-analysis">
                                                             {{tripData.startTime}}
-                                                        <h5>Start Time</h5>
+                                                        <h5>Time</h5>
                                                     </div>
                                                 </div>
                                             </div>
@@ -164,19 +164,19 @@
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="bg-carsouel">
-                                                    <div class="col text-center trip-summary active-trip">
+                                                    <div id="tripDiv1" class="col text-center trip-summary active-trip" (click)="getTripData(1)">
                                                         TRIP 1
                                                     </div>
-                                                    <div class="col text-center trip-summary">
+                                                    <div id="tripDiv2" class="col text-center trip-summary" (click)="getTripData(2)">
                                                         TRIP 2
                                                     </div>
-                                                    <div class="col text-center trip-summary">
+                                                    <div id="tripDiv3" class="col text-center trip-summary" (click)="getTripData(3)">
                                                         TRIP 3
                                                     </div>
-                                                    <div class="col text-center trip-summary">
+                                                    <div id="tripDiv4" class="col text-center trip-summary" (click)="getTripData(4)">
                                                         TRIP 4
                                                     </div>
-                                                   
+
                                                 </div>
                                             </div>
                                         </div>
@@ -187,7 +187,7 @@
 
                         </div>
 
-                </div>
+                    </div>
 
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
