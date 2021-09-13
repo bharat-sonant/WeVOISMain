@@ -130,7 +130,7 @@ export class WardSurveyAnalysisComponent {
     let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       oldCardInstance.unsubscribe();
       if (data != null) {
-        this.progressData.totalLineOldCard = Number(data);
+        this.progressData.totalOldCards = Number(data);
       }
     });
   }
@@ -759,6 +759,7 @@ export class WardSurveyAnalysisComponent {
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
     this.progressData.totalRevisit = 0;
+    this.progressData.totalOldCards=0;
     this.progressData.totalLineOldCard=0;
     $('#divRevisitCount').css("cursor", "text");
     this.clearLineData();
