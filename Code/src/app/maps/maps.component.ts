@@ -536,16 +536,19 @@ export class MapsComponent {
 
   getWardLines() {
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
+    
     let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         if (data != null) {
           lineMapRefrenceInstance.unsubscribe();
           this.mapRefrence = data.toString();
-          dbPath = "Defaults/WardLines/" + this.selectedDate + "/" + this.mapRefrence + "/totalLines";
+          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
+          console.log(dbPath);
           let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
             wardLineCount.unsubscribe();
             if (lineCount != null) {
               this.wardLines = Number(lineCount);
+              this.progressData.totalLines = Number(lineCount);
               this.getAllLinesFromJson();
             }
           });
@@ -556,27 +559,13 @@ export class MapsComponent {
             wardLineCount.unsubscribe();
             if (lineCount != null) {
               this.wardLines = Number(lineCount);
+              this.progressData.totalLines = Number(lineCount);
               this.getAllLinesFromJson();
             }
           });
         }
       }
     );
-
-
-    let zoneDetail = this.zoneList.find((item) => item.zoneNo == this.selectedZone && item.wardLines != 0);
-    if (zoneDetail != null) {
-      this.wardLines = zoneDetail.wardLines;
-      this.getAllLinesFromJson();
-    } else {
-      let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          this.wardLines = Number(lineCount);
-          this.getAllLinesFromJson();
-        }
-      });
-    }
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
@@ -601,33 +590,33 @@ export class MapsComponent {
         this.polylines[index].setMap(this.map);
 
         let userType = localStorage.getItem("userType");
-       // if (this.isWardLines == true) {
-          if (userType == "Internal User") {
-            let lat = latlng[0]["lat"];
-            let lng = latlng[0]["lng"];
-            let marker = new google.maps.Marker({
-              position: { lat: Number(lat), lng: Number(lng) },
-              map: this.map,
-              icon: {
-                url: this.invisibleImageUrl,
-                fillOpacity: 1,
-                strokeWeight: 0,
-                scaledSize: new google.maps.Size(32, 40),
-                origin: new google.maps.Point(0, 0),
-              },
-              label: {
-                text: lineNo.toString(),
-                color: "#000",
-                fontSize: "10px",
-                fontWeight: "bold",
-              },
-            });
+        // if (this.isWardLines == true) {
+        if (userType == "Internal User") {
+          let lat = latlng[0]["lat"];
+          let lng = latlng[0]["lng"];
+          let marker = new google.maps.Marker({
+            position: { lat: Number(lat), lng: Number(lng) },
+            map: this.map,
+            icon: {
+              url: this.invisibleImageUrl,
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scaledSize: new google.maps.Size(32, 40),
+              origin: new google.maps.Point(0, 0),
+            },
+            label: {
+              text: lineNo.toString(),
+              color: "#000",
+              fontSize: "10px",
+              fontWeight: "bold",
+            },
+          });
 
-            this.wardLineNoMarker.push({ marker });
-            if (lineNo == this.wardLines) {
-              this.isWardLines = false;
-            }
+          this.wardLineNoMarker.push({ marker });
+          if (lineNo == this.wardLines) {
+            this.isWardLines = false;
           }
+        }
         //}
       }
     });
@@ -690,7 +679,6 @@ export class MapsComponent {
     let totalLineData = this.db.object("WardLines/" + this.selectedZone).valueChanges().subscribe((totalLines) => {
       totalLineData.unsubscribe();
       let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-      this.progressData.totalLines = Number(totalLines);
       this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
         if (workerData != null) {
           if (workerData["completedLines"] != null) {
