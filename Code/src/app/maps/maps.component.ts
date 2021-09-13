@@ -1084,8 +1084,7 @@ export class MapsComponent {
         if (data != null) {
           let count = 0;
           this.cardNotScanedList = [];
-          let city =
-            this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
+          let city =this.commonService.getFireStoreCity();
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -1162,8 +1161,7 @@ export class MapsComponent {
 
           if (data.length > 0) {
             let count = 0;
-            let city =
-              this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
+            let city =this.commonService.getFireStoreCity();
             for (let i = 0; i < data.length; i++) {
               if (data[i]["cardImage"] != null) {
                 let imageUrl =

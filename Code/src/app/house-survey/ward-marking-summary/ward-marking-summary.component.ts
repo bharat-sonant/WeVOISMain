@@ -484,7 +484,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (data[index]["status"] != null) {
                 status = data[index]["status"];
               }
-              let city = this.cityName.charAt(0).toUpperCase() + this.cityName.slice(1);
+              let city = this.commonService.getFireStoreCity();
 
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
