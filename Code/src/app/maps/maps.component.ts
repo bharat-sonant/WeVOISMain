@@ -543,7 +543,7 @@ export class MapsComponent {
           lineMapRefrenceInstance.unsubscribe();
           this.mapRefrence = data.toString();
           dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-          console.log(dbPath);
+          
           let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
             wardLineCount.unsubscribe();
             if (lineCount != null) {
