@@ -36,6 +36,7 @@ export class WardSurveyAnalysisComponent {
   houseMarker: any[] = [];
   db: any;
   scannedCardList: any[];
+  oldCardList: any[];
   revisitSurveyList: any[];
   revisitLineSurveyList: any[];
   revisitAllSurveyList: any[];
@@ -45,6 +46,7 @@ export class WardSurveyAnalysisComponent {
   progressData: progressDetail = {
     totalMarkers: 0,
     totalSurveyed: 0,
+    totalOldCards: 0,
     totalLineMarkers: 0,
     totalLineSurveyed: 0,
     cardNo: "",
@@ -52,10 +54,16 @@ export class WardSurveyAnalysisComponent {
     name: "",
     totalRevisit: 0,
     totalLineRevisit: 0,
+    totalLineOldCard: 0,
     revisitHouseType: "",
     revisitName: "",
     revisitReason: "",
-    revisitDate: ""
+    revisitDate: "",
+    rfId: "",
+    rfIdName: "",
+    rfIdHouseType: "",
+    rfIdDate: "",
+    rfIdAddress: ""
   };
 
   ngOnInit() {
@@ -117,6 +125,14 @@ export class WardSurveyAnalysisComponent {
         }
       }
     );
+
+    dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + this.selectedZone;
+    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      oldCardInstance.unsubscribe();
+      if (data != null) {
+        this.progressData.totalLineOldCard = Number(data);
+      }
+    });
   }
 
   getCurrentLineDetail(event: any) {
@@ -192,6 +208,7 @@ export class WardSurveyAnalysisComponent {
   getMarkedHouses(lineNo: any) {
     this.clearLineData();
     this.getRevisitRequest();
+    this.getOldCards();
     this.getLineSurveyed();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
@@ -205,6 +222,7 @@ export class WardSurveyAnalysisComponent {
             let lng = data[i]["latLng"].split(",")[1];
             let cardNo = "";
             let revisitKey = "";
+            let rfidNotFoundKey = "";
             if (data[i]["cardNumber"] != null) {
               markerURL = "../assets/img/green-home.png";
               cardNo = data[i]["cardNumber"];
@@ -215,7 +233,12 @@ export class WardSurveyAnalysisComponent {
               revisitKey = data[i]["revisitKey"];
               $('#divLineScannedCount').css("cursor", "pointer");
             }
-            this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, lineNo, this.map);
+            else if (data[i]["rfidNotFoundKey"] != null) {
+              markerURL = "../assets/img/blue-home.png";
+              rfidNotFoundKey = data[i]["rfidNotFoundKey"];
+              $('#divLineScannedCount').css("cursor", "pointer");
+            }
+            this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map);
           }
         }
       }
@@ -248,6 +271,19 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
+  getOldCards() {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
+    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        oldCardInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.totalLineOldCard = Number(data);
+          $('#divLineOldCardCount').css("cursor", "pointer");
+        }
+      }
+    );
+  }
+
   setMarkerForLineNo(lat: any, lng: any, markerURL: any, markerLabel: any, map: any, type: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -271,7 +307,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, lineNo: any, map: any) {
+  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, rfidNotFoundKey: any, lineNo: any, map: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: map,
@@ -296,6 +332,7 @@ export class WardSurveyAnalysisComponent {
         let houseInstance = db.object(dbPath).valueChanges().subscribe((data) => {
           houseInstance.unsubscribe();
           if (data != null) {
+            $("#divOldCardDetail").hide();
             $("#divCardDetail").show();
             $("#divRevisitDetail").hide();
             progressData.cardNo = data["cardNo"];
@@ -320,12 +357,12 @@ export class WardSurveyAnalysisComponent {
             let date = data["date"].split(' ')[0];
             let time = data["date"].split(' ')[1];
             let revisitDate = date.split('-')[2] + " " + CommonService.prototype.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-
             let dbPath = "Defaults/FinalHousesType/" + data["houseType"] + "/name";
             let houseInstance = db.object(dbPath).valueChanges().subscribe((houseData) => {
               houseInstance.unsubscribe();
               if (houseData != null) {
                 let houseType = houseData.toString().split("(")[0];
+                $("#divOldCardDetail").hide();
                 $("#divRevisitDetail").show();
                 $("#divCardDetail").hide();
                 progressData.revisitHouseType = houseType;
@@ -338,8 +375,38 @@ export class WardSurveyAnalysisComponent {
         });
       });
     }
+    else if (rfidNotFoundKey != "") {
+      let wardNo = this.selectedZone;
+      let progressData = this.progressData;
+      let db = this.db;
+      marker.addListener("click", function () {
+        $("#divLoaderOldCard").show();
+        setTimeout(() => {
+          $("#divLoaderOldCard").hide();
+        }, 600);
+        let dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + wardNo + "/" + lineNo + "/" + rfidNotFoundKey;
+        let revisitInstance = db.object(dbPath).valueChanges().subscribe((data) => {
+          revisitInstance.unsubscribe();
+          if (data != null) {
+            let date = data["createdDate"].split(' ')[0];
+            let time = data["createdDate"].split(' ')[1];
+            let rfIdDate = date.split('-')[2] + " " + CommonService.prototype.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+            $("#divOldCardDetail").show();
+            $("#divRevisitDetail").hide();
+            $("#divCardDetail").hide();
+            progressData.rfId = rfidNotFoundKey;
+            progressData.rfIdHouseType = data["cardType"];
+            progressData.rfIdName = data["name"];
+            progressData.rfIdAddress = data["address"];
+            progressData.rfIdDate = rfIdDate;
+
+          }
+        });
+      });
+    }
     else {
       marker.addListener("click", function () {
+        $("#divOldCardDetail").hide();
         $("#divCardDetail").hide();
         $('#divRevisitDetail').hide();
       });
@@ -435,6 +502,31 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
+
+  getOldCard() {
+    if (this.oldCardList.length == 0) {
+      let dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo;
+      let oldCardInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          oldCardInstance.unsubscribe();
+          let city = this.commonService.getFireStoreCity();
+          if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              if (data[i]["createdDate"] != null) {
+                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
+                let date = data[i]["createdDate"].split(' ')[0];
+                let time = data[i]["createdDate"].split(' ')[1];
+                let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                this.oldCardList.push({ imageURL: imageURL, cardNo: data[i]["rfid"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"] });
+              }
+            }
+          }
+        }
+      );
+    }
+  }
+
+
   openModel(content: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -449,6 +541,13 @@ export class WardSurveyAnalysisComponent {
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
       this.getScannedCard();
+    } else if (type == "OldCard") {
+      let divHeight = height - 50 + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
+      this.getOldCard();
     }
     else {
       let mapHeight = height - 80 + "px";
@@ -545,15 +644,19 @@ export class WardSurveyAnalysisComponent {
                 let date = data[index]["date"].split(' ')[0];
                 let time = data[index]["date"].split(' ')[1];
                 let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                let type = data[index]["houseType"];
+                let city = this.commonService.getFireStoreCity();
+                let imageURL = "";
+                if (data[index]["image"] != null) {
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                } let type = data[index]["houseType"];
                 let dbPath = "Defaults/FinalHousesType/" + type + "/name";
                 let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
                   houseInstance.unsubscribe();
                   if (houseData != null) {
                     let houseType = houseData.toString().split("(")[0];
-                    this.revisitSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme" });
-                    this.revisitLineSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
-                    this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+                    this.revisitSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL });
+                    this.revisitLineSurveyList.push({ lineNo: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], imageURL: imageURL });
+                    this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                   }
                 });
               }
@@ -565,7 +668,7 @@ export class WardSurveyAnalysisComponent {
     else {
       this.revisitSurveyList = this.revisitLineSurveyList;
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
-        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
       }
     }
 
@@ -587,19 +690,23 @@ export class WardSurveyAnalysisComponent {
               for (let j = 0; j < keyArray.length; j++) {
                 let index = keyArray[j];
                 if (index != "lineRevisitCount") {
-
                   let date = data[index]["date"].split(' ')[0];
                   let time = data[index]["date"].split(' ')[1];
                   let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                  let city = this.commonService.getFireStoreCity();
+                  let imageURL = "";
+                  if (data[index]["image"] != null) {
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                  }
                   let type = data[index]["houseType"];
                   let dbPath = "Defaults/FinalHousesType/" + type + "/name";
                   let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
                     houseInstance.unsubscribe();
                     if (houseData != null) {
                       let houseType = houseData.toString().split("(")[0];
-                      this.revisitSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme" });
-                      this.revisitAllSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"] });
-                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+                      this.revisitSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL });
+                      this.revisitAllSurveyList.push({ lineNo: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], imageURL: imageURL });
+                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                     }
                   });
                 }
@@ -612,7 +719,7 @@ export class WardSurveyAnalysisComponent {
     else {
       this.revisitSurveyList = this.revisitAllSurveyList;
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
-        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", this.mapRevisit);
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
       }
     }
   }
@@ -652,6 +759,7 @@ export class WardSurveyAnalysisComponent {
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
     this.progressData.totalRevisit = 0;
+    this.progressData.totalLineOldCard=0;
     $('#divRevisitCount').css("cursor", "text");
     this.clearLineData();
   }
@@ -660,6 +768,7 @@ export class WardSurveyAnalysisComponent {
     this.progressData.totalLineMarkers = 0;
     this.progressData.totalLineSurveyed = 0;
     this.progressData.totalLineRevisit = 0;
+    this.progressData.totalLineOldCard = 0;
     this.progressData.cardNo = "";
     this.progressData.cardType = "";
     this.progressData.name = "";
@@ -667,10 +776,16 @@ export class WardSurveyAnalysisComponent {
     this.progressData.revisitHouseType = "";
     this.progressData.revisitName = "";
     this.progressData.revisitReason = "";
+    this.progressData.rfId = "";
+    this.progressData.rfIdAddress = "";
+    this.progressData.rfIdDate = "";
+    this.progressData.rfIdHouseType = "";
+    this.progressData.rfIdName = "";
     $("#divCardDetail").hide();
     $('#divRevisitDetail').hide();
     $('#divLineScannedCount').css("cursor", "text");
     $('#divLineRevisitCount').css("cursor", "text");
+    $('#divLineOldCardCount').css("cursor", "text");
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {
         this.houseMarker[i]["marker"].setMap(null);
@@ -678,6 +793,7 @@ export class WardSurveyAnalysisComponent {
     }
     this.houseMarker = [];
     this.scannedCardList = [];
+    this.oldCardList = [];
     this.revisitSurveyList = [];
     this.revisitLineSurveyList = [];
     this.revisitAllSurveyList = [];
@@ -688,6 +804,7 @@ export class WardSurveyAnalysisComponent {
 export class progressDetail {
   totalMarkers: number;
   totalSurveyed: number;
+  totalOldCards:number;
   totalLineMarkers: number;
   totalLineSurveyed: number;
   cardNo: string;
@@ -695,8 +812,14 @@ export class progressDetail {
   name: string;
   totalRevisit: number;
   totalLineRevisit: number;
+  totalLineOldCard: number;
   revisitHouseType: string;
   revisitName: string;
   revisitReason: string;
   revisitDate: string;
+  rfId: string;
+  rfIdName: string;
+  rfIdHouseType: string;
+  rfIdDate: string;
+  rfIdAddress: string;
 }
