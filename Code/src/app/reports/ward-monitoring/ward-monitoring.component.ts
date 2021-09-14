@@ -58,26 +58,23 @@ export class WardMonitoringComponent {
   polylines = [];
   currentMonthName: any;
   currentYear: any;
-  db:any;
+  db: any;
+  mapRefrence: any;
+  wardLines: any;
 
   constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
-
+    this.selectedZoneNo = "0";
+    this.activeZone = "0";
+    this.selectedZoneName = "--Select--";
     this.getZoneList();
-    this.selectedZoneNo = "1";
-    this.activeZone = "1";
-    this.selectedZoneName = "Ward 1";
-    this.showReport();
-
     this.setMap();
-    //this.drawChart();
     this.setContainerHeight();
-    //this.showReport();
   }
 
   setContainerHeight() {
@@ -126,7 +123,7 @@ export class WardMonitoringComponent {
       this.polylines = [];
       this.setMap();
       this.setKml();
-      this.drawZoneAllLines();
+      this.getWardLines();
     } else {
       let errorMsg = '<span class="now-ui-icons ui-1_bell-53"></span> ' + msg;
       this.toastr.error(errorMsg, '', { timeOut: 5000, enableHtml: true, closeButton: true, toastClass: "alert alert-danger alert-with-icon", positionClass: 'toast-bottom-left' });
@@ -135,21 +132,8 @@ export class WardMonitoringComponent {
   }
 
   getZoneList() {
-
-
-    /*
-        if(new Date(this.selectedDate) < new Date("2019-08-21")){
-          this.zoneList = this.mapService.getOldZones();
-        }else if(new Date(this.selectedDate) > new Date("2019-08-21") && new Date(this.selectedDate) < new Date("2019-12-26")){
-          this.zoneList = this.mapService.getAllZones();
-        }
-        else{
-          
-          this.zoneList = this.mapService.getlatestZones();
-        }  */
-
     this.zoneList = [];
-    this.zoneList = this.mapService.getZones(this.selectedDate);
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
   setMap() {
@@ -158,23 +142,53 @@ export class WardMonitoringComponent {
   }
 
   setKml() {
-    this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
-      wardPath => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map
-        });
-      });
+    this.commonService.setKML(this.selectedZone, this.map);
+  }
+
+
+  getWardLines() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
+
+    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        if (data != null) {
+          lineMapRefrenceInstance.unsubscribe();
+          this.mapRefrence = data.toString();
+          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
+
+          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
+            wardLineCount.unsubscribe();
+            if (lineCount != null) {
+              this.wardLines = Number(lineCount);
+              this.drawZoneAllLines();
+            }
+          });
+        }
+        else {
+          this.mapRefrence = "";
+          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+            wardLineCount.unsubscribe();
+            if (lineCount != null) {
+              this.wardLines = Number(lineCount);
+              this.drawZoneAllLines();
+            }
+          });
+        }
+      }
+    );
   }
 
   drawZoneAllLines() {
-
     //this.httpService.get('../assets/jsons/' + this.selectedZone + '.json').forEach(
-    let wardLines = this.db.object('Defaults/WardLines/' + this.selectedZone).valueChanges().subscribe(
+    let dbPath = "Defaults/WardLines/" + this.selectedZone;
+    if (this.mapRefrence != "") {
+      dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence;
+    }
+    let wardLines = this.db.object(dbPath).valueChanges().subscribe(
       zoneLine => {
-
+        wardLines.unsubscribe();
         var linePath = [];
-        for (let i = 1; i < 10000; i++) {
+        for (let i = 1; i < this.wardLines; i++) {
 
           var line = zoneLine[i];
           if (line == undefined) { break; }

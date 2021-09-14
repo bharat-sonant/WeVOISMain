@@ -84,6 +84,7 @@ export class MapsComponent {
   totalScannedHouse: any;
   skipLineList: any[];
   mapRefrence: any;
+  completedLines: any;
 
   progressData: progressDetail = {
     totalLines: 0,
@@ -571,7 +572,7 @@ export class MapsComponent {
     }
   }
 
-  completedLines: any;
+ 
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
@@ -718,23 +719,8 @@ export class MapsComponent {
   getZones() {
     return new Promise((resolve) => {
       this.zoneList = [];
-      let allZones = this.mapService.getZones(this.toDayDate);
-      for (let index = 1; index < allZones.length; index++) {
-        let zoneNo = allZones[index]["zoneNo"];
-        let zoneName = allZones[index]["zoneName"];
-        let wardLines = 0;
-        if (allZones[index]["wardLines"] != null) {
-          wardLines = allZones[index]["wardLines"];
-        }
-        let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
-        if (zoneDetails == undefined) {
-          this.zoneList.push({
-            zoneNo: zoneNo,
-            zoneName: zoneName,
-            wardLines: wardLines,
-          });
-        }
-      }
+      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+      this.zoneList[0]["zoneName"]="--Select Zone--";
       resolve(true);
     });
   }

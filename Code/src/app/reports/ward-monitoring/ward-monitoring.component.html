@@ -8,9 +8,9 @@
                   style="height: 45px; width: 35%; margin-right: 8px;" />
                 <button class="btn-hvr" (click)="setNextDate();"><span style="color: #fff;">>></span></button>
                 <select class="caret-select" id="ddlZone" style="width: 25%;"
-                (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+                (change)="changeZoneSelection($event.target.value)">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                  ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                  ngSelected="zone.zoneNo == selectedZone?'selected':'0'">
                   {{zone.zoneName}}
                 </option>
               </select>

@@ -53,6 +53,8 @@ export class DownloadWardwiseReportComponent {
   reportCount: number;
   db: any;
   cityName: any;
+  mapRefrence:any;
+  wardLines:any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -110,13 +112,48 @@ export class DownloadWardwiseReportComponent {
     this.completeCount = 0;
     this.totalLineCount = 0;
     this.partailDoneCount = 0;
+    this.mapRefrence="";
+    this.wardLines=0;
     this.selectedZone = this.selectedZoneNo;
     this.selectedZoneName = "Ward " + this.selectedZone;
     this.polylines = [];
     this.allLines = [];
     this.setMap();
-    this.drawZoneAllLines();
+    this.getWardLines();
     this.showReportCreationProgress();
+  }
+
+  
+  getWardLines() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
+
+    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        if (data != null) {
+          lineMapRefrenceInstance.unsubscribe();
+          this.mapRefrence = data.toString();
+          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
+
+          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
+            wardLineCount.unsubscribe();
+            if (lineCount != null) {
+              this.wardLines = Number(lineCount);
+              this.drawZoneAllLines();
+            }
+          });
+        }
+        else {
+          this.mapRefrence = "";
+          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+            wardLineCount.unsubscribe();
+            if (lineCount != null) {
+              this.wardLines = Number(lineCount);
+              this.drawZoneAllLines();
+            }
+          });
+        }
+      }
+    );
   }
 
   setMap() {
@@ -132,9 +169,13 @@ export class DownloadWardwiseReportComponent {
   }
 
   drawZoneAllLines() {
-    let wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
+    let dbPath = "Defaults/WardLines/" + this.selectedZone;
+    if (this.mapRefrence != "") {
+      dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence;
+    }
+    let wardLines = this.db.object(dbPath).valueChanges().subscribe((zoneLine) => {
       wardLines.unsubscribe();
-      for (let i = 1; i < 10000; i++) {
+      for (let i = 1; i < this.wardLines; i++) {
         var line = zoneLine[i];
         if (line == undefined) {
           break;
