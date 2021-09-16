@@ -227,18 +227,31 @@ export class WardSurveyAnalysisComponent {
               markerURL = "../assets/img/green-home.png";
               cardNo = data[i]["cardNumber"];
               $('#divLineScannedCount').css("cursor", "pointer");
+              dbPath = "Houses/" + this.selectedZone + "/" + lineNo + "/" + cardNo + "/latLng";
+              let latLngInstance = this.db.object(dbPath).valueChanges().subscribe(
+                latLngData => {
+                  latLngInstance.unsubscribe();
+                  if (latLngData != null) {
+                    lat = latLngData.replace("(", "").replace(")", "").split(",")[0];
+                    lng = latLngData.replace("(", "").replace(")", "").split(",")[1];
+                    this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map);
+                  }
+                }
+              );
             }
-            else if (data[i]["revisitKey"] != null) {
-              markerURL = "../assets/img/purple-home.png";
-              revisitKey = data[i]["revisitKey"];
-              $('#divLineScannedCount').css("cursor", "pointer");
+            else {
+              if (data[i]["revisitKey"] != null) {
+                markerURL = "../assets/img/purple-home.png";
+                revisitKey = data[i]["revisitKey"];
+                $('#divLineScannedCount').css("cursor", "pointer");
+              }
+              else if (data[i]["rfidNotFoundKey"] != null) {
+                markerURL = "../assets/img/blue-home.png";
+                rfidNotFoundKey = data[i]["rfidNotFoundKey"];
+                $('#divLineScannedCount').css("cursor", "pointer");
+              }
+              this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map);
             }
-            else if (data[i]["rfidNotFoundKey"] != null) {
-              markerURL = "../assets/img/blue-home.png";
-              rfidNotFoundKey = data[i]["rfidNotFoundKey"];
-              $('#divLineScannedCount').css("cursor", "pointer");
-            }
-            this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map);
           }
         }
       }
@@ -759,8 +772,8 @@ export class WardSurveyAnalysisComponent {
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
     this.progressData.totalRevisit = 0;
-    this.progressData.totalOldCards=0;
-    this.progressData.totalLineOldCard=0;
+    this.progressData.totalOldCards = 0;
+    this.progressData.totalLineOldCard = 0;
     $('#divRevisitCount').css("cursor", "text");
     this.clearLineData();
   }
@@ -805,7 +818,7 @@ export class WardSurveyAnalysisComponent {
 export class progressDetail {
   totalMarkers: number;
   totalSurveyed: number;
-  totalOldCards:number;
+  totalOldCards: number;
   totalLineMarkers: number;
   totalLineSurveyed: number;
   cardNo: string;

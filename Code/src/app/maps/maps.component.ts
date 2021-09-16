@@ -109,7 +109,7 @@ export class MapsComponent {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    //localStorage.setItem("houseList", null);
+    localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
