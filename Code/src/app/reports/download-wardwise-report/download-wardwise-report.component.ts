@@ -125,6 +125,8 @@ export class DownloadWardwiseReportComponent {
 
   
   getWardLines() {
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split('-')[0];
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
 
     let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(

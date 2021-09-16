@@ -147,12 +147,15 @@ export class WardMonitoringComponent {
 
 
   getWardLines() {
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split('-')[0];
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-
+    console.log(dbPath);
     let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        lineMapRefrenceInstance.unsubscribe();
         if (data != null) {
-          lineMapRefrenceInstance.unsubscribe();
+
           this.mapRefrence = data.toString();
           dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
 
