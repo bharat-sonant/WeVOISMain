@@ -1,12 +1,12 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-3" style="padding-left: 18px;">
-           
+        <div class="col-md-4" style="padding-left: 18px;">
+
         </div>
-        <div class="col-md-5" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-3" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
             Ward Survey Summary
         </div>
-        <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
+        <div class="col-md-5 text-right total-house" style="padding-left: 18px;">
             <div class="fix-home">
                 <div class="float-first">
                     <i class="fas fa-home" style="color:red;"></i> <span class="house">
@@ -18,9 +18,14 @@
                     <h6>Surveyed Marker</h6>
                 </div>
                 <div class="float-third">
-                    <i class="fas fa-house-damage" style="color:#6d6dcc;"></i> <span class="house">
+                    <i class="fas fa-house-damage" style="color:rgb(213 42 255);"></i> <span class="house">
                         {{surveyData.totalRevisit}}</span><br>
                     <h6>Revisit Request</h6>
+                </div>
+                <div class="float-fourth">
+                    <i class="fas fa-house-damage" style="color:rgb(33 135 236);"></i> <span class="house">
+                        {{surveyData.totalOldCards}}</span><br>
+                    <h6>Old Cards</h6>
                 </div>
             </div>
 
@@ -40,18 +45,21 @@
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Markers</th>
 
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Surveyed</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Revisit</th>
-                                            <th class="text-center" style="width:20%;">Status</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
+                                                Old Cards</th>
+                                            <th class="text-center" style="width:15%;">Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" [hidden]="data.wardNo==0"
-                                                (click)="getSurveyDetail(data.wardNo,i);" style="cursor: pointer;">
+                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
+                                                [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);"
+                                                style="cursor: pointer;">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
@@ -61,6 +69,8 @@
                                                     {{data.surveyed}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                     {{data.revisit}} </td>
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                    {{data.oldCard}}</td>
                                                 <td class="text-center">
                                                     {{data.status}}
                                                 </td>
@@ -95,14 +105,6 @@
                         <div class="col-md-3 text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{surveyData.wardMarkers}}</span> <br>
-                                    Markers
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <div class="table-heading">
-                                <h3>
                                     <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br>
                                     Surveyed
                                 </h3>
@@ -113,6 +115,15 @@
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.wardRevisit}}</span> <br>
                                     Revisit
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.wardOldCards}}</span> <br>
+                                    Old Cards
                                 </h3>
                             </div>
                         </div>
@@ -129,21 +140,23 @@
                                             <table class="table"
                                                 style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Line</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:10%;">Line</th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
+                                                        style="border-right:1px solid #dee2e6; width:10%;">Markers</th>
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">
-                                                        Already Installed</th>
+                                                        Installed</th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Surveyed
+                                                        style="border-right:1px solid #dee2e6; width:10%;">Surveyed
                                                     </th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Revisit
+                                                        style="border-right:1px solid #dee2e6; width:10%;">Revisit
                                                     </th>
-
+                                                    <th class="text-right"
+                                                        style="border-right:1px solid #dee2e6; width:20%;">Old Cards
+                                                    </th>
                                                     <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">#</th>
+                                                        style="border-right:1px solid #dee2e6; width:10%;">#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineSurveyList; let i=index">
@@ -157,7 +170,8 @@
                                                             {{data.survyed}}</td>
                                                         <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                             {{data.revisit}}</td>
-
+                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                            {{data.oldCard}}</td>
                                                         <td class="text-center" style="border-right:1px solid #dee2e6;">
 
                                                             <i class="far fa-eye"

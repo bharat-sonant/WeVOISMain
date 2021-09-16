@@ -26,10 +26,12 @@ export class WardSurveySummaryComponent implements OnInit {
     totalMarkers: 0,
     totalSurveyed: 0,
     totalRevisit: 0,
+    totalOldCards: 0,
     wardMarkers: 0,
     wardSurveyed: 0,
     wardRevisit: 0,
     wardAlreadyCard: 0,
+    wardOldCards: 0
   };
 
   ngOnInit() {
@@ -56,12 +58,12 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, status: "", already: 0 });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard:0, status: "", already: 0 });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
             $("#tr1").addClass("active");
-          }, 1000);
+          }, 3000);
         }
         this.getWardSummary(i, wardNo);
       }
@@ -106,6 +108,15 @@ export class WardSurveySummaryComponent implements OnInit {
         this.surveyData.totalRevisit = this.surveyData.totalRevisit + Number(data);
       }
     });
+
+    dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + wardNo;
+    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      oldCardInstance.unsubscribe();
+      if (data != null) {
+        this.wardProgressList[index]["oldCard"] = Number(data);
+        this.surveyData.totalOldCards = this.surveyData.totalOldCards + Number(data);
+      }
+    });
   }
 
   setActiveClass(index: any) {
@@ -129,6 +140,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardRevisit = 0;
     this.surveyData.wardSurveyed = 0;
     this.surveyData.wardAlreadyCard = 0;
+    this.surveyData.wardOldCards=0;
     this.lineSurveyList = [];
   }
 
@@ -156,9 +168,10 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardRevisit = wardSummary.revisit;
           this.surveyData.wardSurveyed = wardSummary.surveyed;
           this.surveyData.wardAlreadyCard = wardSummary.already;
+          this.surveyData.wardOldCards=wardSummary.oldCard;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, revisit: 0, wardNo: wardNo });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0,oldCard:0, revisit: 0, wardNo: wardNo });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -196,6 +209,19 @@ export class WardSurveySummaryComponent implements OnInit {
                 let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                 if (lineDetail != undefined) {
                   lineDetail.revisit = Number(data);
+                }
+              }
+            }
+          );
+
+          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/lineRfidNotFoundCount";
+          let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              oldCardInstance.unsubscribe();
+              if (data != null) {
+                let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                if (lineDetail != undefined) {
+                  lineDetail.oldCard = Number(data);
                 }
               }
             }
@@ -265,8 +291,10 @@ export class surveyDatail {
   totalMarkers: number;
   totalSurveyed: number;
   totalRevisit: number;
+  totalOldCards: number;
   wardMarkers: number;
   wardSurveyed: number;
   wardRevisit: number;
   wardAlreadyCard: number;
+  wardOldCards: number;
 }
