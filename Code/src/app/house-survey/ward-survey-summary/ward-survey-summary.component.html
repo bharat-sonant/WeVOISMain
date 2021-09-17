@@ -34,7 +34,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-body" style="height:85vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -44,7 +44,7 @@
                                     <table class="table"
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward No.</th>
+                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Markers</th>
 
@@ -52,9 +52,8 @@
                                                 Surveyed</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 Revisit</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:20%;">
-                                                RFID N. M.</th>
-                                            <th class="text-center" style="width:15%;">Status</th>
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:35%;">
+                                                RFID Not Matched</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
@@ -71,9 +70,6 @@
                                                     {{data.revisit}} </td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.oldCard}}</td>
-                                                <td class="text-center">
-                                                    {{data.status}}
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -90,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
                     <div class="row">
@@ -123,7 +119,7 @@
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.wardOldCards}}</span> <br>
-                                    RFID N. M.
+                                    RFID Not Matched
                                 </h3>
                             </div>
                         </div>
@@ -145,7 +141,7 @@
                                                         style="border-right:1px solid #dee2e6; width:10%;">Markers</th>
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:20%;">
-                                                        Installed</th>
+                                                        Already Installed</th>
                                                     <th class="text-right"
                                                         style="border-right:1px solid #dee2e6; width:10%;">Surveyed
                                                     </th>
@@ -153,7 +149,7 @@
                                                         style="border-right:1px solid #dee2e6; width:10%;">Revisit
                                                     </th>
                                                     <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">RFID N. M.
+                                                        style="border-right:1px solid #dee2e6; width:20%;">RFID Not Matched
                                                     </th>
                                                     <th class="text-center"
                                                         style="border-right:1px solid #dee2e6; width:10%;">#</th>
