@@ -335,7 +335,10 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          this.surveyDateList = this.commonService.transformNumeric(dateList, "dateOrder");
+          this.surveyDateList = dateList.sort((a, b) =>
+          b.dateOrder> a.dateOrder ? 1 : -1
+        );
+           // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -367,7 +370,10 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          this.surveyDateList = this.commonService.transformNumeric(dateList, "dateOrder");
+          this.surveyDateList = dateList.sort((a, b) =>
+        b.dateOrder> a.dateOrder ? 1 : -1
+      );
+         // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -399,7 +405,10 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          this.surveyDateList = dateList;
+          this.surveyDateList = dateList.sort((a, b) =>
+        b.dateOrder > a.dateOrder ? 1 : -1
+      );
+        //  this.surveyDateList = this.commonService.transformString(dateList, "-dateOrder");
         }
       }
     );
