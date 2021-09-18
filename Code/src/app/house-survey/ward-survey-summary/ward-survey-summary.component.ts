@@ -16,6 +16,7 @@ export class WardSurveySummaryComponent implements OnInit {
   wardProgressList: any[];
   lineSurveyList: any[];
   surveyedDetailList: any[];
+  surveyDateList: any[];
   wardLineCount: any;
   cityName: any;
   isFirst = true;
@@ -41,8 +42,6 @@ export class WardSurveySummaryComponent implements OnInit {
     this.getWardProgressList();
   }
 
-
-
   clearAll() {
     this.wardProgressList = [];
     this.lineSurveyList = [];
@@ -58,7 +57,7 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard:0, status: "", already: 0 });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0 });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
@@ -140,7 +139,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardRevisit = 0;
     this.surveyData.wardSurveyed = 0;
     this.surveyData.wardAlreadyCard = 0;
-    this.surveyData.wardOldCards=0;
+    this.surveyData.wardOldCards = 0;
     this.lineSurveyList = [];
   }
 
@@ -168,10 +167,10 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardRevisit = wardSummary.revisit;
           this.surveyData.wardSurveyed = wardSummary.surveyed;
           this.surveyData.wardAlreadyCard = wardSummary.already;
-          this.surveyData.wardOldCards=wardSummary.oldCard;
+          this.surveyData.wardOldCards = wardSummary.oldCard;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0,oldCard:0, revisit: 0, wardNo: wardNo });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -279,6 +278,128 @@ export class WardSurveySummaryComponent implements OnInit {
               this.surveyedDetailList.push({ cardType: data[i]["cardType"], cardNo: data[i]["cardNo"], imageUrl: imageUrl, name: data[i]["name"] });
             }
           }
+        }
+      }
+    );
+  }
+
+  showDateWiseDetail(content: any, type: any) {
+    this.surveyDateList = [];
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 870;
+    let width = 400;
+    height = (windowHeight * 90) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 50 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#tblSurvey").css("height", divHeight);
+    $('#surveyType').html(type);
+    if (type == "RFID Not Matched") {
+      this.getRFIDNotFound();
+    }
+    else if (type == "Revisit Requests") {
+      this.getRevisitRequests();
+    }
+    else {
+      this.getHouses();
+    }
+  }
+
+  getHouses() {
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyHouseCount";
+    let surveyedInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        surveyedInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                }
+              }
+            }
+          }
+          this.surveyDateList = this.commonService.transformNumeric(dateList, "dateOrder");
+        }
+      }
+    );
+  }
+
+  getRevisitRequests() {
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyRevisitRequestCount";
+    let revisitInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        revisitInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                }
+              }
+            }
+          }
+          this.surveyDateList = this.commonService.transformNumeric(dateList, "dateOrder");
+        }
+      }
+    );
+  }
+
+  getRFIDNotFound() {
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyRfidNotFoundCount";
+    let rfidInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        rfidInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                }
+              }
+            }
+          }
+          this.surveyDateList = dateList;
         }
       }
     );

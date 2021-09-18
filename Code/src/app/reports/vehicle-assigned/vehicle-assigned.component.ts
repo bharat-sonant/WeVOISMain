@@ -33,21 +33,18 @@ export class VehicleAssignedComponent implements OnInit {
     let vehicleStorageList = JSON.parse(localStorage.getItem("vehicle"));
     if (vehicleStorageList == null) {
       let dbPath = "Vehicles";
-      let vehicleInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((vehicle) => {
-          vehicleInstance.unsubscribe();
-          if (vehicle != null) {
-            let keyArrray = Object.keys(vehicle);
-            if (keyArrray.length > 0) {
-              for (let i = 0; i < keyArrray.length; i++) {
-                this.vehicleList.push({ vehicle: keyArrray[i] });
-              }
+      let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe((vehicle) => {
+        vehicleInstance.unsubscribe();
+        if (vehicle != null) {
+          let keyArrray = Object.keys(vehicle);
+          if (keyArrray.length > 0) {
+            for (let i = 0; i < keyArrray.length; i++) {
+              this.vehicleList.push({ vehicle: keyArrray[i] });
             }
-            this.getAssignedVehicle();
           }
-        });
+          this.getAssignedVehicle();
+        }
+      });
     }
     else {
       for (let i = 3; i < vehicleStorageList.length; i++) {
@@ -59,12 +56,11 @@ export class VehicleAssignedComponent implements OnInit {
 
   getAssignedVehicle() {
     this.assignedVehicleList = [];
-    let monthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     // dustbin assign vehicle
     let dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + this.selectedDate;
+    console.log(dbPath);
     let dustbinInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         dustbinInstance.unsubscribe();
@@ -79,35 +75,33 @@ export class VehicleAssignedComponent implements OnInit {
               this.assignedVehicleList = this.commonService.transformNumeric(this.assignedVehicleList, "vehicle");
             }
             this.getEmployeeDetail(driverId, vehicle);
-          }
-
-          // ward assign vehicle
-          let zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-          for (let j = 1; j < zoneList.length; j++) {
-            let wardNo = zoneList[j]["zoneNo"];
-            dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails";
-            let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
-              data => {
-                vehicleInstance.unsubscribe();
-                if (data != null) {
-                  let vehicles = data["vehicle"].toString().split(',');
-                  let drivers = data["driver"].toString().split(',');
-                  for (let k = 0; k < vehicles.length; k++) {
-                    let vehicle = vehicles[k].trim();
-                    let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
-                    if (vehicleDetail == undefined) {
-                      let driverDetail = [];
-                      this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail });
-                      this.assignedVehicleList = this.commonService.transformNumeric(this.assignedVehicleList, "vehicle");
-
-                    }
-                    let driverId = drivers[k];
-                    this.getEmployeeDetail(driverId, vehicle);
+          }          
+        }
+        // ward assign vehicle
+        let zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+        for (let j = 1; j < zoneList.length; j++) {
+          let wardNo = zoneList[j]["zoneNo"];
+          dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails";
+          let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              vehicleInstance.unsubscribe();
+              if (data != null) {
+                let vehicles = data["vehicle"].toString().split(',');
+                let drivers = data["driver"].toString().split(',');
+                for (let k = 0; k < vehicles.length; k++) {
+                  let vehicle = vehicles[k].trim();
+                  let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
+                  if (vehicleDetail == undefined) {
+                    let driverDetail = [];
+                    this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail });
+                    this.assignedVehicleList = this.commonService.transformNumeric(this.assignedVehicleList, "vehicle");
                   }
+                  let driverId = drivers[k];
+                  this.getEmployeeDetail(driverId, vehicle);
                 }
               }
-            );
-          }
+            }
+          );
         }
       }
     );

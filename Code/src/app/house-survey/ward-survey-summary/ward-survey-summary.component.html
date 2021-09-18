@@ -13,16 +13,16 @@
                         {{surveyData.totalMarkers}}</span><br>
                     <h6>Total Marker</h6>
                 </div>
-                <div class="float-second">
+                <div class="float-second"  style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
                     <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
                     <h6>Surveyed Marker</h6>
                 </div>
-                <div class="float-third">
+                <div class="float-third" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
                     <i class="fas fa-house-damage" style="color:rgb(213 42 255);"></i> <span class="house">
                         {{surveyData.totalRevisit}}</span><br>
                     <h6>Revisit Request</h6>
                 </div>
-                <div class="float-fourth">
+                <div class="float-fourth" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
                     <i class="fas fa-house-damage" style="color:rgb(33 135 236);"></i> <span class="house">
                         {{surveyData.totalOldCards}}</span><br>
                     <h6>RFID not matched</h6>
@@ -196,7 +196,7 @@
     </div>
 </div>
 
-<!--Vehicle Status Start-->
+<!--Survey Line Start-->
 <ng-template #contentLineSurveyed>
     <div style="width: 100%;text-align: right;float: left;">
 
@@ -226,4 +226,35 @@
         </div>
     </div>
 </ng-template>
-<!--Vehicle Status End-->
+<!--Survey Line End-->
+
+
+<!--Survey Line Start-->
+<ng-template #contentDateWise>
+    <div style="width: 100%;text-align: right;float: left;">
+
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body" style="margin-top:-20px; ">
+        <div id="tblSurvey" class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
+            <table class="table"
+                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                <thead>
+                    <th style="border-right:1px solid #dee2e6; width:40%;">Date</th>
+                    <th class="text-right"
+                        style="border-right:1px solid #dee2e6; width:60%;"><span id="surveyType"></span></th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of surveyDateList; let i=index">
+                        <td style="border-right:1px solid #dee2e6">
+                            {{data.date}}</td>
+                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                            {{data.count}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-template>
+<!--Survey Line End-->
