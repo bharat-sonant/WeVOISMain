@@ -111,7 +111,12 @@ export class MapsComponent {
     this.cityName = localStorage.getItem("cityName");
     localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.cityName = localStorage.getItem("cityName");
+    if (this.cityName == "jaipur-greater") {
+      $('#isHouse').hide();
+      $('#showHouseLabel').hide();
+      $('#divDriverDetail').hide();
+      $('#divLineDetail').hide();
+    }
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.toDayDate);
@@ -345,13 +350,17 @@ export class MapsComponent {
   getWardData() {
     this.setDefaultWard();
     if (this.selectedDate == this.toDayDate) {
-      this.showVehicleMovement();
+      if (this.cityName != "jaipur-greater") {
+        this.showVehicleMovement();
+      }
     }
     this.getWardLines();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
-    this.getParshadHouse();
+    if (this.cityName != "jaipur-greater") {
+      this.getParshadHouse();
+    }
   }
 
   setDate(filterVal: any, type: string) {
@@ -387,7 +396,9 @@ export class MapsComponent {
     this.selectedZone = this.activeZone;
     this.setDateFilterDefault();
     if (this.selectedDate == this.toDayDate) {
-      this.showVehicleMovement();
+      if (this.cityName != "jaipur-greater") {
+        this.showVehicleMovement();
+      }
     } else {
       this.marker.setMap(null);
     }
@@ -572,7 +583,7 @@ export class MapsComponent {
     }
   }
 
- 
+
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
@@ -720,7 +731,7 @@ export class MapsComponent {
     return new Promise((resolve) => {
       this.zoneList = [];
       this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-      this.zoneList[0]["zoneName"]="--Select Zone--";
+      this.zoneList[0]["zoneName"] = "--Select Zone--";
       resolve(true);
     });
   }

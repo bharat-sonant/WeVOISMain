@@ -100,6 +100,19 @@ if (city != null) {
     databaseName="dtdshahpura";
     databaseURL= "https://dtdshahpura.firebaseio.com";
   }
+  else if (city == 'jaipur-greater') {
+    firebase = {
+      apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+      authDomain: "dtdnavigator.firebaseapp.com",
+      databaseURL: "https://iejaipurgreater.firebaseio.com",
+      projectId: "dtdnavigator",
+      storageBucket: "dtdnavigator.appspot.com",
+      messagingSenderId: "381118272786",
+      //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
+    };
+    databaseName = "dtdreengus";
+    databaseURL = "https://dtdreengus.firebaseio.com";
+  }
 }
 
 
