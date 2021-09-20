@@ -426,25 +426,25 @@ top: 265px;
 /* border-radius: 5px; */
 border: 1px solid lightgray;
 }
-.ward-percentage .lines-right{
+.ward-percentage .lines-left{
 padding: 14px 10px;
 width:50%;
 float: left;
 text-align: left;
 }
-.ward-percentage .lines-right p{
-font-size: 12px;
+.ward-percentage .lines-left h3{
+font-size: 20px;
 margin:0px!important;
-color: #333;
+color: #000;
 }
-.ward-percentage  .lines-left{
+.ward-percentage  .lines-right{
 padding:14px 10px;
 width: 50%;
 float: right;
 text-align: right;
 }
-.ward-percentage  .lines-left h3{
-font-size: 20px;
+.ward-percentage  .lines-right p{
+font-size: 12px;
 margin:0px!important;
 color: #000;
 }
