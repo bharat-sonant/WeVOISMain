@@ -4781,7 +4781,7 @@ body {
   align-items: center;
 }
 .login-container{
-  width: 700px;
+  width: 950px;
   height: 320px;
   background-color: #fff;
   border-radius: 10px;
@@ -4852,7 +4852,7 @@ font-size: 18px;
 }
 .login-box{
   height: 120px;
-  width: 190px;
+  width: 160px;
   border: 1px solid lightgray;
   display: flex;
   justify-content: center;
@@ -4874,7 +4874,7 @@ font-size: 18px;
   font-size:14px!important;
   text-align: center;
   letter-spacing: 5px;
-  line-height: 28px;
+  line-height: 20px;
   margin-right: -5px!important;
   padding: 0px!important;
   transition: 0.3s ease-out;
@@ -4901,7 +4901,8 @@ box-shadow: 5px 8px 10px #96d49b3d;
 }
 .box-center{
   display: flex; 
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
 }
 .box-center-2{
   display: flex; 
