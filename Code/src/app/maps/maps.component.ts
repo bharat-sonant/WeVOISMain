@@ -105,6 +105,7 @@ export class MapsComponent {
     parshadName: "",
     parshadMobile: "",
     cardNotScaned: 0,
+    workPercentage:0,
   };
 
   ngOnInit() {
@@ -116,6 +117,11 @@ export class MapsComponent {
       $('#showHouseLabel').hide();
       $('#divDriverDetail').hide();
       $('#divLineDetail').hide();
+      $('#divJaipurGreaterDetail').show();
+    }
+    else
+    {
+      $('#divJaipurGreaterDetail').hide();
     }
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -710,10 +716,10 @@ export class MapsComponent {
           // } else {
           //   this.progressData.completedLines = 0;
           // }
-          if (workerData["skippedLines"] != null) {
-            this.progressData.skippedLines = workerData["skippedLines"];
+          if (workerData["workPercentage"] != null) {
+            this.progressData.workPercentage = workerData["workPercentage"];
           } else {
-            this.progressData.skippedLines = 0;
+            this.progressData.workPercentage = 0;
           }
           if (workerData["wardCoveredDistance"] != null) {
             this.progressData.coveredLength = (
@@ -1314,4 +1320,5 @@ export class progressDetail {
   parshadName: string;
   parshadMobile: string;
   cardNotScaned: number;
+  workPercentage:number;
 }
