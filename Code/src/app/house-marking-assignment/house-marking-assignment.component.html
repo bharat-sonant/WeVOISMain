@@ -26,7 +26,8 @@
                                                 Line No.</th>
                                             <th class="text-right" style="width:15%;">
                                                 <input id="chkAll" type="checkbox" (change)="showAll();" />
-                                                Show All</th>
+                                                Show All
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of assignedList; let i=index"
@@ -77,7 +78,7 @@
                         <div class="col-md-3 text-left">
                             <h5> <b>{{houseData.name}} </b></h5>
                         </div>
-                        
+
                         <div class="col-md-3 text-right">
                             <div class="table-heading">
                                 <h3>
@@ -115,17 +116,29 @@
                                             <table class="table"
                                                 style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:30%;">Date</th>
+                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Date</th>
                                                     <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:70%;">Survey Count</th>
+                                                        style="border-right:1px solid #dee2e6; width:25%;">Surveyed
+                                                    </th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:25%;">Revisit</th>
+                                                    <th class="border-right"
+                                                        style="border-right:1px solid #dee2e6; width:30%;">RFID not
+                                                        matched</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
                                                         <td style="border-right:1px solid #dee2e6">
                                                             {{data.date}}</td>
+                                                            <td class="border-right"
+                                                                style="border-right:1px solid #dee2e6;">
+                                                                {{data.surveyed}}</td>
+                                                                <td class="border-right"
+                                                                    style="border-right:1px solid #dee2e6;">
+                                                                    {{data.revisit}}</td>
                                                         <td class="border-right"
                                                             style="border-right:1px solid #dee2e6;">
-                                                            {{data.surveyed}}</td>
+                                                            {{data.rfid}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

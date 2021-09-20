@@ -36,8 +36,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     totalSurveyed: "0",
     name: "",
     wardNo: "",
-    average:"0",
-    totalDays:"0"
+    average: "0",
+    totalDays: "0"
   };
   db: any;
   ngOnInit() {
@@ -63,6 +63,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   getServeyorDetail(userId: any, index: any) {
+    console.log(userId)
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {
@@ -70,8 +71,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
-    this.houseData.average="0";
-    this.houseData.totalDays="0";
+    this.houseData.average = "0";
+    this.houseData.totalDays = "0";
     this.lineMarkerList = [];
     let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
@@ -88,10 +89,10 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             if (index == "totalCount") {
               this.houseData.totalSurveyed = data[index];
-              this.houseData.totalDays=(keyArray.length-1).toString();
+              this.houseData.totalDays = (keyArray.length - 1).toString();
               let average =
                 Number(this.houseData.totalSurveyed) /
-                Number(keyArray.length-1);
+                Number(keyArray.length - 1);
               if (average % 1 == 0) {
                 this.houseData.average = average.toFixed(0);
               } else {
@@ -99,18 +100,62 @@ export class HouseMarkingAssignmentComponent implements OnInit {
               }
 
             } else {
-              let date=new Date(index.split('-')[2]+"-"+index.split('-')[1]+"-"+index.split('-')[0])
+              let date = new Date(index.split('-')[2] + "-" + index.split('-')[1] + "-" + index.split('-')[0])
               this.lineMarkerList.push({
-                date:index,
+                date: index,
                 surveyed: data[index],
-                dateOrder:date
+                dateOrder: date,
+                revisit: 0,
+                rfid: 0
               });
-              this.lineMarkerList=this.commonService.transformNumeric(this.lineMarkerList,"dateOrder");
+              this.getRfidCount(userId,index);
+              this.getRevisitCount(userId,index);
+              this.lineMarkerList = this.commonService.transformNumeric(this.lineMarkerList, "dateOrder");
             }
           }
         }
       }
     });
+  }
+
+  getRfidCount(userId: any, date: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.zoneList[i]["zoneNo"] + "/" + userId + "/" + date;
+        let rfidInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            rfidInstance.unsubscribe();
+            if (data != null) {
+              let detail=this.lineMarkerList.find(item=>item.date==date);
+              if(detail!=undefined)
+              {
+                detail.rfid=Number(detail.rfid)+Number(data);
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
+  getRevisitCount(userId: any, date: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.zoneList[i]["zoneNo"] + "/" + userId + "/" + date;
+        let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            revisitInstance.unsubscribe();
+            if (data != null) {
+              let detail=this.lineMarkerList.find(item=>item.date==date);
+              if(detail!=undefined)
+              {
+                detail.revisit=Number(detail.revisit)+Number(data);
+              }
+            }
+          }
+        );
+      }
+    }
   }
 
   //#endregion
@@ -365,6 +410,6 @@ export class houseDatail {
   totalSurveyed: string;
   name: string;
   wardNo: string;
-  average:string;
-  totalDays:string;
+  average: string;
+  totalDays: string;
 }
