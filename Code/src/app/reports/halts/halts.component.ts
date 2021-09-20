@@ -581,7 +581,6 @@ export class HaltsComponent {
     this.currentMonth = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
-    console.log(this.currentMonth);
     this.currentYear = this.selectedDate.split("-")[0];
     this.getHaltList();
   }

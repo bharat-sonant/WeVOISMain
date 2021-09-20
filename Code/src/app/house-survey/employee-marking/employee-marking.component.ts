@@ -135,7 +135,6 @@ export class EmployeeMarkingComponent implements OnInit {
       .subscribe((data) => {
         wardInstance.unsubscribe();
         if (data != undefined) {
-          console.log(data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length - 1; i++) {
@@ -194,7 +193,6 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   setActiveClass(index: any) {
-    console.log(index);
     for (let i = 0; i < this.userList.length; i++) {
       let id = "tr" + i;
       let element = <HTMLElement>document.getElementById(id);

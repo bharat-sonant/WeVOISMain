@@ -256,7 +256,6 @@ export class HomeComponent implements OnInit {
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
-      console.log(userAccessList)
       for (let i = 0; i < userAccessList.length; i++) {
         if (
           userAccessList[i]["parentId"] == 0 &&

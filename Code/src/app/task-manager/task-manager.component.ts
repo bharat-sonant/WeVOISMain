@@ -404,7 +404,7 @@ export class TaskManagerComponent implements OnInit {
         "date"
 
       );
-      console.log(this.userTaskList)
+     
     });
   }
  

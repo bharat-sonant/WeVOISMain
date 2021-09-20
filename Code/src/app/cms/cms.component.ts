@@ -88,7 +88,6 @@ export class CmsComponent implements OnInit {
   }
 
   getPage(value: any) {
-    console.log(value);
     this.userid = localStorage.getItem("userID");
     let list = value.split("/");
     if (list.length <= 4) {

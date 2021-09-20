@@ -84,7 +84,7 @@ export class WardScancardSummaryComponent implements OnInit {
     this.wardDataList = [];
     let circleWardList = this.wardList.filter((item) => item.circle == this.selectedCircle);
     if (circleWardList.length > 0) {
-      console.log(circleWardList);
+      
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
           this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, helper: "" });

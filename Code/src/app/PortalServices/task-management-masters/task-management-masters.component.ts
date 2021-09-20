@@ -177,7 +177,6 @@ export class TaskManagementMastersComponent implements OnInit {
   //#region common function
 
   openModel(content: any, id: any, type: any) {
-    console.log(type);
     if (type == "department") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();

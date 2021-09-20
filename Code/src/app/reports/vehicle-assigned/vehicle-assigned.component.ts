@@ -60,7 +60,7 @@ export class VehicleAssignedComponent implements OnInit {
     let year = this.selectedDate.split("-")[0];
     // dustbin assign vehicle
     let dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + this.selectedDate;
-    console.log(dbPath);
+   
     let dustbinInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         dustbinInstance.unsubscribe();

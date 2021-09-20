@@ -494,7 +494,7 @@ export class HaltSummaryComponent implements OnInit {
         
         let year = haltDate.split("-")[0];
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
-        console.log(haltInfoPath);
+        
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             if (haltData.length > 0) {

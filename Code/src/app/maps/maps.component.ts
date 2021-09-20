@@ -1258,7 +1258,6 @@ export class MapsComponent {
       data => {
         skipLineInstance.unsubscribe();
         if (data != null) {
-          console.log(data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {

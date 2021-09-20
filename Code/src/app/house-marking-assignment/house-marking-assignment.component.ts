@@ -63,7 +63,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   getServeyorDetail(userId: any, index: any) {
-    console.log(userId)
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {

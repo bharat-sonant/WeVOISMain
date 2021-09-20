@@ -605,7 +605,6 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (summaryData != null) {
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
-          console.log(zoneDetails);
           if (summaryData["workPercentage"] != null) {
             zoneDetails.workPer = summaryData["workPercentage"] + "%";
             zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
