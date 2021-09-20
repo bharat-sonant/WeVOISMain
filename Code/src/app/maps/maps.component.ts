@@ -105,7 +105,7 @@ export class MapsComponent {
     parshadName: "",
     parshadMobile: "",
     cardNotScaned: 0,
-    workPercentage:0,
+    workPercentage:"0%",
   };
 
   ngOnInit() {
@@ -717,9 +717,9 @@ export class MapsComponent {
           //   this.progressData.completedLines = 0;
           // }
           if (workerData["workPercentage"] != null) {
-            this.progressData.workPercentage = workerData["workPercentage"];
+            this.progressData.workPercentage = workerData["workPercentage"]+"%";
           } else {
-            this.progressData.workPercentage = 0;
+            this.progressData.workPercentage = "0%";
           }
           if (workerData["wardCoveredDistance"] != null) {
             this.progressData.coveredLength = (
@@ -1320,5 +1320,5 @@ export class progressDetail {
   parshadName: string;
   parshadMobile: string;
   cardNotScaned: number;
-  workPercentage:number;
+  workPercentage:string;
 }
