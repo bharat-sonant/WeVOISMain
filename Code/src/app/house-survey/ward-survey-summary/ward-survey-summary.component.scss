@@ -383,9 +383,10 @@
 
   .table-heading h3{
     line-height: 28px;
-    font-size: 12px;
+    font-size: 8px;
     font-weight: normal;
-    color: #707070;
+    text-transform: uppercase;
+    color: #000;
     margin-bottom: 15px;
     margin-top: 3px;
     margin-right: 15px;
@@ -395,10 +396,22 @@
     border-radius: 10px;
     background: #0ba11714;
     color: #0ba118;
-    padding: 5px 20px;
+    padding: 5px 10px;
     font-size: 24px;
   }
-
+.col{
+  display: flex;
+  justify-content: center;
+}
+.refresh-btn{
+  margin-left: 10px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.refresh-btn:hover{
+  color: #0ba118!important;
+  font-size: 18px;
+}
   .table-one{
     height: 85vh;
     overflow: hidden;
@@ -496,6 +509,7 @@ label{
 .fix-home{
   float: right;
   margin-right: 15px;
+  margin-top: -5px;
   }
   
   

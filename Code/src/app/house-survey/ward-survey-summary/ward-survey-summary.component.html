@@ -90,7 +90,7 @@
             <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-3 text-center">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.totalLines}}</span> <br>
@@ -98,7 +98,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br>
@@ -106,7 +106,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.wardRevisit}}</span> <br>
@@ -115,10 +115,18 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 text-center">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{surveyData.wardOldCards}}</span> <br>
+                                    RFID Not Matched
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{surveyData.wardOldCards}}</span> <span class="refresh-btn"><i class="fas fa-sync-alt" style="font-size: 18px;"></i></span> <br>
                                     RFID Not Matched
                                 </h3>
                             </div>
