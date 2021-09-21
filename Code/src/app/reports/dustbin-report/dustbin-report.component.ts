@@ -53,11 +53,11 @@ export class DustbinReportComponent implements OnInit {
   pickedDustbin: any;
   preSelectedMarker: any;
   highPriority: any;
-  db:any;
+  db: any;
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.userId = localStorage.getItem('userID');
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
@@ -474,7 +474,7 @@ export class DustbinReportComponent implements OnInit {
           if (isDelete == true) {
             let monthName = this.commonService.getCurrentMonthName(parseInt(date.toString().split('-')[1]) - 1);
             let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + monthName + "/" + date + "/" + dustbin + "/" + planId;
-            
+
             let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
               data => {
                 dataInstance.unsubscribe();
@@ -718,24 +718,17 @@ export class DustbinReportComponent implements OnInit {
                   let binList = bins.toString().replaceAll(" ", "").split(',');
                   let sequenceList = sequence.toString().replaceAll(" ", "").split(',');
 
-                  if (dustbinPickingPosition == 0) {
-                    bins = dustbinId + ", " + bins;
-                    sequence = dustbinId + ", " + sequence;
-                    this.checkDustbinPickingPosition(planDetails, bins, sequence, highPriority, zone, totalDustbin, date, planId, dustbinId);
-                  }
-                  else {
-                    let checkDustbin = sequenceList[dustbinPickingPosition].trim();
-                    let monthName = this.commonService.getCurrentMonthName(parseInt(date.toString().split('-')[1]) - 1);
+                  let checkDustbin = sequenceList[dustbinPickingPosition].trim();
+                  let monthName = this.commonService.getCurrentMonthName(parseInt(date.toString().split('-')[1]) - 1);
 
-                    let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + monthName + "/" + date + "/" + checkDustbin + "/" + planId;
+                  let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + monthName + "/" + date + "/" + checkDustbin + "/" + planId;
 
-                    let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      data => {
-                        dataInstance.unsubscribe();
-                        if (data != null) {
-                          let dustbinPosion = Number(dustbinPickingPosition) + 1;
-                          checkDustbin = sequenceList[dustbinPosion];
-                        }
+                  let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
+                    data => {
+                      dataInstance.unsubscribe();
+                      if (data != null) {
+                        let dustbinPosion = Number(dustbinPickingPosition) + 1;
+                        checkDustbin = sequenceList[dustbinPosion];
                         bins = "";
                         sequence = "";
                         for (let i = 0; i < sequenceList.length; i++) {
@@ -758,9 +751,33 @@ export class DustbinReportComponent implements OnInit {
                         }
                         this.checkDustbinPickingPosition(planDetails, bins, sequence, highPriority, zone, totalDustbin, date, planId, dustbinId);
                       }
-                    );
-
-                  }
+                      else {
+                        let dustbinPosion = Number(dustbinPickingPosition);
+                        checkDustbin = sequenceList[dustbinPosion];
+                        bins = "";
+                        sequence = "";
+                        for (let i = 0; i < sequenceList.length; i++) {
+                          if (sequence != "") { sequence = sequence + ", " }
+                          if (checkDustbin == sequenceList[i].trim()) {
+                            sequence = sequence + dustbinId + ", " + sequenceList[i].trim();
+                          }
+                          else {
+                            sequence = sequence + sequenceList[i].trim();
+                          }
+                        }
+                        for (let i = 0; i < binList.length; i++) {
+                          if (bins != "") { bins = bins + ", " }
+                          if (checkDustbin == binList[i].trim()) {
+                            bins = bins + dustbinId + ", " + binList[i].trim();
+                          }
+                          else {
+                            bins = bins + binList[i].trim();
+                          }
+                        }
+                        this.checkDustbinPickingPosition(planDetails, bins, sequence, highPriority, zone, totalDustbin, date, planId, dustbinId);
+                      }
+                    }
+                  );
                 }
               }
             }
@@ -1166,7 +1183,7 @@ export class DustbinReportComponent implements OnInit {
           this.zoneList.push({ zoneNo: this.dustbinStorageList[i]["zone"], zone: "Zone " + this.dustbinStorageList[i]["zone"], pickFrequency: this.dustbinStorageList[i]["pickFrequency"] })
         }
       }
-      this.zoneList=this.commonService.transformNumeric(this.zoneList,'zone');
+      this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
       this.selectedZone = this.zoneList[0]["zoneNo"];
       this.getDustbins();
     }
@@ -1385,7 +1402,7 @@ export class DustbinReportComponent implements OnInit {
   }
 
   getDustbinPicked(pickedData: any, day: any, dustbin: any, index: any, monthDate: any) {
-    
+
     let icon = this.getIcon("picked");
     let empId = pickedData["pickedBy"];
     if (pickedData["remarks"] == "डस्टबिन लोकेशन पर नहीं है") {
@@ -1415,7 +1432,7 @@ export class DustbinReportComponent implements OnInit {
         this.getEmployee(dustbin, empId, monthDate, 1, index, remark);
       }
       else {
-        dustbinDetails[day] = dustbinDetails[day] + " - " + icon+ filledPercentage + " at " + pickTime + "";
+        dustbinDetails[day] = dustbinDetails[day] + " - " + icon + filledPercentage + " at " + pickTime + "";
         this.getEmployee(dustbin, empId, monthDate, 2, index, remark);
       }
     }
