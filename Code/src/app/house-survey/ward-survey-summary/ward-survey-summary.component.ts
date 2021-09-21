@@ -22,6 +22,7 @@ export class WardSurveySummaryComponent implements OnInit {
   isFirst = true;
   wardCheckList: any[] = [];
   db: any;
+  selectedWard: any;
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -32,10 +33,12 @@ export class WardSurveySummaryComponent implements OnInit {
     wardSurveyed: 0,
     wardRevisit: 0,
     wardAlreadyCard: 0,
-    wardOldCards: 0
+    wardOldCards: 0,
+    wardNameNotCorrect: 0
   };
 
   ngOnInit() {
+    //localStorage.setItem("wardNameNotCorrectList",null);
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -52,17 +55,19 @@ export class WardSurveySummaryComponent implements OnInit {
 
 
   getWardProgressList() {
+
+
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0 });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0 });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
             $("#tr1").addClass("active");
-          }, 3000);
+          }, 4000);
         }
         this.getWardSummary(i, wardNo);
       }
@@ -116,6 +121,14 @@ export class WardSurveySummaryComponent implements OnInit {
         this.surveyData.totalOldCards = this.surveyData.totalOldCards + Number(data);
       }
     });
+
+    let wardNameNotCorrectList = JSON.parse(localStorage.getItem("wardNameNotCorrectList"));
+    if(wardNameNotCorrectList!=null){
+      let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == wardNo);
+        if (wardNameDetail != undefined) {
+         this.wardProgressList[index]["nameNotCorrect"] =wardNameDetail.count;
+        }
+    }
   }
 
   setActiveClass(index: any) {
@@ -140,11 +153,13 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardSurveyed = 0;
     this.surveyData.wardAlreadyCard = 0;
     this.surveyData.wardOldCards = 0;
+    this.surveyData.wardNameNotCorrect = 0;
     this.lineSurveyList = [];
   }
 
   getSurveyDetail(wardNo: any, listIndex: any) {
     this.clearWardDetailData();
+    this.selectedWard = wardNo;
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
@@ -168,6 +183,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardSurveyed = wardSummary.surveyed;
           this.surveyData.wardAlreadyCard = wardSummary.already;
           this.surveyData.wardOldCards = wardSummary.oldCard;
+          this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
           this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo });
@@ -239,6 +255,63 @@ export class WardSurveySummaryComponent implements OnInit {
             }
           );
         }
+      }
+    }
+  }
+
+  getNameNotCorrect() {
+    let nameNotCorrectCount = 0;
+    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
+    let lineCount = wardLineCountList.find(item => item.wardNo == this.selectedWard);
+    if (lineCount != undefined) {
+      let wardLineCount = Number(lineCount.lineCount);
+      for (let i = 1; i <= wardLineCount; i++) {
+        let dbPath = "Houses/" + this.selectedWard + "/" + i;
+        let wardNameInstance = this.db.list(dbPath).valueChanges().subscribe(
+          data => {
+            wardNameInstance.unsubscribe();
+            if (data.length > 0) {
+              for (let j = 0; j < data.length; j++) {
+                if (data[j]["isNameCorrect"] == null) {
+                  nameNotCorrectCount = nameNotCorrectCount + 1;
+                }
+                else if (data[j]["isNameCorrect"] != "yes") {
+                  nameNotCorrectCount = nameNotCorrectCount + 1;
+                }
+              }
+              this.surveyData.wardNameNotCorrect = nameNotCorrectCount;
+            }
+          }
+        );
+      }
+      setTimeout(() => {
+        let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
+        if (wardSummary != undefined) {
+          wardSummary.nameNotCorrect = nameNotCorrectCount;
+          this.setWardNameNotCorrectList(this.selectedWard, nameNotCorrectCount);
+        }
+      }, 1000);
+    }
+  }
+
+  setWardNameNotCorrectList(ward: any, count: any) {
+    let wardNameNotCorrectList = JSON.parse(localStorage.getItem("wardNameNotCorrectList"));
+    if (wardNameNotCorrectList == null) {
+      wardNameNotCorrectList = [];
+      wardNameNotCorrectList.push({ wardNo: ward, count: count });
+      localStorage.setItem("wardNameNotCorrectList",JSON.stringify(wardNameNotCorrectList));
+    }
+    else {
+      let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
+      if (wardSummary != undefined) {
+        let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == this.selectedWard);
+        if (wardNameDetail != undefined) {
+          wardNameDetail.count=count;
+        }
+        else{
+          wardNameNotCorrectList.push({ wardNo: ward, count: count });
+        }
+        localStorage.setItem("wardNameNotCorrectList",JSON.stringify(wardNameNotCorrectList));
       }
     }
   }
@@ -336,9 +409,9 @@ export class WardSurveySummaryComponent implements OnInit {
             }
           }
           this.surveyDateList = dateList.sort((a, b) =>
-          b.dateOrder> a.dateOrder ? 1 : -1
-        );
-           // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+          // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -371,9 +444,9 @@ export class WardSurveySummaryComponent implements OnInit {
             }
           }
           this.surveyDateList = dateList.sort((a, b) =>
-        b.dateOrder> a.dateOrder ? 1 : -1
-      );
-         // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+          // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -406,9 +479,9 @@ export class WardSurveySummaryComponent implements OnInit {
             }
           }
           this.surveyDateList = dateList.sort((a, b) =>
-        b.dateOrder > a.dateOrder ? 1 : -1
-      );
-        //  this.surveyDateList = this.commonService.transformString(dateList, "-dateOrder");
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+          //  this.surveyDateList = this.commonService.transformString(dateList, "-dateOrder");
         }
       }
     );
@@ -427,4 +500,5 @@ export class surveyDatail {
   wardRevisit: number;
   wardAlreadyCard: number;
   wardOldCards: number;
+  wardNameNotCorrect: number;
 }
