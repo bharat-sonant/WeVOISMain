@@ -84,6 +84,7 @@ import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-map
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
+import { JmapsComponent } from '../../jmaps/jmaps.component';
 
 @NgModule({
   imports: [
@@ -172,7 +173,8 @@ import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summar
     LineMarkerMappingComponent,
     VehicleAssignedComponent,
     LogBookComponent,
-    WardScancardSummaryComponent
+    WardScancardSummaryComponent,
+    JmapsComponent
   ]
 })
 

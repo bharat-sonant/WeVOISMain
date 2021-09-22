@@ -77,6 +77,7 @@ import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-map
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
+import { JmapsComponent } from '../../jmaps/jmaps.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -170,6 +171,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'sikar/log-book', component: LogBookComponent },
     { path: 'sikar/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'sikar/jmaps', component: JmapsComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -254,6 +256,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'sikar/:id/log-book', component: LogBookComponent },
     { path: 'sikar/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'sikar/:id/jmaps', component: JmapsComponent },
 
 
     //jaipur-greater
@@ -339,6 +342,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'jaipur-greater/log-book', component: LogBookComponent },
     { path: 'jaipur-greater/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'jaipur-greater/jmaps', component: JmapsComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -423,6 +427,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'jaipur-greater/:id/log-book', component: LogBookComponent },
     { path: 'jaipur-greater/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'jaipur-greater/:id/jmaps', component: JmapsComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -507,6 +512,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'reengus/log-book', component: LogBookComponent },
     { path: 'reengus/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'reengus/jmaps', component: JmapsComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -591,6 +597,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'reengus/:id/log-book', component: LogBookComponent },
     { path: 'reengus/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'reengus/:id/jmaps', component: JmapsComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -675,6 +682,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'shahpura/log-book', component: LogBookComponent },
     { path: 'shahpura/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'shahpura/jmaps', component: JmapsComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -759,6 +767,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'shahpura/:id/log-book', component: LogBookComponent },
     { path: 'shahpura/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'shahpura/:id/jmaps', component: JmapsComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -843,6 +852,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'test/log-book', component: LogBookComponent },
     { path: 'test/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'test/jmaps', component: JmapsComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -927,6 +937,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'test/:id/log-book', component: LogBookComponent },
     { path: 'test/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'test/:id/jmaps', component: JmapsComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1011,6 +1022,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'demo/log-book', component: LogBookComponent },
     { path: 'demo/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'demo/jmaps', component: JmapsComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -1095,4 +1107,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: 'demo/:id/log-book', component: LogBookComponent },
     { path: 'demo/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'demo/:id/jmaps', component: JmapsComponent },
 ]; 
