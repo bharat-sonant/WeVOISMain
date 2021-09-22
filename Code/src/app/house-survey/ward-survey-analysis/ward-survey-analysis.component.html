@@ -213,7 +213,21 @@
   <ng-template #contentRevisit>
 
     <div class="modal-dialog modal-dialog-centered" role="document">
+      
       <div class="modal-content">
+        <div id="divConfirm" style="display: none; position: absolute;z-index: 99999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+          <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>                   
+          <input id="revisitIndex" type="hidden" value="0">
+          <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+              <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                  <button class="btn btn-success " (click)="checkRevisit();">
+                      Confirm</button>
+              </div>
+              <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                  <button class="btn btn-danger " (click)="cancelRevisitDelete();" style="text-transform: uppercase;"> Cancel</button>
+              </div>
+          </div>
+      </div>
         <div style="width: 100%;text-align: right;float: left;">
           <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
         </div>
@@ -223,11 +237,18 @@
               <div id="divSequence" class="scrollable-halt">
                 <div class="{{dt.activeClass}}" *ngFor="let dt of revisitSurveyList, let i=index"
                   (click)="getRevisitMarker(i);">
-                  <div [hidden]="dt.lineNo==0" class="work-stop-address" style="border-bottom: 1px solid lightgray;">
-                    <p><i class="fas fa-map-marker-alt"></i> Line {{dt.lineNo}}</p>
+                  <div [hidden]="dt.lines==0" class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <p><i class="fas fa-map-marker-alt"></i> Line {{dt.lineNo}}
+                     
+                    </p>
                   </div>
                   <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
-                    <p><i class="fas fa-house-damage" style="color: green;"></i> {{dt.houseType}}</p>
+                    <p><i class="fas fa-house-damage" style="color: green;"></i> {{dt.houseType}}
+                      <span style="float: right;">
+                        <a href="{{dt.imageURL}}" target="_blank" [hidden]="dt.imageURL==''">
+                        Check Image</a>
+                      </span>
+                    </p>
                   </div>
                   <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
                     <p><i class="fas fa-user-tie"></i> {{dt.name}}</p>
@@ -236,10 +257,11 @@
                     <p><i class="fas fa-registered" style="color: red;"></i> {{dt.reason}}</p>
                   </div>
                   <div class="work-stop-address">
-                    <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}} <span style="float: right;">
-                      <a href="{{dt.imageURL}}" target="_blank" [hidden]="dt.imageURL==''">
-                      Check Image</a>
-                    </span></p>
+                    <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}} 
+                      <span style="float: right;">
+                        <i class="far fa-trash-alt" style="color: red; cursor: pointer;" (click)="confirmRevisitRequest(i);" ></i>
+                      </span>
+                      </p>
                   </div>
                 </div>
               </div>
