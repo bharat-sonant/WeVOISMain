@@ -46,7 +46,10 @@ export class JmapsComponent {
   progressData: progressDetail = {
     wardLength: "0",
     coveredLength: "0",
-    workPercentage: "0%"
+    workPercentage: "0%",
+    coveredLengthMeter: 0,
+    workPercentageNumber: 0,
+    completedLines: 0
   };
 
   ngOnInit() {
@@ -164,14 +167,25 @@ export class JmapsComponent {
     this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       if (workerData != null) {
         if (workerData["workPercentage"] != null) {
+          this.progressData.workPercentageNumber = Number(workerData["workPercentage"]);
           this.progressData.workPercentage = workerData["workPercentage"] + "%";
         } else {
           this.progressData.workPercentage = "0%";
+          this.progressData.workPercentageNumber = 0;
+
         }
         if (workerData["wardCoveredDistance"] != null) {
+          this.progressData.coveredLengthMeter = Number(workerData["wardCoveredDistance"]);
           this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
         } else {
           this.progressData.coveredLength = "0.00";
+          this.progressData.coveredLengthMeter = 0;
+        }
+
+        if (workerData["completedLines"] != null) {
+          this.progressData.completedLines = Number(workerData["completedLines"]);
+        } else {
+          this.progressData.completedLines = 0;
         }
       }
     });
@@ -237,7 +251,7 @@ export class JmapsComponent {
 
 
 
-  plotLineOnMap(lineNo: any, latlng: any, i: any, wardNo: any) {
+  plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       //lineStatus.unsubscribe();
@@ -246,44 +260,67 @@ export class JmapsComponent {
         lineStatus.unsubscribe();
       }
       let line = new google.maps.Polyline({
-        path: latlng,
+        path: latlngs,
         strokeColor: this.commonService.getLineColor(status),
         strokeWeight: 7,
       });
       this.polylines[i] = line;
-      this.polylines[i].setMap(this.map);
-      let dbEvent = this.db;
-      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-      google.maps.event.addListener(line, 'click', function (h) {
-        var latlng = h.latLng;
-        var needle = {
-          minDistance: 9999999999, //silly high
-          index: -1,
-          latlng: null
-        };
-        let dist = 0;
-        line.getPath().forEach(function (routePoint, index) {
-          dist = google.maps.geometry.spherical.computeDistanceBetween(latlng, routePoint);
-          if (dist < needle.minDistance) {
-            needle.minDistance = dist;
-            needle.index = index;
-            needle.latlng = routePoint;
-          }
-        });
 
-        //alert(dist);
+      this.polylines[i].setMap(this.map);
+      let progresData = this.progressData;
+      let dbEvent = this.db;
+      let wardLines = this.wardLines;
+      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+      let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+      let dbPathSummary = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      google.maps.event.addListener(line, 'click', function (h) {
+
+        let dist = 0;
+        for (let i = latlngs.length - 1; i > 0; i--) {
+          let lat1 = latlngs[i]["lat"];
+          let lon1 = latlngs[i]["lng"];
+          let lat2 = latlngs[i - 1]["lat"];
+          let lon2 = latlngs[i - 1]["lng"];
+
+          const R = 6377830; // metres
+          const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+          const φ2 = lat2 * Math.PI / 180;
+          const Δφ = (lat2 - lat1) * Math.PI / 180;
+          const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+          const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          dist = dist + (R * c);
+
+        }
+
+        let date = new Date();
+        let hour = date.getHours();
+        let min = date.getMinutes();
+        let second = date.getSeconds();
+        let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+
+
+       // alert(dist);
 
         let stockColor = "#60c2ff";
+        let isNew = true;
 
         let statusInstance = dbEvent.object(dbPath).valueChanges().subscribe(
           status => {
             statusInstance.unsubscribe();
             if (status == null) {
+              isNew = true;
               dbEvent.database.ref(dbPath).set("LineCompleted");
+              dbEvent.database.ref(dbPath2).set(time);
               stockColor = "#00f645";
             }
             else {
+              isNew = false;
               dbEvent.database.ref(dbPath).set(null);
+              dbEvent.database.ref(dbPath2).set(null);
               stockColor = "#60c2ff";
             }
             var polyOptions = {
@@ -291,14 +328,55 @@ export class JmapsComponent {
               strokeOpacity: 1.0,
               strokeWeight: 7
             }
+            let summaryInstance = dbEvent.object(dbPathSummary).valueChanges().subscribe(
+              data => {
+                summaryInstance.unsubscribe();
+                let wardCoveredDistance = dist;
+                let completedLines = 1;
+                let workPercentage = 0;
+                if (data == null) {
+                  workPercentage = Math.round((completedLines * 100) / wardLines);
+                }
+                else {
+                  if (isNew == true) {
+                    if (data["completedLines"] != null) {
+                      completedLines = Number(data["completedLines"]) + completedLines;
+                    }
+                    if (data["wardCoveredDistance"] != null) {
+                      wardCoveredDistance = Number(data["wardCoveredDistance"]) + wardCoveredDistance;
+                    }                    
+                  }
+                  else{
+                    if (data["completedLines"] != null) {
+                      completedLines = Number(data["completedLines"]) - completedLines;
+                    }
+                    if (data["wardCoveredDistance"] != null) {
+                      wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
+                    }  
+                  }
+                  workPercentage = Math.round((completedLines * 100) / wardLines);
+                }
+                progresData.coveredLength=wardCoveredDistance.toFixed(0);
+                progresData.workPercentage=workPercentage+"%";
+                let userid = localStorage.getItem("userID");
+                const data1={
+                  userid:userid,
+                  completedLines:completedLines,
+                  wardCoveredDistance:wardCoveredDistance.toFixed(0),
+                  workPercentage:workPercentage
+                }
+                dbEvent.object(dbPathSummary).update(data1);
+              } 
+            );
             line.setOptions(polyOptions);
+
           }
         );
 
       });
 
-      let lat = latlng[0]["lat"];
-      let lng = latlng[0]["lng"];
+      let lat = latlngs[0]["lat"];
+      let lng = latlngs[0]["lng"];
       let marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
         map: this.map,
@@ -374,4 +452,7 @@ export class progressDetail {
   wardLength: string;
   coveredLength: string;
   workPercentage: string;
+  coveredLengthMeter: number;
+  workPercentageNumber: number;
+  completedLines: number;
 }
