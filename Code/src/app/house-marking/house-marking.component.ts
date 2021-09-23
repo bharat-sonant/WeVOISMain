@@ -215,6 +215,9 @@ export class HouseMarkingComponent {
                 if (data[index]["revisitKey"] != null) {
                   status = "Revisit";
                 }
+                if (data[index]["rfidNotFoundKey"] != null) {
+                  status = "RFID not matched";
+                }
 
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
