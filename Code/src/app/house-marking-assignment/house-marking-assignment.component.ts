@@ -34,6 +34,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   houseData: houseDatail = {
     totalMarking: "0",
     totalSurveyed: "0",
+    totalRevisit: "0",
+    totalRFID: "0",
     name: "",
     wardNo: "",
     average: "0",
@@ -70,90 +72,164 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
+    this.houseData.totalRevisit = "0";
+    this.houseData.totalRFID = "0";
     this.houseData.average = "0";
     this.houseData.totalDays = "0";
     this.lineMarkerList = [];
+
+
     let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
       this.houseData.name = userDetail.name;
       this.houseData.wardNo = userDetail.wardNo;
+      this.getSurveyCount(userId);
+      this.getRevisitCount(userId);
+      this.getRfidCount(userId);
     }
-    this.dbPath = "EntitySurveyData/SurveyDateWise/" + userId;
-    let instance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
-      instance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            if (index == "totalCount") {
-              this.houseData.totalSurveyed = data[index];
-              this.houseData.totalDays = (keyArray.length - 1).toString();
-              let average =
-                Number(this.houseData.totalSurveyed) /
-                Number(keyArray.length - 1);
-              if (average % 1 == 0) {
-                this.houseData.average = average.toFixed(0);
-              } else {
-                this.houseData.average = average.toFixed(2);
-              }
+  }
 
-            } else {
-              let date = new Date(index.split('-')[2] + "-" + index.split('-')[1] + "-" + index.split('-')[0])
-              this.lineMarkerList.push({
-                date: index,
-                surveyed: data[index],
-                dateOrder: date,
-                revisit: 0,
-                rfid: 0
-              });
-              this.getRfidCount(userId,index);
-              this.getRevisitCount(userId,index);
-              this.lineMarkerList = this.commonService.transformNumeric(this.lineMarkerList, "dateOrder");
+  getSurveyCount(userId: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyHouseCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    detail.surveyed = Number(detail.surveyed) + count;
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, surveyed: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
             }
           }
+        );
+      }
+    }
+  }
+
+  getRevisitCount(userId: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    if (detail.revisit != null) {
+                      detail.revisit = Number(detail.revisit) + count;
+                    }
+                    else {
+                      detail.revisit = count;
+                    }
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, revisit: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
+
+  getRfidCount(userId: any) {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    if (detail.rfid != null) {
+                      detail.rfid = Number(detail.rfid) + count;
+                    }
+                    else {
+                      detail.rfid = count;
+                    }
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, rfid: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
+
+            }
+            if (i == this.zoneList.length - 1) {
+             // setTimeout(() => {
+                this.getSummary();
+             // }, 2000);
+              
+
+            }
+          }
+        );
+      }
+    }
+  }
+
+  getSummary() {
+    if (this.lineMarkerList.length > 0) {
+
+      let surved = 0;
+      let revisit = 0;
+      let rfid = 0;
+      for (let i = 0; i < this.lineMarkerList.length; i++) {
+        if (this.lineMarkerList[i]["surveyed"] != null) {
+          surved = surved + Number(this.lineMarkerList[i]["surveyed"]);
         }
+        if (this.lineMarkerList[i]["revisit"] != null) {
+          revisit = revisit + Number(this.lineMarkerList[i]["revisit"]);
+        }
+        if (this.lineMarkerList[i]["rfid"] != null) {
+          rfid = rfid + Number(this.lineMarkerList[i]["rfid"]);
+        }
+        this.houseData.totalSurveyed = surved.toString();
+        this.houseData.totalRevisit = revisit.toString();
+        this.houseData.totalRFID = rfid.toString();
+        this.houseData.totalDays = this.lineMarkerList.length.toString();
+        this.houseData.average = ((surved + revisit + rfid) / this.lineMarkerList.length).toFixed(2);
       }
-    });
-  }
 
-  getRfidCount(userId: any, date: any) {
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.zoneList[i]["zoneNo"] + "/" + userId + "/" + date;
-        let rfidInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            rfidInstance.unsubscribe();
-            if (data != null) {
-              let detail=this.lineMarkerList.find(item=>item.date==date);
-              if(detail!=undefined)
-              {
-                detail.rfid=Number(detail.rfid)+Number(data);
-              }
-            }
-          }
-        );
-      }
-    }
-  }
-
-  getRevisitCount(userId: any, date: any) {
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.zoneList[i]["zoneNo"] + "/" + userId + "/" + date;
-        let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            revisitInstance.unsubscribe();
-            if (data != null) {
-              let detail=this.lineMarkerList.find(item=>item.date==date);
-              if(detail!=undefined)
-              {
-                detail.revisit=Number(detail.revisit)+Number(data);
-              }
-            }
-          }
-        );
-      }
     }
   }
 
@@ -175,6 +251,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             let name = data[index]["name"];
             let loginId = data[index]["pin"];
+            let joiningDate = data[index]["joining-date"].split('-')[2] + "-" + data[index]["joining-date"].split('-')[1] + "-" + data[index]["joining-date"].split('-')[0];
             let isActive = false;
             if (data[index]["status"] == "2") {
               isActive = true;
@@ -197,14 +274,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                       }
                     }
                   }
-                  this.surveyorList.push({ userId: index, name: name, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
+                  this.surveyorList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({ userId: index, name: name, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
+                    this.assignedList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   }
                 } else {
-                  this.surveyorList.push({ userId: index, name: name, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
+                  this.surveyorList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({ userId: index, name: name, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
+                    this.assignedList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   }
                 }
                 this.surveyorList = this.commonService.transformNumeric(this.surveyorList, "name");
@@ -407,6 +484,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 export class houseDatail {
   totalMarking: string;
   totalSurveyed: string;
+  totalRevisit: string;
+  totalRFID: string;
   name: string;
   wardNo: string;
   average: string;

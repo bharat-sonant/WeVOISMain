@@ -7,7 +7,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-7" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -71,15 +71,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+
             <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-3 text-left">
-                            <h5> <b>{{houseData.name}} </b></h5>
-                        </div>
-
-                        <div class="col-md-3 text-right">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalDays}}</span> <br>
@@ -87,7 +84,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-right">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.average}}</span> <br>
@@ -95,11 +92,28 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-right">
+                        <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br>
-                                    Total Survey
+                                    Surveyed
+                                </h3>
+                            </div>
+                        </div>
+                        
+                        <div class="col text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br>
+                                    Revisit
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{houseData.totalRFID}}</span> <br>
+                                    RFID not matched
                                 </h3>
                             </div>
                         </div>
@@ -132,12 +146,15 @@
                                                             {{data.date}}</td>
                                                             <td class="border-right"
                                                                 style="border-right:1px solid #dee2e6;">
+                                                                <span [hidden]="data.surveyed!=null">-</span>
                                                                 {{data.surveyed}}</td>
                                                                 <td class="border-right"
                                                                     style="border-right:1px solid #dee2e6;">
+                                                                    <span [hidden]="data.revisit!=null">-</span>
                                                                     {{data.revisit}}</td>
                                                         <td class="border-right"
                                                             style="border-right:1px solid #dee2e6;">
+                                                            <span [hidden]="data.rfid!=null">-</span>
                                                             {{data.rfid}}</td>
                                                     </tr>
                                                 </tbody>
