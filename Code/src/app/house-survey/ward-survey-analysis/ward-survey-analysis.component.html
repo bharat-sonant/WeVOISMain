@@ -1,3 +1,6 @@
+<div id="divLoaderUpdate" class="loaderClass">
+  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
 <section class="header">
   <div class="row no-gutters">
     <div class="col-md-2">
@@ -142,12 +145,14 @@
 
   <!--Old Card Start-->
   <ng-template #contentLineOldCard>
+    
     <div style="width: 100%;text-align: right;float: left;">
 
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
     <div class="modal-body">
+      
       <div id="divStatus" class="content-scroll">
         <div class="row" style="margin:0px !important">
           <div class="col-md-2 box-style" *ngFor="let dt of oldCardList, let i=index" >

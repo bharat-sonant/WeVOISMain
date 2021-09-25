@@ -1,4 +1,3 @@
-import { Conditional } from '@angular/compiler';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -903,6 +902,7 @@ export class WardSurveyAnalysisComponent {
   // process for survey revisit request
 
   getProcess(index: any) {
+    $('#divLoaderUpdate').show();
     let lineNo = this.revisitSurveyList[index]["lineNo"];
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
@@ -932,7 +932,6 @@ export class WardSurveyAnalysisComponent {
           }
           if (canProcess == true) {
             this.generateNewCardNumber(index, markerNo, "", "revisit");
-            this.commonService.setAlertMessage("error", "Go for process !!!");
           }
           else {
             this.moveToRevisitSurveyData(lineNo, revisitKey, cardNo, index);
@@ -974,26 +973,47 @@ export class WardSurveyAnalysisComponent {
     else {
       cardNo = cardCount;
     }
-    let cardNumber = "SIKA" + cardNo;
-    let dbPath = "CardWardMapping/" + cardNumber;
-    let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        checkInstance.unsubscribe();
-        if (data != null) {
-          cardCount = cardCount + 1;
-          this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
+    if (cardCount > 6500) {
+      let dbPath = "Settings/virtualLastCardNumber";
+      let cardNumberInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          cardNumberInstance.unsubscribe();
+          if (data != null) {
+            cardCount = Number(data) + 1;
+            this.db.object("Settings").update({ virtualLastCardNumber: cardCount });
+            let cardNumber = "SIKA" + cardCount;
+            if (surveyType == "Revisit") {
+              this.generateMobileNo(cardNumber, index, markerNo);
+            }
+            else {
+              this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+            }
+          }
         }
-        else {
-          this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
-          if (surveyType == "Revisit") {
-            this.generateMobileNo(cardNumber, index, markerNo);
+      );
+    }
+    else {
+      let cardNumber = "SIKA" + cardNo;
+      let dbPath = "CardWardMapping/" + cardNumber;
+      let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          checkInstance.unsubscribe();
+          if (data != null) {
+            cardCount = cardCount + 1;
+            this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
           }
           else {
-            this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+            this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
+            if (surveyType == "Revisit") {
+              this.generateMobileNo(cardNumber, index, markerNo);
+            }
+            else {
+              this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+            }
           }
         }
-      }
-    );
+      );
+    }
   }
 
   generateMobileNo(cardNumber: any, index: any, markerNo: any) {
@@ -1070,6 +1090,7 @@ export class WardSurveyAnalysisComponent {
 
     this.moveToRevisitSurveyData(lineNo, revisitKey, cardNumber, index);
     this.resetSurveyed();
+    this.commonService.setAlertMessage("success", "Revisit request surveyed successfully !!!");
   }
 
   moveToRevisitSurveyData(lineNo: any, revisitKey: any, cardNo: any, index: any) {
@@ -1091,6 +1112,7 @@ export class WardSurveyAnalysisComponent {
           dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
           this.db.object(dbPath).remove();
           this.resetRevisitRequests(index);
+          $('#divLoaderUpdate').hide();
         }
       }
     );
@@ -1214,9 +1236,10 @@ export class WardSurveyAnalysisComponent {
 
 
   getProcessRfId(index: any) {
+    $('#divLoaderUpdate').show();
     let cardNumber = $('#txt' + index).val();
     let mobileNo = $('#spMobile' + index).html().trim();
-    let rfidCardNo = $('#spCardNo' + index).html().trim();
+    let rfidCardNo = $('#spCardNo' + index).html().trim().split(' ')[0];
     if (cardNumber != "") {
       cardNumber = "SIKA" + cardNumber;
       let dbPath = "CardWardMapping/" + cardNumber;
@@ -1225,6 +1248,7 @@ export class WardSurveyAnalysisComponent {
           checkInstance.unsubscribe();
           if (data != null) {
             this.commonService.setAlertMessage("error", "You can not process this card number!!!");
+            $('#divLoaderUpdate').hide();
           }
           else {
             this.saveRFIDSurveyData(index, cardNumber, mobileNo, rfidCardNo);
@@ -1316,11 +1340,12 @@ export class WardSurveyAnalysisComponent {
           this.updateRFIDNotCounts(this.lineNo, date, surveyorId);
           this.resetSurveyed();
           this.resetRFIDNot(index);
+          this.commonService.setAlertMessage("success", "RFID not matched surveyed successfully !!!");
+          $('#divLoaderUpdate').hide();
         }
       }
     );
   }
-
 }
 
 export class progressDetail {
