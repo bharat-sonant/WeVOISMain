@@ -414,7 +414,6 @@ export class WardSurveyAnalysisComponent {
             progressData.rfIdName = data["name"];
             progressData.rfIdAddress = data["address"];
             progressData.rfIdDate = rfIdDate;
-
           }
         });
       });
@@ -788,7 +787,7 @@ export class WardSurveyAnalysisComponent {
           this.db.object(dbPath).update(data);
 
           // update counts
-          this.updateRevisitCounts(lineNo, date, surveyorId);
+          this.updateRevisitCounts(lineNo, date, surveyorId, "delete");
 
           dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
           this.db.object(dbPath).remove();
@@ -932,12 +931,11 @@ export class WardSurveyAnalysisComponent {
             }
           }
           if (canProcess == true) {
-            this.generateNewCardNumber(index, markerNo);
+            this.generateNewCardNumber(index, markerNo, "", "revisit");
             this.commonService.setAlertMessage("error", "Go for process !!!");
           }
           else {
             this.moveToRevisitSurveyData(lineNo, revisitKey, cardNo, index);
-
             this.commonService.setAlertMessage("error", "Survey already done for this revisit request  !!!");
           }
         }
@@ -945,7 +943,7 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
-  generateNewCardNumber(index: any, markerNo: any) {
+  generateNewCardNumber(index: any, markerNo: any, mobileNo: any, surveyType: any) {
     let dbPath = "Settings/virtualRevisitLastCardNumber";
     let cardNumberInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -954,12 +952,12 @@ export class WardSurveyAnalysisComponent {
         if (data != null) {
           cardCount = Number(data) + 1;
         }
-        this.checkFromCardWardMapping(index, cardCount, markerNo);
+        this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
       }
     );
   }
 
-  checkFromCardWardMapping(index: any, cardCount: any, markerNo: any) {
+  checkFromCardWardMapping(index: any, cardCount: any, markerNo: any, mobileNo: any, surveyType: any) {
     let cardNo = "00001";
     if (cardCount.toString().length == 1) {
       cardNo = "0000" + cardCount;
@@ -983,13 +981,16 @@ export class WardSurveyAnalysisComponent {
         checkInstance.unsubscribe();
         if (data != null) {
           cardCount = cardCount + 1;
-          this.checkFromCardWardMapping(index, cardCount, markerNo);
+          this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
         }
         else {
           this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
-
-          this.generateMobileNo(cardNumber, index, markerNo);
-          console.log(cardNumber);
+          if (surveyType == "Revisit") {
+            this.generateMobileNo(cardNumber, index, markerNo);
+          }
+          else {
+            this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+          }
         }
       }
     );
@@ -1008,7 +1009,6 @@ export class WardSurveyAnalysisComponent {
           this.generateMobileNo(cardNumber, index, markerNo);
         }
         else {
-          console.log(mobileNo);
           this.saveRevisitSurvedData(cardNumber, index, mobileNo, markerNo);
         }
       }
@@ -1069,7 +1069,7 @@ export class WardSurveyAnalysisComponent {
     this.db.object(dbPath).update({ cardNumber: cardNumber });
 
     this.moveToRevisitSurveyData(lineNo, revisitKey, cardNumber, index);
-    this.resetSurveyed(index);
+    this.resetSurveyed();
   }
 
   moveToRevisitSurveyData(lineNo: any, revisitKey: any, cardNo: any, index: any) {
@@ -1079,13 +1079,13 @@ export class WardSurveyAnalysisComponent {
         revisiteMoveInstance.unsubscribe();
         if (data != null) {
           data.cardNumber = cardNo;
-          let date = data.date.split(' ')[0]
+          let date = data.date.split(' ')[0];
           let surveyorId = data.id;
           dbPath = "EntitySurveyData/RevisitRequestSurveyed/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
           this.db.object(dbPath).update(data);
 
           // update counts
-          this.updateRevisitCounts(lineNo, date, surveyorId);
+          this.updateRevisitCounts(lineNo, date, surveyorId, "survey");
           this.updateSurveyedCounts(lineNo, date, surveyorId);
 
           dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
@@ -1096,18 +1096,21 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
-  updateRevisitCounts(lineNo: any, date: any, surveyorId: any) {
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
-    let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      count => {
-        lineRevisitCountInstance.unsubscribe();
-        if (count != null) {
-          let revisitCount = Number(count) - 1;
-          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-          this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
+  updateRevisitCounts(lineNo: any, date: any, surveyorId: any, type: any) {
+    let dbPath = "";
+    if (type != "delete") {
+      dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
+      let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+        count => {
+          lineRevisitCountInstance.unsubscribe();
+          if (count != null) {
+            let revisitCount = Number(count) - 1;
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+            this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
+          }
         }
-      }
-    );
+      );
+    }
 
     let dateNew = date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0];
     dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
@@ -1170,7 +1173,7 @@ export class WardSurveyAnalysisComponent {
         let surveyedCount = Number(count) + 1;
         if (count != null) {
           surveyedCount = Number(count) + 1;
-        }        
+        }
         dbPath = "EntitySurveyData/SurveyDateWise/" + surveyorId + "/" + dateNew;
         this.db.database.ref(dbPath).set(surveyedCount);
       }
@@ -1193,7 +1196,7 @@ export class WardSurveyAnalysisComponent {
     let totalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         totalRevisitCountInstance.unsubscribe();
-        let surveyedCount =  1;
+        let surveyedCount = 1;
         if (count != null) {
           surveyedCount = Number(count) + 1;
         }
@@ -1202,13 +1205,120 @@ export class WardSurveyAnalysisComponent {
       }
     );
   }
-  
-  resetSurveyed(index: any) {
-    this.revisitMarker[index]["marker"].setMap(null);
+
+  resetSurveyed() {
     this.progressData.totalSurveyed = Number(this.progressData.totalSurveyed) + 1;
     this.progressData.totalLineSurveyed = Number(this.progressData.totalLineSurveyed) + 1;
-
     this.getScannedCard();
+  }
+
+
+  getProcessRfId(index: any) {
+    let cardNumber = $('#txt' + index).val();
+    let mobileNo = $('#spMobile' + index).html().trim();
+    let rfidCardNo = $('#spCardNo' + index).html().trim();
+    if (cardNumber != "") {
+      cardNumber = "SIKA" + cardNumber;
+      let dbPath = "CardWardMapping/" + cardNumber;
+      let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          checkInstance.unsubscribe();
+          if (data != null) {
+            this.commonService.setAlertMessage("error", "You can not process this card number!!!");
+          }
+          else {
+            this.saveRFIDSurveyData(index, cardNumber, mobileNo, rfidCardNo);
+          }
+        }
+      );
+    }
+    else {
+      this.generateNewCardNumber(index, rfidCardNo, mobileNo, "RFID");
+    }
+  }
+
+  updateRFIDNotCounts(lineNo: any, date: any, surveyorId: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRfidNotFoundCount"
+    let lineRFIDCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        lineRFIDCountInstance.unsubscribe();
+        if (count != null) {
+          let rfidCount = Number(count) - 1;
+          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+          this.db.object(dbPath).update({ lineRfidNotFoundCount: rfidCount });
+        }
+      }
+    );
+
+    let dateNew = date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0];
+    dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
+    let dailyRFIDCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        dailyRFIDCountInstance.unsubscribe();
+        if (count != null) {
+          let rfidCount = Number(count) - 1;
+          dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
+          this.db.database.ref(dbPath).set(rfidCount);
+        }
+      }
+    );
+
+    dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + this.selectedZone;
+    let totalRFIDCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        totalRFIDCountInstance.unsubscribe();
+        if (count != null) {
+          let rfidCount = Number(count) - 1;
+          dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + this.selectedZone;
+          this.db.database.ref(dbPath).set(rfidCount);
+        }
+      }
+    );
+  }
+
+  resetRFIDNot(index: any) {
+    this.progressData.totalOldCards = Number(this.progressData.totalOldCards) - 1;
+    this.progressData.totalLineOldCard = Number(this.progressData.totalLineOldCard) - 1;
+
+    let cardNo = this.oldCardList[index]["cardNo"];
+    let cardList = [];
+    for (let i = 0; i < this.oldCardList.length; i++) {
+      if (this.oldCardList[i]["cardNo"] != cardNo) {
+        cardList.push({ imageURL: this.oldCardList[i]["imageURL"], cardNo: this.oldCardList[i]["cardNo"], cardType: this.oldCardList[i]["cardType"], name: this.oldCardList[i]["name"], surveyDate: this.oldCardList[i]["surveyDate"], mobile: this.oldCardList[i]["mobile"] });
+      }
+    }
+    this.oldCardList = cardList;
+  }
+
+  saveRFIDSurveyData(index: any, cardNumber: any, mobileNo: any, rfidCardNo: any) {
+    let dbPath = "CardWardMapping/" + cardNumber;
+    this.db.object(dbPath).update({ line: this.lineNo, ward: this.selectedZone });
+    if (mobileNo != "") {
+      dbPath = "HouseWardMapping/" + mobileNo;
+      this.db.object(dbPath).update({ line: this.lineNo, ward: this.selectedZone });
+    }
+
+    dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
+    let rfidInstance = this.db.object(dbPath).valueChanges().subscribe(
+      rfidData => {
+        rfidInstance.unsubscribe();
+        if (rfidData != null) {
+          let date = rfidData["createdDate"].split(' ')[0];
+          let surveyorId = rfidData["surveyorId"];
+          rfidData["cardNo"] = cardNumber;
+          dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + cardNumber;
+          this.db.object(dbPath).update(rfidData);
+          dbPath = "EntitySurveyData/RFIDNotFoundSurveyed/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
+          this.db.object(dbPath).update(rfidData);
+          dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
+          //this.db.object(dbPath).remove();
+          this.updateSurveyedCounts(this.lineNo, date, surveyorId);
+          this.updateRFIDNotCounts(this.lineNo, date, surveyorId);
+          this.resetSurveyed();
+          this.resetRFIDNot(index);
+        }
+      }
+    );
   }
 
 }
