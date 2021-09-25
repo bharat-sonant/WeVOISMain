@@ -147,10 +147,10 @@
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
+    <div class="modal-body">
       <div id="divStatus" class="content-scroll">
-        <div class="row">
-          <div class="col-md-2" *ngFor="let dt of oldCardList, let i=index">
+        <div class="row" style="margin:0px !important">
+          <div class="col-md-2 box-style" *ngFor="let dt of oldCardList, let i=index" >
             <div style="width:100%">
               <a href="{{dt.imageURL}}" target="_blank">
                 <img [src]="dt.imageURL" style="height:100%; width: 100%;" />
@@ -161,11 +161,12 @@
                 <h3 style="width: 100%;"> {{dt.name}} </h3><br />
                 <h3 id="spMobile{{i}}" style="width: 100%;"> {{dt.mobile}} </h3><br />
 
-                <h3  id="spCardNo{{i}}" style="font-weight: bold;"> {{dt.cardNo}} </h3><br />
+                <h3  id="spCardNo{{i}}" style="font-weight: bold;"> {{dt.cardNo}} (RFID) </h3><br />
 
                 <h3> {{dt.surveyDate}} </h3><br />
-                <input id="txt{{i}}" type="text" style="width:71%;border: 1px solid lightgray;border-radius: 5px; padding: 7px; font-weight: bold;">&nbsp;
-                <i class="fas fa-arrow-circle-right" style="color: green; cursor: pointer; font-size: 30px; float:right" (click)="getProcessRfId(i);"></i>
+                 <h3 class="h3caption"> SIKA </h3>
+                <input id="txt{{i}}" type="text" class="txtCardNo">&nbsp;
+                <i class="fas fa-arrow-circle-right btnNext" (click)="getProcessRfId(i);"></i>
               </div>
             </div>
           </div>
@@ -183,7 +184,7 @@
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
+    <div class="modal-body" >
       <div id="divStatus" class="content-scroll">
         <div class="row">
           <div class="col-md-2" *ngFor="let dt of scannedCardList">
