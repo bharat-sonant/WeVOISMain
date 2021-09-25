@@ -974,13 +974,13 @@ export class WardSurveyAnalysisComponent {
       cardNo = cardCount;
     }
     if (cardCount > 6500) {
-      let dbPath = "Settings/virtualLastCardNumber";
+      let dbPath = "Settings/revisitLastCardNumber";
       let cardNumberInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           cardNumberInstance.unsubscribe();
           if (data != null) {
             cardCount = Number(data) + 1;
-            this.db.object("Settings").update({ virtualLastCardNumber: cardCount });
+            this.db.object("Settings").update({ revisitLastCardNumber: cardCount });
             let cardNumber = "SIKA" + cardCount;
             if (surveyType == "Revisit") {
               this.generateMobileNo(cardNumber, index, markerNo);
