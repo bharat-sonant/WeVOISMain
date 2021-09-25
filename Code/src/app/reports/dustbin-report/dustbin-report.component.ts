@@ -1,3 +1,4 @@
+import { ObjectUnsubscribedError } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
@@ -1325,9 +1326,62 @@ export class DustbinReportComponent implements OnInit {
             dbPath = "DustbinData/DustbinPickingPlans";
             this.getPlanDustbin(dbPath, monthName, monthDate);
           }
+          // for ward dustbins
+          dbPath = "DustbinData/DustbinAssignToWard/" + this.selectedYear + "/" + monthName + "/" + monthDate + "";
+          this.getWardDustbinAssignment(dbPath, monthName, monthDate);
         }
       }
     }
+  }
+
+  getWardDustbinAssignment(dbPath: any, monthName: any, monthDate: any) {
+    let wardInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        wardInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let wardNo = keyArray[i];
+              let binList = data[wardNo]["bins"].split(',');
+              if (binList.length > 0) {
+                for (let j = 0; j < binList.length; j++) {
+                  let dustbin = binList[j].trim();
+                  let dustbinDetail = this.dustbinList.find(item => item.dustbin == dustbin);
+                  if (dustbinDetail != undefined) {
+                    let d = "wardDay" + parseFloat(monthDate.split("-")[2]);
+                    dustbinDetail[d] = this.getIcon("assignedNotPicked") + " Assigned but not Picked";
+                    dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + monthName + "/" + monthDate + "/" + dustbin + "/" + wardNo + "";
+                    let dustbinStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      statusData => {
+                        dustbinStatusInstance.unsubscribe();
+                        if (statusData != null) {
+                          let icon = this.getIcon("picked");
+                          let empId = statusData["pickedBy"];
+                          if (statusData["remarks"] == "डस्टबिन लोकेशन पर नहीं है") {
+                            icon = this.getIcon("dustbinNotFound");
+                          }
+                          else if (statusData["remarks"] == "डस्टबिन खाली है") {
+                            icon = this.getIcon("dustbinNotFilled");
+                          }
+                          let pickTime = "";
+                          if (statusData["endTime"] != null) {
+                            pickTime = statusData["endTime"].split(' ')[1].toString().substring(0, 5);
+                          }
+                          this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+                            dustbinDetail[d] = icon + " At " + pickTime + " by  " + employee["name"];
+                          });
+                        }
+                      }
+                    );
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    );
   }
 
   getPlanDustbin(dbPath: any, monthName: any, monthDate: any) {
