@@ -336,7 +336,7 @@ export class JmapsComponent {
                   }
                   workPercentage = Math.round((completedLines * 100) / wardLines);
                 }
-                progresData.coveredLength = wardCoveredDistance.toFixed(0);
+                progresData.coveredLength =(parseFloat(wardCoveredDistance.toString())/1000).toFixed(2);
                 progresData.workPercentage = workPercentage + "%";
                 let userid = localStorage.getItem("userID");
                 const data1 = {
