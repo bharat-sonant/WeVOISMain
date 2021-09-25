@@ -1311,7 +1311,7 @@ export class WardSurveyAnalysisComponent {
           dbPath = "EntitySurveyData/RFIDNotFoundSurveyed/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).update(rfidData);
           dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
-          //this.db.object(dbPath).remove();
+          this.db.object(dbPath).remove();
           this.updateSurveyedCounts(this.lineNo, date, surveyorId);
           this.updateRFIDNotCounts(this.lineNo, date, surveyorId);
           this.resetSurveyed();
