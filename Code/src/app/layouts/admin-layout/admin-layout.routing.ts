@@ -78,6 +78,7 @@ import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
 import { JmapsComponent } from '../../jmaps/jmaps.component';
+import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-analysis/garbage-capture-analysis.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -172,6 +173,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/log-book', component: LogBookComponent },
     { path: 'sikar/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'sikar/jmaps', component: JmapsComponent },
+    { path: 'sikar/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -257,6 +259,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/log-book', component: LogBookComponent },
     { path: 'sikar/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'sikar/:id/jmaps', component: JmapsComponent },
+    { path: 'sikar/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
 
     //jaipur-greater
@@ -343,6 +346,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/log-book', component: LogBookComponent },
     { path: 'jaipur-greater/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'jaipur-greater/jmaps', component: JmapsComponent },
+    { path: 'jaipur-greater/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -428,6 +432,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/log-book', component: LogBookComponent },
     { path: 'jaipur-greater/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'jaipur-greater/:id/jmaps', component: JmapsComponent },
+    { path: 'jaipur-greater/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -513,6 +518,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/log-book', component: LogBookComponent },
     { path: 'reengus/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'reengus/jmaps', component: JmapsComponent },
+    { path: 'reengus/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -598,6 +604,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/log-book', component: LogBookComponent },
     { path: 'reengus/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'reengus/:id/jmaps', component: JmapsComponent },
+    { path: 'reengus/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -683,6 +690,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/log-book', component: LogBookComponent },
     { path: 'shahpura/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'shahpura/jmaps', component: JmapsComponent },
+    { path: 'shahpura/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -768,6 +776,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/log-book', component: LogBookComponent },
     { path: 'shahpura/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'shahpura/:id/jmaps', component: JmapsComponent },
+    { path: 'shahpura/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -853,6 +862,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/log-book', component: LogBookComponent },
     { path: 'test/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'test/jmaps', component: JmapsComponent },
+    { path: 'test/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -938,6 +948,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/log-book', component: LogBookComponent },
     { path: 'test/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'test/:id/jmaps', component: JmapsComponent },
+    { path: 'test/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1023,6 +1034,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/log-book', component: LogBookComponent },
     { path: 'demo/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'demo/jmaps', component: JmapsComponent },
+    { path: 'demo/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -1108,4 +1120,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/log-book', component: LogBookComponent },
     { path: 'demo/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
     { path: 'demo/:id/jmaps', component: JmapsComponent },
+    { path: 'demo/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 ]; 

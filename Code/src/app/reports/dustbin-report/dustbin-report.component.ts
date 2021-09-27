@@ -1350,7 +1350,7 @@ export class DustbinReportComponent implements OnInit {
                   let dustbinDetail = this.dustbinList.find(item => item.dustbin == dustbin);
                   if (dustbinDetail != undefined) {
                     let d = "wardDay" + parseFloat(monthDate.split("-")[2]);
-                    dustbinDetail[d] = this.getIcon("assignedNotPicked") + " Assigned but not Picked";
+                    dustbinDetail[d] = this.getIcon("assignedNotPicked") + " Assigned but not Picked <b>(W)</b>";
                     dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + monthName + "/" + monthDate + "/" + dustbin + "/" + wardNo + "";
                     let dustbinStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
                       statusData => {
@@ -1369,7 +1369,7 @@ export class DustbinReportComponent implements OnInit {
                             pickTime = statusData["endTime"].split(' ')[1].toString().substring(0, 5);
                           }
                           this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                            dustbinDetail[d] = icon + " At " + pickTime + " by  " + employee["name"];
+                            dustbinDetail[d] = icon + " At " + pickTime + " by  " + employee["name"]+" <b>(W)</b>";
                           });
                         }
                       }
