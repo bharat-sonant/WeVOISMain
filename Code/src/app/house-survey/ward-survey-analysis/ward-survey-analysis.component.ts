@@ -664,6 +664,9 @@ export class WardSurveyAnalysisComponent {
                 if (data[index]["image"] != null) {
                   imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[index]["image"] + "?alt=media";
                 }
+                else{
+                  imageURL="../../../assets/img/NotAvailable.jfif";
+                }
                 let type = data[index]["houseType"];
                 let dbPath = "Defaults/FinalHousesType/" + type + "/name";
                 let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
@@ -712,6 +715,9 @@ export class WardSurveyAnalysisComponent {
                   let imageURL = "";
                   if (data[index]["image"] != null) {
                     imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                  }
+                  else{
+                    imageURL="../../../assets/img/NotAvailable.jfif";
                   }
                   let type = data[index]["houseType"];
                   let dbPath = "Defaults/FinalHousesType/" + type + "/name";
