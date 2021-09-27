@@ -67,6 +67,8 @@ export class WardSurveyAnalysisComponent {
     rfIdAddress: ""
   };
 
+  nameList: any[];
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -75,6 +77,7 @@ export class WardSurveyAnalysisComponent {
     this.map = this.commonService.setMap(this.gmap);
     this.selectedZone = 0;
     this.getZones();
+    this.getNameList();
   }
 
   getZones() {
@@ -500,10 +503,10 @@ export class WardSurveyAnalysisComponent {
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
-                let imageURL="../../../assets/img/virtual-survey.jpg";
-                if(data[i]["cardImage"]!=null){
+                let imageURL = "../../../assets/img/system-generated-image.jpg";
+                if (data[i]["cardImage"] != null) {
                   imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
-               
+
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
@@ -992,6 +995,9 @@ export class WardSurveyAnalysisComponent {
               this.generateMobileNo(cardNumber, index, markerNo);
             }
             else {
+              if(mobileNo=="0000000000"){
+                mobileNo=this.generateRFIDMobile();
+              }
               this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
             }
           }
@@ -1014,6 +1020,9 @@ export class WardSurveyAnalysisComponent {
               this.generateMobileNo(cardNumber, index, markerNo);
             }
             else {
+              if(mobileNo=="0000000000"){
+                mobileNo=this.generateRFIDMobile();
+              }
               this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
             }
           }
@@ -1048,10 +1057,10 @@ export class WardSurveyAnalysisComponent {
     let lineNo = this.revisitSurveyList[index]["lineNo"];
 
     let dbPath = "CardWardMapping/" + cardNumber;
-    this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
+    //this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
 
     dbPath = "HouseWardMapping/" + mobileNo;
-    this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
+    //this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
 
     let date = new Date();
     let hour = date.getHours();
@@ -1071,6 +1080,13 @@ export class WardSurveyAnalysisComponent {
     let phaseNo = "2";
     let rfid = rfId;
     let ward = this.selectedZone;
+
+    if (name == "No name" || name == "No" || name == "NA" || name == "Na" || name == "Naam") {
+      let random = Math.floor(Math.random() * this.nameList.length);
+      name = this.nameList[random].toString();
+    }
+
+
 
     const data = {
       address: address,
@@ -1260,6 +1276,9 @@ export class WardSurveyAnalysisComponent {
             $('#divLoaderUpdate').hide();
           }
           else {
+            if(mobileNo=="0000000000"){
+              mobileNo=this.generateRFIDMobile();
+            }
             this.saveRFIDSurveyData(index, cardNumber, mobileNo, rfidCardNo);
           }
         }
@@ -1268,6 +1287,15 @@ export class WardSurveyAnalysisComponent {
     else {
       this.generateNewCardNumber(index, rfidCardNo, mobileNo, "RFID");
     }
+  }
+
+  generateRFIDMobile(){
+    let mobileNo="";
+    let mobilePrefixList = ["9001", "9166", "9571", "9784", "8003", "7568", "8385", "7597", "8993", "9530", "8764", "9694", "9785", "8058", "8502", "7891", "8741", "9887", "8442", "7014", "6001", "7737", "8233", "9214", "9251", "8823", "9549", "9587", "9982", "8094", "7229", "7665"];
+    let random = Math.floor(Math.random() * mobilePrefixList.length);
+    let postFix = Math.floor(100000 + Math.random() * 900000);
+    mobileNo = mobilePrefixList[random].toString() + postFix;
+    return mobileNo;
   }
 
   updateRFIDNotCounts(lineNo: any, date: any, surveyorId: any) {
@@ -1340,6 +1368,12 @@ export class WardSurveyAnalysisComponent {
           let surveyorId = rfidData["surveyorId"];
           let rfid = rfidData["rfid"];
           rfidData["cardNo"] = cardNumber;
+          rfidData["cardImage"] = null;
+          let name = rfidData["name"];
+          if (name == "No name" || name == "No" || name == "NA" || name == "Na" || name == "Naam") {
+            let random = Math.floor(Math.random() * this.nameList.length);
+            name = this.nameList[random].toString();
+          }
           dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + cardNumber;
           this.db.object(dbPath).update(rfidData);
           dbPath = "EntitySurveyData/HistoryRFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
@@ -1351,7 +1385,7 @@ export class WardSurveyAnalysisComponent {
           let rfidHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
               rfidHouseInstance.unsubscribe();
-              if (data.lenght > 0) {
+              if (data!=null) {
                 let keyArray = Object.keys(data);
                 let markerNo = "";
                 if (keyArray.length > 0) {
@@ -1382,6 +1416,31 @@ export class WardSurveyAnalysisComponent {
         }
       }
     );
+  }
+
+
+  getNameList() {
+    this.nameList = ["Krishan kumar", "Satyanarayan", "Manoharlal", "Kishanlal Sharma", "Mahesh bhati", "Vinod saini", "Ratan Lal saini",
+      "Arjun Saini", "Sitaram Sharma", "Rajiv kumar", "Gita Devi", "Pawan sharma", "Laxman Singh", "Abdul Sataar", "Mahendra gurjar", "Bajran Singh", "Gajendra Singh", "Indar Saini", "Sokhat khan", "Hitesh Sharma", "Suresh Kumar", "Omprakash Saini", "Kaluram saini", "Ganesh Kumar Saini", "Sunil pareek", "Rajkumar saini", "Motilal Verma", "Bhagwan Ram Saini", "Rahul saini", "Ramkisor", "Nemichand meena", "Mandan Singh", "Jitendra joshi", "Mahaveer Prasad", "Premchand Saini", "Dwarka prasad saini", "Dileep kumar", "Sayam singh", "Keshar Singh", "Gajraj Singh", "Kamal kishor", "Mulchand Shrama", "Bimla Devi", "Devipratap Singh", "Pappu soni", "Hanuman Singh", "Prabhu Singh", "Mahesh kumar", "Mangu Singh", "Sohanlal Jangir", "Jugalkishor", "Satendra Dhayal", "Omasankar", "Bhawani Devi", "Rajendra singh", "Rajveer singh", "Tara kunwar", "Sambhu Dayal", "Bansidhar Nayak", "Aakash Singh", "Murli Jangir", "Rampal", "Manprakash  Verma", "Birbal singh", "Bhawar Singh", "Surgun kumawat", "Vinod Kumar saini", "Harendra singh", "Vishnu sharma", "Gopal kumawat", "Dataram Sharma", "Ghanshyam sharma", "Balveer singh", "Nathuram soni", "Aaditya soni", "Abdul kalam", "Birju singh", "Moh. Farukh", "Debu gadhwal", " Sankar singh", "Manish kumar", "Gajanand singh", "Foolchand", "Rampal", "Dinesh", "Ram Swaroop kumawat", "Sultan khan", "Amin nagori", "Mohd Yashin", "Mohdsarif", "Naved", "Mohd Tohfik", "Mohd Salim", "Mohd Fharuk", "Rafik", "Mohd Ekbal", "Umar yashin", "Rahmdula", "Ram gopal verma", "Saroj devi", "Bihari Lal", "Behlim mumtaj", "Maqbool ahahmd", "Mohd Esub", "Jakir khan", "Mohmamd saruk", "Mohd Altab", "Mohammed daud", "Arif sadik", "Nijamudin", "Himamudin belim", "Mohammed salim", "Shidhusen", " Najma", "Mohammed kused", "Yasen", "Yakub", "Mohd Haneef", "Gulam nabi", "Abdul kariem", "Mohd Ishymal", "Mohd Essak", "Jamil ahmad", "Mohd Husain", "Mohd Ayub qureshi", "Abdul latief", "Mohd Ramjan", "Imamudeen", "Tofeek bhati", "Mohd Tanwar",
+      "Keshav dev", "Mukesh", "Naru ram dhikiya", "Karan", "Raju kumar", "Mithun", "Balbeer", "Prahlad", "Santosh", "Mahaveer",
+      "Anjali", "Sandip kumar", "Kailash Saini", "Umed Singh Rathor", "Mahender", "Boduram", "Sukhlal", "Gyani Devi", "Radhakishan",
+      "Sushila devi", "Shobha Gupta", "Suraj Ruhela", "Arjun lal", "Bhagwan singh", "R.S. Shekhawat", "Bhivaram", "Suraj", "Bugli devi",
+      "Ashok", "Vikram Nawriya", "Arun sharma", "Gopal dikiya", "Niraj kumar pareek", "Vinod", "Naresh Kumar", "Pawan sindhi",
+      "Surendra kumar", "Krishan soni", "Dindayal sharma", "Nathamal sharma", "Rughuvir harijan", "Gopal Singh", "Krishan",
+      "HARLAL SINGH", "Ranjit Singh ", "Rajendra Prasad ", "Ramavtar singh", "KESHRAM DHAYAL", "Sumesh Kumar", "Jagdish parsad",
+      "Mahipal Singh", "Amarjit singh", "Ram Kumar", "Bhawar Lal", "Vajay kumar", "Gowrishankar sharma", "Sukharam chodhary",
+      "Archana pareek", "RICHHPAL", "Madan Pal", "Dinesh Kumar", "Dinesh Kumar", "Murari lal", "Ratan Lal", "Sunil gupta", "Sanjay Kumar",
+      "Dipak Sharma", "Rameswar lal", "RAMDEV SINGH DHAKA", "Udaram ji", "Narapat singh", "Surji devi", "Triilok Khandelwal",
+      "Manish Kumar", "S. K. Nirmal", "Abdul ahaman", "Kelash Saini", "RAMSINGH BHATI", "GORI SHANKAR SHARMA", "RAMNARAYAN",
+      "SHUSHIL PAREEK", "PURUSHOTAM", "SARWAN KUMAR PAREEK", "Tilak Singh", "Naresh Kumar", "Prakash Kumar soni", "Fhatechand jangid",
+      "Anand Singh Sekhawat", "Adhil Singh bhati", "Mala singh", "Shersingh sekhawat", "Indu devi", "Ankush agarwal", "Pritam Singh",
+      "Laxmi kant", "Sudhir", "Mahima singh", "Om Prakash singh", "Ganpat Singh Gadwal", "Mangal Chand", "Karan Singh beniwal", "Raj vijaya", "Rukmani devi", "Vinod kumar", "Baijnath Dheewan", "Jagdish Bhaskar", "Sanwar Mal Kajla", "Banarsi Devi", "Shiv narayan", "Vidhyadhar", "Hari Singh", "RAJENDRA SIYAG", "Sharwan ji", "Jagan Singh matwa", "Sukhdev", "Sharwan Gadwal", "Ram niwas Gadwal", "Ramswarup nehra", "Mamta devi", "Birju Singh jakhar", "Sultan Singh pilaniya", "Madhya ram ji dayal", "Kaishar Singh ranva", "Vikram Singh", "Raj Singh Choudhary", "Suresh kumar poonia", "Bhiwaram badariya", "Kusum lata", "Saver mal ji", "Mahaveer Singh", "Vijay Kumar rad", "Subhash Kumar", "Birbal", "Omparkash gadwal", "Kuldeep dhaka", "Bihari lal khichar", "Kuldeep", "Sumitra gadwal", "Bhagwan Singh karshniya", "Ram Gopal", "Ramniwas", "Manoj kumar nehra", "Ramdev Singh", "Omparkash jheegar", "Satender", "Sultan singh", "Banwari lal", "Nemichand", "Ramniwas dhaka", "Jagan singh", "Jagan Singh", "Khiv Singh", "Ramesh", "Anandpal", "Hariram", "Murari ji", "Om prakash", "Silochana", "Raja ram ji", "Jaber ji", "Shivdayal ji", "Ram Chandra Singh bagriya", "Harlal", "Mahendra singh", "Monu g", "Loked", "Govind Singh dotasara", "Dharmpal", "Omprkash", "Harpal singh", "Shahu sharma", "Shree chand", "Rajesh meel", "Sukhveer singh", "Shri chand dhaka", "Ramchandra ji", "Jagmal singh", "Dilip Garhwal", "Vidhadhar ji garwal", "Banvari ji", "Suresh garwal", "Rajiv sunda", "Dilip agarwal", "Mamraj dhareewal", "Tala laga hua", "Murari", "Vedant swami", "Subhash jakhar", "Maveer ji", "Gordhan ji", "Harmful singh", "Trilok singh", "Prem singh", "Rajesh kumar", "Rakesh Kumar ji", "Banvari ji", "Onkar Mal", "Bihari Lal khichar", "Satyaveer Singh poonia", "Chuni lalji", "Mahesh ji", "Ghanshyam ji", "Hanuman Singh", "Moolchandji", "Manoj Kumar ji", "Sheeshram Kajla", "Shohni devi", "Om Prakash kichar", "Shyam sundar", "Shiv prasad", "Balbir", "Hari Ram", "Sitaram kumawat", "Somnath", "Ghyarshiram", "Sarita sunda", "Ram kisan", "Sarwan", "Parkash chand", "Sarita w/o Har Lal Singh", "Nathu singh bhukar", "rashpal Singh bijarniya", "Shisupal", "Ramkumar Jangid", "Tarachand",
+      "Sarwan kumar", "Hari ram", "A K SCHOOL DRAISH", "Ravendhar ji", "Ramratan ji", "Amar chand", "Kuldha ji", "Ranjeet ji", "Bhagirth mal", "Santhosh mood", "Rcs burdak", "Shivparshad", "Sukhveer", "Lokesh", "Kanhaiya Lal ji", "Dinesh kumar", "Jagdish ji", "Aravind", "Kelash kumar", "Jawahar singh", "Prakash chand ji", "Riddhi Siddhi PG", "Harlal singh", "Mahipal", "Mukul", "Chotu singh", "Chotu Singh ji", "Debu gora", "Onkarmal", "Roshan lal", "Bl. Bhamu", "Manju devi", "Mega ram", "Bhagirath singh", "Bhagoti devi", "Payarelal puniya", "Babulal", "Suresh Kumar", "Subhash chand", "Surjan singh", "Manoj Kumar", "Rakesh ji", "Santra", "Sukhbir Singh", "sanvarmal", "Rajesh", "Balbir singh", "Manoj", "Lekhram", "Manoj meel", "Sudhir kumar", "Ramakant sharma", "Jai parkash", "ARvind kumar", "Lalchand", "Surendra meel", "SUDHIR KUMAR KHICHAR", "Sultan Singh ji", "Jagdish ruhela", "Rajesh kumar poonia", "Suresh", "dr.rajenderkumar", "Mulchand ji meel", "Dr.k.k.choudhary", "Jaipal lamboriya", "Suresh bagariya", "PHOOLCHAND", "Bhanwar lal choudhary", "Lakhan kumar", "Rajesh choudhary", "Vidhadhar ji", "Bulbir ji gora", "Vedparkash", "Harlal ji", "Ramdev singh ji gora", "Bhanwer ji", "Davender duti", "Satish Chand punia", "Rajender singh dhaka", "Sukhaveer ji", "Mahendar kumer", "Naveen sunda", "Ashok ji", "Mukesh Kumar puniya", "Santra dave", "Gangadhar ji dhutt", "Nekiram mood", "ASHOK PILANIYA", "Sukhdevi davi", "Mahander ji", "Mohini dave", "Subhash ji", "Kamal ji", "Rajuveer singh", "Ramprath ji", "Parmeshwari devi", "Raghuveer ji", "Harish Kumar", "Banwari lal ola", "Hemaram ranwa", "Pithram", "IKRAMUDEEN", "Sunil Gadwal", "Sukhdev Singh", "Surendra ji", "Rajender kumar nehra", "Maju devi", "Dinesh nehra", "Hardev haritwal", "Kaluram", "Ramkumar", "KISHAN SINGH", "NEMICHAND KHICHAR", "BHANWARI DEVI", "SURESH KUMAR", "Susila ji", "Karan Singh Choudhary", "Jeevan ram chodhari", "Jhabar ji Chaudhary", "Shashibala", "H D S FAGERIA", "NEKIRAM", "Darmesh", "Mohan lal", "Satish bhichar", "ASHOK KUMAR JI SHARMA", "Rajeev kumar", "Balbir Singh", "Raguveer singh kajala", "Naresh mohar", "Raghuveer ji kajla", "Mahadev kajla", "Ranveer singh kajla", "Ashok Kumar", "Harlal ji kalwaniya", "Vidyadhar ji", "Prabhu dayal jangir", "Vijay", "Kuldaram jakhar", "Rajendar singh dhaka", "Kamla choudhary", "Birbal singh dotasara", "Radheshyam ji", "Saroj bugaliya", "MAHA SINGH RAO", "Parmeshar Lal swami", "Ramjilal swami", "Vidya Dhar ji pilania", "SANWAR MAL JANGIR", "HANSRAJ", "Jodhraj", "Jaiveer singh", "Nitesh kumar", "Santosh devi", "Ramchandra Singh pachar", "Ganesh ji", "Ram chandra", "Chotu ram dhaka", "Hansh Raj ji", "Shyam Chaudhary", "Hanshraj", "SHIVBHAGWAN", "S.R.katariya", "Santosh ji josi", "Nandlal meel", "SITA DEVI JANGID", "SATYANARAYAN SHASTRI", "Rajendar parsad", "Manju Sharma", "Hanuman singh", "Devendra", "MADAN LAL BIJARNIYA", "Sharda bijarniya", "Sunita khichar", "Rajesh Kumar dhaka", "Anil ji", "Amrchand", "Manohar lal", "Mahesh", "Shishram", "SUNITA DEVI", "MAHIPAL MOOND", "SATVEER SINGH", "RAMNIWASH MEEL", "GAYATRI DEVI", "PANKAJ BIRBAL", "Birju Singh", "MAHESH SUNDA", "DAYANAND DHATARWAL", "SAROJ DEVI", "SHISHAM KHICHAR", "TENDRA KUMAR", "RAJENDRA", "SAVITA DEVI", "NARESH KULHARI", "LAL BAHADUR", "ASHOK KUMAR", "PREM DEVI", "RAMDEV DHAKA", "AHA LAL SAIN", "VINIT KHICHAR", "DILIP SINGH MAHELA", "HIMMAT SINGH", "TENDRA SINGH", "OMPRAKASH SAIN", "RAKESH", "RAJENDRA KUMAR", "SAVINTRA DHAKA", "BIRBAL SINGH", "Ramlal", "Norang singh", "Vidhadhar singh", "Rajveer", "Subhita devi", "Shodanji", "Phochand fagediya", "YASHWANT SINGH DHAYAL", "Bhawar lal", "Surendra singh", "Shiv chand", "Ganeshram", "Ramesh Sharma", "Manoj shrma", "NATHURAM MEEL", "BL MEEL", "MAHIPAL MEEL", "SANJAY KUMAR S/O SHIV PRASAD", "Rajender parsad", "MR NAHAR SINGH", "MAHENDRA DHUKIYA", "RAJENDRA KULHARI", "BALVEER SINGH", "Ramesh Kumar", "Arjun singh", "Surendra Kumar batar", "Pyarelal shivran", "Niraj daya", "RAJENDRA CHOUDHARY", "BHANWAR LAL BAGDIA", "Mahendr bohra", "Omparkash", "PRAKASH SORAN", "RAMCHANDRA", "MAHESH KUMAR", "OMPRAKASH MEEL", "SUMAN DEVI W/O MAHESH KUMAR", "RAMCHANDRA SARAN", "BHANWAR LAL SUNDA", "Hari Ram ji", "Mahinder", "Sandeep", "Naresh", "Mukesh kumar", "Ramnivash", "Honny", "Jagdish", "Subash", "BRIJMOHAN", "MANOJ KUMAR PILANIYA", "Ramsingh", "Arjun Lal jangir", "BUDANIA GIRLS HOSTEL", "VIJAY KUMAR", "GOPAL", "SUKHVEER SINGH BUDANIA", "NAND LAL RANWA", "HEMANT KUMAR", "Harsh", "BHAGCHAND MAWLIYA", "JAGDISH PRASAD GADHWAL", "Kisturi devi", "Jagdish gadhwal", "SITA DEVI", "HANS RAM KHARBAS", "VIJAY SINGH", "PRAKASH CHAND FAGEDIYA", "PRAMESHWAR SINGH", "SURENDRA KUMAR POONIA", "SURENDRA SINGH", "Surnder Singh kajla", "Sukhadev", "Bhagchand", "Ramkumar", "NEMICHAND KAJLA", "SATYAPAL SINGH", "Namichand ji", "Bhagirat maal rewad ji", "Nemaram Nehra", "Sohan Singh khichar", "Kesardev  sain", "RAMSWAROOP BAGDIYA", "Chanderbhan Singh khara", "Ranjeet", "TARUN KUMAR DHABAI", "Rajesh Kajla", "Do. Vinay mund", "Laxman singh", "Banwar ji", "LAXMAN SINGH", "Ratan ji", "Laxman singh", "MOOLARAM MEEL", "SANWAR MAL SAIN", "OMPRAKASH BIJARNIYA", "MAHENDRA GADHWAL", "DALIP KUMAR", "VIMLA DEVI", "MAHIPAL KHICHAR", "DHARMPAL GADHWAL", "Rajender", "VIDHYADHAR KULHARI",
+      "SURENDRA KUMAR BHASKAR", "SUBHASH CHAND", "RAJPAL BUDANIA", "RICHPAL SINGH BATAD", "Phoolchand", "Bhagirathi singh", "RAMCHAND HUDDA", "RAMPRATAP GADHWAL", "Ashok bijarniya", "SHANTI DEVI", "RAMESHWAR", "Rajesh", "Ram lal ji", "Harpal singh bhuriya", "Vidhyadhar ji ranwa", "OMPRAKASH BALBADA", "MANOJ KUMAR", "Nemichand ji", "Surendar singh payal", "Pahlad singh", "Laxmi narayan", "Pardeep", "BEDPAL", "Suresh ji", "Sumitra katariya", "Gdwal bhawan", "Shyam lal", "Jagu", "Misra", "Gjander", "Monika", "Lokender", "Davi lal ji", "Rameshver ji", "Bhola ram", "vishal", "Mulchand ji", "Mulchand bagriya", "Mahipal singh", "Mahaveer gadhwal", "Sarwan kumar jakhar", "Mani devi", "Jyani devi", "Kunal", "Harsh Garden", "Dalel singh", "Sumitra bijarniya", "Mahipal dhaka", "Ranveer singh", "Vishanu  prasad", "Nandkishor", "Kisar dev khyaliya", "Sunil ji", "Nathu ji saini", "Hari parsad saini", "Rahul", "Gori sankar", "Sarda devi", "Laxmi ji", "Indra jakhar", "Nemichand ji", "Subhkarn ji", "Birbal ji", "Nemichand bhaskar", "Om parkas  pangal", "Narendra ji", "Sisram ji", "Narendra kumar", "Goverdhan poonia", "Ummed singh", "Laxman  poonia", "Lekhram mahala", "Danaram choudhary", "Ram kumar ji", "Subhash chandra bugaliya", "BHAGIRATH", "Ram lal", "Ramniwash", "Mahaveer singh", "SHAYOPAL", "MAHESH KUMAWAT", "SANWAR MAL", "SHAYOPAL KUMAWAT", "AMAR CHAND", "RAJKUMAR KUMAWAT", "PRABHU RAM KUMAWAT", "Druga ram", "Surender", "Girdhari kumwat", "Hari", "Bhagwati devi", "Rameshwar", "Ashoka", "Bhagwati devi", "HARDEVA RAM", "OM PRAKASH PILANIA", "RAJURAM JAT", "DAVENDRA SINGH", "RAMSWAROOP", "MANOJ", "RAMKARAN", "Rakes kumar ranwa", "Bhagirath ji kajla", "Ghasi ram", "Manoj", "Devendra kajla", "SHIV CHAND", "VIDHYADHAR SINGH", "Inder g", "Bajrang lal ji", "Banwari lal", "Monu", "mukesh", "Mahver parshad", "Rohit Kumar", "Balveer", "Agrval house", "Mohan chand", "Bharti singh", "Ravi", "Vikash", "Manish", "Harish", "MOHAN SINGH", "Rukmani", "RAMCHANDRA", "BHANWAR LAL", "RAMSWAROOP SONI", "Mahesh Kumar daka", "BABULAL", "Saver ji", "Vijender ji",
+      "Rameswar ji", "Payarelal ji", "Hemanshu", "Nayna", "Podar house", "Bhawani shankar ji", "Rajendra", "Omparkesh ji", "Manoj ji", "Mukesh ji", "Shisram", "Vishnu", "Keshav", "Mohit", "Suresh", "Jassraaj ji", "Sarojdevi", "Surendra", "Rohit", "Ratesh", "Sohan", "Babulal Singh", "BIRJU SINGH Bhaskar", "Fateh Mohammed shekh", "Shyam Lal Chawla", "Surjaram", "Panna Lal kumawat", "SUNITA W/O RAM KRISHANA", "TARACHAND CHOUDHARY ( INSPECTOR)", "RAMLAL SINGH", "VISHAL SINGH", "SARWAN KUMAR JANGID", "TARACHAND MAHALA", "Hrish", "Jagdish singh", "Laxmi chand", "PRAKASH", "SUBASH", "UMESH KUMAR JANGID", "SANWARMAL GADHWAL", "Ramutar", "Hanshu", "Subhash Chand", "Dharmapal matwa", "Sumar", "Babulal", "Suraj bhan singh", "Bhagir g", "Gopal", "Hanuman", "RAKESH KUMAR DHAKA", "MUKESH DHAKA", "Happy", "Rajash", "Abbas", "SHIV KUMAR MEEL", "NIRANJAN LAL", "Nirjan lal", "raghu", "JASHVEER CHOUDHRY", "Rishpal Singh ruhla", "Bhagirath Mal Jat mali", "Manroop batar", "Rameshar lal", "DEVKARAN", "Ram kumar", "Shiv pal Singh", "Suresh pooniya", "Ranjeet Singh", "Rakesh kumar", "Kelash", "SURESH", "Shevda Academy", "Janu house", "MUKESH", "CHUNNI LAL", "Yogesh", "Parveen ji", "Khulda ram ji", "SUNIL CHOUDHARY", "PRADEEEP SINGH", "ALKA SINGH", "SARITA DEVI", "GAJENDRA KUMAR", "NEMICHAND", "BAJARANG LAL", "MAHIPAL", "MAMRAJ BATAD", "DINESH KUMAR", "Shree shayam", "Kamal", "LAXMI CHAND", "HARI RAM BHADIYA", "Gerdari", "KAMAL FAGEDIYA", "KAJODMAL VYAVSTHAPAK", "Mahaveer singh", "Manmohan ji", "Rajan", "Balvir singh", "Satguru classes", "Satguru", "Raguveer", "Ranglal ji", "Eshwar singh", "Karan singh", "Suresh ji jakhar", "Mohar Singh ji", "Jagdesh ji", "Raju ji", "Kavita ji", "Gopchand ji", "Rajesh kumawt", "Suresh Kumar nayen", "Harisingh dhyal", "Sudhir jakhar", "Deelep", "Pankaj mahala", "Vijay singh", "Randheer ji", "Naveen", "Vasu dev jhakhar", "Kailash kumar", "Bahadur mal", "Banwari", "Vasu dev", "Ramesh kumar", "Aamod kumar", "Dataram dhayal", "Tarachand", "Sohanlal", "Muni devi", "Jagdish", "Reena devi", "Satkesh Kumar", "Ramkumar meel", "Pawan ji", "Mohan rewar", "Sunil Kumar", "Hariprasad dhaka", "Surendra", "Rajiv choudhary", "Ranveer Singh mahla", "Jatashnakr puniya", "Hemaram", "Sanju", "Pyare Lal", "Sawarmal bhuriya", "Ram Lal singh", "Mukesh", "Ranjeet", "Sardar singh", "Jagan lal", "Nikhil", "Kamla devi", "harendra", "Abhinav", "Vidhadhar", "Babulal ola", "Suresh kumar Dhaka", "Jeatender", "Hari kesan", "Sankar Lal sharma", "Surender singh mahla", "Suresh Jakhar", "Ram singh Dhaka", "Hari Dhyal", "bharat", "Sandeep singh", "Yashpal",
+      "Saurabh", "Kailash", "Mahipal", "Rampartap", "Sudhir ji", "Mukesh Kumar", "Mahesh bhukar", "Om parkash", "Phoolchand kumawat", "Sawal singh", "Chanda devi", "Sunita", "Supayar choudhary", "Harpool baniwal", "Savita", "narendra", "Manaram", "Sunita devi", "RAJENDRA GADHWAL", "Sabir khan", "Bhagwana ram", "Dharmapal", "Poolchand", "rajendara singh", "Boduram saini", "Pankaj", "Vidhadhar meel", "Haribax", "VINOD KUMAR", "Mukan singh", "Bhpendra kumar", "Kuldeep kumar", "Sunil bhukar", "INDIRA DEVI", "Pardeep", "Goru ram", "Moti singh", "Chandra singh", "Ravidar singh", "Parmeshar lal", "Mukan meel", "Jabhar kajla", "Baldev singh", "Subhkarn singh", "Shoyobax sunda", "Sultan ji", "Nemichand", "Bhupendra singh", "Bansidhar kajla", "Savantri devi", "Manoj dhaka", "Rameshwar singh", "Singh house", "Omparakesh", "Ram Singh", "Satyeparkash", "Sumer ji", "Nanak ram", "Shyam sundar", "Rakesh Kumar sunda", "MAHESH BARI", "MADAN SINGH KAJLA", "Hanuman bagadiya", "Banchan Singh", "Mahavir ji batad", "Gopal ji", "Jitendra singh", "Nihal Singh", "Prameshwarlal", "Vikash rulaniya", "Kishore sunda", "Vikram singh", "Ramesh nayak", "Upandar kudi", "Dhruval sunda", "SANDEEP BABAL", "GOVIND RAM", "Aman", "Gopal gadwal", "Ved ji", "Mahi pal", "Fulchand bukar", "Kuma ram bhukar", "Dinesh shiran", "RAJKUMAR RAO", "Mukand Singh", "Randheer Singh", "Ranbir", "Choti devi", "Vishnu nathshrma", "Sanjiv nehara", "Dr. S. R. Pooina", "Birbal jhakhar", "Gopal ranwa", "Jungle ji jat", "SHARWAN KUMAR KHAYALIA", "Rajeev bagdriya", "Harlal Singh", "SURENDRA KUMAR", "Ramavtar", "Hariram", "Ranjeet", "Mahendra ji", "Goverdhan", "Ramavatar", "Baldev Singh", "Subhash chandra", "Vijay pal", "Kiran", "Pyarelal ji pooina", "Rakesh gajraj", "Phool chand", "Punit kumar mahla", "Prem devi", "Hanumansingh", "KURDARAM SAINI", "Rajkamal", "Chander Singh", "Tarachand dhayal", "Hanuman ji", "Dr. Bal veer sesmaw", "Sunil kumar", "Bhohit ram", "Ramchander", "Sanju", "Partap Singh", "Vikash", "Bhoitram ji", "HARPHOOL SINGH", "Mohar Singh", "Jagdish parsad poonia", "Dil sukh choudhary", "Sandeep ji", "Vidhayadhar", "Om parkash", "Shri chand", "Mhaveer parsad", "Saroj devi", "Mohan poonia", "Mohan Singh puniya", "Vivek", "Bhagirath", "Narendra", "Goverdhan singh bhaskar", "Rajendra", "Shyam lal varma", "Bhivaram", "Om ji", "Ramkumar", "Manoj kumar", "Satya sharma", "Manju Devi", "Girdhari lal", "Sitaram", "Chote lal sarwa", "Vijendra", "Naman", "Dr KAILASH CHANDRA", "Krishna bhawan", "Kailash", "Bhagirath Singh", "Mahipal", "Narendra", "PITARAM MEEL", "Bhagwan Singh", "SUNITA", "RAMCHANDRA SINGH", "Madan pooniya", "Ram parsad bari", "Vidhadhar",
+      "Shivnath singh", "Rich pal Singh batar", "Vimla jakhar", "Kanyalal dara", "Naresh bydania", "Suman davi", "Surya pal", "Makhan Lal", "Hem Singh", "Rajesh gadwal", "Amar Singh matwa", "Daksh", "Nakul bagaria", "Moti Singh pooniya", "Harpool Singh", "BALVEER SINGH BHASKAR", "OMPRAKASH BHASKAR", "MANGAL CHAND MISHRA", "Hera lalsharma", "Dindayal nehara", "Rajkumari", "Madan singh", "DEVKARAN CHOUDHARY", "AJAY CHOUDHARY", "Rajesh Bhukar", "Tan Singh", "Ram chandra dhaka", "VIJENDRA SINGH GILL", "SURAJ MAL ARYA", "Dr Bhim bijarniya", "Dayanand dhaka", "Rajendra meel", "RAJKUMAR FAGEDIYA", "SANTOSH DHAKA", "RATAN SINGH", "RAJENDRA BAGDIYA", "BHAGIRATH MAL KHAYALIYA", "Ramdev bijarniya", "Hoshiyar Singh meel", "Bhawar Singh", "ASHOK SAINI", "SOHANI DEVI", "Pokhar Singh", "Mahesh meel", "Pramod meel", "Rajkumar fagediya", "NEMICHAND", "SHILA DEVI", "VIKASH SHARMA", "Deshraj", "Shri shyam complex", "Aashiyana complex", "Shishpal", "Pardeep jakhar", "NAVEEN KUMAR", "Pardeep kymar", "Sukhbeer Singh bhukar", "Pawan kumar", "BHANWAR", "DR ABHISEK", "banwari lal", "Suresh godara", "VIDHYADAHR", "GORDHAN SINGH GUDHA", "Sobhagaya ragidansy", "Shawai singh", "Banwar lal", "MANOHAR LAL", "Ram parsad", "Gordhan singh", "Madan Singh", "Chataru Singh", "chotu ram kumawat", "Choturam", "Sanju davi", "Sumit", "Bhagwan ji", "Sarwan achra", "Mahendra bhaskar", "Bhomaram", "Mahendra poonia", "No rang singh", "Ramesh soni", "Madan Lal bagdiya", "Kailash butolia", "Vidhadhar dhaka", "Navdeep", "Bhaghath Mal", "REKHA RAM", "Radha krishan", "VIKASH", "Savran Singh", "Maninadar Singh", "Ramdhan", "Rajesh bagria", "Rajpal", "Raj Singh", "Rajpal bhkar", "Kelash shawar mal", "BUDHRAM", "Ram chandra ola", "SUBHITA KAJLA", "DINESH RANWA", "BABULAL KUMAWAT", "Sunita tiffin centre", "ASHOK", "Subhash kumawat", "Dilsukh thalor", "Vidhadhar Singh", "Er Narendra", "Sultan meel", "Subhash Kumar", "Dinesh gadwal", "SURESH KUMAR DHAKA", "Nemichand mahala", "Ramesh", "Mohan singh", "RAJU SARPANCH", "Rajendra seshma", "SHUSHIL BARI", "Ashok kumar", "Ghisaram jakhar", "Dilbag Singh", "Sukhbeer", "Kalu ram", "Bhagirath singh ranwa", "Shyamshunder shain", "Yash apartment", "New house", "Gopal githala", "VEER TEJA APARTMENT", "Mukesh", "MAHESH", "Ramsavroop joshi", "Parbhudayal", "Maya", "Vinod meena", "Mahaveer parsad", "Narayan Lal rewad", "Mahesh", "Mahendra", "Mahendra Kumar godara", "DHANSINGH LAMBA", "URMILA", "Ram chandra sevda", "Bajranglal", "Makhan lal", "Balbir bhukar", "Bhagarthai davi", "Mahindra Singh", "POONAM DEVI", "DEEPAK KUMAR", "DEVA NAND", "BHAGIRATH", "BOY'S HOSTEL", "SHANKAR LAL", "GUNJAN MATWA",
+      "RANDHEER SINGH PILANIYA", "LOKESH MAHALA", "DHANE SINGH", "Surendra", "LAXMICHAND PILANIYA", "HANUMAN", "Mahandra sing", "Ramkuvar", "Ramkuwar", "Ram chandra samota", "Silpa devi", "Mahesh godara", "VISHVANATH SONI", "BIRJMOHAN", "SARWAN", "MUKESH KUMAR JANGID", "Mahendra Singh", "Vikram Singh", "Harish chahar", "Rajendra Singh", "Ramdevi", "Chandan sungh katewa", "Suresh kumawat", "Subhash sharma", "Bhawar singh", "Parkash", "Kuldeep Nehra", "Manoj kumar", "Meena sharma", "Banwari Lal baskar", "Tajpal", "Sarwan", "Mahendra singh mood", "Amarnath butolia", "Dwarka", "Rajesh Kumar bagdiya", "Jhabahar mal bajaya", "Keshar bagdiya", "Subhash kumar", "Amarnath butoliya", "SURESH KUMAR SHARMA", "HARFOOL SINGH KHICHAR", "KANEHYA LAL", "BHAGWAN SINGH JHURIYA", "Kundan singh", "Virendara dotasara", "Virendra Singh", "Hukum Singh mahala", "Bhawar basakar", "SATYAPAL MAHRIYA", "TARACHAND", "Norang Singh kajala", "Norang Singh kajla", "Bhawar Lal dotasara", "SUBASH", "Bhagirath singh matwa", "omparkash", "SURENDRA KUMAR", "PUJA DEVI / LALIT KUMAR", "KELASH CHAND", "Radeshyam kumawat", "Dawarka parsad", "Gopichand", "vikash", "mhadev kumavat", "ramavtar", "radeshyam sharma", "bejrang lal meel", "mahendra", "sankar kumat", "sankar", "Sudhir", "Ramatar dhaka", "KAMLESH KUMAR PUNIYA", "VIJAY KUMAR AGARWAL", "PRAVEEN AGARWAL", "MAHESH KUMAR / DINESH", "SARWAN KUMAR", "Mahesh agrawal", "Shiv bhagwan", "Parveen", "Barjmohan swami", "Vijay Pal", "Mahaveer ji Jangid", "Ramvtar Sharma", "Vimal kumar", "BHANWARLAL NAGA", "RICHPAL", "RAM DEVI / VIKASH KAJALA", "Birabl singh", "SUNIL KUMAR", "MAHENDRA KUMAR MEEL", "SUNDA COLONY", "Dr B R SAINI", "Kumbha ram", "Sahnaj fansy store", "Mahesh kumar", "MANI DEVI", "MAHENDRA KUMAR MEEL", "Ramniwash nithala", "Big apartment", "Ashok kulhari", "Radhika house", "Kiran swami", "Dharmpal", "Dadu ram", "Harish kumar", "Baba men's parler", "Kedar Maan Singh", "Ramlal Singh", "Dr. Ranveer Singh", "Kasar ram bijraniya", "Hari ram meel", "Gora devi", "Indraj", "Ramji lal", "Ramwataar", "Sewa ram", "Sandeep", "Arvind bhaskar", "Ramchandr", "GODAVARI DEVIF", "Ramniwas", "Sunita meel", "SHISHRAM", "Baldev meel", "RANVEER SINGH", "Ram sukh sunda", "Dharmveer", "Manoj kumar pooina", "Johimal", "Anup kumar", "Anil kumar", "Dharmpal sesma", "Pyarelal dhaka", "Ramniwas dhaka", "M. K. General store", "Ravidar jangar", "Makhan Lal jangir", "Prabhudayaal", "Wahid", "Saroj davi", "Sila devi", "Chain Singh khedar", "Karsan kumar", "Dharmendar choudhary", "Vidhader mila", "Santhosh", "Royal digital photo studio", "Birda ram", "Gangadhar"];
   }
 }
 
