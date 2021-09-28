@@ -668,7 +668,7 @@ export class WardSurveyAnalysisComponent {
                   imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[index]["image"] + "?alt=media";
                 }
                 else {
-                  imageURL = "../../../assets/img/NotAvailable.jfif";
+                  imageURL = "../../../assets/img/image-not-found.jpg";
                 }
                 let type = data[index]["houseType"];
                 let dbPath = "Defaults/FinalHousesType/" + type + "/name";
@@ -848,7 +848,7 @@ export class WardSurveyAnalysisComponent {
     let revisitList = [];
     for (let i = 0; i < this.revisitSurveyList.length; i++) {
       if (this.revisitSurveyList[i]["revisitKey"] != revisitKey) {
-        revisitList.push({ lineNo: this.revisitSurveyList[i]["lineNo"], lines: this.revisitSurveyList[i]["lines"], name: this.revisitSurveyList[i]["name"], requestDate: this.revisitSurveyList[i]["requestDate"], reason: this.revisitSurveyList[i]["reason"], houseType: this.revisitSurveyList[i]["houseType"], lat: this.revisitSurveyList[i]["lat"], lng: this.revisitSurveyList[i]["lng"], activeClass: "halt-data-theme", imageURL: this.revisitSurveyList[i]["imageURL"], surveyorId: this.revisitSurveyList[i]["surveyorId"], date: this.revisitSurveyList[i]["date"], revisitKey: this.revisitSurveyList[i]["revisitKey"] });
+        revisitList.push({ lineNo: this.revisitSurveyList[i]["lineNo"],surveyorName:this.revisitSurveyList[i]["surveyorName"], lines: this.revisitSurveyList[i]["lines"], name: this.revisitSurveyList[i]["name"], requestDate: this.revisitSurveyList[i]["requestDate"], reason: this.revisitSurveyList[i]["reason"], houseType: this.revisitSurveyList[i]["houseType"], lat: this.revisitSurveyList[i]["lat"], lng: this.revisitSurveyList[i]["lng"], activeClass: "halt-data-theme", imageURL: this.revisitSurveyList[i]["imageURL"], surveyorId: this.revisitSurveyList[i]["surveyorId"], date: this.revisitSurveyList[i]["date"], revisitKey: this.revisitSurveyList[i]["revisitKey"], houseTypeId: this.revisitSurveyList[i]["houseTypeId"] });
       }
     }
     this.revisitSurveyList = revisitList;
