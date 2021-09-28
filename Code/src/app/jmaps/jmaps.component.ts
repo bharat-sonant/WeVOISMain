@@ -54,6 +54,7 @@ export class JmapsComponent {
     this.setDefault();
   }
 
+
   setDefault() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -66,6 +67,7 @@ export class JmapsComponent {
     this.lines = [];
     this.polylines = [];
     this.wardLineNoMarker = [];
+
   }
 
   resetAll() {
@@ -111,7 +113,6 @@ export class JmapsComponent {
     this.selectedZone = filterVal;
     this.getWardData();
   }
-
 
   setDate(filterVal: any, type: string) {
     if (type == "current") {
@@ -209,28 +210,56 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    for (let i = 1; i <= Number(this.wardLines); i++) {
-      let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
-      if (this.mapRefrence != "") {
-        dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/" + i + "/points";
-      }
-      let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
-        wardLines.unsubscribe();
-        if (zoneData.length > 0) {
-          let lineData = zoneData;
-          var latLng = [];
-          for (let j = 0; j < lineData.length; j++) {
-            latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
+    this.httpService.get("../../assets/jsons/ward-" + this.selectedZone + "-2021-09-28.json").subscribe(data => {
+      if (data != null) {
+        var keyArray = Object.keys(data);
+        console.log(data)
+        if (keyArray.length > 0) {
+          for (let i = 1; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            console.log(lineNo);
+            if (data[lineNo] != null) {
+              console.log(data[lineNo]["points"]);
+              var latLng = [];
+              for (let j = 0; j < data[lineNo]["points"].length; j++) {
+                latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+              }
+
+              this.lines.push({
+                lineNo: i,
+                latlng: latLng,
+                color: "#87CEFA",
+              });
+              this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+            }
           }
-          this.lines.push({
-            lineNo: i,
-            latlng: latLng,
-            color: "#87CEFA",
-          });
-          this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
         }
-      });
-    }
+      }
+    });
+    /*
+        for (let i = 1; i <= Number(this.wardLines); i++) {
+          let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
+          if (this.mapRefrence != "") {
+            dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/" + i + "/points";
+          }
+          let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
+            wardLines.unsubscribe();
+            if (zoneData.length > 0) {
+              let lineData = zoneData;
+              var latLng = [];
+              for (let j = 0; j < lineData.length; j++) {
+                latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
+              }
+              this.lines.push({
+                lineNo: i,
+                latlng: latLng,
+                color: "#87CEFA",
+              });
+              this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+            }
+          });
+        }
+        */
   }
 
   plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
@@ -336,7 +365,7 @@ export class JmapsComponent {
                   }
                   workPercentage = Math.round((completedLines * 100) / wardLines);
                 }
-                progresData.coveredLength =(parseFloat(wardCoveredDistance.toString())/1000).toFixed(2);
+                progresData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
                 progresData.workPercentage = workPercentage + "%";
                 let userid = localStorage.getItem("userID");
                 const data1 = {
