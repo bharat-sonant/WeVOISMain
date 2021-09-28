@@ -716,6 +716,11 @@ export class MapsComponent {
           // } else {
           //   this.progressData.completedLines = 0;
           // }
+          if (workerData["skippedLines"] != null) {
+            this.progressData.skippedLines = workerData["skippedLines"];
+          } else {
+            this.progressData.skippedLines = 0;
+          }
           if (workerData["workPercentage"] != null) {
             this.progressData.workPercentage = workerData["workPercentage"]+"%";
           } else {
