@@ -1087,10 +1087,10 @@ export class WardSurveyAnalysisComponent {
     let lineNo = this.revisitSurveyList[index]["lineNo"];
 
     let dbPath = "CardWardMapping/" + cardNumber;
-    //this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
+    this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
 
     dbPath = "HouseWardMapping/" + mobileNo;
-    //this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
+    this.db.object(dbPath).update({ line: lineNo, ward: this.selectedZone });
 
     let date = new Date();
     let hour = date.getHours();
