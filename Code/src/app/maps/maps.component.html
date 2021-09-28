@@ -119,49 +119,6 @@
 </div>
 </div>
 
-<div id="divJaipurGreaterDetail">
-<div class="ward-percentage">
-  <div class="lines-left" >
-      <h3>
-          <div class="progress">
-              <div class="progress-bar progress-bar-striped bg-success" role="progressbar" [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{progressData.workPercentage}}</div>
-            </div>
-          </h3>
-    </div>
-  <div class="lines-right" >
-    <p>
-        Work Percentage
-    </p>
-  </div>
-
-</div>
-
-<div  class="jaipur-line-details-box">
-<div class="lines" >
-  <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
-    <p>Total Ward Length</p>
-  </h3>
-</div>
-<div class="lines2" >
-  <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
-    <p>Covered Ward Length</p>
-  </h3>
-</div>
-<div id="divInternal">
-  <div class="lines" style="border-top: 1px dotted lightgray;">
-    <h3>{{progressData.totalLines}}
-      <p>Total Lines</p>
-    </h3>
-  </div>
-  <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;" (click)="showSkipLineDetail(contentSkipLines)">
-    <h3>{{progressData.completedLines}}
-      <p>Completed Lines</p>
-    </h3>
-  </div>
-</div>
-</div>
-
-</div>
 <div id="divLineDetail" class="line-details-box">
 <div class="lines" style="display: none;">
   <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>

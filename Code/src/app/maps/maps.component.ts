@@ -105,24 +105,14 @@ export class MapsComponent {
     parshadName: "",
     parshadMobile: "",
     cardNotScaned: 0,
-    workPercentage:"0%",
+    workPercentage: "0%",
   };
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    if (this.cityName == "jaipur-greater") {
-      $('#isHouse').hide();
-      $('#showHouseLabel').hide();
-      $('#divDriverDetail').hide();
-      $('#divLineDetail').hide();
-      $('#divJaipurGreaterDetail').show();
-    }
-    else
-    {
-      $('#divJaipurGreaterDetail').hide();
-    }
+
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.toDayDate);
@@ -356,17 +346,16 @@ export class MapsComponent {
   getWardData() {
     this.setDefaultWard();
     if (this.selectedDate == this.toDayDate) {
-      if (this.cityName != "jaipur-greater") {
-        this.showVehicleMovement();
-      }
+
+      this.showVehicleMovement();
     }
     this.getWardLines();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
-    if (this.cityName != "jaipur-greater") {
-      this.getParshadHouse();
-    }
+
+    this.getParshadHouse();
+
   }
 
   setDate(filterVal: any, type: string) {
@@ -402,9 +391,9 @@ export class MapsComponent {
     this.selectedZone = this.activeZone;
     this.setDateFilterDefault();
     if (this.selectedDate == this.toDayDate) {
-      if (this.cityName != "jaipur-greater") {
-        this.showVehicleMovement();
-      }
+
+      this.showVehicleMovement();
+
     } else {
       this.marker.setMap(null);
     }
@@ -722,7 +711,7 @@ export class MapsComponent {
             this.progressData.skippedLines = 0;
           }
           if (workerData["workPercentage"] != null) {
-            this.progressData.workPercentage = workerData["workPercentage"]+"%";
+            this.progressData.workPercentage = workerData["workPercentage"] + "%";
           } else {
             this.progressData.workPercentage = "0%";
           }
@@ -1325,5 +1314,5 @@ export class progressDetail {
   parshadName: string;
   parshadMobile: string;
   cardNotScaned: number;
-  workPercentage:string;
+  workPercentage: string;
 }
