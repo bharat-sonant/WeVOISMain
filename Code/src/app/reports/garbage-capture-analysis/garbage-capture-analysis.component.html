@@ -1,1 +1,315 @@
-<p>garbage-capture-analysis works!</p>
+<!---------Task Management Section Start----------->
+<section class="task-masters">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-12 top-header text-center">
+                <div style="float: left;">
+                    <button class="btn btn-primary " (click)="setDate('','previous');">
+                        << </button>
+                            <input id="txtDate" class="date-input" type="date"
+                                (change)="setDate($event.target.value,'current')">
+                            <button class="btn btn-primary" (click)="setDate('','next');"
+                                style="margin-left: 0px!important;">
+                                >>
+                            </button>
+                </div>
+                <b class="ward-header"> garbage capture analysis</b>
+            </div>
+            <div class="col-md-12 mt-10" style="padding-left:10px;padding-right:10px;">
+                <button class="tablink active-tab" (click)="setActiveTab('Transfer');" id="tabTransfer">Transfer
+                    Station</button>
+                <button class="tablink" (click)="setActiveTab('OpenDepo');" id="tabOpenDepo">Open Depo</button>
+                <button id="tabLitterDustbin" class="tablink" (click)="setActiveTab('LitterDustbin');">Litter
+                    Dustbin</button>
+                <button id="tabRoadside" class="tablink" (click)="setActiveTab('Roadside');">Roadside</button>
+
+                <div id="Transfer" class="tabcontent show active">
+                    <div class="row" style="margin-top:-52px;">
+                        <div class="col-md-12">
+                           transfer
+                        </div>
+                    </div>
+                </div>
+
+                <div id="OpenDepo" class="tabcontent">
+                    <div class="row" style="margin-top:-52px;">
+                        <div class="col-md-12">
+                            open
+                        </div>
+                    </div>
+                </div>
+
+                <div id="LitterDustbin" class="tabcontent">
+                    <div class="row" style="margin-top:-52px;">
+                        <div class="col-md-12">
+                            litter
+                        </div>
+                    </div>
+                </div>
+                <div id="Roadside" class="tabcontent">
+                    <div class="row" style="margin-top:-52px;">
+                        <div class="col-md-12">
+                            roadside
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteId" value="0" />
+                <input type="hidden" id="confirmType" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmDelete()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Delete Confirmation End-->
+
+
+<!--Task Department Start-->
+<ng-template #contentDepartment>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add/Update Category</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="departmentId" value="0" />
+                <div class="col-md-12 mt-10">
+                    <label>Task Department</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtDepartment" type="text" class="input-green" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="addTaskDepartment()">
+                        SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Task Department End-->
+
+
+<!--Category Start-->
+<ng-template #contentCategory>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add/Update Category</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="catId" value="0" />
+                <input type="hidden" id="maincatId" value="0" />
+                <div class="col-md-12" style="display: none;">
+                    <label>Main Category </label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlMainCategory" class="input-green">
+                            <option value={{cat.mainCat}} *ngFor="let cat of mainTaskList">
+                                {{cat.mainCat}}</option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-10">
+                    <label>Category</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtCategory" type="text" class="input-green" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="addCategory()">
+                        SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Category End-->
+
+
+<!--Project Start-->
+<ng-template #contentProject>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add/Update Project</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="projectId" value="0" />
+                <input type="hidden" id="projectmaincatId" value="0" />
+                <div class="col-md-12" style="display: none;">
+                    <label>Main Category </label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlMainProjectCategory" class="input-green">
+                            <option value={{cat.mainCat}} *ngFor="let cat of mainTaskList">
+                                {{cat.mainCat}}</option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-10">
+                    <label>Project</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtProject" type="text" class="input-green" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="addProject()">
+                        SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Project End-->
+
+
+<!--Project Start-->
+<ng-template #contentModules>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add/Update Project</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="moduleId" value="0" />
+                <input type="hidden" id="modulemaincatId" value="0" />
+                <input type="hidden" id="moduleprojectId" value="0" />
+                <div class="col-md-12" style="display: none;">
+                    <label>Main Category </label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlMainModuleCategory" class="input-green" (change)="getModuleProject();">
+                            <option value={{cat.mainCat}} *ngFor="let cat of mainTaskList">
+                                {{cat.mainCat}}</option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label>Projects </label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlProject" class="input-green">
+                            <option value="0">--Select--</option>
+                            <option value={{project.id}} *ngFor="let project of moduleProjectList">
+                                {{project.name}}</option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-10">
+                    <label>Module</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtModule" type="text" class="input-green" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-tasks" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="addModule()">
+                        SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Project End-->
+
+
+<!--Category Start-->
+<ng-template #contentProjectCategory>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="projectCatgoryId" value="0" />
+                <div class="col-md-12 mt-10">
+                    <div class="table-bg">
+                        <div class="tableFixHead" style="height: 430px;">
+                            <table class="table table-hover"
+                                style="border-bottom:1px solid lightgray; margin-bottom: 110px;">
+                                <tbody>
+                                    <tr *ngFor="let data of categoryList; let i=index">
+                                        <td class="text-left tdBorder">
+                                            <input type="checkbox" id="chk{{i}}" />
+                                        </td>
+                                        <td class="text-left tdBorder">{{data.name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success w-100 submit-btn" (click)="addProjectCategory()">
+                        SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Category End-->
