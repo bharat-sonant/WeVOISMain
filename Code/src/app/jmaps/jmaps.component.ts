@@ -375,7 +375,7 @@ export class JmapsComponent {
           }
         );
       });
-
+/*
       let lat = latlngs[0]["lat"];
       let lng = latlngs[0]["lng"];
       let marker = new google.maps.Marker({
@@ -396,6 +396,7 @@ export class JmapsComponent {
         },
       });
       this.wardLineNoMarker.push({ marker });
+      */
       setTimeout(() => {
         this.centerPoint = this.lines[0]["latlng"][0];
         this.map.setZoom(17);
@@ -439,6 +440,20 @@ export class JmapsComponent {
           line.setOptions(polyOptions);
         }
       }
+    }
+  }
+
+
+  getCurrentStrokeWeight(event: any) {
+    if (event.key == "Enter") {
+      let strokeWeight = $("#txtLineNo").val();
+      if (strokeWeight == "") {
+        this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+        return;
+      }
+      this.strokeWeight = Number(strokeWeight);
+      $("#txtLineNo").val(this.strokeWeight);
+      this.setStrokeWeight();
     }
   }
 
