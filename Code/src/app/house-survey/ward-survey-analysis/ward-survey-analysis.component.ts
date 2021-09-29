@@ -684,8 +684,8 @@ export class WardSurveyAnalysisComponent {
                         if (surveyorData != null) {
                           surveyorName = surveyorData;
                         }
-                        this.revisitSurveyList.push({ lineNo: this.lineNo,surveyorName:surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                        this.revisitLineSurveyList.push({ lineNo: this.lineNo,surveyorName:surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                        this.revisitSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                        this.revisitLineSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
                         this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                       }
                     );
@@ -747,8 +747,8 @@ export class WardSurveyAnalysisComponent {
                           if (surveyorData != null) {
                             surveyorName = surveyorData;
                           }
-                          this.revisitSurveyList.push({ lineNo: lineNo,surveyorName:surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                          this.revisitAllSurveyList.push({ lineNo: lineNo,surveyorName:surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                          this.revisitSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                          this.revisitAllSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
                           this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                         });
                     }
@@ -789,16 +789,24 @@ export class WardSurveyAnalysisComponent {
     let date = this.revisitSurveyList[index]["date"];
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let checkInstance = this.db.list(dbPath).valueChanges().subscribe(
+    let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         checkInstance.unsubscribe();
         if (data != null) {
           let canDelete = true;
-          for (let i = 0; i < data.length; i++) {
-            if (data[i]["revisitKey"] != null) {
-              if (data[i]["revisitKey"] == revisitKey) {
-                i = data.length;
-                canDelete = false;
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (data[index]["revisitKey"] != null) {
+                if (data[index]["revisitKey"] == revisitKey) {
+                  i = keyArray.length;
+                  canDelete = false;
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index;
+                  this.db.object(dbPath).update({ revisitCardDeleted: revisitKey });
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index + "/revisitKey";
+                  this.db.database.ref(dbPath).set(null);
+                }
               }
             }
           }
@@ -806,8 +814,19 @@ export class WardSurveyAnalysisComponent {
             this.deleteRevisit(lineNo, revisitKey, date, surveyorId, index);
           }
           else {
-            this.commonService.setAlertMessage("error", "You can not delete this marker. This is related to house marker !!!");
-
+            this.deleteRevisit(lineNo, revisitKey, date, surveyorId, index);
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
+            let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+              count => {
+                lineRevisitCountInstance.unsubscribe();
+                if (count != null) {
+                  let revisitCount = Number(count) - 1;
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+                  this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
+                }
+              }
+            );
+            //this.commonService.setAlertMessage("error", "You can not delete this marker. This is related to house marker !!!");
           }
         }
       }
@@ -848,7 +867,7 @@ export class WardSurveyAnalysisComponent {
     let revisitList = [];
     for (let i = 0; i < this.revisitSurveyList.length; i++) {
       if (this.revisitSurveyList[i]["revisitKey"] != revisitKey) {
-        revisitList.push({ lineNo: this.revisitSurveyList[i]["lineNo"],surveyorName:this.revisitSurveyList[i]["surveyorName"], lines: this.revisitSurveyList[i]["lines"], name: this.revisitSurveyList[i]["name"], requestDate: this.revisitSurveyList[i]["requestDate"], reason: this.revisitSurveyList[i]["reason"], houseType: this.revisitSurveyList[i]["houseType"], lat: this.revisitSurveyList[i]["lat"], lng: this.revisitSurveyList[i]["lng"], activeClass: "halt-data-theme", imageURL: this.revisitSurveyList[i]["imageURL"], surveyorId: this.revisitSurveyList[i]["surveyorId"], date: this.revisitSurveyList[i]["date"], revisitKey: this.revisitSurveyList[i]["revisitKey"], houseTypeId: this.revisitSurveyList[i]["houseTypeId"] });
+        revisitList.push({ lineNo: this.revisitSurveyList[i]["lineNo"], surveyorName: this.revisitSurveyList[i]["surveyorName"], lines: this.revisitSurveyList[i]["lines"], name: this.revisitSurveyList[i]["name"], requestDate: this.revisitSurveyList[i]["requestDate"], reason: this.revisitSurveyList[i]["reason"], houseType: this.revisitSurveyList[i]["houseType"], lat: this.revisitSurveyList[i]["lat"], lng: this.revisitSurveyList[i]["lng"], activeClass: "halt-data-theme", imageURL: this.revisitSurveyList[i]["imageURL"], surveyorId: this.revisitSurveyList[i]["surveyorId"], date: this.revisitSurveyList[i]["date"], revisitKey: this.revisitSurveyList[i]["revisitKey"], houseTypeId: this.revisitSurveyList[i]["houseTypeId"] });
       }
     }
     this.revisitSurveyList = revisitList;

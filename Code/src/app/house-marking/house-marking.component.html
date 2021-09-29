@@ -237,7 +237,7 @@
                 <h3> {{dt.alreadyInstalled}} </h3><br />
                 <span [hidden]="dt.status==''">
                   <p>Status <span class="f-right"> :</span></p>
-                  <h3> {{dt.status}} </h3>
+                  <h3 ><span class="{{dt.statusClass}}"> {{dt.status}}</span> </h3>
                 </span>
               </div>
             </div>

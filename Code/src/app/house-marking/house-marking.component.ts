@@ -57,7 +57,7 @@ export class HouseMarkingComponent {
   }
 
   getZones() {
-    this.zoneList=JSON.parse(localStorage.getItem("markingWards"));
+    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
     if (this.zoneList != null) {
       this.selectedZone = 0;
       this.map = this.commonService.setMap(this.gmap);
@@ -77,8 +77,8 @@ export class HouseMarkingComponent {
 
   getWardDetail() {
     this.getTotalMarkers();
-    this.wardLineCount=this.commonService.getWardLineCount(this.selectedZone);
-    this.markerData.totalLines=this.wardLineCount;
+    this.wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
+    this.markerData.totalLines = this.wardLineCount;
     this.getWardLines(this.wardLineCount);
     this.getLastScanTime();
     this.getLineApprove();
@@ -171,7 +171,7 @@ export class HouseMarkingComponent {
   }
 
   getWardLines(lineCount: any) {
-    
+
     for (let i = 1; i <= Number(lineCount); i++) {
       let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
         wardLines.unsubscribe();
@@ -209,6 +209,10 @@ export class HouseMarkingComponent {
                 let userId = data[index]["userId"];
                 let date = data[index]["date"].split(" ")[0];
                 let status = "";
+                let statusClass="";
+                if (data[index]["status"] != null) {
+                  status = data[index]["status"];
+                }
                 if (data[index]["cardNumber"] != null) {
                   status = "Surveyed";
                 }
@@ -218,16 +222,16 @@ export class HouseMarkingComponent {
                 if (data[index]["rfidNotFoundKey"] != null) {
                   status = "RFID not matched";
                 }
-
-                if (data[index]["status"] != null) {
-                  status = data[index]["status"];
+                if (data[index]["revisitCardDeleted"] != null) {
+                  status = "Revisit Deleted";
+                  statusClass="status-deleted";
                 }
+
                 let city = this.commonService.getFireStoreCity();
 
                 let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
                 let type = data[index]["houseType"];
                 let alreadyInstalled = "नहीं";
-
                 if (data[index]["alreadyInstalled"] == true) {
                   this.markerData.alreadyCardLineCount =
                     this.markerData.alreadyCardLineCount + 1;
@@ -238,7 +242,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass });
                   }
                 });
                 let alreadyCard = "";
