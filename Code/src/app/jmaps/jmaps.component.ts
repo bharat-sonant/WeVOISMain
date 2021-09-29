@@ -40,7 +40,7 @@ export class JmapsComponent {
   wardLineNoMarker: any[];
   centerPoint: any;
   zoneKML: any;
-
+  strokeWeight = 7;
   progressData: progressDetail = {
     wardLength: "0",
     coveredLength: "0",
@@ -213,18 +213,14 @@ export class JmapsComponent {
     this.httpService.get("../../assets/jsons/ward-" + this.selectedZone + "-2021-09-28.json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
-        console.log(data)
         if (keyArray.length > 0) {
           for (let i = 1; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
-            console.log(lineNo);
             if (data[lineNo] != null) {
-              console.log(data[lineNo]["points"]);
               var latLng = [];
               for (let j = 0; j < data[lineNo]["points"].length; j++) {
                 latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
               }
-
               this.lines.push({
                 lineNo: i,
                 latlng: latLng,
@@ -266,19 +262,17 @@ export class JmapsComponent {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       lineStatus.unsubscribe();
-      if (this.selectedDate != this.toDayDate) {
-        lineStatus.unsubscribe();
-      }
       let line = new google.maps.Polyline({
         path: latlngs,
         strokeColor: this.commonService.getLineColor(status),
-        strokeWeight: 7,
+        strokeWeight: this.strokeWeight,
       });
       this.polylines[i] = line;
       this.polylines[i].setMap(this.map);
       let progresData = this.progressData;
       let dbEvent = this.db;
       let wardLines = this.wardLines;
+      let strokeWeight = this.strokeWeight;
       let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
       let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
       let dbPathSummary = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
@@ -335,7 +329,7 @@ export class JmapsComponent {
             var polyOptions = {
               strokeColor: stockColor,
               strokeOpacity: 1.0,
-              strokeWeight: 7
+              strokeWeight: strokeWeight
             }
             let summaryInstance = dbEvent.object(dbPathSummary).valueChanges().subscribe(
               data => {
@@ -378,10 +372,8 @@ export class JmapsComponent {
               }
             );
             line.setOptions(polyOptions);
-
           }
         );
-
       });
 
       let lat = latlngs[0]["lat"];
@@ -413,6 +405,43 @@ export class JmapsComponent {
     });
   }
 
+
+  getNextPrevious(type: any) {
+    let strokeWeight = $("#txtStrokeWeight").val();
+    if (strokeWeight == "") {
+      this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
+      return;
+    }
+    if (type == "pre") {
+      if (strokeWeight != "1") {
+        this.strokeWeight = Number(strokeWeight) - 1;
+        $("#txtStrokeWeight").val(this.strokeWeight);
+        this.setStrokeWeight();
+      }
+    } else if (type == "next") {
+
+      this.strokeWeight = Number(strokeWeight) + 1;
+      $("#txtStrokeWeight").val(this.strokeWeight);
+      this.setStrokeWeight();
+    }
+  }
+
+  setStrokeWeight() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          let line = this.polylines[i];
+          var polyOptions = {
+            strokeColor: this.polylines[i]["strokeColor"],
+            strokeOpacity: 1.0,
+            strokeWeight: this.strokeWeight
+          }
+          line.setOptions(polyOptions);
+        }
+      }
+    }
+  }
+
   showBounderis() {
     if ($('#showBoundries').html() == "Show Boundaries") {
       $('#showBoundries').html("Hide Boundaries");
@@ -425,6 +454,7 @@ export class JmapsComponent {
         this.zoneKML = null;
       }
     }
+    this.setStrokeWeight();
   }
 
   setHeight() {

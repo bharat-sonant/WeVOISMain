@@ -42,6 +42,20 @@
     </div>
     
     <div  class="jaipur-line-details-box">
+      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+        <div class="border-bottom">
+          <button (click)="getNextPrevious('pre');" class="btn-hvr"
+            style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
+            << </button>
+              <input id="txtStrokeWeight" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
+                style="width: 115px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+                value="7" />
+              <button (click)="getNextPrevious('next');" class="btn-hvr"
+                style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+                >>
+              </button>
+        </div>
+      </div>
     <div class="lines" >
       <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
         <p>Total Ward Length</p>
