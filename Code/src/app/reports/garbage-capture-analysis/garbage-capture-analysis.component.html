@@ -5,11 +5,11 @@
 
             <div class="col-md-12 top-header text-center">
                 <div style="float: left;">
-                    <button class="btn btn-primary " >
+                    <button class="btn btn-primary " (click)="setDate('','previous');">
                         << </button>
                             <input id="txtDate" class="date-input" type="date"
-                               >
-                            <button class="btn btn-primary"
+                                (change)="setDate($event.target.value,'current')">
+                            <button class="btn btn-primary" (click)="setDate('','next');"
                                 style="margin-left: 0px!important;">
                                 >>
                             </button>
@@ -24,33 +24,51 @@
                     Dustbin</button>
                 <button id="tabRoadside" class="tablink" (click)="setActiveTab('Roadside');">Roadside</button>
 
-                <div id="Transfer" class="tabcontent show active">
-                    <div class="row" style="margin-top:-52px;">
-                        <div class="col-md-12">
-                           transfer
+                <div id="Transfer" class="tabcontent show active"> 
+                    <div class="main_view" >
+                        <img   id="main" alt="IMAGE" style="margin-left: 250px;height: 300px;width: 50%;">
+                    </div>
+                    <div  style="display:flex;margin-top:-52px;margin-top: 10px;width: 100%;overflow-x: scroll;height: 150px;">
+                        <div  *ngFor="let img of taransferList; let i=index" >
+                           <img id="transferimage" src="{{img.imageURL}}" alt="" style="height: 150px; width: 150px;padding: 5px;" (click)="transchange(i)">
                         </div>
                     </div>
                 </div>
 
                 <div id="OpenDepo" class="tabcontent">
                     <div class="row" style="margin-top:-52px;">
-                        <div class="col-md-12">
-                            open
+                        <div class="main_view" >
+                            <img   id="main1" alt="IMAGE" style="margin-left: 250px;height: 300px;width: 50%;">
+                        </div>
+                        <div  style="display:flex;margin-top:-52px;margin-top: 10px;width: 100%;overflow-x: scroll;height: 150px;">
+                            <div  *ngFor="let img of openDepoList; let i=index" >
+                               <img id="transferimage" src="{{img.imageURL}}" alt="" style="height: 150px; width: 150px;padding: 5px;" (click)="openchange(i)" >
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="LitterDustbin" class="tabcontent">
                     <div class="row" style="margin-top:-52px;">
-                        <div class="col-md-12">
-                            litter
+                        <div class="main_view" >
+                            <img   id="main2" alt="IMAGE" style="margin-left: 250px;height: 300px;width: 50%;">
+                        </div>
+                        <div  style="display:flex;margin-top:-52px;margin-top: 10px;width: 100%;overflow-x: scroll;height: 150px;">
+                            <div  *ngFor="let img of litterDustbinList; let i=index" >
+                               <img id="transferimage" src="{{img.imageURL}}" alt="" style="height: 150px; width: 150px;padding: 5px;" (click)="literchange(i)" >
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div id="Roadside" class="tabcontent">
                     <div class="row" style="margin-top:-52px;">
-                        <div class="col-md-12">
-                            roadside
+                        <div class="main_view" >
+                            <img   id="main3" alt="IMAGE" style="margin-left: 250px;height: 300px;width: 50%;">
+                        </div>
+                        <div  style="display:flex;margin-top:-52px;margin-top: 10px;width: 100%;overflow-x: scroll;height: 150px;">
+                            <div  *ngFor="let img of roadsideList; let i=index" >
+                               <img id="transferimage" src="{{img.imageURL}}" alt="" style="height: 150px; width: 150px;padding: 5px;" (click)="citychange(i)" >
+                            </div>
                         </div>
                     </div>
                 </div>

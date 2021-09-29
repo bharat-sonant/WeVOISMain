@@ -20,6 +20,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   roadsideList: any[];
   toDayDate: any;
   selectedDate: any;
+  imageNoFoundURL="../../../assets/img/NotAvailable.jfif";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -37,8 +38,23 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.litterDustbinList = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
-    $("#txtDate").val(this.toDayDate);
     this.setActiveTab("Transfer");
+    $('#txtDate').val(this.selectedDate);
+  }
+
+  resetData(){
+    this.taransferList = [];
+    this.openDepoList = [];
+    this.roadsideList = [];
+    this.litterDustbinList = [];
+    let bigImage=<HTMLImageElement>document.getElementById("main");
+    bigImage.src=this.imageNoFoundURL;
+    let bigImage1=<HTMLImageElement>document.getElementById("main1");
+    bigImage1.src=this.imageNoFoundURL;
+    let bigImage2=<HTMLImageElement>document.getElementById("main2");
+    bigImage2.src=this.imageNoFoundURL;
+    let bigImage3=<HTMLImageElement>document.getElementById("main3");
+    bigImage3.src=this.imageNoFoundURL;
   }
 
 
@@ -96,29 +112,98 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
+    this.resetData();
     let dbPath = "WastebinMonitor/ImagesData/" + this.selectedDate;  
     let imageInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         imageInstance.unsubscribe();
         console.log(data);
         if (data.length > 0) {
+          let city = this.commonService.getFireStoreCity();
           for (let i = 0; i < data.length; i++) {
+            let imageURL = "../../../assets/img/system-generated-image.jpg";
+          if (data[i]["imageRef"] != null) {
+            imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F"  + data[i]["imageRef"] + "?alt=media";
+
+          }
             if (data[i]["category"] == "1") {
-              this.taransferList.push({ address: data[i]["address"], imageURL: data[i]["imageRef"], isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
+              this.taransferList.push({ address: data[i]["address"], imageURL: imageURL, isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
             }
             else if (data[i]["category"] == "2") {
-              this.openDepoList.push({ address: data[i]["address"], imageURL: data[i]["imageRef"], isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
+              this.openDepoList.push({ address: data[i]["address"], imageURL:imageURL, isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
             }
             else if (data[i]["category"] == "3") {
-              this.litterDustbinList.push({ address: data[i]["address"], imageURL: data[i]["imageRef"], isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
+              this.litterDustbinList.push({ address: data[i]["address"], imageURL: imageURL, isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
             }
             else if (data[i]["category"] == "4") {
-              this.roadsideList.push({ address: data[i]["address"], imageURL: data[i]["imageRef"], isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
+              this.roadsideList.push({ address: data[i]["address"], imageURL: imageURL, isClean: data[i]["isClean"], time: data[i]["time"], user: data[i]["user"], latLng: data[i]["latLng"] });
             }
+            if(i==data.length-1){
+              let transmain=this.taransferList[0]["imageURL"];
+              let bigImage=<HTMLImageElement>document.getElementById("main");
+              bigImage.src=transmain;
+              let openmain=this.openDepoList[0]["imageURL"];
+              let bigImage1=<HTMLImageElement>document.getElementById("main1");
+              bigImage1.src=openmain;
+              let littermainmain=this.litterDustbinList[0]["imageURL"];
+              let bigImage2=<HTMLImageElement>document.getElementById("main2");
+              bigImage2.src=littermainmain;
+              let roadmain=this.roadsideList[0]["imageURL"];
+              let bigImage3=<HTMLImageElement>document.getElementById("main3");
+              bigImage3.src=roadmain;
+              }
           }
-          console.log(this.taransferList);
         }
       }
     );
   }
+
+  transchange(index:any)
+  {
+    let transmain=this.taransferList[index]["imageURL"];
+    let bigImage=<HTMLImageElement>document.getElementById("main");
+    bigImage.src=transmain;
+  }
+  openchange(index:any)
+  {
+    let openmain=this.openDepoList[index]["imageURL"];
+    let bigImage1=<HTMLImageElement>document.getElementById("main1");
+    bigImage1.src=openmain;
+  }
+  literchange(index:any)
+  {
+    let littermainmain=this.litterDustbinList[index]["imageURL"];
+    let bigImage2=<HTMLImageElement>document.getElementById("main2");
+    bigImage2.src=littermainmain;
+  }
+  citychange(index:any)
+  {
+    let roadmain=this.roadsideList[index]["imageURL"];
+    let bigImage3=<HTMLImageElement>document.getElementById("main3");
+    bigImage3.src=roadmain;
+  }
+
+  
+  setDate(filterVal: any, type: string) {
+    if (type == "current") {
+      this.selectedDate = filterVal;
+    } else if (type == "next") {
+      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
+      this.selectedDate = nextDate;
+    } else if (type == "previous") {
+      let previousDate = this.commonService.getPreviousDate(
+        $("#txtDate").val(),
+        1
+      );
+      this.selectedDate = previousDate;
+    }
+    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
+      this.selectedDate = this.toDayDate;
+      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
+      return;
+    }
+    $("#txtDate").val(this.selectedDate);
+   this.getCapturedImages();
+  }
+ 
 }
