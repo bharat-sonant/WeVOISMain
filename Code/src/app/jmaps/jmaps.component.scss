@@ -278,12 +278,12 @@
     /*************New Work CSS*****************/
     .driver-helper-box{
     width: 270px;
-    min-height: 100px;
+    min-height: 300px;
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
     right: 15px;
-    top: 80px;
+    top: 265px;
     /* border-radius: 5px; */
     border:1px solid #80bd7b;
     }
@@ -595,6 +595,78 @@
     text-transform: capitalize;
     margin-top: 1px!important;
     }
+
+    
+/**************************Table Start***************************/
+.table-bg{
+
+    background-color: #fff;
+    border-radius: 0.25rem;
+     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+  }
+  .table-header{
+    height: 40px;
+    margin-top: 15px;
+    text-align: center;
+    // border-bottom: 5px solid #dcdcdc;
+    background-color: #0ba118;;
+    padding: 15px;
+    padding-top:8px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    border-radius: 0.25rem 0.25rem 0rem 0rem ;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    border: 1px solid #e2e2e2;
+  }
+  .tableFixHead {
+    overflow-y: auto;
+    height: 40vh;
+  }
+  
+  .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #0ba118;
+    color: #fff;
+    font-size: 13px;
+    z-index: 33333;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  thead th{
+    font-size:15px;
+    color: rgb(56, 56, 56);
+    font-weight: normal;
+  }
+  table td{
+    padding: 7px 7px !important;
+    font-size: 12px;
+    
+  }
+  .tableFixHead a{
+    color: #000;
+  }
+  .tableFixHead .fa-long-arrow-alt-down{
+    color: red;
+  }
+  .tableFixHead .fa-long-arrow-alt-up{
+    color: #0ba118;
+  }
+  .red-halt{
+    background-color: red;
+    color: #fff!important;
+    padding: 5px 10px;
+    border-radius: 20px;
+  }
+  .tableFixHead::-webkit-scrollbar{
+    display: none; 
+   }
+   
+  /**************************Table End***************************/
     
     
     

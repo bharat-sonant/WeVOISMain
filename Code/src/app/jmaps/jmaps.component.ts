@@ -41,6 +41,7 @@ export class JmapsComponent {
   centerPoint: any;
   zoneKML: any;
   strokeWeight = 7;
+  vehicleList: any[];
   progressData: progressDetail = {
     wardLength: "0",
     coveredLength: "0",
@@ -67,6 +68,7 @@ export class JmapsComponent {
     this.lines = [];
     this.polylines = [];
     this.wardLineNoMarker = [];
+    this.vehicleList = [];
 
   }
 
@@ -98,6 +100,7 @@ export class JmapsComponent {
     }
     this.polylines = [];
     this.lines = [];
+    this.vehicleList = [];
   }
 
 
@@ -121,10 +124,7 @@ export class JmapsComponent {
       let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
       this.selectedDate = nextDate;
     } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate(
-        $("#txtDate").val(),
-        1
-      );
+      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
       this.selectedDate = previousDate;
     }
     if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
@@ -173,6 +173,14 @@ export class JmapsComponent {
           this.progressData.completedLines = Number(workerData["completedLines"]);
         } else {
           this.progressData.completedLines = 0;
+        }
+        if(workerData["vehicles"]!=null){
+          let vechileList=workerData["vehicles"].split(',');
+          if(vechileList.length>0){
+            for(let i=0;i<vechileList.length;i++){
+              this.vehicleList.push({vehicle:vechileList[i]});
+            }
+          }
         }
       }
     });
@@ -375,28 +383,28 @@ export class JmapsComponent {
           }
         );
       });
-/*
-      let lat = latlngs[0]["lat"];
-      let lng = latlngs[0]["lng"];
-      let marker = new google.maps.Marker({
-        position: { lat: Number(lat), lng: Number(lng) },
-        map: this.map,
-        icon: {
-          url: this.invisibleImageUrl,
-          fillOpacity: 1,
-          strokeWeight: 0,
-          scaledSize: new google.maps.Size(32, 40),
-          origin: new google.maps.Point(0, 0),
-        },
-        label: {
-          text: lineNo.toString(),
-          color: "#000",
-          fontSize: "10px",
-          fontWeight: "bold",
-        },
-      });
-      this.wardLineNoMarker.push({ marker });
-      */
+      /*
+            let lat = latlngs[0]["lat"];
+            let lng = latlngs[0]["lng"];
+            let marker = new google.maps.Marker({
+              position: { lat: Number(lat), lng: Number(lng) },
+              map: this.map,
+              icon: {
+                url: this.invisibleImageUrl,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scaledSize: new google.maps.Size(32, 40),
+                origin: new google.maps.Point(0, 0),
+              },
+              label: {
+                text: lineNo.toString(),
+                color: "#000",
+                fontSize: "10px",
+                fontWeight: "bold",
+              },
+            });
+            this.wardLineNoMarker.push({ marker });
+            */
       setTimeout(() => {
         this.centerPoint = this.lines[0]["latlng"][0];
         this.map.setZoom(17);
@@ -499,6 +507,51 @@ export class JmapsComponent {
         this.progressData.wardLength = "0.00";
       }
     });
+  }
+
+  addVehicle() {
+    console.log(this.selectedZone);
+    if (this.selectedZone == "0" || this.selectedZone == null) {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
+    if ($('#txtVehicle').val() == "") {
+      this.commonService.setAlertMessage("error", "Please enter vehicle no. !!!");
+      return;
+    }
+    let vehicleNo = $('#txtVehicle').val();
+    let vehicles = "";
+    this.vehicleList.push({ vehicle: vehicleNo });
+    if (this.vehicleList != null) {
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        if (i == 0) {
+          vehicles = this.vehicleList[i]["vehicle"];
+        }
+        else {
+          vehicles = vehicles + "," + this.vehicleList[i]["vehicle"];
+        }
+      }
+    }
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    this.db.object(dbPath).update({ vehicles: vehicles });
+    $('#txtVehicle').val("");
+    this.commonService.setAlertMessage("success", "Vehicle add successfully !!!");
+  }
+
+  removeVehicle(index:any){
+    let vehicleList=[];
+    let vehicles="";
+    for(let i=0;i<this.vehicleList.length;i++){
+      if(i!=index){
+        vehicleList.push({vehicle:this.vehicleList[i]["vehicle"]});
+        if(vehicles!=""){vehicles=vehicles+","}
+        vehicles=this.vehicleList[i]["vehicle"];
+      }
+    }
+    this.vehicleList=vehicleList;
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    this.db.object(dbPath).update({ vehicles: vehicles });
+    this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
 }
 
