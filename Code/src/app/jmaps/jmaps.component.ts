@@ -174,11 +174,11 @@ export class JmapsComponent {
         } else {
           this.progressData.completedLines = 0;
         }
-        if(workerData["vehicles"]!=null){
-          let vechileList=workerData["vehicles"].split(',');
-          if(vechileList.length>0){
-            for(let i=0;i<vechileList.length;i++){
-              this.vehicleList.push({vehicle:vechileList[i]});
+        if (workerData["vehicles"] != null) {
+          let vechileList = workerData["vehicles"].split(',');
+          if (vechileList.length > 0) {
+            for (let i = 0; i < vechileList.length; i++) {
+              this.vehicleList.push({ vehicle: vechileList[i] });
             }
           }
         }
@@ -218,6 +218,7 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
+
     this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedZone + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
@@ -239,7 +240,34 @@ export class JmapsComponent {
           }
         }
       }
+    }, err => {
+      let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+        wardLineCount.unsubscribe();
+        if (lineCount != null) {
+          this.wardLines = Number(lineCount);
+          for (let i = 1; i <= Number(this.wardLines); i++) {
+            let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
+            let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
+              wardLines.unsubscribe();
+              if (zoneData.length > 0) {
+                let lineData = zoneData;
+                var latLng = [];
+                for (let j = 0; j < lineData.length; j++) {
+                  latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
+                }
+                this.lines.push({
+                  lineNo: i,
+                  latlng: latLng,
+                  color: "#87CEFA",
+                });
+                this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+              }
+            });
+          }
+        }
+      });
     });
+
     /*
         for (let i = 1; i <= Number(this.wardLines); i++) {
           let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
@@ -538,17 +566,17 @@ export class JmapsComponent {
     this.commonService.setAlertMessage("success", "Vehicle add successfully !!!");
   }
 
-  removeVehicle(index:any){
-    let vehicleList=[];
-    let vehicles="";
-    for(let i=0;i<this.vehicleList.length;i++){
-      if(i!=index){
-        vehicleList.push({vehicle:this.vehicleList[i]["vehicle"]});
-        if(vehicles!=""){vehicles=vehicles+","}
-        vehicles=this.vehicleList[i]["vehicle"];
+  removeVehicle(index: any) {
+    let vehicleList = [];
+    let vehicles = "";
+    for (let i = 0; i < this.vehicleList.length; i++) {
+      if (i != index) {
+        vehicleList.push({ vehicle: this.vehicleList[i]["vehicle"] });
+        if (vehicles != "") { vehicles = vehicles + "," }
+        vehicles = this.vehicleList[i]["vehicle"];
       }
     }
-    this.vehicleList=vehicleList;
+    this.vehicleList = vehicleList;
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
