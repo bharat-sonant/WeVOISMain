@@ -218,7 +218,7 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    this.httpService.get("../../assets/jsons/ward-" + this.selectedZone + "-2021-09-28.json").subscribe(data => {
+    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedZone + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {

@@ -154,11 +154,13 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.getCapturedImages();
     }
     else {
-      this.startIndex = this.startIndex - 10;
-      this.endIndex = this.endIndex - 10;
-      this.progressData.startFrom = this.startIndex;
-      this.progressData.endTo = this.endIndex;
-      this.getCapturedImages();
+      if (this.startIndex != 1) {
+        this.startIndex = this.startIndex - 10;
+        this.endIndex = this.endIndex - 10;
+        this.progressData.startFrom = this.startIndex;
+        this.progressData.endTo = this.endIndex;
+        this.getCapturedImages();
+      }
     }
   }
 }
