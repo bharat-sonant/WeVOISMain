@@ -25,6 +25,16 @@
             garbage capture analysis
         </div>
         <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
+            <div class="fix-home">
+                <div class="float-first" style="margin-left: 10px; margin-top: 0px;">
+                    <span class="house"> {{progressData.totalCount}}</span><br>
+                    <h6>Total</h6>
+                </div>
+                <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+                    <span class="house"> {{progressData.totalPenalty}}</span><br>
+                    <h6>Total Penalty</h6>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -52,7 +62,8 @@
                                     (click)="getRecord('next');"></i>
                                 <br />
                                 <h3 style="margin-right: 20px;"> record from <b>{{progressData.startFrom}}</b> to
-                                    <b>{{progressData.endTo}}</b></h3>
+                                    <b>{{progressData.endTo}}</b>
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -75,7 +86,7 @@
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
                                                 User</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:35%;">
-                                                View Image</th>
+                                                Analysis Status</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of progressList; let i=index">
@@ -86,11 +97,13 @@
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.isClean}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6;">
-                                                    {{data.panalty}} </td>
+                                                    {{data.penalty}} </td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6;">
                                                     {{data.user}} </td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
-                                                    {{data.imageUrl}}</td>
+                                                    <span class="{{data.cssClass}}"
+                                                        (click)="getCaptureData(i);">Analysis</span>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -111,11 +124,40 @@
         <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
                 <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <div class="table-heading">
+                                <h3 style="font-size: 20px; font-weight: bold;">
+                                    Time {{progressData.time}}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="table-heading">
+                                <h3 style="font-size: 20px; font-weight: bold; margin-right: 20px;">
+                                    Penalty {{progressData.panalty}}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                    <input id="dataId" type="hidden" value="0">
                     <div class="row">
-
                         <div class="col-md-12">
+                            <div class="divMainImage">
+                                <img id="mainImage" class="main-image" />
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-left: 10px;">
+                            <h6>Image Analysis</h6>
+                            <div style="float: left;" >
+                            Penalty <input id="txtPanalty" type="number" value="0" />
+                            </div>
+                            <div style="float: right;">                                
+                                <button class="btn btn-success" style="margin-left: 10px; margin-right: 10px;" (click)="analysis();">Apply
+                                    Analysis</button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -652,7 +652,7 @@ export class CommonService {
     if (city == "Demo") {
       city = "Jaipur";
     }
-    else if (city == "jaipur-greater") {
+    else if (city == "Jaipur-greater") {
       city = "Jaipur-Greater";
     }
     return city;

@@ -611,6 +611,26 @@ label{
   font-size: 18px;
   }
 
+  .analysis-not{
+    color:red;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .analysis-yes{
+    color: #1fda2f;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .divMainImage{
+    width: 100%;
+    height:50vh;
+    text-align: center;
+  }
+
+  .main-image{
+    max-height: 50vh;
+  }
 
 
 
