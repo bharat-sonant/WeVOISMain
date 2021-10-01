@@ -652,8 +652,8 @@ export class CommonService {
     if (city == "Demo") {
       city = "Jaipur";
     }
-    else if(city=="jaipur-greater"){
-      city="Jaipur-Greater";
+    else if (city == "jaipur-greater") {
+      city = "Jaipur-Greater";
     }
     return city;
   }
@@ -1238,27 +1238,5 @@ export class CommonService {
       }
     }
     return wardLines;
-  }
-
-  getImageOptionTypes(){
-    let optionList=[];
-    let dbPath="Defaults/ImageOptionTypes";
-    let typeInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
-        typeInstance.unsubscribe();
-        if(data!=null){
-          let keyArray=Object.keys(data);
-          if(keyArray.length>0)
-          {
-            for(let i=0;i<keyArray.length;i++){
-              let index=keyArray[i];
-              optionList.push({id:index,optionType:data[index]["en"]});
-            }
-          }
-        }
-        
-      }
-    );
-    return optionList;
   }
 }

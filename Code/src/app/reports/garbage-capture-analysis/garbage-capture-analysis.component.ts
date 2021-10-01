@@ -43,9 +43,28 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $('#txtDate').val(this.selectedDate);
-    this.optionList = this.commonService.getImageOptionTypes();
+    this.getImageOptionTypes();
     this.resetData();
     this.setMonthYear();
+  }
+
+  getImageOptionTypes() {
+    let optionList = [];
+    let dbPath = "Defaults/ImageOptionTypes";
+    let typeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        typeInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              optionList.push({ id: index, optionType: data[index]["en"] });
+            }
+            this.optionList=optionList;
+          }
+        }
+      });
   }
 
   setMonthYear() {
@@ -133,7 +152,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 this.progressList.push({ address: data["address"], isClean: status, time: data["time"], panalty: panalty, user: user, imageUrl: data["imageRef"] });
               }
             );
-
           }
           else {
 
