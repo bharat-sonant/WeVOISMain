@@ -127,21 +127,29 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   let date1 = new Date(this.toDayDate + " " + data["time"]);
                   let date2 = new Date(this.toDayDate + " 12:00");
                   if (date2 < date1) {
-                    panalty = 100;
+                    panalty = 0;
                   }
                 }
-
                 this.progressList.push({ address: data["address"], isClean: status, time: data["time"], panalty: panalty, user: user, imageUrl: data["imageRef"] });
               }
             );
-            $('#divMessage').hide();
+
           }
           else {
-            $('#divMessage').show();
+
           }
         }
       );
     }
+    setTimeout(() => {
+      if (this.progressList.length == 0) {
+        $('#divMessage').show();
+      }
+      else {
+        $('#divMessage').hide();
+      }
+
+    }, 1000);
   }
 
   getRecord(type: any) {
