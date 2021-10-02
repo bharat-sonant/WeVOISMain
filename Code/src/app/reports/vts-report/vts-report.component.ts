@@ -17,37 +17,32 @@ import { FirebaseService } from "../../firebase.service";
 export class VtsReportComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
-  index: any;
-  studentDetail: any;
   zoneList: any[];
   reportData: ReportData =
     {
       zoneName: "--",
       reportDate: "--",
-      vehicleNo: "--"
+      vehicleNo: "--",
+      wardLength: "0.000",
+      coveredLength: "0.000"
+
     };
   selectedZoneNo: any;
   selectedZoneName: any;
   selectedDate: any;
 
   public selectedZone: any;
-  marker = new google.maps.Marker();
-  previousLat: any;
-  previousLng: any;
   allLines: any[];
-  skipCount: number;
-  completeCount: number;
   totalLineCount: number;
-  partailDoneCount: number;
   public bounds: any;
 
   polylines = [];
   currentMonthName: any;
   currentYear: any;
   db: any;
-  mapRefrence: any;
   wardLines: any;
   cityName: any;
+  percentage: any;
 
   constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient) { }
 
@@ -58,10 +53,11 @@ export class VtsReportComponent {
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.selectedZoneNo = "0";
-    this.selectedZoneName = "--Select--";
+    this.selectedZoneName = "--";
     this.getZoneList();
     this.setMap();
     this.setContainerHeight();
+    this.percentage = 0;
   }
 
   setContainerHeight() {
@@ -90,7 +86,6 @@ export class VtsReportComponent {
     this.showReport();
   }
 
-  
   setDate(filterVal: any, type: string) {
     if (type == "current") {
       this.selectedDate = filterVal;
@@ -102,7 +97,6 @@ export class VtsReportComponent {
       this.selectedDate = previousDate;
     }
     if (new Date(this.selectedDate) > new Date(this.commonService.setTodayDate())) {
-      //this.selectedDate = this.commonService.setTodayDate();
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       return;
     }
@@ -110,19 +104,20 @@ export class VtsReportComponent {
     this.showReport();
   }
 
-
   showReport() {
-    this.skipCount = 0;
-    this.completeCount = 0;
-    this.totalLineCount = 0;
-    this.partailDoneCount = 0;
-    let msg: string;
+    this.reportData.zoneName = this.selectedZoneName;
+    this.reportData.reportDate = this.selectedDate;
+    this.percentage=0;
+    this.reportData.coveredLength="0.000";
+    this.reportData.vehicleNo="--";
+    this.reportData.wardLength="0.000";
     this.bounds = new google.maps.LatLngBounds();
     this.selectedZone = this.selectedZoneNo;
     this.polylines = [];
     this.setMap();
-    this.setKml();
+    this.setKml();    
     this.drawZoneAllLines();
+   
   }
 
   drawZoneAllLines() {
@@ -139,7 +134,6 @@ export class VtsReportComponent {
                 path.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
                 this.bounds.extend({ lat: data[lineNo].points[j][0], lng: data[lineNo].points[j][1] });
               }
-
               linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
             }
           }
@@ -175,12 +169,10 @@ export class VtsReportComponent {
     });
   }
 
-
   drawRealTimePloylines() {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
     let dbPathLineCompleted = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectedDate + '/LineStatus';
-
     let lineCompletedRecords = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
       data => {
         for (let index = 1; index <= this.allLines.length; index++) {
@@ -198,13 +190,6 @@ export class VtsReportComponent {
                 } else {
                   lineColor = "#87CEFA";
                 }
-                if (data[index]["Status"] == "LineCompleted") {
-                  this.completeCount++
-                } else if (data[index]["Status"] == "PartialLineCompleted") {
-                  this.partailDoneCount++;
-                } else {
-                  this.skipCount++
-                }
               }
             }
           }
@@ -216,7 +201,6 @@ export class VtsReportComponent {
         }
 
         this.polylines = [];
-
         for (let index = 0; index < this.allLines.length; index++) {
 
           let lineData = this.allLines.find(item => item.lineNo == (index + 1));
@@ -229,23 +213,30 @@ export class VtsReportComponent {
           this.polylines.push(line);
           this.totalLineCount++;
         }
-
         for (let index = 0; index < this.polylines.length; index++) {
           this.polylines[index].setMap(this.map);
         }
         this.map.fitBounds(this.bounds);
         lineCompletedRecords.unsubscribe();
-
-        this.getZoneVehicles();
-
+        this.getSummary();
+        setTimeout(() => {
+          this.drawChart();
+        }, 1000);
       });
   }
 
+  getSummary() {
 
-  getZoneVehicles() {
-    this.reportData.zoneName = this.selectedZoneName;
-    this.reportData.reportDate = this.selectedDate;
-    this.drawChart();
+    let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
+    let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
+      wardLengthDetails.unsubscribe();
+      if (wardLengthData != null) {
+        this.reportData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(3) + "";
+      } else {
+        this.reportData.wardLength = "0.000";
+      }
+    });
+
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();
@@ -263,18 +254,20 @@ export class VtsReportComponent {
             }
           }
         }
+        if (workerData["workPercentage"] != null) {
+          this.percentage = Number(workerData["workPercentage"]);
+        }
+        if (workerData["wardCoveredDistance"] != null) {
+          this.reportData.coveredLength = (parseFloat(workerData["wardCoveredDistance"].toString()) / 1000).toFixed(3) + "";
+        }
+        
       }
     });
   }
 
   drawChart() {
-
-
-    let pending = this.totalLineCount - (this.completeCount + this.skipCount + this.partailDoneCount);
-
-
+    let pending = 100 - Number(this.percentage);
     let chart = new CanvasJS.Chart("chartContainer", {
-
       animationEnabled: true,
       legend: {
         fontSize: 13,
@@ -291,7 +284,7 @@ export class VtsReportComponent {
         indexLabelFontColor: "navy",
         indexLabelFontWeight: "bold",
         dataPoints: [
-          { y: this.completeCount, name: "Complete", color: "#66ff71", },
+          { y: this.percentage, name: "Complete", color: "#66ff71", },
           { y: pending, name: "Pending", color: "#DCDCDC" }
         ]
       }]
@@ -304,4 +297,6 @@ export class ReportData {
   zoneName: string;
   reportDate: string;
   vehicleNo: string;
+  wardLength: string;
+  coveredLength: string;
 }

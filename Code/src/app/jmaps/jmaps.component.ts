@@ -43,6 +43,7 @@ export class JmapsComponent {
   strokeWeight = 7;
   vehicleList: any[];
   progressData: progressDetail = {
+    totalWardLength: 0,
     wardLength: "0",
     coveredLength: "0",
     workPercentage: "0%",
@@ -59,7 +60,7 @@ export class JmapsComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
-    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate,1);
+    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
     $("#txtDate").val(this.selectedDate);
     this.setHeight();
     this.getZones();
@@ -257,6 +258,7 @@ export class JmapsComponent {
       let progresData = this.progressData;
       let dbEvent = this.db;
       let wardLines = this.wardLines;
+      let totalWardLength = this.progressData.totalWardLength;
       let strokeWeight = this.strokeWeight;
       let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
       let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
@@ -343,7 +345,7 @@ export class JmapsComponent {
                       wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
                     }
                   }
-                  workPercentage = Math.round((completedLines * 100) / wardLines);
+                  workPercentage = Math.round((wardCoveredDistance * 100) / totalWardLength);
                 }
                 progresData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
                 progresData.workPercentage = workPercentage + "%";
@@ -478,11 +480,11 @@ export class JmapsComponent {
     let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
       wardLengthDetails.unsubscribe();
       if (wardLengthData != null) {
-        this.progressData.wardLength = (
-          parseFloat(wardLengthData.toString()) / 1000
-        ).toFixed(2);
+        this.progressData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
+        this.progressData.totalWardLength = Number(wardLengthData);
       } else {
         this.progressData.wardLength = "0.00";
+        this.progressData.totalWardLength = 0;
       }
     });
   }
@@ -534,6 +536,7 @@ export class JmapsComponent {
 }
 
 export class progressDetail {
+  totalWardLength: number;
   wardLength: string;
   coveredLength: string;
   workPercentage: string;
