@@ -59,15 +59,20 @@ export class JmapsComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
-    this.selectedDate = this.toDayDate;
-    $("#txtDate").val(this.toDayDate);
+    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate,1);
+    $("#txtDate").val(this.selectedDate);
     this.setHeight();
     this.getZones();
-    this.map = this.commonService.setMap(this.gmap);
+    this.setMaps();
     this.lines = [];
     this.polylines = [];
     this.wardLineNoMarker = [];
     this.vehicleList = [];
+  }
+
+  setMaps() {
+    let mapProp = this.commonService.initMapProperties();
+    this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
   resetAll() {
