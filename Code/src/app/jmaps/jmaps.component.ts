@@ -55,7 +55,6 @@ export class JmapsComponent {
     this.setDefault();
   }
 
-
   setDefault() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -69,7 +68,6 @@ export class JmapsComponent {
     this.polylines = [];
     this.wardLineNoMarker = [];
     this.vehicleList = [];
-
   }
 
   resetAll() {
@@ -87,10 +85,12 @@ export class JmapsComponent {
         this.wardLineNoMarker[i]["marker"].setMap(null);
       }
     }
+
     this.wardLineNoMarker = [];
     if (this.marker != null) {
       this.marker.setMap(null);
     }
+
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -98,6 +98,7 @@ export class JmapsComponent {
         }
       }
     }
+
     this.polylines = [];
     this.lines = [];
     this.vehicleList = [];
@@ -141,14 +142,12 @@ export class JmapsComponent {
 
   getWardData() {
     this.resetAll();
-    this.getWardLines();
     this.getProgressDetail();
     this.getWardTotalLength();
   }
 
 
   getProgressDetail() {
-
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();
@@ -183,38 +182,8 @@ export class JmapsComponent {
           }
         }
       }
+      this.getAllLinesFromJson();
     });
-  }
-
-  getWardLines() {
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-
-    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          lineMapRefrenceInstance.unsubscribe();
-          this.mapRefrence = data.toString();
-          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.getAllLinesFromJson();
-            }
-          });
-        }
-        else {
-          this.mapRefrence = "";
-          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.getAllLinesFromJson();
-            }
-          });
-        }
-      }
-    );
   }
 
   getAllLinesFromJson() {

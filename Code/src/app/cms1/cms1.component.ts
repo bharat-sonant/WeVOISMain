@@ -18,7 +18,8 @@ export class Cms1Component implements OnInit {
   }
 
   setData() {
-    let dbPath = "WastebinMonitor/ImagesData/2021-10-01";
+    let dbPath = "WastebinMonitor/ImagesData/2021-10-02";
+    console.log(dbPath);
     let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         dataInstance.unsubscribe();
@@ -48,7 +49,7 @@ export class Cms1Component implements OnInit {
                   roadIndex=roadIndex+1;
                   addindex=roadIndex;
                 }
-                dbPath = "WastebinMonitor/ImagesData/2021/October/2021-10-01/" + category + "/" + addindex;
+                dbPath = "WastebinMonitor/ImagesData/2021/October/2021-10-02/" + category + "/" + addindex;
                 this.db.object(dbPath).update(dataObject);
               }
             }
