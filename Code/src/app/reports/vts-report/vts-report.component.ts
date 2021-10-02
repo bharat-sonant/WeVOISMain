@@ -187,10 +187,8 @@ export class VtsReportComponent {
           let lineData = this.allLines.find(item => item.lineNo == index);
           let lineColor = "#87CEFA";
           if (data != null) {
-            document.getElementById('btnDownload')["disabled"] = false;
             if (data[index] != undefined) {
               if (data[index]["Status"] != 'undefined') {
-
                 if (data[index]["Status"] == "LineCompleted") {
                   lineColor = "#33ff33";
                 } else if (data[index]["Status"] == "PartialLineCompleted") {
