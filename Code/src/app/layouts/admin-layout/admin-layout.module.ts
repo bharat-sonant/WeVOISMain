@@ -86,6 +86,7 @@ import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
 import { JmapsComponent } from '../../jmaps/jmaps.component';
 import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-analysis/garbage-capture-analysis.component';
+import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
 
 @NgModule({
   imports: [
@@ -176,7 +177,8 @@ import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-a
     LogBookComponent,
     WardScancardSummaryComponent,
     JmapsComponent,
-    GarbageCaptureAnalysisComponent
+    GarbageCaptureAnalysisComponent,
+    VtsReportComponent
   ]
 })
 

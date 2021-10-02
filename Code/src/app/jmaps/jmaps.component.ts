@@ -192,12 +192,12 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-
     this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedZone + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 1; i < keyArray.length; i++) {
+            this.wardLines = keyArray.length;
             let lineNo = keyArray[i];
             if (data[lineNo] != null) {
               var latLng = [];
@@ -241,31 +241,6 @@ export class JmapsComponent {
         }
       });
     });
-
-    /*
-        for (let i = 1; i <= Number(this.wardLines); i++) {
-          let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
-          if (this.mapRefrence != "") {
-            dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/" + i + "/points";
-          }
-          let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
-            wardLines.unsubscribe();
-            if (zoneData.length > 0) {
-              let lineData = zoneData;
-              var latLng = [];
-              for (let j = 0; j < lineData.length; j++) {
-                latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-              }
-              this.lines.push({
-                lineNo: i,
-                latlng: latLng,
-                color: "#87CEFA",
-              });
-              this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-            }
-          });
-        }
-        */
   }
 
   plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
@@ -347,6 +322,7 @@ export class JmapsComponent {
                 let wardCoveredDistance = dist;
                 let completedLines = 1;
                 let workPercentage = 0;
+                console.log(wardLines);
                 if (data == null) {
                   workPercentage = Math.round((completedLines * 100) / wardLines);
                 }
