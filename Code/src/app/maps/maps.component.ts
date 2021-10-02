@@ -922,48 +922,39 @@ export class MapsComponent {
       let houseInstance = this.db.list(housePath).valueChanges().subscribe((houseData) => {
         houseInstance.unsubscribe();
         if (houseData.length > 0) {
+          this.totalWardHouse = Number(this.totalWardHouse) + houseData.length;
+         // console.log(houseData.length);
           for (let j = 0; j < houseData.length; j++) {
-            let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[0];
-            let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[1];
-            let cardNo = houseData[j]["cardNo"];
-            let rfId = houseData[j]["rfid"];
-            let name = houseData[j]["name"];
-            let ward = this.selectedZone;
-            let line = houseData[j]["line"];
-            let isApproved = "no";
-            if (houseData[j]["isApproved"] != null) {
-              if (houseData[j]["isApproved"] == "yes") {
-                isApproved = "yes";
+            if (houseData[j]["latLng"] != null) {
+              let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[0];
+              let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[1];
+              let cardNo = houseData[j]["cardNo"];
+              let rfId = houseData[j]["rfid"];
+              let name = houseData[j]["name"];
+              let ward = this.selectedZone;
+              let line = houseData[j]["line"];
+              let isApproved = "no";
+              if (houseData[j]["isApproved"] != null) {
+                if (houseData[j]["isApproved"] == "yes") {
+                  isApproved = "yes";
+                }
               }
-            }
-            let markerType = "red";
+              let markerType = "red";
 
-            this.houseList.push({
-              wardNo: this.selectedZone,
-              markerType: markerType,
-              lat: lat,
-              lng: lng,
-              cardNo: cardNo,
-              isApproved: isApproved,
-              isActive: false,
-            });
-            let houseLocalList = JSON.parse(
-              localStorage.getItem("houseList")
-            );
-            if (houseLocalList == null) {
-              houseLocalList = [];
-              houseLocalList.push({
-                ward: ward,
-                name: name,
-                cardNo: cardNo,
-                rfId: rfId,
-                line: line,
+              this.houseList.push({
+                wardNo: this.selectedZone,
+                markerType: markerType,
                 lat: lat,
                 lng: lng,
+                cardNo: cardNo,
+                isApproved: isApproved,
+                isActive: false,
               });
-            } else {
-              let houseDetail = houseLocalList.find((item) => item.cardNo == cardNo && item.ward == this.selectedZone);
-              if (houseDetail == undefined) {
+              let houseLocalList = JSON.parse(
+                localStorage.getItem("houseList")
+              );
+              if (houseLocalList == null) {
+                houseLocalList = [];
                 houseLocalList.push({
                   ward: ward,
                   name: name,
@@ -973,14 +964,27 @@ export class MapsComponent {
                   lat: lat,
                   lng: lng,
                 });
+              } else {
+                let houseDetail = houseLocalList.find((item) => item.cardNo == cardNo && item.ward == this.selectedZone);
+                if (houseDetail == undefined) {
+                  houseLocalList.push({
+                    ward: ward,
+                    name: name,
+                    cardNo: cardNo,
+                    rfId: rfId,
+                    line: line,
+                    lat: lat,
+                    lng: lng,
+                  });
+                }
               }
+              
+              setTimeout(() => {
+                this.progressData.houses = this.totalWardHouse;
+              }, 1500);
+              this.getScanedCard(cardNo, markerType);
+              localStorage.setItem("houseList", JSON.stringify(houseLocalList));
             }
-            this.totalWardHouse = Number(this.totalWardHouse) + 1;
-            if (lineNo == this.wardLines) {
-              this.progressData.houses = this.totalWardHouse;
-            }
-            this.getScanedCard(cardNo, markerType);
-            localStorage.setItem("houseList", JSON.stringify(houseLocalList));
           }
         }
       });
