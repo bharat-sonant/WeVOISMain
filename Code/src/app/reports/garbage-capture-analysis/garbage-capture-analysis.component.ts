@@ -169,7 +169,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.category = categoryDetail.optionType;
     }
 
-    let dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption + "/totalPenalty";
+    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/" + this.selectedOption + "/totalPenalty";
     let totalPenaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalPenaltyInstance.unsubscribe();
@@ -179,7 +179,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
 
-    dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption + "/totalCount";
+    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/" + this.selectedOption + "/totalCount";
     let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalCountInstance.unsubscribe();
