@@ -87,12 +87,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.endIndex = 20;
     this.progressData.category = "";
     this.progressData.endTo = 20;
-    this.progressData.startFrom = 1; 
-    this.progressData.time="00:00";
-    this.progressData.panalty=0;
-    
+    this.progressData.startFrom = 1;
+    this.progressData.time = "00:00";
+    this.progressData.panalty = 0;
+
     let element = <HTMLImageElement>document.getElementById("mainImage");
-    element.src = this.imageNoFoundURL;   
+    element.src = this.imageNoFoundURL;
   }
 
   changeOptionSelection(option: any) {
@@ -105,7 +105,15 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getCapturedImages();
   }
 
+  startLoader(){
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 2000);
+  }
+
   setDate(filterVal: any, type: string) {
+  
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -153,6 +161,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
 
   getCapturedImages() {
+    this.startLoader();
     this.progressList = [];
 
     let categoryDetail = this.optionList.find(item => item.id == this.selectedOption);
@@ -160,12 +169,22 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.category = categoryDetail.optionType;
     }
 
-    let dbPath = "WastebinMonitor/Summary/CategoryWise/"+this.selectedOption+"/totalPenalty";
+    let dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption + "/totalPenalty";
     let totalPenaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalPenaltyInstance.unsubscribe();
         if (data != null) {
           this.progressData.panalty = Number(data);
+        }
+      }
+    );
+
+    dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption + "/totalCount";
+    let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        totalCountInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.count = Number(data);
         }
       }
     );
@@ -180,7 +199,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
             let userInstance = this.db.object(dbPath).valueChanges().subscribe(
               userData => {
                 userInstance.unsubscribe();
-                let cssClass = "analysis-not";
                 let user = "";
                 let status = "कचरा उठा लिया है |";
                 let penalty = 0;
@@ -192,13 +210,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   status = "कचरा नहीं उठाया |";
                 }
                 if (data["isAnalysis"] != null) {
-                  cssClass = "analysis-yes";
                   isAnalysis = true;
                 }
-                if (data["penalty"] !=null) {
+                if (data["penalty"] != null) {
                   penalty = data["penalty"];
                 }
-                this.progressList.push({ imageId: i, address: data["address"], isClean: status, time: data["time"], penalty: penalty, user: user, imageUrl: data["imageRef"], cssClass: cssClass, isAnalysis: isAnalysis });
+                this.progressList.push({ imageId: i, address: data["address"], isClean: status, time: data["time"], penalty: penalty, user: user, imageUrl: data["imageRef"], isAnalysis: isAnalysis });
               }
             );
           }
@@ -217,14 +234,37 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCaptureData(index) {
+    this.startLoader();
+    this.setActiveClass(index);
     if (this.progressList.length > 0) {
       this.progressData.time = this.progressList[index]["time"];
       $('#txtPanalty').val(this.progressList[index]["penalty"]);
       $('#dataId').val(index);
-      let city = "Jaipur-Greater";
-      let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + this.progressList[index]["imageUrl"] + "?alt=media";
+      let city = this.commonService.getFireStoreCity();
+      let imageName = this.progressList[index]["imageUrl"];
+      let imageURL = this.imageNoFoundURL;
+      if (imageName.split('~')[0] != "2021") {
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+      }
+      else {
+        imageURL="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F"+this.currentYear+"%2F"+this.currentMonthName+"%2F"+this.selectedDate+"%2F" + imageName + "?alt=media";
+      }
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
+    }
+  }
+
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.progressList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        $("#tr" + i).removeClass(className);
+      }
+      if (i == index) {
+        $("#tr" + i).addClass("active");
+      }
     }
   }
 
@@ -240,8 +280,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId;
       this.db.object(dbPath).update({ isAnalysis: 'yes', penalty: penalty });
       this.setPenaltyCounts(prePenalty, penalty);
-      this.progressList[Number(index)]["cssClass"] = "analysis-yes";
-      this.progressList[Number(index)]["penalty"]=penalty;
+      this.progressList[Number(index)]["isAnalysis"] = true;
+      this.progressList[Number(index)]["penalty"] = penalty;
       $('#txtPanalty').val("0");
       $('#dataId').val("0");
     }
@@ -255,11 +295,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         totalInstance.unsubscribe();
         let total = penalty;
         if (count != null) {
-          total =Number(count) - Number(prePenalty) + Number(penalty);
+          total = Number(count) - Number(prePenalty) + Number(penalty);
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise";
         this.db.object(dbPath).update({ totalPenalty: total });
-        this.progressData.totalPenalty =total;
+        this.progressData.totalPenalty = total;
       }
     );
 
@@ -269,11 +309,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         categoryInstance.unsubscribe();
         let total = penalty;
         if (count != null) {
-          total =Number(count) - Number(prePenalty) + Number(penalty);
+          total = Number(count) - Number(prePenalty) + Number(penalty);
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
-        this.progressData.panalty =total;
+        this.progressData.panalty = total;
       }
     );
 
@@ -283,7 +323,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         dateInstance.unsubscribe();
         let total = penalty;
         if (count != null) {
-          total =Number(count) - Number(prePenalty) + Number(penalty);
+          total = Number(count) - Number(prePenalty) + Number(penalty);
         }
         dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
@@ -296,7 +336,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         dateWiseInstance.unsubscribe();
         let total = penalty;
         if (count != null) {
-          total =Number(count) - Number(prePenalty) + Number(penalty);
+          total = Number(count) - Number(prePenalty) + Number(penalty);
         }
         dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate;
         this.db.object(dbPath).update({ totalPenalty: total });

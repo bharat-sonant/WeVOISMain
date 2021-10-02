@@ -624,13 +624,32 @@ label{
 
   .divMainImage{
     width: 100%;
-    height:50vh;
+    height:70vh;
     text-align: center;
   }
 
   .main-image{
-    max-height: 50vh;
+    max-height: 70vh;
   }
+
+  .text-box{
+    width: 115px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+      
+.loaderClass{
+  display: none; position: absolute; width: 100%; height: 100%;z-index: 9999;background-color: lightgray; opacity: 0.5; 
+ }
+
+ 
+.imgLoader{
+   position: absolute; left: 50%;top: 50%;  transform: translate(-50%, -50%); 
+ }
 
 
 
