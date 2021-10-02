@@ -236,7 +236,7 @@ export class VtsReportComponent {
         this.reportData.wardLength = "0.000";
       }
     });
-
+   
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();

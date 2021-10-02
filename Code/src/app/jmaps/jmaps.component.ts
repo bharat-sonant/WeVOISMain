@@ -336,14 +336,14 @@ export class JmapsComponent {
                     if (data["wardCoveredDistance"] != null) {
                       wardCoveredDistance = Number(data["wardCoveredDistance"]) + wardCoveredDistance;
                     }
-                  }
+                  } 
                   else {
                     if (data["completedLines"] != null) {
                       completedLines = Number(data["completedLines"]) - completedLines;
                     }
                     if (data["wardCoveredDistance"] != null) {
                       wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
-                    }
+                    }  
                   }
                   workPercentage = Math.round((wardCoveredDistance * 100) / totalWardLength);
                 }
