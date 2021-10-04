@@ -18,7 +18,7 @@ export class Cms1Component implements OnInit {
   }
 
   setData() {
-    let date = "2021-10-02";
+    let date = "2021-10-04";
     let dbPath = "WastebinMonitor/ImagesData/" + date;
     let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -58,15 +58,15 @@ export class Cms1Component implements OnInit {
             dbPath = "WastebinMonitor/Summary/CategoryWise/1";
             this.db.object(dbPath).update({ totalCount: preTotal });
 
-            preTotal = 251 + openIndex;
+            preTotal = 783 + openIndex;
             dbPath = "WastebinMonitor/Summary/CategoryWise/2";
             this.db.object(dbPath).update({ totalCount: preTotal });
 
-            preTotal = 16 + litterIndex;
+            preTotal = 28 + litterIndex;
             dbPath = "WastebinMonitor/Summary/CategoryWise/3";
             this.db.object(dbPath).update({ totalCount: preTotal });
 
-            preTotal = 0 + roadIndex;
+            preTotal = 1 + roadIndex;
             dbPath = "WastebinMonitor/Summary/CategoryWise/4";
             this.db.object(dbPath).update({ totalCount: preTotal });
 
@@ -87,7 +87,7 @@ export class Cms1Component implements OnInit {
             let totalInstance = this.db.object(dbPath).valueChanges().subscribe(
               count => {
                 totalInstance.unsubscribe();
-                let total = 267+ transferIndex + openIndex + litterIndex + roadIndex;
+                let total = 812+ transferIndex + openIndex + litterIndex + roadIndex;
                 // if (count != null) {
                 //    total = 267 + Number(total);
                 //  }
