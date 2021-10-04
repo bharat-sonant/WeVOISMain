@@ -26,6 +26,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   startIndex: any;
   endIndex: any;
   imageNoFoundURL = "../../../assets/img/img-not-available-01.jpg";
+  userType:any;
   progressData: progressDetail = {
     startFrom: 0,
     endTo: 0,
@@ -34,7 +35,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     panalty: 0,
     totalPenalty: 0,
     totalCount: 0,
-    count: 0
+    count: 0,
+    address:"---",
+    latLng:"---"
   };
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -44,6 +47,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setDefault() {
+    
     this.optionList = [];
     this.selectedOption = "0";
     this.toDayDate = this.commonService.setTodayDate();
@@ -52,25 +56,22 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getImageOptionTypes();
     this.resetData();
     this.setMonthYear();
+    this.userType = localStorage.getItem("userType");
+    if (this.userType == "External User") {
+      $('#topPenality').hide();
+      $('#leftPenality').hide();
+      $('#divAnalysis').hide();
+      $('#tblPenalty').hide();
+    }
   }
 
   getImageOptionTypes() {
-    let optionList = [];
-    let dbPath = "Defaults/ImageOptionTypes";
-    let typeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        typeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              optionList.push({ id: index, optionType: data[index]["en"] });
-            }
-            this.optionList = optionList;
-          }
-        }
-      });
+    this.commonService.getCategory().then((category:any) => {
+      if (category != null) {
+        console.log(category);
+        this.optionList=JSON.parse(category);
+      }
+    });
   }
 
   setMonthYear() {
@@ -89,8 +90,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.startFrom = 1;
     this.progressData.time = "00:00";
     this.progressData.panalty = 0;
-    this.progressData.totalCount=0;
-    this.progressData.totalPenalty=0;
+    this.progressData.totalCount = 0;
+    this.progressData.totalPenalty = 0;
+    this.progressData.address="---";
+    this.progressData.latLng="---";
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
   }
@@ -105,7 +108,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getCapturedImages();
   }
 
-  startLoader(){
+  startLoader() {
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
@@ -113,7 +116,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-  
+
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -139,7 +142,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getTotals() {
-    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/"+this.selectedOption+"/totalCount";
+    let dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalCount";
     let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalCountInstance.unsubscribe();
@@ -148,7 +151,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
       }
     );
-    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/"+this.selectedOption+"/totalPenalty";
+    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalPenalty";
     let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         penaltyInstance.unsubscribe();
@@ -170,7 +173,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.category = categoryDetail.optionType;
     }
 
-    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/" + this.selectedOption + "/totalPenalty";
+    let dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalPenalty";
     let totalPenaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalPenaltyInstance.unsubscribe();
@@ -180,7 +183,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
 
-    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/" + this.selectedOption + "/totalCount";
+    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalCount";
     let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalCountInstance.unsubscribe();
@@ -203,6 +206,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 let user = "";
                 let status = "कचरा उठा लिया है |";
                 let penalty = 0;
+                let latLng="";
                 let isAnalysis = false;
                 if (userData != null) {
                   user = userData;
@@ -216,7 +220,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 if (data["penalty"] != null) {
                   penalty = data["penalty"];
                 }
-                this.progressList.push({ imageId: i, address: data["address"], isClean: status, time: data["time"], penalty: penalty, user: user, imageUrl: data["imageRef"], isAnalysis: isAnalysis });
+                if(data["latLng"]!=null){
+                  latLng=data["latLng"];
+                }
+                this.progressList.push({ imageId: i, address: data["address"], isClean: status, time: data["time"], penalty: penalty, user: user, imageUrl: data["imageRef"], isAnalysis: isAnalysis,latLng:latLng,userType:this.userType });
               }
             );
           }
@@ -239,6 +246,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.setActiveClass(index);
     if (this.progressList.length > 0) {
       this.progressData.time = this.progressList[index]["time"];
+      this.progressData.latLng=this.progressList[index]["latLng"];
+      this.progressData.address=this.progressList[index]["address"];
       $('#txtPanalty').val(this.progressList[index]["penalty"]);
       $('#dataId').val(index);
       let city = this.commonService.getFireStoreCity();
@@ -248,7 +257,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
       else {
-        imageURL="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F"+this.currentYear+"%2F"+this.currentMonthName+"%2F"+this.selectedDate+"%2F" + imageName + "?alt=media";
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
       }
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
@@ -374,4 +383,6 @@ export class progressDetail {
   totalPenalty: number;
   totalCount: number;
   count: number;
+  address:string;
+  latLng:string;
 }

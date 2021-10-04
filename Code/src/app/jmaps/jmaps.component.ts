@@ -473,15 +473,8 @@ export class JmapsComponent {
 
   getZones() {
     this.zoneList=[];
-    this.commonService.getZones().then((zoneList) => {
-      this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
-      let keyArray = Object.keys(zoneList);
-      if (keyArray.length > 0) {
-        for (let i = 0; i < keyArray.length; i++) {
-          let index = keyArray[i];
-          this.zoneList.push({ zoneNo: zoneList[index]["zoneNo"], zoneName:zoneList[index]["zoneName"]  });
-        }
-      }
+    this.commonService.getZones().then((zoneList:any) => {
+      this.zoneList=JSON.parse(zoneList);      
     });
   }
 

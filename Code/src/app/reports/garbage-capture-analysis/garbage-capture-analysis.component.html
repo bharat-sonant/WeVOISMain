@@ -29,13 +29,14 @@
         </div>
         <div class="col-md-3 text-right total-house" style="padding-left: 18px;">
             <div class="fix-home">
-                <div class="float-first" style="margin-left: 10px; margin-top: 0px;">
-                    <span class="house"> {{progressData.totalCount}}</span><br>
-                    <h6>Total</h6>
-                </div>
-                <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+                <div id="topPenality" class="float-first" style="margin-left: 10px; margin-top: 0px;">
                     <span class="house"> {{progressData.totalPenalty}}</span><br>
                     <h6>Total Penalty</h6>
+                </div>
+                <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+                    <span class="house"> {{progressData.totalCount}}</span><br>
+                    <h6>Total</h6>
+                    
                 </div>
             </div>
 
@@ -65,7 +66,7 @@
                         </div>
                         <div class="col-md-2 text-right">
                             <div class="table-heading">
-                                <h3>
+                                <h3 id="leftPenality">
                                     <span class="tbl-points"> {{progressData.panalty}}</span> <br>
                                     Penalty
                                 </h3>
@@ -100,7 +101,7 @@
                                                 Time</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:15%;">
                                                 #</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
+                                            <th id="tblPenalty" class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
                                                 Penalty</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:15%;">
                                                 User</th>
@@ -115,10 +116,10 @@
                                                     {{data.time}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     {{data.isClean}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                <td class="text-right" style="border-right:1px solid #dee2e6;" [hidden]="data.userType=='External User'">
                                                     {{data.penalty}} </td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6;">
-                                                    {{data.user}} </td>
+                                                    {{data.user}}</td>
                                                 <td class="text-center" style="border-right:1px solid #dee2e6">
                                                     <i class="fas fa-times" style="color:red; font-size: 20px;"
                                                         [hidden]="data.isAnalysis==true"></i>
@@ -152,7 +153,14 @@
                                 <img id="mainImage" class="main-image" />
                             </div>
                         </div>
-                        <div class="col-md-12" style="margin-left: 10px;">
+                        <div class="col-md-12" style="margin-left: 10px; border-top:1px solid lightgray; margin-right: 10px;line-height: 30px;">
+                            <span style="float:left"><b>Time : {{progressData.time}}</b></span>
+                            <span style="float:right"><b>Lat-Lng : {{progressData.latLng}}</b></span>
+                        </div>
+                        <div class="col-md-12" style="margin-left: 10px;border-bottom:1px solid lightgray">
+                            <b> Address : </b> {{progressData.address}}
+                        </div>
+                        <div id="divAnalysis" class="col-md-12" style="margin-left: 10px; margin-top: 10px;">
                             <h6>Image Analysis</h6>
                             <div style="float: left;">
                                 Penalty <input id="txtPanalty" class="text-box" type="number" value="0" />

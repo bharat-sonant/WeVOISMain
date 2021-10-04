@@ -8,6 +8,9 @@
             >>
           </button>
           <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+            <option value="0">
+              --Select--
+            </option>
             <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
               {{zone.zoneName}}
             </option>

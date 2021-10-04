@@ -1227,18 +1227,18 @@ export class CommonService {
 
   getZones() {
     return new Promise((resolve) => {
-      let zoneList=[];
+      let zoneList = [];
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/AvailableWard/" + cityName + ".json").subscribe(data => {
         if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 1; i < keyArray.length; i++) {
-                let index = keyArray[i];
-                if(data[index]!=null){
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 1; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (data[index] != null) {
                 if (
                   !data[index].toString().includes("Test") &&
                   data[index] != "OfficeWork" &&
@@ -1291,42 +1291,63 @@ export class CommonService {
                   }
                 }
               }
-              }
             }
-          
-          resolve(zoneList);
+          }
+
+          resolve(JSON.stringify(zoneList));
         }
       });
     });
   }
 
-  getWardTotalLength(wardNo:any) {
+  getWardTotalLength(wardNo: any) {
     return new Promise((resolve) => {
-      let totalLength=0;
+      let totalLength = 0;
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
         if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let index = keyArray[i];
-                if(data[index]!=null){
-                  if(index==wardNo){
-                    totalLength=Number(data[index]);
-                  }
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (data[index] != null) {
+                if (index == wardNo) {
+                  totalLength = Number(data[index]);
                 }
+              }
             }
-          }          
+          }
           resolve(totalLength);
         }
       });
     });
   }
 
-  
+  getCategory() {
+    return new Promise((resolve) => {
+
+      this.httpService.get("../../assets/jsons/Common/Category.json").subscribe(data => {
+        let categoryList = [];
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index=keyArray[i];
+              categoryList.push({id:index,optionType:data[index]["en"]});
+            }
+          }
+          resolve(JSON.stringify(categoryList));
+        }
+      });
+    });
+  }
+
+
+
+
 
 
 
