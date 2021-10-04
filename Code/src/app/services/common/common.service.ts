@@ -4,18 +4,13 @@ import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { FirebaseService } from "../../firebase.service";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
 })
 export class CommonService {
-  constructor(
-    private router: Router,
-    public dbFireStore: AngularFirestore,
-    public fs: FirebaseService,
-    public db: AngularFireDatabase,
-    private toastr: ToastrService
-  ) { }
+  constructor(private router: Router, public dbFireStore: AngularFirestore, public fs: FirebaseService, public db: AngularFireDatabase, private toastr: ToastrService, public httpService: HttpClient) { }
 
   notificationInterval: any;
   fsDb: any;
@@ -946,6 +941,7 @@ export class CommonService {
 
 
   setZones(newDb: any) {
+
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
     let wardDetail = newDb
@@ -1227,6 +1223,89 @@ export class CommonService {
 
   //#endregion
 
+  //#region  local json
+
+  getZones() {
+    return new Promise((resolve) => {
+      let zoneList=[];
+      let cityName = localStorage.getItem("cityName");
+      if (cityName == "demo") {
+        cityName = "jaipur"
+      }
+      this.httpService.get("../../assets/jsons/AvailableWard/" + cityName + ".json").subscribe(data => {
+        if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 1; i < keyArray.length; i++) {
+                let index = keyArray[i];
+                if(data[index]!=null){
+                if (
+                  !data[index].toString().includes("Test") &&
+                  data[index] != "OfficeWork" &&
+                  data[index] != "FixedWages" &&
+                  data[index] != "BinLifting" &&
+                  data[index] != "GarageWork" &&
+                  data[index] != "Compactor" &&
+                  data[index] != "SegregationWork" &&
+                  data[index] != "GeelaKachra" &&
+                  data[index] != "SecondHelper" &&
+                  data[index] != "ThirdHelper"
+                ) {
+                  if (data[index].toString().includes("mkt")) {
+                    zoneList.push({
+                      zoneNo: data[index],
+                      zoneName:
+                        "Market " + data[index].toString().replace("mkt", ""),
+                    });
+                  } else if (data[index].toString().includes("MarketRoute1")) {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Market 1" });
+                  } else if (data[index].toString().includes("MarketRoute2")) {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Market 2" });
+                  } else if (data[index].toString() == "WetWaste") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 1" });
+                  } else if (data[index].toString() == "WetWaste1") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 2" });
+                  } else if (data[index].toString() == "WetWaste2") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 3" });
+                  } else if (data[index].toString() == "WetWaste4") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 4" });
+                  } else if (data[index].toString() == "WetWaste5") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 5" });
+                  } else if (data[index].toString() == "WetWaste6") {
+                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 6" });
+                  } else if (data[index].toString() == "CompactorTracking1") {
+                    zoneList.push({
+                      zoneNo: data[index],
+                      zoneName: "CompactorTracking1",
+                    });
+                  } else if (data[index].toString() == "CompactorTracking2") {
+                    zoneList.push({
+                      zoneNo: data[index],
+                      zoneName: "CompactorTracking2",
+                    });
+                  } else {
+                    zoneList.push({
+                      zoneNo: data[index],
+                      zoneName: "Ward " + data[index],
+                    });
+                  }
+                }
+              }
+              }
+            }
+          
+          resolve(zoneList);
+        }
+      });
+    });
+  }
+
+  
+
+
+
+
+
 
   getWardLineCount(zoneNo: any) {
     let wardLines = 0;
@@ -1239,4 +1318,8 @@ export class CommonService {
     }
     return wardLines;
   }
+
+  //#endregion
+
+
 }

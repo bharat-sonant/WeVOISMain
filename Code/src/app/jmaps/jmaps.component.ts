@@ -151,11 +151,11 @@ export class JmapsComponent {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
-   // this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
-   // setTimeout(() => {
-   //   this.zoneKML.setMap(null);
-   //   this.zoneKML = null;
-   // }, 200);
+    // this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+    // setTimeout(() => {
+    //   this.zoneKML.setMap(null);
+    //   this.zoneKML = null;
+    // }, 200);
   }
 
 
@@ -193,7 +193,7 @@ export class JmapsComponent {
             }
           }
         }
-        if(workerData["penalty"]!=null){
+        if (workerData["penalty"] != null) {
           $('#txtPenalty').val(workerData["penalty"]);
         }
       }
@@ -439,7 +439,6 @@ export class JmapsComponent {
     }
   }
 
-
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
       let strokeWeight = $("#txtLineNo").val();
@@ -474,11 +473,16 @@ export class JmapsComponent {
   }
 
   getZones() {
-    return new Promise((resolve) => {
-      this.zoneList = [];
-      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-      this.zoneList[0]["zoneName"] = "--Select Zone--";
-      resolve(true);
+    this.zoneList=[];
+    this.commonService.getZones().then((zoneList) => {
+      this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
+      let keyArray = Object.keys(zoneList);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let index = keyArray[i];
+          this.zoneList.push({ zoneNo: zoneList[index]["zoneNo"], zoneName:zoneList[index]["zoneName"]  });
+        }
+      }
     });
   }
 
@@ -498,7 +502,6 @@ export class JmapsComponent {
   }
 
   addVehicle() {
-    console.log(this.selectedZone);
     if (this.selectedZone == "0" || this.selectedZone == null) {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -542,15 +545,15 @@ export class JmapsComponent {
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
 
-  saveDone(){
-    let penalty=$('#txtPenalty').val();
-    if(penalty==""){
-      penalty=0;
+  saveDone() {
+    let penalty = $('#txtPenalty').val();
+    if (penalty == "") {
+      penalty = 0;
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vtsDone: "yes" });
-    this.db.object(dbPath).update({ userid:  localStorage.getItem("userID")});
-    this.db.object(dbPath).update({ penalty:  penalty});
+    this.db.object(dbPath).update({ userid: localStorage.getItem("userID") });
+    this.db.object(dbPath).update({ penalty: penalty });
   }
 }
 
