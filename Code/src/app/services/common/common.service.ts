@@ -1300,6 +1300,32 @@ export class CommonService {
     });
   }
 
+  getWardTotalLength(wardNo:any) {
+    return new Promise((resolve) => {
+      let totalLength=0;
+      let cityName = localStorage.getItem("cityName");
+      if (cityName == "demo") {
+        cityName = "jaipur"
+      }
+      this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
+        if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let index = keyArray[i];
+                if(data[index]!=null){
+                  if(index==wardNo){
+                    totalLength=Number(data[index]);
+                  }
+                }
+            }
+          }          
+          resolve(totalLength);
+        }
+      });
+    });
+  }
+
   
 
 

@@ -86,7 +86,6 @@ export class JmapsComponent {
       this.zoneKML.setMap(null);
       this.zoneKML = null;
     }
-
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
         this.wardLineNoMarker[i]["marker"].setMap(null);
@@ -486,15 +485,13 @@ export class JmapsComponent {
     });
   }
 
-
   getWardTotalLength() {
-    let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
-    let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
-      wardLengthDetails.unsubscribe();
-      if (wardLengthData != null) {
-        this.progressData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
-        this.progressData.totalWardLength = Number(wardLengthData);
-      } else {
+    this.commonService.getWardTotalLength(this.selectedZone).then((totalLength) => {
+      if(totalLength!=null){
+        this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
+        this.progressData.totalWardLength = Number(totalLength);
+      }
+      else{
         this.progressData.wardLength = "0.00";
         this.progressData.totalWardLength = 0;
       }
