@@ -52,7 +52,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getImageOptionTypes();
     this.resetData();
     this.setMonthYear();
-    this.getTotals();
   }
 
   getImageOptionTypes() {
@@ -90,7 +89,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.startFrom = 1;
     this.progressData.time = "00:00";
     this.progressData.panalty = 0;
-
+    this.progressData.totalCount=0;
+    this.progressData.totalPenalty=0;
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
   }
@@ -139,7 +139,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getTotals() {
-    let dbPath = "WastebinMonitor/Summary/CategoryWise/totalCount";
+    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/totalCount";
     let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalCountInstance.unsubscribe();
@@ -148,7 +148,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
       }
     );
-    dbPath = "WastebinMonitor/Summary/CategoryWise/totalPenalty";
+    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/totalPenalty";
     let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         penaltyInstance.unsubscribe();
@@ -162,6 +162,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   getCapturedImages() {
     this.startLoader();
+    this.getTotals();
     this.progressList = [];
 
     let categoryDetail = this.optionList.find(item => item.id == this.selectedOption);
