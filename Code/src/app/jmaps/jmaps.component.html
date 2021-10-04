@@ -9,20 +9,19 @@
           </button>
           <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
             <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
-              {{zone.zoneName}} 
+              {{zone.zoneName}}
             </option>
           </select>
     </div>
 
     <div id="houseCount" class="col-md-4 text-right total-house">
-
       <div class="fix-home">
         <div class="float-third" style="font-size: 16px;">
-          <button id="showBoundries" style="width: 90%!important; background-color: #0ba118; color: #fff;" (click)="showBounderis();">Show Boundaries</button>
+          <button id="showBoundries" style="width: 90%!important; background-color: #0ba118; color: #fff;"
+            (click)="showBounderis();">Show Boundaries</button>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -101,7 +100,8 @@
                     <!---->
                     <tr *ngFor="let dt of vehicleList, let i=index">
                       <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
-                      <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt" style="float:right; color:red; cursor: pointer;" (click)="removeVehicle(i)"></i></td>
+                      <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
+                          style="float:right; color:red; cursor: pointer;" (click)="removeVehicle(i)"></i></td>
                     </tr>
                   </tbody>
                 </table>
@@ -110,6 +110,18 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+    <div>
+      Penalty
+      <input id="txtPenalty" type="number"  autocomplete="off"
+        style="width: 180px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold; text-align: right;" value="0" />
+
+    </div>
+    <div>
+      <button class="VTS-button"
+        (click)="saveDone();">VTS Tracking Done</button>
     </div>
   </div>
 </div>

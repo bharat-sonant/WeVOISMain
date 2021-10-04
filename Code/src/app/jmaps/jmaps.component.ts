@@ -81,6 +81,7 @@ export class JmapsComponent {
     this.progressData.coveredLength = "0";
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
+    $('#txtPenalty').val("0");
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
       this.zoneKML = null;
@@ -191,6 +192,9 @@ export class JmapsComponent {
               this.vehicleList.push({ vehicle: vechileList[i] });
             }
           }
+        }
+        if(workerData["penalty"]!=null){
+          $('#txtPenalty').val(workerData["penalty"]);
         }
       }
       this.getAllLinesFromJson();
@@ -536,6 +540,17 @@ export class JmapsComponent {
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
+  }
+
+  saveDone(){
+    let penalty=$('#txtPenalty').val();
+    if(penalty==""){
+      penalty=0;
+    }
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    this.db.object(dbPath).update({ vtsDone: "yes" });
+    this.db.object(dbPath).update({ userid:  localStorage.getItem("userID")});
+    this.db.object(dbPath).update({ penalty:  penalty});
   }
 }
 

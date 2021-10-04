@@ -283,8 +283,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.setPenaltyCounts(prePenalty, penalty);
       this.progressList[Number(index)]["isAnalysis"] = true;
       this.progressList[Number(index)]["penalty"] = penalty;
-      $('#txtPanalty').val("0");
-      $('#dataId').val("0");
+      //$('#txtPanalty').val("0");
+      //$('#dataId').val("0");
     }
   }
 
