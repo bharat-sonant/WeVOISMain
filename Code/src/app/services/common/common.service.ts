@@ -1293,7 +1293,6 @@ export class CommonService {
               }
             }
           }
-
           resolve(JSON.stringify(zoneList));
         }
       });
@@ -1344,16 +1343,7 @@ export class CommonService {
       });
     });
   }
-
-
-
-
-
-
-
-
-
-
+  
   getWardLineCount(zoneNo: any) {
     let wardLines = 0;
     let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));

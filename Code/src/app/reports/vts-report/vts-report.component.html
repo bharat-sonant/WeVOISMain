@@ -29,23 +29,25 @@
     <div class="card">
 
         <div class="row no-gutters">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card-header ">
                     <div class="rpt-head-text">
                         VTS Report
-                        <span style="font-size: 10px;">( Ward wise )</span>
+                        <span style="font-size: 10px;">(As per the analysis of VTS data provided by BVG)</span>
                     </div>
-                    <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar"
-                        style="width: 100%;height: 6px;margin-bottom:10px;" />
+                    
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-header ">
+                    <div class="rpt-head-text">
+                        {{reportData.zoneName}}
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 ">
                 <div class="col-md-12" id="divGeneralData">
-                    <table class="tbl" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="report-left-td">Ward </td>
-                            <td class="report-right-td">{{reportData.zoneName}}</td>
-                        </tr>
+                    <table class="tbl" cellpadding="0" cellspacing="0">                       
                         <tr>
                             <td class="report-left-td">Date   </td>
                             <td class="report-right-td">{{reportData.reportDate}}</td>
