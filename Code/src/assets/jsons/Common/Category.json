@@ -1,14 +1,14 @@
 {
   "1" : {
-    "en" : "Transfer-Station",
-    "hi" : "स्थानांतरण-स्टेशन"
+    "en" : "Secondary Storage Point",
+    "hi" : "माध्यमिक भंडारण बिंदु"
   },
   "2" : {
-    "en" : "Open Depo",
-    "hi" : "ओपन डेपो"
+    "en" : "Depot",
+    "hi" : "डेपो"
   },
   "3" : {
-    "en" : "litter Dustbin",
+    "en" : "Litter Bins",
     "hi" : "कूड़ेदान"
   }
 }
