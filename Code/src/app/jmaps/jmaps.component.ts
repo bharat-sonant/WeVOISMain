@@ -150,6 +150,11 @@ export class JmapsComponent {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
+    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+    setTimeout(() => {
+      this.zoneKML.setMap(null);
+      this.zoneKML = null;
+    }, 200);
   }
 
 
@@ -324,7 +329,6 @@ export class JmapsComponent {
                 let wardCoveredDistance = dist;
                 let completedLines = 1;
                 let workPercentage = 0;
-                console.log(wardLines);
                 if (data == null) {
                   workPercentage = Math.round((completedLines * 100) / wardLines);
                 }
@@ -336,14 +340,14 @@ export class JmapsComponent {
                     if (data["wardCoveredDistance"] != null) {
                       wardCoveredDistance = Number(data["wardCoveredDistance"]) + wardCoveredDistance;
                     }
-                  } 
+                  }
                   else {
                     if (data["completedLines"] != null) {
                       completedLines = Number(data["completedLines"]) - completedLines;
                     }
                     if (data["wardCoveredDistance"] != null) {
                       wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
-                    }  
+                    }
                   }
                   workPercentage = Math.round((wardCoveredDistance * 100) / totalWardLength);
                 }
@@ -384,13 +388,13 @@ export class JmapsComponent {
               },
             });
             this.wardLineNoMarker.push({ marker });
-            */
+            
       setTimeout(() => {
         this.centerPoint = this.lines[0]["latlng"][0];
-        this.map.setZoom(17);
+        this.map.setZoom(15);
         this.map.setCenter(this.centerPoint);
       }, 200);
-
+*/
     });
   }
 
