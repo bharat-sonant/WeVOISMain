@@ -139,7 +139,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getTotals() {
-    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/totalCount";
+    let dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/"+this.selectedOption+"/totalCount";
     let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         totalCountInstance.unsubscribe();
@@ -148,7 +148,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
       }
     );
-    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/totalPenalty";
+    dbPath = "WastebinMonitor/Summary/DateWise/"+this.selectedDate+"/"+this.selectedOption+"/totalPenalty";
     let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         penaltyInstance.unsubscribe();
