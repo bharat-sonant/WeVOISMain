@@ -150,11 +150,11 @@ export class JmapsComponent {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
-    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
-    setTimeout(() => {
-      this.zoneKML.setMap(null);
-      this.zoneKML = null;
-    }, 200);
+   // this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+   // setTimeout(() => {
+   //   this.zoneKML.setMap(null);
+   //   this.zoneKML = null;
+   // }, 200);
   }
 
 
@@ -388,13 +388,13 @@ export class JmapsComponent {
               },
             });
             this.wardLineNoMarker.push({ marker });
-            
+            */
       setTimeout(() => {
         this.centerPoint = this.lines[0]["latlng"][0];
-        this.map.setZoom(15);
+        this.map.setZoom(17);
         this.map.setCenter(this.centerPoint);
       }, 200);
-*/
+
     });
   }
 
