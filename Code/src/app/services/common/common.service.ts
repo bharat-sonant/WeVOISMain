@@ -1327,7 +1327,6 @@ export class CommonService {
 
   getCategory() {
     return new Promise((resolve) => {
-
       this.httpService.get("../../assets/jsons/Common/Category.json").subscribe(data => {
         let categoryList = [];
         if (data != null) {
@@ -1341,6 +1340,30 @@ export class CommonService {
           resolve(JSON.stringify(categoryList));
         }
       });
+    });
+  }
+
+  getCircleWiseWard(){
+    return new Promise((resolve) => {
+      let cityName = localStorage.getItem("cityName");
+      if (cityName == "demo") {
+        cityName = "jaipur"
+      }
+      let circleList=[];
+      this.httpService.get("../../assets/jsons/CircleWiseWard/" + cityName + ".json").subscribe(data => {
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let circleName = keyArray[i];
+              let wardList = data[circleName];
+              circleList.push({ circleName: circleName, wardList: wardList });
+            }
+            resolve(JSON.stringify(circleList));
+          }
+        }
+      });
+      
     });
   }
   

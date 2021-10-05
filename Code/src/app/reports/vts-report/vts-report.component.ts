@@ -18,6 +18,7 @@ export class VtsReportComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
   zoneList: any[];
+  circleList: any[];
   reportData: ReportData =
     {
       zoneName: "--",
@@ -50,11 +51,19 @@ export class VtsReportComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setDefault();    
+  }
+
+  setDefault(){    
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.selectedZoneNo = "0";
-    this.selectedZoneName = "--";
-    this.getZoneList();
+    this.selectedZoneName = "---";
+    this.commonService.getCircleWiseWard().then((circleList: any) => {
+      this.circleList = JSON.parse(circleList);
+    });
+    this.zoneList = [];
+    this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
     this.setMap();
     this.setContainerHeight();
     this.percentage = 0;
@@ -66,9 +75,20 @@ export class VtsReportComponent {
     $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 201);
   }
 
-  getZoneList() {
+  changeCircleSelection(filterVal: any) {
+    this.selectedZoneNo = "0";
+    this.selectedZoneName = "---";
+    this.resetAll();
     this.zoneList = [];
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
+    
+    let circleDetail = this.circleList.find(item => item.circleName == filterVal);
+    if (circleDetail != undefined) {
+      let zoneList = circleDetail.wardList;
+      for (let i = 1; i < zoneList.length; i++) {
+        this.zoneList.push({ zoneNo: zoneList[i], zoneName: "Ward " + zoneList[i] });
+      }
+    }
   }
 
   setMap() {
@@ -82,7 +102,12 @@ export class VtsReportComponent {
 
   changeZoneSelection(filterVal: any) {
     this.selectedZoneNo = filterVal;
+    if(filterVal!="0"){
     this.selectedZoneName = "Ward " + filterVal;
+    }
+    else{
+      this.selectedZoneName="---";
+    }
     this.showReport();
   }
 
@@ -105,19 +130,23 @@ export class VtsReportComponent {
   }
 
   showReport() {
+    this.resetAll();
+    this.setMap();
+    this.setKml();
+    this.drawZoneAllLines();
+  }
+
+  resetAll()
+  {
     this.reportData.zoneName = this.selectedZoneName;
     this.reportData.reportDate = this.selectedDate;
-    this.percentage=0;
-    this.reportData.coveredLength="0.000";
-    this.reportData.vehicleNo="--";
-    this.reportData.wardLength="0.000";
+    this.percentage = 0;
+    this.reportData.coveredLength = "0.000";
+    this.reportData.vehicleNo = "--";
+    this.reportData.wardLength = "0.000";
     this.bounds = new google.maps.LatLngBounds();
     this.selectedZone = this.selectedZoneNo;
     this.polylines = [];
-    this.setMap();
-    this.setKml();    
-    this.drawZoneAllLines();
-   
   }
 
   drawZoneAllLines() {
@@ -236,7 +265,7 @@ export class VtsReportComponent {
         this.reportData.wardLength = "0.000";
       }
     });
-   
+
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();
@@ -260,7 +289,7 @@ export class VtsReportComponent {
         if (workerData["wardCoveredDistance"] != null) {
           this.reportData.coveredLength = (parseFloat(workerData["wardCoveredDistance"].toString()) / 1000).toFixed(3) + "";
         }
-        
+
       }
     });
   }
