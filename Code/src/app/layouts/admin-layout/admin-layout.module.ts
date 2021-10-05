@@ -87,6 +87,7 @@ import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summar
 import { JmapsComponent } from '../../jmaps/jmaps.component';
 import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-analysis/garbage-capture-analysis.component';
 import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
+import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 
 @NgModule({
   imports: [
@@ -178,7 +179,8 @@ import { VtsReportComponent } from '../../reports/vts-report/vts-report.componen
     WardScancardSummaryComponent,
     JmapsComponent,
     GarbageCaptureAnalysisComponent,
-    VtsReportComponent
+    VtsReportComponent,
+    VtsMonthlyReportComponent
   ]
 })
 
