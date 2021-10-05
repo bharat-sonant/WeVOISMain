@@ -1,5 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
-
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
@@ -68,7 +66,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   getImageOptionTypes() {
     this.commonService.getCategory().then((category:any) => {
       if (category != null) {
-        console.log(category);
         this.optionList=JSON.parse(category);
       }
     });
@@ -292,8 +289,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.setPenaltyCounts(prePenalty, penalty);
       this.progressList[Number(index)]["isAnalysis"] = true;
       this.progressList[Number(index)]["penalty"] = penalty;
-      //$('#txtPanalty').val("0");
-      //$('#dataId').val("0");
     }
   }
 
