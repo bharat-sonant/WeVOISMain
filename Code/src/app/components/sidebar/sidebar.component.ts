@@ -180,6 +180,8 @@ export class SidebarComponent implements OnInit {
       icon = "./assets/img/jaipur.svg";
     } else if (cityName == "demo") {
       icon = "./assets/img/demo.svg";
+    }else if(cityName=="jaipur-greater"){
+      icon="./assets/img/jaipur_greater.svg";
     }
     return icon;
   }
