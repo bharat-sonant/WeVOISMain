@@ -146,7 +146,14 @@ export class VtsReportComponent {
     this.reportData.wardLength = "0.000";
     this.bounds = new google.maps.LatLngBounds();
     this.selectedZone = this.selectedZoneNo;
+    if(this.polylines.length>0)
+    {
+      for(let i=0;i<this.polylines.length;i++){
+        this.polylines[i].setMap(null);
+      }
+    }
     this.polylines = [];
+    this.drawChart();
   }
 
   drawZoneAllLines() {
