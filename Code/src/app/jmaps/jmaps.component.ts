@@ -299,7 +299,7 @@ export class JmapsComponent {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
         var polyOptions = {
-          strokeColor: "#28a745",
+          strokeColor: "#0ba118",
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
@@ -363,7 +363,7 @@ export class JmapsComponent {
       lineStatus.unsubscribe();
       let strockColor="#fa0505";
       if(status=="LineCompleted"){
-        strockColor="#28a745";
+        strockColor="#0ba118";
       }
       let line = new google.maps.Polyline({
         path: latlngs,
@@ -422,7 +422,7 @@ export class JmapsComponent {
               isNew = true;
               dbEvent.database.ref(dbPath).set("LineCompleted");
               dbEvent.database.ref(dbPath2).set(time);
-              stockColor = "#28a745";
+              stockColor = "#0ba118";
             }
             else {
               isNew = false;
