@@ -7,6 +7,15 @@
           <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
             >>
           </button>
+          <select class="caret-select" id="ddlCircle" style="width: 150px;"
+                (change)="changeCircleSelection($event.target.value)">
+                <option value="0">
+                    --Select Zone--
+                  </option>
+                <option *ngFor="let circle of circleList" value={{circle.circleName}}>
+                  {{circle.circleName}}
+                </option>
+              </select>
           <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
             <option value="0">
               --Select--

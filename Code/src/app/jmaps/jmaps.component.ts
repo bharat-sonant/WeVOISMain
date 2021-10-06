@@ -42,6 +42,7 @@ export class JmapsComponent {
   zoneKML: any;
   strokeWeight = 7;
   vehicleList: any[];
+  circleList:any[];
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -61,14 +62,30 @@ export class JmapsComponent {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.commonService.getCircleWiseWard().then((circleList: any) => {
+      this.circleList = JSON.parse(circleList);
+    });
     $("#txtDate").val(this.selectedDate);
     this.setHeight();
-    this.getZones();
+    //this.getZones();
     this.setMaps();
     this.lines = [];
     this.polylines = [];
     this.wardLineNoMarker = [];
     this.vehicleList = [];
+  }
+
+  changeCircleSelection(filterVal: any) {
+    this.selectedZone=0;
+    this.resetAll();
+    this.zoneList = [];
+    let circleDetail = this.circleList.find(item => item.circleName == filterVal);
+    if (circleDetail != undefined) {
+      let zoneList = circleDetail.wardList;
+      for (let i = 1; i < zoneList.length; i++) {
+        this.zoneList.push({ zoneNo: zoneList[i], zoneName: "Ward " + zoneList[i] });
+      }
+    }
   }
 
   setMaps() {
@@ -150,11 +167,6 @@ export class JmapsComponent {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
-    // this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
-    // setTimeout(() => {
-    //   this.zoneKML.setMap(null);
-    //   this.zoneKML = null;
-    // }, 200);
   }
 
 
@@ -370,28 +382,6 @@ export class JmapsComponent {
           }
         );
       });
-      /*
-            let lat = latlngs[0]["lat"];
-            let lng = latlngs[0]["lng"];
-            let marker = new google.maps.Marker({
-              position: { lat: Number(lat), lng: Number(lng) },
-              map: this.map,
-              icon: {
-                url: this.invisibleImageUrl,
-                fillOpacity: 1,
-                strokeWeight: 0,
-                scaledSize: new google.maps.Size(32, 40),
-                origin: new google.maps.Point(0, 0),
-              },
-              label: {
-                text: lineNo.toString(),
-                color: "#000",
-                fontSize: "10px",
-                fontWeight: "bold",
-              },
-            });
-            this.wardLineNoMarker.push({ marker });
-            */
       setTimeout(() => {
         this.centerPoint = this.lines[0]["latlng"][0];
         this.map.setZoom(17);
@@ -400,7 +390,6 @@ export class JmapsComponent {
 
     });
   }
-
 
   getNextPrevious(type: any) {
     let strokeWeight = $("#txtStrokeWeight").val();
