@@ -30,11 +30,11 @@
         <div class="col-md-3 text-right total-house" style="padding-left: 18px;">
             <div class="fix-home">
                 <div id="topPenality" class="float-first" style="margin-left: 10px; margin-top: 0px;">
-                    <span class="house"> {{progressData.totalPenalty}}</span><br>
+                    <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                     <h6>Penalty</h6>
                 </div>
                 <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
-                    <span class="house"> {{progressData.totalCount}}</span><br>
+                    <span class="house"><i class="far fa-images"></i> {{progressData.totalCount}}</span><br>
                     <h6>Images</h6>
                     
                 </div>
@@ -48,45 +48,46 @@
         <div class="col-md-7" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-header custom-header">
-                    <div class="row">
+                    <div class="row align">
                         <div class="col-md-4 text-left">
-                            <div class="table-heading">
-                                <h3 style="font-size: 18px; font-weight: bold;">
+                            <div class="main-heading">
+                                <h3>
                                     {{progressData.category}}
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-2 text-right">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{progressData.count}}</span> <br>
-                                    Total
-                                </h3>
-                            </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="f-all">
+                                    <div class="table-heading heading1 text-center">
+                                            <h3>
+                                                <span class="tbl-points "> {{progressData.count}}</span> <br>
+                                                Total
+                                            </h3>
+                                        </div>
+                                        <div class="table-heading heading2 text-center">
+                                                <h3 id="leftPenality">
+                                                    <span class="tbl-points"> {{progressData.panalty}}</span> <br>
+                                                    Penalty
+                                                </h3>
+                                            </div>
+                                            <div class="table-heading heading3 text-right">
+                                                    <i class="fas fa-arrow-circle-left" (click)="getRecord('pre');"></i>
+                                                    <i class="fas fa-arrow-circle-right" (click)="getRecord('next');"></i>
+                                                    <br />
+                                                    <h3 class="mr-20" style="border-right: none;"> record from <b class="font-bold">{{progressData.startFrom}}</b> to
+                                                        <b class="font-bold">{{progressData.endTo}}</b>
+                                                    </h3>
+                                                </div>
+                                    </div>
+                                </div>
+ 
                         </div>
-                        <div class="col-md-2 text-right">
-                            <div class="table-heading">
-                                <h3 id="leftPenality">
-                                    <span class="tbl-points"> {{progressData.panalty}}</span> <br>
-                                    Penalty
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-4 text-right">
-                            <div class="table-heading">
-                                <i class="fas fa-arrow-circle-left"
-                                    style="font-size: 20px; color: green; margin-right: 20px; cursor: pointer;"
-                                    (click)="getRecord('pre');"></i>
-                                <i class="fas fa-arrow-circle-right"
-                                    style="font-size: 20px; color: green; margin-right: 20px; cursor: pointer;"
-                                    (click)="getRecord('next');"></i>
-                                <br />
-                                <h3 style="margin-right: 20px;"> record from <b>{{progressData.startFrom}}</b> to
-                                    <b>{{progressData.endTo}}</b>
-                                </h3>
-                            </div>
                         </div>
                     </div>
+
+
                 </div>
                 <div class="card-body" style="height:80vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -97,7 +98,7 @@
                                         style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
                                         <thead>
                                             <th style="border-right:1px solid #dee2e6; width:40%;">Locality</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:10%;">
+                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
                                                 Time</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:15%;">
                                                 #</th>
@@ -112,7 +113,7 @@
                                             <tr id="tr{{i}}" *ngFor="let data of progressList; let i=index" style="cursor: pointer;" (click)="getCaptureData(i);">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.address}}</td>
-                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.time}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     {{data.isClean}}</td>
@@ -121,9 +122,9 @@
                                                 <td class="text-left" style="border-right:1px solid #dee2e6;">
                                                     {{data.user}}</td>
                                                 <td class="text-center" style="border-right:1px solid #dee2e6">
-                                                    <i class="fas fa-times" style="color:red; font-size: 20px;"
+                                                    <i class="fas fa-times" 
                                                         [hidden]="data.isAnalysis==true"></i>
-                                                    <i class="fas fa-check" style="color:#1fda2f; font-size: 20px;"
+                                                    <i class="fas fa-check"
                                                         [hidden]="data.isAnalysis==false"></i>
                                                 </td>
                                             </tr>
@@ -144,7 +145,7 @@
             </div>
         </div>
         <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
+            <div class="card">
                 <div class="card-body" style="padding: 3px 11px 15px 0px;">
                     <input id="dataId" type="hidden" value="0">
                     <div class="row">
@@ -153,24 +154,28 @@
                                 <img id="mainImage" class="main-image" />
                             </div>
                         </div>
-                        <div class="col-md-12" style="margin-left: 10px; border-top:1px solid lightgray; margin-right: 10px;line-height: 30px;">
-                            <span style="float:left"><b>Time : {{progressData.time}}</b></span>
-                            <span style="float:right"><b>Lat-Lng : {{progressData.latLng}}</b></span>
+                        <div class="col-md-12 bg-light">
+                            <span class="time-data" > <b>Time : </b>{{progressData.time}}</span> |
+                            <span class="ltlg-data"><b>Lat-Lng : </b> {{progressData.latLng}}</span> <br>
+                            <b>Address :</b>  {{progressData.address}}
                         </div>
-                        <div class="col-md-12" style="margin-left: 10px;border-bottom:1px solid lightgray">
-                            <b> Address : </b> {{progressData.address}}
-                        </div>
-                        <div id="divAnalysis" class="col-md-12" style="margin-left: 10px; margin-top: 10px;">
-                            <h6>Image Analysis</h6>
-                            <div style="float: left;">
-                                Penalty <input id="txtPanalty" class="text-box" type="number" value="0" />
+                        <div id="divAnalysis" class="col-md-12 mt-10 ml-10" >
+                            <div class="f-all-data">
+                                <div class="heading4 text-left">
+                                    <h6 class="mt-10">Image Analysis</h6>
+                                    </div>
+                                    <div class="heading5 text-left">
+                                    Penalty <input id="txtPanalty" class="text-box" type="number" value="0" />
+                                    </div>
+                                    <div class="heading6 text-right">
+                                        <button class="btn btn-success"
+                                        (click)="analysis();">Apply
+                                        Analysis</button>
+                                    </div>
+
+
                             </div>
-                            <div style="float: right;">
-                                <button class="btn btn-success"
-                                    style="margin-left: 10px; margin-right: 10px;margin-top: -7px;"
-                                    (click)="analysis();">Apply
-                                    Analysis</button>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

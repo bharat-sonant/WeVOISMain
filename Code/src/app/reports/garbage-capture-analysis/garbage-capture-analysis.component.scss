@@ -1,9 +1,15 @@
 /************************Task Management Section Start**************************************/
 /********************************** Header Start**********************************/
 
-.caret-select{ margin-left:10px!important;
-  border-radius: 5px; width: 130px; font-size: 12px;
-  padding:8px; border:none!important;}
+.caret-select{
+  margin-left:10px!important;
+  border-radius: 5px;
+   width: 130px;
+    font-size: 12px;
+  padding:8px;
+   border:none!important;
+   z-index: 1;
+  }
   
   .btn-primary{
     font-weight: 400;
@@ -441,23 +447,150 @@
   }
 
   .table-heading h3{
-    line-height: 28px;
-    font-size: 12px;
+    line-height: 15px;
+    font-size: 10px;
     font-weight: normal;
     text-transform: uppercase;
-    color: #000;
+    color: #707070;
     margin-bottom: 15px;
-    margin-top: 3px;
-    //margin-right: 15px;
+    margin-top: 6px;
+    border-right: 1px solid lightgray;
+    letter-spacing: 0.5px;
   }
   .table-heading .tbl-points{
     font-weight: bold;
-    border-radius: 10px;
-    background: #0ba11714;
+   // border-radius: 10px;
+    //background: #0ba11714;
     color: #0ba118;
-    padding: 5px 10px;
-    font-size: 24px;
+   // padding: 5px 10px;
+    font-size: 30px;
   }
+  .font-bold{
+    color: #000;
+  }
+  .align{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+.main-heading h3{
+  font-size: 16px;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #333;
+    margin-top: -15px;
+    margin-bottom: 0px;
+}
+.mr-20{
+  margin-right: 20px!important;
+}
+.mt-10{
+  margin-top: 10px!important;
+}
+.ml-10{
+  margin-left: 10px!important;
+}
+.fa-arrow-circle-right, .fa-arrow-circle-left{
+  font-size: 22px;
+    color: green;
+    margin-right: 20px;
+    cursor: pointer;
+
+}
+.btn-success{
+  margin-left: 10px;
+   margin-right: 10px;
+   margin-top: 0px;
+   background-color: #0ba118;
+   padding: 11px!important;
+}
+.fa-times-circle{
+  color: #ff0000;
+  font-size: 14px;
+}
+.fa-images{
+  color: #0ba118;
+  font-size: 14px;
+}
+.f-all{
+  width: 100%;
+  margin-left: 18%;
+}
+.f-all .heading1{
+float: left;
+width: 22%;
+padding-top: 3px;
+}
+.f-all .heading2{
+float: left;
+width: 22%;
+padding-top: 3px;
+}
+.f-all .heading3{
+float: left;
+width: 38%;
+padding-top: 3px;
+}
+.form-group h5{
+  color: #707070;
+    font-size: 18px;
+    font-weight: normal;
+    text-transform: capitalize;
+}
+.fa-times{
+  color: red;
+  font-size: 14px;
+}
+.fa-check{
+  color:#1fda2f;
+   font-size: 20px;
+}
+.card{
+  margin-top:-6px;
+   height: 85vh!important;
+   overflow: hidden;
+}
+.bg-light{
+  background: #0ba118!important;
+  color: #fff;
+  border-top:1px solid lightgray;
+  padding: 10px 30px;
+
+}
+.time-data{
+  float:left;
+  margin-right: 20px;
+}
+.ltlg-data{
+  margin-left: 20px;
+}
+
+
+#divAnalysis h6{
+  font-size: 14px;
+  text-transform: capitalize;
+}
+.f-all-data{
+  width: 100%;
+}
+.f-all-data .heading4{
+float: left;
+width: 30%;
+}
+.f-all-data .heading5{
+float: left;
+width: 40%;
+}
+.f-all-data .heading6{
+float: left;
+width: 30%;
+}
+
+
+
+
+
+
 .col{
   display: flex;
   justify-content: center;
@@ -624,12 +757,13 @@ label{
 
   .divMainImage{
     width: 100%;
-    height:62vh;
+    height:66vh;
     text-align: center;
+    padding: 10px;
   }
 
   .main-image{
-    max-height: 62vh;
+    max-height: 63vh;
   }
 
   .text-box{
