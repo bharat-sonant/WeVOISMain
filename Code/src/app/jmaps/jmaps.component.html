@@ -1,6 +1,6 @@
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-8">
+    <div class="col-md-7">
       <button class="btn btn-primary " (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
@@ -26,8 +26,16 @@
           </select>
     </div>
 
-    <div id="houseCount" class="col-md-4 text-right total-house">
+    <div id="houseCount" class="col-md-5 text-right total-house">
       <div class="fix-home">
+        <div class="float-third" style="font-size: 16px; display: none;">
+          <button style="width: 90%!important; background-color: #0ba118; color: #fff;"
+            (click)="resetAllLines();">Reset All</button>
+        </div>
+        <div class="float-third" style="font-size: 16px; display: none;">
+          <button style="width: 90%!important; background-color: #0ba118; color: #fff;"
+            (click)="selectAll();">Select All</button>
+        </div>
         <div class="float-third" style="font-size: 16px;">
           <button id="showBoundries" style="width: 90%!important; background-color: #0ba118; color: #fff;"
             (click)="showBounderis();">Show Boundaries</button>
