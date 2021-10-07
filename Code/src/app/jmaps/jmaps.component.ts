@@ -66,6 +66,7 @@ export class JmapsComponent {
       this.zoneList = JSON.parse(zoneList);
     });
     $("#txtDate").val(this.selectedDate);
+    $('#txtPreDate').val(this.selectedDate);
     this.setHeight();
     this.setMaps();
     this.lines = [];
@@ -90,20 +91,6 @@ export class JmapsComponent {
   setMaps() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-  }
-
-  setPreviousData() {
-    let date = "2021-10-04";
-    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
-    let year = date.split("-")[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
-    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        preDataInstance.unsubscribe();
-        dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-        this.db.object(dbPath).update(data);
-        this.getWardData();
-      });
   }
 
   resetAll() {
@@ -280,6 +267,24 @@ export class JmapsComponent {
     });
   }
 
+  setPreviousData() {
+    let date = $('#txtPreDate').val().toString();
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+    let year = date.split("-")[0];
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
+    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        preDataInstance.unsubscribe();
+        dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+        this.db.object(dbPath).update(data);
+        this.getWardData();
+      });
+  }
+
   resetAllLines() {
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
@@ -289,6 +294,8 @@ export class JmapsComponent {
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
+        this.polylines[j]["strokeColor"]="#fa0505";
+
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
@@ -307,6 +314,7 @@ export class JmapsComponent {
       this.db.object(dbPath).update({ resetBy: localStorage.getItem("userID"), resetTime: time });
       this.progressData.coveredLength = "0";
       this.progressData.workPercentage = 0 + "%";
+      this.closeModel();
     }
   }
 
@@ -635,6 +643,22 @@ export class JmapsComponent {
     this.db.object(dbPath).update({ vtsDone: "yes" });
     this.db.object(dbPath).update({ userid: localStorage.getItem("userID") });
     this.db.object(dbPath).update({ penalty: penalty });
+  }
+
+  openModel(content: any) {
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let height = 145;
+    let width = 350;
+    let marginTop = "0px";
+    marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
   }
 
 }

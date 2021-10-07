@@ -28,17 +28,43 @@
 
     <div id="houseCount" class="col-md-5 text-right total-house">
       <div class="fix-home">
-        <div class="float-third" style="font-size: 16px; display: none;">
-          <button style="width: 90%!important; background-color: #0ba118; color: #fff;"
-            (click)="resetAllLines();">Reset All</button>
-        </div>
-        <div class="float-third" style="font-size: 16px; display: none;">
-          <button style="width: 90%!important; background-color: #0ba118; color: #fff;"
-            (click)="selectAll();">Select All</button>
-        </div>
         <div class="float-third" style="font-size: 16px;">
-          <button id="showBoundries" style="width: 90%!important; background-color: #0ba118; color: #fff;"
-            (click)="showBounderis();">Hide Boundaries</button>
+            <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+            aria-expanded="true" aria-controls="collapsetwo">Setting <i class="fas fa-cog fa-spin"></i></button>
+        </div>
+      </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingtwo">
+            <h4 class="panel-title">
+            </h4>
+          </div>
+          <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12 text-left">
+                  <div class="setting-box">
+                    <p id="showBoundries"> Hide Boundaries</p>
+                    
+                    <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i class="fas fa-grip-lines-vertical"></i></button>
+                  </div>
+                  <div class="setting-box">
+                    <p> Select All</p>
+                    <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i class="far fa-window-restore"></i></button>
+                  </div>
+                  <div class="setting-box">
+                    <p> Reset All</p>
+                    <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i class="fas fa-check-double"></i></button>
+                  </div>
+                  <div class="setting-box">
+                    <p class="previous-data"><b>Get Previous Data</b></p> <br>
+                    <input class="date-input date" id="txtPreDate" type="date">
+                    <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -145,3 +171,26 @@
     </div>
   </div>
 </div>
+
+<!--Reset Confirmation Start-->
+<ng-template #contentPlanConfirm>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Are you sure to reset?</h5>                
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-6" style="text-align: center;">
+                      <button class="btn btn-success " (click)="resetAllLines();" style="background-color: #0ba118;">
+                          Confirm</button>
+                  </div>
+                  <div class="col-md-6" style="text-align: center;">
+                      <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+<!--Reset Confirmation End-->
