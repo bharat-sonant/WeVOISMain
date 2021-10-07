@@ -1306,6 +1306,7 @@ export class CommonService {
       if (cityName == "demo") {
         cityName = "jaipur"
       }
+      //cityName="jaipur-greater";
       this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -1343,6 +1344,8 @@ export class CommonService {
     });
   }
 
+
+
   getCircleWiseWard(){
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
@@ -1362,8 +1365,26 @@ export class CommonService {
             resolve(JSON.stringify(circleList));
           }
         }
-      });
-      
+      });      
+    });
+  }
+
+  getZoneWiseWard(){
+    return new Promise((resolve) => {
+      let zoneList=[];
+      this.httpService.get("../../assets/jsons/CircleWiseWard/jaipur-greater.json").subscribe(data => {
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let zoneName = keyArray[i];
+              let wardList = data[zoneName];
+              zoneList.push({ zoneName: zoneName, wardList: wardList });
+            }
+            resolve(JSON.stringify(zoneList));
+          }
+        }
+      });      
     });
   }
   

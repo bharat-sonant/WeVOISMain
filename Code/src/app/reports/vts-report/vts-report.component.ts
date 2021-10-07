@@ -51,10 +51,10 @@ export class VtsReportComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.setDefault();    
+    this.setDefault();
   }
 
-  setDefault(){    
+  setDefault() {
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.selectedZoneNo = "0";
@@ -79,9 +79,10 @@ export class VtsReportComponent {
     this.selectedZoneNo = "0";
     this.selectedZoneName = "---";
     this.resetAll();
+    this.drawChart();
     this.zoneList = [];
     this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
-    
+
     let circleDetail = this.circleList.find(item => item.circleName == filterVal);
     if (circleDetail != undefined) {
       let zoneList = circleDetail.wardList;
@@ -102,11 +103,11 @@ export class VtsReportComponent {
 
   changeZoneSelection(filterVal: any) {
     this.selectedZoneNo = filterVal;
-    if(filterVal!="0"){
-    this.selectedZoneName = "Ward " + filterVal;
+    if (filterVal != "0") {
+      this.selectedZoneName = "Ward " + filterVal;
     }
-    else{
-      this.selectedZoneName="---";
+    else {
+      this.selectedZoneName = "---";
     }
     this.showReport();
   }
@@ -136,8 +137,7 @@ export class VtsReportComponent {
     this.drawZoneAllLines();
   }
 
-  resetAll()
-  {
+  resetAll() {
     this.reportData.zoneName = this.selectedZoneName;
     this.reportData.reportDate = this.selectedDate;
     this.percentage = 0;
@@ -146,14 +146,12 @@ export class VtsReportComponent {
     this.reportData.wardLength = "0.000";
     this.bounds = new google.maps.LatLngBounds();
     this.selectedZone = this.selectedZoneNo;
-    if(this.polylines.length>0)
-    {
-      for(let i=0;i<this.polylines.length;i++){
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
       }
     }
     this.polylines = [];
-    this.drawChart();
   }
 
   drawZoneAllLines() {
@@ -213,18 +211,12 @@ export class VtsReportComponent {
       data => {
         for (let index = 1; index <= this.allLines.length; index++) {
           let lineData = this.allLines.find(item => item.lineNo == index);
-          let lineColor = "#87CEFA";
+          let lineColor = "#fa0505";
           if (data != null) {
             if (data[index] != undefined) {
               if (data[index]["Status"] != 'undefined') {
                 if (data[index]["Status"] == "LineCompleted") {
-                  lineColor = "#33ff33";
-                } else if (data[index]["Status"] == "PartialLineCompleted") {
-                  lineColor = "#ff9d00";
-                } else if (data[index]["Status"] == "skip" || data[index]["Status"] == "Skipped") {
-                  lineColor = "red";
-                } else {
-                  lineColor = "#87CEFA";
+                  lineColor = "#0ba118";
                 }
               }
             }

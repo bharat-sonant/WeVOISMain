@@ -23,8 +23,8 @@ export class JmapsComponent {
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
-  public selectedZone: any;
-  zoneList: any[];
+  public selectedWard: any;
+  wardList: any[];
   marker = new google.maps.Marker();
   cityName: any;
   toDayDate: any;
@@ -40,9 +40,9 @@ export class JmapsComponent {
   wardLineNoMarker: any[];
   centerPoint: any;
   zoneKML: any;
-  strokeWeight = 7;
+  strokeWeight = 4;
   vehicleList: any[];
-  circleList: any[];
+  zoneList: any[];
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -62,8 +62,8 @@ export class JmapsComponent {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
-    this.commonService.getCircleWiseWard().then((circleList: any) => {
-      this.circleList = JSON.parse(circleList);
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
     });
     $("#txtDate").val(this.selectedDate);
     this.setHeight();
@@ -74,15 +74,15 @@ export class JmapsComponent {
     this.vehicleList = [];
   }
 
-  changeCircleSelection(filterVal: any) {
-    this.selectedZone = 0;
+  changeZoneSelection(filterVal: any) {
+    this.selectedWard = 0;
     this.resetAll();
-    this.zoneList = [];
-    let circleDetail = this.circleList.find(item => item.circleName == filterVal);
-    if (circleDetail != undefined) {
-      let zoneList = circleDetail.wardList;
-      for (let i = 1; i < zoneList.length; i++) {
-        this.zoneList.push({ zoneNo: zoneList[i], zoneName: "Ward " + zoneList[i] });
+    this.wardList = [];
+    let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
+    if (zoneDetail != undefined) {
+      let wardList = zoneDetail.wardList;
+      for (let i = 1; i < wardList.length; i++) {
+        this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
   }
@@ -92,8 +92,22 @@ export class JmapsComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
+  setPreviousData() {
+    let date = "2021-10-04";
+    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+    let year = date.split("-")[0];
+    let dbPath = "WasteCollectionInfo/"+this.selectedWard+"/"+year+"/"+monthName+"/"+date;
+    let preDataInstance=this.db.object(dbPath).valueChanges().subscribe(
+      data=>{
+        preDataInstance.unsubscribe();
+        dbPath = "WasteCollectionInfo/"+this.selectedWard+"/"+this.currentYear+"/"+this.currentMonthName+"/"+this.selectedDate;
+        this.db.object(dbPath).update(data);
+        this.getWardData();
+      });
+  }
+
   resetAll() {
-    $('#showBoundries').html("Show Boundaries");
+    $('#showBoundries').html("Hide Boundaries");
     this.progressData.coveredLength = "0";
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
@@ -127,16 +141,14 @@ export class JmapsComponent {
   }
 
 
-  changeZoneSelection(filterVal: any) {
+  changeWardSelection(filterVal: any) {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     $("#txtDate").val(this.selectedDate);
-    this.selectedZone = filterVal;
+    this.selectedWard = filterVal;
     this.getWardData();
   }
 
@@ -170,7 +182,7 @@ export class JmapsComponent {
 
 
   getProgressDetail() {
-    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();
       if (workerData != null) {
@@ -212,8 +224,8 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    //this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
-    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedZone + ".json").subscribe(data => {
+    this.zoneKML = this.commonService.setKML(this.selectedWard, this.map);
+    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -232,7 +244,7 @@ export class JmapsComponent {
                     latlng: latLng,
                     color: "#fa0505",
                   });
-                  this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedZone);
+                  this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedWard);
                 }
               }
             }
@@ -240,12 +252,12 @@ export class JmapsComponent {
         }
       }
     }, err => {
-      let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+      let wardLineCount = this.db.object("WardLines/" + this.selectedWard + "").valueChanges().subscribe((lineCount) => {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           this.wardLines = Number(lineCount);
           for (let i = 1; i <= Number(this.wardLines); i++) {
-            let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
+            let dbPath = "Defaults/WardLines/" + this.selectedWard + "/" + i + "/points";
             let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
               wardLines.unsubscribe();
               if (zoneData.length > 0) {
@@ -259,7 +271,7 @@ export class JmapsComponent {
                   latlng: latLng,
                   color: "#fa0505",
                 });
-                this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
+                this.plotLineOnMap(i, latLng, i - 1, this.selectedWard);
               }
             });
           }
@@ -279,13 +291,13 @@ export class JmapsComponent {
         }
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
-        let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-        let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+        let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
         this.db.database.ref(dbPath).set(null);
         this.db.database.ref(dbPath2).set(null);
-      }      
-      
-      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      }
+
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
       this.db.database.ref(dbPath).set(null);
       this.progressData.coveredLength = "0";
       this.progressData.workPercentage = 0 + "%";
@@ -331,8 +343,8 @@ export class JmapsComponent {
         let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
 
         let lineNo = this.lines[j]["lineNo"];
-        let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-        let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+        let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
         this.db.database.ref(dbPath).set("LineCompleted");
         this.db.database.ref(dbPath2).set(time);
 
@@ -350,7 +362,7 @@ export class JmapsComponent {
         wardCoveredDistance: wardCoveredDistance.toFixed(0),
         workPercentage: workPercentage
       }
-      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
       this.db.object(dbPath).update(data1);
       this.progressData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
       this.progressData.workPercentage = workPercentage + "%";
@@ -361,9 +373,9 @@ export class JmapsComponent {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       lineStatus.unsubscribe();
-      let strockColor="#fa0505";
-      if(status=="LineCompleted"){
-        strockColor="#0ba118";
+      let strockColor = "#fa0505";
+      if (status == "LineCompleted") {
+        strockColor = "#0ba118";
       }
       let line = new google.maps.Polyline({
         path: latlngs,
@@ -377,9 +389,9 @@ export class JmapsComponent {
       let wardLines = this.wardLines;
       let totalWardLength = this.progressData.totalWardLength;
       let strokeWeight = this.strokeWeight;
-      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-      let dbPath2 = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
-      let dbPathSummary = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+      let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+      let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
       google.maps.event.addListener(line, 'click', function (h) {
 
         let dist = 0;
@@ -479,12 +491,6 @@ export class JmapsComponent {
           }
         );
       });
-      setTimeout(() => {
-        this.centerPoint = this.lines[0]["latlng"][0];
-        this.map.setZoom(17);
-        this.map.setCenter(this.centerPoint);
-      }, 200);
-
     });
   }
 
@@ -540,7 +546,7 @@ export class JmapsComponent {
   showBounderis() {
     if ($('#showBoundries').html() == "Show Boundaries") {
       $('#showBoundries').html("Hide Boundaries");
-      this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+      this.zoneKML = this.commonService.setKML(this.selectedWard, this.map);
     }
     else {
       $('#showBoundries').html("Show Boundaries");
@@ -558,7 +564,7 @@ export class JmapsComponent {
   }
 
   getWardTotalLength() {
-    this.commonService.getWardTotalLength(this.selectedZone).then((totalLength) => {
+    this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
       if (totalLength != null) {
         this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
         this.progressData.totalWardLength = Number(totalLength);
@@ -571,7 +577,7 @@ export class JmapsComponent {
   }
 
   addVehicle() {
-    if (this.selectedZone == "0" || this.selectedZone == null) {
+    if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
@@ -592,7 +598,7 @@ export class JmapsComponent {
         }
       }
     }
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
     $('#txtVehicle').val("");
     this.commonService.setAlertMessage("success", "Vehicle add successfully !!!");
@@ -609,7 +615,7 @@ export class JmapsComponent {
       }
     }
     this.vehicleList = vehicleList;
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
@@ -619,7 +625,7 @@ export class JmapsComponent {
     if (penalty == "") {
       penalty = 0;
     }
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vtsDone: "yes" });
     this.db.object(dbPath).update({ userid: localStorage.getItem("userID") });
     this.db.object(dbPath).update({ penalty: penalty });

@@ -7,28 +7,28 @@
           <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
             >>
           </button>
-          <select class="caret-select" id="ddlCircle" style="width: 150px;"
-                (change)="changeCircleSelection($event.target.value)">
+          <select class="caret-select" id="ddlZone" style="width: 150px;"
+                (change)="changeZoneSelection($event.target.value)">
                 <option value="0">
                     --Select Zone--
                   </option>
-                <option *ngFor="let circle of circleList" value={{circle.circleName}}>
-                  {{circle.circleName}}
+                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                  {{zone.zoneName}}
                 </option>
               </select>
-          <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+          <select class="caret-select" id="ddlWard" (change)="changeWardSelection($event.target.value)">
             <option value="0">
               --Select--
             </option>
-            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
-              {{zone.zoneName}}
+            <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+              {{ward.wardName}}
             </option>
           </select>
     </div>
 
     <div id="houseCount" class="col-md-5 text-right total-house">
       <div class="fix-home">
-        <div class="float-third" style="font-size: 16px; display: none;">
+        <div class="float-third" style="font-size: 16px;display: none; ">
           <button style="width: 90%!important; background-color: #0ba118; color: #fff;"
             (click)="resetAllLines();">Reset All</button>
         </div>
@@ -38,7 +38,7 @@
         </div>
         <div class="float-third" style="font-size: 16px;">
           <button id="showBoundries" style="width: 90%!important; background-color: #0ba118; color: #fff;"
-            (click)="showBounderis();">Show Boundaries</button>
+            (click)="showBounderis();">Hide Boundaries</button>
         </div>
       </div>
     </div>
@@ -69,7 +69,7 @@
           << </button>
             <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
               style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; text-align: center; font-weight: bold;"
-              value="7" />
+              value="4" />
             <button (click)="getNextPrevious('next');" class="btn-hvr"
               style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
               >>
