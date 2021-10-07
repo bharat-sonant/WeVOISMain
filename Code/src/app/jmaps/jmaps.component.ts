@@ -96,11 +96,11 @@ export class JmapsComponent {
     let date = "2021-10-04";
     let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
     let year = date.split("-")[0];
-    let dbPath = "WasteCollectionInfo/"+this.selectedWard+"/"+year+"/"+monthName+"/"+date;
-    let preDataInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
+    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
         preDataInstance.unsubscribe();
-        dbPath = "WasteCollectionInfo/"+this.selectedWard+"/"+this.currentYear+"/"+this.currentMonthName+"/"+this.selectedDate;
+        dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
         this.db.object(dbPath).update(data);
         this.getWardData();
       });
@@ -292,13 +292,19 @@ export class JmapsComponent {
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-        let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
         this.db.database.ref(dbPath).set(null);
-        this.db.database.ref(dbPath2).set(null);
+        dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+        this.db.database.ref(dbPath).set(null);
       }
 
-      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
       this.db.database.ref(dbPath).set(null);
+      let date = new Date();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      let second = date.getSeconds();
+      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+      this.db.object(dbPath).update({ resetBy: localStorage.getItem("userID"), resetTime: time });
       this.progressData.coveredLength = "0";
       this.progressData.workPercentage = 0 + "%";
     }

@@ -24,7 +24,7 @@ export class RouteTrackingComponent {
   public map: google.maps.Map;
 
   constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
-db:any;
+  db: any;
   public selectedZone: any;
   zoneList: any[];
   marker = new google.maps.Marker();
@@ -922,7 +922,9 @@ db:any;
                       monthDetailData = [];
                     }
                     monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
-                    localStorage.setItem('routeMonthDetail', JSON.stringify(monthDetailData));
+                    if (monthDate != this.toDayDate) {
+                      localStorage.setItem('routeMonthDetail', JSON.stringify(monthDetailData));
+                    }
                   }
                 );
               });

@@ -61,6 +61,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       $('#divAnalysis').hide();
       $('#tblPenalty').hide();
     }
+    this.getTotals();
   }
 
   getImageOptionTypes() {
@@ -97,7 +98,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   changeOptionSelection(option: any) {
     if (option == "0") {
-      this.commonService.setAlertMessage("error", "Please select option !!!")
+      this.commonService.setAlertMessage("error", "Please select option !!!");
+      this.selectedOption = "0";
       return;
     }
     this.selectedOption = option;
