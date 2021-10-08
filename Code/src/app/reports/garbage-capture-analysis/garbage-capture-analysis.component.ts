@@ -37,6 +37,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     address: "---",
     latLng: "---"
   };
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -45,7 +46,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setDefault() {
-
     this.optionList = [];
     this.selectedOption = "0";
     this.toDayDate = this.commonService.setTodayDate();
@@ -115,17 +115,13 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
       let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
       this.selectedDate = nextDate;
     } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate(
-        $("#txtDate").val(),
-        1
-      );
+      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
       this.selectedDate = previousDate;
     }
     if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
@@ -137,7 +133,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.resetData();
     this.setMonthYear();
     this.getCapturedImages();
-
   }
 
   getTotals() {
@@ -160,7 +155,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
   }
-
 
   getCapturedImages() {
     this.startLoader();
@@ -242,7 +236,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       else {
         $('#divMessage').hide();
       }
-
     }, 1000);
   }
 
@@ -301,7 +294,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setPenaltyCounts(prePenalty, penalty: any) {
-
     let dbPath = "WastebinMonitor/Summary/CategoryWise/totalPenalty";
     let totalInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {

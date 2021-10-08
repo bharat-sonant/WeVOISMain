@@ -18,7 +18,6 @@ export class VtsMonthlyReportComponent implements OnInit {
   zoneList: any[];
   wardDataList: any[];
   yearList: any[];
-  circleList: any[];
   costData: costDatail =
     {
       totalCost: "0",
@@ -60,7 +59,6 @@ export class VtsMonthlyReportComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.setDefault();
   }
-
 
   setDefault() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -148,7 +146,6 @@ export class VtsMonthlyReportComponent implements OnInit {
     this.selectedYear = filterVal;
     this.getWards();
   }
-
   
   getSum(day: any, cost: any) {
     if (day == "day1") {
@@ -246,7 +243,6 @@ export class VtsMonthlyReportComponent implements OnInit {
     }
   }
 
-
   clearAll() {
     this.costData.totalCost = "0.00";
     this.wardDataList = [];
@@ -282,9 +278,7 @@ export class VtsMonthlyReportComponent implements OnInit {
     this.costData.day30 = "0.00";
     this.costData.day31 = "0.00";
   }
-
 }
-
 
 export class costDatail {
   totalCost: string;

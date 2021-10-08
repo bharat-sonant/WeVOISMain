@@ -99,7 +99,8 @@ export class VtsReportComponent {
   }
 
   setKml() {
-    this.commonService.setKML(this.selectedWard, this.map);
+    this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
+    });
   }
 
   changeWardSelection(filterVal: any) {
@@ -156,7 +157,7 @@ export class VtsReportComponent {
   }
 
   drawWardAllLines() {
-    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedWard + ".json").subscribe(data => {
+    this.httpService.get("../../assets/jsons/WardLines/"+this.cityName+"/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var linePath = [];
         var keyArray = Object.keys(data);
@@ -176,31 +177,6 @@ export class VtsReportComponent {
           this.drawRealTimePloylines();
         }
       }
-    }, err => {
-      let wardLineCount = this.db.object("WardLines/" + this.selectedWard + "").valueChanges().subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          var linePath = [];
-          this.wardLines = Number(lineCount);
-          for (let i = 1; i <= Number(this.wardLines); i++) {
-            let dbPath = "Defaults/WardLines/" + this.selectedWard + "/" + i + "/points";
-            let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
-              wardLines.unsubscribe();
-              if (zoneData.length > 0) {
-                let lineData = zoneData;
-                var path = [];
-                for (let j = 0; j < lineData.length; j++) {
-                  path.push({ lat: lineData[j][0], lng: lineData[j][1] });
-                  this.bounds.extend({ lat: lineData[j][0], lng: lineData[j][1] });
-                }
-                linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
-              }
-            });
-          }
-          this.allLines = linePath;
-          this.drawRealTimePloylines();
-        }
-      });
     });
   }
 
@@ -254,14 +230,12 @@ export class VtsReportComponent {
       });
   }
 
-  getSummary() {
-
-    let wardLenghtPath = "WardRouteLength/" + this.selectedWard;
-    let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
-      wardLengthDetails.unsubscribe();
-      if (wardLengthData != null) {
-        this.reportData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(3) + "";
-      } else {
+  getSummary() {        
+    this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
+      if (totalLength != null) {
+        this.reportData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(3);
+      }
+      else {
         this.reportData.wardLength = "0.000";
       }
     });
@@ -289,7 +263,6 @@ export class VtsReportComponent {
         if (workerData["wardCoveredDistance"] != null) {
           this.reportData.coveredLength = (parseFloat(workerData["wardCoveredDistance"].toString()) / 1000).toFixed(3) + "";
         }
-
       }
     });
   }

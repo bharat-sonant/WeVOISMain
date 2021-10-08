@@ -1,15 +1,13 @@
-
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
 import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
@@ -21,7 +19,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class JmapsComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
@@ -31,14 +29,10 @@ export class JmapsComponent {
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
-  workerDetails: any;
-  mapRefrence: any;
   wardLines: any;
   lines: any[];
   polylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
-  wardLineNoMarker: any[];
-  centerPoint: any;
   wardBoundary: any;
   strokeWeight = 4;
   vehicleList: any[];
@@ -49,8 +43,7 @@ export class JmapsComponent {
     coveredLength: "0",
     workPercentage: "0%",
     coveredLengthMeter: 0,
-    workPercentageNumber: 0,
-    completedLines: 0
+    workPercentageNumber: 0
   };
 
   ngOnInit() {
@@ -71,7 +64,6 @@ export class JmapsComponent {
     this.setMaps();
     this.lines = [];
     this.polylines = [];
-    this.wardLineNoMarker = [];
     this.vehicleList = [];
   }
 
@@ -103,13 +95,6 @@ export class JmapsComponent {
       this.wardBoundary.setMap(null);
     }    
     this.wardBoundary = null;
-    if (this.wardLineNoMarker.length > 0) {
-      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-        this.wardLineNoMarker[i]["marker"].setMap(null);
-      }
-    }
-
-    this.wardLineNoMarker = [];
     if (this.marker != null) {
       this.marker.setMap(null);
     }
@@ -159,13 +144,11 @@ export class JmapsComponent {
     this.getWardData();
   }
 
-
   getWardData() {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
   }
-
 
   getProgressDetail() {
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
@@ -178,7 +161,6 @@ export class JmapsComponent {
         } else {
           this.progressData.workPercentage = "0%";
           this.progressData.workPercentageNumber = 0;
-
         }
         if (workerData["wardCoveredDistance"] != null) {
           this.progressData.coveredLengthMeter = Number(workerData["wardCoveredDistance"]);
@@ -187,12 +169,7 @@ export class JmapsComponent {
           this.progressData.coveredLength = "0.00";
           this.progressData.coveredLengthMeter = 0;
         }
-
-        if (workerData["completedLines"] != null) {
-          this.progressData.completedLines = Number(workerData["completedLines"]);
-        } else {
-          this.progressData.completedLines = 0;
-        }
+        
         if (workerData["vehicles"] != null) {
           let vechileList = workerData["vehicles"].split(',');
           if (vechileList.length > 0) {
@@ -213,7 +190,6 @@ export class JmapsComponent {
     this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
-
     
     this.httpService.get("../../assets/jsons/WardLines/"+this.cityName+"/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
@@ -294,7 +270,6 @@ export class JmapsComponent {
       this.closeModel();
     }
   }
-
 
   selectAll() {
     if (this.lines.length > 0) {
@@ -381,10 +356,9 @@ export class JmapsComponent {
       let totalWardLength = this.progressData.totalWardLength;
       let strokeWeight = this.strokeWeight;
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-      let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+      let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
       let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
       google.maps.event.addListener(line, 'click', function (h) {
-
         let dist = 0;
         for (let i = latlngs.length - 1; i > 0; i--) {
           let lat1 = latlngs[i]["lat"];
@@ -403,7 +377,6 @@ export class JmapsComponent {
             Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
           dist = dist + (R * c);
-
         }
 
         let date = new Date();
@@ -411,9 +384,6 @@ export class JmapsComponent {
         let min = date.getMinutes();
         let second = date.getSeconds();
         let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-
-
-        // alert(dist);
 
         let stockColor = "#fa0505";
         let isNew = true;
@@ -424,13 +394,13 @@ export class JmapsComponent {
             if (status == null) {
               isNew = true;
               dbEvent.database.ref(dbPath).set("LineCompleted");
-              dbEvent.database.ref(dbPath2).set(time);
+              dbEvent.database.ref(dbPathTime).set(time);
               stockColor = "#0ba118";
             }
             else {
               isNew = false;
               dbEvent.database.ref(dbPath).set(null);
-              dbEvent.database.ref(dbPath2).set(null);
+              dbEvent.database.ref(dbPathTime).set(null);
               stockColor = "#fa0505";
             }
             var polyOptions = {
@@ -498,7 +468,6 @@ export class JmapsComponent {
         this.setStrokeWeight();
       }
     } else if (type == "next") {
-
       this.strokeWeight = Number(strokeWeight) + 1;
       $("#txtStrokeWeight").val(this.strokeWeight);
       this.setStrokeWeight();
@@ -594,7 +563,7 @@ export class JmapsComponent {
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
     $('#txtVehicle').val("");
-    this.commonService.setAlertMessage("success", "Vehicle add successfully !!!");
+    this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
   }
 
   removeVehicle(index: any) {
@@ -619,9 +588,7 @@ export class JmapsComponent {
       penalty = 0;
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ vtsDone: "yes" });
-    this.db.object(dbPath).update({ userid: localStorage.getItem("userID") });
-    this.db.object(dbPath).update({ penalty: penalty });
+    this.db.object(dbPath).update({ vtsDone: "yes",userid: localStorage.getItem("userID"),penalty: penalty });
     this.commonService.setAlertMessage("success","VTS Tracking for ward "+this.selectedWard+" done !!!");
   }
 
@@ -640,7 +607,6 @@ export class JmapsComponent {
   closeModel() {
     this.modalService.dismissAll();
   }
-
 }
 
 export class progressDetail {
@@ -650,5 +616,4 @@ export class progressDetail {
   workPercentage: string;
   coveredLengthMeter: number;
   workPercentageNumber: number;
-  completedLines: number;
 }
