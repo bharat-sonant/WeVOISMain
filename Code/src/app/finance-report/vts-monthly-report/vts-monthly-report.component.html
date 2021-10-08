@@ -22,13 +22,13 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>            
-            <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
                 style="width: 170px;">
                 <option value="0">
                     --Select Zone--
                   </option>
-                <option *ngFor="let circle of circleList" value={{circle.circleName}}>
-                    {{circle.circleName}}
+                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                    {{zone.zoneName}}
                   </option>
             </select>
         </div>

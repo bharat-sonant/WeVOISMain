@@ -17,7 +17,8 @@ import { FirebaseService } from "../../firebase.service";
 export class VtsReportComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
-  zoneList: any[];
+  zoneList:any[];
+  wardList: any[];
   circleList: any[];
   reportData: ReportData =
     {
@@ -28,11 +29,11 @@ export class VtsReportComponent {
       coveredLength: "0.000"
 
     };
-  selectedZoneNo: any;
-  selectedZoneName: any;
+  selectedWardNo: any;
+  selectedWardName: any;
   selectedDate: any;
 
-  public selectedZone: any;
+  public selectedWard: any;
   allLines: any[];
   totalLineCount: number;
   public bounds: any;
@@ -57,13 +58,13 @@ export class VtsReportComponent {
   setDefault() {
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
-    this.selectedZoneNo = "0";
-    this.selectedZoneName = "---";
-    this.commonService.getCircleWiseWard().then((circleList: any) => {
-      this.circleList = JSON.parse(circleList);
+    this.selectedWardNo = "0";
+    this.selectedWardName = "---";
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
     });
-    this.zoneList = [];
-    this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
+    this.wardList = [];
+    this.wardList.push({ wardNo: "0", wardName: "--Select--" });
     this.setMap();
     this.setContainerHeight();
     this.percentage = 0;
@@ -75,19 +76,19 @@ export class VtsReportComponent {
     $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 201);
   }
 
-  changeCircleSelection(filterVal: any) {
-    this.selectedZoneNo = "0";
-    this.selectedZoneName = "---";
+  changeZoneSelection(filterVal: any) {
+    this.selectedWardNo = "0";
+    this.selectedWardName = "---";
     this.resetAll();
     this.drawChart();
-    this.zoneList = [];
-    this.zoneList.push({ zoneNo: "0", zoneName: "--Select--" });
+    this.wardList = [];
+    this.wardList.push({ wardNo: "0", wardName: "--Select--" });
 
-    let circleDetail = this.circleList.find(item => item.circleName == filterVal);
-    if (circleDetail != undefined) {
-      let zoneList = circleDetail.wardList;
-      for (let i = 1; i < zoneList.length; i++) {
-        this.zoneList.push({ zoneNo: zoneList[i], zoneName: "Ward " + zoneList[i] });
+    let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
+    if (zoneDetail != undefined) {
+      let wardList = zoneDetail.wardList;
+      for (let i = 1; i < wardList.length; i++) {
+        this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
   }
@@ -98,16 +99,16 @@ export class VtsReportComponent {
   }
 
   setKml() {
-    this.commonService.setKML(this.selectedZone, this.map);
+    this.commonService.setKML(this.selectedWard, this.map);
   }
 
-  changeZoneSelection(filterVal: any) {
-    this.selectedZoneNo = filterVal;
+  changeWardSelection(filterVal: any) {
+    this.selectedWardNo = filterVal;
     if (filterVal != "0") {
-      this.selectedZoneName = "Ward " + filterVal;
+      this.selectedWardName = "Ward " + filterVal;
     }
     else {
-      this.selectedZoneName = "---";
+      this.selectedWardName = "---";
     }
     this.showReport();
   }
@@ -134,18 +135,18 @@ export class VtsReportComponent {
     this.resetAll();
     this.setMap();
     this.setKml();
-    this.drawZoneAllLines();
+    this.drawWardAllLines();
   }
 
   resetAll() {
-    this.reportData.zoneName = this.selectedZoneName;
+    this.reportData.zoneName = this.selectedWardName;
     this.reportData.reportDate = this.selectedDate;
     this.percentage = 0;
     this.reportData.coveredLength = "0.000";
     this.reportData.vehicleNo = "--";
     this.reportData.wardLength = "0.000";
     this.bounds = new google.maps.LatLngBounds();
-    this.selectedZone = this.selectedZoneNo;
+    this.selectedWard = this.selectedWardNo;
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
@@ -154,8 +155,8 @@ export class VtsReportComponent {
     this.polylines = [];
   }
 
-  drawZoneAllLines() {
-    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedZone + ".json").subscribe(data => {
+  drawWardAllLines() {
+    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var linePath = [];
         var keyArray = Object.keys(data);
@@ -176,13 +177,13 @@ export class VtsReportComponent {
         }
       }
     }, err => {
-      let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+      let wardLineCount = this.db.object("WardLines/" + this.selectedWard + "").valueChanges().subscribe((lineCount) => {
         wardLineCount.unsubscribe();
         if (lineCount != null) {
           var linePath = [];
           this.wardLines = Number(lineCount);
           for (let i = 1; i <= Number(this.wardLines); i++) {
-            let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
+            let dbPath = "Defaults/WardLines/" + this.selectedWard + "/" + i + "/points";
             let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
               wardLines.unsubscribe();
               if (zoneData.length > 0) {
@@ -206,7 +207,7 @@ export class VtsReportComponent {
   drawRealTimePloylines() {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
-    let dbPathLineCompleted = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectedDate + '/LineStatus';
+    let dbPathLineCompleted = 'WasteCollectionInfo/' + this.selectedWard + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectedDate + '/LineStatus';
     let lineCompletedRecords = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
       data => {
         for (let index = 1; index <= this.allLines.length; index++) {
@@ -255,7 +256,7 @@ export class VtsReportComponent {
 
   getSummary() {
 
-    let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
+    let wardLenghtPath = "WardRouteLength/" + this.selectedWard;
     let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
       wardLengthDetails.unsubscribe();
       if (wardLengthData != null) {
@@ -265,7 +266,7 @@ export class VtsReportComponent {
       }
     });
 
-    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
       workerDetails.unsubscribe();
       if (workerData != null) {

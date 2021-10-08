@@ -7,20 +7,19 @@
                 <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')"
                   style="height: 45px; width: 150px; margin-right: 8px;" />
                 <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
-                <select class="caret-select" id="ddlCircle" style="width: 150px;"
-                (change)="changeCircleSelection($event.target.value)">
+                <select class="caret-select" id="ddlZone" style="width: 150px;"
+                (change)="changeZoneSelection($event.target.value)">
                 <option value="0">
                     --Select Zone--
                   </option>
-                <option *ngFor="let circle of circleList" value={{circle.circleName}}>
-                  {{circle.circleName}}
+                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                  {{zone.zoneName}}
                 </option>
               </select>
-              <select class="caret-select" id="ddlZone" style="width: 150px;"
-                (change)="changeZoneSelection($event.target.value)">
-                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                  ngSelected="zone.zoneNo == selectedZone?'selected':'0'">
-                  {{zone.zoneName}}
+              <select class="caret-select" id="ddlWard" style="width: 150px;"
+                (change)="changeWardSelection($event.target.value)">
+                <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+                  {{ward.wardName}}
                 </option>
               </select>
               </div>

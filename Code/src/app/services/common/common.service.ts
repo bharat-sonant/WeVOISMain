@@ -1306,7 +1306,7 @@ export class CommonService {
       if (cityName == "demo") {
         cityName = "jaipur"
       }
-      //cityName="jaipur-greater";
+      cityName="jaipur-greater";
       this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);

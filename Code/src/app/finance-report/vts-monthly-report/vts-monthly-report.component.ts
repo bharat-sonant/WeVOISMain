@@ -13,7 +13,7 @@ export class VtsMonthlyReportComponent implements OnInit {
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
-  selectedCircle: any;
+  selectedZone: any;
   db: any;
   zoneList: any[];
   wardDataList: any[];
@@ -69,8 +69,8 @@ export class VtsMonthlyReportComponent implements OnInit {
     this.selectedYear = this.toDayDate.split('-')[0];
     $('#ddlMonth').val(this.selectedMonth);
     $('#ddlYear').val(this.selectedYear);
-    this.commonService.getCircleWiseWard().then((circleList: any) => {
-      this.circleList = JSON.parse(circleList);
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
     });
   }
 
@@ -85,11 +85,11 @@ export class VtsMonthlyReportComponent implements OnInit {
   getWards() {
     this.clearAll();
     this.wardDataList = [];
-    let circleDetail = this.circleList.find(item => item.circleName == this.selectedCircle);
-    if (circleDetail != undefined) {
-      let zoneList = circleDetail.wardList;
-      for (let i = 1; i < zoneList.length; i++) {
-        this.wardDataList.push({ wardNo: zoneList[i], wardName: "Ward " + zoneList[i],cost:0 });
+    let zoneDetail = this.zoneList.find(item => item.zoneName == this.selectedZone);
+    if (zoneDetail != undefined) {
+      let wardList = zoneDetail.wardList;
+      for (let i = 1; i < wardList.length; i++) {
+        this.wardDataList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i],cost:0 });
       }
     }
     if (this.wardDataList.length > 0) {
@@ -134,8 +134,8 @@ export class VtsMonthlyReportComponent implements OnInit {
     }
   }
 
-  changeCircleSelection(filterVal: any) {
-    this.selectedCircle = filterVal;
+  changeZoneSelection(filterVal: any) {
+    this.selectedZone = filterVal;
     this.getWards();
   }
 
@@ -248,7 +248,6 @@ export class VtsMonthlyReportComponent implements OnInit {
 
 
   clearAll() {
-    this.zoneList = [];
     this.costData.totalCost = "0.00";
     this.wardDataList = [];
     this.costData.day1 = "0.00";
