@@ -16,6 +16,7 @@ export class CommonService {
   fsDb: any;
   zoneKML: any;
   map: any;
+  wardKML: any;
 
 
   setTodayDate() {
@@ -1306,7 +1307,6 @@ export class CommonService {
       if (cityName == "demo") {
         cityName = "jaipur"
       }
-      cityName="jaipur-greater";
       this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -1334,8 +1334,8 @@ export class CommonService {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
-              let index=keyArray[i];
-              categoryList.push({id:index,optionType:data[index]["en"]});
+              let index = keyArray[i];
+              categoryList.push({ id: index, optionType: data[index]["en"] });
             }
           }
           resolve(JSON.stringify(categoryList));
@@ -1346,13 +1346,13 @@ export class CommonService {
 
 
 
-  getCircleWiseWard(){
+  getCircleWiseWard() {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
         cityName = "jaipur"
       }
-      let circleList=[];
+      let circleList = [];
       this.httpService.get("../../assets/jsons/CircleWiseWard/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -1365,13 +1365,13 @@ export class CommonService {
             resolve(JSON.stringify(circleList));
           }
         }
-      });      
+      });
     });
   }
 
-  getZoneWiseWard(){
+  getZoneWiseWard() {
     return new Promise((resolve) => {
-      let zoneList=[];
+      let zoneList = [];
       this.httpService.get("../../assets/jsons/CircleWiseWard/jaipur-greater.json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -1384,10 +1384,36 @@ export class CommonService {
             resolve(JSON.stringify(zoneList));
           }
         }
-      });      
+      });
     });
   }
-  
+
+  setWardsKML(wardNo: any, map: any) {
+    return new Promise((resolve) => {
+      let cityName = localStorage.getItem("cityName");
+      if (cityName == "demo") {
+        cityName = "jaipur"
+      }
+      this.httpService.get("../../assets/jsons/WardBoundries/" + cityName + ".json").subscribe(data => {
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let wardNos = keyArray[i];
+            if (wardNos == wardNo) {
+              this.wardKML = new google.maps.KmlLayer({
+                url: data[wardNos].toString(),
+                map: map,
+              });
+            }
+            }
+            resolve(this.wardKML);
+          }
+        }
+      });
+    });
+  }
+
   getWardLineCount(zoneNo: any) {
     let wardLines = 0;
     let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
@@ -1399,6 +1425,8 @@ export class CommonService {
     }
     return wardLines;
   }
+
+
 
   //#endregion
 

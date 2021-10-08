@@ -39,7 +39,7 @@ export class JmapsComponent {
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   wardLineNoMarker: any[];
   centerPoint: any;
-  zoneKML: any;
+  wardKML: any;
   strokeWeight = 4;
   vehicleList: any[];
   zoneList: any[];
@@ -99,10 +99,10 @@ export class JmapsComponent {
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
     $('#txtPenalty').val("0");
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-      this.zoneKML = null;
-    }
+    if (this.wardKML != null) {
+      this.wardKML.setMap(null);
+    }    
+    this.wardKML = null;
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
         this.wardLineNoMarker[i]["marker"].setMap(null);
@@ -126,7 +126,6 @@ export class JmapsComponent {
     this.lines = [];
     this.vehicleList = [];
   }
-
 
   changeWardSelection(filterVal: any) {
     if (filterVal == "0") {
@@ -211,7 +210,10 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    this.zoneKML = this.commonService.setKML(this.selectedWard, this.map);
+    this.commonService.setWardsKML(this.selectedWard,this.map).then((wardKML: any) => {
+      this.wardKML = wardKML;
+    });
+    
     this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
@@ -560,13 +562,13 @@ export class JmapsComponent {
   showBounderis() {
     if ($('#showBoundries').html() == "Show Boundaries") {
       $('#showBoundries').html("Hide Boundaries");
-      this.zoneKML = this.commonService.setKML(this.selectedWard, this.map);
+      this.wardKML = this.commonService.setWardsKML(this.selectedWard, this.map);
     }
     else {
       $('#showBoundries').html("Show Boundaries");
-      if (this.zoneKML != null) {
-        this.zoneKML.setMap(null);
-        this.zoneKML = null;
+      if (this.wardKML != null) {
+        this.wardKML.setMap(null);
+        this.wardKML = null;
       }
     }
     this.setStrokeWeight();
