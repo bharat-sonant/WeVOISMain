@@ -16,7 +16,7 @@ export class CommonService {
   fsDb: any;
   zoneKML: any;
   map: any;
-  wardKML: any;
+  wardBoundary: any;
 
 
   setTodayDate() {
@@ -1388,7 +1388,7 @@ export class CommonService {
     });
   }
 
-  setWardsKML(wardNo: any, map: any) {
+  setWardBoundary(wardNo: any, map: any) {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
@@ -1401,13 +1401,13 @@ export class CommonService {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNos = keyArray[i];
             if (wardNos == wardNo) {
-              this.wardKML = new google.maps.KmlLayer({
+              this.wardBoundary = new google.maps.KmlLayer({
                 url: data[wardNos].toString(),
                 map: map,
               });
             }
             }
-            resolve(this.wardKML);
+            resolve(this.wardBoundary);
           }
         }
       });

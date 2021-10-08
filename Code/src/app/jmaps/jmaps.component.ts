@@ -39,7 +39,7 @@ export class JmapsComponent {
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   wardLineNoMarker: any[];
   centerPoint: any;
-  wardKML: any;
+  wardBoundary: any;
   strokeWeight = 4;
   vehicleList: any[];
   zoneList: any[];
@@ -99,10 +99,10 @@ export class JmapsComponent {
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
     $('#txtPenalty').val("0");
-    if (this.wardKML != null) {
-      this.wardKML.setMap(null);
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
     }    
-    this.wardKML = null;
+    this.wardBoundary = null;
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
         this.wardLineNoMarker[i]["marker"].setMap(null);
@@ -210,11 +210,12 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    this.commonService.setWardsKML(this.selectedWard,this.map).then((wardKML: any) => {
-      this.wardKML = wardKML;
+    this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
+      this.wardBoundary = wardKML;
     });
+
     
-    this.httpService.get("../../assets/jsons/JaipurGreater/" + this.selectedWard + ".json").subscribe(data => {
+    this.httpService.get("../../assets/jsons/WardLines/"+this.cityName+"/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -240,32 +241,6 @@ export class JmapsComponent {
           }
         }
       }
-    }, err => {
-      let wardLineCount = this.db.object("WardLines/" + this.selectedWard + "").valueChanges().subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          this.wardLines = Number(lineCount);
-          for (let i = 1; i <= Number(this.wardLines); i++) {
-            let dbPath = "Defaults/WardLines/" + this.selectedWard + "/" + i + "/points";
-            let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
-              wardLines.unsubscribe();
-              if (zoneData.length > 0) {
-                let lineData = zoneData;
-                var latLng = [];
-                for (let j = 0; j < lineData.length; j++) {
-                  latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-                }
-                this.lines.push({
-                  lineNo: i,
-                  latlng: latLng,
-                  color: "#fa0505",
-                });
-                this.plotLineOnMap(i, latLng, i - 1, this.selectedWard);
-              }
-            });
-          }
-        }
-      });
     });
   }
 
@@ -562,14 +537,16 @@ export class JmapsComponent {
   showBounderis() {
     if ($('#showBoundries').html() == "Show Boundaries") {
       $('#showBoundries').html("Hide Boundaries");
-      this.wardKML = this.commonService.setWardsKML(this.selectedWard, this.map);
+      this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
+        this.wardBoundary = wardKML;
+      });
     }
     else {
       $('#showBoundries').html("Show Boundaries");
-      if (this.wardKML != null) {
-        this.wardKML.setMap(null);
-        this.wardKML = null;
+      if (this.wardBoundary != null) {
+        this.wardBoundary.setMap(null);
       }
+      this.wardBoundary = null;
     }
     this.setStrokeWeight();
   }
@@ -636,7 +613,7 @@ export class JmapsComponent {
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
 
-  saveDone() {
+  saveVTSTrackingDone() {
     let penalty = $('#txtPenalty').val();
     if (penalty == "") {
       penalty = 0;
@@ -645,6 +622,7 @@ export class JmapsComponent {
     this.db.object(dbPath).update({ vtsDone: "yes" });
     this.db.object(dbPath).update({ userid: localStorage.getItem("userID") });
     this.db.object(dbPath).update({ penalty: penalty });
+    this.commonService.setAlertMessage("success","VTS Tracking for ward "+this.selectedWard+" done !!!");
   }
 
   openModel(content: any) {
