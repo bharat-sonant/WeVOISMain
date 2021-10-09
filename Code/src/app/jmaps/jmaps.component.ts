@@ -65,6 +65,11 @@ export class JmapsComponent {
     this.lines = [];
     this.polylines = [];
     this.vehicleList = [];
+    if(localStorage.getItem("strokeWeight")!=null)
+    {
+      this.strokeWeight=Number(localStorage.getItem("strokeWeight"));
+      $('#txtStrokeWeight').val(this.strokeWeight);
+    }
   }
 
   changeZoneSelection(filterVal: any) {
@@ -93,7 +98,7 @@ export class JmapsComponent {
     $('#txtPenalty').val("0");
     if (this.wardBoundary != null) {
       this.wardBoundary.setMap(null);
-    }    
+    }
     this.wardBoundary = null;
     if (this.marker != null) {
       this.marker.setMap(null);
@@ -169,7 +174,7 @@ export class JmapsComponent {
           this.progressData.coveredLength = "0.00";
           this.progressData.coveredLengthMeter = 0;
         }
-        
+
         if (workerData["vehicles"] != null) {
           let vechileList = workerData["vehicles"].split(',');
           if (vechileList.length > 0) {
@@ -187,11 +192,11 @@ export class JmapsComponent {
   }
 
   getAllLinesFromJson() {
-    this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
+    this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
-    
-    this.httpService.get("../../assets/jsons/WardLines/"+this.cityName+"/" + this.selectedWard + ".json").subscribe(data => {
+
+    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -236,6 +241,7 @@ export class JmapsComponent {
         this.db.object(dbPath).update(data);
         this.getWardData();
       });
+      this.hideSetting();
   }
 
   resetAllLines() {
@@ -247,7 +253,7 @@ export class JmapsComponent {
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
-        this.polylines[j]["strokeColor"]="#fa0505";
+        this.polylines[j]["strokeColor"] = "#fa0505";
 
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
@@ -269,12 +275,15 @@ export class JmapsComponent {
       this.progressData.workPercentage = 0 + "%";
       this.closeModel();
     }
+
   }
 
   selectAll() {
     if (this.lines.length > 0) {
       let dist = 0;
+      let lineLength = [];
       for (let j = 0; j < this.lines.length; j++) {
+        let lineDistance = 0;
         let line = new google.maps.Polyline(this.polylines[j]);
         var polyOptions = {
           strokeColor: "#0ba118",
@@ -301,6 +310,7 @@ export class JmapsComponent {
             Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
           dist = dist + (R * c);
+          lineDistance = lineDistance + (R * c);
         }
         let date = new Date();
         let hour = date.getHours();
@@ -313,8 +323,12 @@ export class JmapsComponent {
         let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
         this.db.database.ref(dbPath).set("LineCompleted");
         this.db.database.ref(dbPath2).set(time);
+        console.log("lineNo: " + lineNo);
+        console.log("length: " + lineDistance.toFixed(0));
+        lineLength.push({ lineNo: lineNo, length: lineDistance.toFixed(0) });
 
       }
+      console.log(lineLength);
 
       let wardCoveredDistance = dist;
       let completedLines = this.lines.length - 1;
@@ -333,6 +347,7 @@ export class JmapsComponent {
       this.progressData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
       this.progressData.workPercentage = workPercentage + "%";
     }
+    this.hideSetting();
   }
 
   plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
@@ -465,11 +480,13 @@ export class JmapsComponent {
       if (strokeWeight != "1") {
         this.strokeWeight = Number(strokeWeight) - 1;
         $("#txtStrokeWeight").val(this.strokeWeight);
+        localStorage.setItem("strokeWeight",this.strokeWeight.toFixed(0));
         this.setStrokeWeight();
       }
     } else if (type == "next") {
       this.strokeWeight = Number(strokeWeight) + 1;
       $("#txtStrokeWeight").val(this.strokeWeight);
+      localStorage.setItem("strokeWeight",this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
   }
@@ -503,10 +520,17 @@ export class JmapsComponent {
     }
   }
 
+  hideSetting() {
+    let element = <HTMLElement>document.getElementById("collapsetwo");
+    let className = element.className;
+    $("#collapsetwo").removeClass(className);
+    $("#collapsetwo").addClass("panel-collapse collapse in");
+  }
+
   showBounderis() {
     if ($('#showBoundries').html() == "Show Boundaries") {
       $('#showBoundries').html("Hide Boundaries");
-      this.commonService.setWardBoundary(this.selectedWard,this.map).then((wardKML: any) => {
+      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
       });
     }
@@ -518,6 +542,7 @@ export class JmapsComponent {
       this.wardBoundary = null;
     }
     this.setStrokeWeight();
+    this.hideSetting();
   }
 
   setHeight() {
@@ -588,8 +613,8 @@ export class JmapsComponent {
       penalty = 0;
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ vtsDone: "yes",userid: localStorage.getItem("userID"),penalty: penalty });
-    this.commonService.setAlertMessage("success","VTS Tracking for ward "+this.selectedWard+" done !!!");
+    this.db.object(dbPath).update({ vtsDone: "yes", userid: localStorage.getItem("userID"), penalty: penalty });
+    this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
   }
 
   openModel(content: any) {
@@ -606,6 +631,7 @@ export class JmapsComponent {
 
   closeModel() {
     this.modalService.dismissAll();
+    this.hideSetting();
   }
 }
 

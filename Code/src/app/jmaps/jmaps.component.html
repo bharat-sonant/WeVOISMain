@@ -8,14 +8,14 @@
             >>
           </button>
           <select class="caret-select" id="ddlZone" style="width: 150px;"
-                (change)="changeZoneSelection($event.target.value)">
-                <option value="0">
-                    --Select Zone--
-                  </option>
-                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
-                  {{zone.zoneName}}
-                </option>
-              </select>
+            (change)="changeZoneSelection($event.target.value)">
+            <option value="0">
+              --Select Zone--
+            </option>
+            <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+              {{zone.zoneName}}
+            </option>
+          </select>
           <select class="caret-select" id="ddlWard" (change)="changeWardSelection($event.target.value)">
             <option value="0">
               --Select--
@@ -29,8 +29,8 @@
     <div id="houseCount" class="col-md-3 text-right total-house">
       <div class="fix-home">
         <div class="float-third" style="font-size: 16px;">
-            <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
-            aria-expanded="true" aria-controls="collapsetwo">Setting <i class="fas fa-cog fa-spin"></i></button>
+          <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+            aria-expanded="true" aria-controls="collapsetwo">Settings <i class="fas fa-cog fa-spin"></i></button>
         </div>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
@@ -45,21 +45,38 @@
                 <div class="col-md-12 text-left">
                   <div class="setting-box">
                     <p id="showBoundries"> Hide Boundaries</p>
-                    
-                    <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i class="fas fa-grip-lines-vertical"></i></button>
+
+                    <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
+                        class="fas fa-grip-lines-vertical"></i></button>
                   </div>
                   <div class="setting-box">
                     <p> Select All</p>
-                    <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i class="far fa-window-restore"></i></button>
+                    <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i
+                        class="far fa-window-restore"></i></button>
                   </div>
                   <div class="setting-box">
                     <p> Reset All</p>
-                    <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i class="fas fa-check-double"></i></button>
+                    <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i
+                        class="fas fa-check-double"></i></button>
                   </div>
                   <div class="setting-box">
                     <p class="previous-data"><b>Get Previous Data</b></p> <br>
                     <input class="date-input date" id="txtPreDate" type="date">
                     <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
+                  </div>
+                  <div class="setting-box" style="padding-bottom: 10px!important;">
+
+                    <button (click)="getNextPrevious('pre');" class="btn-primary"
+                      style="background-color: #0ba118!important;">
+                      << </button>
+                        <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
+                          autocomplete="off" class="date-input" style="text-align: center; width: 170px; font-weight: bold;"
+                          value="4" />
+                        <button (click)="getNextPrevious('next');" class="btn-primary"
+                          style="background-color: #0ba118!important;">
+                          >>
+                        </button>
+
                   </div>
                 </div>
               </div>
@@ -75,7 +92,8 @@
 
 
 <div id="divJaipurGreaterDetail">
-  <div class="ward-percentage">
+  <div class="jaipur-line-details-box">
+    <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
     <div class="lines-left">
       <h3>
         <div class="progress">
@@ -84,24 +102,7 @@
             aria-valuemax="100">{{progressData.workPercentage}}</div>
         </div>
       </h3>
-    </div>
-  </div>
-
-  <div class="jaipur-line-details-box">
-    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
-      <div>
-        <button (click)="getNextPrevious('pre');" class="btn-hvr"
-          style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
-          << </button>
-            <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
-              style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; text-align: center; font-weight: bold;"
-              value="4" />
-            <button (click)="getNextPrevious('next');" class="btn-hvr"
-              style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
-              >>
-            </button>
-      </div>
-    </div>
+    </div></div>
     <div class="lines">
       <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
         <p>Total Ward Length</p>
@@ -113,7 +114,6 @@
       </h3>
     </div>
   </div>
-
 </div>
 
 
@@ -161,13 +161,13 @@
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
     <div>
       Penalty
-      <input id="txtPenalty" type="number"  autocomplete="off"
-        style="width: 180px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold; text-align: right;" value="0" />
+      <input id="txtPenalty" type="number" autocomplete="off"
+        style="width: 180px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold; text-align: right;"
+        value="0" />
 
     </div>
     <div>
-      <button class="VTS-button"
-        (click)="saveVTSTrackingDone();">VTS Tracking Done</button>
+      <button class="VTS-button" (click)="saveVTSTrackingDone();">VTS Tracking Done</button>
     </div>
   </div>
 </div>
@@ -175,22 +175,22 @@
 <!--Reset Confirmation Start-->
 <ng-template #contentPlanConfirm>
   <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Are you sure to reset?</h5>                
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <div class="col-md-6" style="text-align: center;">
-                      <button class="btn btn-success " (click)="resetAllLines();" style="background-color: #0ba118;">
-                          Confirm</button>
-                  </div>
-                  <div class="col-md-6" style="text-align: center;">
-                      <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
-                  </div>
-              </div>
-          </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Are you sure to reset?</h5>
       </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6" style="text-align: center;">
+            <button class="btn btn-success " (click)="resetAllLines();" style="background-color: #0ba118;">
+              Confirm</button>
+          </div>
+          <div class="col-md-6" style="text-align: center;">
+            <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-template>
 <!--Reset Confirmation End-->

@@ -6,7 +6,7 @@
   .caret-select{margin-top: 10px!important; margin-left:10px!important;
   border-radius: 5px; width: 130px; font-size: 12px;
   padding:8px; border:none!important;}
-  button{width: 50%;   border-radius: 5px; padding:10px; margin-top: 10px!important; border:none!important; margin-left: -30px; margin-left:20px!important; }
+  button{width: 50%;   border-radius: 5px; padding:10px; margin-top: 10px!important; border:none!important; margin-left:20px; }
   
   
   
@@ -32,8 +32,9 @@
   background-color: #49ac41;
   background: #888!important;
   color: #ffffff;
-  height: 36px;
-  width: 37px;
+  height: 36px!important;
+  width: 37px!important;
+  margin-left: 0px!important;
   }
   .btn-primary:hover{
   background-color: #2dbd23!important;
@@ -283,7 +284,7 @@
   box-shadow: 0 1px 5px 1px #80bd7b;
   position: absolute;
   right: 15px;
-  top: 265px;
+  top: 190px;
   /* border-radius: 5px; */
   border:1px solid #80bd7b;
   }
@@ -387,7 +388,7 @@
   box-shadow: 0 2px 5px 2px #dedede;
   position: absolute;
   right: 15px;
-  top: 140px;
+  top: 70px;
   /* border-radius: 5px; */
   border: 1px solid lightgray;
   }
