@@ -87,7 +87,7 @@ export class VtsMonthlyReportComponent implements OnInit {
     if (zoneDetail != undefined) {
       let wardList = zoneDetail.wardList;
       for (let i = 1; i < wardList.length; i++) {
-        this.wardDataList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i],cost:0 });
+        this.wardDataList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i], cost: 0 });
       }
     }
     if (this.wardDataList.length > 0) {
@@ -111,20 +111,27 @@ export class VtsMonthlyReportComponent implements OnInit {
         data => {
           summaryInstance.unsubscribe();
           if (data != null) {
-            let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
-            if (zoneDetails != undefined) {
-              let d = "day" + parseFloat(monthDate.split("-")[2]);
-              let dataHtml="";
-              if(data["workPercentage"]!=null){
-                dataHtml="<b>"+data["workPercentage"]+"%</b>";
+            if (data["vtsDone"] != null) {
+              let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
+              if (zoneDetails != undefined) {
+                let d = "day" + parseFloat(monthDate.split("-")[2]);
+                let dataHtml = "";
+                if (data["workPercentage"] != null) {
+                  dataHtml = "<b>" + data["workPercentage"] + "%</b>";
+                }
+                else{
+                  dataHtml = "<b>0%</b>";
+                }
+                if (data["penalty"] != null) {
+                  if (data["penalty"] != 0) {
+                    dataHtml = dataHtml + " (<span style='color:red;'>" + data["penalty"] + "</span>)";
+                    zoneDetails.cost = (Number(data["penalty"]) + Number(zoneDetails.cost)).toFixed(2);
+                    this.costData.totalCost = (Number(this.costData.totalCost) + Number(data["penalty"])).toFixed(2);
+                    this.getSum(d, data["penalty"]);
+                  }
+                }
+                zoneDetails[d] = dataHtml;
               }
-              if(data["penalty"]!=null){
-                dataHtml=dataHtml+" (<span style='color:red;'>"+data["penalty"]+"</span>)";
-                zoneDetails.cost = (Number(data["penalty"]) + Number(zoneDetails.cost)).toFixed(2);
-                this.costData.totalCost=(Number(this.costData.totalCost)+Number(data["penalty"])).toFixed(2);
-                this.getSum(d, data["penalty"]);
-              }
-              zoneDetails[d]=dataHtml;
             }
           }
         }
@@ -146,7 +153,7 @@ export class VtsMonthlyReportComponent implements OnInit {
     this.selectedYear = filterVal;
     this.getWards();
   }
-  
+
   getSum(day: any, cost: any) {
     if (day == "day1") {
       this.costData.day1 = (parseFloat(this.costData.day1) + parseFloat(cost)).toFixed(2);

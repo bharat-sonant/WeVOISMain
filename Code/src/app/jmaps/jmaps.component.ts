@@ -43,7 +43,8 @@ export class JmapsComponent {
     coveredLength: "0",
     workPercentage: "0%",
     coveredLengthMeter: 0,
-    workPercentageNumber: 0
+    workPercentageNumber: 0,
+    penalty: 0
   };
 
   ngOnInit() {
@@ -65,11 +66,12 @@ export class JmapsComponent {
     this.lines = [];
     this.polylines = [];
     this.vehicleList = [];
-    if(localStorage.getItem("strokeWeight")!=null)
-    {
-      this.strokeWeight=Number(localStorage.getItem("strokeWeight"));
+    if (localStorage.getItem("strokeWeight") != null) {
+      this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
       $('#txtStrokeWeight').val(this.strokeWeight);
     }
+    $('#iconDone').hide();
+    $('#iconPending').show();
   }
 
   changeZoneSelection(filterVal: any) {
@@ -92,9 +94,12 @@ export class JmapsComponent {
 
   resetAll() {
     $('#showBoundries').html("Hide Boundaries");
+    $('#iconDone').hide();
+    $('#iconPending').show();
     this.progressData.coveredLength = "0";
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
+    this.progressData.penalty = 0;
     $('#txtPenalty').val("0");
     if (this.wardBoundary != null) {
       this.wardBoundary.setMap(null);
@@ -115,6 +120,7 @@ export class JmapsComponent {
     this.polylines = [];
     this.lines = [];
     this.vehicleList = [];
+
   }
 
   changeWardSelection(filterVal: any) {
@@ -185,6 +191,11 @@ export class JmapsComponent {
         }
         if (workerData["penalty"] != null) {
           $('#txtPenalty').val(workerData["penalty"]);
+          this.progressData.penalty = workerData["penalty"];
+        }
+        if (workerData["vtsDone"] != null) {
+          $('#iconDone').show();
+          $('#iconPending').hide();
         }
       }
       this.getAllLinesFromJson();
@@ -241,7 +252,7 @@ export class JmapsComponent {
         this.db.object(dbPath).update(data);
         this.getWardData();
       });
-      this.hideSetting();
+    this.hideSetting();
   }
 
   resetAllLines() {
@@ -480,13 +491,13 @@ export class JmapsComponent {
       if (strokeWeight != "1") {
         this.strokeWeight = Number(strokeWeight) - 1;
         $("#txtStrokeWeight").val(this.strokeWeight);
-        localStorage.setItem("strokeWeight",this.strokeWeight.toFixed(0));
+        localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
         this.setStrokeWeight();
       }
     } else if (type == "next") {
       this.strokeWeight = Number(strokeWeight) + 1;
       $("#txtStrokeWeight").val(this.strokeWeight);
-      localStorage.setItem("strokeWeight",this.strokeWeight.toFixed(0));
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
   }
@@ -614,6 +625,10 @@ export class JmapsComponent {
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vtsDone: "yes", userid: localStorage.getItem("userID"), penalty: penalty });
+    
+    $('#iconDone').show();
+    $('#iconPending').hide();
+    this.progressData.penalty=Number(penalty);
     this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
   }
 
@@ -642,4 +657,5 @@ export class progressDetail {
   workPercentage: string;
   coveredLengthMeter: number;
   workPercentageNumber: number;
+  penalty: number;
 }

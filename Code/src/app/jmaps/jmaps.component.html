@@ -28,9 +28,21 @@
 
     <div id="houseCount" class="col-md-3 text-right total-house">
       <div class="fix-home">
-        <div class="float-third" style="font-size: 16px;">
+        <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
+          <i id="iconDone" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
+          <i id="iconPending" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
+          <h6 id="divTracking" style="font-size: 9px!important;">Tracking</h6>
+        </div>
+        <div class="float-second" style="margin-top: 10px;">
+          <span class="house"> {{progressData.penalty}}</span><br>
+          <h6 style="font-size: 9px!important;">Penalty</h6>
+        </div>
+
+        <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
-            aria-expanded="true" aria-controls="collapsetwo">Settings <i class="fas fa-cog fa-spin"></i></button>
+            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
+            <h6 style="font-size: 9px!important;">Settings</h6></button>
+            
         </div>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
@@ -70,8 +82,8 @@
                       style="background-color: #0ba118!important;">
                       << </button>
                         <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
-                          autocomplete="off" class="date-input" style="text-align: center; width: 170px; font-weight: bold;"
-                          value="4" />
+                          autocomplete="off" class="date-input"
+                          style="text-align: center; width: 170px; font-weight: bold;" value="4" />
                         <button (click)="getNextPrevious('next');" class="btn-primary"
                           style="background-color: #0ba118!important;">
                           >>
@@ -94,15 +106,16 @@
 <div id="divJaipurGreaterDetail">
   <div class="jaipur-line-details-box">
     <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
-    <div class="lines-left">
-      <h3>
-        <div class="progress">
-          <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-            [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25" aria-valuemin="0"
-            aria-valuemax="100">{{progressData.workPercentage}}</div>
-        </div>
-      </h3>
-    </div></div>
+      <div class="lines-left">
+        <h3>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+              [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25" aria-valuemin="0"
+              aria-valuemax="100">{{progressData.workPercentage}}</div>
+          </div>
+        </h3>
+      </div>
+    </div>
     <div class="lines">
       <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
         <p>Total Ward Length</p>
