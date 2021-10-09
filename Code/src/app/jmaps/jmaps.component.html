@@ -1,7 +1,7 @@
 <section class="header">
   <div class="row no-gutters">
     <div class="col-md-9">
-      <button class="btn btn-primary " (click)="setDate('','previous');">
+      <button class="btn btn-primary " style="margin-left: 20px!important;" (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
           <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
