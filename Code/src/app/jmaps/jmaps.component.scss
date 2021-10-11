@@ -598,14 +598,13 @@
   margin-top: 1px!important;
   }
   .VTS-button{
-   width: 100%; 
-     border-radius: 5px; 
-     padding:10px; 
-     margin-top: 10px!important;
-      border:none!important; 
-      margin-left: -6px !important; 
-      background-color: #0ba118; 
-      color: #fff;
+    width: 134px;
+    border-radius: 5px;
+    padding: 10px;
+    border: none !important;
+    background-color: #0ba118;
+    color: #fff;
+    font-size: 12px;
      }
   
   
@@ -701,6 +700,7 @@ text-transform: uppercase;
 letter-spacing: 1px;
 font-weight: bold;
 transition: 0.5s;
+text-align: right;
 }
 .btn-accordion:hover{
 color: #0ba118;
@@ -730,6 +730,9 @@ float: left;
 padding: 0px 10px;
 border-bottom: 1px solid lightgray;
 }
+.setting-box i{
+  color: #0ba118;
+}
 .image-circle{
 background: #0c9b1826;
   padding: 15px;
@@ -752,7 +755,7 @@ display: inline-block;
   height: 30px;
   text-align: center;
   border-radius: 50%;
-  background: #0ba118;
+  background: #0ba11723;
 }
 .setting-box button{
   width: 85px;
@@ -774,3 +777,33 @@ width: 142px;
   margin-top: 5px!important;
   margin-bottom: 15px;
 } 
+
+
+/***********Penalty Input******************/
+.penalty-input{
+  width: 60px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  margin-top: 20px;
+  padding: 7px 0px;
+  text-align: center;
+  font-weight: bold;
+}
+.penalty-input:focus-visible{
+  outline: 1px solid #0ba118!important;
+}
+.penalty-icon{
+  width: 25px;
+  margin-right: 5px;
+}
+.header-penalty{
+  width: 15px;
+}
+.d-ib{
+  display: inline-block;
+}
+
+
+
+
+

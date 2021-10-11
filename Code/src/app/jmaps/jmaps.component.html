@@ -34,7 +34,7 @@
           <h6 id="divTracking" style="font-size: 9px!important;">Tracking</h6>
         </div>
         <div class="float-second" style="margin-top: 10px;">
-          <span class="house"> {{progressData.penalty}}</span><br>
+          <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg" class="img-fluid header-penalty" alt=""> </span><br>
           <h6 style="font-size: 9px!important;">Penalty</h6>
         </div>
 
@@ -172,14 +172,12 @@
     </div>
   </div>
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
-    <div>
-      Penalty
-      <input id="txtPenalty" type="number" autocomplete="off"
-        style="width: 180px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold; text-align: right;"
-        value="0" />
+    <div class="d-ib">
+      <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
+      <input class="penalty-input" id="txtPenalty" type="number" autocomplete="off" value="0" />
 
     </div>
-    <div>
+    <div class="d-ib">
       <button class="VTS-button" (click)="saveVTSTrackingDone();">VTS Tracking Done</button>
     </div>
   </div>
