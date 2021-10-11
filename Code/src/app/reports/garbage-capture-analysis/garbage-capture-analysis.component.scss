@@ -823,8 +823,9 @@ padding-left: 5px!important;
 .info-box{
 background: #fff;
 border:1px solid lightgray;
-min-height: 50px;
+min-height: 10vh;
 border-radius: 5px;
+
 }
 .inner-data{
 padding: 7px 20px;
@@ -852,7 +853,7 @@ overflow-x: hidden!important;
 .inner-box{
 background: #fff;
 border:1px solid lightgray;
-min-height: 70px!important;
+min-height: 5vh!important;
 border-radius: 5px;
 }
 .inner-box .inner-data{
@@ -929,7 +930,7 @@ align-items: center;
   padding: 5px 10px!important;
 }
 .main-final-blk{
-  min-height: 60px!important;
+  min-height: 5vh!important;
 }
 .main-content{
   margin-top: -35px;
