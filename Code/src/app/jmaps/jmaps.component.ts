@@ -447,7 +447,7 @@ export class JmapsComponent implements OnInit {
               dbEvent.object(dbPathSummary).update(data1);
               setTimeout(() => {
                 $('#divLoader').hide();
-              }, 200);
+              }, 800);
             }
           );
           line.setOptions(polyOptions);
