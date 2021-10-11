@@ -371,6 +371,7 @@ export class JmapsComponent implements OnInit {
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
     google.maps.event.addListener(line, 'click', function (h) {
+      $('#divLoader').show();
       let dist = 0;
       let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
@@ -444,6 +445,9 @@ export class JmapsComponent implements OnInit {
                 workPercentage: workPercentage
               }
               dbEvent.object(dbPathSummary).update(data1);
+              setTimeout(() => {
+                $('#divLoader').hide();
+              }, 200);
             }
           );
           line.setOptions(polyOptions);
