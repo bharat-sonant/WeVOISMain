@@ -3,7 +3,7 @@
   </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-5" style="padding-left: 18px;">
+        <div class="col-md-5 pl-18">
             <div style="margin-top: -15px;">
                 <button class="btn btn-primary " (click)="setDate('','previous');">
                     << </button>
@@ -24,16 +24,16 @@
                         </select>
             </div>
         </div>
-        <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-4 main-headers">
             garbage capture analysis
         </div>
-        <div class="col-md-3 text-right total-house" style="padding-left: 18px;">
+        <div class="col-md-3 text-right total-house pl-18">
             <div class="fix-home">
-                <div id="topPenality" class="float-first" style="margin-left: 10px; margin-top: 0px;">
+                <div id="topPenality" class="float-first ml-10 mt-0">
                     <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                     <h6>Penalty</h6>
                 </div>
-                <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+                <div class="float-second ml-10 mt-0">
                     <span class="house"><i class="far fa-images"></i> {{progressData.totalCount}}</span><br>
                     <h6>Images</h6>
                     
@@ -44,8 +44,8 @@
     </div>
 </section>
 <div class="main-content">
-    <div class="row">
-        <div class="col-md-7" style="padding-left: 0px;padding-right:7px;">
+    <div class="row main-row">
+        <div class="col-md-7 pl-0 pr-7">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
@@ -89,39 +89,38 @@
 
 
                 </div>
-                <div class="card-body" style="height:80vh; padding: 0px 10px 0px 0px;">
+                <div class="card-body">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table table-line">
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:40%;">Locality</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
+                                            <th class="br-1" style=" width:40%;">Locality</th>
+                                            <th class="text-right br-1" style="width:10%;">
                                                 Time</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-left br-1" style=" width:15%;">
                                                 #</th>
-                                            <th id="tblPenalty" class="text-right" style="border-right:1px solid #dee2e6; width:10%;">
+                                            <th id="tblPenalty" class="text-right br-1" style="width:10%;">
                                                 Penalty</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-left br-1" style="width:15%;">
                                                 User</th>
-                                            <th class="text-center" style="border-right:1px solid #dee2e6; width:10%;">
+                                            <th class="text-center br-1" style=" width:10%;">
                                                 Status</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of progressList; let i=index" style="cursor: pointer;" (click)="getCaptureData(i);">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.address}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right br-1" >
                                                     {{data.time}}</td>
-                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                <td class="text-left br-1">
                                                     {{data.isClean}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6;" [hidden]="data.userType=='External User'">
+                                                <td class="text-right br-1" [hidden]="data.userType=='External User'">
                                                     {{data.penalty}} </td>
-                                                <td class="text-left" style="border-right:1px solid #dee2e6;">
+                                                <td class="text-left br-1" >
                                                     {{data.user}}</td>
-                                                <td class="text-center" style="border-right:1px solid #dee2e6">
+                                                <td class="text-center br-1" >
                                                     <i class="fas fa-times" 
                                                         [hidden]="data.isAnalysis==true"></i>
                                                     <i class="fas fa-check"
@@ -144,7 +143,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
+        <!-- <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
             <div class="card">
                 <div class="card-body" style="padding: 3px 11px 15px 0px;">
                     <input id="dataId" type="hidden" value="0">
@@ -180,6 +179,70 @@
                     </div>
                 </div>
             </div>
+        </div> -->
+
+
+        <!-----NeW Work Start------->
+        <div class="col-md-5 pr-13">
+            <div class="row right-scroll">
+                <div class="col-md-12 pl-5 pr-0">
+                    <div class="image-box">
+                        <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title="" alt="">
+                    </div>
+                </div>
+                <div class="col-md-12 mt-10 pl-5 pr-0">
+                    <div class="info-box">
+                        <div class="row">
+                            <div class="col-md-4 text-left pr-0">
+                                <div class="inner-data">
+                                     <h3>  <b> {{progressData.time}}</b> </h3>
+                                        <p><i class="far fa-clock"></i> Time</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 text-left pl-0">
+                                    <div class="inner-data">
+                                            <h3>  <b> {{progressData.latLng}}</b> </h3>
+                                            <p><i class="fas fa-chalkboard"></i> Lat-Lng</p>
+                                    </div>
+                            </div>
+                            <div class="col-md-12 text-left">
+                                    <div class="inner-data address-info border-none">
+                                            <p class="para-text"><b><i class="fas fa-map-marker-alt"></i> Address :</b></p>
+                                             <h3 class="address" style="display:inline;">   {{progressData.address}}</h3>
+                                            
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-10 pr-0 pl-5">
+                    <div class="inner-box main-final-blk">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="inner-data bg-dark final-blk">
+                                    <h3>  <b>Image Analysis</b> </h3>
+                                    <i class="fas fa-caret-right"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-5 text-center">
+                            <div class="inner-data final-blk">
+                                    <span>Penalty</span>  <input id="txtPanalty" class="text-box" type="number" placeholder="Penalty" value="0" />
+                            </div>
+                            </div>
+                            <div class="col-md-3 bg-dark btn-data mt-10 ">
+                                    <div class="inner-data final-blk">
+                                    <button type="button" class="btn btn-success">SAVE</button>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+                </div>
+
+
+
+            </div>
         </div>
+
+
     </div>
 </div>
