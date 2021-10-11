@@ -1326,6 +1326,30 @@ export class CommonService {
     });
   }
 
+  getWardLineLength(wardNo: any) {
+    return new Promise((resolve) => {
+      let lineLengthList = [];
+      let cityName = localStorage.getItem("cityName");
+      if (cityName == "demo") {
+        cityName = "jaipur"
+      }
+      this.httpService.get("../../assets/jsons/WardLineLength/" + cityName + "/" + wardNo + ".json").subscribe(data => {
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (data[index] != null) {
+                lineLengthList.push({ lineNo: index, length: data[index]});
+              }
+            }
+          }
+          resolve(JSON.stringify(lineLengthList));
+        }
+      });
+    });
+  }
+
   getCategory() {
     return new Promise((resolve) => {
       this.httpService.get("../../assets/jsons/Common/Category.json").subscribe(data => {
@@ -1400,12 +1424,12 @@ export class CommonService {
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNos = keyArray[i];
-            if (wardNos == wardNo) {
-              this.wardBoundary = new google.maps.KmlLayer({
-                url: data[wardNos].toString(),
-                map: map,
-              });
-            }
+              if (wardNos == wardNo) {
+                this.wardBoundary = new google.maps.KmlLayer({
+                  url: data[wardNos].toString(),
+                  map: map,
+                });
+              }
             }
             resolve(this.wardBoundary);
           }

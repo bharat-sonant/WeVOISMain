@@ -1,13 +1,10 @@
 /// <reference types="@types/googlemaps" />
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
 import { CommonService } from "../services/common/common.service";
-import { MapService } from "../services/map/map.service";
-import * as $ from "jquery";
-import { ActivatedRoute } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
@@ -16,7 +13,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   templateUrl: './jmaps.component.html',
   styleUrls: ['./jmaps.component.scss']
 })
-export class JmapsComponent {
+export class JmapsComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
@@ -37,6 +34,7 @@ export class JmapsComponent {
   strokeWeight = 4;
   vehicleList: any[];
   zoneList: any[];
+  wardLineLengthList: any[];
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -66,6 +64,7 @@ export class JmapsComponent {
     this.lines = [];
     this.polylines = [];
     this.vehicleList = [];
+    this.wardLineLengthList = [];
     if (localStorage.getItem("strokeWeight") != null) {
       this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
       $('#txtStrokeWeight').val(this.strokeWeight);
@@ -120,6 +119,7 @@ export class JmapsComponent {
     this.polylines = [];
     this.lines = [];
     this.vehicleList = [];
+    this.wardLineLengthList = [];
 
   }
 
@@ -159,7 +159,17 @@ export class JmapsComponent {
     this.resetAll();
     this.getProgressDetail();
     this.getWardTotalLength();
+    this.getWardLineLength();
   }
+
+  getWardLineLength() {
+    this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
+      if (lengthList != null) {
+        this.wardLineLengthList = JSON.parse(lengthList);
+      }
+    });
+  }
+
 
   getProgressDetail() {
     let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
@@ -268,6 +278,7 @@ export class JmapsComponent {
 
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
+        this.setClickInstance(line, lineNo);
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
         this.db.database.ref(dbPath).set(null);
         dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
@@ -286,66 +297,34 @@ export class JmapsComponent {
       this.progressData.workPercentage = 0 + "%";
       this.closeModel();
     }
-
   }
 
   selectAll() {
     if (this.lines.length > 0) {
-      let dist = 0;
-      let lineLength = [];
       for (let j = 0; j < this.lines.length; j++) {
-        let lineDistance = 0;
         let line = new google.maps.Polyline(this.polylines[j]);
         var polyOptions = {
           strokeColor: "#0ba118",
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
+        let lineNo = this.lines[j]["lineNo"];
         line.setOptions(polyOptions);
-        let latlngs = this.lines[j]["latlng"];
-
-        for (let i = latlngs.length - 1; i > 0; i--) {
-          let lat1 = latlngs[i]["lat"];
-          let lon1 = latlngs[i]["lng"];
-          let lat2 = latlngs[i - 1]["lat"];
-          let lon2 = latlngs[i - 1]["lng"];
-
-          const R = 6377830; // metres
-          const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-          const φ2 = lat2 * Math.PI / 180;
-          const Δφ = (lat2 - lat1) * Math.PI / 180;
-          const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-          const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          dist = dist + (R * c);
-          lineDistance = lineDistance + (R * c);
-        }
+        this.setClickInstance(line, lineNo);
         let date = new Date();
         let hour = date.getHours();
         let min = date.getMinutes();
         let second = date.getSeconds();
         let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-
-        let lineNo = this.lines[j]["lineNo"];
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
         let dbPath2 = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
         this.db.database.ref(dbPath).set("LineCompleted");
         this.db.database.ref(dbPath2).set(time);
-        console.log("lineNo: " + lineNo);
-        console.log("length: " + lineDistance.toFixed(0));
-        lineLength.push({ lineNo: lineNo, length: lineDistance.toFixed(0) });
-
       }
-      console.log(lineLength);
 
-      let wardCoveredDistance = dist;
+      let wardCoveredDistance = this.progressData.totalWardLength;
       let completedLines = this.lines.length - 1;
-      let workPercentage = 0;
-      workPercentage = Math.round((wardCoveredDistance * 100) / this.progressData.totalWardLength);
-
+      let workPercentage = 100;
       let userid = localStorage.getItem("userID");
       const data1 = {
         userid: userid,
@@ -376,108 +355,100 @@ export class JmapsComponent {
       });
       this.polylines[i] = line;
       this.polylines[i].setMap(this.map);
-      let progresData = this.progressData;
-      let dbEvent = this.db;
-      let wardLines = this.wardLines;
-      let totalWardLength = this.progressData.totalWardLength;
-      let strokeWeight = this.strokeWeight;
-      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
-      let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
-      let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-      google.maps.event.addListener(line, 'click', function (h) {
-        let dist = 0;
-        for (let i = latlngs.length - 1; i > 0; i--) {
-          let lat1 = latlngs[i]["lat"];
-          let lon1 = latlngs[i]["lng"];
-          let lat2 = latlngs[i - 1]["lat"];
-          let lon2 = latlngs[i - 1]["lng"];
+      this.setClickInstance(line, lineNo);
+    });
+  }
 
-          const R = 6377830; // metres
-          const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-          const φ2 = lat2 * Math.PI / 180;
-          const Δφ = (lat2 - lat1) * Math.PI / 180;
-          const Δλ = (lon2 - lon1) * Math.PI / 180;
+  setClickInstance(line: any, lineNo: any) {
+    let progresData = this.progressData;
+    let dbEvent = this.db;
+    let wardLines = this.wardLines;
+    let totalWardLength = this.progressData.totalWardLength;
+    let wardLineLengthList = this.wardLineLengthList;
+    let strokeWeight = this.strokeWeight;
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+    let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Time";
+    let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
-          const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          dist = dist + (R * c);
-        }
+    google.maps.event.addListener(line, 'click', function (h) {
+      let dist = 0;
+      let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
+      if (lineDetail != undefined) {
+        dist = Number(lineDetail.length);
+      }
 
-        let date = new Date();
-        let hour = date.getHours();
-        let min = date.getMinutes();
-        let second = date.getSeconds();
-        let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+      let date = new Date();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      let second = date.getSeconds();
+      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
 
-        let stockColor = "#fa0505";
-        let isNew = true;
+      let stockColor = "#fa0505";
+      let isNew = true;
 
-        let statusInstance = dbEvent.object(dbPath).valueChanges().subscribe(
-          status => {
-            statusInstance.unsubscribe();
-            if (status == null) {
-              isNew = true;
-              dbEvent.database.ref(dbPath).set("LineCompleted");
-              dbEvent.database.ref(dbPathTime).set(time);
-              stockColor = "#0ba118";
-            }
-            else {
-              isNew = false;
-              dbEvent.database.ref(dbPath).set(null);
-              dbEvent.database.ref(dbPathTime).set(null);
-              stockColor = "#fa0505";
-            }
-            var polyOptions = {
-              strokeColor: stockColor,
-              strokeOpacity: 1.0,
-              strokeWeight: strokeWeight
-            }
-            let summaryInstance = dbEvent.object(dbPathSummary).valueChanges().subscribe(
-              data => {
-                summaryInstance.unsubscribe();
-                let wardCoveredDistance = dist;
-                let completedLines = 1;
-                let workPercentage = 0;
-                if (data == null) {
-                  workPercentage = Math.round((completedLines * 100) / wardLines);
+      let statusInstance = dbEvent.object(dbPath).valueChanges().subscribe(
+        status => {
+          statusInstance.unsubscribe();
+          if (status == null) {
+            isNew = true;
+            dbEvent.database.ref(dbPath).set("LineCompleted");
+            dbEvent.database.ref(dbPathTime).set(time);
+            stockColor = "#0ba118";
+          }
+          else {
+            isNew = false;
+            dbEvent.database.ref(dbPath).set(null);
+            dbEvent.database.ref(dbPathTime).set(null);
+            stockColor = "#fa0505";
+          }
+          var polyOptions = {
+            strokeColor: stockColor,
+            strokeOpacity: 1.0,
+            strokeWeight: strokeWeight
+          }
+          let summaryInstance = dbEvent.object(dbPathSummary).valueChanges().subscribe(
+            data => {
+              summaryInstance.unsubscribe();
+              let wardCoveredDistance = dist;
+              let completedLines = 1;
+              let workPercentage = 0;
+              if (data == null) {
+                workPercentage = Math.round((completedLines * 100) / wardLines);
+              }
+              else {
+                if (isNew == true) {
+                  if (data["completedLines"] != null) {
+                    completedLines = Number(data["completedLines"]) + completedLines;
+                  }
+                  if (data["wardCoveredDistance"] != null) {
+                    wardCoveredDistance = Number(data["wardCoveredDistance"]) + wardCoveredDistance;
+                  }
                 }
                 else {
-                  if (isNew == true) {
-                    if (data["completedLines"] != null) {
-                      completedLines = Number(data["completedLines"]) + completedLines;
-                    }
-                    if (data["wardCoveredDistance"] != null) {
-                      wardCoveredDistance = Number(data["wardCoveredDistance"]) + wardCoveredDistance;
-                    }
+                  if (data["completedLines"] != null) {
+                    completedLines = Number(data["completedLines"]) - completedLines;
                   }
-                  else {
-                    if (data["completedLines"] != null) {
-                      completedLines = Number(data["completedLines"]) - completedLines;
-                    }
-                    if (data["wardCoveredDistance"] != null) {
-                      wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
-                    }
+                  if (data["wardCoveredDistance"] != null) {
+                    wardCoveredDistance = Number(data["wardCoveredDistance"]) - wardCoveredDistance;
                   }
-                  workPercentage = Math.round((wardCoveredDistance * 100) / totalWardLength);
                 }
-                progresData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
-                progresData.workPercentage = workPercentage + "%";
-                let userid = localStorage.getItem("userID");
-                const data1 = {
-                  userid: userid,
-                  completedLines: completedLines,
-                  wardCoveredDistance: wardCoveredDistance.toFixed(0),
-                  workPercentage: workPercentage
-                }
-                dbEvent.object(dbPathSummary).update(data1);
+                workPercentage = Math.round((wardCoveredDistance * 100) / totalWardLength);
               }
-            );
-            line.setOptions(polyOptions);
-          }
-        );
-      });
+              progresData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
+              progresData.workPercentage = workPercentage + "%";
+              let userid = localStorage.getItem("userID");
+              const data1 = {
+                userid: userid,
+                completedLines: completedLines,
+                wardCoveredDistance: wardCoveredDistance.toFixed(0),
+                workPercentage: workPercentage
+              }
+              dbEvent.object(dbPathSummary).update(data1);
+            }
+          );
+          line.setOptions(polyOptions);
+        }
+      );
     });
   }
 
@@ -513,6 +484,8 @@ export class JmapsComponent {
             strokeWeight: this.strokeWeight
           }
           line.setOptions(polyOptions);
+          let lineNo = this.lines[i]["lineNo"];
+          this.setClickInstance(line, lineNo);
         }
       }
     }
@@ -625,10 +598,10 @@ export class JmapsComponent {
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vtsDone: "yes", userid: localStorage.getItem("userID"), penalty: penalty });
-    
+
     $('#iconDone').show();
     $('#iconPending').hide();
-    this.progressData.penalty=Number(penalty);
+    this.progressData.penalty = Number(penalty);
     this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
   }
 
