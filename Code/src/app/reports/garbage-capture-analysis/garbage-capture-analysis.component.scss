@@ -834,7 +834,7 @@ border-bottom: 1px solid lightgray;
 }
 .inner-data h3{
 color: #333;
-font-size: 18px;
+font-size: 14px;
 margin: 0px!important;
 }
 .inner-data .address{
@@ -865,7 +865,7 @@ height: 9.5vh;
 .inner-box h3{
 display: inline-block;
 color: #333;
-font-size: 12px;
+font-size: 14px;
 margin-top: -2px !important;
 }
 .inner-box span{
@@ -907,6 +907,7 @@ margin-top: 0px!important;
   height: 32px;
   padding: 8px 20px!important;
   margin-top: 0px;
+  font-size: 12px;
   margin-bottom: 0px!important;
 }
 .border-none{
@@ -967,5 +968,8 @@ align-items: center;
 .penalty-icon{
   width: 20px;
   margin-right: 5px;
+  margin-top: -8px;
 }
-
+.info-box i{
+  color: #0ba118;
+}
