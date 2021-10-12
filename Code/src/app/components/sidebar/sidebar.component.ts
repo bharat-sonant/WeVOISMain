@@ -177,7 +177,7 @@ export class SidebarComponent implements OnInit {
     if (cityName == "reengus") {
       icon = "./assets/img/reengus.svg";
     } else if (cityName == "test") {
-      icon = "./assets/img/jaipur.svg";
+      icon = "./assets/img/test.svg";
     } else if (cityName == "demo") {
       icon = "./assets/img/demo.svg";
     }else if(cityName=="jaipur-greater"){
