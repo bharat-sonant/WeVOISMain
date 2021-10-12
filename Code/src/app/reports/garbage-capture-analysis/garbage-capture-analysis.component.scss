@@ -800,7 +800,7 @@ align-items: center;
 
 }
 .image-box img{
-height: 55vh;
+height: 54vh;
 }
 .mt-7{
 margin-top: -7px!important;;
@@ -823,7 +823,7 @@ padding-left: 5px!important;
 .info-box{
 background: #fff;
 border:1px solid lightgray;
-min-height: 60px;
+min-height: 16vh;
 border-radius: 5px;
 
 }
@@ -930,7 +930,7 @@ align-items: center;
   padding: 5px 10px!important;
 }
 .main-final-blk{
-  min-height: 60px!important;
+  height:  (85vh - (57vh + 18.5vh));
 }
 .main-content{
   margin-top: -35px;
