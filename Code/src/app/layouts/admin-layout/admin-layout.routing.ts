@@ -81,6 +81,7 @@ import { JmapsComponent } from '../../jmaps/jmaps.component';
 import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-analysis/garbage-capture-analysis.component';
 import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
+import { ChangePasswordComponent } from '../../change-password/change-password.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -93,6 +94,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //sikar
     { path: 'sikar/home', component: HomeComponent },
+    { path: 'sikar/change-password', component: ChangePasswordComponent },
     { path: 'sikar/maps', component: MapsComponent },
     { path: 'sikar/maps/:id', component: MapsComponent },
     { path: 'sikar/dashboard', component: DashboardComponent },
@@ -266,6 +268,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'sikar/:id/vts-report', component: VtsReportComponent },
     { path: 'sikar/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'sikar/:id/change-password', component: ChangePasswordComponent },
 
 
     //jaipur-greater
@@ -355,6 +358,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'jaipur-greater/vts-report', component: VtsReportComponent },
     { path: 'jaipur-greater/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'jaipur-greater/change-password', component: ChangePasswordComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -443,6 +447,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
     { path: 'jaipur-greater/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'jaipur-greater/:id/change-password', component: ChangePasswordComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -531,6 +536,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'reengus/vts-report', component: VtsReportComponent },
     { path: 'reengus/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'reengus/change-password', component: ChangePasswordComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -619,6 +625,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'reengus/:id/vts-report', component: VtsReportComponent },
     { path: 'reengus/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'reengus/:id/change-password', component: ChangePasswordComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -707,6 +714,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'shahpura/vts-report', component: VtsReportComponent },
     { path: 'shahpura/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'shahpura/change-password', component: ChangePasswordComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -795,6 +803,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'shahpura/:id/vts-report', component: VtsReportComponent },
     { path: 'shahpura/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'shahpura/:id/change-password', component: ChangePasswordComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -883,6 +892,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'test/vts-report', component: VtsReportComponent },
     { path: 'test/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'test/change-password', component: ChangePasswordComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -971,6 +981,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'test/:id/vts-report', component: VtsReportComponent },
     { path: 'test/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'test/:id/change-password', component: ChangePasswordComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1059,6 +1070,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'demo/vts-report', component: VtsReportComponent },
     { path: 'demo/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'demo/change-password', component: ChangePasswordComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -1147,4 +1159,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'demo/:id/vts-report', component: VtsReportComponent },
     { path: 'demo/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'demo/:id/change-password', component: ChangePasswordComponent },
 ]; 

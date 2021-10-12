@@ -85,7 +85,7 @@
                       style="background-color: #0ba118!important;">
                       << </button>
                         <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
-                          autocomplete="off" class="date-input"
+                          autocomplete="off" class="date-input" 
                           style="text-align: center; width: 170px; font-weight: bold;" value="4" />
                         <button (click)="getNextPrevious('next');" class="btn-primary"
                           style="background-color: #0ba118!important;">
@@ -177,7 +177,7 @@
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
     <div class="d-ib">
       <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
-      <input class="penalty-input" id="txtPenalty" type="number" autocomplete="off" value="0" />
+      <input class="penalty-input" id="txtPenalty" type="number" min="1"  autocomplete="off" value="0" />
 
     </div>
     <div class="d-ib">

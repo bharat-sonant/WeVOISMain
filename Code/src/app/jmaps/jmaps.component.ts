@@ -500,13 +500,14 @@ export class JmapsComponent implements OnInit {
 
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
-      let strokeWeight = $("#txtLineNo").val();
+      let strokeWeight = $("#txtStrokeWeight").val();
       if (strokeWeight == "") {
         this.commonService.setAlertMessage("error", "Please enter line no. !!!");
         return;
       }
       this.strokeWeight = Number(strokeWeight);
-      $("#txtLineNo").val(this.strokeWeight);
+      $("#txtStrokeWeight").val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
   }

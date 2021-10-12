@@ -46,6 +46,7 @@ export class SidebarComponent implements OnInit {
   userDetail: userDetail = {
     name: "",
     homeLink: "/home",
+    changePasswordLink:"/change-password",
   };
   menuItems: any[];
 
@@ -105,6 +106,7 @@ export class SidebarComponent implements OnInit {
       }, 2000);
     }
     this.userDetail.homeLink = "/" + this.cityName + "/home";
+    this.userDetail.changePasswordLink="/" + this.cityName + "/change-password";
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
     if (date != null) {
@@ -892,4 +894,5 @@ export class SidebarComponent implements OnInit {
 export class userDetail {
   name: string;
   homeLink: string;
+  changePasswordLink:string;
 }
