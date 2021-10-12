@@ -13,13 +13,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
   styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private commonService: CommonService,
-    private toastr: ToastrService,
-    public db: AngularFireDatabase,
-    public dbFireStore: AngularFirestore
-  ) { }
+  constructor(private router: Router, private commonService: CommonService, private toastr: ToastrService, public db: AngularFireDatabase, public dbFireStore: AngularFirestore) { }
   userId: any;
   userName: any = "admin";
   expiryDate: any;
@@ -44,9 +38,7 @@ export class LoginComponent implements OnInit {
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    let userDetails = userList.find(
-      (item) => item.email == userName && item.password == password
-    );
+    let userDetails = userList.find((item) => item.email == userName && item.password == password);
     if (userDetails != undefined) {
       this.commonService.setUserAccess(userDetails.userId);
       if (userDetails.expiryDate != "") {
@@ -60,6 +52,7 @@ export class LoginComponent implements OnInit {
       localStorage.setItem("userID", userDetails.userId);
       localStorage.setItem("userKey", userDetails.userKey);
       localStorage.setItem("userType", userDetails.userType);
+      localStorage.setItem("userPassword", userDetails.password);
       if (userDetails.officeAppUserId != 0) {
         localStorage.setItem("officeAppUserId", userDetails.officeAppUserId);
       }
@@ -73,22 +66,10 @@ export class LoginComponent implements OnInit {
       }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
-      localStorage.setItem(
-        "notificationMobileDataOff",
-        userDetails.notificationMobileDataOff
-      );
-      localStorage.setItem(
-        "notificationSkippedLines",
-        userDetails.notificationSkippedLines
-      );
-      localStorage.setItem(
-        "notificationPickDustbins",
-        userDetails.notificationPickDustbins
-      );
-      localStorage.setItem(
-        "notificationGeoSurfing",
-        userDetails.notificationGeoSurfing
-      );
+      localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);
+      localStorage.setItem("notificationSkippedLines", userDetails.notificationSkippedLines);
+      localStorage.setItem("notificationPickDustbins", userDetails.notificationPickDustbins);
+      localStorage.setItem("notificationGeoSurfing", userDetails.notificationGeoSurfing);
       if (this.expiryDate != null) {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
@@ -97,10 +78,7 @@ export class LoginComponent implements OnInit {
           }, 1000);
         } else {
           localStorage.setItem("loginStatus", "Fail");
-          this.commonService.setAlertMessage(
-            "error",
-            "Account Not Activate !!!"
-          );
+          this.commonService.setAlertMessage("error", "Account Not Activate !!!");
         }
       } else {
         localStorage.setItem("expiryDate", null);
@@ -111,10 +89,7 @@ export class LoginComponent implements OnInit {
       }
     } else {
       localStorage.setItem("loginStatus", "Fail");
-      this.commonService.setAlertMessage(
-        "error",
-        "Invalid username or password !!!"
-      );
+      this.commonService.setAlertMessage("error", "Invalid username or password !!!");
     }
   }
 
@@ -122,38 +97,26 @@ export class LoginComponent implements OnInit {
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    let userDetails = userList.find(
-      (item) => item.email == userName && item.password == password
-    );
+    let userDetails = userList.find((item) => item.email == userName && item.password == password);
     if (userDetails != undefined) {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("UserAccess")
-        .collection("UserAccess")
-        .doc(userDetails.userId.toString())
-        .collection(this.cityName)
-        .doc(this.cityName)
-        .get()
-        .subscribe((doc) => {
-          if (doc.data() == undefined) {
-            this.commonService.setAlertMessage(
-              "error",
-              "sorry! you have not access for " + this.cityName + ""
-            );
+      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userDetails.userId.toString()).collection(this.cityName).doc(this.cityName).get().subscribe((doc) => {
+        if (doc.data() == undefined) {
+          this.commonService.setAlertMessage("error", "sorry! you have not access for " + this.cityName + "");
+          this.router.navigate(["/portal-access"]);
+        } else {
+          let pageId = doc.data()["pageId"];
+          if (pageId == null) {
+            this.commonService.setAlertMessage("error", "sorry! you have not access for " + this.cityName + "");
             this.router.navigate(["/portal-access"]);
           } else {
-            let pageId = doc.data()["pageId"];
-            if (pageId == null) {
-              this.commonService.setAlertMessage(
-                "error",
-                "sorry! you have not access for " + this.cityName + ""
-              );
-              this.router.navigate(["/portal-access"]);
-            } else {
-              this.doLogin();
-            }
+            this.doLogin();
           }
-        });
+        }
+      });
+    }
+    else{
+      localStorage.setItem("loginStatus", "Fail");
+      this.commonService.setAlertMessage("error", "Invalid username or password !!!");
     }
   }
 }
