@@ -309,6 +309,7 @@ export class JmapsComponent implements OnInit {
           strokeWeight: this.strokeWeight
         }
         let lineNo = this.lines[j]["lineNo"];
+        this.polylines[j]["strokeColor"] = "#0ba118";
         line.setOptions(polyOptions);
         this.setClickInstance(line, lineNo);
         let date = new Date();
