@@ -172,38 +172,41 @@ export class JmapsComponent implements OnInit {
 
 
   getProgressDetail() {
-    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
-      workerDetails.unsubscribe();
-      if (workerData != null) {
-        if (workerData["workPercentage"] != null) {
-          this.progressData.workPercentageNumber = Number(workerData["workPercentage"]);
-          this.progressData.workPercentage = workerData["workPercentage"] + "%";
+
+    let summarydbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    console.log(summarydbPath);
+    let summaryInstance = this.db.object(summarydbPath).valueChanges().subscribe((summaryData) => {
+      summaryInstance.unsubscribe();
+      if (summaryData != null) {
+        console.log(summaryData["workPercentage"]);
+        if (summaryData["workPercentage"] != null) {
+          this.progressData.workPercentageNumber = Number(summaryData["workPercentage"]);
+          this.progressData.workPercentage = summaryData["workPercentage"] + "%";
         } else {
           this.progressData.workPercentage = "0%";
           this.progressData.workPercentageNumber = 0;
         }
-        if (workerData["wardCoveredDistance"] != null) {
-          this.progressData.coveredLengthMeter = Number(workerData["wardCoveredDistance"]);
-          this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
+        if (summaryData["wardCoveredDistance"] != null) {
+          this.progressData.coveredLengthMeter = Number(summaryData["wardCoveredDistance"]);
+          this.progressData.coveredLength = (parseFloat(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
         } else {
           this.progressData.coveredLength = "0.00";
           this.progressData.coveredLengthMeter = 0;
         }
 
-        if (workerData["vehicles"] != null) {
-          let vechileList = workerData["vehicles"].split(',');
+        if (summaryData["vehicles"] != null) {
+          let vechileList = summaryData["vehicles"].split(',');
           if (vechileList.length > 0) {
             for (let i = 0; i < vechileList.length; i++) {
               this.vehicleList.push({ vehicle: vechileList[i] });
             }
           }
         }
-        if (workerData["penalty"] != null) {
-          $('#txtPenalty').val(workerData["penalty"]);
-          this.progressData.penalty = workerData["penalty"];
+        if (summaryData["penalty"] != null) {
+          $('#txtPenalty').val(summaryData["penalty"]);
+          this.progressData.penalty = summaryData["penalty"];
         }
-        if (workerData["vtsDone"] != null) {
+        if (summaryData["vtsDone"] != null) {
           $('#iconDone').show();
           $('#iconPending').hide();
         }
