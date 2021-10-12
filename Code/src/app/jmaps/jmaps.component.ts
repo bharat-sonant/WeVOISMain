@@ -172,10 +172,9 @@ export class JmapsComponent implements OnInit {
 
 
   getProgressDetail() {
-
-    let summarydbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    console.log(summarydbPath);
-    let summaryInstance = this.db.object(summarydbPath).valueChanges().subscribe((summaryData) => {
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    console.log(dbPath);
+    let summaryInstance = this.db.object(dbPath).valueChanges().subscribe((summaryData) => {
       summaryInstance.unsubscribe();
       if (summaryData != null) {
         console.log(summaryData["workPercentage"]);
