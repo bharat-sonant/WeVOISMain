@@ -94,6 +94,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.latLng = "---";
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
+    $('#txtPanalty').val("0");
   }
 
   changeOptionSelection(option: any) {
@@ -304,7 +305,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise";
         this.db.object(dbPath).update({ totalPenalty: total });
-        this.progressData.totalPenalty = total;
       }
     );
 
@@ -318,7 +318,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
-        this.progressData.panalty = total;
+        
       }
     );
 
@@ -332,6 +332,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
+        this.progressData.panalty = total;
       }
     );
 
@@ -345,6 +346,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate;
         this.db.object(dbPath).update({ totalPenalty: total });
+        this.progressData.totalPenalty = total;
       }
     );
   }
