@@ -191,6 +191,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 pl-5 pr-0" style="padding-bottom:10px!important;">
+                    <input id="dataId" type="hidden" value="0">
                     <div class="info-box">
                         <div class="row">
                             <div class="col-md-4 text-left pr-0">
@@ -218,20 +219,19 @@
                 <div class="col-md-12 pr-0 pl-5">
                     <div class="inner-box main-final-blk">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 br-1">
                                 <div class="inner-data bg-dark final-blk">
                                     <h3>  <b>Image Analysis</b> </h3>
-                                    <i class="fas fa-caret-right"></i>
                                 </div>
                             </div>
-                            <div class="col-md-5 text-center">
+                            <div class="col-md-5 br-1 text-center">
                             <div class="inner-data final-blk">
-                                    <span>Penalty</span>  <input id="txtPanalty" class="text-box" type="number" placeholder="Penalty" value="0" />
+                                    <span><img src="../../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" title="Penalty" alt="Penalty"></span>  <input id="txtPanalty" class="text-box" type="number" placeholder="Penalty" value="0" />
                             </div>
                             </div>
                             <div class="col-md-3 bg-dark btn-data mt-10 ">
                                     <div class="inner-data final-blk">
-                                    <button type="button" class="btn btn-success">SAVE</button>
+                                    <button type="button" class="btn btn-success" (click)="analysis();">SAVE</button>
                                     </div>
                                 </div>
                         </div>

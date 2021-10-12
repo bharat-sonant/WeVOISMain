@@ -860,6 +860,7 @@ border-radius: 5px;
 display: flex;
 justify-content: center;
 align-items: center;
+height: 9.5vh;
 }
 .inner-box h3{
 display: inline-block;
@@ -883,11 +884,9 @@ border: none!important;
 }
 .inner-data input{
 width: 100px;
-margin-top: 8px;
 border: 1px solid lightgray!important;
 transition: 0.5s;
 height: 32px;
-margin-top: 10px !important;
 }
 .inner-data input:hover{
 border: 1px solid #0ba118!important;
@@ -965,5 +964,8 @@ align-items: center;
 .br-1{
   border-right: 1px solid #dee2e6;
 }
-
+.penalty-icon{
+  width: 20px;
+  margin-right: 5px;
+}
 
