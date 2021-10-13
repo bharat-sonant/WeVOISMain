@@ -15,27 +15,29 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   db: any;
   cityName: any;
   progressList: any[];
+  allProgressList: any[];
   toDayDate: any;
   selectedDate: any;
   optionList: any[];
+  userList: any[];
+  zoneList: any[];
+  wardList: any[];
   selectedOption: any;
   currentMonthName: any;
   currentYear: any;
-  startIndex: any;
-  endIndex: any;
   imageNoFoundURL = "../../../assets/img/img-not-available-01.jpg";
   userType: any;
   progressData: progressDetail = {
-    startFrom: 0,
-    endTo: 0,
-    category: "",
+    category: "---",
     time: "00.00",
     panalty: 0,
     totalPenalty: 0,
     totalCount: 0,
     count: 0,
     address: "---",
-    latLng: "---"
+    latLng: "---",
+    zone: "---",
+    ward: "---"
   };
 
   ngOnInit() {
@@ -47,10 +49,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   setDefault() {
     this.optionList = [];
+    this.userList = [];
+    this.wardList = [];
+    this.zoneList = [];
     this.selectedOption = "0";
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $('#txtDate').val(this.selectedDate);
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
+    });
+    this.getFilterData();
     this.getImageOptionTypes();
     this.resetData();
     this.setMonthYear();
@@ -62,6 +71,78 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       $('#tblPenalty').hide();
     }
     this.getTotals();
+  }
+
+  getWard() {
+    let zone = $('#ddlZone').val();
+    if (zone == "0") {
+      this.wardList = [];
+    }
+    else {
+      let zoneDetail = this.zoneList.find(item => item.zoneName == zone);
+      if (zoneDetail != undefined) {
+        let wardList = zoneDetail.wardList;
+        for (let i = 1; i < wardList.length; i++) {
+          this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
+        }
+      }
+    }
+
+    this.filterData();
+  }
+
+  getFilterData() {
+    let dbPath = "WastebinMonitor/Users";
+    let userInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        userInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let userId = keyArray[i];
+              let name = data[userId]["name"];
+              this.userList.push({ userId: userId, name: name });
+            }
+          }
+        }
+      }
+    );
+
+  }
+
+  filterData() {
+    this.resetDetail();
+    let userId = $('#ddlUser').val();
+    let category = $('#ddlCategory').val();
+    let zone = $('#ddlZone').val();
+    let ward = $('#ddlWard').val();
+    let filterList = this.allProgressList;
+    if (userId != "0") {
+      filterList = filterList.filter((item) => item.userId == userId);
+    }
+    if (category != "0") {
+      if (category == "1") {
+        category = "कचरा नहीं उठाया |";
+      }
+      else {
+        category = "कचरा उठा लिया है |";
+      }
+      filterList = filterList.filter((item) => item.isClean == category);
+    }
+    if (zone != "0") {
+      filterList = filterList.filter((item) => item.zone == zone);
+    }
+    if (ward != "0") {
+      filterList = filterList.filter((item) => item.ward == ward);
+    }
+    this.progressList = filterList;
+    this.progressData.count = this.progressList.length;
+    let sum = 0;
+    for (let i = 0; i < this.progressList.length; i++) {
+      sum = sum + Number(this.progressList[i]["penalty"]);
+    }
+    this.progressData.panalty = sum;
   }
 
   getImageOptionTypes() {
@@ -81,17 +162,15 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   resetData() {
     this.progressList = [];
-    this.startIndex = 1;
-    this.endIndex = 20;
-    this.progressData.category = "";
-    this.progressData.endTo = 20;
-    this.progressData.startFrom = 1;
+    this.progressData.category = "---";
     this.progressData.time = "00:00";
     this.progressData.panalty = 0;
     this.progressData.totalCount = 0;
     this.progressData.totalPenalty = 0;
     this.progressData.address = "---";
     this.progressData.latLng = "---";
+    this.progressData.zone = "---";
+    this.progressData.ward = "---";
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
     $('#txtPanalty').val("0");
@@ -161,6 +240,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.startLoader();
     this.getTotals();
     this.progressList = [];
+    this.allProgressList = [];
 
     let categoryDetail = this.optionList.find(item => item.id == this.selectedOption);
     if (categoryDetail != undefined) {
@@ -193,51 +273,76 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
 
-    for (let i = this.startIndex; i <= this.endIndex; i++) {
-      let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + i;
-      let imageDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          imageDataInstance.unsubscribe();
-          if (data != null) {
-            dbPath = "WastebinMonitor/Users/" + data["user"] + "/name";
-            let userInstance = this.db.object(dbPath).valueChanges().subscribe(
-              userData => {
-                userInstance.unsubscribe();
-                let user = "";
-                let status = "कचरा उठा लिया है |";
-                let penalty = 0;
-                let latLng = "";
-                let isAnalysis = false;
-                if (userData != null) {
-                  user = userData;
-                }
-                if (data["isClean"] == true) {
-                  status = "कचरा नहीं उठाया |";
-                }
-                if (data["isAnalysis"] != null) {
-                  isAnalysis = true;
-                }
-                if (data["penalty"] != null) {
-                  penalty = data["penalty"];
-                }
-                if (data["latLng"] != null) {
-                  latLng = data["latLng"];
-                }
-                this.progressList.push({ imageId: i, address: data["address"], isClean: status, time: data["time"], penalty: penalty, user: user, imageUrl: data["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType });
-              }
-            );
+    dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption;
+    let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        imageInstance.unsubscribe();
+        if (data != null) {
+          $('#divMessage').hide();
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let imageId = keyArray[i];
+              dbPath = "WastebinMonitor/Users/" + data[imageId]["user"] + "/name";
+              let userInstance = this.db.object(dbPath).valueChanges().subscribe(
+                userData => {
+                  userInstance.unsubscribe();
+                  let user = "";
+                  let status = "कचरा उठा लिया है |";
+                  let penalty = 0;
+                  let latLng = "";
+                  let zone = "---";
+                  let ward = "---";
+                  let isAnalysis = false;
+                  let userId = data[imageId]["user"];
+                  if (userData != null) {
+                    user = userData;
+                  }
+                  if (data[imageId]["isClean"] == true) {
+                    status = "कचरा नहीं उठाया |";
+                  }
+                  if (data[imageId]["isAnalysis"] != null) {
+                    isAnalysis = true;
+                  }
+                  if (data[imageId]["penalty"] != null) {
+                    penalty = data[imageId]["penalty"];
+                  }
+                  if (data[imageId]["latLng"] != null) {
+                    latLng = data[imageId]["latLng"];
+                  }
+                  if (data[imageId]["zone"] != null) {
+                    zone = data[imageId]["zone"];
+                  }
+                  if (data[imageId]["ward"] != null) {
+                    ward = data[imageId]["ward"];
+                  }
+                  this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                  this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                });
+
+
+            }
           }
         }
-      );
-    }
-    setTimeout(() => {
-      if (this.progressList.length == 0) {
-        $('#divMessage').show();
+        else {
+          $('#divMessage').show();
+        }
       }
-      else {
-        $('#divMessage').hide();
-      }
-    }, 1000);
+    );
+
+  }
+
+  resetDetail() {
+    this.progressData.time = "00:00";
+    this.progressData.latLng = "---";
+    this.progressData.address = "---";
+    this.progressData.zone = "---";
+    this.progressData.ward = "---";
+    $('#txtPanalty').val(0);
+    $('#dataId').val(0);
+    let city = this.commonService.getFireStoreCity();
+    let element = <HTMLImageElement>document.getElementById("mainImage");
+    element.src = this.imageNoFoundURL;
   }
 
   getCaptureData(index) {
@@ -247,6 +352,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.time = this.progressList[index]["time"];
       this.progressData.latLng = this.progressList[index]["latLng"];
       this.progressData.address = this.progressList[index]["address"];
+      this.progressData.zone = this.progressList[index]["zone"];
+      this.progressData.ward = this.progressList[index]["ward"];
       $('#txtPanalty').val(this.progressList[index]["penalty"]);
       $('#dataId').val(index);
       let city = this.commonService.getFireStoreCity();
@@ -318,7 +425,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
-        
+
       }
     );
 
@@ -350,30 +457,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
   }
-
-  getRecord(type: any) {
-    if (type == "next") {
-      this.startIndex = this.startIndex + 20;
-      this.endIndex = this.endIndex + 20;
-      this.progressData.startFrom = this.startIndex;
-      this.progressData.endTo = this.endIndex;
-      this.getCapturedImages();
-    }
-    else {
-      if (this.startIndex != 1) {
-        this.startIndex = this.startIndex - 20;
-        this.endIndex = this.endIndex - 20;
-        this.progressData.startFrom = this.startIndex;
-        this.progressData.endTo = this.endIndex;
-        this.getCapturedImages();
-      }
-    }
-  }
 }
 
 export class progressDetail {
-  startFrom: number;
-  endTo: number;
   category: string;
   time: string;
   panalty: number;
@@ -382,4 +468,6 @@ export class progressDetail {
   count: number;
   address: string;
   latLng: string;
+  zone: string;
+  ward: string;
 }

@@ -90,6 +90,17 @@ width: 97%;
 border: 1px solid lightgray!important;
 font-size: 12px;
 }
+
+.filter-select{
+  margin-top: 10px;
+    margin-right: 2px !important;
+    border-radius: 5px;
+    padding: 5px;
+    width: 97%;
+    border: 1px solid lightgray !important;
+    font-size: 12px;
+}
+
 .caret-select-vehicle{
 margin-top: 0px!important;
   margin-left:0px!important;
@@ -463,7 +474,7 @@ font-weight: bold;
 //background: #0ba11714;
 color: #0ba118;
 // padding: 5px 10px;
-font-size: 30px;
+font-size: 20px;
 }
 .font-bold{
 color: #000;
@@ -478,7 +489,7 @@ font-size: 16px;
 font-weight: bold;
 text-transform: capitalize;
 color: #333;
-margin-top: -15px;
+margin-top: 0px;
 margin-bottom: 0px;
 }
 .mr-20{
@@ -514,16 +525,16 @@ font-size: 14px;
 }
 .f-all{
 width: 100%;
-margin-left: 18%;
+margin-right: 10%;
 }
 .f-all .heading1{
 float: left;
-width: 22%;
+width: 50%;
 padding-top: 3px;
 }
 .f-all .heading2{
 float: left;
-width: 22%;
+width: 50%;
 padding-top: 3px;
 }
 .f-all .heading3{
@@ -547,7 +558,7 @@ font-size: 20px;
 }
 .card{
 margin-top:-6px;
-height: 88vh!important;
+height: 85vh!important;
 overflow: hidden;
 }
 .bg-light{
@@ -797,11 +808,11 @@ padding: 5px;
 display: flex;
 justify-content: center;
 align-items: center;
-height: 61vh!important;
+height: 57vh!important;
 
 }
 .image-box img{
-height: 56vh;
+height: 54vh;
 }
 .mt-7{
 margin-top: -7px!important;;
@@ -829,7 +840,7 @@ border-radius: 5px;
 
 }
 .inner-data{
-padding: 7px 20px;
+padding: 7px 10px;
 border-right: 1px solid lightgray;
 border-bottom: 1px solid lightgray;
 }
@@ -955,7 +966,7 @@ align-items: center;
   padding-right:7px!important;
 }
 .card-body{
-  height:90vh;
+  height:80vh;
   padding: 0px 10px 0px 0px;
 }
 .table-line{
@@ -974,12 +985,3 @@ align-items: center;
 .info-box i{
   color: #0ba118;
 }
- .main-content {
-  padding: 0 30px 10px!important;
-}
-
-
-
-
-
-
