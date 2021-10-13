@@ -55,10 +55,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.selectedOption = "0";
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
-    $('#txtDate').val(this.selectedDate);
-    this.commonService.getZoneWiseWard().then((zoneList: any) => {
-      this.zoneList = JSON.parse(zoneList);
-    });
+    $('#txtDate').val(this.selectedDate);    
     this.getFilterData();
     this.getImageOptionTypes();
     this.resetData();
@@ -92,6 +89,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getFilterData() {
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
+    });
     let dbPath = "WastebinMonitor/Users";
     let userInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -105,10 +105,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
               this.userList.push({ userId: userId, name: name });
             }
           }
+          this.userList=this.commonService.transformNumeric(this.userList,"name");
         }
       }
     );
-
   }
 
   filterData() {
@@ -117,6 +117,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     let category = $('#ddlCategory').val();
     let zone = $('#ddlZone').val();
     let ward = $('#ddlWard').val();
+   // let time1=new Date(this.selectedDate+ " 10:15");
+   // let time2=new Date(this.selectedDate+ " 11:15");
     let filterList = this.allProgressList;
     if (userId != "0") {
       filterList = filterList.filter((item) => item.userId == userId);
@@ -136,6 +138,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     if (ward != "0") {
       filterList = filterList.filter((item) => item.ward == ward);
     }
+   // if(time1!=null){
+   //   filterList = filterList.filter((item) => new Date(this.selectedDate+ " "+item.time) >= time1 && new Date(this.selectedDate+ " "+item.time)<=time2);
+   // }
     this.progressList = filterList;
     this.progressData.count = this.progressList.length;
     let sum = 0;
@@ -174,6 +179,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
     $('#txtPanalty').val("0");
+    $('#ddlUser').val("0");
+    $('#ddlCategory').val("0");
+    $('#ddlZone').val("0");
+    $('#ddlWard').val("0");
   }
 
   changeOptionSelection(option: any) {
@@ -281,7 +290,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
           $('#divMessage').hide();
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
+            for (let i = 0; i < keyArray.length-1; i++) {
               let imageId = keyArray[i];
               dbPath = "WastebinMonitor/Users/" + data[imageId]["user"] + "/name";
               let userInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -319,8 +328,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                   this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                 });
-
-
             }
           }
         }
