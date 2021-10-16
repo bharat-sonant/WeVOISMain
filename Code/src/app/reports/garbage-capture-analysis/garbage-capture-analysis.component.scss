@@ -436,7 +436,7 @@ background: #0ba118!important;
 }
 
 .custom-header{
-height: 80px;
+height: 100px;
 }
 .custom-header h5{
 font-size: 14px;
@@ -485,7 +485,7 @@ justify-content: center;
 align-items: center;
 }
 .main-heading h3{
-font-size: 16px;
+font-size: 14px;
 font-weight: bold;
 text-transform: capitalize;
 color: #333;
@@ -985,3 +985,63 @@ align-items: center;
 .info-box i{
   color: #0ba118;
 }
+
+
+
+
+
+/***********************New CSS Start**********************/
+.time-input{
+  font-size: 12px;
+  margin-top: 8px;
+  border-radius: 2px;
+  border: 1px solid lightgray!important;
+  padding: 3px 3px;
+  width: 95px;
+}
+input:hover{
+  border: 1px solid #0ba118!important;
+}
+input{
+  outline: none!important;
+}
+.para-txt{
+  font-size: 12px;
+  font-weight: bold;
+}
+.filter-input{
+  font-size: 12px;
+  margin-top: 8px;
+  border-radius: 2px;
+  width:24%!important;
+  border: 1px solid lightgray!important;
+}
+.filter-input:hover{
+  border: 1px solid #0ba118!important;
+}
+.fa-search{
+  background: #0ba118;
+  padding: 5px;
+  color: #fff;
+  border-radius: 2px;
+  height: 26px;
+}
+.ml-20{
+  margin-left: -20px!important;
+}
+.ml-23{
+  margin-left: -23px!important;
+}
+.mt-10{
+  margin-top: 10px!important;
+}
+.mt-15{
+  margin-top: 15px;
+}
+.ml-5{
+  margin-left: 5px!important;
+}
+.mr-5{
+  margin-right: 5px!important;
+}
+

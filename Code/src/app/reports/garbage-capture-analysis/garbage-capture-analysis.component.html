@@ -50,17 +50,23 @@
                 <div class="card-header custom-header">
                     <div class="row align">
                         <div class="col-md-9 text-left">
-                            <div class="main-heading">
-                                <h3>
-                                    {{progressData.category}}
-                                </h3>
-                                <input type="time" id="txtTime1">
-                                <input type="time" id="txtTime2">
-                                <i class="fas fa-search" (click)="filterData();"></i>
+                                <div class="row">
+                                    <div class="col-md-5 pr-0">
+                                    <div class="main-heading mt-10">
+                                        <h3>
+                                            {{progressData.category}}
+                                        </h3>
+                                    </div>
+                                </div>
+                        <div class="col-md-7 text-right ml-23">
+                                <div class="main-heading">
+                                    <input class="time-input mr-5" type="time" id="txtTime1"> <span class="para-txt"> to</span>
+                                    <input class="time-input ml-5 mr-5" type="time" id="txtTime2">
+                                    <i class="fas fa-search" (click)="filterData();"></i>
+                                </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <select class="filter-select" style="width: 22%;" id="ddlUser"
+                                <div class="col-md-12 text-right ml-20">
+                                    <select class="filter-select filter-input"  id="ddlUser"
                                         (change)="filterData();">
                                         <option value="0">
                                             All Users
@@ -69,7 +75,7 @@
                                             {{user.name}}
                                         </option>
                                     </select>
-                                    <select class="filter-select" style="width: 22%;" id="ddlCategory"
+                                    <select class="filter-select filter-input"  id="ddlCategory"
                                         (change)="filterData();">
                                         <option value="0">
                                             All Category
@@ -81,7 +87,7 @@
                                             कचरा उठा लिया है
                                         </option>
                                     </select>
-                                    <select class="filter-select" style="width: 22%;" id="ddlZone"
+                                    <select class="filter-select filter-input"  id="ddlZone"
                                         (change)="getWard();">
                                         <option value="0">
                                             All Zone
@@ -90,7 +96,7 @@
                                             {{zone.zoneName}}
                                         </option>
                                     </select>
-                                    <select class="filter-select" style="width: 22%;" id="ddlWard"
+                                    <select class="filter-select filter-input" id="ddlWard"
                                         (change)="filterData();">
                                         <option value="0">
                                             All Ward
@@ -104,7 +110,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12 mt-15">
                                     <div class="f-all">
                                         <div class="table-heading heading1 text-center">
                                             <h3>
