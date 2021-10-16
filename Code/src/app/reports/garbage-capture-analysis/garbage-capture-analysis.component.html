@@ -54,6 +54,9 @@
                                 <h3>
                                     {{progressData.category}}
                                 </h3>
+                                <input type="time" id="txtTime1">
+                                <input type="time" id="txtTime2">
+                                <i class="fas fa-search" (click)="filterData();"></i>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -72,10 +75,10 @@
                                             All Category
                                         </option>
                                         <option value="1">
-                                            कचरा नहीं उठाया |
+                                            कचरा नहीं उठाया
                                         </option>
                                         <option value="2">
-                                            कचरा उठा लिया है |
+                                            कचरा उठा लिया है
                                         </option>
                                     </select>
                                     <select class="filter-select" style="width: 22%;" id="ddlZone"
