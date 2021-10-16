@@ -642,9 +642,7 @@ export class CommonService {
   }
 
   getFireStoreCity() {
-    let city =
-      localStorage.getItem("cityName").charAt(0).toUpperCase() +
-      localStorage.getItem("cityName").slice(1);
+    let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
     if (city == "Demo") {
       city = "Jaipur";
     }
@@ -1019,7 +1017,7 @@ export class CommonService {
       .get()
       .subscribe((ss) => {
         const document = ss.docs;
-        
+
         document.forEach((doc) => {
           let imgUrl = "internal-user.png";
           let utitle = "Internal User";
@@ -1341,7 +1339,7 @@ export class CommonService {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
               if (data[index] != null) {
-                lineLengthList.push({ lineNo: index, length: data[index]});
+                lineLengthList.push({ lineNo: index, length: data[index] });
               }
             }
           }
@@ -1429,7 +1427,7 @@ export class CommonService {
                 this.wardBoundary = new google.maps.KmlLayer({
                   url: data[wardNos].toString(),
                   map: map,
-                  clickable:false
+                  clickable: false
                 });
               }
             }
