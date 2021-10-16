@@ -196,6 +196,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     $('#ddlCategory').val("0");
     $('#ddlZone').val("0");
     $('#ddlWard').val("0");
+    $('#txtTime1').val("");
+    $('#txtTime2').val("");
   }
 
   changeOptionSelection(option: any) {
