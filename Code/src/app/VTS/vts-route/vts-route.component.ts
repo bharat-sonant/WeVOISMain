@@ -28,7 +28,7 @@ export class VtsRouteComponent implements OnInit {
     $('#txtDate').val(this.selectedDate);
     this.getVehicle();
     this.fileRouteList = [];
-    this.routeList=[];
+    this.routeList = [];
   }
 
 
@@ -84,17 +84,17 @@ export class VtsRouteComponent implements OnInit {
         this.commonService.setAlertMessage("error", "Please enter correct json !!!");
       }
     }
-    if(isFile==false){
-      if(this.fileRouteList.length>0){
-        isFile=true;
-        this.routeList=this.fileRouteList;
-      }      
+    if (isFile == false) {
+      if (this.fileRouteList.length > 0) {
+        isFile = true;
+        this.routeList = this.fileRouteList;
+      }
     }
 
-    if(isFile==false){
+    if (isFile == false) {
       this.commonService.setAlertMessage("error", "Please paste or browse json file!!!");
     }
-    else{
+    else {
       if (this.routeList.length > 0) {
         for (let i = 0; i < this.routeList.length; i++) {
           let dateTime = this.routeList[i]["datetimerpl"];
@@ -133,58 +133,6 @@ export class VtsRouteComponent implements OnInit {
       this.commonService.setAlertMessage("success", "Data added successfully !!!");
     }
 
-
-
-/*
-    if ($('#txtJson').val() != "") {
-      try {
-        let routeList = JSON.parse($('#txtJson').val().toString());
-        if (routeList.length > 0) {
-          for (let i = 0; i < routeList.length; i++) {
-            let dateTime = routeList[i]["datetimerpl"];
-            let vehicle = routeList[i]["vehicleNamerpl"];
-            let color = routeList[i]["color"];
-            let lat = routeList[i]["lat"];
-            let lng = routeList[i]["lng"];
-            let time = dateTime.toString().split(' ')[1] + " " + dateTime.toString().split(' ')[2];
-            let date = dateTime.toString().split(' ')[0];
-            let year = date.split('/')[2];
-            date = date.split('/')[2] + "-" + date.split('/')[0] + "-" + date.split('/')[1];
-            let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
-            const data = {
-              vehicle: vehicle,
-              color: color,
-              lat: lat,
-              lng: lng
-            }
-            let dbPath = "VTSRoute/" + year + "/" + monthName + "/" + date + "/" + vehicle + "/" + time;
-            this.db.object(dbPath).update(data);
-            let vehicleDetail = this.summaryVehicleList.find(item => item.vehicle == vehicle);
-            if (vehicleDetail == undefined) {
-              dbPath = "VTSRoute/" + year + "/" + monthName + "/" + date + "/Summary/" + vehicle;
-              this.db.database.ref(dbPath).set("1");
-              this.summaryVehicleList.push({ vehicle: vehicle });
-            }
-            if (date == this.selectedDate) {
-              vehicleDetail = this.vehicleList.find(item => item.vehicle == vehicle);
-              if (vehicleDetail == undefined) {
-                this.vehicleList.push({ vehicle: vehicle });
-              }
-            }
-          }
-
-        }
-        $('#txtJson').val("");
-        this.commonService.setAlertMessage("success", "Data added successfully !!!");
-      }
-      catch {
-        this.commonService.setAlertMessage("error", "Please enter correct json !!!");
-      }
-    }
-    else {
-      this.commonService.setAlertMessage("error", "Please enter json !!!");
-    }
-    */
   }
 
 
@@ -193,10 +141,10 @@ export class VtsRouteComponent implements OnInit {
     let selectedFile = event.target.files[0];
     let fileReader = new FileReader();
     fileReader.onload = (e) => {
-      try{
-      this.fileRouteList = JSON.parse(fileReader.result.toString());
+      try {
+        this.fileRouteList = JSON.parse(fileReader.result.toString());
       }
-      catch{
+      catch {
         this.commonService.setAlertMessage("error", "Please upload json file!!!");
       }
     }
