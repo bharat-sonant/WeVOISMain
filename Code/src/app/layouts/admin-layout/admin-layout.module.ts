@@ -89,6 +89,7 @@ import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-a
 import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
+import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 
 @NgModule({
   imports: [
@@ -182,7 +183,8 @@ import { ChangePasswordComponent } from '../../change-password/change-password.c
     GarbageCaptureAnalysisComponent,
     VtsReportComponent,
     VtsMonthlyReportComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    VtsRouteComponent
   ]
 })
 

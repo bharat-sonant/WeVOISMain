@@ -82,6 +82,7 @@ import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-a
 import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
+import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -180,6 +181,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
     { path: 'sikar/vts-report', component: VtsReportComponent },
     { path: 'sikar/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'sikar/vts-route', component: VtsRouteComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -269,6 +271,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/vts-report', component: VtsReportComponent },
     { path: 'sikar/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'sikar/:id/change-password', component: ChangePasswordComponent },
+    { path: 'sikar/:id/vts-route', component: VtsRouteComponent },
 
 
     //jaipur-greater
@@ -359,6 +362,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/vts-report', component: VtsReportComponent },
     { path: 'jaipur-greater/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'jaipur-greater/change-password', component: ChangePasswordComponent },
+    { path: 'jaipur-greater/vts-route', component: VtsRouteComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -448,6 +452,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
     { path: 'jaipur-greater/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'jaipur-greater/:id/change-password', component: ChangePasswordComponent },
+    { path: 'jaipur-greater/:id/vts-route', component: VtsRouteComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -537,6 +542,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vts-report', component: VtsReportComponent },
     { path: 'reengus/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'reengus/change-password', component: ChangePasswordComponent },
+    { path: 'reengus/vts-route', component: VtsRouteComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -626,6 +632,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/vts-report', component: VtsReportComponent },
     { path: 'reengus/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'reengus/:id/change-password', component: ChangePasswordComponent },
+    { path: 'reengus/:id/vts-route', component: VtsRouteComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -715,6 +722,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/vts-report', component: VtsReportComponent },
     { path: 'shahpura/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'shahpura/change-password', component: ChangePasswordComponent },
+    { path: 'shahpura/vts-route', component: VtsRouteComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -804,6 +812,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/vts-report', component: VtsReportComponent },
     { path: 'shahpura/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'shahpura/:id/change-password', component: ChangePasswordComponent },
+    { path: 'shahpura/:id/vts-route', component: VtsRouteComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -893,6 +902,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/vts-report', component: VtsReportComponent },
     { path: 'test/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'test/change-password', component: ChangePasswordComponent },
+    { path: 'test/vts-route', component: VtsRouteComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -982,6 +992,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/vts-report', component: VtsReportComponent },
     { path: 'test/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'test/:id/change-password', component: ChangePasswordComponent },
+    { path: 'test/:id/vts-route', component: VtsRouteComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1071,6 +1082,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/vts-report', component: VtsReportComponent },
     { path: 'demo/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'demo/change-password', component: ChangePasswordComponent },
+    { path: 'demo/vts-route', component: VtsRouteComponent },
 
     
     { path: 'demo/:id/home', component: HomeComponent },
@@ -1160,4 +1172,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/vts-report', component: VtsReportComponent },
     { path: 'demo/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'demo/:id/change-password', component: ChangePasswordComponent },
+    { path: 'demo/:id/vts-route', component: VtsRouteComponent },
 ]; 

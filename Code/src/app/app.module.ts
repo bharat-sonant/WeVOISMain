@@ -134,7 +134,6 @@ if (city != null) {
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    
   ],
   providers: [{ provide: FirestoreSettingsToken, useValue: {} }],
   bootstrap: [AppComponent]

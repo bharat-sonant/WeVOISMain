@@ -80,6 +80,13 @@ export class PortalServicesComponent implements OnInit {
         ) {
           $("#divLineMarker").show();
         }
+        
+        if (
+          userAccessList[i]["pageId"] == "8G" &&
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
+        ) {
+          $("#divVTSRoute").show();
+        }
       }
       this.getSalary();
       this.getYear();
