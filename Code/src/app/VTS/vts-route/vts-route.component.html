@@ -80,8 +80,18 @@
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1" style="margin-left: 10px;">
-                                        <textarea id="txtJson" style="height: 70vh; width: 95%;" placeholder="Paste Json Here"></textarea>
+                                        <textarea id="txtJson" style="height: 50vh; width: 95%;" placeholder="Paste Json Here"></textarea>
                                     </div>
+                                    <div class="col-md-12 pr-1 text-center" style="margin-left: 10px;">
+                                       <h5> -- Or --</h5>
+                                    </div>
+                                    <div class="col-md-12 pr-1" style="margin-left: 10px;">
+                                        <label>Upload Slip</label>
+                                        <div class="file-upload-wrapper" data-text="Upload Your Slip" required>
+                                          <input id="fileUpload" type="file" name="file" class="file-upload-field" placeholder="" value=""
+                                            (change)="onFileChanged($event)">
+                                        </div>
+                                     </div>
                                     <div class="col-md-12 pr-1 text-center">
                                         <div class="form-group">
                                             <button type="button" class="btn btn-success"

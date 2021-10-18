@@ -17,14 +17,18 @@ export class VtsRouteComponent implements OnInit {
   toDayDate: any;
   selectedDate: any;
   summaryVehicleList: any[];
+  fileRouteList: any[];
+  routeList: any[];
   ngOnInit() {
-    this.cityName = localStorage.getItem("cityName");    
+    this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $('#txtDate').val(this.selectedDate);
     this.getVehicle();
+    this.fileRouteList = [];
+    this.routeList=[];
   }
 
 
@@ -68,7 +72,70 @@ export class VtsRouteComponent implements OnInit {
   }
 
   saveData() {
-    this.summaryVehicleList = [];    
+    this.summaryVehicleList = [];
+    this.routeList = [];
+    let isFile = false;
+    if ($('#txtJson').val() != "") {
+      isFile = true;
+      try {
+        this.routeList = JSON.parse($('#txtJson').val().toString());
+      } catch {
+        isFile = false;
+        this.commonService.setAlertMessage("error", "Please enter correct json !!!");
+      }
+    }
+    if(isFile==false){
+      if(this.fileRouteList.length>0){
+        isFile=true;
+        this.routeList=this.fileRouteList;
+      }      
+    }
+
+    if(isFile==false){
+      this.commonService.setAlertMessage("error", "Please paste or browse json file!!!");
+    }
+    else{
+      if (this.routeList.length > 0) {
+        for (let i = 0; i < this.routeList.length; i++) {
+          let dateTime = this.routeList[i]["datetimerpl"];
+          let vehicle = this.routeList[i]["vehicleNamerpl"];
+          let color = this.routeList[i]["color"];
+          let lat = this.routeList[i]["lat"];
+          let lng = this.routeList[i]["lng"];
+          let time = dateTime.toString().split(' ')[1] + " " + dateTime.toString().split(' ')[2];
+          let date = dateTime.toString().split(' ')[0];
+          let year = date.split('/')[2];
+          date = date.split('/')[2] + "-" + date.split('/')[0] + "-" + date.split('/')[1];
+          let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+          const data = {
+            vehicle: vehicle,
+            color: color,
+            lat: lat,
+            lng: lng
+          }
+          let dbPath = "VTSRoute/" + year + "/" + monthName + "/" + date + "/" + vehicle + "/" + time;
+          this.db.object(dbPath).update(data);
+          let vehicleDetail = this.summaryVehicleList.find(item => item.vehicle == vehicle);
+          if (vehicleDetail == undefined) {
+            dbPath = "VTSRoute/" + year + "/" + monthName + "/" + date + "/Summary/" + vehicle;
+            this.db.database.ref(dbPath).set("1");
+            this.summaryVehicleList.push({ vehicle: vehicle });
+          }
+          if (date == this.selectedDate) {
+            vehicleDetail = this.vehicleList.find(item => item.vehicle == vehicle);
+            if (vehicleDetail == undefined) {
+              this.vehicleList.push({ vehicle: vehicle });
+            }
+          }
+        }
+      }
+      $('#txtJson').val("");
+      this.commonService.setAlertMessage("success", "Data added successfully !!!");
+    }
+
+
+
+/*
     if ($('#txtJson').val() != "") {
       try {
         let routeList = JSON.parse($('#txtJson').val().toString());
@@ -114,8 +181,25 @@ export class VtsRouteComponent implements OnInit {
         this.commonService.setAlertMessage("error", "Please enter correct json !!!");
       }
     }
-    else{
+    else {
       this.commonService.setAlertMessage("error", "Please enter json !!!");
     }
+    */
+  }
+
+
+  onFileChanged(event) {
+    this.fileRouteList = [];
+    let selectedFile = event.target.files[0];
+    let fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      try{
+      this.fileRouteList = JSON.parse(fileReader.result.toString());
+      }
+      catch{
+        this.commonService.setAlertMessage("error", "Please upload json file!!!");
+      }
+    }
+    fileReader.readAsText(selectedFile);
   }
 }
