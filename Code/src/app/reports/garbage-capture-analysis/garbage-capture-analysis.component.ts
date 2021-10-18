@@ -239,7 +239,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
-    $('#divLoader').show();
+    
     this.getTotals();
     this.progressList = [];
     this.allProgressList = [];
@@ -280,6 +280,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       data => {
         imageInstance.unsubscribe();
         if (data != null) {
+          $('#divLoader').show();
           $('#divMessage').hide();
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
@@ -334,6 +335,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         else {
           $('#divMessage').show();
+          $('#divLoader').hide();  
         }
       }
     );
