@@ -61,7 +61,7 @@
                         << </button>
                 </div>
                 <div class="col-8 pl-0">
-                    <input id="txtDate" class="date-input" type="date"
+                    <input id="txtDateNav" class="date-input" type="date"
                         (change)="setDate($event.target.value,'current')">
                 </div>
                 <div class="col-2 pl-0">
@@ -69,7 +69,7 @@
                         >> </button>
                 </div>
                 <div class="col-12 pr-25 pl-5">
-                    <select class="caret-select" style="width: 200px;" id="ddlOption"
+                    <select class="caret-select" style="width: 200px;" id="ddlOptionNav"
                         (change)="changeOptionSelection($event.target.value)">
                         <option value="0">
                             Select
@@ -79,7 +79,7 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-6 pr-0 ">
+                <div id="topPenalityNav" class="col-6 pr-0 ">
                     <div class="mb-home text-left">
                         <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                         <h6>Penalty</h6>

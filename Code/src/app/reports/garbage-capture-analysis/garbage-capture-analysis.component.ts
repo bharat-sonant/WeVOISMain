@@ -56,6 +56,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $('#txtDate').val(this.selectedDate);
+    $('#txtDateNav').val(this.selectedDate);
     this.commonService.getZoneWiseWard().then((zoneList: any) => {
       this.zoneList = JSON.parse(zoneList);
     });
@@ -65,6 +66,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.userType = localStorage.getItem("userType");
     if (this.userType == "External User") {
       $('#topPenality').hide();
+      $('#topPenalityNav').hide();
       $('#leftPenality').hide();
       $('#divAnalysis').hide();
       $('#tblPenalty').hide();
@@ -184,6 +186,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.selectedOption = "0";
       return;
     }
+    $('#ddlOptionNav').val(option);
+    $('#ddlOption').val(option);
     this.selectedOption = option;
     this.resetData();
     this.getCapturedImages();
@@ -212,6 +216,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       return;
     }
     $("#txtDate").val(this.selectedDate);
+    $('#txtDateNav').val(this.selectedDate);
     this.resetData();
     this.setMonthYear();
     this.getCapturedImages();

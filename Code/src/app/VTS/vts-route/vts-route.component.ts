@@ -9,7 +9,6 @@ import { CommonService } from "../../services/common/common.service";
   styleUrls: ['./vts-route.component.scss']
 })
 export class VtsRouteComponent implements OnInit {
-
   constructor(private vtsService: VtsService, private fs: FirebaseService, private commonService: CommonService) { }
   vehicleList: any[];
   db: any;
@@ -30,7 +29,6 @@ export class VtsRouteComponent implements OnInit {
     this.fileRouteList = [];
     this.routeList = [];
   }
-
 
   setDate(filterVal: any, type: string) {
     if (type == "current") {
@@ -90,7 +88,6 @@ export class VtsRouteComponent implements OnInit {
         this.routeList = this.fileRouteList;
       }
     }
-
     if (isFile == false) {
       this.commonService.setAlertMessage("error", "Please paste or browse json file!!!");
     }
@@ -133,11 +130,8 @@ export class VtsRouteComponent implements OnInit {
           }
         }
       }
-
     }
-
   }
-
 
   onFileChanged(event) {
     this.fileRouteList = [];
