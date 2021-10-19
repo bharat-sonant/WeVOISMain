@@ -127,10 +127,13 @@ export class VtsRouteComponent implements OnInit {
               this.vehicleList.push({ vehicle: vehicle });
             }
           }
+          if (i == this.routeList.length - 1) {
+            $('#txtJson').val("");
+            this.commonService.setAlertMessage("success", "Data added successfully !!!");
+          }
         }
       }
-      $('#txtJson').val("");
-      this.commonService.setAlertMessage("success", "Data added successfully !!!");
+
     }
 
   }
