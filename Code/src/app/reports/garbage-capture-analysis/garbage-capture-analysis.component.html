@@ -1,9 +1,10 @@
 <div id="divLoader" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
+<!----Desktop Navbar Start----->
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-5 pl-18">
+        <div class="col-md-6 col-lg-6 col-xl-5 pl-18">
             <div style="margin-top: -15px;">
                 <button class="btn btn-primary " (click)="setDate('','previous');">
                     << </button>
@@ -24,10 +25,10 @@
                         </select>
             </div>
         </div>
-        <div class="col-md-4 main-headers">
+        <div class="col-md-3 col-lg-3 col-xl-4 main-headers">
             garbage capture analysis
         </div>
-        <div class="col-md-3 text-right total-house pl-18">
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
             <div class="fix-home">
                 <div id="topPenality" class="float-first ml-10 mt-0">
                     <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
@@ -39,35 +40,92 @@
 
                 </div>
             </div>
-
         </div>
+
     </div>
 </section>
+<!----Desktop Navbar End----->
+
+<!----Mobile Navbar Start----->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">garbage capture analysis</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-angle-down"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <div class="row">
+                <div class="col-2 pr-0 ">
+                    <button class="btn btn-primary " (click)="setDate('','previous');">
+                        << </button>
+                </div>
+                <div class="col-8 pl-0">
+                    <input id="txtDate" class="date-input" type="date"
+                        (change)="setDate($event.target.value,'current')">
+                </div>
+                <div class="col-2 pl-0">
+                    <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
+                        >> </button>
+                </div>
+                <div class="col-12 pr-25 pl-5">
+                    <select class="caret-select" style="width: 200px;" id="ddlOption"
+                        (change)="changeOptionSelection($event.target.value)">
+                        <option value="0">
+                            Select
+                        </option>
+                        <option *ngFor="let dt of optionList" value={{dt.id}}>
+                            {{dt.optionType}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-6 pr-0 ">
+                    <div class="mb-home text-left">
+                        <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
+                        <h6>Penalty</h6>
+                    </div>
+                </div>
+                <div class="col-6 pl-0">
+                    <div class="mb-home text-right">
+                        <span class="house"><i class="far fa-images"></i> {{progressData.totalCount}}</span><br>
+                        <h6>Images</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</nav>
+<!----Mobile Navbar End----->
+
+
 <div class="main-content">
     <div class="row main-row">
-        <div class="col-md-7 pl-0 pr-7">
+        <div class="col-md-12 col-lg-12 col-xl-7 pl-0 pr-7 pad-mob-b-10 pad-pr-0">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
                         <div class="col-md-9 text-left">
-                                <div class="row">
-                                    <div class="col-md-5 pr-0">
+                            <div class="row">
+                                <div class="col-md-5 pr-0">
                                     <div class="main-heading mt-10">
                                         <h3>
                                             {{progressData.category}}
                                         </h3>
                                     </div>
                                 </div>
-                        <div class="col-md-7 text-right ml-23">
-                                <div class="main-heading">
-                                    <input class="time-input mr-5" type="time" id="txtTime1"> <span class="para-txt"> to</span>
-                                    <input class="time-input ml-5 mr-5" type="time" id="txtTime2">
-                                    <i class="fas fa-search" (click)="filterData();"></i>
+                                <div class="col-md-7 mob-40 text-right ml-23">
+                                    <div class="main-heading">
+                                        <input class="time-input mr-5" type="time" id="txtTime1"> <span
+                                            class="para-txt"> to</span>
+                                        <input class="time-input ml-5 mr-5" type="time" id="txtTime2">
+                                        <i class="fas fa-search" (click)="filterData();"></i>
+                                    </div>
                                 </div>
-                            </div>
                                 <div class="col-md-12 text-right ml-20">
-                                    <select class="filter-select filter-input"  id="ddlUser"
-                                        (change)="filterData();">
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData();">
                                         <option value="0">
                                             All Users
                                         </option>
@@ -75,7 +133,7 @@
                                             {{user.name}}
                                         </option>
                                     </select>
-                                    <select class="filter-select filter-input"  id="ddlCategory"
+                                    <select class="filter-select filter-input" id="ddlCategory"
                                         (change)="filterData();">
                                         <option value="0">
                                             All Category
@@ -87,8 +145,7 @@
                                             कचरा उठा लिया है
                                         </option>
                                     </select>
-                                    <select class="filter-select filter-input"  id="ddlZone"
-                                        (change)="getWard();">
+                                    <select class="filter-select filter-input" id="ddlZone" (change)="getWard();">
                                         <option value="0">
                                             All Zone
                                         </option>
@@ -96,8 +153,7 @@
                                             {{zone.zoneName}}
                                         </option>
                                     </select>
-                                    <select class="filter-select filter-input" id="ddlWard"
-                                        (change)="filterData();">
+                                    <select class="filter-select filter-input" id="ddlWard" (change)="filterData();">
                                         <option value="0">
                                             All Ward
                                         </option>
@@ -117,11 +173,10 @@
                                                 <span class="tbl-points"> {{progressData.panalty}}</span> <br>
                                                 Penalty
 
-                                                
                                             </h3>
                                         </div>
                                         <div class="table-heading heading2 text-center">
-                                            <h3  style="border-right: none!important;">
+                                            <h3 style="border-right: none!important;">
                                                 <span class="tbl-points "> {{progressData.count}}</span> <br>
                                                 Images
                                             </h3>
@@ -137,6 +192,7 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
+
                                     <table class="table table-line">
                                         <thead>
                                             <th class="br-1" style=" width:40%;">Locality</th>
@@ -155,7 +211,8 @@
                                             <tr id="tr{{i}}" *ngFor="let data of progressList; let i=index"
                                                 style="cursor: pointer;" (click)="getCaptureData(i);">
                                                 <td style="border-right:1px solid #dee2e6">
-                                                    {{data.address}} <span [hidden]="data.zone=='---'"> - {{data.zone}} ward {{data.ward}} </span></td>
+                                                    {{data.address}} <span [hidden]="data.zone=='---'"> - {{data.zone}}
+                                                        ward {{data.ward}} </span></td>
                                                 <td class="text-right br-1">
                                                     {{data.time}}</td>
                                                 <td class="text-left br-1">
@@ -186,10 +243,10 @@
             </div>
         </div>
         <!-----NeW Work Start------->
-        <div class="col-md-5 pr-13" style="height:85vh;overflow:hidden;margin-top:-6px!important;">
+        <div class="col-md-12 col-lg-12 col-xl-5 pr-13 mob-pr-10 mob-res pad-pl-0">
             <div class="fix-h">
                 <div class="row right-scroll">
-                    <div class="col-md-12 pl-5 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;">
+                    <div class="col-md-12 mob-10 pl-5 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;">
                         <div class="image-box">
                             <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""
                                 alt="">
@@ -200,31 +257,31 @@
                         <div class="info-box">
                             <div class="row">
                                 <div class="col-md-2 text-left pr-0">
-                                    <div class="inner-data">
+                                    <div class="inner-data pad-pl-20">
                                         <h3> <b> {{progressData.time}}</b> </h3>
                                         <p><i class="far fa-clock"></i> Time</p>
                                     </div>
                                 </div>
-                                <div class="col-md-5 text-left pr-0" style="padding-left: 0px!important;">
-                                    <div class="inner-data">
+                                <div class="col-md-4  text-left pr-0" style="padding-left: 0px!important;">
+                                    <div class="inner-data mob-pl-25">
                                         <h3> <b> {{progressData.latLng}}</b> </h3>
                                         <p><i class="fas fa-chalkboard"></i> Lat-Lng</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3 text-left pr-0" style="padding-left: 0px!important;">
-                                    <div class="inner-data">
+                                    <div class="inner-data mob-pl-25">
                                         <h3> <b> {{progressData.zone}}</b> </h3>
                                         <p><i class="far fa-clock"></i> Zone</p>
                                     </div>
                                 </div>
-                                <div class="col-md-2 text-left pl-0" style="padding-left: 0px!important;">
-                                    <div class="inner-data">
+                                <div class="col-md-3 text-left pl-0" style="padding-left: 0px!important;">
+                                    <div class="inner-data mob-pl-25">
                                         <h3> <b> {{progressData.ward}}</b> </h3>
                                         <p><i class="fas fa-chalkboard"></i> Ward</p>
                                     </div>
                                 </div>
                                 <div class="col-md-12 text-left">
-                                    <div class="inner-data address-info border-none">
+                                    <div class="inner-data address-info border-none pad-pl-20">
                                         <p class="para-text"><b><i class="fas fa-map-marker-alt"></i> Address :</b></p>
                                         <h3 class="address" style="display:inline;"> {{progressData.address}}</h3>
 
@@ -233,9 +290,9 @@
                             </div>
                         </div>
                     </div>
-                    <div id="divAnalysis" class="col-md-12 pr-0 pl-5">
+                    <div id="divAnalysis" class="col-md-12 pr-0 pl-20">
                         <div class="inner-box main-final-blk">
-                            <div class="row">
+                            <div class="row bg-white">
                                 <div class="col-md-4 br-1">
                                     <div class="inner-data bg-dark final-blk">
                                         <h3> <b>Image Analysis</b> </h3>
