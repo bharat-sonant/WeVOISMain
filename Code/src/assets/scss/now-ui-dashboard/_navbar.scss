@@ -222,6 +222,7 @@
         background-color: $transparent-bg !important;
         box-shadow: none;
         color: $white-color;
+       margin-left: -50px;
     }
 
     &.bg-white:not(.navbar-transparent){
@@ -278,4 +279,18 @@
 
 .bg-white{
     background-color: $white-color !important;
+}
+
+// Small devices (landscape phones, 576px and up)
+@media  (max-width: 576px) { 
+   .navbar-transparent{
+        margin-left: 0px!important;
+    }
+
+}
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .navbar-transparent{
+        margin-left: 0px!important;
+    }
 }
