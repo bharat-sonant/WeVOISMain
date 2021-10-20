@@ -1,4 +1,4 @@
-import { LineCardMappingComponent } from "./../../line-card-mapping/line-card-mapping.component";
+
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { HttpClient } from "@angular/common/http";
@@ -46,7 +46,7 @@ export class SidebarComponent implements OnInit {
   userDetail: userDetail = {
     name: "",
     homeLink: "/home",
-    changePasswordLink:"/change-password",
+    changePasswordLink: "/change-password",
   };
   menuItems: any[];
 
@@ -75,14 +75,7 @@ export class SidebarComponent implements OnInit {
   accessCity: any[] = [];
 
   ngOnInit() {
-    //if (localStorage.getItem("loginDate") != null) {
-    //  if (
-    //    this.commonService.setTodayDate() != localStorage.getItem("loginDate")
-    //  ) {
-    //    window.location.href = "/portal-access";
-    //  }
-    // }
-
+    this.checkLoginDate();
     this.setDefault();
   }
 
@@ -106,7 +99,7 @@ export class SidebarComponent implements OnInit {
       }, 2000);
     }
     this.userDetail.homeLink = "/" + this.cityName + "/home";
-    this.userDetail.changePasswordLink="/" + this.cityName + "/change-password";
+    this.userDetail.changePasswordLink = "/" + this.cityName + "/change-password";
     this.toDayDate = this.commonService.setTodayDate();
     let date = localStorage.getItem("date");
     if (date != null) {
@@ -182,8 +175,8 @@ export class SidebarComponent implements OnInit {
       icon = "./assets/img/test.svg";
     } else if (cityName == "demo") {
       icon = "./assets/img/demo.svg";
-    }else if(cityName=="jaipur-greater"){
-      icon="./assets/img/jaipur_greater.svg";
+    } else if (cityName == "jaipur-greater") {
+      icon = "./assets/img/jaipur_greater.svg";
     }
     return icon;
   }
@@ -715,7 +708,17 @@ export class SidebarComponent implements OnInit {
     );
   }
 
+  checkLoginDate() {
+    if (localStorage.getItem("loginDate") != null) {
+      if (this.commonService.setTodayDate() != localStorage.getItem("loginDate")) {
+        localStorage.removeItem("loginDate");
+        window.location.href = "/logout";
+      }
+    }
+  }
+
   getPage(value: any) {
+    this.checkLoginDate();
     this.userid = localStorage.getItem("userID");
     CmsComponent.prototype.userid = this.userid;
     let list = value.split("/");
@@ -880,7 +883,7 @@ export class SidebarComponent implements OnInit {
         $("#shahpuraBox").show();
       } else if (this.accessCity[i]["city"] == "demo") {
         $("#demoBox").show();
-      }else if (this.accessCity[i]["city"] == "jaipur-greater") {
+      } else if (this.accessCity[i]["city"] == "jaipur-greater") {
         $("#jaipurGreaterBox").show();
       }
     }
@@ -894,5 +897,5 @@ export class SidebarComponent implements OnInit {
 export class userDetail {
   name: string;
   homeLink: string;
-  changePasswordLink:string;
+  changePasswordLink: string;
 }

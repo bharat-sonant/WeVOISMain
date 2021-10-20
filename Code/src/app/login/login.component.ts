@@ -25,12 +25,12 @@ export class LoginComponent implements OnInit {
   toDayDate: any;
 
   ngOnInit() {
-    this.cityName = localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");    
+    this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     this.commonService.setLocalStorageData(this.cityName);
-    this.toDayDate = this.commonService.setTodayDate();
   }
 
   doLogin() {

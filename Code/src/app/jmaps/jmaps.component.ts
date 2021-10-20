@@ -129,7 +129,6 @@ export class JmapsComponent implements OnInit {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -138,7 +137,6 @@ export class JmapsComponent implements OnInit {
       }
     }
     this.polylines = [];
-
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
         if (this.vtsPolylines[i] != undefined) {
@@ -187,29 +185,76 @@ export class JmapsComponent implements OnInit {
   }
 
   getWardData() {
-    if(this.selectedWard=="0"){
+    if (this.selectedWard == "0") {
       return;
     }
     this.resetAll();
-    this.getProgressDetail();
     this.getWardTotalLength();
     this.getWardLineLength();
+    this.getProgressFromLocalStorage();
   }
 
   getWardLineLength() {
-      this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
-        if (lengthList != null) {
-          this.wardLineLengthList = JSON.parse(lengthList);
+    this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
+      if (lengthList != null) {
+        this.wardLineLengthList = JSON.parse(lengthList);
+      }
+    });
+  }
+
+  getProgressFromLocalStorage() {
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList == null) {
+      this.getProgressDetail();
+    }
+    else {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail == undefined) {
+        this.getProgressDetail();
+      }
+      else {
+        this.progressData.workPercentageNumber = Number(summaryDetail.workPerc);
+        this.progressData.workPercentage = summaryDetail.workPerc + "%";
+        this.progressData.coveredLengthMeter = Number(summaryDetail.coveredLength);
+        this.progressData.coveredLength = (parseFloat(summaryDetail.coveredLength) / 1000).toFixed(2);
+        $('#txtPenalty').val(summaryDetail.penalty);
+        $('#txtPenaltyNav').val(summaryDetail.penalty);
+        this.progressData.penalty = summaryDetail.penalty;
+        if (summaryDetail.vtsDone == "yes") {
+          $('#iconDone').show();
+          $('#iconPending').hide();
+          $('#iconDoneNav').show();
+          $('#iconPendingNav').hide();
         }
-      });
+        if (summaryDetail.vehicles != "") {
+          let vechileList = summaryDetail.vehicles.split(',');
+          if (vechileList.length > 0) {
+            for (let i = 0; i < vechileList.length; i++) {
+              if (vechileList[i] != "") {
+                this.vehicleList.push({ vehicle: vechileList[i] });
+              }
+            }
+          }
+        }
+        setTimeout(() => {
+          this.getAllLinesFromJson();
+        }, 300);
+      }
+    }
   }
 
   getProgressDetail() {
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     let summaryInstance = this.db.object(dbPath).valueChanges().subscribe((summaryData) => {
       summaryInstance.unsubscribe();
+      let workPerc = 0;
+      let coveredLength = 0;
+      let penalty = 0;
+      let vtsDone = "no";
+      let vehicles = "";
       if (summaryData != null) {
         if (summaryData["workPerc"] != null) {
+          workPerc = Number(summaryData["workPerc"]);
           this.progressData.workPercentageNumber = Number(summaryData["workPerc"]);
           this.progressData.workPercentage = summaryData["workPerc"] + "%";
         } else {
@@ -217,14 +262,15 @@ export class JmapsComponent implements OnInit {
           this.progressData.workPercentageNumber = 0;
         }
         if (summaryData["coveredLength"] != null) {
+          coveredLength = Number(summaryData["coveredLength"]);
           this.progressData.coveredLengthMeter = Number(summaryData["coveredLength"]);
           this.progressData.coveredLength = (parseFloat(summaryData["coveredLength"]) / 1000).toFixed(2);
         } else {
           this.progressData.coveredLength = "0.00";
           this.progressData.coveredLengthMeter = 0;
         }
-
         if (summaryData["vehicles"] != null) {
+          vehicles = summaryData["vehicles"];
           let vechileList = summaryData["vehicles"].split(',');
           if (vechileList.length > 0) {
             for (let i = 0; i < vechileList.length; i++) {
@@ -235,23 +281,30 @@ export class JmapsComponent implements OnInit {
           }
         }
         if (summaryData["penalty"] != null) {
+          penalty = Number(summaryData["penalty"]);
           $('#txtPenalty').val(summaryData["penalty"]);
           $('#txtPenaltyNav').val(summaryData["penalty"]);
           this.progressData.penalty = summaryData["penalty"];
         }
         if (summaryData["vtsDone"] != null) {
+          vtsDone = "yes";
           $('#iconDone').show();
           $('#iconPending').hide();
           $('#iconDoneNav').show();
           $('#iconPendingNav').hide();
         }
       }
+      let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+      if (summaryList == null) {
+        summaryList = [];
+      }
+      summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, vtsDone: vtsDone, vehicles: vehicles });
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
       this.getAllLinesFromJson();
     });
   }
 
   getAllLinesFromJson() {
-    
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
@@ -261,8 +314,6 @@ export class JmapsComponent implements OnInit {
         this.drowVTSRoute(this.vehicleList[i]["vehicle"], i + 1, i);
       }
     }
-
-    
 
     this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
@@ -436,13 +487,14 @@ export class JmapsComponent implements OnInit {
     });
   }
 
-
   setClickInstance(line: any, lineNo: any, index: any) {
     let progresData = this.progressData;
     let dbEvent = this.db;
     let lines = this.lines;
     let polylines = this.polylines;
     let userId = this.userId;
+    let selectedWard = this.selectedWard;
+    let selectedDate = this.selectedDate;
     let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
@@ -493,6 +545,15 @@ export class JmapsComponent implements OnInit {
         progresData.workPercentage = workPercentage + "%";
         progresData.coveredLengthMeter = wardCoveredDistance;
         progresData.coveredLength = (wardCoveredDistance / 1000).toFixed(2);
+        let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+        if (summaryList != null) {
+          let summaryDetail = summaryList.find(item => item.date == selectedDate && item.ward == selectedWard);
+          if (summaryDetail != undefined) {
+            summaryDetail.workPerc = Number(workPercentage);
+            summaryDetail.coveredLength = wardCoveredDistance.toFixed(0);
+          }
+          localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+        }
       }
     });
   }
@@ -628,8 +689,6 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "This vehicle already added !!!");
       return;
     }
-
-
     let vehicles = "";
     let latLng = [];
     this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng });
@@ -654,7 +713,6 @@ export class JmapsComponent implements OnInit {
   drowVTSRoute(vehicle: any, colorIndex: any, index: any) {
     let VTSList = [];
     let dbPath = "VTSRoute/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + vehicle;
-
     let VTSInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         VTSInstance.unsubscribe();
@@ -704,9 +762,7 @@ export class JmapsComponent implements OnInit {
       color = "#eafe03";
     }
     return color;
-
   }
-
 
   removeVehicle(index: any) {
     let vehicleList = [];
@@ -761,7 +817,6 @@ export class JmapsComponent implements OnInit {
         penalty = 0;
       }
     }
-
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vtsDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
 

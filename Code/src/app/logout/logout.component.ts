@@ -13,28 +13,27 @@ export class LogoutComponent implements OnInit {
   constructor(private router: Router, private commonService: CommonService) { }
 
   ngOnInit() {
-    localStorage.setItem("userAccessList", null);
-    localStorage.setItem("savedData", null);
-    localStorage.setItem("fixedLocation", null);
-    localStorage.setItem("routeMonthDetail", null);
-    localStorage.setItem("savedRouteData", null);
-    localStorage.setItem("employeeDetail", null);
-    localStorage.setItem("wardLineStorage", null);
-    localStorage.setItem("lineStatusDate", null);
-    localStorage.setItem("employee", null);
-    localStorage.setItem("expiryDate", null);
-    localStorage.setItem("vehicle", null);
-    localStorage.setItem("dustbin", null);
-    localStorage.setItem("employeeList", null);
+    localStorage.removeItem("userAccessList");
+    localStorage.removeItem("savedData");
+    localStorage.removeItem("fixedLocation");
+    localStorage.removeItem("routeMonthDetail");
+    localStorage.removeItem("savedRouteData");
+    localStorage.removeItem("employeeDetail");
+    localStorage.removeItem("wardLineStorage");
+    localStorage.removeItem("lineStatusDate");
+    localStorage.removeItem("employee");
+    localStorage.removeItem("expiryDate");
+    localStorage.removeItem("vehicle");
+    localStorage.removeItem("dustbin");
+    localStorage.removeItem("employeeList");
     localStorage.setItem('loginStatus', "Fail");
-    localStorage.setItem('webPortalUserList', null);
-    localStorage.setItem('dustbin', null);
-    localStorage.setItem('portalAccess', null);
-    localStorage.setItem('userID', null);
+    localStorage.removeItem('webPortalUserList');
+    localStorage.removeItem('dustbin');
+    localStorage.removeItem('portalAccess');
+    localStorage.removeItem('userID');
     localStorage.removeItem('officeAppUserId');
     localStorage.removeItem('empLocation');
-    localStorage.setItem('cityName', null);
-    this.router.navigate(['/index']);
+    localStorage.removeItem('cityName');
     $("#divSideMenus").hide();
     localStorage.setItem('notificationHalt', "0");
     localStorage.setItem('notificationMobileDataOff', "0");
@@ -42,10 +41,13 @@ export class LogoutComponent implements OnInit {
     localStorage.setItem('notificationPickDustbins', "0");
     localStorage.setItem('notificationGeoSurfing', "0");
     localStorage.setItem('isTaskManager', "0");
-    localStorage.setItem("houseList", null);
+    localStorage.removeItem("houseList");
+    localStorage.removeItem("jmapWardSummaryList");
+    localStorage.removeItem("loginDate");
     if (this.commonService.notificationInterval != null) {
       this.commonService.notificationInterval.unsubscribe();
     }
+    this.router.navigate(['/index']);
   }
 
 }
