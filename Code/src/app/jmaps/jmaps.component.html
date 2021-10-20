@@ -1,16 +1,17 @@
 <div id="divLoader" class="loaderClass">
   <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
+<!------------Desktop Navbar Start------------->
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-8">
-      <button class="btn btn-primary " style="margin-left: 20px!important;" (click)="setDate('','previous');">
+    <div class="col-md-7 col-xl-8 ipad-pl-25">
+      <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;" (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-          <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
+          <button class="btn btn-primary ipad-btn" (click)="setDate('','next');" style="margin-left: 0px!important;">
             >>
           </button>
-          <select class="caret-select" id="ddlZone" style="width: 150px;"
+          <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
             (change)="changeZoneSelection($event.target.value)">
             <option value="0">
               --Select Zone--
@@ -19,7 +20,7 @@
               {{zone.zoneName}}
             </option>
           </select>
-          <select class="caret-select" id="ddlWard" (change)="changeWardSelection($event.target.value)">
+          <select class="caret-select ipad-ipt-2" id="ddlWard" (change)="changeWardSelection($event.target.value)">
             <option value="0">
               --Select--
             </option>
@@ -27,9 +28,12 @@
               {{ward.wardName}}
             </option>
           </select>
+          <div class="main-headers hide-on-ipad">
+            VTS Analysis
+          </div>
     </div>
 
-    <div id="houseCount" class="col-md-4 text-right total-house">
+    <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
       <div class="fix-home">
         <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
           <i id="iconDone" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
@@ -37,15 +41,17 @@
           <h6 id="divTracking" style="font-size: 9px!important;">Tracking</h6>
         </div>
         <div class="float-second" style="margin-top: 10px;">
-          <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg" class="img-fluid header-penalty" alt=""> </span><br>
+          <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
+              class="img-fluid header-penalty" alt=""> </span><br>
           <h6 style="font-size: 9px!important;">Penalty</h6>
         </div>
 
         <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
             aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
-            <h6 style="font-size: 9px!important;">Settings</h6></button>
-            
+            <h6 style="font-size: 9px!important;">Settings</h6>
+          </button>
+
         </div>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
@@ -76,7 +82,7 @@
                   </div>
                   <div class="setting-box">
                     <p class="previous-data"><b>Get Previous Data</b></p> <br>
-                    <input class="date-input date" id="txtPreDate" type="date">
+                    <input class="date-input date" id="txtPreDate" type="date" (change)="setPreDate($event.target.value)">
                     <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
                   </div>
                   <div class="setting-box" style="padding-bottom: 10px!important;">
@@ -85,7 +91,7 @@
                       style="background-color: #0ba118!important;">
                       << </button>
                         <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
-                          autocomplete="off" class="date-input" 
+                          autocomplete="off" class="date-input"
                           style="text-align: center; width: 170px; font-weight: bold;" value="4" />
                         <button (click)="getNextPrevious('next');" class="btn-primary"
                           style="background-color: #0ba118!important;">
@@ -100,13 +106,239 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-12 main-headers ipad-desk-hide">
+      VTS Analysis
+    </div>
   </div>
 </section>
+<!------------Desktop Navbar End------------->
+
+<!----Mobile Navbar Start----->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">VTS Analysis</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <i class="fas fa-angle-down"></i>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <div class="row">
+        <div class="col-2 pr-0 ">
+          <button class="btn btn-primary " (click)="setDate('','previous');">
+            << </button>
+        </div>
+        <div class="col-8 pl-0">
+          <input id="txtDateNav" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+        </div>
+        <div class="col-2 pl-0">
+          <button class="btn btn-primary" (click)="setDate('','next');"> >> </button>
+        </div>
+        <div class="col-12 pr-25 pl-5 mob-pl-15 mob-pr-15">
+          <select class="caret-select" id="ddlZoneNav" style="width: 150px;"
+            (change)="changeZoneSelection($event.target.value)">
+            <option value="0">
+              --Select Zone--
+            </option>
+            <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+              {{zone.zoneName}}
+            </option>
+          </select>
+        </div>
+        <div class="col-12 mt-10 pr-25 pl-5 mob-pl-15 mob-pr-15">
+          <select class="caret-select" id="ddlWardNav" (change)="changeWardSelection($event.target.value)">
+            <option value="0">
+              --Select--
+            </option>
+            <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+              {{ward.wardName}}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-4 mt-10 pr-0">
+          <div class="mb-home  text-left">
+            <i id="iconDoneNav" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
+            <i id="iconPendingNav" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
+            <h6 id="divTrackingNav" style="font-size: 9px!important;">Tracking</h6>
+          </div>
+        </div>
+        <div class="col-4 mb-home mt-10 text-center pl-0">
+          <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
+              class="img-fluid header-penalty" alt=""> </span><br>
+          <h6 style="font-size: 9px!important;">Penalty</h6>
+        </div>
+        <div class="col-4 mb-home mt-5 pl-0">
+          <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
+            <h6 style="font-size: 9px!important;">Settings</h6>
+          </button>
+        </div>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingtwo">
+              <h4 class="panel-title">
+              </h4>
+            </div>
+            <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-md-12 text-left">
+                    <div class="setting-box">
+                      <p id="showBoundriesNav"> Hide Boundaries</p>
+
+                      <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
+                          class="fas fa-grip-lines-vertical"></i></button>
+                    </div>
+                    <div class="setting-box">
+                      <p> Select All</p>
+                      <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i
+                          class="far fa-window-restore"></i></button>
+                    </div>
+                    <div class="setting-box">
+                      <p> Reset All</p>
+                      <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i
+                          class="fas fa-check-double"></i></button>
+                    </div>
+                    <div class="setting-box">
+                      <p class="previous-data"><b>Get Previous Data</b></p> <br>
+                      <input class="date-input date-input-mob-1 date" id="txtPreDateNav" type="date"  (change)="setPreDate($event.target.value)">
+                      <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
+                    </div>
+                    <div class="setting-box" style="padding-bottom: 10px!important;">
+
+                      <button (click)="getNextPrevious('pre');" class="btn-primary mob-btn-primary"
+                        style="background-color: #0ba118!important;">
+                        << </button>
+                          <input class="date-input-mob-2 date-input" id="txtStrokeWeightNav" type="text"
+                            (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
+                            style="text-align: center; width: 170px; font-weight: bold;" value="4" />
+                          <button (click)="getNextPrevious('next');" class="btn-primary mob-btn-primary"
+                            style="background-color: #0ba118!important;">
+                            >>
+                          </button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</nav>
+<!----Mobile Navbar End----->
 
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
 
+<!----Map Content on Mobile Start----->
+<div class="col-4 mb-home hide-on-desk mt-5 pl-0">
+  <button class="btn-accordion mob-btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsethree"
+    aria-expanded="true" aria-controls="collapsethree">Ward Details</button>
+</div>
+<div class="panel-group hide-on-desk" id="accordion" role="tablist" aria-multiselectable="true"
+  style="border-radius: 5px;">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingthree">
+      <h4 class="panel-title">
+      </h4>
+    </div>
+    <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
+      <div class="panel-body mob-panel-body">
+        <div id="divJaipurGreaterDetail">
+          <div class="jaipur-line-details-box">
+            <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
+              <div class="lines-left">
+                <h3>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                      [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25"
+                      aria-valuemin="0" aria-valuemax="100">{{progressData.workPercentage}}</div>
+                  </div>
+                </h3>
+              </div>
+            </div>
+            <div class="lines">
+              <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+                <p>Total Ward Length</p>
+              </h3>
+            </div>
+            <div class="lines2">
+              <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+                <p>Covered Ward Length</p>
+              </h3>
+            </div>
+          </div>
+        </div>
 
-<div id="divJaipurGreaterDetail">
+        <div id="divDriverDetail" class="driver-helper-box">
+          <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+            <div>
+              <input id="txtVehicle" type="text" autocomplete="off"
+                style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
+              <button (click)="addVehicle();"
+                style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+                Add Vehicle
+              </button>
+            </div>
+          </div>
+          <div id="myBox">
+            <div class="accordion">
+              <div class="card">
+                <div aria-labelledby="headingOne">
+                  <div class="dth">
+                    <div class="table-bg">
+                      <div class="tableFixHead">
+                        <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col"><b>Sno</b></th>
+                              <th class="text-left" scope="col" style="text-align: left!important;"><b>Vehicle</b></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!---->
+                            <tr *ngFor="let dt of vehicleList, let i=index">
+                              <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
+                              <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
+                                  style="float:right; color:red; cursor: pointer;" (click)="removeVehicle(i)"></i></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+            <div class="d-ib">
+              <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
+              <input class="penalty-input" id="txtPenalty" type="number" min="0" autocomplete="off" value="0" />
+
+            </div>
+            <div class="d-ib">
+              <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Analysis
+                Done</button>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<!----Map Content on Mobile End----->
+
+<!----Map Content on Desktop Start----->
+<div class="hide-on-mob" id="divJaipurGreaterDetail">
   <div class="jaipur-line-details-box">
     <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
       <div class="lines-left">
@@ -133,10 +365,10 @@
 </div>
 
 
-<div id="divDriverDetail" class="driver-helper-box">
+<div id="divDriverDetail" class="driver-helper-box hide-on-mob">
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
     <div>
-      <input id="txtVehicle" type="text" (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
+      <input id="txtVehicleNav" type="text" autocomplete="off"
         style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
       <button (click)="addVehicle();"
         style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
@@ -177,14 +409,17 @@
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
     <div class="d-ib">
       <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
-      <input class="penalty-input" id="txtPenalty" type="number" min="1"  autocomplete="off" value="0" />
+      <input class="penalty-input" id="txtPenaltyNav" type="number" min="1" autocomplete="off" value="0" />
 
     </div>
     <div class="d-ib">
-      <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Analysis Done</button>
+      <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Analysis
+        Done</button>
     </div>
   </div>
 </div>
+<!----Map Content on Desktop End----->
+
 
 <!--Reset Confirmation Start-->
 <ng-template #contentPlanConfirm>
