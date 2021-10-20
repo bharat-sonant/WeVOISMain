@@ -220,7 +220,7 @@ export class JmapsComponent implements OnInit {
         $('#txtPenalty').val(summaryDetail.penalty);
         $('#txtPenaltyNav').val(summaryDetail.penalty);
         this.progressData.penalty = summaryDetail.penalty;
-        if (summaryDetail.vtsDone == "yes") {
+        if (summaryDetail.analysisDone == "yes") {
           $('#iconDone').show();
           $('#iconPending').hide();
           $('#iconDoneNav').show();
@@ -250,7 +250,7 @@ export class JmapsComponent implements OnInit {
       let workPerc = 0;
       let coveredLength = 0;
       let penalty = 0;
-      let vtsDone = "no";
+      let analysisDone = "no";
       let vehicles = "";
       if (summaryData != null) {
         if (summaryData["workPerc"] != null) {
@@ -286,8 +286,8 @@ export class JmapsComponent implements OnInit {
           $('#txtPenaltyNav').val(summaryData["penalty"]);
           this.progressData.penalty = summaryData["penalty"];
         }
-        if (summaryData["vtsDone"] != null) {
-          vtsDone = "yes";
+        if (summaryData["analysisDone"] != null) {
+          analysisDone = "yes";
           $('#iconDone').show();
           $('#iconPending').hide();
           $('#iconDoneNav').show();
@@ -298,7 +298,7 @@ export class JmapsComponent implements OnInit {
       if (summaryList == null) {
         summaryList = [];
       }
-      summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, vtsDone: vtsDone, vehicles: vehicles });
+      summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
       localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
       this.getAllLinesFromJson();
     });
@@ -707,6 +707,14 @@ export class JmapsComponent implements OnInit {
     this.db.object(dbPath).update({ vehicles: vehicles });
     $('#txtVehicle').val("");
     $('#txtVehicleNav').val("");
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.vehicles = vehicles;
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
     this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
   }
 
@@ -806,6 +814,14 @@ export class JmapsComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
       this.db.database.ref(dbPath).set(null);
     }
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.vehicles = vehicles;
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
 
@@ -818,7 +834,7 @@ export class JmapsComponent implements OnInit {
       }
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ vtsDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
+    this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
 
     $('#iconDone').show();
     $('#iconPending').hide();
@@ -827,6 +843,15 @@ export class JmapsComponent implements OnInit {
     this.progressData.penalty = Number(penalty);
     $('#txtPenalty').val(penalty);
     $('#txtPenaltyNav').val(penalty);
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.penalty = Number(penalty);
+        summaryDetail.analysisDone = "yes";
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
     this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
   }
 
