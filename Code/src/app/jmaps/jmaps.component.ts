@@ -38,6 +38,8 @@ export class JmapsComponent implements OnInit {
   wardLineLengthList: any[];
   userId: any;
   isBoundaryShow = true;
+  strockColorNotDone = "#fa0505";
+  strockColorDone = "#0ba118";
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -47,6 +49,27 @@ export class JmapsComponent implements OnInit {
     workPercentageNumber: 0,
     penalty: 0
   };
+
+  showBoundries = "#showBoundries";
+  showBoundriesNav = "#showBoundriesNav";
+  ddlZone = "#ddlZone";
+  ddlZoneNav = "#ddlZoneNav";
+  txtDate = "#txtDate";
+  txtDateNav = "#txtDateNav";
+  txtPreDate = "#txtPreDate";
+  txtPreDateNav = "#txtPreDateNav";
+  txtStrokeWeight = "#txtStrokeWeight";
+  txtStrokeWeightNav = "#txtStrokeWeightNav";
+  iconDone = "#iconDone";
+  iconPending = "#iconPending";
+  iconDoneNav = "#iconDoneNav";
+  iconPendingNav = "#iconPendingNav";
+  txtPenalty = "#txtPenalty";
+  txtPenaltyNav = "#txtPenaltyNav";
+  ddlWard = "#ddlWard";
+  ddlWardNav = "#ddlWardNav";
+  txtVehicle = "#txtVehicle";
+  txtVehicleNav = "#txtVehicleNav";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -64,10 +87,10 @@ export class JmapsComponent implements OnInit {
       this.zoneList = JSON.parse(zoneList);
     });
     this.userId = localStorage.getItem("userID");
-    $("#txtDate").val(this.selectedDate);
-    $('#txtPreDate').val(this.selectedDate);
-    $("#txtDateNav").val(this.selectedDate);
-    $('#txtPreDateNav').val(this.selectedDate);
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtPreDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
+    $(this.txtPreDateNav).val(this.selectedDate);
     this.setHeight();
     this.setMaps();
     this.lines = [];
@@ -78,18 +101,15 @@ export class JmapsComponent implements OnInit {
     this.selectedWard = "0";
     if (localStorage.getItem("strokeWeight") != null) {
       this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
-      $('#txtStrokeWeight').val(this.strokeWeight);
-      $('#txtStrokeWeightNav').val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
     }
-    $('#iconDone').hide();
-    $('#iconPending').show();
-    $('#iconDoneNav').hide();
-    $('#iconPendingNav').show();
+    this.showHideAnalysisDoneHtml("hide");
   }
 
   changeZoneSelection(filterVal: any) {
-    $('#ddlZone').val(filterVal);
-    $('#ddlZoneNav').val(filterVal);
+    $(this.ddlZone).val(filterVal);
+    $(this.ddlZoneNav).val(filterVal);
     this.selectedWard = 0;
     this.resetAll();
     this.wardList = [];
@@ -108,16 +128,38 @@ export class JmapsComponent implements OnInit {
     this.map.setOptions({ clickableIcons: false });
   }
 
+  showHideBoundariesHtml() {
+    if (this.isBoundaryShow == true) {
+      $(this.showBoundries).html("Hide Boundaries");
+      $(this.showBoundriesNav).html("Hide Boundaries");
+    }
+    else {
+      $(this.showBoundries).html("Show Boundaries");
+      $(this.showBoundriesNav).html("Show Boundaries");
+    }
+  }
+
+  showHideAnalysisDoneHtml(type: any) {
+    if (type == "hide") {
+      $(this.iconDone).hide();
+      $(this.iconPending).show();
+      $(this.iconDoneNav).hide();
+      $(this.iconPendingNav).show();
+    }
+    else {
+      $(this.iconDone).show();
+      $(this.iconPending).hide();
+      $(this.iconDoneNav).show();
+      $(this.iconPendingNav).hide();
+    }
+  }
+
   resetAll() {
     this.isBoundaryShow = true;
-    $('#showBoundries').html("Hide Boundaries");
-    $('#iconDone').hide();
-    $('#iconPending').show();
-    $('#txtPenalty').val("0");
-    $('#showBoundriesNav').html("Hide Boundaries");
-    $('#iconDoneNav').hide();
-    $('#iconPendingNav').show();
-    $('#txtPenaltyNav').val("0");
+    this.showHideBoundariesHtml();
+    this.showHideAnalysisDoneHtml("hide");
+    $(this.txtPenalty).val("0");
+    $(this.txtPenaltyNav).val("0");
     this.progressData.coveredLength = "0";
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
@@ -154,8 +196,8 @@ export class JmapsComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
-    $('#ddlWard').val(filterVal);
-    $('#ddlWardNav').val(filterVal);
+    $(this.ddlWard).val(filterVal);
+    $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
     this.getWardData();
   }
@@ -175,8 +217,8 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       return;
     }
-    $("#txtDate").val(this.selectedDate);
-    $("#txtDateNav").val(this.selectedDate);
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     this.getWardData();
@@ -217,14 +259,11 @@ export class JmapsComponent implements OnInit {
         this.progressData.workPercentage = summaryDetail.workPerc + "%";
         this.progressData.coveredLengthMeter = Number(summaryDetail.coveredLength);
         this.progressData.coveredLength = (parseFloat(summaryDetail.coveredLength) / 1000).toFixed(2);
-        $('#txtPenalty').val(summaryDetail.penalty);
-        $('#txtPenaltyNav').val(summaryDetail.penalty);
+        $(this.txtPenalty).val(summaryDetail.penalty);
+        $(this.txtPenaltyNav).val(summaryDetail.penalty);
         this.progressData.penalty = summaryDetail.penalty;
         if (summaryDetail.analysisDone == "yes") {
-          $('#iconDone').show();
-          $('#iconPending').hide();
-          $('#iconDoneNav').show();
-          $('#iconPendingNav').hide();
+          this.showHideAnalysisDoneHtml("show");
         }
         if (summaryDetail.vehicles != "") {
           let vechileList = summaryDetail.vehicles.split(',');
@@ -279,16 +318,13 @@ export class JmapsComponent implements OnInit {
         }
         if (summaryData["penalty"] != null) {
           penalty = Number(summaryData["penalty"]);
-          $('#txtPenalty').val(summaryData["penalty"]);
-          $('#txtPenaltyNav').val(summaryData["penalty"]);
+          $(this.txtPenalty).val(summaryData["penalty"]);
+          $(this.txtPenaltyNav).val(summaryData["penalty"]);
           this.progressData.penalty = summaryData["penalty"];
         }
         if (summaryData["analysisDone"] != null) {
           analysisDone = "yes";
-          $('#iconDone').show();
-          $('#iconPending').hide();
-          $('#iconDoneNav').show();
-          $('#iconPendingNav').hide();
+          this.showHideAnalysisDoneHtml("show");
         }
       }
       let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
@@ -334,7 +370,7 @@ export class JmapsComponent implements OnInit {
                   this.lines.push({
                     lineNo: lineNo,
                     latlng: latLng,
-                    color: "#fa0505",
+                    color: this.strockColorNotDone,
                     dist: dist
                   });
                   this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedWard);
@@ -348,7 +384,7 @@ export class JmapsComponent implements OnInit {
   }
 
   setPreviousData() {
-    let date = $('#txtPreDate').val().toString();
+    let date = $(this.txtPreDate).val().toString();
     if (date == "") {
       this.commonService.setAlertMessage("error", "Please select date !!!");
       return;
@@ -403,14 +439,14 @@ export class JmapsComponent implements OnInit {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
         var polyOptions = {
-          strokeColor: "#fa0505",
+          strokeColor: this.strockColorNotDone,
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
-        this.polylines[j]["strokeColor"] = "#fa0505";
-        this.lines[j]["color"] = "#fa0505";
+        this.polylines[j]["strokeColor"] = this.strockColorNotDone;
+        this.lines[j]["color"] = this.strockColorNotDone;
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
         this.db.database.ref(dbPath).set(null);
       }
@@ -435,13 +471,13 @@ export class JmapsComponent implements OnInit {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
         var polyOptions = {
-          strokeColor: "#0ba118",
+          strokeColor: this.strockColorDone,
           strokeOpacity: 1.0,
           strokeWeight: this.strokeWeight
         }
         let lineNo = this.lines[j]["lineNo"];
-        this.polylines[j]["strokeColor"] = "#0ba118";
-        this.lines[j]["color"] = "#0ba118";
+        this.polylines[j]["strokeColor"] = this.strockColorDone;
+        this.lines[j]["color"] = this.strockColorDone;
         line.setOptions(polyOptions);
         let date = new Date();
         let hour = date.getHours();
@@ -473,9 +509,9 @@ export class JmapsComponent implements OnInit {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       lineStatus.unsubscribe();
-      let strockColor = "#fa0505";
+      let strockColor = this.strockColorNotDone;
       if (status != null) {
-        strockColor = "#0ba118";
+        strockColor = this.strockColorDone;
       }
       let line = new google.maps.Polyline({
         path: latlngs,
@@ -500,6 +536,8 @@ export class JmapsComponent implements OnInit {
     let userId = this.userId;
     let selectedWard = this.selectedWard;
     let selectedDate = this.selectedDate;
+    let strockColorNotDone=this.strockColorNotDone;
+    let strockColorDone=this.strockColorDone;
     let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
@@ -511,7 +549,7 @@ export class JmapsComponent implements OnInit {
       let second = date.getSeconds();
       let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
 
-      let stockColor = "#fa0505";
+      let stockColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         dist = Number(lineDetail.dist);
@@ -519,15 +557,15 @@ export class JmapsComponent implements OnInit {
         let wardCoveredDistance = progresData.coveredLengthMeter;
         let workPercentage = 0;
         stockColor = lineDetail.color;
-        if (stockColor == "#fa0505") {
+        if (stockColor == strockColorNotDone) {
           dbEvent.database.ref(dbPathTime).set(time);
-          lineDetail.color = "#0ba118";
+          lineDetail.color = strockColorDone;
           stockColor = lineDetail.color;
           wardCoveredDistance = wardCoveredDistance + dist;
         }
         else {
           dbEvent.database.ref(dbPathTime).set(null);
-          lineDetail.color = "#fa0505";
+          lineDetail.color = strockColorNotDone;
           stockColor = lineDetail.color;
           wardCoveredDistance = wardCoveredDistance - dist;
         }
@@ -564,9 +602,9 @@ export class JmapsComponent implements OnInit {
   }
 
   getNextPrevious(type: any) {
-    let strokeWeight = $("#txtStrokeWeight").val();
+    let strokeWeight = $(this.txtStrokeWeight).val();
     if (strokeWeight == "") {
-      strokeWeight = $("#txtStrokeWeightNav").val();
+      strokeWeight = $(this.txtStrokeWeightNav).val();
       if (strokeWeight == "") {
         this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
         return;
@@ -575,15 +613,15 @@ export class JmapsComponent implements OnInit {
     if (type == "pre") {
       if (strokeWeight != "1") {
         this.strokeWeight = Number(strokeWeight) - 1;
-        $("#txtStrokeWeight").val(this.strokeWeight);
-        $("#txtStrokeWeightNav").val(this.strokeWeight);
+        $(this.txtStrokeWeight).val(this.strokeWeight);
+        $(this.txtStrokeWeightNav).val(this.strokeWeight);
         localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
         this.setStrokeWeight();
       }
     } else if (type == "next") {
       this.strokeWeight = Number(strokeWeight) + 1;
-      $("#txtStrokeWeight").val(this.strokeWeight);
-      $("#txtStrokeWeightNav").val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
       localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
@@ -607,17 +645,17 @@ export class JmapsComponent implements OnInit {
 
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
-      let strokeWeight = $("#txtStrokeWeight").val();
+      let strokeWeight = $(this.txtStrokeWeight).val();
       if (strokeWeight == "") {
-        strokeWeight = $("#txtStrokeWeightNav").val();
+        strokeWeight = $(this.txtStrokeWeightNav).val();
         if (strokeWeight == "") {
           this.commonService.setAlertMessage("error", "Please enter line no. !!!");
           return;
         }
       }
       this.strokeWeight = Number(strokeWeight);
-      $("#txtStrokeWeight").val(this.strokeWeight);
-      $("#txtStrokeWeightNav").val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
       localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
@@ -631,24 +669,22 @@ export class JmapsComponent implements OnInit {
   }
 
   setPreDate(filterVal: any) {
-    $('#txtPreDate').val(filterVal);
-    $('#txtPreDateNav').val(filterVal);
+    $(this.txtPreDate).val(filterVal);
+    $(this.txtPreDateNav).val(filterVal);
   }
 
   showBounderis() {
     if (this.isBoundaryShow == true) {
-      $('#showBoundries').html("Show Boundaries");
-      $('#showBoundriesNav').html("Show Boundaries");
       this.isBoundaryShow = false;
+      this.showHideBoundariesHtml();
       if (this.wardBoundary != null) {
         this.wardBoundary.setMap(null);
       }
       this.wardBoundary = null;
     }
     else {
-      $('#showBoundries').html("Hide Boundaries");
-      $('#showBoundriesNav').html("Hide Boundaries");
       this.isBoundaryShow = true;
+      this.showHideBoundariesHtml();
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
       });
@@ -677,8 +713,7 @@ export class JmapsComponent implements OnInit {
   }
 
   addVehicle() {
-
-    let vehicleNo = $('#txtVehicle').val().toString().trim();
+    let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
@@ -711,8 +746,8 @@ export class JmapsComponent implements OnInit {
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
-    $('#txtVehicle').val("");
-    $('#txtVehicleNav').val("");
+    $(this.txtVehicle).val("");
+    $(this.txtVehicleNav).val("");
     let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
     if (summaryList != null) {
       let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
@@ -836,23 +871,19 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
-    let penalty = $('#txtPenalty').val();
+    let penalty = $(this.txtPenalty).val();
     if (penalty == "" || penalty == "0") {
-      penalty = $('#txtPenaltyNav').val();
+      penalty = $(this.txtPenaltyNav).val();
       if (penalty == "" || penalty == "0") {
         penalty = 0;
       }
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
-
-    $('#iconDone').show();
-    $('#iconPending').hide();
-    $('#iconDoneNav').show();
-    $('#iconPendingNav').hide();
+    this.showHideAnalysisDoneHtml("show");
     this.progressData.penalty = Number(penalty);
-    $('#txtPenalty').val(penalty);
-    $('#txtPenaltyNav').val(penalty);
+    $(this.txtPenalty).val(penalty);
+    $(this.txtPenaltyNav).val(penalty);
     let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
     if (summaryList != null) {
       let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
