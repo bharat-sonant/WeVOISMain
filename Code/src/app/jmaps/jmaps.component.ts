@@ -58,6 +58,8 @@ export class JmapsComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
     this.commonService.getZoneWiseWard().then((zoneList: any) => {
       this.zoneList = JSON.parse(zoneList);
     });
@@ -103,6 +105,7 @@ export class JmapsComponent implements OnInit {
   setMaps() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+    this.map.setOptions({ clickableIcons: false });
   }
 
   resetAll() {
@@ -153,11 +156,6 @@ export class JmapsComponent implements OnInit {
   changeWardSelection(filterVal: any) {
     $('#ddlWard').val(filterVal);
     $('#ddlWardNav').val(filterVal);
-    if (filterVal == "0") {
-      this.commonService.setAlertMessage("error", "Please select ward !!!");
-    }
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split("-")[0];
     this.selectedWard = filterVal;
     this.getWardData();
   }
@@ -185,12 +183,14 @@ export class JmapsComponent implements OnInit {
   }
 
   getWardData() {
-    if (this.selectedWard == "0") {
+    if (this.selectedWard == "0" || this.selectedWard == null) {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
     this.resetAll();
     this.getWardTotalLength();
     this.getWardLineLength();
+    this.getAllLinesFromJson();
     this.getProgressFromLocalStorage();
   }
 
@@ -236,9 +236,6 @@ export class JmapsComponent implements OnInit {
             }
           }
         }
-        setTimeout(() => {
-          this.getAllLinesFromJson();
-        }, 300);
       }
     }
   }
@@ -300,7 +297,6 @@ export class JmapsComponent implements OnInit {
       }
       summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
       localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
-      this.getAllLinesFromJson();
     });
   }
 
@@ -385,6 +381,15 @@ export class JmapsComponent implements OnInit {
                 workPerc: workPercentage
               }
               this.db.object(dbPath).update(data1);
+              let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+              if (summaryList != null) {
+                let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+                if (summaryDetail != undefined) {
+                  summaryDetail.workPerc = Number(workPercentage);
+                  summaryDetail.coveredLength = wardCoveredDistance.toFixed(0);
+                }
+                localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+              }
             }
             this.getWardData();
           }
@@ -672,9 +677,10 @@ export class JmapsComponent implements OnInit {
   }
 
   addVehicle() {
+
     let vehicleNo = $('#txtVehicle').val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
     if (vehicleNo == "") {
@@ -826,6 +832,10 @@ export class JmapsComponent implements OnInit {
   }
 
   saveVTSTrackingDone() {
+    if (this.selectedWard == "0" || this.selectedWard == null) {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
     let penalty = $('#txtPenalty').val();
     if (penalty == "" || penalty == "0") {
       penalty = $('#txtPenaltyNav').val();
@@ -852,7 +862,7 @@ export class JmapsComponent implements OnInit {
       }
       localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
     }
-    this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
+    this.commonService.setAlertMessage("success", "Analysis done for ward " + this.selectedWard + " done !!!");
   }
 
   openModel(content: any) {
