@@ -4,8 +4,7 @@
             <div class="col-md-12" style=" padding-left: 20px; padding-top: 4px;">
                 <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
                     << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')"
-                  style="height: 45px; width: 150px; margin-right: 8px;" />
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" />
                 <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
                 <select class="caret-select" id="ddlZone" style="width: 150px;"
                 (change)="changeZoneSelection($event.target.value)">
@@ -46,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 ">
+            <div class="col-md-5 col-xl-4 ">
                 <div class="col-md-12" id="divGeneralData">
                     <table class="tbl" cellpadding="0" cellspacing="0">                       
                         <tr>
@@ -79,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 " id="divRptRight">
+            <div class="col-md-7 col-xl-8 " id="divRptRight">
                 <div id="divMap" class="report-map" style="margin-left:-17px;">
                     <div #gmap style="width:100%;height:100%;"></div>
                 </div>
