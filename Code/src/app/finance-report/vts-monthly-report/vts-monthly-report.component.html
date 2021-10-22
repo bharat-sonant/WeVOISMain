@@ -1,13 +1,11 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-6" style="padding-left: 10px;">
-            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
-                style="width: 150px;" [(ngModel)]="selectedYear">
+        <div class="col-md-6 col-xl-5" style="padding-left: 10px;">
+            <select class="caret-select select-1" id="ddlYear" (change)="changeYearSelection($event.target.value)" [(ngModel)]="selectedYear">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlMonth"   (change)="changeMonthSelection($event.target.value)"
-                style="width: 150px;">
+            <select class="caret-select select-2" id="ddlMonth"   (change)="changeMonthSelection($event.target.value)">
                 <option value="0">Month</option>
                 <option value="01">January</option>
                 <option value="02">February</option>
@@ -22,8 +20,7 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>            
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-                style="width: 170px;">
+            <select class="caret-select select-3" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
                 <option value="0">
                     --Select Zone--
                   </option>
@@ -32,8 +29,8 @@
                   </option>
             </select>
         </div>
-        <div class="col-md-6" style="padding-left: 10px;padding-top: 10px;">
-            VTS Monthly Report        
+        <div class="col-md-6 col-xl-7" style="padding-left: 10px;padding-top: 10px;">
+            <h6 class="header-text">VTS Monthly Report</h6>     
         </div>
     </div>
 </section>
@@ -48,7 +45,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">Ward</th>
-                                        <th scope="col" class="text-left thFixed1 " style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">Penalty</th>
+                                        <th scope="col" class="text-left thFixed1 " >Penalty</th>
                                         <th scope="col" class="text-center">01</th>
                                         <th scope="col" class="text-center">02</th>
                                         <th scope="col" class="text-center">03</th>
@@ -86,7 +83,7 @@
                                     <tr *ngFor="let dt of wardDataList" >
                                         <td class=" thFixed" style="vertical-align: top; font-weight: bold;">{{dt.wardNo}}</td>
                                         <td class="text-left thFixed1 rowWidth" style="vertical-align: top; font-weight: bold;"><div class="rowWidthTime">₹{{dt.cost}}</div></td>
-                                        <td class=" text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day1" class="rowWidth"></div></td>
+                                        <td class=" text-center" style="vertical-align: top; margin-left: 200px" ><div [innerHTML]="dt.day1" class="rowWidth"></div></td>
                                         <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day2" class="rowWidth"></div></td>
                                         <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day3" class="rowWidth"></div></td>
                                         <td class="text-center" style="vertical-align: top;" ><div [innerHTML]="dt.day4" class="rowWidth"></div></td>
@@ -165,7 +162,7 @@
 
 <div class="tracking-bg">
     <div class="main-info" style="padding-top: 10px;">
-      <h1>Penalty : {{costData.totalCost}}
+      <h1> <span>{{costData.totalCost}}</span> <br> Penalty
       </h1>
     </div>
   </div>
