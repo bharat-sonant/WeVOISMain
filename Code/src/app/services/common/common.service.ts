@@ -25,27 +25,11 @@ export class CommonService {
     let month = d.getMonth() + 1;
     let day = d.getDate();
 
-    return (
-      d.getFullYear() +
-      "-" +
-      (month < 10 ? "0" : "") +
-      month +
-      "-" +
-      (day < 10 ? "0" : "") +
-      day
-    );
+    return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
   getDate(day: any, month: any, year: any) {
-    return (
-      year +
-      "-" +
-      (month < 10 ? "0" : "") +
-      month +
-      "-" +
-      (day < 10 ? "0" : "") +
-      day
-    );
+    return (year + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
   getTodayDateTime() {
@@ -55,27 +39,11 @@ export class CommonService {
     let hour = d.getHours();
     let min = d.getMinutes();
 
-    return (
-      d.getFullYear() +
-      "-" +
-      (month < 10 ? "0" : "") +
-      month +
-      "-" +
-      (day < 10 ? "0" : "") +
-      day +
-      " " +
-      (hour < 10 ? "0" : "") +
-      hour +
-      ":" +
-      (min < 10 ? "0" : "") +
-      min
-    );
+    return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day + " " + (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min);
   }
 
   getDaysBetweenDates(date1: any, date2: any) {
-    let Difference_In_Time =
-      new Date(date2.toString()).getTime() -
-      new Date(date1.toString()).getTime();
+    let Difference_In_Time = new Date(date2.toString()).getTime() - new Date(date1.toString()).getTime();
     return Difference_In_Time / (1000 * 3600 * 24);
   }
 
@@ -127,9 +95,35 @@ export class CommonService {
     return year + "-" + month + "-" + nextday;
   }
 
+  getDefaultCityLatLng(){
+    let latLng=[];
+    let cityName=localStorage.getItem("cityName");
+    if(cityName=="jaipur-greater"){
+      latLng.push({lat:26.912434,lng:75.787270});
+    }
+    else if(cityName=="test"){
+      latLng.push({lat:26.912434,lng:75.787270});
+    }
+    else if(cityName=="demo"){
+      latLng.push({lat:26.912434,lng:75.787270});
+    }
+    else if(cityName=="sikar"){
+      latLng.push({lat:27.616270,lng:75.152443});
+    }
+    else if(cityName=="reengus"){
+      latLng.push({lat:27.369301,lng:75.566200});
+    }
+    else if(cityName=="shahpura"){
+      latLng.push({lat:27.385250,lng:75.963074});
+    }
+    
+    return latLng;
+  }
+
   initMapProperties() {
+    let latLng=this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(27.6094, 75.1077),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
       zoom: 14,
       disableDefaultUI: true,
       zoomControl: true,
@@ -145,8 +139,9 @@ export class CommonService {
   }
 
   initMapPropertiesDefault() {
+    let latLng=this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(27.6094, 75.1077),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
       zoom: 12,
       disableDefaultUI: false,
       zoomControl: false,
@@ -161,8 +156,9 @@ export class CommonService {
   }
 
   initMapPropertiesRealTime() {
+    let latLng=this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(27.6094, 75.1077),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
       zoom: 50,
       disableDefaultUI: false,
       zoomControl: false,
@@ -188,13 +184,13 @@ export class CommonService {
       streetViewControl: false,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     };
-
     return mapProp;
   }
 
   mapForReport() {
+    let latLng=this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(27.6094, 75.1077),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
       optimized: false,
       zoom: 15,
       disableDefaultUI: true,
@@ -220,9 +216,9 @@ export class CommonService {
         stylers: [{ visibility: "off" }],
       },
     ];
-
+    let latLng=this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(27.6094, 75.1077),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
       zoom: 14,
       disableDefaultUI: false,
       zoomControl: true,
