@@ -6,8 +6,11 @@
      width: 100%; 
      padding: 10px;
      border-radius: 5px; 
-     font-size: 13px;   
      font-family: Verdana, Geneva, Tahoma, sans-serif;
+     height: 40px!important;
+     width: 145px!important;
+     margin-right: 8px;
+     font-size: 12px;
   }
  
   .report-content{
@@ -24,7 +27,7 @@
  }
  
  .search-bar{
-     width: 70%;
+     width: 100%;
      margin-top:-39px;  
      margin-left: 10px;  
  }
@@ -79,15 +82,24 @@
      background: #FCFCFC;	
      margin-bottom:10px;
  }
- .caret-select{margin-top: 3px!important; margin-left:10px!important; margin-right: 10px;
-     border-radius: 5px;
-     padding:10px; border:none!important;  width: 97%; height: 42px;}
+ .caret-select{    
+     margin-top: 3px !important;
+    margin-left: 8px !important;
+    margin-right: 2px;
+    border-radius: 5px;
+    padding: 10px;
+    border: none !important;
+    width: 130px!important;
+    height: 40px;
+    font-size: 12px;
+}
  .btn-hvr{
-     cursor: pointer;
-     width: 50px;
-     height: 44px;
-     border-radius: 5px;;
-     background: #888!important;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+    border-radius: 5px;
+    background: #888 !important;
  }
  .btn-hvr:hover{
      background: #979797!important;

@@ -1,6 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { bind } from "@angular/core/src/render3";
-import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 
@@ -10,10 +8,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./dustbin-analysis.component.scss"],
 })
 export class DustbinAnalysisComponent implements OnInit {
-  constructor(
-    private commonService: CommonService,
-    public fs: FirebaseService
-  ) {}
+  constructor(private commonService: CommonService, public fs: FirebaseService) { }
 
   planList: any[];
   dustbinList: any[];
@@ -70,12 +65,10 @@ export class DustbinAnalysisComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
     );
@@ -93,28 +86,17 @@ export class DustbinAnalysisComponent implements OnInit {
       let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
       this.selectedDate = nextDate;
     } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate(
-        $("#txtDate").val(),
-        1
-      );
+      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
       this.selectedDate = previousDate;
     }
 
-    if (
-      new Date(this.selectedDate.toString()) <=
-      new Date(this.commonService.setTodayDate())
-    ) {
+    if (new Date(this.selectedDate.toString()) <= new Date(this.commonService.setTodayDate())) {
       $("#txtDate").val(this.selectedDate);
-      this.currentMonthName = this.commonService.getCurrentMonthName(
-        new Date(this.selectedDate).getMonth()
-      );
+      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
       this.currentYear = this.selectedDate.split("-")[0];
       this.getAssignedPlans();
     } else {
-      this.commonService.setAlertMessage(
-        "error",
-        "Selected date is greater then today date."
-      );
+      this.commonService.setAlertMessage("error", "Selected date is greater then today date.");
     }
   }
 
@@ -136,16 +118,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   getAssignedPlans() {
     this.planList = [];
-    let assignedPlanPath = this.db
-      .list(
-        "DustbinData/DustbinAssignment/" +
-          this.currentYear +
-          "/" +
-          this.currentMonthName +
-          "/" +
-          this.selectedDate
-      )
-      .valueChanges()
+    let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges()
       .subscribe((assignedPlans) => {
         if (assignedPlans.length > 0) {
           for (let index = 0; index < assignedPlans.length; index++) {
@@ -164,10 +137,7 @@ export class DustbinAnalysisComponent implements OnInit {
           this.getBinsForSelectedPlan(this.planList[0]["planId"]);
         } else {
           this.resetData();
-          this.commonService.setAlertMessage(
-            "error",
-            "No plan created for the selected date."
-          );
+          this.commonService.setAlertMessage("error", "No plan created for the selected date.");
         }
 
         assignedPlanPath.unsubscribe();
@@ -205,53 +175,31 @@ export class DustbinAnalysisComponent implements OnInit {
 
   getBinsForSelectedPlan(planId: string) {
     $("#divLoader").show();
+    this.resetData();
 
-    let pickingPlanPath = this.db
-      .object("DustbinData/DustbinPickingPlans/" + planId)
-      .valueChanges()
-      .subscribe((pickingPlanData) => {
-        if (pickingPlanData == null) {
-          // now need to find with date
-          let pickingPlanWithDatePath = this.db
-            .object(
-              "DustbinData/DustbinPickingPlans/" +
-                this.selectedDate +
-                "/" +
-                planId
-            )
-            .valueChanges()
-            .subscribe((pickingPlanWithDateData) => {
-              if (pickingPlanWithDateData == null) {
-                let pickingPlanHistory = this.db
-                  .object(
-                    "DustbinData/DustbinPickingPlanHistory/" +
-                      this.currentYear +
-                      "/" +
-                      this.currentMonthName +
-                      "/" +
-                      this.selectedDate +
-                      "/" +
-                      planId
-                  )
-                  .valueChanges()
-                  .subscribe((dustbinPlanHistoryData) => {
-                    let bins = dustbinPlanHistoryData["bins"];
-                    this.getBinsDetail(bins, planId);
-                    pickingPlanHistory.unsubscribe();
-                  });
-              } else {
-                let bins = pickingPlanWithDateData["bins"];
-                this.getBinsDetail(bins, planId);
-              }
-              pickingPlanWithDatePath.unsubscribe();
+    let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe((pickingPlanData) => {
+      if (pickingPlanData == null) {
+        // now need to find with date
+        let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
+          if (pickingPlanWithDateData == null) {
+            let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
+              let bins = dustbinPlanHistoryData["bins"];
+              this.getBinsDetail(bins, planId);
+              pickingPlanHistory.unsubscribe();
             });
-        } else {
-          let bins = pickingPlanData["bins"];
-          this.getBinsDetail(bins, planId);
-        }
+          } else {
+            let bins = pickingPlanWithDateData["bins"];
+            this.getBinsDetail(bins, planId);
+          }
+          pickingPlanWithDatePath.unsubscribe();
+        });
+      } else {
+        let bins = pickingPlanData["bins"];
+        this.getBinsDetail(bins, planId);
+      }
 
-        pickingPlanPath.unsubscribe();
-      });
+      pickingPlanPath.unsubscribe();
+    });
   }
 
   getBinsDetail(bins: string, planId: string) {
@@ -260,108 +208,74 @@ export class DustbinAnalysisComponent implements OnInit {
     this.dustbinList = [];
     for (let index = 0; index < binsArray.length; index++) {
       let binId = binsArray[index].replace(" ", "");
-      let binsDetailsPath = this.db
-        .object("DustbinData/DustbinDetails/" + binId + "/address")
-        .valueChanges()
-        .subscribe((dustbinAddress) => {
-          let dustbinPickHistoryPath = this.db
-            .object(
-              "DustbinData/DustbinPickHistory/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.selectedDate +
-                "/" +
-                binId +
-                "/" +
-                planId
-            )
-            .valueChanges()
-            .subscribe((dustbinHistoryData) => {
-              this.dustbinList.push({
-                dustbinId: binId,
-                address: dustbinAddress,
-                iconClass: this.setIconClass(dustbinHistoryData),
-                divClass: this.setBackgroudClasss(dustbinHistoryData),
-                duration: this.setDuration(dustbinHistoryData),
-                dustbinRemark: this.checkNullValue(
-                  dustbinHistoryData,
-                  "remarks"
-                ),
-                filledTopViewImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "filled-top"
-                ),
-                filledFarFromImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "filled-far"
-                ),
-                emptyTopViewImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "empty-top"
-                ),
-                emptyFarFromImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "empty-far"
-                ),
-                emptyDustbinTopViewImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "empty-dustbin-top"
-                ),
-                emptyDustbinFarFromImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "empty-dustbin-far"
-                ),
-                dustbinNotFoundImage: this.setImageUrl(
-                  dustbinHistoryData,
-                  "not-at-location"
-                ),
-                startTime: this.checkNullValue(dustbinHistoryData, "startTime"),
-                endTime: this.checkNullValue(dustbinHistoryData, "endTime"),
-                analysisBy: this.checkAnalysisValues(
-                  dustbinHistoryData,
-                  "analysisBy"
-                ),
-                analysisAt: this.checkAnalysisValues(
-                  dustbinHistoryData,
-                  "analysisAt"
-                ),
-                filledPercentage: this.checkAnalysisValues(
-                  dustbinHistoryData,
-                  "filledPercentage"
-                ),
-                analysisRemark: this.checkAnalysisValues(
-                  dustbinHistoryData,
-                  "remark"
-                ),
-              });
+      let binsDetailsPath = this.db.object("DustbinData/DustbinDetails/" + binId + "/address").valueChanges().subscribe((dustbinAddress) => {
+        let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
+          this.dustbinList.push({
+            dustbinId: binId,
+            address: dustbinAddress,
+            iconClass: this.setIconClass(dustbinHistoryData),
+            divClass: this.setBackgroudClasss(dustbinHistoryData),
+            duration: this.setDuration(dustbinHistoryData),
+            dustbinRemark: this.checkNullValue(
+              dustbinHistoryData,
+              "remarks"
+            ),
+            filledTopViewImage: this.setImageUrl(
+              dustbinHistoryData,
+              "filled-top"
+            ),
+            filledFarFromImage: this.setImageUrl(
+              dustbinHistoryData,
+              "filled-far"
+            ),
+            emptyTopViewImage: this.setImageUrl(
+              dustbinHistoryData,
+              "empty-top"
+            ),
+            emptyFarFromImage: this.setImageUrl(
+              dustbinHistoryData,
+              "empty-far"
+            ),
+            emptyDustbinTopViewImage: this.setImageUrl(
+              dustbinHistoryData,
+              "empty-dustbin-top"
+            ),
+            emptyDustbinFarFromImage: this.setImageUrl(
+              dustbinHistoryData,
+              "empty-dustbin-far"
+            ),
+            dustbinNotFoundImage: this.setImageUrl(
+              dustbinHistoryData,
+              "not-at-location"
+            ),
+            startTime: this.checkNullValue(dustbinHistoryData, "startTime"),
+            endTime: this.checkNullValue(dustbinHistoryData, "endTime"),
+            analysisBy: this.checkAnalysisValues(dustbinHistoryData, "analysisBy"),
+            analysisAt: this.checkAnalysisValues(dustbinHistoryData, "analysisAt"),
+            filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
+            analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
+          });
 
-              if (
-                this.dustbinList[index]["divClass"] !=
-                  "address md-background" &&
-                firstIndexNeedtobeSelected == -1
-              ) {
-                firstIndexNeedtobeSelected = index;
-              }
+          if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
+            firstIndexNeedtobeSelected = index;
+          }
 
-              if (index == binsArray.length - 1) {
-                $("#divLoader").hide();
-                if (firstIndexNeedtobeSelected != -1) {
-                  this.showDustbinData(firstIndexNeedtobeSelected);
-                } else {
-                  this.binDetail.filledTopViewImageUrl =
-                    this.imageNotAvailablePath;
-                }
+          if (index == binsArray.length - 1) {
+            $("#divLoader").hide();
+            if (firstIndexNeedtobeSelected != -1) {
+              this.showDustbinData(firstIndexNeedtobeSelected);
+            } else {
+              this.binDetail.filledTopViewImageUrl = this.imageNotAvailablePath;
+            }
 
-                this.showPlanDetails(planId);
-              }
+            this.showPlanDetails(planId);
+          }
 
-              dustbinPickHistoryPath.unsubscribe();
-            });
-
-          binsDetailsPath.unsubscribe();
+          dustbinPickHistoryPath.unsubscribe();
         });
+
+        binsDetailsPath.unsubscribe();
+      });
     }
 
     // this.totalDustbins = binsArray.length;
@@ -369,23 +283,14 @@ export class DustbinAnalysisComponent implements OnInit {
 
   showPlanDetails(planId: any) {
     let plan = this.planList.find((item) => item.planId == planId);
-    this.commonService
-      .getEmplyeeDetailByEmployeeId(plan.driver)
-      .then(
-        (employee) => (this.planDetail.driverName = employee["name"] + " [D]")
-      );
-    this.commonService
-      .getEmplyeeDetailByEmployeeId(plan.helper)
-      .then(
-        (employee) => (this.planDetail.helper = employee["name"] + " [H1]")
-      );
+    this.commonService.getEmplyeeDetailByEmployeeId(plan.driver).then((employee) => (this.planDetail.driverName = employee["name"] + " [D]")
+    );
+    this.commonService.getEmplyeeDetailByEmployeeId(plan.helper).then((employee) => (this.planDetail.helper = employee["name"] + " [H1]")
+    );
     if (plan.secondHelper != undefined) {
-      this.commonService
-        .getEmplyeeDetailByEmployeeId(plan.secondHelper)
-        .then(
-          (employee) =>
-            (this.planDetail.secondHelper = employee["name"] + " [H2]")
-        );
+      this.commonService.getEmplyeeDetailByEmployeeId(plan.secondHelper).then((employee) =>
+        (this.planDetail.secondHelper = employee["name"] + " [H2]")
+      );
     } else {
       this.planDetail.secondHelper = "Not Assigned";
     }
@@ -411,12 +316,7 @@ export class DustbinAnalysisComponent implements OnInit {
     if (countType == "picked") {
       for (let index = 0; index < this.dustbinList.length; index++) {
         const element = this.dustbinList[index];
-        if (
-          element["emptyFarFromImage"] != this.imageNotAvailablePath &&
-          element["emptyTopViewImage"] != this.imageNotAvailablePath &&
-          element["filledFarFromImage"] != this.imageNotAvailablePath &&
-          element["filledTopViewImage"] != this.imageNotAvailablePath
-        ) {
+        if (element["emptyFarFromImage"] != this.imageNotAvailablePath && element["emptyTopViewImage"] != this.imageNotAvailablePath && element["filledFarFromImage"] != this.imageNotAvailablePath && element["filledTopViewImage"] != this.imageNotAvailablePath) {
           count++;
         }
       }
@@ -463,40 +363,19 @@ export class DustbinAnalysisComponent implements OnInit {
     if (binData != undefined) {
       if (binData["Image"] != undefined) {
         if (imageType == "filled-top") {
-          imageUrl =
-            binData["Image"]["Urls"]["filledTopViewImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["filledTopViewImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["filledTopViewImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["filledTopViewImageUrl"];
         } else if (imageType == "filled-far") {
-          imageUrl =
-            binData["Image"]["Urls"]["filledFarFromImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["filledFarFromImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["filledFarFromImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["filledFarFromImageUrl"];
         } else if (imageType == "empty-top") {
-          imageUrl =
-            binData["Image"]["Urls"]["emptyTopViewImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["emptyTopViewImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["emptyTopViewImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["emptyTopViewImageUrl"];
         } else if (imageType == "empty-far") {
-          imageUrl =
-            binData["Image"]["Urls"]["emptyFarFromImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["emptyFarFromImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["emptyFarFromImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["emptyFarFromImageUrl"];
         } else if (imageType == "not-at-location") {
-          imageUrl =
-            binData["Image"]["Urls"]["dustbinNotFoundImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["dustbinNotFoundImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["dustbinNotFoundImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["dustbinNotFoundImageUrl"];
         } else if (imageType == "empty-dustbin-top") {
-          imageUrl =
-            binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"];
         } else if (imageType == "empty-dustbin-far") {
-          imageUrl =
-            binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"] == undefined
-              ? imageUrl
-              : binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"];
+          imageUrl = binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"] == undefined ? imageUrl : binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"];
         }
       }
     }
@@ -525,30 +404,17 @@ export class DustbinAnalysisComponent implements OnInit {
           // icon for "dustbin not at location"
           iconClass = "fas not-at-location";
         } else {
-          let filledTopViewImageUrl =
-            binData["Image"]["Urls"]["filledTopViewImageUrl"];
-          let emptyFarFromImageUrl =
-            binData["Image"]["Urls"]["emptyFarFromImageUrl"];
-          let emptyTopViewImageUrl =
-            binData["Image"]["Urls"]["emptyTopViewImageUrl"];
-          let filledFarFromImageUrl =
-            binData["Image"]["Urls"]["filledFarFromImageUrl"];
-          let emptyDustbinTopViewImage =
-            binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"];
-          let emptyDustbinFarFromImage =
-            binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"];
+          let filledTopViewImageUrl = binData["Image"]["Urls"]["filledTopViewImageUrl"];
+          let emptyFarFromImageUrl = binData["Image"]["Urls"]["emptyFarFromImageUrl"];
+          let emptyTopViewImageUrl = binData["Image"]["Urls"]["emptyTopViewImageUrl"];
+          let filledFarFromImageUrl = binData["Image"]["Urls"]["filledFarFromImageUrl"];
+          let emptyDustbinTopViewImage = binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"];
+          let emptyDustbinFarFromImage = binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"];
 
-          if (
-            emptyDustbinTopViewImage != undefined &&
-            emptyDustbinFarFromImage != undefined
+          if (emptyDustbinTopViewImage != undefined && emptyDustbinFarFromImage != undefined
           ) {
             iconClass = "fas fa-check-double";
-          } else if (
-            filledTopViewImageUrl == undefined ||
-            emptyFarFromImageUrl == undefined ||
-            emptyTopViewImageUrl == undefined ||
-            filledFarFromImageUrl == undefined
-          ) {
+          } else if (filledTopViewImageUrl == undefined || emptyFarFromImageUrl == undefined || emptyTopViewImageUrl == undefined || filledFarFromImageUrl == undefined) {
             // icon for "If any one is missing"
             iconClass = "fas warning";
           }
@@ -581,9 +447,7 @@ export class DustbinAnalysisComponent implements OnInit {
         if (dustbinNotFoundImage != undefined) {
           duration = "";
         } else if (binData["duration"] != null) {
-          duration =
-            binData["duration"] +
-            "  min <img src='../../../assets/img/clock-icon.png'>";
+          duration = binData["duration"] + "  min <img src='../../../assets/img/clock-icon.png'>";
         }
       }
     }
@@ -601,51 +465,33 @@ export class DustbinAnalysisComponent implements OnInit {
 
   getPandingAnalysis() {
     let dbPath = "DustbinData/TotalDustbinAnalysisPending";
-    this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        if (data != null) {
-          this.dustbinData.pendingAnalysis = data.toString();
-        }
-      });
+    this.db.object(dbPath).valueChanges().subscribe((data) => {
+      if (data != null) {
+        this.dustbinData.pendingAnalysis = data.toString();
+      }
+    });
   }
 
   showDustbinData(index: any) {
-    if (
-      this.dustbinList[index]["filledTopViewImage"] !=
-      this.imageNotAvailablePath
-    ) {
+    if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
       $("#ImageLoader").show();
     }
 
     this.binDetail.binId = this.dustbinList[index]["dustbinId"];
     this.binDetail.address = this.dustbinList[index]["address"];
-    this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(
-      this.dustbinList[index]["startTime"]
-    );
-    this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(
-      this.dustbinList[index]["endTime"]
-    );
-    this.binDetail.filledTopViewImageUrl =
-      this.dustbinList[index]["filledTopViewImage"];
-    this.binDetail.filledFarFromImageUrl =
-      this.dustbinList[index]["filledFarFromImage"];
-    this.binDetail.emptyFarFromImageUrl =
-      this.dustbinList[index]["emptyFarFromImage"];
-    this.binDetail.emptyTopViewImageUrl =
-      this.dustbinList[index]["emptyTopViewImage"];
-    this.binDetail.emptyDustbinTopViewImageUrl =
-      this.dustbinList[index]["emptyDustbinTopViewImage"];
-    this.binDetail.emptyDustbinFarViewImageUrl =
-      this.dustbinList[index]["emptyDustbinFarFromImage"];
-    this.binDetail.dustbinNotFoundImageUrl =
-      this.dustbinList[index]["dustbinNotFoundImage"];
+    this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.dustbinList[index]["startTime"]);
+    this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.dustbinList[index]["endTime"]);
+    this.binDetail.filledTopViewImageUrl = this.dustbinList[index]["filledTopViewImage"];
+    this.binDetail.filledFarFromImageUrl = this.dustbinList[index]["filledFarFromImage"];
+    this.binDetail.emptyFarFromImageUrl = this.dustbinList[index]["emptyFarFromImage"];
+    this.binDetail.emptyTopViewImageUrl = this.dustbinList[index]["emptyTopViewImage"];
+    this.binDetail.emptyDustbinTopViewImageUrl = this.dustbinList[index]["emptyDustbinTopViewImage"];
+    this.binDetail.emptyDustbinFarViewImageUrl = this.dustbinList[index]["emptyDustbinFarFromImage"];
+    this.binDetail.dustbinNotFoundImageUrl = this.dustbinList[index]["dustbinNotFoundImage"];
 
     this.binDetail.analysisBy = this.dustbinList[index]["analysisBy"];
     this.binDetail.analysisAt = this.dustbinList[index]["analysisAt"];
-    this.binDetail.filledPercentage =
-      this.dustbinList[index]["filledPercentage"];
+    this.binDetail.filledPercentage = this.dustbinList[index]["filledPercentage"];
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
 
@@ -664,17 +510,12 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setFillingPercentage() {
-    if (
-      this.binDetail.filledPercentage == undefined ||
-      this.binDetail.filledPercentage == ""
-    ) {
+    if (this.binDetail.filledPercentage == undefined || this.binDetail.filledPercentage == "") {
       this.binDetail.filledPercentage = "0";
       this.fillPercentage = "0";
     }
 
-    let element = <HTMLInputElement>(
-      document.getElementById("radio" + this.binDetail.filledPercentage + "")
-    );
+    let element = <HTMLInputElement>(document.getElementById("radio" + this.binDetail.filledPercentage + ""));
     element.checked = true;
   }
 
@@ -722,21 +563,10 @@ export class DustbinAnalysisComponent implements OnInit {
       );
       if (userData != undefined) {
         let date = this.binDetail.analysisAt.split(" ");
-        let analysisTime =
-          date[0].split("-")[2] +
-          " " +
-          this.commonService.getCurrentMonthName(
-            Number(date[0].split("-")[1]) - 1
-          ) +
-          ", " +
-          date[1];
-        this.binDetail.analysisDetail =
-          "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
+        let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1]) - 1) + ", " + date[1];
+        this.binDetail.analysisDetail = "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
       } else {
-        this.commonService.setAlertMessage(
-          "error",
-          "Something went wrong, Please logout and login again."
-        );
+        this.commonService.setAlertMessage("error", "Something went wrong, Please logout and login again.");
       }
     } else {
       this.binDetail.analysisDetail = "";
@@ -747,9 +577,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let canDo = "yes";
     if (this.binDetail.filledTopViewImageUrl == this.imageNotAvailablePath) {
       canDo = "no";
-    } else if (
-      this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath
-    ) {
+    } else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
       canDo = "no";
     }
 
@@ -835,50 +663,20 @@ export class DustbinAnalysisComponent implements OnInit {
 
   saveDustbinAnalysis() {
     if (this.binDetail.canDoAnalysis == "yes") {
-      this.db
-        .object(
-          "DustbinData/DustbinPickHistory/" +
-            this.currentYear +
-            "/" +
-            this.currentMonthName +
-            "/" +
-            this.selectedDate +
-            "/" +
-            this.binDetail.binId +
-            "/" +
-            this.planDetail.planId +
-            "/Analysis/"
-        )
-        .update({
-          filledPercentage: this.fillPercentage,
-          analysisAt: this.commonService.getTodayDateTime(),
-          analysisBy: this.userId,
-          remark: this.getRemarks(),
-        });
-
+      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), });
       this.updatePendingAnalysis();
       this.updateBinListAndDetails();
       this.setAnalysisDetails();
       this.updateIsDustbinBroken();
-      this.commonService.setAlertMessage(
-        "success",
-        "Data has been added successfully."
-      );
+      this.commonService.setAlertMessage("success", "Data has been added successfully.");
     } else {
-      this.commonService.setAlertMessage(
-        "error",
-        "Can not do analysis for this bin."
-      );
+      this.commonService.setAlertMessage("error", "Can not do analysis for this bin.");
     }
   }
 
   updateIsDustbinBroken() {
     let element = <HTMLInputElement>document.getElementById("chkRemark2");
-    this.db
-      .object("DustbinData/DustbinDetails/" + this.binDetail.binId + "/")
-      .update({
-        isBroken: element.checked,
-      });
+    this.db.object("DustbinData/DustbinDetails/" + this.binDetail.binId + "/").update({ isBroken: element.checked, });
   }
 
   getRemarks() {

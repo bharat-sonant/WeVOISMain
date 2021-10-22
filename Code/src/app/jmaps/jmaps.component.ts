@@ -70,6 +70,7 @@ export class JmapsComponent implements OnInit {
   ddlWardNav = "#ddlWardNav";
   txtVehicle = "#txtVehicle";
   txtVehicleNav = "#txtVehicleNav";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -155,6 +156,22 @@ export class JmapsComponent implements OnInit {
   }
 
   resetAll() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.vtsPolylines.length > 0) {
+      for (let i = 0; i < this.vtsPolylines.length; i++) {
+        if (this.vtsPolylines[i] != undefined) {
+          this.vtsPolylines[i].setMap(null);
+        }
+      }
+    }
+    this.vtsPolylines = [];
     this.isBoundaryShow = true;
     this.showHideBoundariesHtml();
     this.showHideAnalysisDoneHtml("hide");
@@ -174,22 +191,7 @@ export class JmapsComponent implements OnInit {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.vtsPolylines.length > 0) {
-      for (let i = 0; i < this.vtsPolylines.length; i++) {
-        if (this.vtsPolylines[i] != undefined) {
-          this.vtsPolylines[i].setMap(null);
-        }
-      }
-    }
-    this.vtsPolylines = [];
+
     this.lines = [];
     this.vehicleList = [];
     this.wardLineLengthList = [];
@@ -230,10 +232,18 @@ export class JmapsComponent implements OnInit {
       return;
     }
     this.resetAll();
+   this.showLoader();
     this.getWardTotalLength();
     this.getWardLineLength();
-    this.getAllLinesFromJson();
     this.getProgressFromLocalStorage();
+    this.getAllLinesFromJson();
+  }
+
+  showLoader(){
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 2000);
   }
 
   getWardLineLength() {
@@ -536,8 +546,8 @@ export class JmapsComponent implements OnInit {
     let userId = this.userId;
     let selectedWard = this.selectedWard;
     let selectedDate = this.selectedDate;
-    let strockColorNotDone=this.strockColorNotDone;
-    let strockColorDone=this.strockColorDone;
+    let strockColorNotDone = this.strockColorNotDone;
+    let strockColorDone = this.strockColorDone;
     let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
