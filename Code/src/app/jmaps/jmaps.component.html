@@ -4,6 +4,9 @@
 <!------------Desktop Navbar Start------------->
 <section class="header">
   <div class="row no-gutters">
+    <div class="main-headers hide-on-ipad" style="position: absolute; z-index: 999; margin-left: 50%; margin-top: 15px;">
+      Route Analysis
+    </div>
     <div class="col-md-7 col-xl-8 ipad-pl-25">
       <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;" (click)="setDate('','previous');">
         << </button>
@@ -28,9 +31,7 @@
               {{ward.wardName}}
             </option>
           </select>
-          <div class="main-headers hide-on-ipad">
-            VTS Analysis
-          </div>
+          
     </div>
 
     <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
@@ -64,6 +65,13 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
+                  <div class="setting-box">
+                    <p> {{progressData.lastShowDate}}</p>
+
+                    <button type="button" class="btn btn-main btn-success" (click)="resetData();">
+                      <i class="fas fa-sync-alt"></i>
+                      </button>
+                  </div>
                   <div class="setting-box">
                     <p id="showBoundries"> Hide Boundaries</p>
 
