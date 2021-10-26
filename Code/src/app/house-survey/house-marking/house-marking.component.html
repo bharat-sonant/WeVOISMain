@@ -237,7 +237,7 @@
                 <h3> {{dt.alreadyInstalled}} </h3><br />
                 <span [hidden]="dt.status==''">
                   <p>Status <span class="f-right"> :</span></p>
-                  <h3 ><span class="{{dt.statusClass}}"> {{dt.status}}</span> </h3>
+                  <h3 ><span class="{{dt.statusClass}}"> {{dt.status}}</span>{{dt.isRevisit}} </h3>
                 </span>
               </div>
             </div>
@@ -249,6 +249,11 @@
               (click)="removeMarker(dt.index,dt.alreadyInstalled);"
               style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
               [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
+
+              <button class="btn btn-danger" [hidden]="dt.isRevisit=='0'"
+              (click)="removeMarker(dt.index,dt.alreadyInstalled);"
+              style="width:45%; background:red!important;   margin-left: 0px!important; margin-bottom: 10px!important;"
+              [hidden]="dt.isRevisit=='0'"><i class="fas fa-times"></i> Delete</button>
 
           </div>
         </div>
