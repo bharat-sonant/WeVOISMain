@@ -168,9 +168,6 @@ export class LineCardMappingComponent {
         // modify house ward mapping
         this.db.object("HouseWardMapping/" + data["mobile"]).set({ line: $("#txtNewLine").val(), ward: this.selectedZone, });
       }
-      if (data["cardImage"] != null) {
-        this.moveImages(data["cardImage"], lineNo, newLineNo);
-      }
 
     }
     setTimeout(() => {
@@ -178,44 +175,6 @@ export class LineCardMappingComponent {
       $("#txtNewLine").val("");
       this.getLineData();
     }, 3000);
-  }
-
-  moveImages(imageName: any, lineNo: any, newLineNo: any) {
-    const pathOld = this.commonService.getFireStoreCity() + "/SurveyCardImage/" + this.selectedZone + "/" + lineNo + "/" + imageName;
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
-    ref.getDownloadURL()
-      .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-
-        // This can be downloaded directly:
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'blob';
-        // xhr.setRequestHeader("Access-Control-Allow-Origin","*");
-        // xhr.setRequestHeader('Connection', 'close');
-
-
-
-        xhr.onload = (event) => {
-          var blob = xhr.response;
-          const pathNew = this.commonService.getFireStoreCity() + "/SurveyCardImage/" + this.selectedZone + "/" + newLineNo + "/" + imageName;
-          const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
-          ref1.put(blob).then((promise) => {
-            ref.delete();
-
-          });
-        };
-        xhr.open('GET', url);
-
-        xhr.send();
-        // Or inserted into an <img> element
-        // var img = document.getElementById('myimg');
-        // img.setAttribute('src', url);
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
-
   }
 
   getLinesFromJson() {

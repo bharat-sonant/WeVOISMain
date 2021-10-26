@@ -506,7 +506,6 @@ export class WardSurveyAnalysisComponent {
               if (data[i]["createdDate"] != null) {
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-                  //imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
                   imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
@@ -531,7 +530,7 @@ export class WardSurveyAnalysisComponent {
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
-                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
+                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
@@ -665,7 +664,7 @@ export class WardSurveyAnalysisComponent {
                 let city = this.commonService.getFireStoreCity();
                 let imageURL = "";
                 if (data[index]["image"] != null) {
-                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";
                 }
                 else {
                   imageURL = "../../../assets/img/image-not-found.jpg";
@@ -728,7 +727,7 @@ export class WardSurveyAnalysisComponent {
                   let city = this.commonService.getFireStoreCity();
                   let imageURL = "";
                   if (data[index]["image"] != null) {
-                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";
                   }
                   else {
                     imageURL = "../../../assets/img/image-not-found.jpg";

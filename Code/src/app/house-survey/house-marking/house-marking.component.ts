@@ -2,10 +2,10 @@ import { Component, ViewChild } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
-import { CommonService } from "../services/common/common.service";
+import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
 import { Router } from "@angular/router";
-import { FirebaseService } from "../firebase.service";
+import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
