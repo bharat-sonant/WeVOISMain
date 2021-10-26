@@ -506,8 +506,8 @@ export class WardSurveyAnalysisComponent {
               if (data[i]["createdDate"] != null) {
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
-
+                  //imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
@@ -752,13 +752,11 @@ export class WardSurveyAnalysisComponent {
                           this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                         });
                     }
-
                   });
                 }
               }
             }
-          }
-        );
+          });
       }
     }
     else {

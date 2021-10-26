@@ -24,6 +24,7 @@ export class JmapsComponent implements OnInit {
   cityName: any;
   toDayDate: any;
   selectedDate: any;
+  localStorageDate: any;
   currentMonthName: any;
   currentYear: any;
   wardLines: any;
@@ -74,8 +75,8 @@ export class JmapsComponent implements OnInit {
   divLoader = "#divLoader";
 
   ngOnInit() {
-    localStorage.removeItem("jmapWasteCollectionLine");
-    localStorage.removeItem("jmapWardSummaryList");
+    // localStorage.removeItem("jmapWasteCollectionLine");
+    // localStorage.removeItem("jmapWardSummaryList");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -90,6 +91,7 @@ export class JmapsComponent implements OnInit {
     this.setHeight();
     this.setMaps();
     this.showHideAnalysisDoneHtml("hide");
+
   }
 
   getZoneList() {
@@ -118,12 +120,62 @@ export class JmapsComponent implements OnInit {
   setDefaultDate() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     $(this.txtDate).val(this.selectedDate);
     $(this.txtPreDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
     $(this.txtPreDateNav).val(this.selectedDate);
+    this.removePreviousLocalStorage();
+  }
+
+  removePreviousLocalStorage() {
+    let localStorageDate = this.commonService.getPreviousDate(this.toDayDate, 5);
+
+    // ward lines 
+
+    let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+    if (wardCollectionList != null) {
+      let tempList = [];
+      for (let i = 0; i < wardCollectionList.length; i++) {
+        if (new Date(wardCollectionList[i]["date"]) >= new Date(localStorageDate)) {
+          tempList.push({ date: wardCollectionList[i]["date"], ward: wardCollectionList[i]["ward"], lineNo: wardCollectionList[i]["lineNo"], latlng: wardCollectionList[i]["latlng"], color: wardCollectionList[i]["color"], dateTime: wardCollectionList[i]["dateTime"] });
+        }
+      }
+      localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(tempList));
+    }
+    // summary
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let tempList = [];
+      for (let i = 0; i < summaryList.length; i++) {
+        if (new Date(summaryList[i]["date"]) >= new Date(localStorageDate)) {
+          let workPerc = 0;
+          let coveredLength = 0;
+          let penalty = 0;
+          let analysisDone = "No";
+          let vehicles = "";
+          if (summaryList[i]["workPerc"] != null) {
+            workPerc = Number(summaryList[i]["workPerc"]);
+          }
+          if (summaryList[i]["coveredLength"] != null) {
+            coveredLength = Number(summaryList[i]["coveredLength"]);
+          }
+          if (summaryList[i]["penalty"] != null) {
+            penalty = Number(summaryList[i]["penalty"]);
+          }
+          if (summaryList[i]["analysisDone"] != null) {
+            analysisDone = summaryList[i]["analysisDone"];
+          }
+          if (summaryList[i]["vehicles"] != null) {
+            vehicles = summaryList[i]["vehicles"];
+          }
+          tempList.push({ ward: summaryList[i]["ward"], date: summaryList[i]["date"], workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
+        }
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(tempList));
+    }
   }
 
   changeZoneSelection(filterVal: any) {
@@ -669,10 +721,10 @@ export class JmapsComponent implements OnInit {
           if (summaryList[i]["vehicles"] != null) {
             vehicles = summaryList[i]["vehicles"];
           }
-          tempList.push({ ward: summaryList[i]["ward"], date: summaryList[i]["date"],workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
+          tempList.push({ ward: summaryList[i]["ward"], date: summaryList[i]["date"], workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
         }
       }
-      localStorage.setItem("jmapWardSummaryList", JSON.stringify(tempList));     
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(tempList));
     }
 
     let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
