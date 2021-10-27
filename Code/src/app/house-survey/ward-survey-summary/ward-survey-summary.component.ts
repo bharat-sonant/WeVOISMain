@@ -123,11 +123,11 @@ export class WardSurveySummaryComponent implements OnInit {
     });
 
     let wardNameNotCorrectList = JSON.parse(localStorage.getItem("wardNameNotCorrectList"));
-    if(wardNameNotCorrectList!=null){
+    if (wardNameNotCorrectList != null) {
       let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == wardNo);
-        if (wardNameDetail != undefined) {
-         this.wardProgressList[index]["nameNotCorrect"] =wardNameDetail.count;
-        }
+      if (wardNameDetail != undefined) {
+        this.wardProgressList[index]["nameNotCorrect"] = wardNameDetail.count;
+      }
     }
   }
 
@@ -299,19 +299,19 @@ export class WardSurveySummaryComponent implements OnInit {
     if (wardNameNotCorrectList == null) {
       wardNameNotCorrectList = [];
       wardNameNotCorrectList.push({ wardNo: ward, count: count });
-      localStorage.setItem("wardNameNotCorrectList",JSON.stringify(wardNameNotCorrectList));
+      localStorage.setItem("wardNameNotCorrectList", JSON.stringify(wardNameNotCorrectList));
     }
     else {
       let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
       if (wardSummary != undefined) {
         let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == this.selectedWard);
         if (wardNameDetail != undefined) {
-          wardNameDetail.count=count;
+          wardNameDetail.count = count;
         }
-        else{
+        else {
           wardNameNotCorrectList.push({ wardNo: ward, count: count });
         }
-        localStorage.setItem("wardNameNotCorrectList",JSON.stringify(wardNameNotCorrectList));
+        localStorage.setItem("wardNameNotCorrectList", JSON.stringify(wardNameNotCorrectList));
       }
     }
   }
@@ -347,7 +347,7 @@ export class WardSurveySummaryComponent implements OnInit {
             if (data[i]["latLng"] != null) {
               let imageName = data[i]["cardImage"];
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + imageName + "?alt=media";
               this.surveyedDetailList.push({ cardType: data[i]["cardType"], cardNo: data[i]["cardNo"], imageUrl: imageUrl, name: data[i]["name"] });
             }
           }
@@ -402,8 +402,10 @@ export class WardSurveySummaryComponent implements OnInit {
                   dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
                 }
                 else {
-                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
-                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
                 }
               }
             }
@@ -437,8 +439,10 @@ export class WardSurveySummaryComponent implements OnInit {
                   dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
                 }
                 else {
-                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
-                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
                 }
               }
             }
@@ -472,8 +476,10 @@ export class WardSurveySummaryComponent implements OnInit {
                   dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
                 }
                 else {
-                  let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
-                  dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
                 }
               }
             }
