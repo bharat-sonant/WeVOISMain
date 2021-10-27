@@ -273,10 +273,11 @@
   box-shadow: 0 1px 5px 1px #80bd7b;
   position: absolute;
   right: 15px;
-  top: 210px;
+  top: 230px;
   /* border-radius: 5px; */
   border:1px solid #80bd7b;
   }
+
   .driver{
   padding: 5px;
   display: flex;
@@ -532,7 +533,10 @@
   cursor: pointer;
   margin-right: -15px;
   }
-  
+  .seprater{
+    padding:25px 15px 0px 10px;
+     border-bottom: 1px solid lightgray;
+  }
   
   .img-close{
   position: relative;
