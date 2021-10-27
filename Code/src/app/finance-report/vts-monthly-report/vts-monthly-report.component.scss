@@ -12,9 +12,34 @@
   .custom-date-input{   
   height: 42px;
   }
-  .caret-select{margin-top: 0px!important; margin-left:10px!important;
+  .caret-select {
+    margin-top: -3px !important;
+    margin-left: 10px !important;
     border-radius: 5px;
-    padding:10px; border:none!important;  width: 97%;}
+    padding: 10px;
+    border: none !important;  
+  font-size: 12px;
+  height: 38px;
+}
+.select-1{
+  width: 75px!important;
+}
+.select-2{
+  width: 100px!important;
+}
+.select-3{
+  width: 130px!important;
+}
+.caret-select:focus-visible{
+  outline: none!important;
+}
+.header-text{
+  font-size: 20px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  text-transform: uppercase;    
+  margin-top: -5px;
+}
   
     .btn-hvr{
       
@@ -70,19 +95,34 @@
   .tableFixHead {
     overflow-y: scroll;
     height:88vh;
-    position: relative;
     border-radius: 5px;
   }
   .tableFixHead thead {
     background-color: #f1f1f1;
-  }
-  .tableFixHead thead th {
     position: sticky;
     top: 0;
-    background-color: #f1f1f1;
-    width: 200px;
-    z-index: 11;
+    white-space: nowrap;
+    z-index: 111;
+    width: 100%!important;
   }
+  .tableFixHead thead th {
+    background-color: #f1f1f1;
+    
+  }
+
+  .fixTableHead {
+    overflow-y: auto;
+    height: 110px;
+  }
+  .fixTableHead thead th {
+    position: sticky;
+    top: 0;
+  }
+  table {
+    border-collapse: collapse;        
+    width: 100%;
+  }
+
   table {
     border-collapse: collapse;
     width: 100%;
@@ -108,7 +148,9 @@
   z-index: 1;
   background-color: #fff;
   color: rgb(0, 0, 0);
+  margin-left: 200px;
   }
+
   .thFixed2{
   position: sticky;
   left: 173px;
@@ -146,31 +188,41 @@
   
   /************** Total box start **************/
   .tracking-bg{
-  background: #0ba118;
-  width: 300px;
-  box-shadow: 0 0.175rem 0.75rem rgba(0, 0, 0, 0.158);
-  border-radius: 8px;
-  position: fixed;
-  right: 15px;
-  top: 7px;
+    background: #0ba118;
+    width: 250px;
+    //box-shadow: 0 0.175rem 0.75rem #9e9e9e56;
+    border-radius: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 64px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px!important;
+  transition: 0.5s;
   }
   .tracking-bg .main-info{
   text-align: center;
   width: 100%;
   padding: 8px;
   }
-  .tracking-bg .main-info:hover{
-  background: #f96332;
-  transition: 0.5s;
+  .tracking-bg:hover{
+  background: #2ba436;
   }
   
   .tracking-bg  .main-info h1{
   text-align: center;
-  font-size: 18px;
-  line-height: 30px;
-  font-weight: 500;
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: normal;
   color: #fff;
   margin: 0px!important;
+  }
+  .main-info span{
+font-size: 20px;
+font-weight: bold;
   }
   
   .tracking-bg .main-info p{
@@ -179,3 +231,76 @@
   margin: 0px!important;
   }
   /************** Total box end **************/
+
+  
+/******************************Custom Scrollbar Start*********************************/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: transparent; 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: transparent; 
+  -webkit-box-shadow: transparent; 
+}
+
+:hover::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+/* Track */
+:hover::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+/* Handle */
+:hover::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: #20a120; 
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+/******************************Custom Scrollbar End*********************************/
+
+
+
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) and (max-width: 991.98px) { 
+  .tracking-bg  .main-info h1{
+    text-align: center;
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0px!important;
+    }
+    .tracking-bg{
+      background: #0ba118;
+      width: 150px;
+    }
+.main-info span{
+  font-size: 14px;
+  font-weight: bold;
+}
+.header-text {
+  font-size: 15px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 0px;
+}
+.select-1 {
+  margin-left: 40px!important;
+}
+
+ }

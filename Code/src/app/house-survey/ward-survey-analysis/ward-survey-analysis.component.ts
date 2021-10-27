@@ -1,4 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -44,6 +43,7 @@ export class WardSurveyAnalysisComponent {
   revisitAllSurveyList: any[];
   revisitMarker: any[];
   preRevisitIndex: any;
+  nameList: any[];
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -67,8 +67,6 @@ export class WardSurveyAnalysisComponent {
     rfIdDate: "",
     rfIdAddress: ""
   };
-
-  nameList: any[];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -506,8 +504,13 @@ export class WardSurveyAnalysisComponent {
               if (data[i]["createdDate"] != null) {
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
-
+                  
+                  if(data[i]["surveyorId"]=="-1"){
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
+                  else{
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
@@ -531,7 +534,7 @@ export class WardSurveyAnalysisComponent {
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
-                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[i]["cardImage"] + "?alt=media";
+                let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
@@ -665,7 +668,7 @@ export class WardSurveyAnalysisComponent {
                 let city = this.commonService.getFireStoreCity();
                 let imageURL = "";
                 if (data[index]["image"] != null) {
-                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";
                 }
                 else {
                   imageURL = "../../../assets/img/image-not-found.jpg";
@@ -728,7 +731,7 @@ export class WardSurveyAnalysisComponent {
                   let city = this.commonService.getFireStoreCity();
                   let imageURL = "";
                   if (data[index]["image"] != null) {
-                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + this.selectedZone + "%2F" + lineNo + "%2F" + data[index]["image"] + "?alt=media";
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";
                   }
                   else {
                     imageURL = "../../../assets/img/image-not-found.jpg";
@@ -752,13 +755,11 @@ export class WardSurveyAnalysisComponent {
                           this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
                         });
                     }
-
                   });
                 }
               }
             }
-          }
-        );
+          });
       }
     }
     else {
@@ -1135,8 +1136,6 @@ export class WardSurveyAnalysisComponent {
       name = this.nameList[random].toString();
     }
 
-
-
     const data = {
       address: address,
       cardNo: cardNo,
@@ -1414,19 +1413,21 @@ export class WardSurveyAnalysisComponent {
         rfidInstance.unsubscribe();
         if (rfidData != null) {
           let date = rfidData["createdDate"].split(' ')[0];
-          let surveyorId = rfidData["surveyorId"];
+          let surveyorId = rfidData["surveyorId"];          
           let rfid = rfidData["rfid"];
           rfidData["cardNo"] = cardNumber;
-          rfidData["cardImage"] = null;
+          //rfidData["cardImage"] = null;
           let name = rfidData["name"];
           if (name == "No name" || name == "No" || name == "NA" || name == "Na" || name == "Naam") {
             let random = Math.floor(Math.random() * this.nameList.length);
             name = this.nameList[random].toString();
           }
-          dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + cardNumber;
-          this.db.object(dbPath).update(rfidData);
           dbPath = "EntitySurveyData/HistoryRFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).update(rfidData);
+          rfidData["surveyorId"]="-1";
+          dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + cardNumber;
+          this.db.object(dbPath).update(rfidData);
+          
           dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).remove();
 
@@ -1445,10 +1446,8 @@ export class WardSurveyAnalysisComponent {
                         markerNo = markerIndex;
                         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ cardNumber: cardNumber });
-
                         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo + "/rfidNotFoundKey";
                         this.db.database.ref(dbPath).set(null);
-
                       }
                     }
                   }

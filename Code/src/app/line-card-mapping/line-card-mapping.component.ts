@@ -9,6 +9,7 @@ import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: "app-line-card-mapping",
@@ -19,13 +20,7 @@ export class LineCardMappingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(
-    public fs: FirebaseService,
-    public httpService: HttpClient,
-    private mapService: MapService,
-    private commonService: CommonService,
-    private toastr: ToastrService
-  ) { }
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -135,10 +130,7 @@ export class LineCardMappingComponent {
         $("#txtLineNo").val(currentLine);
         this.getLineData();
       } else {
-        this.commonService.setAlertMessage(
-          "error",
-          "line number not less than 1 !!!"
-        );
+        this.commonService.setAlertMessage("error", "line number not less than 1 !!!");
       }
     }
   }
@@ -149,24 +141,20 @@ export class LineCardMappingComponent {
       return;
     }
     if (this.selectedCardDetails.length == 0) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select atleast one card to move"
-      );
+      this.commonService.setAlertMessage("error", "Please select atleast one card to move");
       return;
     }
     if (this.selectedCardDetails[0]["line"] == $("#txtNewLine").val()) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Sorry! cards can't be move on same line"
-      );
+      this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
+    let lineNo = $('#txtLineNo').val();
+    let newLineNo = $("#txtNewLine").val();
 
     for (let index = 0; index < this.selectedCardDetails.length; index++) {
       let cardNo = this.selectedCardDetails[index]["cardNo"];
       let data = this.selectedCardDetails[index]["data"];
-      data["line"]=$("#txtNewLine").val();
+      data["line"] = $("#txtNewLine").val();
 
       this.db.object("Houses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/" + cardNo).set(data);
 
@@ -174,24 +162,16 @@ export class LineCardMappingComponent {
       this.db.object(path).remove();
 
       // modify card ward mapping
-      this.db.object("CardWardMapping/" + data["cardNo"]).set({
-        line: $("#txtNewLine").val(),
-        ward: this.selectedZone,
-      });
+      this.db.object("CardWardMapping/" + data["cardNo"]).set({ line: $("#txtNewLine").val(), ward: this.selectedZone, });
 
       if (data["mobile"] != "") {
         // modify house ward mapping
-        this.db.object("HouseWardMapping/" + data["mobile"]).set({
-          line: $("#txtNewLine").val(),
-          ward: this.selectedZone,
-        });
+        this.db.object("HouseWardMapping/" + data["mobile"]).set({ line: $("#txtNewLine").val(), ward: this.selectedZone, });
       }
+
     }
     setTimeout(() => {
-      this.commonService.setAlertMessage(
-        "success",
-        "Card moved to Line " + $("#txtNewLine").val() + " successfully"
-      );
+      this.commonService.setAlertMessage("success", "Card moved to Line " + $("#txtNewLine").val() + " successfully");
       $("#txtNewLine").val("");
       this.getLineData();
     }, 3000);

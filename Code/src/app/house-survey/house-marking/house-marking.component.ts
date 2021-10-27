@@ -2,10 +2,10 @@ import { Component, ViewChild } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
-import { CommonService } from "../services/common/common.service";
+import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
 import { Router } from "@angular/router";
-import { FirebaseService } from "../firebase.service";
+import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
@@ -210,6 +210,7 @@ export class HouseMarkingComponent {
                 let date = data[index]["date"].split(" ")[0];
                 let status = "";
                 let statusClass="";
+                let isRevisit="0";
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }
@@ -224,6 +225,7 @@ export class HouseMarkingComponent {
                 }
                 if (data[index]["revisitCardDeleted"] != null) {
                   status = "Revisit Deleted";
+                  isRevisit="1";
                   statusClass="status-deleted";
                 }
 
@@ -242,7 +244,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass,isRevisit:isRevisit });
                   }
                 });
                 let alreadyCard = "";
@@ -334,7 +336,7 @@ export class HouseMarkingComponent {
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], });
+                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"],isRevisit:this.markerList[i]["isRevisit"] });
               }
             }
             this.markerList = newMarkerList;
@@ -613,7 +615,7 @@ export class HouseMarkingComponent {
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;

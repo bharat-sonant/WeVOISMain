@@ -28,6 +28,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
+  
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
@@ -65,7 +66,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       markerInstance.unsubscribe();
       if (data != null) {
-        let markers = Number(data["marked"]);
+        let markers = 0;
+        if(data["marked"]!=null){
+          markers=Number(data["marked"]);
+        }
         let alreadyInstalled = 0;
         if (data["alreadyInstalled"] != null) {
           alreadyInstalled = Number(data["alreadyInstalled"]);

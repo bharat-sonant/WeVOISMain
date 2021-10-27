@@ -54,9 +54,9 @@ export class LineMarkerMappingComponent {
   plansRef: AngularFireList<any>;
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.lineNo = 1;
     this.previousLine = 1;
     this.allMarkers = [];
@@ -416,6 +416,9 @@ export class LineMarkerMappingComponent {
       lastMarkerData => {
         lastMarkerInstance.unsubscribe();
         let lastKey = 0;
+        let surveyedCount = 0;
+        let revisitCount = 0;
+        let rfIdNotFound = 0;
         let newLineNo = $("#txtNewLine").val();
         if (lastMarkerData != null) {
           lastKey = Number(lastMarkerData);
@@ -429,80 +432,174 @@ export class LineMarkerMappingComponent {
           data["image"] = lastKey + ".jpg";
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/" + lastKey;
           this.db.object(dbPath).update(data);
+
+          if (data["cardNumber"] != null) {
+            surveyedCount = surveyedCount + 1;
+          }
+          else if (data["revisitKey"] != null) {
+            revisitCount = revisitCount + 1;
+          }
+          else if (data["rfidNotFoundKey"] != null) {
+            rfIdNotFound = rfIdNotFound + 1;
+          }
+
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
           this.db.object(dbPath).remove();
           let oldImageName = markerNo + ".jpg";
           let newImageName = lastKey + ".jpg";
           this.moveImages(oldImageName, newImageName, newLineNo);
+          if (i == this.selectedCardDetails.length - 1) {
+            this.updateCounts(rfIdNotFound, newLineNo, revisitCount, surveyedCount);
+          }
         }
-        let count = this.selectedCardDetails.length;
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
-        let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          marksCount => {
-            marksCountInstance.unsubscribe();
-            if (marksCount != null) {
-              marksCount = Number(marksCount) - count;
-            }
-            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-            this.db.object(dbPath).update({ marksCount: marksCount });
+      }
+    );
+  }
+
+  updateCounts(rfIdNotFound: any, newLineNo: any, revisitCount: any, surveyedCount: any) {
+    //rfid not found
+
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
+    let marksRfIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        marksRfIdInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) - rfIdNotFound;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+        this.db.object(dbPath).update({ lineRfidNotFoundCount: marksCount });
+      }
+    );
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/lineRfidNotFoundCount";
+    let newMarksRfIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        newMarksRfIdInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) + rfIdNotFound;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
+        this.db.object(dbPath).update({ lineRfidNotFoundCount: marksCount });
+      }
+    );
+
+    // revisit
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
+    let marksRevisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        marksRevisitInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) - revisitCount;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+        this.db.object(dbPath).update({ lineRevisitCount: marksCount });
+      }
+    );
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/lineRevisitCount";
+    let newMarksRevisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        newMarksRevisitInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) + revisitCount;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
+        this.db.object(dbPath).update({ lineRevisitCount: marksCount });
+      }
+    );
+
+    //sueveyed
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
+    let marksSurveyedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        marksSurveyedInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) - surveyedCount;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+        this.db.object(dbPath).update({ surveyedCount: marksCount });
+      }
+    );
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/surveyedCount";
+    let newMarksSurveyedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        newMarksSurveyedInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) + surveyedCount;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
+        this.db.object(dbPath).update({ surveyedCount: marksCount });
+      }
+    );
+
+
+    let count = this.selectedCardDetails.length;
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
+    let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      marksCount => {
+        marksCountInstance.unsubscribe();
+        if (marksCount != null) {
+          marksCount = Number(marksCount) - count;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+        this.db.object(dbPath).update({ marksCount: marksCount });
+      }
+    );
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/marksCount";
+    let newMarksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      newMarksCount => {
+        newMarksCountInstance.unsubscribe();
+        if (newMarksCount != null) {
+          newMarksCount = Number(newMarksCount) + count;
+        }
+        else {
+          newMarksCount = count;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
+        this.db.object(dbPath).update({ marksCount: newMarksCount });
+      }
+    );
+
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus/status";
+    let perLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      preData => {
+        let approveCount = 0;
+        perLineInstance.unsubscribe();
+        if (preData != null) {
+          if (preData == "Confirm") {
+            approveCount = approveCount + 1;
           }
-        );
-
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/marksCount";
-        let newMarksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          newMarksCount => {
-            newMarksCountInstance.unsubscribe();
-            if (newMarksCount != null) {
-              newMarksCount = Number(newMarksCount) + count;
-            }
-            else {
-              newMarksCount = count;
-            }
-            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-            this.db.object(dbPath).update({ marksCount: newMarksCount });
-          }
-        );
-
-
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus/status";
-        let perLineInstance = this.db.object(dbPath).valueChanges().subscribe(
-          preData => {
-            let approveCount = 0;
-            perLineInstance.unsubscribe();
-            if (preData != null) {
-              if (preData == "Confirm") {
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+        this.db.object(dbPath).update({ status: "Reject" });
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus/status";
+        let newLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+          newData => {
+            newLineInstance.unsubscribe();
+            if (newData != null) {
+              if (newData == "Confirm") {
                 approveCount = approveCount + 1;
               }
             }
-            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus";
             this.db.object(dbPath).update({ status: "Reject" });
-            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus/status";
-            let newLineInstance = this.db.object(dbPath).valueChanges().subscribe(
-              newData => {
-                newLineInstance.unsubscribe();
-                if (newData != null) {
-                  if (newData == "Confirm") {
-                    approveCount = approveCount + 1;
-                  }
-                }
-                dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus";
-                this.db.object(dbPath).update({ status: "Reject" });
 
-                dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
-                let approvedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  approvedData => {
-                    approvedInstance.unsubscribe();
-                    let total = 0;
-                    if (approvedData != null) {
-                      total = Number(approvedData) - approveCount;
-                    }
-                    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone;
-                    this.db.object(dbPath).update({ approved: total });
-                  }
-                );
-              });
-          }
-        );
+            dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
+            let approvedInstance = this.db.object(dbPath).valueChanges().subscribe(
+              approvedData => {
+                approvedInstance.unsubscribe();
+                let total = 0;
+                if (approvedData != null) {
+                  total = Number(approvedData) - approveCount;
+                }
+                dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone;
+                this.db.object(dbPath).update({ approved: total });
+              }
+            );
+          });
       }
     );
   }

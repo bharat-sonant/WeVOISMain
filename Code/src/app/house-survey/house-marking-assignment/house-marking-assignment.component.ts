@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
-import { CommonService } from "../services/common/common.service";
+import { CommonService } from "../../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { MapService } from "../services/map/map.service";
-import { FirebaseService } from "../firebase.service";
+import { MapService } from "../../services/map/map.service";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: "app-house-marking-assignment",

@@ -63,9 +63,9 @@ import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-rep
 import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
-import { HouseMarkingComponent } from '../../house-marking/house-marking.component';
+import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
-import { HouseMarkingAssignmentComponent } from '../../house-marking-assignment/house-marking-assignment.component';
+import { HouseMarkingAssignmentComponent } from '../../house-survey/house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
@@ -77,9 +77,9 @@ import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-map
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
-import { JmapsComponent } from '../../jmaps/jmaps.component';
-import { GarbageCaptureAnalysisComponent } from '../../reports/garbage-capture-analysis/garbage-capture-analysis.component';
-import { VtsReportComponent } from '../../reports/vts-report/vts-report.component';
+import { JmapsComponent } from '../../VTS/jmaps/jmaps.component';
+import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
+import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
@@ -92,6 +92,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'index#services', component: IndexComponent },
     { path: 'index#gallery', component: IndexComponent },
     { path: 'portal-access', component: PortalAccessComponent },
+    { path: 'logout', component: LogoutComponent },
     
     //sikar
     { path: 'sikar/home', component: HomeComponent },

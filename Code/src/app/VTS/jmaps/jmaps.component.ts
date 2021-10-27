@@ -4,8 +4,8 @@ import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
-import { CommonService } from "../services/common/common.service";
-import { FirebaseService } from "../firebase.service";
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
@@ -38,6 +38,8 @@ export class JmapsComponent implements OnInit {
   wardLineLengthList: any[];
   userId: any;
   isBoundaryShow = true;
+  strockColorNotDone = "#fa0505";
+  strockColorDone = "#0ba118";
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -45,8 +47,31 @@ export class JmapsComponent implements OnInit {
     workPercentage: "0%",
     coveredLengthMeter: 0,
     workPercentageNumber: 0,
-    penalty: 0
+    penalty: 0,
+    lastShowDate: this.commonService.getTodayDateTime()
   };
+
+  showBoundries = "#showBoundries";
+  showBoundriesNav = "#showBoundriesNav";
+  ddlZone = "#ddlZone";
+  ddlZoneNav = "#ddlZoneNav";
+  txtDate = "#txtDate";
+  txtDateNav = "#txtDateNav";
+  txtPreDate = "#txtPreDate";
+  txtPreDateNav = "#txtPreDateNav";
+  txtStrokeWeight = "#txtStrokeWeight";
+  txtStrokeWeightNav = "#txtStrokeWeightNav";
+  iconDone = "#iconDone";
+  iconPending = "#iconPending";
+  iconDoneNav = "#iconDoneNav";
+  iconPendingNav = "#iconPendingNav";
+  txtPenalty = "#txtPenalty";
+  txtPenaltyNav = "#txtPenaltyNav";
+  ddlWard = "#ddlWard";
+  ddlWardNav = "#ddlWardNav";
+  txtVehicle = "#txtVehicle";
+  txtVehicleNav = "#txtVehicleNav";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -55,39 +80,102 @@ export class JmapsComponent implements OnInit {
   }
 
   setDefault() {
+    this.selectedWard = "0";
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.toDayDate = this.commonService.setTodayDate();
-    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.getZoneList();
+    this.setDefaultLocalStorage();
+    this.setDefaultDate();
+    this.setHeight();
+    this.setMaps();
+    this.showHideAnalysisDoneHtml("hide");
+  }
+
+  getZoneList() {
     this.commonService.getZoneWiseWard().then((zoneList: any) => {
       this.zoneList = JSON.parse(zoneList);
     });
-    this.userId = localStorage.getItem("userID");
-    $("#txtDate").val(this.selectedDate);
-    $('#txtPreDate').val(this.selectedDate);
-    $("#txtDateNav").val(this.selectedDate);
-    $('#txtPreDateNav').val(this.selectedDate);
-    this.setHeight();
-    this.setMaps();
+  }
+
+  setDefaultArrayList() {
     this.lines = [];
     this.polylines = [];
     this.vtsPolylines = [];
     this.vehicleList = [];
     this.wardLineLengthList = [];
-    this.selectedWard = "0";
+  }
+
+  setDefaultLocalStorage() {
+    this.userId = localStorage.getItem("userID");
     if (localStorage.getItem("strokeWeight") != null) {
       this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
-      $('#txtStrokeWeight').val(this.strokeWeight);
-      $('#txtStrokeWeightNav').val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
     }
-    $('#iconDone').hide();
-    $('#iconPending').show();
-    $('#iconDoneNav').hide();
-    $('#iconPendingNav').show();
+  }
+
+  setDefaultDate() {
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtPreDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
+    $(this.txtPreDateNav).val(this.selectedDate);
+    this.removePreviousLocalStorage();
+  }
+
+  removePreviousLocalStorage() {
+    let localStorageDate = this.commonService.getPreviousDate(this.toDayDate, 5);
+
+    // ward lines 
+
+    let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+    if (wardCollectionList != null) {
+      let tempList = [];
+      for (let i = 0; i < wardCollectionList.length; i++) {
+        if (new Date(wardCollectionList[i]["date"]) >= new Date(localStorageDate)) {
+          tempList.push({ date: wardCollectionList[i]["date"], ward: wardCollectionList[i]["ward"], lineNo: wardCollectionList[i]["lineNo"], latlng: wardCollectionList[i]["latlng"], color: wardCollectionList[i]["color"], dateTime: wardCollectionList[i]["dateTime"] });
+        }
+      }
+      localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(tempList));
+    }
+    // summary
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let tempList = [];
+      for (let i = 0; i < summaryList.length; i++) {
+        if (new Date(summaryList[i]["date"]) >= new Date(localStorageDate)) {
+          let workPerc = 0;
+          let coveredLength = 0;
+          let penalty = 0;
+          let analysisDone = "No";
+          let vehicles = "";
+          if (summaryList[i]["workPerc"] != null) {
+            workPerc = Number(summaryList[i]["workPerc"]);
+          }
+          if (summaryList[i]["coveredLength"] != null) {
+            coveredLength = Number(summaryList[i]["coveredLength"]);
+          }
+          if (summaryList[i]["penalty"] != null) {
+            penalty = Number(summaryList[i]["penalty"]);
+          }
+          if (summaryList[i]["analysisDone"] != null) {
+            analysisDone = summaryList[i]["analysisDone"];
+          }
+          if (summaryList[i]["vehicles"] != null) {
+            vehicles = summaryList[i]["vehicles"];
+          }
+          tempList.push({ ward: summaryList[i]["ward"], date: summaryList[i]["date"], workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
+        }
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(tempList));
+    }
   }
 
   changeZoneSelection(filterVal: any) {
-    $('#ddlZone').val(filterVal);
-    $('#ddlZoneNav').val(filterVal);
+    $(this.ddlZone).val(filterVal);
+    $(this.ddlZoneNav).val(filterVal);
     this.selectedWard = 0;
     this.resetAll();
     this.wardList = [];
@@ -103,18 +191,49 @@ export class JmapsComponent implements OnInit {
   setMaps() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+    this.map.setOptions({ clickableIcons: false });
+  }
+
+  showHideBoundariesHtml() {
+    if (this.isBoundaryShow == true) {
+      $(this.showBoundries).html("Hide Boundaries");
+      $(this.showBoundriesNav).html("Hide Boundaries");
+    }
+    else {
+      $(this.showBoundries).html("Show Boundaries");
+      $(this.showBoundriesNav).html("Show Boundaries");
+    }
+  }
+
+  showHideAnalysisDoneHtml(type: any) {
+    if (type == "hide") {
+      $(this.iconDone).hide();
+      $(this.iconPending).show();
+      $(this.iconDoneNav).hide();
+      $(this.iconPendingNav).show();
+    }
+    else {
+      $(this.iconDone).show();
+      $(this.iconPending).hide();
+      $(this.iconDoneNav).show();
+      $(this.iconPendingNav).hide();
+    }
   }
 
   resetAll() {
+    this.resetMap();
+    this.resetProgressData();
     this.isBoundaryShow = true;
-    $('#showBoundries').html("Hide Boundaries");
-    $('#iconDone').hide();
-    $('#iconPending').show();
-    $('#txtPenalty').val("0");
-    $('#showBoundriesNav').html("Hide Boundaries");
-    $('#iconDoneNav').hide();
-    $('#iconPendingNav').show();
-    $('#txtPenaltyNav').val("0");
+    this.showHideBoundariesHtml();
+    this.showHideAnalysisDoneHtml("hide");
+    $(this.txtPenalty).val("0");
+    $(this.txtPenaltyNav).val("0");
+    this.lines = [];
+    this.vehicleList = [];
+    this.wardLineLengthList = [];
+  }
+
+  resetProgressData() {
     this.progressData.coveredLength = "0";
     this.progressData.wardLength = "0";
     this.progressData.workPercentage = "0%";
@@ -122,13 +241,9 @@ export class JmapsComponent implements OnInit {
     this.progressData.coveredLengthMeter = 0;
     this.progressData.totalWardLength = 0;
     this.progressData.workPercentageNumber = 0;
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
-    this.wardBoundary = null;
-    if (this.marker != null) {
-      this.marker.setMap(null);
-    }
+  }
+
+  resetMap() {
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -145,19 +260,15 @@ export class JmapsComponent implements OnInit {
       }
     }
     this.vtsPolylines = [];
-    this.lines = [];
-    this.vehicleList = [];
-    this.wardLineLengthList = [];
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
   }
 
   changeWardSelection(filterVal: any) {
-    $('#ddlWard').val(filterVal);
-    $('#ddlWardNav').val(filterVal);
-    if (filterVal == "0") {
-      this.commonService.setAlertMessage("error", "Please select ward !!!");
-    }
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split("-")[0];
+    $(this.ddlWard).val(filterVal);
+    $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
     this.getWardData();
   }
@@ -177,21 +288,32 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       return;
     }
-    $("#txtDate").val(this.selectedDate);
-    $("#txtDateNav").val(this.selectedDate);
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     this.getWardData();
   }
 
   getWardData() {
-    if (this.selectedWard == "0") {
+    if (this.selectedWard == "0" || this.selectedWard == null) {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
     this.resetAll();
+    this.showLoader();
     this.getWardTotalLength();
     this.getWardLineLength();
     this.getProgressFromLocalStorage();
+    this.setWardBoundary();
+    this.getWardLines();
+  }
+
+  showLoader() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 2000);
   }
 
   getWardLineLength() {
@@ -217,14 +339,11 @@ export class JmapsComponent implements OnInit {
         this.progressData.workPercentage = summaryDetail.workPerc + "%";
         this.progressData.coveredLengthMeter = Number(summaryDetail.coveredLength);
         this.progressData.coveredLength = (parseFloat(summaryDetail.coveredLength) / 1000).toFixed(2);
-        $('#txtPenalty').val(summaryDetail.penalty);
-        $('#txtPenaltyNav').val(summaryDetail.penalty);
+        $(this.txtPenalty).val(summaryDetail.penalty);
+        $(this.txtPenaltyNav).val(summaryDetail.penalty);
         this.progressData.penalty = summaryDetail.penalty;
-        if (summaryDetail.vtsDone == "yes") {
-          $('#iconDone').show();
-          $('#iconPending').hide();
-          $('#iconDoneNav').show();
-          $('#iconPendingNav').hide();
+        if (summaryDetail.analysisDone == "yes") {
+          this.showHideAnalysisDoneHtml("show");
         }
         if (summaryDetail.vehicles != "") {
           let vechileList = summaryDetail.vehicles.split(',');
@@ -236,9 +355,6 @@ export class JmapsComponent implements OnInit {
             }
           }
         }
-        setTimeout(() => {
-          this.getAllLinesFromJson();
-        }, 300);
       }
     }
   }
@@ -250,7 +366,7 @@ export class JmapsComponent implements OnInit {
       let workPerc = 0;
       let coveredLength = 0;
       let penalty = 0;
-      let vtsDone = "no";
+      let analysisDone = "no";
       let vehicles = "";
       if (summaryData != null) {
         if (summaryData["workPerc"] != null) {
@@ -282,39 +398,40 @@ export class JmapsComponent implements OnInit {
         }
         if (summaryData["penalty"] != null) {
           penalty = Number(summaryData["penalty"]);
-          $('#txtPenalty').val(summaryData["penalty"]);
-          $('#txtPenaltyNav').val(summaryData["penalty"]);
+          $(this.txtPenalty).val(summaryData["penalty"]);
+          $(this.txtPenaltyNav).val(summaryData["penalty"]);
           this.progressData.penalty = summaryData["penalty"];
         }
-        if (summaryData["vtsDone"] != null) {
-          vtsDone = "yes";
-          $('#iconDone').show();
-          $('#iconPending').hide();
-          $('#iconDoneNav').show();
-          $('#iconPendingNav').hide();
+        if (summaryData["analysisDone"] != null) {
+          analysisDone = "yes";
+          this.showHideAnalysisDoneHtml("show");
         }
       }
       let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
       if (summaryList == null) {
         summaryList = [];
       }
-      summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, vtsDone: vtsDone, vehicles: vehicles });
+      summaryList.push({ ward: this.selectedWard, date: this.selectedDate, workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
       localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
-      this.getAllLinesFromJson();
     });
   }
 
-  getAllLinesFromJson() {
+  setWardBoundary() {
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
+  }
 
+  drowVTSVehicleRoute() {
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         this.drowVTSRoute(this.vehicleList[i]["vehicle"], i + 1, i);
       }
     }
+  }
 
+  getWardLines() {
+    this.drowVTSVehicleRoute();
     this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
@@ -334,144 +451,41 @@ export class JmapsComponent implements OnInit {
                   if (lineDetail != undefined) {
                     dist = Number(lineDetail.length);
                   }
-
                   this.lines.push({
                     lineNo: lineNo,
                     latlng: latLng,
-                    color: "#fa0505",
+                    color: this.strockColorNotDone,
                     dist: dist
                   });
-                  this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedWard);
                 }
               }
             }
+          }
+          let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+          if (wardCollectionList == null) {
+            this.plotLinesOnMap();
+          }
+          else {
+            let collectionList = wardCollectionList.filter(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+            if (collectionList.length > 0) {
+              this.progressData.lastShowDate = collectionList[0]["dateTime"];
+              this.plotLinesOnMapStorage(collectionList);
+            }
+            else {
+              this.plotLinesOnMap();
+            }
+
           }
         }
       }
     });
   }
 
-  setPreviousData() {
-    let date = $('#txtPreDate').val().toString();
-    if (date == "") {
-      this.commonService.setAlertMessage("error", "Please select date !!!");
-      return;
-    }
-    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
-    let year = date.split("-")[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
-    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        preDataInstance.unsubscribe();
-        if (data != null) {
-          if (data["LineStatus"] != null) {
-            let obj = data["LineStatus"];
-            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
-            this.db.object(dbPath).update(obj);
-            if (data["Summary"] != null) {
-              dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-              let userid = localStorage.getItem("userID");
-              let wardCoveredDistance = 0;
-              let workPercentage = 0;
-              if (data["Summary"]["coveredLength"] != null) {
-                wardCoveredDistance = Number(data["Summary"]["coveredLength"]);
-              }
-              if (data["Summary"]["workPerc"] != null) {
-                workPercentage = Number(data["Summary"]["workPerc"]);
-              }
-              const data1 = {
-                analysedBy: userid,
-                coveredLength: wardCoveredDistance.toFixed(0),
-                workPerc: workPercentage
-              }
-              this.db.object(dbPath).update(data1);
-            }
-            this.getWardData();
-          }
-        }
-      });
-    this.hideSetting();
-  }
-
-  resetAllLines() {
-    if (this.lines.length > 0) {
-      for (let j = 0; j < this.lines.length; j++) {
-        let line = new google.maps.Polyline(this.polylines[j]);
-        var polyOptions = {
-          strokeColor: "#fa0505",
-          strokeOpacity: 1.0,
-          strokeWeight: this.strokeWeight
-        }
-        line.setOptions(polyOptions);
-        let lineNo = this.lines[j]["lineNo"];
-        this.polylines[j]["strokeColor"] = "#fa0505";
-        this.lines[j]["color"] = "#fa0505";
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        this.db.database.ref(dbPath).set(null);
-      }
-
-      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
-      this.db.database.ref(dbPath).set(null);
-      let date = new Date();
-      let hour = date.getHours();
-      let min = date.getMinutes();
-      let second = date.getSeconds();
-      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-      this.db.object(dbPath).update({ resetBy: localStorage.getItem("userID"), resetTime: time });
-      this.progressData.coveredLength = "0";
-      this.progressData.workPercentage = 0 + "%";
-      this.progressData.coveredLengthMeter = 0;
-      this.closeModel();
-    }
-  }
-
-  selectAll() {
-    if (this.lines.length > 0) {
-      for (let j = 0; j < this.lines.length; j++) {
-        let line = new google.maps.Polyline(this.polylines[j]);
-        var polyOptions = {
-          strokeColor: "#0ba118",
-          strokeOpacity: 1.0,
-          strokeWeight: this.strokeWeight
-        }
-        let lineNo = this.lines[j]["lineNo"];
-        this.polylines[j]["strokeColor"] = "#0ba118";
-        this.lines[j]["color"] = "#0ba118";
-        line.setOptions(polyOptions);
-        let date = new Date();
-        let hour = date.getHours();
-        let min = date.getMinutes();
-        let second = date.getSeconds();
-        let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        this.db.database.ref(dbPath).set(time);
-      }
-
-      let wardCoveredDistance = this.progressData.totalWardLength;
-      let workPercentage = 100;
-      let userid = localStorage.getItem("userID");
-      const data1 = {
-        analysedBy: userid,
-        coveredLength: wardCoveredDistance.toFixed(0),
-        workPerc: workPercentage
-      }
-      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-      this.db.object(dbPath).update(data1);
-      this.progressData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
-      this.progressData.workPercentage = workPercentage + "%";
-      this.progressData.coveredLengthMeter = wardCoveredDistance;
-    }
-    this.hideSetting();
-  }
-
-  plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
-    let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-    let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
-      lineStatus.unsubscribe();
-      let strockColor = "#fa0505";
-      if (status != null) {
-        strockColor = "#0ba118";
-      }
+  plotLinesOnMapStorage(collectionList: any) {
+    for (let i = 0; i < collectionList.length; i++) {
+      let lineNo = collectionList[i]["lineNo"];
+      let latlngs = collectionList[i]["latlng"];
+      let strockColor = collectionList[i]["color"];
       let line = new google.maps.Polyline({
         path: latlngs,
         strokeColor: strockColor,
@@ -484,7 +498,49 @@ export class JmapsComponent implements OnInit {
         lineDetail.color = strockColor;
       }
       this.setClickInstance(line, lineNo, i);
-    });
+    }
+  }
+
+  plotLinesOnMap() {
+    if (this.lines.length > 0) {
+      for (let i = 0; i < this.lines.length; i++) {
+        let lineNo = this.lines[i]["lineNo"];
+        let latlngs = this.lines[i]["latlng"];
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+          status => {
+            lineStatusInstance.unsubscribe();
+            let strockColor = this.strockColorNotDone;
+            if (status != null) {
+              strockColor = this.strockColorDone;
+            }
+            let line = new google.maps.Polyline({
+              path: latlngs,
+              strokeColor: strockColor,
+              strokeWeight: this.strokeWeight,
+            });
+            this.polylines[i] = line;
+            this.polylines[i].setMap(this.map);
+            let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.color = strockColor;
+            }
+            this.setLinesLocalStorage(lineNo, latlngs, strockColor);
+            this.setClickInstance(line, lineNo, i);
+          }
+        );
+      }
+    }
+  }
+
+  setLinesLocalStorage(lineNo: any, latlng: any, color: any) {
+    let wasteCollectionLine = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+    if (wasteCollectionLine == null) {
+      wasteCollectionLine = [];
+    }
+    this.progressData.lastShowDate = this.commonService.getTodayDateTime();
+    wasteCollectionLine.push({ date: this.selectedDate, ward: this.selectedWard, lineNo: lineNo, latlng: latlng, color: color, dateTime: this.commonService.getTodayDateTime() });
+    localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(wasteCollectionLine));
   }
 
   setClickInstance(line: any, lineNo: any, index: any) {
@@ -495,6 +551,8 @@ export class JmapsComponent implements OnInit {
     let userId = this.userId;
     let selectedWard = this.selectedWard;
     let selectedDate = this.selectedDate;
+    let strockColorNotDone = this.strockColorNotDone;
+    let strockColorDone = this.strockColorDone;
     let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
@@ -506,7 +564,7 @@ export class JmapsComponent implements OnInit {
       let second = date.getSeconds();
       let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
 
-      let stockColor = "#fa0505";
+      let stockColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         dist = Number(lineDetail.dist);
@@ -514,15 +572,15 @@ export class JmapsComponent implements OnInit {
         let wardCoveredDistance = progresData.coveredLengthMeter;
         let workPercentage = 0;
         stockColor = lineDetail.color;
-        if (stockColor == "#fa0505") {
+        if (stockColor == strockColorNotDone) {
           dbEvent.database.ref(dbPathTime).set(time);
-          lineDetail.color = "#0ba118";
+          lineDetail.color = strockColorDone;
           stockColor = lineDetail.color;
           wardCoveredDistance = wardCoveredDistance + dist;
         }
         else {
           dbEvent.database.ref(dbPathTime).set(null);
-          lineDetail.color = "#fa0505";
+          lineDetail.color = strockColorNotDone;
           stockColor = lineDetail.color;
           wardCoveredDistance = wardCoveredDistance - dist;
         }
@@ -554,14 +612,226 @@ export class JmapsComponent implements OnInit {
           }
           localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
         }
+        let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+        if (wardCollectionList != null) {
+          let collectionDetail = wardCollectionList.find(item => item.date == selectedDate && item.ward == selectedWard && item.lineNo == lineNo);
+          if (collectionDetail != null) {
+            collectionDetail.color = lineDetail.color;
+          }
+          localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(wardCollectionList));
+        }
       }
     });
   }
 
+  setPreviousData() {
+    let date = $(this.txtPreDate).val().toString();
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+    let year = date.split("-")[0];
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
+    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        preDataInstance.unsubscribe();
+        if (data != null) {
+          if (data["LineStatus"] != null) {
+            let obj = data["LineStatus"];
+            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+            this.db.object(dbPath).update(obj);
+            if (data["Summary"] != null) {
+              dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+              let userid = this.userId;
+              let wardCoveredDistance = 0;
+              let workPercentage = 0;
+              if (data["Summary"]["coveredLength"] != null) {
+                wardCoveredDistance = Number(data["Summary"]["coveredLength"]);
+              }
+              if (data["Summary"]["workPerc"] != null) {
+                workPercentage = Number(data["Summary"]["workPerc"]);
+              }
+              const data1 = {
+                analysedBy: userid,
+                coveredLength: wardCoveredDistance.toFixed(0),
+                workPerc: workPercentage
+              }
+              this.db.object(dbPath).update(data1);
+              let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+              if (summaryList != null) {
+                let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+                if (summaryDetail != undefined) {
+                  summaryDetail.workPerc = Number(workPercentage);
+                  summaryDetail.coveredLength = wardCoveredDistance.toFixed(0);
+                }
+                localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+              }
+            }
+            let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+            if (wardCollectionList != null) {
+              let newList = [];
+              for (let i = 0; i < wardCollectionList.length; i++) {
+                if (wardCollectionList[i]["date"] == this.selectedDate && wardCollectionList[i]["ward"] == this.selectedWard) {
+
+                }
+                else {
+                  newList.push({ date: wardCollectionList[i]["date"], ward: wardCollectionList[i]["ward"], lineNo: wardCollectionList[i]["lineNo"], latlng: wardCollectionList[i]["latlng"], color: wardCollectionList[i]["color"], dateTime: wardCollectionList[i]["dateTime"] });
+
+                }
+              }
+              localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(newList));
+            }
+            this.getWardData();
+          }
+        }
+      });
+    this.hideSetting();
+  }
+
+  resetData() {
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let tempList = [];
+      for (let i = 0; i < summaryList.length; i++) {
+        if (summaryList[i]["date"] == this.selectedDate && summaryList[i]["ward"] == this.selectedWard) { }
+        else {
+          let workPerc = 0;
+          let coveredLength = 0;
+          let penalty = 0;
+          let analysisDone = "No";
+          let vehicles = "";
+          if (summaryList[i]["workPerc"] != null) {
+            workPerc = Number(summaryList[i]["workPerc"]);
+          }
+          if (summaryList[i]["coveredLength"] != null) {
+            coveredLength = Number(summaryList[i]["coveredLength"]);
+          }
+          if (summaryList[i]["penalty"] != null) {
+            penalty = Number(summaryList[i]["penalty"]);
+          }
+          if (summaryList[i]["analysisDone"] != null) {
+            analysisDone = summaryList[i]["analysisDone"];
+          }
+          if (summaryList[i]["vehicles"] != null) {
+            vehicles = summaryList[i]["vehicles"];
+          }
+          tempList.push({ ward: summaryList[i]["ward"], date: summaryList[i]["date"], workPerc: workPerc, coveredLength: coveredLength, penalty: penalty, analysisDone: analysisDone, vehicles: vehicles });
+        }
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(tempList));
+    }
+
+    let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+    if (wardCollectionList != null) {
+      let tempList = [];
+      for (let i = 0; i < wardCollectionList.length; i++) {
+        if (wardCollectionList[i]["date"] == this.selectedDate && wardCollectionList[i]["ward"] == this.selectedWard) {
+        }
+        else {
+          tempList.push({ date: wardCollectionList[i]["date"], ward: wardCollectionList[i]["ward"], lineNo: wardCollectionList[i]["lineNo"], latlng: wardCollectionList[i]["latlng"], color: wardCollectionList[i]["color"], dateTime: wardCollectionList[i]["dateTime"] });
+        }
+      }
+      localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(tempList));
+    }
+    this.getWardData();
+  }
+
+  resetAllLines() {
+    if (this.lines.length > 0) {
+      for (let j = 0; j < this.lines.length; j++) {
+        let line = new google.maps.Polyline(this.polylines[j]);
+        var polyOptions = {
+          strokeColor: this.strockColorNotDone,
+          strokeOpacity: 1.0,
+          strokeWeight: this.strokeWeight
+        }
+        line.setOptions(polyOptions);
+        let lineNo = this.lines[j]["lineNo"];
+        this.polylines[j]["strokeColor"] = this.strockColorNotDone;
+        this.lines[j]["color"] = this.strockColorNotDone;
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        this.db.database.ref(dbPath).set(null);
+        this.setLocalStorageDetail(lineNo, this.strockColorNotDone, 0);
+      }
+
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
+      this.db.database.ref(dbPath).set(null);
+      let date = new Date();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      let second = date.getSeconds();
+      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+      this.db.object(dbPath).update({ resetBy: this.userId, resetTime: time });
+      this.progressData.coveredLength = "0";
+      this.progressData.workPercentage = 0 + "%";
+      this.progressData.coveredLengthMeter = 0;
+      this.closeModel();
+    }
+  }
+
+  selectAll() {
+    if (this.lines.length > 0) {
+      for (let j = 0; j < this.lines.length; j++) {
+        let line = new google.maps.Polyline(this.polylines[j]);
+        var polyOptions = {
+          strokeColor: this.strockColorDone,
+          strokeOpacity: 1.0,
+          strokeWeight: this.strokeWeight
+        }
+        let lineNo = this.lines[j]["lineNo"];
+        this.polylines[j]["strokeColor"] = this.strockColorDone;
+        this.lines[j]["color"] = this.strockColorDone;
+        line.setOptions(polyOptions);
+        let date = new Date();
+        let hour = date.getHours();
+        let min = date.getMinutes();
+        let second = date.getSeconds();
+        let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        this.db.database.ref(dbPath).set(time);
+        this.setLocalStorageDetail(lineNo, this.strockColorDone, 100);
+      }
+      let wardCoveredDistance = this.progressData.totalWardLength;
+      let workPercentage = 100;
+      const data1 = {
+        analysedBy: this.userId,
+        coveredLength: wardCoveredDistance.toFixed(0),
+        workPerc: workPercentage
+      }
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      this.db.object(dbPath).update(data1);
+      this.progressData.coveredLength = (parseFloat(wardCoveredDistance.toString()) / 1000).toFixed(2);
+      this.progressData.workPercentage = workPercentage + "%";
+      this.progressData.coveredLengthMeter = wardCoveredDistance;
+    }
+    this.hideSetting();
+  }
+
+  setLocalStorageDetail(lineNo: any, strockColor: any, workPercentage: any) {
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.workPerc = Number(workPercentage);
+        summaryDetail.coveredLength = this.progressData.totalWardLength.toFixed(0);
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
+    let wardCollectionList = JSON.parse(localStorage.getItem("jmapWasteCollectionLine"));
+    if (wardCollectionList != null) {
+      let collectionDetail = wardCollectionList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard && item.lineNo == lineNo);
+      if (collectionDetail != null) {
+        collectionDetail.color = strockColor;
+      }
+      localStorage.setItem("jmapWasteCollectionLine", JSON.stringify(wardCollectionList));
+    }
+  }
+
   getNextPrevious(type: any) {
-    let strokeWeight = $("#txtStrokeWeight").val();
+    let strokeWeight = $(this.txtStrokeWeight).val();
     if (strokeWeight == "") {
-      strokeWeight = $("#txtStrokeWeightNav").val();
+      strokeWeight = $(this.txtStrokeWeightNav).val();
       if (strokeWeight == "") {
         this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
         return;
@@ -570,15 +840,15 @@ export class JmapsComponent implements OnInit {
     if (type == "pre") {
       if (strokeWeight != "1") {
         this.strokeWeight = Number(strokeWeight) - 1;
-        $("#txtStrokeWeight").val(this.strokeWeight);
-        $("#txtStrokeWeightNav").val(this.strokeWeight);
+        $(this.txtStrokeWeight).val(this.strokeWeight);
+        $(this.txtStrokeWeightNav).val(this.strokeWeight);
         localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
         this.setStrokeWeight();
       }
     } else if (type == "next") {
       this.strokeWeight = Number(strokeWeight) + 1;
-      $("#txtStrokeWeight").val(this.strokeWeight);
-      $("#txtStrokeWeightNav").val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
       localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
@@ -602,17 +872,17 @@ export class JmapsComponent implements OnInit {
 
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
-      let strokeWeight = $("#txtStrokeWeight").val();
+      let strokeWeight = $(this.txtStrokeWeight).val();
       if (strokeWeight == "") {
-        strokeWeight = $("#txtStrokeWeightNav").val();
+        strokeWeight = $(this.txtStrokeWeightNav).val();
         if (strokeWeight == "") {
           this.commonService.setAlertMessage("error", "Please enter line no. !!!");
           return;
         }
       }
       this.strokeWeight = Number(strokeWeight);
-      $("#txtStrokeWeight").val(this.strokeWeight);
-      $("#txtStrokeWeightNav").val(this.strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
       localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
@@ -626,24 +896,22 @@ export class JmapsComponent implements OnInit {
   }
 
   setPreDate(filterVal: any) {
-    $('#txtPreDate').val(filterVal);
-    $('#txtPreDateNav').val(filterVal);
+    $(this.txtPreDate).val(filterVal);
+    $(this.txtPreDateNav).val(filterVal);
   }
 
   showBounderis() {
     if (this.isBoundaryShow == true) {
-      $('#showBoundries').html("Show Boundaries");
-      $('#showBoundriesNav').html("Show Boundaries");
       this.isBoundaryShow = false;
+      this.showHideBoundariesHtml();
       if (this.wardBoundary != null) {
         this.wardBoundary.setMap(null);
       }
       this.wardBoundary = null;
     }
     else {
-      $('#showBoundries').html("Hide Boundaries");
-      $('#showBoundriesNav').html("Hide Boundaries");
       this.isBoundaryShow = true;
+      this.showHideBoundariesHtml();
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
       });
@@ -672,9 +940,9 @@ export class JmapsComponent implements OnInit {
   }
 
   addVehicle() {
-    let vehicleNo = $('#txtVehicle').val().toString().trim();
+    let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
     if (vehicleNo == "") {
@@ -705,8 +973,16 @@ export class JmapsComponent implements OnInit {
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
-    $('#txtVehicle').val("");
-    $('#txtVehicleNav').val("");
+    $(this.txtVehicle).val("");
+    $(this.txtVehicleNav).val("");
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.vehicles = vehicles;
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
     this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
   }
 
@@ -806,28 +1082,45 @@ export class JmapsComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
       this.db.database.ref(dbPath).set(null);
     }
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.vehicles = vehicles;
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
   }
 
   saveVTSTrackingDone() {
-    let penalty = $('#txtPenalty').val();
+    if (this.selectedWard == "0" || this.selectedWard == null) {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+    let penalty = $(this.txtPenalty).val();
     if (penalty == "" || penalty == "0") {
-      penalty = $('#txtPenaltyNav').val();
+      penalty = $(this.txtPenaltyNav).val();
       if (penalty == "" || penalty == "0") {
         penalty = 0;
       }
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ vtsDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
-
-    $('#iconDone').show();
-    $('#iconPending').hide();
-    $('#iconDoneNav').show();
-    $('#iconPendingNav').hide();
+    this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: this.userId, penalty: penalty });
+    this.showHideAnalysisDoneHtml("show");
     this.progressData.penalty = Number(penalty);
-    $('#txtPenalty').val(penalty);
-    $('#txtPenaltyNav').val(penalty);
-    this.commonService.setAlertMessage("success", "VTS Tracking for ward " + this.selectedWard + " done !!!");
+    $(this.txtPenalty).val(penalty);
+    $(this.txtPenaltyNav).val(penalty);
+    let summaryList = JSON.parse(localStorage.getItem("jmapWardSummaryList"));
+    if (summaryList != null) {
+      let summaryDetail = summaryList.find(item => item.date == this.selectedDate && item.ward == this.selectedWard);
+      if (summaryDetail != undefined) {
+        summaryDetail.penalty = Number(penalty);
+        summaryDetail.analysisDone = "yes";
+      }
+      localStorage.setItem("jmapWardSummaryList", JSON.stringify(summaryList));
+    }
+    this.commonService.setAlertMessage("success", "Analysis done for ward " + this.selectedWard + " done !!!");
   }
 
   openModel(content: any) {
@@ -856,4 +1149,5 @@ export class progressDetail {
   coveredLengthMeter: number;
   workPercentageNumber: number;
   penalty: number;
+  lastShowDate: string;
 }
