@@ -834,6 +834,10 @@
   .main-content {
   margin-top: 10px!important;
   }
+  .seprater {
+    padding: 0px 15px 10px 10px;
+    border-bottom: 1px solid lightgray;
+}
   .navbar a{
   color: #FFFFFF;
   font-weight: bold;
@@ -964,7 +968,7 @@
   min-height: 300px;
   position: absolute;
   right: 15px;
-  top: -20px;
+  top: 15px;
   border: 1px solid #80bd7b;
   }
   .mob-panel-body{
@@ -1019,6 +1023,10 @@
   .navbar-expand-lg{
   display: block;
   } 
+  .seprater {
+    padding: 0px 15px 10px 10px;
+    border-bottom: 1px solid lightgray;
+}
   .header{
   display: none;
   }
@@ -1155,7 +1163,7 @@
   min-height: 300px;
   position: absolute;
   right: 15px;
-  top: 10px;
+  top: 15px;
   border: 1px solid #80bd7b;
   }
   .mob-panel-body{
@@ -1232,14 +1240,14 @@
   margin-left: 0px;
   }
   .header{
-  height: 100px;
+  height: 63px;
   }
   .jaipur-line-details-box {
   top: 110px;
   border: 1px solid lightgray;
   }
   .driver-helper-box {
-  top: 250px;
+  top: 270px;
   }
   .ipad-pl-25{
   padding-left:25px!important
