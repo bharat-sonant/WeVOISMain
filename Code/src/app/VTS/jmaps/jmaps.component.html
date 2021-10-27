@@ -39,7 +39,7 @@
         <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
           <i id="iconDone" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
           <i id="iconPending" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
-          <h6 id="divTracking" style="font-size: 9px!important;">Tracking</h6>
+          <h6 id="divTracking" style="font-size: 9px!important;">Analysis</h6>
         </div>
         <div class="float-second" style="margin-top: 10px;">
           <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
@@ -65,13 +65,6 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div class="setting-box">
-                    <p> {{progressData.lastShowDate}}</p>
-
-                    <button type="button" class="btn btn-main btn-success" (click)="resetData();">
-                      <i class="fas fa-sync-alt"></i>
-                      </button>
-                  </div>
                   <div class="setting-box">
                     <p id="showBoundries"> Hide Boundaries</p>
 
@@ -168,7 +161,7 @@
           <div class="mb-home  text-left">
             <i id="iconDoneNav" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
             <i id="iconPendingNav" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
-            <h6 id="divTrackingNav" style="font-size: 9px!important;">Tracking</h6>
+            <h6 id="divTrackingNav" style="font-size: 9px!important;">Analysis</h6>
           </div>
         </div>
         <div class="col-4 mb-home mt-10 text-center pl-0">
@@ -260,6 +253,10 @@
       <div class="panel-body mob-panel-body">
         <div id="divJaipurGreaterDetail">
           <div class="jaipur-line-details-box">
+            <div class="lines-left" style="margin-top: 7px;padding: 5px;padding-bottom: 0px;">
+              {{progressData.lastShowDate}}
+                <i class="fas fa-sync-alt" (click)="resetData();" style="cursor: pointer; float:right; color:green;"></i>
+          </div>
             <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
               <div class="lines-left">
                 <h3>
@@ -348,10 +345,15 @@
 <!----Map Content on Desktop Start----->
 <div class="hide-on-mob" id="divJaipurGreaterDetail">
   <div class="jaipur-line-details-box">
+   
     <div style="padding:20px 10px; border-bottom: 1px solid lightgray;">
+      <div class="lines-left" style="margin-top: -10px; padding-bottom: 10px;">
+          {{progressData.lastShowDate}}
+            <i class="fas fa-sync-alt" (click)="resetData();" style="cursor: pointer; float:right; color:green;"></i>
+      </div>
       <div class="lines-left">
         <h3>
-          <div class="progress">
+          <div class="progress" >
             <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
               [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25" aria-valuemin="0"
               aria-valuemax="100">{{progressData.workPercentage}}</div>
