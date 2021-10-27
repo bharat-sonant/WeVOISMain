@@ -24,7 +24,6 @@ export class JmapsComponent implements OnInit {
   cityName: any;
   toDayDate: any;
   selectedDate: any;
-  localStorageDate: any;
   currentMonthName: any;
   currentYear: any;
   wardLines: any;
@@ -75,8 +74,6 @@ export class JmapsComponent implements OnInit {
   divLoader = "#divLoader";
 
   ngOnInit() {
-    // localStorage.removeItem("jmapWasteCollectionLine");
-    // localStorage.removeItem("jmapWardSummaryList");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -91,7 +88,6 @@ export class JmapsComponent implements OnInit {
     this.setHeight();
     this.setMaps();
     this.showHideAnalysisDoneHtml("hide");
-
   }
 
   getZoneList() {
@@ -120,7 +116,6 @@ export class JmapsComponent implements OnInit {
   setDefaultDate() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
-
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     $(this.txtDate).val(this.selectedDate);
