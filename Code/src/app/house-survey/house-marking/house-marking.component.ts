@@ -231,7 +231,7 @@ export class HouseMarkingComponent {
 
                 let city = this.commonService.getFireStoreCity();
 
-                let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + imageName + "?alt=media";
+                let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
                 let type = data[index]["houseType"];
                 let alreadyInstalled = "नहीं";
                 if (data[index]["alreadyInstalled"] == true) {
@@ -615,7 +615,7 @@ export class HouseMarkingComponent {
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + imageName + "?alt=media";
+        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;

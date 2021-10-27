@@ -490,7 +490,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               }
               let city = this.commonService.getFireStoreCity();
 
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + imageName + "?alt=media";
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
               let houseInstance1 = this.db.object(dbPath1).valueChanges().subscribe((data) => {
