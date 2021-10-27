@@ -40,42 +40,78 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     ward: "---"
   };
 
+  // html id's
+  topPenality = "#topPenality";
+  topPenalityNav = "#topPenalityNav";
+  leftPenality = "#leftPenality";
+  divAnalysis = "#divAnalysis";
+  tblPenalty = "#tblPenalty";
+  txtDate = "#txtDate";
+  txtDateNav = "#txtDateNav";
+  ddlZone = "#ddlZone";
+  ddlUser = "#ddlUser";
+  ddlCategory = "#ddlCategory";
+  ddlWard = "#ddlWard";
+  txtTime1 = "#txtTime1";
+  txtTime2 = "#txtTime2";
+  txtPanalty = "#txtPanalty";
+  ddlOptionNav = "#ddlOptionNav";
+  ddlOption = "#ddlOption";
+  divLoader = "#divLoader";
+  divMessage = "#divMessage";
+  dataId = "#dataId";
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.setDefault();
   }
 
   setDefault() {
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.setDefaultArray();
+    this.selectedOption = "0";
+    this.setDefaultDate();
+    this.getZoneList();
+    this.getImageOptionTypes();
+    this.resetData();
+    this.setMonthYear();
+    this.getTotals();
+  }
+
+  setDefaultArray() {
     this.optionList = [];
     this.userList = [];
     this.wardList = [];
     this.zoneList = [];
-    this.selectedOption = "0";
-    this.toDayDate = this.commonService.setTodayDate();
-    this.selectedDate = this.toDayDate;
-    $('#txtDate').val(this.selectedDate);
-    $('#txtDateNav').val(this.selectedDate);
+  }
+
+  setUsersPermission() {
+    this.userType = localStorage.getItem("userType");
+    if (this.userType == "External User") {
+      $(this.topPenality).hide();
+      $(this.topPenalityNav).hide();
+      $(this.leftPenality).hide();
+      $(this.divAnalysis).hide();
+      $(this.tblPenalty).hide();
+    }
+  }
+
+  getZoneList() {
     this.commonService.getZoneWiseWard().then((zoneList: any) => {
       this.zoneList = JSON.parse(zoneList);
     });
-    this.getImageOptionTypes();
-    this.resetData();
-    this.setMonthYear();
-    this.userType = localStorage.getItem("userType");
-    if (this.userType == "External User") {
-      $('#topPenality').hide();
-      $('#topPenalityNav').hide();
-      $('#leftPenality').hide();
-      $('#divAnalysis').hide();
-      $('#tblPenalty').hide();
-    }
-    this.getTotals();
+  }
+
+  setDefaultDate() {
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.toDayDate;
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
   }
 
   getWard() {
-    let zone = $('#ddlZone').val();
+    let zone = $(this.ddlZone).val();
     if (zone == "0") {
       this.wardList = [];
     }
@@ -93,12 +129,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   filterData() {
     this.resetDetail();
-    let userId = $('#ddlUser').val();
-    let category = $('#ddlCategory').val();
-    let zone = $('#ddlZone').val();
-    let ward = $('#ddlWard').val();
-    let time1 = $('#txtTime1').val();
-    let time2 = $('#txtTime2').val();
+    let userId = $(this.ddlUser).val();
+    let category = $(this.ddlCategory).val();
+    let zone = $(this.ddlZone).val();
+    let ward = $(this.ddlWard).val();
+    let time1 = $(this.txtTime1).val();
+    let time2 = $(this.txtTime2).val();
 
     let dat1 = new Date();
     let dat2 = new Date();
@@ -159,25 +195,27 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   resetData() {
     this.progressList = [];
-    this.userList=[];
+    this.userList = [];    
+    this.resetProgressData();
+    this.resetDefaultValues();
+  }
+
+  resetProgressData() {
     this.progressData.category = "---";
-    this.progressData.time = "00:00";
     this.progressData.panalty = 0;
     this.progressData.totalCount = 0;
     this.progressData.totalPenalty = 0;
-    this.progressData.address = "---";
-    this.progressData.latLng = "---";
-    this.progressData.zone = "---";
-    this.progressData.ward = "---";
-    let element = <HTMLImageElement>document.getElementById("mainImage");
-    element.src = this.imageNoFoundURL;
-    $('#txtPanalty').val("0");
-    $('#ddlUser').val("0");
-    $('#ddlCategory').val("0");
-    $('#ddlZone').val("0");
-    $('#ddlWard').val("0");
-    $('#txtTime1').val("");
-    $('#txtTime2').val("");
+    this.resetDetail();
+  }
+  
+  resetDefaultValues() {
+    $(this.txtPanalty).val("0");
+    $(this.ddlUser).val("0");
+    $(this.ddlCategory).val("0");
+    $(this.ddlZone).val("0");
+    $(this.ddlWard).val("0");
+    $(this.txtTime1).val("");
+    $(this.txtTime2).val("");
   }
 
   changeOptionSelection(option: any) {
@@ -186,17 +224,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.selectedOption = "0";
       return;
     }
-    $('#ddlOptionNav').val(option);
-    $('#ddlOption').val(option);
+    $(this.ddlOptionNav).val(option);
+    $(this.ddlOption).val(option);
     this.selectedOption = option;
     this.resetData();
     this.getCapturedImages();
   }
 
   startLoader() {
-    $('#divLoader').show();
+    $(this.divLoader).show();
     setTimeout(() => {
-      $('#divLoader').hide();
+      $(this.divLoader).hide();
     }, 2000);
   }
 
@@ -215,8 +253,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       return;
     }
-    $("#txtDate").val(this.selectedDate);
-    $('#txtDateNav').val(this.selectedDate);
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
     this.resetData();
     this.setMonthYear();
     this.getCapturedImages();
@@ -244,49 +282,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
-    
     this.getTotals();
     this.progressList = [];
     this.allProgressList = [];
-
-    let categoryDetail = this.optionList.find(item => item.id == this.selectedOption);
-    if (categoryDetail != undefined) {
-      this.progressData.category = categoryDetail.optionType;
-    }
-
-    let dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalPenalty";
-    let totalPenaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        totalPenaltyInstance.unsubscribe();
-        if (data != null) {
-          this.progressData.panalty = Number(data);
-        }
-        else {
-          this.progressData.panalty = 0;
-        }
-      }
-    );
-
-    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalCount";
-    let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        totalCountInstance.unsubscribe();
-        if (data != null) {
-          this.progressData.count = Number(data);
-        }
-        else {
-          this.progressData.count = 0;
-        }
-      }
-    );
-
-    dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption;
+    this.getCategorySummary();
+    let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption;
     let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         imageInstance.unsubscribe();
         if (data != null) {
-          $('#divLoader').show();
-          $('#divMessage').hide();
+          $(this.divLoader).show();
+          $(this.divMessage).hide();
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length - 1; i++) {
@@ -326,25 +332,58 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                   this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                   this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
-                  let userDetail=this.userList.find(item=>item.userId==userId);
-                  if(userDetail==undefined){
-                    this.userList.push({userId:userId,name:user});
-                    this.userList=this.commonService.transformNumeric(this.userList,"name");
+                  let userDetail = this.userList.find(item => item.userId == userId);
+                  if (userDetail == undefined) {
+                    this.userList.push({ userId: userId, name: user });
+                    this.userList = this.commonService.transformNumeric(this.userList, "name");
                   }
-                  if(i==keyArray.length - 2){
-                    $('#divLoader').hide();                   
+                  if (i == keyArray.length - 2) {
+                    $(this.divLoader).hide();
                   }
                 });
             }
           }
         }
         else {
-          $('#divMessage').show();
-          $('#divLoader').hide();  
+          $(this.divMessage).show();
+          $(this.divLoader).hide();
         }
       }
     );
 
+  }
+
+  getCategorySummary() {
+    let categoryDetail = this.optionList.find(item => item.id == this.selectedOption);
+    if (categoryDetail != undefined) {
+      this.progressData.category = categoryDetail.optionType;
+    }
+
+    let dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalPenalty";
+    let totalPenaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        totalPenaltyInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.panalty = Number(data);
+        }
+        else {
+          this.progressData.panalty = 0;
+        }
+      }
+    );
+
+    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalCount";
+    let totalCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        totalCountInstance.unsubscribe();
+        if (data != null) {
+          this.progressData.count = Number(data);
+        }
+        else {
+          this.progressData.count = 0;
+        }
+      }
+    );
   }
 
   resetDetail() {
@@ -353,9 +392,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.address = "---";
     this.progressData.zone = "---";
     this.progressData.ward = "---";
-    $('#txtPanalty').val(0);
-    $('#dataId').val(0);
-    let city = this.commonService.getFireStoreCity();
+    $(this.txtPanalty).val(0);
+    $(this.dataId).val(0);
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
   }
@@ -369,8 +407,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.address = this.progressList[index]["address"];
       this.progressData.zone = this.progressList[index]["zone"];
       this.progressData.ward = this.progressList[index]["ward"];
-      $('#txtPanalty').val(this.progressList[index]["penalty"]);
-      $('#dataId').val(index);
+      $(this.txtPanalty).val(this.progressList[index]["penalty"]);
+      $(this.dataId).val(index);
       let city = this.commonService.getFireStoreCity();
       let imageName = this.progressList[index]["imageUrl"];
       let imageURL = this.imageNoFoundURL;
@@ -400,10 +438,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   analysis() {
-    let index = $('#dataId').val();
+    let index = $(this.dataId).val();
     let imageId = this.progressList[Number(index)]["imageId"];
     let prePenalty = this.progressList[Number(index)]["penalty"];
-    let penalty = $('#txtPanalty').val();
+    let penalty = $(this.txtPanalty).val();
     if (penalty == "") {
       penalty = 0;
     }

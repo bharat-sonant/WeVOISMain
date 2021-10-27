@@ -28,6 +28,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
+  
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
@@ -65,7 +66,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       markerInstance.unsubscribe();
       if (data != null) {
-        let markers = Number(data["marked"]);
+        let markers = 0;
+        if(data["marked"]!=null){
+          markers=Number(data["marked"]);
+        }
         let alreadyInstalled = 0;
         if (data["alreadyInstalled"] != null) {
           alreadyInstalled = Number(data["alreadyInstalled"]);
@@ -486,7 +490,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               }
               let city = this.commonService.getFireStoreCity();
 
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
               let houseInstance1 = this.db.object(dbPath1).valueChanges().subscribe((data) => {

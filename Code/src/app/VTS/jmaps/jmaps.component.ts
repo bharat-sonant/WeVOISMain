@@ -4,8 +4,8 @@ import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 //services
-import { CommonService } from "../services/common/common.service";
-import { FirebaseService } from "../firebase.service";
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
@@ -643,7 +643,7 @@ export class JmapsComponent implements OnInit {
             this.db.object(dbPath).update(obj);
             if (data["Summary"] != null) {
               dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-              let userid = localStorage.getItem("userID");
+              let userid = this.userId;
               let wardCoveredDistance = 0;
               let workPercentage = 0;
               if (data["Summary"]["coveredLength"] != null) {
@@ -762,7 +762,7 @@ export class JmapsComponent implements OnInit {
       let min = date.getMinutes();
       let second = date.getSeconds();
       let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-      this.db.object(dbPath).update({ resetBy: localStorage.getItem("userID"), resetTime: time });
+      this.db.object(dbPath).update({ resetBy: this.userId, resetTime: time });
       this.progressData.coveredLength = "0";
       this.progressData.workPercentage = 0 + "%";
       this.progressData.coveredLengthMeter = 0;
@@ -1106,7 +1106,7 @@ export class JmapsComponent implements OnInit {
       }
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: localStorage.getItem("userID"), penalty: penalty });
+    this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: this.userId, penalty: penalty });
     this.showHideAnalysisDoneHtml("show");
     this.progressData.penalty = Number(penalty);
     $(this.txtPenalty).val(penalty);
