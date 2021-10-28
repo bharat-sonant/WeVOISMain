@@ -288,7 +288,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.allProgressList = [];
     this.getCategorySummary();
 
-    this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
+    this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.commonService.getFireStoreCity() + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
       if (data != null) {
         if (data[this.selectedOption] != null) {
           $(this.divLoader).show();
@@ -400,32 +400,32 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getUserName(imageId: any, userId: any) {
-    let dbPath = "WastebinMonitor/Users/" + userId + "/name";
-    let userInstance = this.db.object(dbPath).valueChanges().subscribe(
-      userData => {
-        userInstance.unsubscribe();
-        let user = "";
-        if (userData != null) {
-          user = userData.toString().charAt(0).toUpperCase() + userData.toString().slice(1);;
+    this.commonService.getVTSUserDetailByUserId(userId).then((users) => {
+      let user=users["name"].toString().charAt(0).toUpperCase() + users["name"].toString().slice(1);
+      let userDetails = this.progressList.find((item) => item.imageId == imageId);
+      if (userDetails != undefined) {
+        userDetails.user = user;
+      }
+
+      if (this.progressList.length > 0) {
+        let detail = this.progressList.find(item => item.imageId == imageId);
+        if (detail != undefined) {
+          detail.user = user;
         }
-        if (this.progressList.length > 0) {
-          let detail = this.progressList.find(item => item.imageId == imageId);
-          if (detail != undefined) {
-            detail.user = user;
-          }
+      }
+      if (this.allProgressList.length > 0) {
+        let detail = this.allProgressList.find(item => item.imageId == imageId);
+        if (detail != undefined) {
+          detail.user = user;
         }
-        if (this.allProgressList.length > 0) {
-          let detail = this.allProgressList.find(item => item.imageId == imageId);
-          if (detail != undefined) {
-            detail.user = user;
-          }
-        }
-        let userDetail = this.userList.find(item => item.userId == userId);
-        if (userDetail == undefined) {
-          this.userList.push({ userId: userId, name: user });
-          this.userList = this.commonService.transformNumeric(this.userList, "name");
-        }
-      });
+      }
+      let userDetail = this.userList.find(item => item.userId == userId);
+      if (userDetail == undefined) {
+        this.userList.push({ userId: userId, name: user });
+        this.userList = this.commonService.transformNumeric(this.userList, "name");
+      }
+
+    });
   }
 
   getPenalty(imageId: any, dbPath: any) {
@@ -496,7 +496,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     element.src = this.imageNoFoundURL;
   }
 
-  getCaptureData(index:any) {
+  getCaptureData(index: any) {
     this.startLoader();
     this.setActiveClass(index);
     if (this.progressList.length > 0) {

@@ -95,35 +95,35 @@ export class CommonService {
     return year + "-" + month + "-" + nextday;
   }
 
-  getDefaultCityLatLng(){
-    let latLng=[];
-    let cityName=localStorage.getItem("cityName");
-    if(cityName=="jaipur-greater"){
-      latLng.push({lat:26.912434,lng:75.787270});
+  getDefaultCityLatLng() {
+    let latLng = [];
+    let cityName = localStorage.getItem("cityName");
+    if (cityName == "jaipur-greater") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
-    else if(cityName=="test"){
-      latLng.push({lat:26.912434,lng:75.787270});
+    else if (cityName == "test") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
-    else if(cityName=="demo"){
-      latLng.push({lat:26.912434,lng:75.787270});
+    else if (cityName == "demo") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
-    else if(cityName=="sikar"){
-      latLng.push({lat:27.616270,lng:75.152443});
+    else if (cityName == "sikar") {
+      latLng.push({ lat: 27.616270, lng: 75.152443 });
     }
-    else if(cityName=="reengus"){
-      latLng.push({lat:27.369301,lng:75.566200});
+    else if (cityName == "reengus") {
+      latLng.push({ lat: 27.369301, lng: 75.566200 });
     }
-    else if(cityName=="shahpura"){
-      latLng.push({lat:27.385250,lng:75.963074});
+    else if (cityName == "shahpura") {
+      latLng.push({ lat: 27.385250, lng: 75.963074 });
     }
-    
+
     return latLng;
   }
 
   initMapProperties() {
-    let latLng=this.getDefaultCityLatLng();
+    let latLng = this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]), Number(latLng[0]["lng"])),
       zoom: 14,
       disableDefaultUI: true,
       zoomControl: true,
@@ -139,9 +139,9 @@ export class CommonService {
   }
 
   initMapPropertiesDefault() {
-    let latLng=this.getDefaultCityLatLng();
+    let latLng = this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]), Number(latLng[0]["lng"])),
       zoom: 12,
       disableDefaultUI: false,
       zoomControl: false,
@@ -156,9 +156,9 @@ export class CommonService {
   }
 
   initMapPropertiesRealTime() {
-    let latLng=this.getDefaultCityLatLng();
+    let latLng = this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]), Number(latLng[0]["lng"])),
       zoom: 50,
       disableDefaultUI: false,
       zoomControl: false,
@@ -188,9 +188,9 @@ export class CommonService {
   }
 
   mapForReport() {
-    let latLng=this.getDefaultCityLatLng();
+    let latLng = this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]), Number(latLng[0]["lng"])),
       optimized: false,
       zoom: 15,
       disableDefaultUI: true,
@@ -216,9 +216,9 @@ export class CommonService {
         stylers: [{ visibility: "off" }],
       },
     ];
-    let latLng=this.getDefaultCityLatLng();
+    let latLng = this.getDefaultCityLatLng();
     var mapProp = {
-      center: new google.maps.LatLng(Number(latLng[0]["lat"]),Number(latLng[0]["lng"])),
+      center: new google.maps.LatLng(Number(latLng[0]["lat"]), Number(latLng[0]["lng"])),
       zoom: 14,
       disableDefaultUI: false,
       zoomControl: true,
@@ -1449,6 +1449,33 @@ export class CommonService {
 
 
   //#endregion
+
+
+  getVTSUserDetailByUserId(userId: string) {
+    return new Promise((resolve) => {
+      let userList = JSON.parse(localStorage.getItem("vtsUserList"));
+      if (userList == undefined) {
+        userList = [];
+      }
+
+      let userData = userList.find((item) => item.userId == userId);
+      if (userData == undefined) {
+        console.log(userId);
+        this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+        let userDbPath = "WastebinMonitor/Users/"+userId;
+        let userDataInstance = this.fsDb.object(userDbPath).valueChanges().subscribe((data) => {
+          userDataInstance.unsubscribe();
+          userList.push({ userId: userId, name: data["name"], email: data["email"] });
+          localStorage.setItem("vtsUserList", JSON.stringify(userList));
+          let list = JSON.parse(localStorage.getItem("vtsUserList"));
+          let userData = list.find((item) => item.userId == userId);
+          resolve(userData);
+        });
+      } else {
+        resolve(userData);
+      }
+    });
+  }
 
 
 }

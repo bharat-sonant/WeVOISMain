@@ -90,6 +90,7 @@ import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
+import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
 
 @NgModule({
   imports: [
@@ -184,7 +185,8 @@ import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
     VtsReportComponent,
     VtsMonthlyReportComponent,
     ChangePasswordComponent,
-    VtsRouteComponent
+    VtsRouteComponent,
+    CreateRouteComponent
   ]
 })
 
