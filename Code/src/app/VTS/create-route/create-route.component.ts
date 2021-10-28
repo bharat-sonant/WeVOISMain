@@ -21,6 +21,9 @@ export class CreateRouteComponent implements OnInit {
   lines: any[];
   polylines = [];
   ddlVehicle = "#ddlVehicle";
+  wardLatLngList: any[];
+  wardBoundaryList: any[];
+  wardKMLList = [];
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -29,10 +32,35 @@ export class CreateRouteComponent implements OnInit {
 
   setDefault() {
     this.polylines = [];
+    this.wardKMLList = [];
     this.lines = [];
     this.selectedVehicle = "0";
+    this.wardBoundaryList = [];
+    this.wardLatLngList = [];
     this.setHeight();
     this.setMaps();
+    this.getCityBoundaryList();
+  }
+
+  getCityBoundaryList() {
+    this.httpService.get("../../assets/jsons/WardBoundries/WardWise/" + this.cityName + ".json").subscribe(data => {
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let index = keyArray[i];
+          let ward = index.split("_")[0];
+          let latLngList = [];
+          for (let j = 0; j < data[index].length; j++) {
+            let latLng = data[index][j];
+            let lat = latLng.split(",")[1];
+            let lng = latLng.split(",")[0];
+            latLngList.push({ lat: Number(lat), lng: Number(lng) })
+          }
+          this.wardLatLngList.push({ ward: ward, latLngList: latLngList });
+        }
+        // console.log(this.wardLatLngList);
+      }
+    });
   }
 
 
@@ -58,6 +86,15 @@ export class CreateRouteComponent implements OnInit {
       }
     }
     this.polylines = [];
+    if (this.wardKMLList.length > 0) {
+      for (let i = 0; i < this.wardKMLList.length; i++) {
+        if (this.wardKMLList[i] != undefined) {
+          this.wardKMLList[i]["wardKML"].setMap(null);
+        }
+      }
+    }
+    this.wardKMLList=[];
+    this.wardBoundaryList=[];
     this.createRoute();
   }
 
@@ -71,6 +108,7 @@ export class CreateRouteComponent implements OnInit {
           let lat = data[index]["latitude"];
           let lng = data[index]["longitude"];
           latLng.push({ lat: Number(lat), lng: Number(lng) });
+          this.getPlyGon(lat, lng);
         }
         let strockColor = "red";
         let line = new google.maps.Polyline({
@@ -82,6 +120,44 @@ export class CreateRouteComponent implements OnInit {
         this.polylines[0].setMap(this.map);
       }
     });
+  }
+
+
+  getPlyGon(lat: any, lng: any) {
+    if (this.wardLatLngList.length > 0) {
+      for (let i = 0; i < this.wardLatLngList.length; i++) {
+        let ward = this.wardLatLngList[i]["ward"];
+        this.inside(lat, lng, this.wardLatLngList[i]["latLngList"], ward);
+      }
+    }
+  }
+
+  inside(point1: any, point2: any, vs: any, ward: any) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+
+    var x = point1, y = point2;
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      var xi = vs[i]["lat"], yi = vs[i]["lng"];
+      var xj = vs[j]["lat"], yj = vs[j]["lng"];
+      // console.log(xi)
+
+      var intersect = ((yi > y) != (yj > y))
+        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    if (inside == true) {
+      let detail = this.wardBoundaryList.find(item => item.ward == ward);
+      if (detail == undefined) {
+        console.log(ward);
+        this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
+          this.wardKMLList.push({ wardKML });
+        });
+        this.wardBoundaryList.push({ ward: ward });
+        //console.log(inside);
+      }
+    }
   }
 
 }
