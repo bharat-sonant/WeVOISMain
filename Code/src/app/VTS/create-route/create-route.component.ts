@@ -24,7 +24,7 @@ export class CreateRouteComponent implements OnInit {
   wardLatLngList: any[];
   wardBoundaryList: any[];
   wardKMLList = [];
-  vehicleRouteLength:any;
+  vehicleRouteLength: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -37,12 +37,12 @@ export class CreateRouteComponent implements OnInit {
     this.wardKMLList = [];
     this.lines = [];
     this.selectedVehicle = "0";
-    this.vehicleRouteLength=0;
+    this.vehicleRouteLength = 0;
     this.wardBoundaryList = [];
     this.wardLatLngList = [];
     this.setHeight();
     this.setMaps();
-    this.getCityBoundaryList();
+   // this.getCityBoundaryList();
   }
 
   getCityBoundaryList() {
@@ -79,8 +79,8 @@ export class CreateRouteComponent implements OnInit {
   }
 
   changeVehicleSelection(filterVal: any) {
-    $('#divLoader').show();
-    this.vehicleRouteLength=0;
+   // $('#divLoader').show();
+    this.vehicleRouteLength = 0;
     $(this.ddlVehicle).val(filterVal);
     this.selectedVehicle = filterVal;
     if (this.polylines.length > 0) {
@@ -104,17 +104,18 @@ export class CreateRouteComponent implements OnInit {
   }
 
   createRoute() {
+    $('#divLoader').show();
     this.httpService.get("../../assets/jsons/VehicleRoute/" + this.cityName + "/" + this.selectedVehicle + ".json").subscribe(data => {
       if (data != null) {
         let keyArray = Object.keys(data);
         let latLng = [];
-        this.vehicleRouteLength=keyArray.length-1;
-        for (let i = 0; i < keyArray.length; i++) {
+        this.vehicleRouteLength = keyArray.length - 1;
+        for (let i = 0; i < keyArray.length; i=i+2) {
           let index = keyArray[i];
           let lat = data[index]["latitude"];
           let lng = data[index]["longitude"];
           latLng.push({ lat: Number(lat), lng: Number(lng) });
-          this.getPlyGon(lat, lng,i);
+         // this.getPlyGon(lat, lng, i);
         }
         let strockColor = "red";
         let line = new google.maps.Polyline({
@@ -124,88 +125,81 @@ export class CreateRouteComponent implements OnInit {
         });
         this.polylines[0] = line;
         this.polylines[0].setMap(this.map);
+        $('#divLoader').hide();
       }
     });
   }
 
 
-  getPlyGon(lat: any, lng: any,index:any) {
+  getPlyGon(lat: any, lng: any, index: any) {
     if (this.wardLatLngList.length > 0) {
-      for (let i = 0; i < this.wardLatLngList.length; i++) {
-        let ward = this.wardLatLngList[i]["ward"];
-        this.inside(lat, lng, this.wardLatLngList[i]["latLngList"], ward, index);
-      }
-    }
-  }
+      for (let k = 0; k < this.wardLatLngList.length; k++) {
+        let ward = this.wardLatLngList[k]["ward"];
+        let vs=this.wardLatLngList[k]["latLngList"];
 
-  inside(point1: any, point2: any, vs: any, ward: any,index:any) {
-    var x = point1, y = point2;
-    var inside = false;
-    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      var xi = vs[i]["lat"], yi = vs[i]["lng"];
-      var xj = vs[j]["lat"], yj = vs[j]["lng"];
+        var x = lat, y = lng;
+        var inside = false;
+        for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+          var xi = vs[i]["lat"], yi = vs[i]["lng"];
+          var xj = vs[j]["lat"], yj = vs[j]["lng"];
 
-      var intersect = ((yi > y) != (yj > y))
-        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-    }
-    if (inside == true) {
-      let detail = this.wardBoundaryList.find(item => item.ward == ward);
-      if (detail == undefined) {
-        let latLng = [];
-        latLng.push({ lat: Number(point1), lng: Number(point2) });
-        this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
-          this.wardKMLList.push({ ward: ward, wardKML: wardKML });
-          let wardKMLList = this.wardKMLList;
-          let polylines = this.polylines;
-          let wardBoundaryList = this.wardBoundaryList;
-          let map = this.map;
-          google.maps.event.addListener(wardKML, 'click', function (h) {
-            $('#lblWardNo').html(ward);
-            if (wardKMLList.length > 0) {
-              for (let i = 0; i < wardKMLList.length; i++) {
-                if (wardKMLList[i] != undefined) {
-                  wardKMLList[i]["wardKML"].setMap(null);
+          var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+          if (intersect) inside = !inside;
+        }
+        if (inside == true) {
+          k=this.wardLatLngList.length;
+          let detail = this.wardBoundaryList.find(item => item.ward == ward);
+          if (detail == undefined) {
+            let latLng = [];
+            latLng.push({ lat: Number(lat), lng: Number(lng) });
+            this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
+              this.wardKMLList.push({ ward: ward, wardKML: wardKML });
+              let wardKMLList = this.wardKMLList;
+              let polylines = this.polylines;
+              let wardBoundaryList = this.wardBoundaryList;
+              let map = this.map;
+              google.maps.event.addListener(wardKML, 'click', function (h) {
+                $('#lblWardNo').html(ward);
+                if (wardKMLList.length > 0) {
+                  for (let i = 0; i < wardKMLList.length; i++) {
+                    if (wardKMLList[i] != undefined) {
+                      wardKMLList[i]["wardKML"].setMap(null);
+                    }
+                  }
                 }
-              }
-            }
 
-            if (polylines.length > 0) {
-              for (let i = 0; i < polylines.length; i++) {
-                if (polylines[i] != undefined) {
-                  polylines[i].setMap(null);
+                if (polylines.length > 0) {
+                  for (let i = 0; i < polylines.length; i++) {
+                    if (polylines[i] != undefined) {
+                      polylines[i].setMap(null);
+                    }
+                  }
                 }
-              }
-            }
-            wardKML.setMap(map);
-            let detail = wardBoundaryList.find(item => item.ward == ward);
-            if (detail != undefined) {
-              let latLng = detail.latLng;
-              let strockColor = "red";
-              let line = new google.maps.Polyline({
-                path: latLng,
-                strokeColor: strockColor,
-                strokeWeight: 2,
+                wardKML.setMap(map);
+                let detail = wardBoundaryList.find(item => item.ward == ward);
+                if (detail != undefined) {
+                  let latLng = detail.latLng;
+                  let strockColor = "red";
+                  let line = new google.maps.Polyline({
+                    path: latLng,
+                    strokeColor: strockColor,
+                    strokeWeight: 2,
+                  });
+                  polylines[0] = line;
+                  polylines[0].setMap(map);
+                }
               });
-              polylines[0] = line;
-              polylines[0].setMap(map);
-            }
-          });
-        });
-        this.wardBoundaryList.push({ ward: ward, latLng: latLng });
+            });
+            this.wardBoundaryList.push({ ward: ward, latLng: latLng });
+          }
+          else {
+            let latLng = detail.latLng;
+            latLng.push({ lat: Number(lat), lng: Number(lng) });
+            detail.latLng = latLng;
+          }
+        }
       }
-      else {
-        let latLng = detail.latLng;
-        latLng.push({ lat: Number(point1), lng: Number(point2) });
-        detail.latLng = latLng;
-      }
-    }
-    if(index==this.vehicleRouteLength)
-    {
-      setTimeout(() => {
-        $('#divLoader').hide();
-        
-      }, 200);
     }
   }
 
@@ -268,49 +262,4 @@ export class CreateRouteComponent implements OnInit {
       }
     }
   }
-
-  getSelectedWardData(ward: any) {
-    if (this.wardKMLList.length > 0) {
-      for (let i = 0; i < this.wardKMLList.length; i++) {
-        if (this.wardKMLList[i] != undefined) {
-          this.wardKMLList[i]["wardKML"].setMap(null);
-        }
-      }
-    }
-    this.wardKMLList = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
-
-      google.maps.event.addListener(wardKML, 'click', function (h) {
-        alert("wardKML");
-
-
-      });
-
-      this.wardKMLList.push({ ward: ward, wardKML: wardKML });
-
-    });
-    if (this.wardBoundaryList.length > 0) {
-      let detail = this.wardBoundaryList.find(item => item.ward == ward);
-      if (detail != undefined) {
-        let latLng = detail.latLng;
-        let strockColor = "red";
-        let line = new google.maps.Polyline({
-          path: latLng,
-          strokeColor: strockColor,
-          strokeWeight: 2,
-        });
-        this.polylines[0] = line;
-        this.polylines[0].setMap(this.map);
-      }
-    }
-  }
-
 }
