@@ -9,7 +9,8 @@
             Create Route
         </div>
         <div class="col-md-12 col-xl-12 ipad-pl-25">
-            <select class="caret-select ipad-ipt-2" id="ddlVehicle" (change)="changeVehicleSelection($event.target.value)">
+            <select class="caret-select ipad-ipt-2" id="ddlVehicle"
+                (change)="changeVehicleSelection($event.target.value)">
                 <option value="0">
                     --Select Vehicle--
                 </option>
@@ -35,3 +36,38 @@
 <!------------Desktop Navbar End------------->
 
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+
+<div id="divDriverDetail" class="driver-helper-box hide-on-mob">
+    <div id="myBox">
+        <div class="accordion">
+            <div class="card">
+                <div aria-labelledby="headingOne">
+                    <div class="dth">
+                        <div class="table-bg">
+                            <div class="tableFixHead">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><b>Sno</b></th>
+                                            <th class="text-left" scope="col" style="text-align: left!important;">
+                                                <b>Wards</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let dt of wardBoundaryList, let i=index">
+                                            <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
+                                            <td class="text-left">{{dt.ward}}
+                                                <input type="checkbox" style="float:right;" (click)="getSelectedWardData(dt.ward)">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

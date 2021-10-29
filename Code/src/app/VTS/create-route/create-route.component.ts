@@ -93,8 +93,8 @@ export class CreateRouteComponent implements OnInit {
         }
       }
     }
-    this.wardKMLList=[];
-    this.wardBoundaryList=[];
+    this.wardKMLList = [];
+    this.wardBoundaryList = [];
     this.createRoute();
   }
 
@@ -133,15 +133,11 @@ export class CreateRouteComponent implements OnInit {
   }
 
   inside(point1: any, point2: any, vs: any, ward: any) {
-    // ray-casting algorithm based on
-    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
-
     var x = point1, y = point2;
     var inside = false;
     for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
       var xi = vs[i]["lat"], yi = vs[i]["lng"];
       var xj = vs[j]["lat"], yj = vs[j]["lng"];
-      // console.log(xi)
 
       var intersect = ((yi > y) != (yj > y))
         && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
@@ -150,12 +146,103 @@ export class CreateRouteComponent implements OnInit {
     if (inside == true) {
       let detail = this.wardBoundaryList.find(item => item.ward == ward);
       if (detail == undefined) {
-        console.log(ward);
+        let latLng = [];
+        latLng.push({ lat: Number(point1), lng: Number(point2) });
         this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
-          this.wardKMLList.push({ wardKML });
+          let wardKMLList = this.wardKMLList;
+          let polylines = this.polylines;
+          let wardBoundaryList=this.wardBoundaryList;
+          let map=this.map;
+          let commonService=this.commonService;
+          google.maps.event.addListener(wardKML, 'click', function (h) {
+            if (wardKMLList.length > 0) {
+              for (let i = 0; i < wardKMLList.length; i++) {
+                if (wardKMLList[i] != undefined) {
+                  wardKMLList[i]["wardKML"].setMap(null);
+                }
+              }
+            }
+            wardKMLList = [];
+            if (polylines.length > 0) {
+              for (let i = 0; i < polylines.length; i++) {
+                if (polylines[i] != undefined) {
+                  polylines[i].setMap(null);
+                }
+              }
+            }
+            polylines = [];
+
+            commonService.setWardBoundary(ward, map).then((wardKML: any) => {
+              wardKMLList.push({ ward: ward, wardKML: wardKML });
+            });
+            let detail = wardBoundaryList.find(item => item.ward == ward);
+            if (detail != undefined) {
+              let latLng = detail.latLng;
+              let strockColor = "red";
+              let line = new google.maps.Polyline({
+                path: latLng,
+                strokeColor: strockColor,
+                strokeWeight: 2,
+              });
+              polylines[0] = line;
+              polylines[0].setMap(map);
+            }
+
+
+
+          });
+          this.wardKMLList.push({ ward: ward, wardKML: wardKML });
         });
-        this.wardBoundaryList.push({ ward: ward });
-        //console.log(inside);
+        this.wardBoundaryList.push({ ward: ward, latLng: latLng });
+      }
+      else {
+        let latLng = detail.latLng;
+        latLng.push({ lat: Number(point1), lng: Number(point2) });
+        detail.latLng = latLng;
+      }
+    }
+  }
+
+  getSelectedWardData(ward: any) {
+    if (this.wardKMLList.length > 0) {
+      for (let i = 0; i < this.wardKMLList.length; i++) {
+        if (this.wardKMLList[i] != undefined) {
+          this.wardKMLList[i]["wardKML"].setMap(null);
+        }
+      }
+    }
+    this.wardKMLList = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    this.commonService.setWardBoundary(ward, this.map).then((wardKML: any) => {
+
+      google.maps.event.addListener(wardKML, 'click', function (h) {
+        alert("wardKML");
+
+
+      });
+
+      this.wardKMLList.push({ ward: ward, wardKML: wardKML });
+
+    });
+    if (this.wardBoundaryList.length > 0) {
+      let detail = this.wardBoundaryList.find(item => item.ward == ward);
+      if (detail != undefined) {
+        let latLng = detail.latLng;
+        let strockColor = "red";
+        let line = new google.maps.Polyline({
+          path: latLng,
+          strokeColor: strockColor,
+          strokeWeight: 2,
+        });
+        this.polylines[0] = line;
+        this.polylines[0].setMap(this.map);
       }
     }
   }
