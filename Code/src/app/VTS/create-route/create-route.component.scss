@@ -268,12 +268,12 @@
     /*************New Work CSS*****************/
     .driver-helper-box{
     width: 270px;
-    min-height: 300px;
+    min-height: 400px;
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
     right: 15px;
-    top: 230px;
+    top: 70px;
     /* border-radius: 5px; */
     border:1px solid #80bd7b;
     }
@@ -591,7 +591,7 @@
     margin-top: 1px!important;
     }
     .VTS-button{
-    width: 110px;
+    width: 125px;
     border-radius: 5px;
     padding: 10px;
     border: none !important;
@@ -599,6 +599,16 @@
     color: #fff;
     font-size: 12px;
     }
+
+    .show-all-button{
+      width: 80px;
+      border-radius: 5px;
+      padding: 10px;
+      border: none !important;
+      background-color: #0ba118;
+      color: #fff;
+      font-size: 12px;
+      }
     
     
     .loaderClass{
@@ -636,7 +646,7 @@
     }
     .tableFixHead {
     overflow-y: auto;
-    height: 200px;
+    height: 295px;
     }
     
     .tableFixHead thead th {
@@ -965,7 +975,7 @@
     }
     .driver-helper-box{
     width: 270px;
-    min-height: 300px;
+    min-height: 400px;
     position: absolute;
     right: 15px;
     top: 15px;
@@ -1160,7 +1170,7 @@
     }
     .driver-helper-box{
     width: 270px;
-    min-height: 300px;
+    min-height: 400px;
     position: absolute;
     right: 15px;
     top: 15px;

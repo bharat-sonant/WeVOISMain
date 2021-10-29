@@ -58,7 +58,6 @@
                                         <tr *ngFor="let dt of wardBoundaryList, let i=index">
                                             <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
                                             <td class="text-left">{{dt.ward}}
-                                                <input type="checkbox" style="float:right;" (click)="getSelectedWardData(dt.ward)">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -70,4 +69,15 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+        <div class="d-ib">
+            Selected Ward
+         <b><label id="lblWardNo">0</label></b> 
+        </div>
+        <br/>
+        <div class="d-ib">
+          <button class="VTS-button" (click)="saveWardRoute();" style="margin-left: 10px!important;">Save Ward Route</button>
+          <button class="show-all-button" (click)="showAllRoute();" style="margin-left: 10px!important;">Show All</button>
+        </div>
+      </div>
 </div>
