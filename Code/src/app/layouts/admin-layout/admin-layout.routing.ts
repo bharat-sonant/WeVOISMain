@@ -84,6 +84,8 @@ import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-repo
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
+import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
+
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -185,6 +187,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'sikar/vts-route', component: VtsRouteComponent },
     { path: 'sikar/create-route', component: CreateRouteComponent },
+    { path: 'sikar/create-ward-line-path', component: CreateWardLinePathComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -276,6 +279,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/change-password', component: ChangePasswordComponent },
     { path: 'sikar/:id/vts-route', component: VtsRouteComponent },
     { path: 'sikar/:id/create-route', component: CreateRouteComponent },
+    { path: 'sikar/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 
 
     //jaipur-greater
@@ -368,6 +372,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-greater/vts-route', component: VtsRouteComponent },
     { path: 'jaipur-greater/create-route', component: CreateRouteComponent },
+    { path: 'jaipur-greater/create-ward-line-path', component: CreateWardLinePathComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -459,6 +464,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-greater/:id/vts-route', component: VtsRouteComponent },
     { path: 'jaipur-greater/:id/create-route', component: CreateRouteComponent },
+    { path: 'jaipur-greater/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -550,6 +556,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/change-password', component: ChangePasswordComponent },
     { path: 'reengus/vts-route', component: VtsRouteComponent },
     { path: 'reengus/create-route', component: CreateRouteComponent },
+    { path: 'reengus/create-ward-line-path', component: CreateWardLinePathComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -641,6 +648,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/change-password', component: ChangePasswordComponent },
     { path: 'reengus/:id/vts-route', component: VtsRouteComponent },
     { path: 'reengus/:id/create-route', component: CreateRouteComponent },
+    { path: 'reengus/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -732,6 +740,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/change-password', component: ChangePasswordComponent },
     { path: 'shahpura/vts-route', component: VtsRouteComponent },
     { path: 'shahpura/create-route', component: CreateRouteComponent },
+    { path: 'shahpura/create-ward-line-path', component: CreateWardLinePathComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -823,6 +832,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/change-password', component: ChangePasswordComponent },
     { path: 'shahpura/:id/vts-route', component: VtsRouteComponent },
     { path: 'shahpura/:id/create-route', component: CreateRouteComponent },
+    { path: 'shahpura/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -914,6 +924,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/change-password', component: ChangePasswordComponent },
     { path: 'test/vts-route', component: VtsRouteComponent },
     { path: 'test/create-route', component: CreateRouteComponent },
+    { path: 'test/create-ward-line-path', component: CreateWardLinePathComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1005,6 +1016,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/change-password', component: ChangePasswordComponent },
     { path: 'test/:id/vts-route', component: VtsRouteComponent },
     { path: 'test/:id/create-route', component: CreateRouteComponent },
+    { path: 'test/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1096,6 +1108,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/change-password', component: ChangePasswordComponent },
     { path: 'demo/vts-route', component: VtsRouteComponent },
     { path: 'demo/create-route', component: CreateRouteComponent },
+    { path: 'demo/create-ward-line-path', component: CreateWardLinePathComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1186,4 +1199,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/change-password', component: ChangePasswordComponent },
     { path: 'demo/:id/vts-route', component: VtsRouteComponent },
     { path: 'demo/:id/create-route', component: CreateRouteComponent },
+    { path: 'demo/:id/create-ward-line-path', component: CreateWardLinePathComponent },
 ]; 

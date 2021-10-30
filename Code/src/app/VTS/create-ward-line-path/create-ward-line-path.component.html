@@ -6,30 +6,26 @@
     <div class="row no-gutters">
         <div class="main-headers hide-on-ipad"
             style="position: absolute; z-index: 999; margin-left: 45%; margin-top: 15px;">
-            Create Route
+            Create Ward Line Path
         </div>
         <div class="col-md-12 col-xl-12 ipad-pl-25">
-            <select class="caret-select ipad-ipt-2" id="ddlVehicle"
-                (change)="changeVehicleSelection($event.target.value)">
-                <option value="0">
-                    --Select Vehicle--
-                </option>
-                <option value="RJ14GJ0404">
-                    RJ14GJ0404
-                </option>
-                <option value="RJ14GJ0367">
-                    RJ14GJ0367
-                </option>
-                <option value="RJ14GH9814">
-                    RJ14GH9814
-                </option>
-                <option value="RJ14GH9806">
-                    RJ14GH9806
-                </option>
-                <option value="MH49AT5584">
-                    MH49AT5584
-                </option>
-            </select>
+            <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
+            (change)="changeZoneSelection($event.target.value)">
+            <option value="0">
+              --Select Zone--
+            </option>
+            <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+              {{zone.zoneName}}
+            </option>
+          </select>
+          <select class="caret-select ipad-ipt-2" id="ddlWard" (change)="changeWardSelection($event.target.value)">
+            <option value="0">
+              --Select--
+            </option>
+            <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+              {{ward.wardName}}
+            </option>
+          </select>
         </div>
     </div>
 </section>
@@ -50,15 +46,15 @@
                                         <tr>
                                             <th scope="col"><b>Sno</b></th>
                                             <th class="text-left" scope="col" style="text-align: left!important;">
-                                                <b>Wards</b>
+                                                <b>Vehicles</b>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let dt of wardBoundaryList, let i=index">
+                                        <tr *ngFor="let dt of refList, let i=index">
                                             <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
-                                            <td class="text-left">{{dt.ward}}
-                                                <i class="fas fa-check" [hidden]="dt.isDone==0" style="float:right; color: green;"></i>
+                                            <td class="text-left">{{dt.ref}}
+                                                <input type="checkbox" id="chk{{i}}" [checked]="dt.isShow==1" style="float: right;" (change)="changeRef(dt.ref,i);">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -70,15 +66,4 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
-        <div class="d-ib">
-            Selected Ward
-         <b><label id="lblWardNo">0</label></b> 
-        </div>
-        <br/>
-        <div class="d-ib">
-          <button class="VTS-button" (click)="saveWardRoute();" style="margin-left: 10px!important;">Save Ward Route</button>
-          <button class="show-all-button" (click)="showAllRoute();" style="margin-left: 10px!important;">Show All</button>
-        </div>
-      </div>
 </div>

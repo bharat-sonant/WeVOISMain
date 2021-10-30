@@ -93,6 +93,12 @@ export class PortalServicesComponent implements OnInit {
         ) {
           $("#divCreateRoute").show();
         }
+        if (
+          userAccessList[i]["pageId"] == "8I" &&
+          userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"]==this.cityName
+        ) {
+          $("#divCreateLinePath").show();
+        }
       }
       this.getSalary();
       this.getYear();

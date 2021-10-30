@@ -42,7 +42,7 @@ export class CreateRouteComponent implements OnInit {
     this.wardLatLngList = [];
     this.setHeight();
     this.setMaps();
-   // this.getCityBoundaryList();
+    this.getCityBoundaryList();
   }
 
   getCityBoundaryList() {
@@ -79,7 +79,7 @@ export class CreateRouteComponent implements OnInit {
   }
 
   changeVehicleSelection(filterVal: any) {
-   // $('#divLoader').show();
+    // $('#divLoader').show();
     this.vehicleRouteLength = 0;
     $(this.ddlVehicle).val(filterVal);
     this.selectedVehicle = filterVal;
@@ -110,12 +110,12 @@ export class CreateRouteComponent implements OnInit {
         let keyArray = Object.keys(data);
         let latLng = [];
         this.vehicleRouteLength = keyArray.length - 1;
-        for (let i = 0; i < keyArray.length; i=i+2) {
+        for (let i = 0; i < keyArray.length; i++) {
           let index = keyArray[i];
           let lat = data[index]["latitude"];
           let lng = data[index]["longitude"];
           latLng.push({ lat: Number(lat), lng: Number(lng) });
-         // this.getPlyGon(lat, lng, i);
+          this.getPlyGon(lat, lng);
         }
         let strockColor = "red";
         let line = new google.maps.Polyline({
@@ -131,11 +131,11 @@ export class CreateRouteComponent implements OnInit {
   }
 
 
-  getPlyGon(lat: any, lng: any, index: any) {
+  getPlyGon(lat: any, lng: any) {
     if (this.wardLatLngList.length > 0) {
       for (let k = 0; k < this.wardLatLngList.length; k++) {
         let ward = this.wardLatLngList[k]["ward"];
-        let vs=this.wardLatLngList[k]["latLngList"];
+        let vs = this.wardLatLngList[k]["latLngList"];
 
         var x = lat, y = lng;
         var inside = false;
@@ -148,7 +148,7 @@ export class CreateRouteComponent implements OnInit {
           if (intersect) inside = !inside;
         }
         if (inside == true) {
-          k=this.wardLatLngList.length;
+          k = this.wardLatLngList.length;
           let detail = this.wardBoundaryList.find(item => item.ward == ward);
           if (detail == undefined) {
             let latLng = [];
@@ -191,7 +191,8 @@ export class CreateRouteComponent implements OnInit {
                 }
               });
             });
-            this.wardBoundaryList.push({ ward: ward, latLng: latLng });
+            this.wardBoundaryList.push({ ward: ward, latLng: latLng, isDone: 0 });
+            this.checkWardVehicle(ward);
           }
           else {
             let latLng = detail.latLng;
@@ -201,6 +202,20 @@ export class CreateRouteComponent implements OnInit {
         }
       }
     }
+  }
+
+  checkWardVehicle(ward: any) {
+    let dbPath = "WardRoute/Vehicle/" + ward + "/" + this.selectedVehicle;
+    let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        checkInstance.unsubscribe();
+        if (data != null) {
+          let detail = this.wardBoundaryList.find(item => item.ward == ward);
+          if (detail != undefined) {
+            detail.isDone = 1;
+          }
+        }
+      });
   }
 
   saveWardRoute() {
@@ -217,6 +232,10 @@ export class CreateRouteComponent implements OnInit {
             this.db.database.ref(dbPath).set(latLng);
             dbPath = "WardRoute/Vehicle/" + ward + "/" + this.selectedVehicle;
             this.db.database.ref(dbPath).set("1");
+            let details = this.wardBoundaryList.find(item => item.ward == ward);
+            if (details != undefined) {
+              details.isDone = 1;
+            }
           }
           $('#lblWardNo').html("0");
           this.commonService.setAlertMessage("success", "Ward route added successfully");
