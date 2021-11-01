@@ -28,8 +28,11 @@ export class CreateWardLinePathComponent implements OnInit {
   refList: any[];
   ddlWard = "#ddlWard";
   ddlZone = "#ddlZone";
+  ddlRef = "#ddlRef";
   wardLines: any;
   wardLineLengthList: any[];
+  strockColorNotDone = "#60c2ff";
+  strockColorDone = "#0ba118";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -126,7 +129,6 @@ export class CreateWardLinePathComponent implements OnInit {
     );
   }
 
-
   getWardData() {
     this.setWardBoundary();
     this.getWardLines();
@@ -148,19 +150,65 @@ export class CreateWardLinePathComponent implements OnInit {
                   for (let j = 0; j < data[lineNo]["points"].length; j++) {
                     latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
                   }
-                  let strockColor = "red";
+                  let strockColor = this.strockColorNotDone;
+                  this.lines.push({
+                    lineNo: lineNo,
+                    latlng: latLng,
+                    color: strockColor
+                  });
                   let line = new google.maps.Polyline({
                     path: latLng,
                     strokeColor: strockColor,
-                    strokeWeight: 2,
+                    strokeWeight: 4,
                   });
+
                   this.polylines[i] = line;
                   this.polylines[i].setMap(this.map);
+                  this.setClickInstance(line, lineNo, i);
                 }
               }
             }
           }
         }
+      }
+    });
+  }
+
+  setClickInstance(line: any, lineNo: any, index: any) {
+    let dbEvent = this.db;
+    let lines = this.lines;
+    let polylines = this.polylines;
+    let selectedWard = this.selectedWard;
+    let strockColorNotDone = this.strockColorNotDone;
+    let strockColorDone = this.strockColorDone;
+    let commonServices = this.commonService;
+
+    google.maps.event.addListener(line, 'click', function (h) {
+      let ref = $('#ddlRef').val();
+      if (ref == "0") {
+        commonServices.setAlertMessage("error", "Please select Vehicle !!!");
+        return;
+      }
+      let stockColor = strockColorNotDone;
+      let lineDetail = lines.find(item => item.lineNo == lineNo);
+      if (lineDetail != undefined) {
+        stockColor = lineDetail.color;
+        if (stockColor == strockColorNotDone) {
+          lineDetail.color = strockColorDone;
+          stockColor = lineDetail.color;
+        }
+        else {
+          lineDetail.color = strockColorNotDone;
+          stockColor = lineDetail.color;
+        }
+        var polyOptions = {
+          strokeColor: stockColor,
+          strokeOpacity: 1.0,
+          strokeWeight: 4
+        }
+        line.setOptions(polyOptions);
+        polylines[index]["strokeColor"] = stockColor;
+
       }
     });
   }
@@ -176,7 +224,7 @@ export class CreateWardLinePathComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let ref = keyArray[i];
               let latLngList = data[ref];
-              let color=this.getVTSLineColor(i);
+              let color = this.getVTSLineColor(i);
               this.refList.push({ ref: ref, latLngList: latLngList, isShow: 1, color: color });
               this.plotRefRouteOnMap(ref, i);
             }
@@ -188,9 +236,7 @@ export class CreateWardLinePathComponent implements OnInit {
 
 
   changeRef(ref: any, index: any) {
-    
     let element = <HTMLInputElement>document.getElementById("chk" + index);
-    console.log(element.checked);
     if (element.checked == true) {
       this.refList[index]["isShow"] = 1;
     }
@@ -226,7 +272,7 @@ export class CreateWardLinePathComponent implements OnInit {
           let line = new google.maps.Polyline({
             path: latLng,
             strokeColor: strockColor,
-            strokeWeight: 2,
+            strokeWeight: 4,
           });
           this.RoutePolylines[index] = line;
           this.RoutePolylines[index].setMap(this.map);
@@ -236,7 +282,7 @@ export class CreateWardLinePathComponent implements OnInit {
   }
 
   getVTSLineColor(index: any) {
-    let color = "green";
+    let color = "red";
     if (index == 1) {
       color = "#0614f4";
     }
@@ -251,7 +297,6 @@ export class CreateWardLinePathComponent implements OnInit {
     }
     return color;
   }
-
 
   setWardBoundary() {
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {

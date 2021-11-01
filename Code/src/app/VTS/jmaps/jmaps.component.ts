@@ -418,6 +418,7 @@ export class JmapsComponent implements OnInit {
 
   setWardBoundary() {
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+      
       this.wardBoundary = wardKML;
     });
   }

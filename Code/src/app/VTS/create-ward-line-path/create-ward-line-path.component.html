@@ -66,4 +66,19 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+        <div class="d-ib">
+            <select class="penalty-input" id="ddlRef">
+                <option value="0">
+                  --Select--
+                </option>
+                <option *ngFor="let data of refList" value={{data.ref}}>
+                  {{data.ref}}
+                </option>
+              </select>
+        </div>
+        <div class="d-ib">
+          <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Save</button>
+        </div>
+      </div>
 </div>
