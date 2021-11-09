@@ -1,3 +1,4 @@
+
 /// <reference types="@types/googlemaps" />
 import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
@@ -26,15 +27,20 @@ export class CreateWardLinePathComponent implements OnInit {
   polylines = [];
   RoutePolylines = [];
   refList: any[];
+  routeList: any[];
+  selectedRoute: any[];
   ddlWard = "#ddlWard";
   ddlZone = "#ddlZone";
   ddlRef = "#ddlRef";
+  routeText = "#routeText";
+  lblSelectedRoute = "#lblSelectedRoute";
   wardLines: any;
   wardLineLengthList: any[];
   strockColorNotDone = "#60c2ff";
   strockColorDone = "#0ba118";
 
   ngOnInit() {
+    localStorage.removeItem("routeLines");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -48,6 +54,7 @@ export class CreateWardLinePathComponent implements OnInit {
     this.lines = [];
     this.zoneList = [];
     this.refList = [];
+    this.routeList = [];
     this.selectedWard = "0";
     this.wardLines = 0;
     this.wardBoundary = null;
@@ -83,6 +90,7 @@ export class CreateWardLinePathComponent implements OnInit {
     }
     this.RoutePolylines = [];
     this.refList = [];
+    this.routeList = [];
   }
 
   getZoneList() {
@@ -116,17 +124,20 @@ export class CreateWardLinePathComponent implements OnInit {
   }
 
   checkWardRoute() {
-    let dbPath = "WardRoute/Vehicle/" + this.selectedWard;
-    let wardInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        wardInstance.unsubscribe();
-        if (data == null) {
-          this.commonService.setAlertMessage("error", "Sorry no ward route found in selected ward !!!");
-          return;
-        }
-        this.getWardData();
-      }
-    );
+    this.getWardData();
+    /*
+        let dbPath = "WardRoute/Vehicle/" + this.selectedWard;
+        let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            dataInstance.unsubscribe();
+            if (data == null) {
+              this.commonService.setAlertMessage("error", "Sorry no ward route found in selected ward !!!");
+              return;
+            }
+            this.getWardData();
+          }
+        );
+        */
   }
 
   getWardData() {
@@ -182,34 +193,57 @@ export class CreateWardLinePathComponent implements OnInit {
     let strockColorNotDone = this.strockColorNotDone;
     let strockColorDone = this.strockColorDone;
     let commonServices = this.commonService;
+    let lblSelectedRoute = this.lblSelectedRoute;
 
     google.maps.event.addListener(line, 'click', function (h) {
-      let ref = $('#ddlRef').val();
-      if (ref == "0") {
-        commonServices.setAlertMessage("error", "Please select Vehicle !!!");
+      let ref = $(lblSelectedRoute).html();
+      if (ref == "") {
+        commonServices.setAlertMessage("error", "Please create route !!!");
         return;
       }
       let stockColor = strockColorNotDone;
-      let lineDetail = lines.find(item => item.lineNo == lineNo);
-      if (lineDetail != undefined) {
-        stockColor = lineDetail.color;
-        if (stockColor == strockColorNotDone) {
-          lineDetail.color = strockColorDone;
-          stockColor = lineDetail.color;
+      let isOtherLine = false;
+      let routeName = "";
+      let routeLines = JSON.parse(localStorage.getItem("routeLines"));
+      if (routeLines.length > 0) {
+        for (let i = 0; i < routeLines.length; i++) {
+          if (routeLines[i]["routeNo"] != ref) {
+            let lineInRoutes = routeLines[i]["routeLines"];
+            let detail = lineInRoutes.find(item => item.lineNo == lineNo);
+            if (detail != undefined) {
+              isOtherLine = true;
+              routeName = routeLines[i]["route"];
+              i = routeLines.length;
+            }
+          }
+        }
+      }
+      if (isOtherLine == true) {
+        commonServices.setAlertMessage("error", "This line already in " + routeName + " !!!");
+        return;
+      }
+
+      let routeDetail = routeLines.find(item => item.routeNo == ref);
+      if (routeDetail != undefined) {
+        let lineDetail = routeDetail.routeLines.find(item => item.lineNo == lineNo);
+        if (lineDetail == undefined) {
+          routeDetail.routeLines.push({ lineNo: lineNo });
+          stockColor = strockColorDone;
         }
         else {
-          lineDetail.color = strockColorNotDone;
-          stockColor = lineDetail.color;
+          let list = routeDetail.routeLines.filter(item => item.lineNo != lineNo);
+          routeDetail.routeLines = list;
+          stockColor = strockColorNotDone;
         }
-        var polyOptions = {
-          strokeColor: stockColor,
-          strokeOpacity: 1.0,
-          strokeWeight: 4
-        }
-        line.setOptions(polyOptions);
-        polylines[index]["strokeColor"] = stockColor;
-
       }
+      localStorage.setItem("routeLines", JSON.stringify(routeLines));
+      var polyOptions = {
+        strokeColor: stockColor,
+        strokeOpacity: 1.0,
+        strokeWeight: 4
+      }
+      line.setOptions(polyOptions);
+      polylines[index]["strokeColor"] = stockColor;
     });
   }
 
@@ -296,6 +330,29 @@ export class CreateWardLinePathComponent implements OnInit {
       color = "#eafe03";
     }
     return color;
+  }
+
+  createRoute() {
+    let newRoute = 1;
+    let routeLines = [];
+    if(this.polylines.length>0){
+      
+    }
+    this.routeList = JSON.parse(localStorage.getItem("routeLines"));
+    if (this.routeList == null) {
+      this.routeList = [];
+      this.routeList.push({ routeNo: newRoute, route: "Route " + newRoute, routeLines: routeLines, isShow: 1 });
+    }
+    else {
+      for (let i = 0; i < this.routeList.length; i++) {
+        this.routeList[i]["isShow"] = 0;
+      }
+      newRoute = Number(this.routeList[this.routeList.length - 1]["routeNo"]) + 1;
+      this.routeList.push({ routeNo: newRoute, route: "Route " + newRoute, routeLines: routeLines, isShow: 1 });
+    }
+    $(this.routeText).html("Please add lines for Route " + newRoute);
+    localStorage.setItem("routeLines", JSON.stringify(this.routeList));
+    $(this.lblSelectedRoute).html(newRoute.toString());
   }
 
   setWardBoundary() {

@@ -67,18 +67,34 @@
         </div>
     </div>
     <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
-        <div class="d-ib">
-            <select class="penalty-input" id="ddlRef">
-                <option value="0">
-                  --Select--
-                </option>
-                <option *ngFor="let data of refList" value={{data.ref}}>
-                  {{data.ref}}
-                </option>
-              </select>
-        </div>
-        <div class="d-ib">
-          <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Save</button>
+        <div style="text-align: right; padding-bottom: 10px;">
+            <button class="VTS-button" (click)="createRoute();" style="margin-left: 10px!important;">Create Route</button>
+        </div>  
+        <div style="padding-bottom: 10px;">
+            <label id="routeText">Please create route</label>
+            <label id="lblSelectedRoute" style="display:none;"></label>
+        </div>  
+        <div class="dth">
+            <div class="table-bg">
+                <div class="tableFixHead">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-left" scope="col" style="text-align: left!important;">
+                                    <b>Routes</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dt of routeList, let i=index">
+                                <td class="text-left">{{dt.route}}
+                                    <input type="checkbox" id="chkRoute{{i}}" [checked]="dt.isShow==1" style="float: right;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
       </div>
 </div>

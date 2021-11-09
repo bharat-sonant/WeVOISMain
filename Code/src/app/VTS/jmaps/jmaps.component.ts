@@ -38,6 +38,7 @@ export class JmapsComponent implements OnInit {
   wardLineLengthList: any[];
   userId: any;
   isBoundaryShow = true;
+  isLineShow = true;
   strockColorNotDone = "#fa0505";
   strockColorDone = "#0ba118";
   progressData: progressDetail = {
@@ -53,6 +54,8 @@ export class JmapsComponent implements OnInit {
 
   showBoundries = "#showBoundries";
   showBoundriesNav = "#showBoundriesNav";
+  showLines = "#showLines";
+  showLinesNav = "#showLinesNav";
   ddlZone = "#ddlZone";
   ddlZoneNav = "#ddlZoneNav";
   txtDate = "#txtDate";
@@ -75,6 +78,7 @@ export class JmapsComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    console.log(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
@@ -205,6 +209,17 @@ export class JmapsComponent implements OnInit {
     }
   }
 
+  showHideLinesHTML() {
+    if (this.isLineShow == true) {
+      $(this.showLines).html("Hide Red Lines");
+      $(this.showLinesNav).html("Hide Red Lines");
+    }
+    else {
+      $(this.showLines).html("Show Red Lines");
+      $(this.showLinesNav).html("Show Red Lines");
+    }
+  }
+
   showHideAnalysisDoneHtml(type: any) {
     if (type == "hide") {
       $(this.iconDone).hide();
@@ -224,7 +239,9 @@ export class JmapsComponent implements OnInit {
     this.resetMap();
     this.resetProgressData();
     this.isBoundaryShow = true;
+    this.isLineShow = true;
     this.showHideBoundariesHtml();
+    this.showHideLinesHTML();
     this.showHideAnalysisDoneHtml("hide");
     $(this.txtPenalty).val("0");
     $(this.txtPenaltyNav).val("0");
@@ -418,7 +435,7 @@ export class JmapsComponent implements OnInit {
 
   setWardBoundary() {
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-      
+
       this.wardBoundary = wardKML;
     });
   }
@@ -916,6 +933,40 @@ export class JmapsComponent implements OnInit {
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
       });
+
+    }
+    this.setStrokeWeight();
+    this.hideSetting();
+  }
+
+  showRedLines() {
+    if (this.isLineShow == true) {
+      this.isLineShow = false;
+      this.showHideLinesHTML();
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != undefined) {
+            if (this.polylines[i]["strokeColor"] == this.strockColorNotDone) {
+              this.polylines[i].setMap(null);
+            }
+          }
+        }
+      }
+    }
+    else {
+      this.isLineShow = true;
+      this.showHideLinesHTML();
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != undefined) {
+            let line = this.polylines[i];
+            if (this.polylines[i]["strokeColor"] == this.strockColorNotDone) {
+              this.polylines[i].setMap(this.map);
+            }
+            
+          }
+        }
+      }
 
     }
     this.setStrokeWeight();
