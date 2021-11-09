@@ -78,7 +78,6 @@ export class JmapsComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    console.log(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
