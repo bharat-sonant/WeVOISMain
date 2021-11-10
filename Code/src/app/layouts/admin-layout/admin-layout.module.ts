@@ -92,7 +92,7 @@ import { ChangePasswordComponent } from '../../change-password/change-password.c
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
 import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
-
+import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
 
 @NgModule({
   imports: [
@@ -189,7 +189,8 @@ import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/cre
     ChangePasswordComponent,
     VtsRouteComponent,
     CreateRouteComponent,
-    CreateWardLinePathComponent
+    CreateWardLinePathComponent,
+    TestRouteComponent
   ]
 })
 
