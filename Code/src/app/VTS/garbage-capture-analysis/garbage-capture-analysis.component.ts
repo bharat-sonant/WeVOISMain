@@ -378,11 +378,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                 this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                 this.getUserName(i, userId);
-                let userDetail = this.userList.find(item => item.userId == userId);
-                if (userDetail == undefined) {
-                  this.userList.push({ userId: userId, name: user });
-                  this.userList = this.commonService.transformNumeric(this.userList, "name");
-                }
                 if (i == keyArray.length - 2) {
                   $(this.divLoader).hide();
                 }
