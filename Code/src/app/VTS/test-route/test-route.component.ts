@@ -50,6 +50,12 @@ export class TestRouteComponent implements OnInit {
     this.setHeight();
     this.setMaps();
     this.getVehicleList();
+    this.commonService.setWardBoundary(75, this.map).then((wardKML: any) => {
+      //this.wardBoundary = wardKML;
+    });
+    this.commonService.setWardBoundary(2, this.map).then((wardKML: any) => {
+      //this.wardBoundary = wardKML;
+    });
   }
 
   getVehicleList() {

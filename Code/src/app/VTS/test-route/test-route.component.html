@@ -48,7 +48,7 @@
                                     <tbody>
                                         <tr *ngFor="let dt of vehicleList, let i=index">
                                             <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
-                                            <td class="text-left">{{dt.vehicle}}
+                                            <td class="text-left" [style.color]="dt.color">{{dt.vehicle}}
                                                 <input type="checkbox" id="chk{{i}}" [checked]="dt.isShow==1" style="float: right;" (change)="changeRef(i);">
                                             </td>
                                         </tr>
