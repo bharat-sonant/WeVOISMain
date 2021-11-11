@@ -668,7 +668,15 @@ export class JmapsComponent implements OnInit {
           if (data["LineStatus"] != null) {
             let obj = data["LineStatus"];
             dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
-            this.db.object(dbPath).update(obj);
+
+            if (obj != null) {
+              let keyArray = Object.keys(obj);
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let newPath = dbPath + "/" + lineNo;
+                this.db.database.ref(newPath).set(obj[lineNo]);
+              }
+            }
             if (data["Summary"] != null) {
               dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
               let userid = this.userId;
