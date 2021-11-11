@@ -1,4 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
@@ -17,6 +16,16 @@ export class Cms1Component implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+  }
+
+  setSurveyorId() {
+    let dbPath = "EntitySurveyData/HistoryRFIDNotFoundSurvey/1000";
+    let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        dataInstance.unsubscribe();
+        console.log(data);
+      }
+    );
   }
 
   setData() {
@@ -146,94 +155,147 @@ export class Cms1Component implements OnInit {
   }
 
   setWasteCollectionInfoData() {
-    let zoneList = [];
-    let year = "2021";
-    let monthName = "October";
-    let date = "2021-10-03";
-    for (let i = 1; i <= 150; i++) {
-      let zoneNo = i;
-      this.httpService.get("../../assets/jsons/JaipurGreater/" + zoneNo + ".json").subscribe(data => {
-        if (data != null) {
-          var keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let m = 1; m < keyArray.length; m++) {
-              let lineNo = keyArray[m];
-              let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + date + "/LineStatus/" + lineNo + "/Status";
-              let wasteInstance = this.db.object(dbPath).valueChanges().subscribe(
-                wasteData => {
-                  wasteInstance.unsubscribe();
-                  if (wasteData != null) {
-                    if (wasteData == "LineCompleted") {
+    let year = Number($('#txtYear').val());
+    let wardNo = Number($('#txtWardNo').val());
+    let wardTotalLength = Number($('#txtWardTotalLength').val());
+    let month = Number($('#txtMonth').val());
+    let date = $('#txtDate').val();
+    if (wardNo == 0) {
+      this.commonService.setAlertMessage("error", "Please enter ward No.");
+      return;
+    }
 
-                      if (data[lineNo]["points"] != null) {
-                        var latLng = [];
-                        for (let j = 0; j < data[lineNo]["points"].length; j++) {
-                          latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
-                        }
-                        let dist = 0;
-                        for (let k = latLng.length - 1; k > 0; k--) {
-                          let lat1 = latLng[k]["lat"];
-                          let lon1 = latLng[k]["lng"];
-                          let lat2 = latLng[k - 1]["lat"];
-                          let lon2 = latLng[k - 1]["lng"];
+    if (wardTotalLength == 0) {
+      this.commonService.setAlertMessage("error", "Please enter ward total length");
+      return;
+    }
 
-                          const R = 6377830; // metres
-                          const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-                          const φ2 = lat2 * Math.PI / 180;
-                          const Δφ = (lat2 - lat1) * Math.PI / 180;
-                          const Δλ = (lon2 - lon1) * Math.PI / 180;
+    if (date == "") {
+      if (month == 0) {
+        this.commonService.setAlertMessage("error", "Please enter month or date");
+        return;
+      }
+    }
 
-                          const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                            Math.cos(φ1) * Math.cos(φ2) *
-                            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                          dist = dist + (R * c);
-
-                        }
-                        if (zoneList.length == 0) {
-                          zoneList.push({ zone: zoneNo, dist: dist });
-                        }
-                        else {
-                          let zoneLineList = zoneList.find(item => item.zone == zoneNo);
-                          if (zoneLineList != undefined) {
-                            zoneLineList.dist = Number(zoneLineList.dist) + dist;
-                          }
-                          else {
-                            zoneList.push({ zone: zoneNo, dist: dist });
-                          }
-                        }
+    let days = new Date(year, month, 0).getDate();
+    this.commonService.getWardLineLength(wardNo).then((lengthList: any) => {
+      if (lengthList != null) {
+        let wardLineLengthList = JSON.parse(lengthList);
+        if (date == "") {
+          for (let i = 1; i <= days; i++) {
+            let monthDate = year + '-' + (month < 10 ? '0' : '') + month + '-' + (i < 10 ? '0' : '') + i;
+            let monthName = this.commonService.getCurrentMonthName(new Date(monthDate).getMonth());
+            let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/LineStatus";
+            let wasteInstance = this.db.object(dbPath).valueChanges().subscribe(
+              data => {
+                wasteInstance.unsubscribe();
+                if (data != null) {
+                  let keyArray = Object.keys(data);
+                  if (keyArray.length > 0) {
+                    let coveredLength = 0;
+                    for (let j = 0; j < keyArray.length; j++) {
+                      let lineNo = keyArray[j];
+                      let time = "00:00:58";
+                      if (data[lineNo]["Time"] != null) {
+                        time = data[lineNo]["Time"];
+                      }
+                      else {
+                        time = data[lineNo];
+                      }
+                      let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
+                      if (lineDetail != undefined) {
+                        dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/LineStatus/" + lineNo;
+                        this.db.database.ref(dbPath).set(time);
+                        coveredLength = coveredLength + Number(lineDetail.length);
                       }
                     }
+                    let workPerc = Math.round((coveredLength * 100) / wardTotalLength);
+                    dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+                    const data1 = {
+                      coveredLength: coveredLength.toFixed(0),
+                      workPerc: workPerc
+                    }
+                    this.db.object(dbPath).update(data1);
+                    console.log(wardNo);
+                    console.log(monthDate);
+                    console.log(coveredLength);
+                    console.log(workPerc + "%")
                   }
                 }
-              );
-            }
+              }
+            );
           }
         }
-      });
-    }
-    setTimeout(() => {
-      for (let i = 1; i <= 150; i++) {
-        let zoneNo = i;
-        let dbPath = "WardRouteLength/" + zoneNo;
-        let wardLengthInstance = this.db.object(dbPath).valueChanges().subscribe(
-          wardLength => {
-            wardLengthInstance.unsubscribe();
-            if (wardLength != null) {
-              let workPercentage = 0;
-              let zoneLineList = zoneList.find(item => item.zone == zoneNo);
-              if (zoneLineList != undefined) {
-                workPercentage = Math.round((zoneLineList.dist * 100) / Number(wardLength));
-                dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + date + "/Summary";
-                this.db.object(dbPath).update({ wardCoveredDistance: zoneLineList.dist.toFixed(0) });
-                this.db.object(dbPath).update({ workPercentage: workPercentage });
-                console.log(workPercentage);
+        else {
+          let month = Number(date.toString().split('-')[1])
+          let monthDate = date;
+          let monthName = this.commonService.getCurrentMonthName(month - 1);
+
+          let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/LineStatus";
+          let wasteInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              wasteInstance.unsubscribe();
+              if (data != null) {
+                let keyArray = Object.keys(data);
+                if (keyArray.length > 0) {
+                  let coveredLength = 0;
+                  for (let j = 0; j < keyArray.length; j++) {
+                    let lineNo = keyArray[j];
+                    let time = "00:00:58";
+                    if (data[lineNo]["Time"] != null) {
+                      time = data[lineNo]["Time"];
+                    }
+                    else {
+                      time = data[lineNo];
+                    }
+                    let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
+                    if (lineDetail != undefined) {
+                      dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/LineStatus/" + lineNo;
+                      this.db.database.ref(dbPath).set(time);
+                      coveredLength = coveredLength + Number(lineDetail.length);
+                    }
+                  }
+                  let workPerc = Math.round((coveredLength * 100) / wardTotalLength);
+                  dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+                  const data1 = {
+                    coveredLength: coveredLength.toFixed(0),
+                    workPerc: workPerc
+                  }
+                  this.db.object(dbPath).update(data1);
+                  console.log(wardNo);
+                  console.log(monthDate);
+                  console.log(coveredLength);
+                  console.log(workPerc + "%")
+                }
               }
             }
-          }
-        );
+          );
+        }
       }
-    }, 12000);
+    });
+  }
 
+  setWardTotalLength() {
+    for (let i = 1; i <= 1; i++) {
+      let wardNo = i;
+      this.httpService.get("../../assets/jsons/\WardLineLength/jaipur-greater/" + wardNo + ".json").subscribe(data => {
+        if (data != null) {
+          var keyArray = Object.keys(data);
+          //console.log(data);
+          if (keyArray.length > 0) {
+            let dist = 0;
+            for (let m = 0; m < keyArray.length; m++) {
+              let lineNo = keyArray[m];
+              dist = dist + Number(data[lineNo]);
+              // console.log("line No. "+lineNo);
+              // console.log(Number(data[lineNo]));
+            }
+            console.log("Ward No. " + wardNo);
+            console.log(dist);
+
+          }
+        }
+      })
+    }
   }
 }

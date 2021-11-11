@@ -1,3 +1,36 @@
-<button (click)="setData();" style="margin-left: 20px; margin-top: 10px;">set data</button>
+<button (click)="setData();" style="margin-left: 20px; margin-top: 10px; display:none;" >set data</button>
 
-<button (click)="setWasteCollectionInfoData();" style="margin-left: 20px; margin-top: 10px; display: none;">Update WasteCollectionInfo Sumary</button>
+
+
+<button (click)="setWardTotalLength();" style="margin-left: 20px; margin-top: 10px; display:none;">Update Ward Total Length</button>
+
+<button (click)="setSurveyorId();" style="margin-left: 20px; margin-top: 10px; display:none;">Update SurveyID</button>
+<br/>
+<br/>
+<div style="padding-left: 20px;">
+    <table>
+        <tr>
+            <td>Year</td>
+            <td><input id="txtYear" type="text" value="2021"></td>
+        </tr>
+        <tr>
+            <td>ward No</td>
+            <td><input id="txtWardNo" type="text" ></td>
+        </tr>
+        <tr>
+            <td>ward Total Length</td>
+            <td><input id="txtWardTotalLength" type="text" ></td>
+        </tr>
+        <tr>
+            <td>month</td>
+            <td><input id="txtMonth" type="text" ></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td><input id="txtDate" type="text" placeholder="yyyy-mm-dd" ></td>
+        </tr>
+    </table>
+</div>
+
+
+<button (click)="setWasteCollectionInfoData();" style="margin-left: 20px; margin-top: 10px;">Update WasteCollectionInfo Sumary</button>
