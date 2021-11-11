@@ -1459,7 +1459,6 @@ export class CommonService {
 
       let userData = userList.find((item) => item.userId == userId);
       if (userData == undefined) {
-        console.log(userId);
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
         let userDbPath = "WastebinMonitor/Users/"+userId;
         let userDataInstance = this.fsDb.object(userDbPath).valueChanges().subscribe((data) => {

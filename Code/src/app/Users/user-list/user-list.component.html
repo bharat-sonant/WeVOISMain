@@ -22,14 +22,16 @@
                 <table class="table table-hover" style="border-bottom: 1px solid lightgray;">
                   <thead>
                     <th style="width: 65px;">S.No.</th>
+                    <th style="width: 80px;">User ID</th>
                     <th >Name</th>
                     <th>Email</th>
                     <th class="text-right">Mobile</th>
-                    <th class="text-right">Action</th>
+                    <th class="text-right" style="width: 120px;">Action</th>
                   </thead>
                   <tbody>
                     <tr *ngFor="let usr of userRecord ; let i=index">
                       <td class="border-right border-left" style="width: 65px;">{{i+1}}</td>
+                      <td class="border-right text-center">{{usr.userId}}</td>
                       <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}" width="20" title="{{usr.utitle}}" />
                         {{usr.name}}</td>
                       <td class="border-right">{{usr.email}}</td>

@@ -377,7 +377,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 }
                 this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                 this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
-                this.getUserName(i, userId);
+                let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
+                this.getPenalty(i, dbPath);
+                 this.getUserName(i, userId);
                 if (i == keyArray.length - 2) {
                   $(this.divLoader).hide();
                 }
@@ -532,8 +534,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   analysis() {
     let index = $(this.dataId).val();
-    let imageId = this.progressList[Number(index)]["imageId"];
-    let prePenalty = this.progressList[Number(index)]["penalty"];
+    let imageId = this.progressList[Number(index)+1]["imageId"];
+    let prePenalty = this.progressList[Number(index)+1]["penalty"];
     let penalty = $(this.txtPanalty).val();
     if (penalty == "") {
       penalty = 0;

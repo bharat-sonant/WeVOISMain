@@ -1,3 +1,4 @@
+
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild, OnInit } from "@angular/core";
@@ -247,6 +248,7 @@ export class JmapsComponent implements OnInit {
     this.lines = [];
     this.vehicleList = [];
     this.wardLineLengthList = [];
+    localStorage.removeItem("jmapVehicleList");
   }
 
   resetProgressData() {
@@ -286,7 +288,8 @@ export class JmapsComponent implements OnInit {
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
-    this.getWardData();
+    this.resetData();
+    //this.getWardData();
   }
 
   setDate(filterVal: any, type: string) {
@@ -316,6 +319,7 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
+
     this.resetAll();
     this.showLoader();
     this.getWardTotalLength();
@@ -362,6 +366,8 @@ export class JmapsComponent implements OnInit {
           this.showHideAnalysisDoneHtml("show");
         }
         if (summaryDetail.vehicles != "") {
+
+          localStorage.setItem("jmapVehicleList", summaryDetail.vehicles);
           let vechileList = summaryDetail.vehicles.split(',');
           if (vechileList.length > 0) {
             for (let i = 0; i < vechileList.length; i++) {
@@ -402,7 +408,9 @@ export class JmapsComponent implements OnInit {
           this.progressData.coveredLengthMeter = 0;
         }
         if (summaryData["vehicles"] != null) {
+
           vehicles = summaryData["vehicles"];
+          localStorage.setItem("jmapVehicleList", vehicles);
           let vechileList = summaryData["vehicles"].split(',');
           if (vechileList.length > 0) {
             for (let i = 0; i < vechileList.length; i++) {
@@ -434,7 +442,6 @@ export class JmapsComponent implements OnInit {
 
   setWardBoundary() {
     this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-
       this.wardBoundary = wardKML;
     });
   }
@@ -570,17 +577,22 @@ export class JmapsComponent implements OnInit {
     let selectedDate = this.selectedDate;
     let strockColorNotDone = this.strockColorNotDone;
     let strockColorDone = this.strockColorDone;
+    let commonService = this.commonService;
     let dbPathTime = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let dbPathSummary = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
 
     google.maps.event.addListener(line, 'click', function (h) {
+      if (localStorage.getItem("jmapVehicleList") == null) {
+        commonService.setAlertMessage("error", "Please add vehicle !!!");
+        return;
+      }
       let dist = 0;
       let date = new Date();
       let hour = date.getHours();
       let min = date.getMinutes();
       let second = date.getSeconds();
       let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-
+      time = time + "-" + userId;
       let stockColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
@@ -612,7 +624,6 @@ export class JmapsComponent implements OnInit {
           workPercentage = Math.round((wardCoveredDistance * 100) / wardTotalLength);
         }
         const data1 = {
-          analysedBy: userId,
           coveredLength: wardCoveredDistance.toFixed(0),
           workPerc: workPercentage
         }
@@ -670,7 +681,6 @@ export class JmapsComponent implements OnInit {
                 workPercentage = Number(data["Summary"]["workPerc"]);
               }
               const data1 = {
-                analysedBy: userid,
                 coveredLength: wardCoveredDistance.toFixed(0),
                 workPerc: workPercentage
               }
@@ -774,12 +784,8 @@ export class JmapsComponent implements OnInit {
 
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
       this.db.database.ref(dbPath).set(null);
-      let date = new Date();
-      let hour = date.getHours();
-      let min = date.getMinutes();
-      let second = date.getSeconds();
-      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
-      this.db.object(dbPath).update({ resetBy: this.userId, resetTime: time });
+      let date = this.commonService.getTodayDateTime();
+      this.db.object(dbPath).update({ resetBy: this.userId, resetDateTime: date });
       this.progressData.coveredLength = "0";
       this.progressData.workPercentage = 0 + "%";
       this.progressData.coveredLengthMeter = 0;
@@ -805,6 +811,7 @@ export class JmapsComponent implements OnInit {
         let min = date.getMinutes();
         let second = date.getSeconds();
         let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+        time = time + "-" + this.userId;
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
         this.db.database.ref(dbPath).set(time);
         this.setLocalStorageDetail(lineNo, this.strockColorDone, 100);
@@ -812,7 +819,6 @@ export class JmapsComponent implements OnInit {
       let wardCoveredDistance = this.progressData.totalWardLength;
       let workPercentage = 100;
       const data1 = {
-        analysedBy: this.userId,
         coveredLength: wardCoveredDistance.toFixed(0),
         workPerc: workPercentage
       }
@@ -962,7 +968,7 @@ export class JmapsComponent implements OnInit {
             if (this.polylines[i]["strokeColor"] == this.strockColorNotDone) {
               this.polylines[i].setMap(this.map);
             }
-            
+
           }
         }
       }
@@ -1021,6 +1027,7 @@ export class JmapsComponent implements OnInit {
           vehicles = vehicles + "," + this.vehicleList[i]["vehicle"];
         }
       }
+      localStorage.setItem("jmapVehicleList", vehicles);
     }
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
     this.db.object(dbPath).update({ vehicles: vehicles });
@@ -1101,6 +1108,12 @@ export class JmapsComponent implements OnInit {
         vehicles = this.vehicleList[i]["vehicle"];
       }
     }
+    if (vehicles == "") {
+      localStorage.removeItem("jmapVehicleList");
+    }
+    else {
+      localStorage.setItem("jmapVehicleList", vehicles);
+    }
     this.vehicleList = vehicleList;
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
@@ -1149,6 +1162,10 @@ export class JmapsComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
+    if (localStorage.getItem("jmapVehicleList") == null) {
+      this.commonService.setAlertMessage("error", "Please add vehicle !!!");
+      return;
+    }
     let penalty = $(this.txtPenalty).val();
     if (penalty == "" || penalty == "0") {
       penalty = $(this.txtPenaltyNav).val();
@@ -1156,8 +1173,9 @@ export class JmapsComponent implements OnInit {
         penalty = 0;
       }
     }
+    let analysisDoneDate = this.commonService.getTodayDateTime();
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ analysisDone: "yes", analysedBy: this.userId, penalty: penalty });
+    this.db.object(dbPath).update({ analysisDone: "yes", analysisDoneDate: analysisDoneDate, analysisDoneBy: this.userId, penalty: penalty });
     this.showHideAnalysisDoneHtml("show");
     this.progressData.penalty = Number(penalty);
     $(this.txtPenalty).val(penalty);

@@ -44,7 +44,7 @@ export class UserListComponent implements OnInit {
             utitle = "External User";
           }
           if (doc.data()["isDelete"] == "0") {
-            this.userRecord.push({ uid: doc.data()["uid"], name: doc.data()["name"], email: doc.data()["email"], mobile: doc.data()["mobile"], userType: doc.data()["userType"], password: doc.data()["password"], $Key: doc.id, imgUrl: imgUrl, utitle: utitle,cityName:this.cityName });
+            this.userRecord.push({ uid: doc.data()["uid"], userId:doc.data()["userId"], name: doc.data()["name"], email: doc.data()["email"], mobile: doc.data()["mobile"], userType: doc.data()["userType"], password: doc.data()["password"], $Key: doc.id, imgUrl: imgUrl, utitle: utitle,cityName:this.cityName });
           }
         });
         this.userRecord=this.commonService.transformNumeric(this.userRecord,"name");
