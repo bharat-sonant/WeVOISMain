@@ -349,3 +349,61 @@ textarea:focus-visible{
  .submit-btn{
   background: #0ba118!important;
 }
+
+.modal-header{
+  background: #c6c6c6!important;
+  color: #000!important;
+  box-shadow: 0 .2rem 1rem rgba(0,0,0,.15)!important
+}
+.modal-header h5{
+  font-size: 18px;
+  font-weight: 600;
+
+}
+input:hover{
+  border: 1px solid #0ba118!important;
+}
+select:hover{
+  border: 1px solid #0ba118!important;
+}
+textarea:hover{
+  border: 1px solid #0ba118!important;
+}
+.fa-expand-showgraph:hover{
+  background: #0ba118;
+}
+.fa-expand-showgraph:hover .fa-sync-alt{
+  color: #fff;
+}
+.add-new-btn{
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+.add-new-btn .btn-success{
+  cursor: cell;
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 30px;
+  padding: 15px 25px;
+  background: #0ba118!important;
+  box-shadow: 0 .2rem 1rem rgba(0,0,0,.15)!important;
+
+}
+.add-new-btn .btn-success:hover{
+  background: #19ca28!important;
+}
+.table{
+  width: 100%;
+    margin-bottom: 8rem;
+    background-color: transparent;
+    border-bottom: 1px solid lightgray;
+}
+.fa-plus-square{
+  margin-right: 6px!important;
+}
+
+
+
+
