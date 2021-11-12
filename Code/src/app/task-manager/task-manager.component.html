@@ -1,8 +1,8 @@
 <section class="header">
   <div class="row no-gutters">
     <div class="col-md-4" style="padding-left: 31px; margin-top: -4px;">
-      <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentTask,'0','task')">
-        <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ADD NEW</span></button>
+      <!-- <button type="button" class="user-button" style="cursor: cell;" (click)="openModel(contentTask,'0','task')">
+        <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp; ADD NEW</span></button> -->
       &nbsp;&nbsp;
       <button type="button" class="user-button" style="cursor:pointer; display: none;"
         (click)="openModel(contentSummary,'0','summary')">
@@ -133,6 +133,11 @@
                   <h5>No data available on Selected Date</h5>
                 </div>
               </div>
+
+              <div class="add-new-btn">
+                <button class="btn btn-success" (click)="openModel(contentTask,'0','task')"><i class="far fa-plus-square"></i> Add New</button>
+              </div>
+
             </div>
           </form>
         </div>
@@ -168,7 +173,7 @@
 <!--Delete Confirmation End-->
 
 
-<!--Tasks  Start-->
+<!--Tasks Popup Start-->
 <ng-template #contentTask>
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -199,7 +204,7 @@
              />
           <span class="focus-input"></span>
           <span class="symbol-input">
-            <i class="fas fa-tasks" aria-hidden="true"></i>
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
           </span>
         </div>
         <div class="wrap-input-effects" required>
@@ -210,7 +215,7 @@
           </select>
           <span class="focus-input"></span>
           <span class="symbol-input">
-            <i class="fas fa-tasks" aria-hidden="true"></i>
+            <i class="fas fa-align-justify" aria-hidden="true"></i>
           </span>
         </div>
         <div class="wrap-input-effects" required>
@@ -232,7 +237,7 @@
           </select>
           <span class="focus-input"></span>
           <span class="symbol-input">
-            <i class="fas fa-tasks" aria-hidden="true"></i>
+            <i class="fas fa-th-large" aria-hidden="true"></i>
           </span>
         </div>
         <div class="wrap-input-effects" required>
@@ -251,7 +256,7 @@
     </div>
   </div>
 </ng-template>
-<!--Tasks End-->
+<!--Tasks Popup End-->
 
 <!--Tasks Status  Start-->
 <ng-template #contentStatus>
