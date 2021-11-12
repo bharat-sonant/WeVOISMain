@@ -87,6 +87,7 @@ export class JmapsComponent implements OnInit {
     this.selectedWard = "0";
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getZoneList();
+    this.setDefaultArrayList();
     this.setDefaultLocalStorage();
     this.setDefaultDate();
     this.setHeight();

@@ -573,7 +573,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption;
         this.db.object(dbPath).update({ totalPenalty: total });
-
       }
     );
 
