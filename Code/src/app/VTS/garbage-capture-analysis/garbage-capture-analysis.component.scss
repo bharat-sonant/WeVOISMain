@@ -995,13 +995,14 @@ color: #0ba118;
 
 
 /***********************New CSS Start**********************/
+
 .time-input{
 font-size: 12px;
 margin-top: 8px;
 border-radius: 2px;
 border: 1px solid lightgray!important;
 padding: 3px 3px;
-width: 95px;
+width: 94px;
 }
 input:hover{
 border: 1px solid #0ba118!important;
@@ -1420,6 +1421,7 @@ padding-left: 20px!important;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid lightgray;
 }
 .image-heading h3{
   font-size: 12px;
