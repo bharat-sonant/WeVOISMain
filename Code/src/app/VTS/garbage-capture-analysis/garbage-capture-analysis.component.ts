@@ -38,7 +38,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     address: "---",
     latLng: "---",
     zone: "---",
-    ward: "---"
+    ward: "---",
+    timeResolved: "---",
+    latLngResolved: "---"
   };
 
   // html id's
@@ -296,41 +298,43 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
           let objData = data[this.selectedOption];
           let keyArray = Object.keys(objData);
           if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length - 1; i++) {
+            for (let i = 1; i < keyArray.length - 1; i++) {
               let imageId = keyArray[i];
-              let user = "";
-              let status = "कचरा उठा लिया है";
-              let penalty = 0;
-              let latLng = "";
-              let zone = "---";
-              let ward = "---";
-              let isAnalysis = false;
-              let userId = objData[imageId]["user"];
-              if (objData[imageId]["isClean"] == true) {
-                status = "कचरा नहीं उठाया";
-              }
-              if (objData[imageId]["isAnalysis"] != null) {
-                isAnalysis = true;
-              }
-              if (objData[imageId]["penalty"] != null) {
-                penalty = objData[imageId]["penalty"];
-              }
-              if (objData[imageId]["latLng"] != null) {
-                latLng = objData[imageId]["latLng"];
-              }
-              if (objData[imageId]["zone"] != null) {
-                zone = objData[imageId]["zone"];
-              }
-              if (objData[imageId]["ward"] != null) {
-                ward = objData[imageId]["ward"];
-              }
-              this.progressList.push({ userId: userId, imageId: i, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
-              this.allProgressList.push({ userId: userId, imageId: i, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
-              let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
-              this.getPenalty(i, dbPath);
-              this.getUserName(i, userId);
-              if (i == keyArray.length - 2) {
-                $(this.divLoader).hide();
+              if (imageId != null) {
+                let user = "";
+                let status = "कचरा उठा लिया है";
+                let penalty = 0;
+                let latLng = "";
+                let zone = "---";
+                let ward = "---";
+                let isAnalysis = false;
+                let userId = objData[imageId]["user"];
+                if (objData[imageId]["isClean"] == true) {
+                  status = "कचरा नहीं उठाया";
+                }
+                if (objData[imageId]["isAnalysis"] != null) {
+                  isAnalysis = true;
+                }
+                if (objData[imageId]["penalty"] != null) {
+                  penalty = objData[imageId]["penalty"];
+                }
+                if (objData[imageId]["latLng"] != null) {
+                  latLng = objData[imageId]["latLng"];
+                }
+                if (objData[imageId]["zone"] != null) {
+                  zone = objData[imageId]["zone"];
+                }
+                if (objData[imageId]["ward"] != null) {
+                  ward = objData[imageId]["ward"];
+                }
+                this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
+                this.getPenalty(imageId, dbPath);
+                this.getUserName(imageId, userId);
+                if (i == keyArray.length - 2) {
+                  $(this.divLoader).hide();
+                }
               }
             }
           }
@@ -348,7 +352,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length - 1; i++) {
                 let imageId = keyArray[i];
-
                 let user = "";
                 let status = "कचरा उठा लिया है";
                 let penalty = 0;
@@ -375,11 +378,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 if (data[imageId]["ward"] != null) {
                   ward = data[imageId]["ward"];
                 }
-                this.progressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
-                this.allProgressList.push({ userId: userId, imageId: i, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
+                this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward });
                 let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
-                this.getPenalty(i, dbPath);
-                 this.getUserName(i, userId);
+                this.getPenalty(imageId, dbPath);
+                this.getUserName(imageId, userId);
                 if (i == keyArray.length - 2) {
                   $(this.divLoader).hide();
                 }
@@ -398,7 +401,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   getUserName(imageId: any, userId: any) {
     this.commonService.getVTSUserDetailByUserId(userId).then((users) => {
-      let user=users["name"].toString().charAt(0).toUpperCase() + users["name"].toString().slice(1);
+      let user = users["name"].toString().charAt(0).toUpperCase() + users["name"].toString().slice(1);
       let userDetails = this.progressList.find((item) => item.imageId == imageId);
       if (userDetails != undefined) {
         userDetails.user = user;
@@ -484,6 +487,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   resetDetail() {
     this.progressData.time = "00:00";
     this.progressData.latLng = "---";
+    this.progressData.timeResolved = "---";
+    this.progressData.latLngResolved = "---";
     this.progressData.address = "---";
     this.progressData.zone = "---";
     this.progressData.ward = "---";
@@ -491,10 +496,13 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     $(this.dataId).val(0);
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
+    element = <HTMLImageElement>document.getElementById("mainImageResolved");
+    element.src = this.imageNoFoundURL;
   }
 
   getCaptureData(index: any) {
     this.startLoader();
+    this.resetDetail();
     this.setActiveClass(index);
     if (this.progressList.length > 0) {
       this.progressData.time = this.progressList[index]["time"];
@@ -515,7 +523,33 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
+      let imageId = this.progressList[index]["imageId"];
+
+      this.getResolvedData(imageId);
     }
+  }
+
+  getResolvedData(imageId: any) {
+    let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/BvgAction";
+    let resolvedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        resolvedInstance.unsubscribe();
+        if (data != null) {
+          let imageName = data["imageRef"];
+          this.progressData.timeResolved=data["date"]+" "+data["time"];
+          this.progressData.latLngResolved=data["latlng"];
+          let imageURL = this.imageNoFoundURL;
+          if (imageName.split('~')[0] != "2021") {
+            imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+          }
+          else {
+            imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+          }
+          let element = <HTMLImageElement>document.getElementById("mainImageResolved");
+          element.src = imageURL;
+        }
+      }
+    );
   }
 
   setActiveClass(index: any) {
@@ -534,8 +568,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   analysis() {
     let index = $(this.dataId).val();
-    let imageId = this.progressList[Number(index)+1]["imageId"];
-    let prePenalty = this.progressList[Number(index)+1]["penalty"];
+    let imageId = this.progressList[Number(index)]["imageId"];
+    let prePenalty = this.progressList[Number(index)]["penalty"];
     let penalty = $(this.txtPanalty).val();
     if (penalty == "") {
       penalty = 0;
@@ -617,4 +651,6 @@ export class progressDetail {
   latLng: string;
   zone: string;
   ward: string;
+  timeResolved: string;
+  latLngResolved: string;
 }

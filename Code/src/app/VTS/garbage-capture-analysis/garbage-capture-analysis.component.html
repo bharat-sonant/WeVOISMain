@@ -103,7 +103,7 @@
 
 <div class="main-content">
     <div class="row main-row">
-        <div class="col-md-12 col-lg-12 col-xl-7 pl-0 pr-7 pad-mob-b-10 pad-pr-0">
+        <div class="col-md-12 col-lg-12 col-xl-6 pl-0 pr-6 pad-mob-b-10 pad-pr-0">
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
@@ -243,12 +243,18 @@
             </div>
         </div>
         <!-----NeW Work Start------->
-        <div class="col-md-12 col-lg-12 col-xl-5 pr-13 mob-pr-10 mob-res pad-pl-0">
+        <div class="col-md-12 col-lg-12 col-xl-6 pr-13 mob-pr-10 mob-res pad-pl-0">
             <div class="fix-h">
                 <div class="row right-scroll">
-                    <div class="col-md-12 mob-10 pl-5 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;">
+                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;">
                         <div class="image-box">
                             <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""
+                                alt="">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;">
+                        <div class="image-box">
+                            <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""
                                 alt="">
                         </div>
                     </div>
@@ -270,17 +276,27 @@
                                 </div>
                                 <div class="col-md-3 text-left pr-0" style="padding-left: 0px!important;">
                                     <div class="inner-data mob-pl-25">
-                                        <h3> <b> {{progressData.zone}}</b> </h3>
-                                        <p><i class="far fa-clock"></i> Zone</p>
+                                        <h3> <b> {{progressData.timeResolved}}</b> </h3>
+                                        <p><i class="far fa-clock"></i> Date Time</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3 text-left pl-0" style="padding-left: 0px!important;">
                                     <div class="inner-data mob-pl-25">
-                                        <h3> <b> {{progressData.ward}}</b> </h3>
-                                        <p><i class="fas fa-chalkboard"></i> Ward</p>
+                                        <h3> <b> {{progressData.latLngResolved}}</b> </h3>
+                                        <p><i class="fas fa-chalkboard"></i> Lat-Lng</p>
                                     </div>
                                 </div>
                                 <div class="col-md-12 text-left">
+                                    <div class="inner-data" style="float: left; width: 50%!important;">
+                                        <p class="para-text"><b><i class="far fa-clock"></i> Zone :</b></p>
+                                        <h3 class="address" style="display:inline;"> {{progressData.zone}}</h3>
+
+                                    </div>
+                                    <div class="inner-data" style="float: right; width: 50%!important;">
+                                        <p class="para-text"><b><i class="fas fa-chalkboard"></i> Ward :</b></p>
+                                        <h3 class="address" style="display:inline;"> {{progressData.ward}}</h3>
+
+                                    </div>
                                     <div class="inner-data address-info border-none pad-pl-20">
                                         <p class="para-text"><b><i class="fas fa-map-marker-alt"></i> Address :</b></p>
                                         <h3 class="address" style="display:inline;"> {{progressData.address}}</h3>
