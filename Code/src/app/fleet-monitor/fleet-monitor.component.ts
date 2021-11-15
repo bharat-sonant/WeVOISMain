@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 //services
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
-import { MapService } from '../services/map/map.service'; 
+import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 
 @Component({
@@ -21,7 +21,7 @@ export class FleetMonitorComponent {
 
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
-  db:any;
+  db: any;
 
   constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
@@ -43,7 +43,7 @@ export class FleetMonitorComponent {
   currentMonthName: any;
   currentYear: any;
   cityName: any;
-  instancesList:any[];
+  instancesList: any[];
   workerDetails: WorkderDetails =
     {
       vehicleNo: '',
@@ -57,10 +57,10 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
-    this.instancesList=[];
-    this.cityName=localStorage.getItem("cityName");
-    this.db=this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.chkUserPageAccess(window.location.href,this.cityName);
+    this.instancesList = [];
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
@@ -87,9 +87,9 @@ export class FleetMonitorComponent {
   }
 
   setKml() {
-   let kmlInstance= this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
+    let kmlInstance = this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
       wardPath => {
-        this.instancesList.push({instances:kmlInstance});
+        this.instancesList.push({ instances: kmlInstance });
         new google.maps.KmlLayer({
           url: wardPath.toString(),
           map: this.map
@@ -98,11 +98,9 @@ export class FleetMonitorComponent {
   }
 
   getZones() {
-
     this.zoneList = [];
     this.zoneList.push({ zoneNo: "0", zoneName: "-- Select Zone --" });
     let allZones = this.mapService.getAllZones();
-
     for (let index = 0; index < allZones.length; index++) {
       let dbPathLineCompleted = 'WasteCollectionInfo/' + allZones[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
       let zonesData = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
@@ -116,19 +114,15 @@ export class FleetMonitorComponent {
   }
 
   getWardWorkProgressDetails() {
-
     for (let index = 1; index <= this.zoneList.length; index++) {
-      //for (let index = 1; index <= 1; index++) {
       if (this.zoneList[index] != undefined) {
         let wardNo = this.zoneList[index].zoneNo;
         let totalLineData = this.db.object('WardLines/' + wardNo).valueChanges().subscribe(
           totalLines => {
             let workerDetailsdbPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails';
-
             let workerDetails = this.db.list(workerDetailsdbPath).valueChanges().subscribe(
               workerData => {
-                this.instancesList.push({instances:workerDetails});
-
+                this.instancesList.push({ instances: workerDetails });
                 if (workerData.length > 0) {
                   this.getLineStatus(wardNo, Number(totalLines));
                   totalLineData.unsubscribe();
@@ -146,45 +140,29 @@ export class FleetMonitorComponent {
     let dbPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
     let lineStatus = this.db.list(dbPath).valueChanges().subscribe(
       lineStatusData => {
-
         lineStatus.unsubscribe();
-
         let completedCount = 0;
         for (let index = 0; index < lineStatusData.length; index++) {
           if (lineStatusData[index]["Status"] == "LineCompleted") {
             completedCount++;
           }
         }
-
         let workPercentage = Number((completedCount / Number(totalLines)) * 100).toFixed(0);
-
-
         this.showVehicle(wardNo, workPercentage);
-        //let vehicleInterval = interval(15000).subscribe((val) => { this.showVehicle(wardNo, workPercentage); });
-
       });
   }
 
   showVehicle(wardNo: string, workPercentage: any) {
-
     this.bounds = new google.maps.LatLngBounds();
-
     let currentLocationPath = "CurrentLocationInfo/" + wardNo + "/latLng";
-    // let dbPath="RealTimeDetails/WardDetails/"+wardNo;
     let vehicleLocation = this.db.object(currentLocationPath).valueChanges().subscribe(
       locationData => {
         vehicleLocation.unsubscribe();
-
         let cureentStatusDPath = 'RealTimeDetails/WardDetails/' + wardNo + '/activityStatus';
-
-
-
         let currentDtatus = this.db.object(cureentStatusDPath).valueChanges().subscribe(
           statusId => {
-            this.instancesList.push({instances:currentDtatus});
-
+            this.instancesList.push({ instances: currentDtatus });
             let vehiclePath = '../assets/img/tipper-green.png';
-
             if (statusId == 'completed') {
               vehiclePath = '../assets/img/tipper-gray.png';
             } else if (statusId == 'stopped') {
@@ -192,36 +170,27 @@ export class FleetMonitorComponent {
             }
 
             if (statusId != "completed") {
-
               let driverIdPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails/driver';
               let driver = this.db.object(driverIdPath).valueChanges().subscribe(
                 driverId => {
-
-                  this.instancesList.push({instances:driver});
-
-
+                  this.instancesList.push({ instances: driver });
                   let cardswapentriesPath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/' + driverId + '/card-swap-entries';
-
                   let cardSwapEntries = this.db.list(cardswapentriesPath).valueChanges().subscribe(
                     cardSwapEntriesData => {
 
-                      this.instancesList.push({instances:cardSwapEntries});
+                      this.instancesList.push({ instances: cardSwapEntries });
                       let cardEntiresArr = cardSwapEntriesData.toString().split(',');
 
                       if (cardEntiresArr[cardEntiresArr.length - 1] == 'Out') {
                         vehiclePath = '../assets/img/tipper-gray.png';
                       }
                       let location = locationData.toString().split(",");
-                      // let location = locationData.toString().split(":")[1].replace('(', '').replace(')', '').replace(' ', '').split(",");
-                      //this.marker.setMap(null);
                       this.marker = new google.maps.Marker({
                         position: { lat: Number(location[0]), lng: Number(location[1]) },
                         map: this.map,
                         icon: vehiclePath,
                       });
                       this.bounds.extend({ lat: Number(location[0]), lng: Number(location[1]) });
-
-
                       if (cardEntiresArr[cardEntiresArr.length - 1] == 'In') {
                         let statusString = '<div style="width: 100px;background-color: white;float: left;">';
                         statusString += '<div style="background:green;float: left;color:white;width: ' + workPercentage + '%;text-align:center;font-size:12px;"> ' + workPercentage + '%';
@@ -347,10 +316,9 @@ export class FleetMonitorComponent {
           });
       });
   }
-  ngOnDestroy(){
-    if(this.instancesList.length>0)
-    {
-      for(let i=0;i<this.instancesList.length;i++){
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
         this.instancesList[i]["instances"].unsubscribe();
       }
     }

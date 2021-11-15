@@ -45,13 +45,12 @@ export class HaltSummaryComponent implements OnInit {
   driveySalary: any;
   halperSalary: any;
   totalSalary: any;
-  db:any;
+  db: any;
 
   public map: google.maps.Map;
   marker = new google.maps.Marker();
   public bounds: any;
-
-
+  cityName: any;
 
   haltData: haltDetail =
     {
@@ -134,8 +133,9 @@ export class HaltSummaryComponent implements OnInit {
     };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     $('#divG').hide();
     $('#divTbl').show();
     $('#spGraph').show();
@@ -152,12 +152,10 @@ export class HaltSummaryComponent implements OnInit {
     this.getHaltDataWeek();
     this.getHaltDataLastWeek();
     this.getHaltDataLastMonth();
-    //this.getDriverData();
     setTimeout(() => {
       this.setSummary();
       this.getHaltDataRealTime();
     }, 6000);
-
     setInterval(() => {
       this.setProfitLose();
     }, 6000);
@@ -290,7 +288,7 @@ export class HaltSummaryComponent implements OnInit {
       let haltDate = "";
       for (let i = 1; i <= today; i++) {
         haltDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (i < 10 ? '0' : '') + i;
-        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1]) - 1);
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
@@ -359,7 +357,7 @@ export class HaltSummaryComponent implements OnInit {
         if (i == 8)
           this.haltDataShow.date7 = haltDate.toString().split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(haltDate.split('-')[1]));
 
-        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1]) - 1);
         let year = haltDate.split("-")[0];
 
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
@@ -490,11 +488,11 @@ export class HaltSummaryComponent implements OnInit {
     for (let index = 1; index < this.zoneList.length; index++) {
       for (let i = 7; i < 14; i++) {
         let haltDate = this.commonService.getPreviousDate(this.currentDate, i);
-        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1])-1);
-        
+        let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1]) - 1);
+
         let year = haltDate.split("-")[0];
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
-        
+
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             if (haltData.length > 0) {
@@ -539,7 +537,7 @@ export class HaltSummaryComponent implements OnInit {
         let monthDate = year + '-' + (monthPre < 10 ? '0' : '') + monthPre + '-' + (i < 10 ? '0' : '') + i;
         let fullMonth = this.commonService.getCurrentMonthName(new Date(monthDate).getMonth());
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + fullMonth + '/' + monthDate;
-        
+
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {

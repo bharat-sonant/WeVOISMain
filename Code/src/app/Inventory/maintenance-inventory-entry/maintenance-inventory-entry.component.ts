@@ -14,16 +14,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./maintenance-inventory-entry.component.scss"],
 })
 export class MaintenanceInventoryEntryComponent implements OnInit {
-  constructor(
-    private storage: AngularFireStorage,
-    private http: HttpClient,
-    private router: Router,
-    public fs: FirebaseService,
-    public httpService: HttpClient,
-    public toastr: ToastrService,
-    private actRoute: ActivatedRoute,
-    private commonService: CommonService
-  ) {}
+  constructor(private storage: AngularFireStorage, private http: HttpClient, private router: Router, public fs: FirebaseService, public httpService: HttpClient, public toastr: ToastrService, private actRoute: ActivatedRoute, private commonService: CommonService) { }
   selectedFile: File;
   partFilterList: any[] = [];
   partAllList: any[] = [];
@@ -44,9 +35,8 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   db: any;
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     const id = this.actRoute.snapshot.paramMap.get("id");
     const id2 = this.actRoute.snapshot.paramMap.get("id2");
     if (id != null) {
@@ -54,15 +44,11 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
     }
     if (id2 != null) {
       this.toDayDate = id;
-      this.currentMonthName = this.commonService.getCurrentMonthName(
-        new Date(this.toDayDate).getMonth()
-      );
+      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
       this.currentYear = this.toDayDate.split("-")[0];
     } else {
       this.toDayDate = this.commonService.setTodayDate();
-      this.currentMonthName = this.commonService.getCurrentMonthName(
-        new Date(this.toDayDate).getMonth()
-      );
+      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
       this.currentYear = new Date().getFullYear();
     }
     $("#parts").hide();
@@ -205,48 +191,37 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   }
 
   getEntryData(id: any) {
-    let dbPath =
-      "Inventory/VehiclePartData/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.toDayDate +
-      "/" +
-      id;
-    let petrolInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        petrolInstance.unsubscribe();
-        if (data != null) {
-          $("#billNo").val(data["billNo"]);
-          $("#date").val(data["date"]);
-          $("#netAmount").val(data["netAmount"]);
-          if (data["vendorName"] != null) {
-            $("#vendorName").val(data["vendorName"]);
-          }
-          if (data["remark"] != null) {
-            $("#remark").val(data["remark"]);
-          }
-          if (data["billImage"] != null) {
-            this.billImage = data["billImage"];
-          }
-          let listData = data["Detail"];
-          if (listData.length > 0) {
-            for (let i = 0; i < listData.length; i++) {
-              this.partList.push({
-                sno: i,
-                part: listData[i]["part"],
-                qty: listData[i]["qty"],
-                price: listData[i]["price"],
-                amount: listData[i]["amount"],
-                unit: listData[i]["unit"],
-              });
-            }
+    let dbPath = "Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + id;
+    let petrolInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      petrolInstance.unsubscribe();
+      if (data != null) {
+        $("#billNo").val(data["billNo"]);
+        $("#date").val(data["date"]);
+        $("#netAmount").val(data["netAmount"]);
+        if (data["vendorName"] != null) {
+          $("#vendorName").val(data["vendorName"]);
+        }
+        if (data["remark"] != null) {
+          $("#remark").val(data["remark"]);
+        }
+        if (data["billImage"] != null) {
+          this.billImage = data["billImage"];
+        }
+        let listData = data["Detail"];
+        if (listData.length > 0) {
+          for (let i = 0; i < listData.length; i++) {
+            this.partList.push({
+              sno: i,
+              part: listData[i]["part"],
+              qty: listData[i]["qty"],
+              price: listData[i]["price"],
+              amount: listData[i]["amount"],
+              unit: listData[i]["unit"],
+            });
           }
         }
-      });
+      }
+    });
   }
 
   onFileChanged(event) {
@@ -308,25 +283,22 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
     result_image_obj.src = newImageData;
     result_image.src = result_image_obj.src;
     this.imageUrl = result_image_obj;
-    result_image.onload = function () {};
+    result_image.onload = function () { };
   }
 
   getParts() {
     let dbPath = "Defaults/VehicleParts";
-    let vehicleInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((vehicle) => {
-        vehicleInstance.unsubscribe();
-        if (vehicle != null) {
-          let keyArray = Object.keys(vehicle);
-          this.partNo = Number(keyArray[keyArray.length - 1]) + 1;
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            this.partFilterList.push({ part: vehicle[index]["name"] });
-          }
+    let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe((vehicle) => {
+      vehicleInstance.unsubscribe();
+      if (vehicle != null) {
+        let keyArray = Object.keys(vehicle);
+        this.partNo = Number(keyArray[keyArray.length - 1]) + 1;
+        for (let i = 0; i < keyArray.length; i++) {
+          let index = keyArray[i];
+          this.partFilterList.push({ part: vehicle[index]["name"] });
         }
-      });
+      }
+    });
   }
 
   submitData() {
@@ -368,17 +340,9 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
     let isDelete = 0;
     if (this.selectedFile != null) {
       let fileName = billNo + "_" + this.selectedFile.name;
-      const path =
-        "" +
-        this.commonService.getFireStoreCity() +
-        "/VehiclePartBill/" +
-        date +
-        "/" +
-        fileName;
+      const path = "" + this.commonService.getFireStoreCity() + "/VehiclePartBill/" + date + "/" + fileName;
       this.billImage = fileName;
-      const ref = this.storage.storage.app
-        .storage("gs://dtdnavigator.appspot.com")
-        .ref(path);
+      const ref = this.storage.storage.app.storage("gs://dtdnavigator.appspot.com").ref(path);
 
       var byteString;
       if (this.imageUrl.src.split(",")[0].indexOf("base64") >= 0)
@@ -407,137 +371,39 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
       Number(date.toString().split("-")[1]) - 1
     );
     if (this.entryNo == null) {
-      let dbPath =
-        "Inventory/VehiclePartData/" +
-        this.currentYear +
-        "/" +
-        this.currentMonthName +
-        "/" +
-        this.toDayDate +
-        "/lastEntry";
-      let lastEntryInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          lastEntryInstance.unsubscribe();
-          if (data != null) {
-            this.lastEntry = data;
-          } else {
-            this.lastEntry = 0;
-          }
-          this.lastEntry = Number(this.lastEntry) + 1;
-          this.db
-            .object(
-              "Inventory/VehiclePartData/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                ""
-            )
-            .update({
-              lastEntry: this.lastEntry,
-            });
-          this.db
-            .object(
-              "Inventory/VehiclePartData/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/" +
-                this.lastEntry
-            )
-            .update({
-              billNo: billNo,
-              date: date,
-              vendorName: vendorName,
-              netAmount: netAmount,
-              userId: userId,
-              creationDate: this.toDayDate,
-              isDelete: isDelete,
-              billImage: this.billImage,
-              remark: remark,
-            });
-          if (this.partList.length > 0) {
-            for (let i = 0; i < this.partList.length; i++) {
-              if (this.partList[i]["isNew"] == true) {
-                let path = "Defaults/VehicleParts/" + this.partNo;
-                this.db.object(path).update({
-                  name: this.partList[i]["part"],
-                });
-              }
-              this.db
-                .object(
-                  "Inventory/VehiclePartData/" +
-                    this.currentYear +
-                    "/" +
-                    this.currentMonthName +
-                    "/" +
-                    this.toDayDate +
-                    "/" +
-                    this.lastEntry +
-                    "/Detail/" +
-                    this.partList[i]["sno"]
-                )
-                .update({
-                  part: this.partList[i]["part"],
-                  qty: this.partList[i]["qty"],
-                  price: this.partList[i]["price"],
-                  amount: this.partList[i]["amount"],
-                  unit: this.partList[i]["unit"],
-                });
+      let dbPath = "Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/lastEntry";
+      let lastEntryInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        lastEntryInstance.unsubscribe();
+        if (data != null) {
+          this.lastEntry = data;
+        } else {
+          this.lastEntry = 0;
+        }
+        this.lastEntry = Number(this.lastEntry) + 1;
+        this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "").update({ lastEntry: this.lastEntry, });
+        this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + this.lastEntry).update({ billNo: billNo, date: date, vendorName: vendorName, netAmount: netAmount, userId: userId, creationDate: this.toDayDate, isDelete: isDelete, billImage: this.billImage, remark: remark, });
+        if (this.partList.length > 0) {
+          for (let i = 0; i < this.partList.length; i++) {
+            if (this.partList[i]["isNew"] == true) {
+              let path = "Defaults/VehicleParts/" + this.partNo;
+              this.db.object(path).update({ name: this.partList[i]["part"], });
             }
+            this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + this.lastEntry + "/Detail/" + this.partList[i]["sno"]).update({ part: this.partList[i]["part"], qty: this.partList[i]["qty"], price: this.partList[i]["price"], amount: this.partList[i]["amount"], unit: this.partList[i]["unit"], });
           }
-          setTimeout(() => {
-            $("#divLoader").hide();
-            elementSave.disabled = false;
-            elementCancel.disabled = false;
-            this.setAlertMessage("success", "Entry Added Successfully !!!");
-            this.clearAll();
-          }, 4000);
-        });
+        }
+        setTimeout(() => {
+          $("#divLoader").hide();
+          elementSave.disabled = false;
+          elementCancel.disabled = false;
+          this.setAlertMessage("success", "Entry Added Successfully !!!");
+          this.clearAll();
+        }, 4000);
+      });
     } else {
       this.lastEntry = this.entryNo;
-      this.db
-        .object(
-          "Inventory/VehiclePartData/" +
-            this.currentYear +
-            "/" +
-            this.currentMonthName +
-            "/" +
-            this.toDayDate +
-            "/" +
-            this.lastEntry
-        )
-        .update({
-          billNo: billNo,
-          date: date,
-          vendorName: vendorName,
-          netAmount: netAmount,
-          userId: userId,
-          creationDate: this.toDayDate,
-          isDelete: isDelete,
-          billImage: this.billImage,
-          remark: remark,
-        });
+      this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + this.lastEntry).update({ billNo: billNo, date: date, vendorName: vendorName, netAmount: netAmount, userId: userId, creationDate: this.toDayDate, isDelete: isDelete, billImage: this.billImage, remark: remark, });
       if (this.partList.length > 0) {
-        this.db
-          .object(
-            "Inventory/VehiclePartData/" +
-              this.currentYear +
-              "/" +
-              this.currentMonthName +
-              "/" +
-              this.toDayDate +
-              "/" +
-              this.lastEntry
-          )
-          .update({
-            Detail: null,
-          });
+        this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + this.lastEntry).update({ Detail: null, });
 
         for (let i = 0; i < this.partList.length; i++) {
           if (this.partList[i]["isNew"] == true) {
@@ -546,34 +412,12 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
               name: this.partList[i]["part"],
             });
           }
-          this.db
-            .object(
-              "Inventory/VehiclePartData/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/" +
-                this.lastEntry +
-                "/Detail/" +
-                this.partList[i]["sno"]
-            )
-            .update({
-              part: this.partList[i]["part"],
-              qty: this.partList[i]["qty"],
-              price: this.partList[i]["price"],
-              amount: this.partList[i]["amount"],
-              unit: this.partList[i]["unit"],
-            });
+          this.db.object("Inventory/VehiclePartData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + this.lastEntry + "/Detail/" + this.partList[i]["sno"]).update({ part: this.partList[i]["part"], qty: this.partList[i]["qty"], price: this.partList[i]["price"], amount: this.partList[i]["amount"], unit: this.partList[i]["unit"], });
         }
       }
       setTimeout(() => {
         this.setAlertMessage("success", "Entry Updated Successfully !!!");
-        this.router.navigate([
-          "/" + this.cityName + "/7B/maintenance-inventory-list",
-        ]);
-        //this.router.navigate(['/maintenance-inventory-list']);
+        this.router.navigate(["/" + this.cityName + "/7B/maintenance-inventory-list",]);
       }, 4000);
     }
   }
@@ -592,9 +436,7 @@ export class MaintenanceInventoryEntryComponent implements OnInit {
   }
 
   cancelEntry() {
-    this.router.navigate([
-      "/" + this.cityName + "/7B/maintenance-inventory-list",
-    ]);
+    this.router.navigate([      "/" + this.cityName + "/7B/maintenance-inventory-list",    ]);
   }
 
   setAlertMessage(type: any, message: any) {

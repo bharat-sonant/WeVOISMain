@@ -13,16 +13,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./petrol-inventory-entry.component.scss"],
 })
 export class PetrolInventoryEntryComponent implements OnInit {
-  constructor(
-    private storage: AngularFireStorage,
-    public http: HttpClient,
-    private router: Router,
-    public fs: FirebaseService,
-    public httpService: HttpClient,
-    public toastr: ToastrService,
-    private actRoute: ActivatedRoute,
-    private commonService: CommonService
-  ) {}
+  constructor(private storage: AngularFireStorage, public http: HttpClient, private router: Router, public fs: FirebaseService, public httpService: HttpClient, public toastr: ToastrService, private actRoute: ActivatedRoute, private commonService: CommonService) { }
   selectedFile: File;
   vehicleList: any[] = [];
   vehicleAllList: any[] = [];
@@ -51,9 +42,8 @@ export class PetrolInventoryEntryComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.preDate = null;
     this.preSlipImage = null;
     const id = this.actRoute.snapshot.paramMap.get("id");
@@ -69,14 +59,10 @@ export class PetrolInventoryEntryComponent implements OnInit {
     }
     if (id2 != null) {
       this.toDayDate = id;
-      this.currentMonthName = this.commonService.getCurrentMonthName(
-        new Date(this.toDayDate).getMonth()
-      );
+      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
       this.currentYear = this.toDayDate.split("-")[0];
     } else {
-      this.currentMonthName = this.commonService.getCurrentMonthName(
-        new Date(this.toDayDate).getMonth()
-      );
+      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
       this.currentYear = new Date().getFullYear();
     }
     $("#date").val(this.toDayDate);
@@ -96,42 +82,29 @@ export class PetrolInventoryEntryComponent implements OnInit {
   }
 
   getEntryData(id: any, vehicleNo: any) {
-    let dbPath =
-      "Inventory/PetrolData/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.toDayDate +
-      "/" +
-      vehicleNo +
-      "/" +
-      id;
-    let petrolInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        petrolInstance.unsubscribe();
-        if (data != null) {
-          $("#liters").val(data["liters"]);
-          $("#price").val(data["price"]);
-          $("#ddlVehicle").val(vehicleNo);
-          $("#date").val(this.toDayDate);
-          this.preDate = this.toDayDate;
-          $("#amount").val(data["amount"]);
-          $("#km").val(data["vehicleMeterReading"]);
-          if (data["address"] != null) {
-            $("#address").val(data["address"]);
-          }
-          if (data["slipImage"] != null) {
-            this.slipImage = data["slipImage"];
-            this.preSlipImage = data["slipImage"];
-          }
-          if (data["remark"] != null) {
-            $("#remark").val(data["remark"]);
-          }
+    let dbPath = "Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/" + id;
+    let petrolInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      petrolInstance.unsubscribe();
+      if (data != null) {
+        $("#liters").val(data["liters"]);
+        $("#price").val(data["price"]);
+        $("#ddlVehicle").val(vehicleNo);
+        $("#date").val(this.toDayDate);
+        this.preDate = this.toDayDate;
+        $("#amount").val(data["amount"]);
+        $("#km").val(data["vehicleMeterReading"]);
+        if (data["address"] != null) {
+          $("#address").val(data["address"]);
         }
-      });
+        if (data["slipImage"] != null) {
+          this.slipImage = data["slipImage"];
+          this.preSlipImage = data["slipImage"];
+        }
+        if (data["remark"] != null) {
+          $("#remark").val(data["remark"]);
+        }
+      }
+    });
   }
 
   onFileChanged(event) {
@@ -193,16 +166,14 @@ export class PetrolInventoryEntryComponent implements OnInit {
     result_image_obj.src = newImageData;
     result_image.src = result_image_obj.src;
     this.imageUrl = result_image_obj;
-    result_image.onload = function () {};
+    result_image.onload = function () { };
   }
 
   getVehicle() {
     let vehicleStorageList = JSON.parse(localStorage.getItem("vehicle"));
     if (vehicleStorageList == null) {
       let dbPath = "Vehicles";
-      let vehicleInstance = this.db
-        .object(dbPath)
-        .valueChanges()
+      let vehicleInstance = this.db.object(dbPath).valueChanges()
         .subscribe((vehicle) => {
           vehicleInstance.unsubscribe();
           if (vehicle != null) {
@@ -234,11 +205,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
     if (flt != "") {
       if (this.vehicleAllList.length > 0) {
         for (let i = 0; i < this.vehicleAllList.length; i++) {
-          if (
-            this.vehicleAllList[i]["vehicle"]
-              .toString()
-              .includes(flt.toString().toUpperCase())
-          ) {
+          if (this.vehicleAllList[i]["vehicle"].toString().includes(flt.toString().toUpperCase())) {
             this.vehicleList.push({
               vehicle: this.vehicleAllList[i]["vehicle"],
             });
@@ -336,12 +303,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
       if ($("#km").val() != "") {
         let reading = $("#km").val();
         if (Number(reading) < this.vehicleLastMeterReading) {
-          this.setAlertMessage(
-            "error",
-            "Please fill Meter reading more than " +
-              this.vehicleLastMeterReading +
-              ""
-          );
+          this.setAlertMessage("error", "Please fill Meter reading more than " + this.vehicleLastMeterReading + "");
           return;
         }
       } else {
@@ -390,46 +352,36 @@ export class PetrolInventoryEntryComponent implements OnInit {
     let liters = $("#liters").val();
     let date = $("#date").val();
     let km = 0;
-    let dbPath =
-      "Inventory/PetrolData/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      date +
-      "";
-    let petrolInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        petrolInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            let isData = false;
-            for (let i = 0; i < keyArray.length - 1; i++) {
-              let index = keyArray[i];
-              if (
-                data[index]["isDelete"] == 0 &&
-                data[index]["vehicleNo"] == vehicleNo &&
-                data[index]["liters"] == liters
-              ) {
-                i = keyArray.length;
-                this.vehicleDataDetail.date = date.toString();
-                this.vehicleDataDetail.vehicleNo = vehicleNo.toString();
-                this.vehicleDataDetail.liters = liters.toString();
-                $("#alertBox").show();
-                isData = true;
-              }
-            }
-            if (isData == false) {
-              this.saveAllData();
+    let dbPath = "Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + date + "";
+    let petrolInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      petrolInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          let isData = false;
+          for (let i = 0; i < keyArray.length - 1; i++) {
+            let index = keyArray[i];
+            if (
+              data[index]["isDelete"] == 0 &&
+              data[index]["vehicleNo"] == vehicleNo &&
+              data[index]["liters"] == liters
+            ) {
+              i = keyArray.length;
+              this.vehicleDataDetail.date = date.toString();
+              this.vehicleDataDetail.vehicleNo = vehicleNo.toString();
+              this.vehicleDataDetail.liters = liters.toString();
+              $("#alertBox").show();
+              isData = true;
             }
           }
-        } else {
-          this.saveAllData();
+          if (isData == false) {
+            this.saveAllData();
+          }
         }
-      });
+      } else {
+        this.saveAllData();
+      }
+    });
   }
 
   saveAllData() {
@@ -463,128 +415,58 @@ export class PetrolInventoryEntryComponent implements OnInit {
     let userId = localStorage.getItem("userID");
     this.currentYear = date.toString().split("-")[0];
     this.toDayDate = date;
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      Number(date.toString().split("-")[1]) - 1
-    );
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(date.toString().split("-")[1]) - 1);
     if (this.entryNo == null) {
-      let dbPath =
-        "Inventory/PetrolData/" +
-        this.currentYear +
-        "/" +
-        this.currentMonthName +
-        "/" +
-        this.toDayDate +
-        "/" +
-        vehicleNo +
-        "/lastEntry";
-      let lastEntryInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          lastEntryInstance.unsubscribe();
-          if (data != null) {
-            this.lastEntry = data;
-          } else {
-            this.lastEntry = 0;
+      let dbPath = "Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/lastEntry";
+      let lastEntryInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        lastEntryInstance.unsubscribe();
+        if (data != null) {
+          this.lastEntry = data;
+        } else {
+          this.lastEntry = 0;
+        }
+        this.lastEntry = Number(this.lastEntry) + 1;
+        if (this.selectedFile != null) {
+          let fileName = vehicleNo.toString().replace("/Can", "") + "_" + this.lastEntry + ".png";
+
+          const path = "" + this.commonService.getFireStoreCity() + "/PetrolSlip/" + this.currentYear + "/" + this.currentMonthName + "/" + date + "/" + vehicleNo + "/" + fileName;
+          this.slipImage = fileName;
+          //const ref = this.storage.ref(path);
+          const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com").ref(path);
+
+          var byteString;
+          if (this.imageUrl.src.split(",")[0].indexOf("base64") >= 0)
+            byteString = atob(this.imageUrl.src.split(",")[1]);
+          else byteString = unescape(this.imageUrl.src.split(",")[1]);
+
+          // separate out the mime component
+          var mimeString = this.imageUrl.src
+            .split(",")[0]
+            .split(":")[1]
+            .split(";")[0];
+
+          // write the bytes of the string to a typed array
+          var ia = new Uint8Array(byteString.length);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
           }
-          this.lastEntry = Number(this.lastEntry) + 1;
-          if (this.selectedFile != null) {
-            let fileName =
-              vehicleNo.toString().replace("/Can", "") +
-              "_" +
-              this.lastEntry +
-              ".png";
 
-            const path =
-              "" +
-              this.commonService.getFireStoreCity() +
-              "/PetrolSlip/" +
-              this.currentYear +
-              "/" +
-              this.currentMonthName +
-              "/" +
-              date +
-              "/" +
-              vehicleNo +
-              "/" +
-              fileName;
-            this.slipImage = fileName;
-            //const ref = this.storage.ref(path);
-            const ref = this.storage.storage.app
-              .storage("https://firebasestorage.googleapis.com")
-              .ref(path);
-
-            var byteString;
-            if (this.imageUrl.src.split(",")[0].indexOf("base64") >= 0)
-              byteString = atob(this.imageUrl.src.split(",")[1]);
-            else byteString = unescape(this.imageUrl.src.split(",")[1]);
-
-            // separate out the mime component
-            var mimeString = this.imageUrl.src
-              .split(",")[0]
-              .split(":")[1]
-              .split(";")[0];
-
-            // write the bytes of the string to a typed array
-            var ia = new Uint8Array(byteString.length);
-            for (var i = 0; i < byteString.length; i++) {
-              ia[i] = byteString.charCodeAt(i);
-            }
-
-            let blob = new Blob([ia], { type: mimeString });
-            const task = ref.put(blob);
-          }
-          this.db
-            .object(
-              "Inventory/PetrolData/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/" +
-                vehicleNo +
-                ""
-            )
-            .update({
-              lastEntry: this.lastEntry,
-            });
-          this.db
-            .object(
-              "Inventory/PetrolData/" +
-                this.currentYear +
-                "/" +
-                this.currentMonthName +
-                "/" +
-                this.toDayDate +
-                "/" +
-                vehicleNo +
-                "/" +
-                this.lastEntry
-            )
-            .update({
-              price: price,
-              liters: liters,
-              amount: amount,
-              userId: userId,
-              creationDate: this.commonService.setTodayDate(),
-              address: address,
-              isDelete: isDelete,
-              slipImage: this.slipImage,
-              vehicleMeterReading: km,
-              remark: remark,
-            });
-          if (vehicleNo != "Drum/Can") {
-            this.setVehicleAverage(vehicleNo);
-          }
-          setTimeout(() => {
-            $("#divLoader").hide();
-            elementSave.disabled = false;
-            elementCancel.disabled = false;
-            this.setAlertMessage("success", "Entry Added Successfully !!!");
-            this.clearAll();
-          }, 4000);
-        });
+          let blob = new Blob([ia], { type: mimeString });
+          const task = ref.put(blob);
+        }
+        this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "").update({ lastEntry: this.lastEntry, });
+        this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/" + this.lastEntry).update({ price: price, liters: liters, amount: amount, userId: userId, creationDate: this.commonService.setTodayDate(), address: address, isDelete: isDelete, slipImage: this.slipImage, vehicleMeterReading: km, remark: remark, });
+        if (vehicleNo != "Drum/Can") {
+          this.setVehicleAverage(vehicleNo);
+        }
+        setTimeout(() => {
+          $("#divLoader").hide();
+          elementSave.disabled = false;
+          elementCancel.disabled = false;
+          this.setAlertMessage("success", "Entry Added Successfully !!!");
+          this.clearAll();
+        }, 4000);
+      });
     } else {
       this.lastEntry = this.entryNo;
       if (this.preDate != date) {
@@ -594,30 +476,12 @@ export class PetrolInventoryEntryComponent implements OnInit {
         }
       }
       if (this.selectedFile != null) {
-        let fileName =
-          vehicleNo.toString().replace("/Can", "") +
-          "_" +
-          this.lastEntry +
-          ".png";
+        let fileName = vehicleNo.toString().replace("/Can", "") + "_" + this.lastEntry + ".png";
 
-        const path =
-          "" +
-          this.commonService.getFireStoreCity() +
-          "/PetrolSlip/" +
-          this.currentYear +
-          "/" +
-          this.currentMonthName +
-          "/" +
-          date +
-          "/" +
-          vehicleNo +
-          "/" +
-          fileName;
+        const path = "" + this.commonService.getFireStoreCity() + "/PetrolSlip/" + this.currentYear + "/" + this.currentMonthName + "/" + date + "/" + vehicleNo + "/" + fileName;
         this.slipImage = fileName;
         //const ref = this.storage.ref(path);
-        const ref = this.storage.storage.app
-          .storage("gs://dtdnavigator.appspot.com")
-          .ref(path);
+        const ref = this.storage.storage.app.storage("gs://dtdnavigator.appspot.com").ref(path);
 
         var byteString;
         if (this.imageUrl.src.split(",")[0].indexOf("base64") >= 0)
@@ -644,111 +508,22 @@ export class PetrolInventoryEntryComponent implements OnInit {
         let monthName = this.commonService.getCurrentMonthName(
           Number(this.preDate.toString().split("-")[1]) - 1
         );
-        this.db
-          .object(
-            "Inventory/PetrolData/" +
-              year +
-              "/" +
-              monthName +
-              "/" +
-              this.preDate +
-              "/" +
-              vehicleNo +
-              "/" +
-              this.lastEntry
-          )
-          .update({
-            isDelete: 1,
-          });
-        let dbPath =
-          "Inventory/PetrolData/" +
-          this.currentYear +
-          "/" +
-          this.currentMonthName +
-          "/" +
-          this.toDayDate +
-          "/" +
-          vehicleNo +
-          "/lastEntry";
-        let lastEntryInstance = this.db
-          .object(dbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            lastEntryInstance.unsubscribe();
-            if (data != null) {
-              this.lastEntry = data;
-            } else {
-              this.lastEntry = 0;
-            }
-            this.lastEntry = Number(this.lastEntry) + 1;
-            this.db
-              .object(
-                "Inventory/PetrolData/" +
-                  this.currentYear +
-                  "/" +
-                  this.currentMonthName +
-                  "/" +
-                  this.toDayDate +
-                  "/" +
-                  vehicleNo +
-                  ""
-              )
-              .update({
-                lastEntry: this.lastEntry,
-              });
+        this.db.object("Inventory/PetrolData/" + year + "/" + monthName + "/" + this.preDate + "/" + vehicleNo + "/" + this.lastEntry).update({ isDelete: 1, });
+        let dbPath = "Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/lastEntry";
+        let lastEntryInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+          lastEntryInstance.unsubscribe();
+          if (data != null) {
+            this.lastEntry = data;
+          } else {
+            this.lastEntry = 0;
+          }
+          this.lastEntry = Number(this.lastEntry) + 1;
+          this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "").update({ lastEntry: this.lastEntry, });
 
-            this.db
-              .object(
-                "Inventory/PetrolData/" +
-                  this.currentYear +
-                  "/" +
-                  this.currentMonthName +
-                  "/" +
-                  this.toDayDate +
-                  "/" +
-                  vehicleNo +
-                  "/" +
-                  this.lastEntry
-              )
-              .update({
-                price: price,
-                liters: liters,
-                amount: amount,
-                userId: userId,
-                creationDate: this.commonService.setTodayDate(),
-                address: address,
-                isDelete: isDelete,
-                slipImage: this.slipImage,
-                vehicleMeterReading: km,
-                remark: remark,
-              });
-          });
+          this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/" + this.lastEntry).update({ price: price, liters: liters, amount: amount, userId: userId, creationDate: this.commonService.setTodayDate(), address: address, isDelete: isDelete, slipImage: this.slipImage, vehicleMeterReading: km, remark: remark, });
+        });
       } else {
-        this.db
-          .object(
-            "Inventory/PetrolData/" +
-              this.currentYear +
-              "/" +
-              this.currentMonthName +
-              "/" +
-              this.toDayDate +
-              "/" +
-              vehicleNo +
-              "/" +
-              this.lastEntry
-          )
-          .update({
-            price: price,
-            liters: liters,
-            amount: amount,
-            userId: userId,
-            creationDate: this.commonService.setTodayDate(),
-            address: address,
-            isDelete: isDelete,
-            slipImage: this.slipImage,
-            vehicleMeterReading: km,
-            remark: remark,
-          });
+        this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + vehicleNo + "/" + this.lastEntry).update({ price: price, liters: liters, amount: amount, userId: userId, creationDate: this.commonService.setTodayDate(), address: address, isDelete: isDelete, slipImage: this.slipImage, vehicleMeterReading: km, remark: remark, });
       }
       if (vehicleNo == "Drum/Can") {
       } else if (vehicleNo == "Motor Cycle") {
@@ -797,54 +572,31 @@ export class PetrolInventoryEntryComponent implements OnInit {
       0
     ).getDate();
     let rowTo = days;
-    if (
-      this.toDayDate.toString().split("-")[1] ==
-      this.commonService.setTodayDate().split("-")[1]
-    ) {
+    if (this.toDayDate.toString().split("-")[1] == this.commonService.setTodayDate().split("-")[1]) {
       rowTo = parseInt(this.commonService.setTodayDate().split("-")[2]);
     }
     for (let j = 1; j <= rowTo; j++) {
-      let monthDate =
-        this.currentYear +
-        "-" +
-        this.toDayDate.split("-")[1] +
-        "-" +
-        (j < 10 ? "0" : "") +
-        j;
-      let monthName = this.commonService.getCurrentMonthName(
-        parseInt(monthDate.split("-")[1]) - 1
-      );
-      let dbPath =
-        "Inventory/PetrolData/" +
-        this.currentYear +
-        "/" +
-        monthName +
-        "/" +
-        monthDate +
-        "/" +
-        vehicleNo +
-        "";
-      let petrolInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          petrolInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length - 1; i++) {
-                let index = keyArray[i];
-                if (data[index]["isDelete"] == 0) {
-                  this.averageList.push({
-                    km: data[index]["vehicleMeterReading"],
-                    petrol: data[index]["liters"],
-                    date: monthDate,
-                  });
-                }
+      let monthDate = this.currentYear + "-" + this.toDayDate.split("-")[1] + "-" + (j < 10 ? "0" : "") + j;
+      let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split("-")[1]) - 1);
+      let dbPath = "Inventory/PetrolData/" + this.currentYear + "/" + monthName + "/" + monthDate + "/" + vehicleNo + "";
+      let petrolInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        petrolInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length - 1; i++) {
+              let index = keyArray[i];
+              if (data[index]["isDelete"] == 0) {
+                this.averageList.push({
+                  km: data[index]["vehicleMeterReading"],
+                  petrol: data[index]["liters"],
+                  date: monthDate,
+                });
               }
             }
           }
-        });
+        }
+      });
     }
 
     setTimeout(() => {
@@ -856,10 +608,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
           this.averageList[this.averageList.length - 1]["km"]
         );
         for (let preIndex = 0; preIndex < this.averageList.length; preIndex++) {
-          if (
-            Number(this.averageList[preIndex]["km"]) != 0 &&
-            Number(this.averageList[preIndex]["km"]) != -1
-          ) {
+          if (Number(this.averageList[preIndex]["km"]) != 0 && Number(this.averageList[preIndex]["km"]) != -1) {
             preKm = Number(this.averageList[preIndex]["km"]);
             Km = currentKm - preKm;
             preIndex = this.averageList.length;
@@ -881,22 +630,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
             avgrage = Number((Km / petrol).toFixed(2));
           }
         }
-        this.db
-          .object(
-            "Inventory/PetrolData/" +
-              this.currentYear +
-              "/" +
-              this.currentMonthName +
-              "/Vehicles/" +
-              vehicleNo
-          )
-          .update({
-            average: avgrage,
-            km: Km,
-            petrol: petrol,
-            totalKm: totalKm,
-            totalPetrol: totalPetrol,
-          });
+        this.db.object("Inventory/PetrolData/" + this.currentYear + "/" + this.currentMonthName + "/Vehicles/" + vehicleNo).update({ average: avgrage, km: Km, petrol: petrol, totalKm: totalKm, totalPetrol: totalPetrol, });
       }
     }, 2000);
   }
@@ -918,54 +652,39 @@ export class PetrolInventoryEntryComponent implements OnInit {
   getLastReading(vehicleNo: any, date: any) {
     if (date != "2021-01-01") {
       let year = date.split("-")[0];
-      let monthName = this.commonService.getCurrentMonthName(
-        parseInt(date.split("-")[1]) - 1
-      );
-      let dbPath =
-        "Inventory/PetrolData/" +
-        year +
-        "/" +
-        monthName +
-        "/" +
-        date +
-        "/" +
-        vehicleNo;
-      let readingInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((readingData) => {
-          readingInstance.unsubscribe();
-          if (readingData != null) {
-            let meterReading = 0;
-            let keyArray = Object.keys(readingData);
-            if (keyArray.length > 0) {
-              for (let k = keyArray.length - 2; k >= 0; k--) {
-                let index = keyArray[k];
-                if (readingData[index]["isDelete"] == 0) {
-                  if (readingData[index]["vehicleMeterReading"] != 0) {
-                    meterReading = readingData[index]["vehicleMeterReading"];
-                    this.vehicleLastMeterReading = meterReading;
-                  }
+      let monthName = this.commonService.getCurrentMonthName(parseInt(date.split("-")[1]) - 1);
+      let dbPath = "Inventory/PetrolData/" + year + "/" + monthName + "/" + date + "/" + vehicleNo;
+      let readingInstance = this.db.object(dbPath).valueChanges().subscribe((readingData) => {
+        readingInstance.unsubscribe();
+        if (readingData != null) {
+          let meterReading = 0;
+          let keyArray = Object.keys(readingData);
+          if (keyArray.length > 0) {
+            for (let k = keyArray.length - 2; k >= 0; k--) {
+              let index = keyArray[k];
+              if (readingData[index]["isDelete"] == 0) {
+                if (readingData[index]["vehicleMeterReading"] != 0) {
+                  meterReading = readingData[index]["vehicleMeterReading"];
+                  this.vehicleLastMeterReading = meterReading;
                 }
               }
             }
-            if (meterReading == 0) {
-              this.getLastReading(
-                vehicleNo,
-                this.commonService.getPreviousDate(date, 1)
-              );
-            } else {
-              $("#kmReading").html(
-                "(Previous Reading <b>" + meterReading + " KM/" + date + "</b>)"
-              );
-            }
-          } else {
+          }
+          if (meterReading == 0) {
             this.getLastReading(
               vehicleNo,
               this.commonService.getPreviousDate(date, 1)
             );
+          } else {
+            $("#kmReading").html("(Previous Reading <b>" + meterReading + " KM/" + date + "</b>)");
           }
-        });
+        } else {
+          this.getLastReading(
+            vehicleNo,
+            this.commonService.getPreviousDate(date, 1)
+          );
+        }
+      });
     }
   }
 
@@ -975,12 +694,7 @@ export class PetrolInventoryEntryComponent implements OnInit {
       if (reading != "") {
         if (Number(reading) < this.vehicleLastMeterReading) {
           $("#km").val("");
-          this.setAlertMessage(
-            "error",
-            "Please fill Meter reading more than " +
-              this.vehicleLastMeterReading +
-              ""
-          );
+          this.setAlertMessage("error", "Please fill Meter reading more than " + this.vehicleLastMeterReading + "");
         }
       }
     }

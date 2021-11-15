@@ -87,23 +87,15 @@ export class LineStatisticsComponent implements OnInit {
 
   endInterval: any;
   db: any;
-  constructor(
-    public fs: FirebaseService,
-    private mapService: MapService,
-    public httpService: HttpClient,
-    private commonService: CommonService
-  ) {}
+  cityName: any;
+  constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.todayDate = this.commonService.setTodayDate();
-    this.currentMonth = this.commonService.getCurrentMonthName(
-      new Date(this.todayDate).getMonth()
-    );
+    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();
 
     this.zoneList = this.mapService.getZones(this.todayDate);
@@ -118,34 +110,21 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   checkTodayWorkStatus() {
-    let dbPath =
-      "WasteCollectionInfo/" +
-      this.activeZone +
-      "/" +
-      this.currentYear +
-      "/" +
-      this.currentMonth +
-      "/" +
-      this.todayDate +
-      "/LineStatus";
+    let dbPath = "WasteCollectionInfo/" + this.activeZone + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.todayDate + "/LineStatus";
+    let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
+      this.graphHeaderData.date = this.getDate(0);
+      this.graphHeaderData.workprogress = "0";
 
-    let wardLineData = this.db
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        this.graphHeaderData.date = this.getDate(0);
-        this.graphHeaderData.workprogress = "0";
+      if (data.length > 0) {
+        $("#divNoRecord").hide();
 
-        if (data.length > 0) {
-          $("#divNoRecord").hide();
+        this.getGrpahDataTodayAndLastFiveDays(15);
+      } else {
+        $("#divNoRecord").show();
+      }
 
-          this.getGrpahDataTodayAndLastFiveDays(15);
-        } else {
-          $("#divNoRecord").show();
-        }
-
-        wardLineData.unsubscribe();
-      });
+      wardLineData.unsubscribe();
+    });
   }
 
   getGrpahDataTodayAndLastFiveDays(interval: any) {
@@ -191,217 +170,148 @@ export class LineStatisticsComponent implements OnInit {
     this.distance4 = [];
   }
 
-  getData(
-    interval: any,
-    timeCollection: any[],
-    distanceCollection: any[],
-    date: any
-  ) {
+  getData(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
     let year = date.split("-")[0];
-    let monthName = this.commonService.getCurrentMonthName(
-      new Date(date).getMonth()
-    );
-    //let monthName = this.commonService.getCurrentMonthName(parseInt( date.split('-')[1])-1);
-    let dbPath =
-      "WasteCollectionInfo/" +
-      this.activeZone +
-      "/" +
-      year +
-      "/" +
-      monthName +
-      "/" +
-      date +
-      "/LineStatus";
+    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+    let dbPath = "WasteCollectionInfo/" + this.activeZone + "/" + year + "/" + monthName + "/" + date + "/LineStatus";
+    let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
+      let lineCompleted = 0;
+      if (data.length > 0) {
+        data = this.commonService.transformString(data, "start-time");
+        let intervalInMinutes = interval;
+        let timePeriod = 100 / (60 / intervalInMinutes) / 100;
 
-    let wardLineData = this.db
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        let lineCompleted = 0;
-        if (data.length > 0) {
-          data = this.commonService.transformString(data, "start-time");
-          let intervalInMinutes = interval;
-          let timePeriod = 100 / (60 / intervalInMinutes) / 100;
+        let distanceCovered = 0;
+        let timeInterval = 0;
 
-          let distanceCovered = 0;
-          let timeInterval = 0;
+        timeCollection.push(timeInterval + " ~0");
+        distanceCollection.push(distanceCovered);
 
-          timeCollection.push(timeInterval + " ~0");
-          distanceCollection.push(distanceCovered);
+        let intervalStart = data[0]["start-time"];
+        let endTime = data[0]["end-time"];
 
-          let intervalStart = data[0]["start-time"];
-          let endTime = data[0]["end-time"];
+        // This is just a patch due to bad data
+        if (intervalStart > endTime) {
+          intervalStart = endTime;
+        }
 
-          // This is just a patch due to bad data
-          if (intervalStart > endTime) {
-            intervalStart = endTime;
-          }
+        let intervalEnd = new Date(
+          new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() +
+          intervalInMinutes * 60000
+        );
 
-          let intervalEnd = new Date(
-            new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() +
-              intervalInMinutes * 60000
+        for (let index = 0; index < data.length; index++) {
+          let lineDistance = data[index]["line-distance"];
+          let lineStartTime = data[index]["start-time"];
+
+          let lineEndTime = new Date(
+            this.getFormattedDate(0) + " " + data[index]["end-time"]
           );
 
-          for (let index = 0; index < data.length; index++) {
-            let lineDistance = data[index]["line-distance"];
-            let lineStartTime = data[index]["start-time"];
-
-            let lineEndTime = new Date(
-              this.getFormattedDate(0) + " " + data[index]["end-time"]
-            );
-
-            if (data[index]["end-time"] == undefined) {
-              break;
-            }
-
-            if (timeInterval > this.endInterval) {
-              break;
-            }
-
-            if (lineDistance == undefined) {
-              lineDistance = 0;
-            }
-
-            if (lineEndTime < intervalEnd) {
-              distanceCovered += Number(lineDistance);
-            } else {
-              timeInterval = timeInterval + timePeriod;
-
-              timeCollection.push(timeInterval + " ~ " + index);
-              distanceCollection.push(distanceCovered);
-
-              if (index > 0) {
-                index--;
-                let previousLineEndTime = new Date(
-                  this.getFormattedDate(0) + " " + data[index]["end-time"]
-                );
-                if (distanceCovered == 0) {
-                  intervalEnd = new Date(
-                    intervalEnd.getTime() + intervalInMinutes * 60000
-                  );
-                } else {
-                  intervalEnd = new Date(
-                    intervalEnd.getTime() + intervalInMinutes * 60000
-                  );
-                }
-              } else {
-                index--;
-                if (distanceCovered == 0) {
-                  intervalEnd = new Date(
-                    intervalEnd.getTime() + intervalInMinutes * 60000
-                  );
-                }
-              }
-
-              distanceCovered = 0;
-            }
-
-            lineCompleted = index;
-
-            if (this.days == 1) {
-              this.endInterval = timeInterval;
-            }
+          if (data[index]["end-time"] == undefined) {
+            break;
           }
 
-          if (distanceCovered > 0) {
-            timeCollection.push(
-              timeInterval + timePeriod + " ~ " + lineCompleted
-            );
+          if (timeInterval > this.endInterval) {
+            break;
+          }
+
+          if (lineDistance == undefined) {
+            lineDistance = 0;
+          }
+
+          if (lineEndTime < intervalEnd) {
+            distanceCovered += Number(lineDistance);
+          } else {
+            timeInterval = timeInterval + timePeriod;
+
+            timeCollection.push(timeInterval + " ~ " + index);
             distanceCollection.push(distanceCovered);
+
+            if (index > 0) {
+              index--;
+              let previousLineEndTime = new Date(
+                this.getFormattedDate(0) + " " + data[index]["end-time"]
+              );
+              if (distanceCovered == 0) {
+                intervalEnd = new Date(
+                  intervalEnd.getTime() + intervalInMinutes * 60000
+                );
+              } else {
+                intervalEnd = new Date(
+                  intervalEnd.getTime() + intervalInMinutes * 60000
+                );
+              }
+            } else {
+              index--;
+              if (distanceCovered == 0) {
+                intervalEnd = new Date(
+                  intervalEnd.getTime() + intervalInMinutes * 60000
+                );
+              }
+            }
+
+            distanceCovered = 0;
           }
 
-          this.maxDistance.push(Math.max.apply(null, distanceCollection));
+          lineCompleted = index;
 
-          let wardLines = this.db
-            .object("WardLines/" + this.activeZone)
-            .valueChanges()
-            .subscribe((lines) => {
-              if (this.days == 2) {
-                this.graphHeaderData.workprogress = (
-                  (Number(lineCompleted) / Number(lines)) *
-                  100
-                )
-                  .toFixed(2)
-                  .toString();
-              }
-              if (this.days == 3) {
-                this.graphHeaderData.workprogress1 = (
-                  (Number(lineCompleted) / Number(lines)) *
-                  100
-                )
-                  .toFixed(2)
-                  .toString();
-              }
-              if (this.days == 4) {
-                this.graphHeaderData.workprogress2 = (
-                  (Number(lineCompleted) / Number(lines)) *
-                  100
-                )
-                  .toFixed(2)
-                  .toString();
-              }
-              if (this.days == 5) {
-                this.graphHeaderData.workprogress3 = (
-                  (Number(lineCompleted) / Number(lines)) *
-                  100
-                )
-                  .toFixed(2)
-                  .toString();
-              }
-              if (this.days == 6) {
-                this.graphHeaderData.workprogress4 = (
-                  (Number(lineCompleted) / Number(lines)) *
-                  100
-                )
-                  .toFixed(2)
-                  .toString();
-              }
-
-              wardLines.unsubscribe();
-            });
+          if (this.days == 1) {
+            this.endInterval = timeInterval;
+          }
         }
 
-        this.days = Number(this.days) + 1;
-        if (this.days < 6) {
+        if (distanceCovered > 0) {
+          timeCollection.push(
+            timeInterval + timePeriod + " ~ " + lineCompleted
+          );
+          distanceCollection.push(distanceCovered);
+        }
+
+        this.maxDistance.push(Math.max.apply(null, distanceCollection));
+
+        let wardLines = this.db.object("WardLines/" + this.activeZone).valueChanges().subscribe((lines) => {
           if (this.days == 2) {
-            this.getData(
-              interval,
-              this.time1,
-              this.distance1,
-              this.commonService.getPreviousDate(date, 1)
-            );
+            this.graphHeaderData.workprogress = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
           if (this.days == 3) {
-            this.getData(
-              interval,
-              this.time2,
-              this.distance2,
-              this.commonService.getPreviousDate(date, 1)
-            );
+            this.graphHeaderData.workprogress1 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
           if (this.days == 4) {
-            this.getData(
-              interval,
-              this.time3,
-              this.distance3,
-              this.commonService.getPreviousDate(date, 1)
-            );
+            this.graphHeaderData.workprogress2 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
           if (this.days == 5) {
-            this.getData(
-              interval,
-              this.time4,
-              this.distance4,
-              this.commonService.getPreviousDate(date, 1)
-            );
+            this.graphHeaderData.workprogress3 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
-        } else {
-          this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
-          this.graphOptions();
-        }
+          if (this.days == 6) {
+            this.graphHeaderData.workprogress4 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
+          }
 
-        wardLineData.unsubscribe();
-      });
+          wardLines.unsubscribe();
+        });
+      }
+
+      this.days = Number(this.days) + 1;
+      if (this.days < 6) {
+        if (this.days == 2) {
+          this.getData(interval, this.time1, this.distance1, this.commonService.getPreviousDate(date, 1));
+        }
+        if (this.days == 3) {
+          this.getData(interval, this.time2, this.distance2, this.commonService.getPreviousDate(date, 1));
+        }
+        if (this.days == 4) {
+          this.getData(interval, this.time3, this.distance3, this.commonService.getPreviousDate(date, 1));
+        }
+        if (this.days == 5) {
+          this.getData(interval, this.time4, this.distance4, this.commonService.getPreviousDate(date, 1));
+        }
+      } else {
+        this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
+        this.graphOptions();
+      }
+
+      wardLineData.unsubscribe();
+    });
   }
 
   setStepSizeandMaxValue(value: any) {
@@ -579,11 +489,7 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   getDate(days: any) {
-    let displayDate = new Date(
-      new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24
-    )
-      .toDateString()
-      .slice(4, 20);
+    let displayDate = new Date(new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24).toDateString().slice(4, 20);
     let month = displayDate.split(" ")[0];
     let day = displayDate.split(" ")[1];
     let year = displayDate.split(" ")[2];
@@ -591,9 +497,7 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   getFormattedDate(days: any) {
-    let date = new Date(
-      new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24
-    );
+    let date = new Date(      new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24    );
     let day = new Date(date).getDate().toString();
     let month = (new Date(date).getMonth() + 1).toString();
 

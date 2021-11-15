@@ -33,58 +33,6 @@ export class FinanceComponent implements OnInit {
         this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
       }
     }
-
-
-    return;
-
-    if (this.userid == "0") {
-      userAccessList = this.commonService.transform(userAccessList, 'position');
-    }
-    if (this.portalAccessList != null) {
-      this.accessList = [];
-      let userAccessPermission = [];
-      for (let i = 0; i < userAccessList.length; i++) {
-        let kk = i + 1;
-        if (this.userid != "0") {
-
-          let userList = this.db.list('UserAccess/').valueChanges().subscribe(
-            userlistdata => {
-
-              if (userlistdata != null) {
-                let url = "javaScript:void(0);";
-                let dataClass = "dashboard-widgets";
-                this.isShow = false;
-
-                for (let j = 0; j < userlistdata.length; j++) {
-                  if (userAccessList[i]["pageID"] == userlistdata[j]["pageID"] && userlistdata[j]["userId"] == this.userid) {
-
-                    url = userAccessList[i]["url"];
-                    this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass })
-                    userAccessPermission.push({ name: userAccessList[i]["name"], url: url });
-                  }
-                }
-                // if (url == "javaScript:void(0);") {
-                // dataClass = "dashboard-widgets-disabled";
-                //  if (this.userType == "External User") {
-                //    this.isShow = true;
-                // }
-                // }
-
-                localStorage.setItem("userAccess", JSON.stringify(userAccessPermission));
-              }
-              // else {
-              //   this.accessList.push({ name: userAccessList[i]["name"], url: "javaScript:void(0);", isShow: false, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: "dashboard-widgets" })
-              //  }
-              userList.unsubscribe();
-            });
-        }
-        // else {
-        //   this.accessList.push({ name: userAccessList[i]["name"], url: userAccessList[i]["url"], isShow: false, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: "dashboard-widgets" })
-        // }
-
-      }
-
-    }
   }
 
 }

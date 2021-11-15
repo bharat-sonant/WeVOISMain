@@ -74,7 +74,6 @@ export class DustbinMonitoringComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;
     this.minHalt = 5;

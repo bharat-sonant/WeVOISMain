@@ -33,6 +33,7 @@ export class MonthSalaryReportComponent implements OnInit {
   yearList: any[] = [];
   OtherList: any[];
   db:any
+  cityName:any;
 
   costData: costDatail =
     {
@@ -172,8 +173,9 @@ export class MonthSalaryReportComponent implements OnInit {
     };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db=this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href,this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];

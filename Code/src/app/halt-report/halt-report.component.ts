@@ -36,7 +36,8 @@ export class HaltReportComponent implements OnInit {
   minHalt: number;
   haltListDriver: any[];
   haltMonthlyListDriver: any[];
-  db:any;
+  db: any;
+  cityName: any;
 
   headerData: headerDetail =
     {
@@ -45,18 +46,14 @@ export class HaltReportComponent implements OnInit {
     };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 201);
     this.selectedDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
-    //this.headerData.date
     this.minHalt = 5;
-   // this.getZoneList();
-   // this.getHaltDriverData();
-   // this.getHaltMonthlyDriverData();
-     //this.getHaltData();
   }
 
 
@@ -69,43 +66,29 @@ export class HaltReportComponent implements OnInit {
     let day = d.getDate();
     let year = d.getFullYear();
 
-
-
-
     for (let index = 1; index < this.zoneList.length; index++) {
-      //for (let index = 1; index < 2; index++) {
-
-
       let ward = this.zoneList[index]["zoneNo"];
       for (let i = 1; i <= day; i++) {
         let dataDate = this.commonService.getDate(i, month, year);
         // Get Driver data
         let workerDataPath = 'WasteCollectionInfo/' + ward + '/' + dataDate + '/WorkerDetails';
-
         let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
           workerInfo => {
-
             setTimeout(() => {
               if (workerInfo) {
-
                 let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-
                 let driver = this.db.object(driverPath).valueChanges().subscribe(
                   driverData => {
-
-
+                    driver.unsubscribe();
                     let helperPath = 'Employees/' + workerInfo["helper"] + "/GeneralDetails";
                     let helper = this.db.object(helperPath).valueChanges().subscribe(
                       helperData => {
-
-
+                        helper.unsubscribe();
                         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + dataDate;
                         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
                           haltData => {
-
                             let totalBreak = 0;
                             if (haltData.length > 0) {
-
                               for (let index = 0; index < haltData.length; index++) {
 
                                 if (haltData[index]["haltType"] != "network-off") {
@@ -131,24 +114,24 @@ export class HaltReportComponent implements OnInit {
                             for (let i = 0; i < haltDateData.length; i++) {
                               let rowIndex = 0;
                               if (i == 0) {
-                                this.haltMonthlyListDriver=[];
+                                this.haltMonthlyListDriver = [];
                                 let driverName = haltDateData[i]["driver"];
                                 let breakTotal = haltDateData[i]["breakTotal"];
 
                                 this.haltMonthlyListDriver.push({
                                   driver: haltDateData != null ? driverName : "---",
-                                  breakTotal:parseFloat(breakTotal),
+                                  breakTotal: parseFloat(breakTotal),
                                 });
                               }
                               else {
                                 let driverName = haltDateData[i]["driver"];
                                 let haltTime = 0;
-                                
+
                                 let breakTotal = haltDateData[i]["breakTotal"];
                                 let isdata: boolean = false;
                                 for (let j = 0; j < this.haltMonthlyListDriver.length; j++) {
                                   if (driverName == this.haltMonthlyListDriver[j]["driver"]) {
-                                    haltTime =parseFloat(this.haltMonthlyListDriver[j]["breakTotal"])+ parseFloat(haltDateData[i]["breakTotal"]);
+                                    haltTime = parseFloat(this.haltMonthlyListDriver[j]["breakTotal"]) + parseFloat(haltDateData[i]["breakTotal"]);
                                     isdata = true;
                                     rowIndex = j;
                                   }
@@ -178,37 +161,27 @@ export class HaltReportComponent implements OnInit {
   }
 
   getHaltDriverData() {
-    this.haltListDriver = []; 
+    this.haltListDriver = [];
     for (let index = 1; index < this.zoneList.length; index++) {
-      //for (let index = 1; index < 2; index++) {
-
-
       let ward = this.zoneList[index]["zoneNo"];
 
       // Get Driver data
       let workerDataPath = 'WasteCollectionInfo/' + ward + '/' + this.selectedDate + '/WorkerDetails';
-
       let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
         workerInfo => {
-
           setTimeout(() => {
             if (workerInfo) {
-
               let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-
               let driver = this.db.object(driverPath).valueChanges().subscribe(
                 driverData => {
-
-
+                  driver.unsubscribe();
                   let helperPath = 'Employees/' + workerInfo["helper"] + "/GeneralDetails";
                   let helper = this.db.object(helperPath).valueChanges().subscribe(
                     helperData => {
-
-
+                      helper.unsubscribe();
                       let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + this.selectedDate;
                       let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
                         haltData => {
-
                           let totalBreak = 0;
                           if (haltData.length > 0) {
 
@@ -250,7 +223,6 @@ export class HaltReportComponent implements OnInit {
   }
 
   getHaltData() {
-
     this.dateList = [];
     this.haltList = [];
     this.haltListDriver = [];
@@ -262,16 +234,13 @@ export class HaltReportComponent implements OnInit {
 
     for (let i = 1; i <= day; i++) {
       let dataDate = this.commonService.getDate(i, month, year);
-
       for (let index = 1; index < this.zoneList.length; index++) {
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + dataDate;
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             let totalBreak = 0;
             if (haltData.length > 0) {
-
               for (let index = 0; index < haltData.length; index++) {
-
                 if (haltData[index]["haltType"] != "network-off") {
                   let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
                   if (duration > this.minHalt) {
@@ -281,27 +250,19 @@ export class HaltReportComponent implements OnInit {
               }
             }
 
-
             // Get Driver data
             let workerDataPath = 'WasteCollectionInfo/' + this.zoneList[index]["zoneNo"] + '/' + dataDate + '/WorkerDetails';
-
             let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
               workerInfo => {
-
-
-
                 if (workerInfo) {
-
                   let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-
                   let driver = this.db.object(driverPath).valueChanges().subscribe(
                     driverData => {
-
-
+                      driver.unsubscribe();
                       let helperPath = 'Employees/' + workerInfo["helper"] + "/GeneralDetails";
                       let helper = this.db.object(helperPath).valueChanges().subscribe(
                         helperData => {
-
+                          helper.unsubscribe();
                           this.haltList.push(
                             {
                               wardNo: this.zoneList[index]["zoneNo"],
@@ -329,20 +290,6 @@ export class HaltReportComponent implements OnInit {
                               }
                             }
                             this.drawChartCurrentDay(chartData);
-
-                            // for (let i = 1; i < this.zoneList.length; i++) {
-                            //   let wardNo = this.zoneList[i]["zoneNo"];
-                            //  let haltTime = 0;
-                            //  for (let j = 0; j < this.haltList.length; j++) {
-                            //    if (wardNo == this.haltList[j]["wardNo"]) {
-                            //      haltTime += parseFloat(this.haltList[j]["breakTotal"]);
-                            //    }
-                            // }
-                            //  chartDataMonth.push({ y: haltTime, label: wardNo });
-                            // chartDataMonthPie.push({ y: haltTime, name: wardNo });
-                            //   }
-                            // this.drawChartCurrentMonth(chartDataMonth);
-                            //this.drawChartPieCurrentMonth(chartDataMonthPie);
                           }
                         });
                     });
@@ -359,15 +306,8 @@ export class HaltReportComponent implements OnInit {
     return x = y;
   }
 
-  getMonthHalt() {
-
-  }
-
   drawChartCurrentDay(chartData: any) {
-
-
     let chart = new CanvasJS.Chart("chartContainer", {
-
       animationEnabled: true,
       theme: "light2", // "light1", "light2", "dark1", "dark2"
       title: {
@@ -391,10 +331,7 @@ export class HaltReportComponent implements OnInit {
   }
 
   drawChartCurrentMonth(chartData: any) {
-
-
     let chart = new CanvasJS.Chart("chartContainerMonth", {
-
       animationEnabled: true,
       theme: "light2", // "light1", "light2", "dark1", "dark2"
       title: {
@@ -418,10 +355,7 @@ export class HaltReportComponent implements OnInit {
   }
 
   drawChartPieCurrentMonth(chartData: any) {
-
-
     let chart = new CanvasJS.Chart("chartContainerPieMonth", {
-
       animationEnabled: true,
       legend: {
         fontSize: 13,
@@ -442,8 +376,6 @@ export class HaltReportComponent implements OnInit {
     });
     chart.render();
   }
-
-
 }
 
 export class headerDetail {

@@ -21,25 +21,15 @@ export class HomeComponent implements OnInit {
     name: "",
   };
 
-  constructor(
-    private commonService: CommonService,
-    public dbFireStore: AngularFirestore, public fs: FirebaseService,
-  ) { }
+  constructor(private commonService: CommonService, public dbFireStore: AngularFirestore, public fs: FirebaseService,) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    //this.getBreakDustbin();
-    //this.setRemark();
-    //this.setAllWard();
-    // this.setAvailableWard();
-    //console.log("home");
-    //this.getJsonFile();
     this.commonService.getFireStoreCity();
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
-    //this.commonService.chkUserExpiryDate();
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
     if (localStorage.getItem("isCityChange") == "yes") {
@@ -50,66 +40,26 @@ export class HomeComponent implements OnInit {
     } else {
       this.getUserAccess();
     }
-    // this.commonService.setCityData();
-    // if (localStorage.getItem('isCityChange') == "yes") {
-    //   localStorage.setItem('isCityChange', "no");
-    // setTimeout(() => {
-    //   window.location.href = window.location.href;
-    //}, 1000);
-    //  }
-    //  else {
-    //setTimeout(() => {
-
-    // }, 1000);
-    //  }
-  }
-
-  getJsonFile() {
-    /*
-   // let require: any
-
-    var obj = {
-      table: []
-    };
-    obj.table.push({ id: 1, square: 2 });
-    var json = JSON.stringify(obj);
-    let fsa = require('browserify-fs');
-    fsa.writeFile('myjsonfile.json', json, 'utf8');
-    fsa.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        obj = JSON.parse(data); //now it an object
-        obj.table.push({ id: 2, square: 3 }); //add some data
-        json = JSON.stringify(obj); //convert it back to json
-        fsa.writeFile('myjsonfile.json', json, 'utf8'); // write it back 
-      }
-    });
-    */
-
   }
 
   getBreakDustbin() {
     let dbPath = "DustbinData/DustbinDetails";
-    let instance = this.db
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        instance.unsubscribe();
-        if (data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            let zone = data[i]["zone"];
-            let ward = data[i]["ward"];
-            if (data[i]["isBroken"] != null) {
-              if (data[i]["isBroken"] == true) {
-                console.log(
-                  "Zone: " + zone + "  address: " + data[i]["address"]
-                );
-              }
+    let instance = this.db.list(dbPath).valueChanges().subscribe((data) => {
+      instance.unsubscribe();
+      if (data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          let zone = data[i]["zone"];
+          let ward = data[i]["ward"];
+          if (data[i]["isBroken"] != null) {
+            if (data[i]["isBroken"] == true) {
+              console.log(
+                "Zone: " + zone + "  address: " + data[i]["address"]
+              );
             }
           }
         }
-      });
+      }
+    });
   }
 
   setRemark() {
@@ -252,7 +202,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUserAccess() {
-    
+
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
@@ -267,34 +217,10 @@ export class HomeComponent implements OnInit {
           this.isShow = false;
           if (userAccessList[i]["url"].includes("task-manager")) {
             if (localStorage.getItem("officeAppUserId") != null) {
-              this.accessList.push({
-                name: userAccessList[i]["name"],
-                url:
-                  "/" +
-                  this.cityName +
-                  "/" +
-                  userAccessList[i]["pageId"] +
-                  userAccessList[i]["url"],
-                isShow: this.isShow,
-                position: userAccessList[i]["position"],
-                img: userAccessList[i]["img"],
-                dataClass: dataClass,
-              });
+              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
             }
           } else {
-            this.accessList.push({
-              name: userAccessList[i]["name"],
-              url:
-                "/" +
-                this.cityName +
-                "/" +
-                userAccessList[i]["pageId"] +
-                userAccessList[i]["url"],
-              isShow: this.isShow,
-              position: userAccessList[i]["position"],
-              img: userAccessList[i]["img"],
-              dataClass: dataClass,
-            });
+            this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
           }
         }
       }

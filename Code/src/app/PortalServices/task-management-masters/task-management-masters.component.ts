@@ -11,12 +11,7 @@ import { HtmlAstPath } from "@angular/compiler";
   styleUrls: ["./task-management-masters.component.scss"],
 })
 export class TaskManagementMastersComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private commonService: CommonService,
-    public dbFireStore: AngularFirestore,
-    private modalService: NgbModal
-  ) {}
+  constructor(private router: Router, private commonService: CommonService, public dbFireStore: AngularFirestore, private modalService: NgbModal) { }
 
   mainTaskList: any[];
   categoryList: any[];
@@ -91,87 +86,73 @@ export class TaskManagementMastersComponent implements OnInit {
     this.projectList = [];
     this.taskList = [];
     this.moduleProjectList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("TaskManagement")
-      .collection("Tasks")
-      .get()
-      .subscribe((ss) => {
-        ss.forEach((doc) => {
-          this.mainTaskList.push({ mainCat: doc.id });
-          let mainCategory = doc.id;
-          //for category list
-          const refCategory = doc.ref.path + "/Category";
-          this.dbFireStore
-            .collection(refCategory)
-            .get()
-            .subscribe((cat) => {
-              cat.forEach((catDoc) => {
-                let id = catDoc.id;
-                let name = catDoc.data()["name"];
-                this.categoryList.push({
+    this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").get().subscribe((ss) => {
+      ss.forEach((doc) => {
+        this.mainTaskList.push({ mainCat: doc.id });
+        let mainCategory = doc.id;
+        //for category list
+        const refCategory = doc.ref.path + "/Category";
+        this.dbFireStore.collection(refCategory).get().subscribe((cat) => {
+          cat.forEach((catDoc) => {
+            let id = catDoc.id;
+            let name = catDoc.data()["name"];
+            this.categoryList.push({
+              mainCategory: mainCategory,
+              id: id,
+              name: name,
+            });
+          });
+        });
+        // for Project List
+        const refProject = doc.ref.path + "/Projects";
+        this.dbFireStore.collection(refProject).get().subscribe((project) => {
+          project.forEach((projectDoc) => {
+            let project = projectDoc.id;
+            let projectCategory = "";
+            let projectCategoryId = "";
+            if (projectDoc.data()["Category"] != undefined) {
+              let projectCategoryList = projectDoc.data()["Category"];
+              for (let i = 0; i < projectCategoryList.length; i++) {
+                let categoryDetail = this.categoryList.find(
+                  (item) => item.id == projectCategoryList[i]
+                );
+                if (categoryDetail != undefined) {
+                  if (i == 0) {
+                    projectCategory = categoryDetail.name;
+                    projectCategoryId = categoryDetail.id;
+                  } else {
+                    projectCategory =
+                      projectCategory + ", " + categoryDetail.name;
+                    projectCategoryId =
+                      projectCategoryId + ", " + categoryDetail.id;
+                  }
+                }
+              }
+            }
+            this.projectList.push({
+              mainCategory: mainCategory,
+              id: project,
+              name: project,
+              projectCategory: projectCategory,
+              projectCategoryId: projectCategoryId
+            });
+            const refModule = projectDoc.ref.path + "/Modules";
+            this.dbFireStore.collection(refModule).get().subscribe((module) => {
+              module.forEach((ModuleDoc) => {
+                let moduleId = ModuleDoc.id;
+                let name = ModuleDoc.data()["name"];
+                this.taskList.push({
                   mainCategory: mainCategory,
-                  id: id,
+                  project: project,
+                  id: moduleId,
                   name: name,
                 });
               });
             });
-          // for Project List
-          const refProject = doc.ref.path + "/Projects";
-          this.dbFireStore
-            .collection(refProject)
-            .get()
-            .subscribe((project) => {
-              project.forEach((projectDoc) => {
-                let project = projectDoc.id;
-                let projectCategory = "";
-                let projectCategoryId = "";
-                if (projectDoc.data()["Category"] != undefined) {
-                  let projectCategoryList = projectDoc.data()["Category"];
-                  for (let i = 0; i < projectCategoryList.length; i++) {
-                    let categoryDetail = this.categoryList.find(
-                      (item) => item.id == projectCategoryList[i]
-                    );
-                    if (categoryDetail != undefined) {
-                      if (i == 0) {
-                        projectCategory = categoryDetail.name;
-                        projectCategoryId = categoryDetail.id;
-                      } else {
-                        projectCategory =
-                          projectCategory + ", " + categoryDetail.name;
-                        projectCategoryId =
-                          projectCategoryId + ", " + categoryDetail.id;
-                      }
-                    }
-                  }
-                }
-                this.projectList.push({
-                  mainCategory: mainCategory,
-                  id: project,
-                  name: project,
-                  projectCategory: projectCategory,
-                  projectCategoryId:projectCategoryId
-                });
-                const refModule = projectDoc.ref.path + "/Modules";
-                this.dbFireStore
-                  .collection(refModule)
-                  .get()
-                  .subscribe((module) => {
-                    module.forEach((ModuleDoc) => {
-                      let moduleId = ModuleDoc.id;
-                      let name = ModuleDoc.data()["name"];
-                      this.taskList.push({
-                        mainCategory: mainCategory,
-                        project: project,
-                        id: moduleId,
-                        name: name,
-                      });
-                    });
-                  });
-              });
-            });
+          });
         });
       });
+    });
   }
 
   //#region common function
@@ -183,13 +164,8 @@ export class TaskManagementMastersComponent implements OnInit {
       let height = 280;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id == 0) {
         $("#exampleModalLongTitle").html("Add Task Department");
@@ -204,13 +180,8 @@ export class TaskManagementMastersComponent implements OnInit {
       let height = 280;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#addNewMainCategory").show();
       if (id != "0") {
@@ -235,13 +206,8 @@ export class TaskManagementMastersComponent implements OnInit {
       let height = 280;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#addNewMainProjectCategory").show();
       if (id != "0") {
@@ -266,18 +232,13 @@ export class TaskManagementMastersComponent implements OnInit {
       let height = 320;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id == "0") {
         $("#exampleModalLongTitle").html("Add Module");
         $("#ddlMainModuleCategory").val("Office");
-        this.moduleProjectList=[];
+        this.moduleProjectList = [];
         let projectList = this.projectList.filter(
           (item) => item.mainCategory == "Office"
         );
@@ -322,13 +283,8 @@ export class TaskManagementMastersComponent implements OnInit {
       let height = 600;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#exampleModalLongTitle").html("Choose Category for " + id);
       $("#projectCatgoryId").val(id);
@@ -353,53 +309,38 @@ export class TaskManagementMastersComponent implements OnInit {
         }
       }, 600);
     }
-    else if(type=="deleteCategory"){
+    else if (type == "deleteCategory") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#deleteId").val(id);
       $('#confirmType').val('category');
     }
-    else if(type=="deleteProject"){
+    else if (type == "deleteProject") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#deleteId").val(id);
       $('#confirmType').val('project');
     }
-    else if(type=="deleteModule"){
+    else if (type == "deleteModule") {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let height = 170;
       let width = 350;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#deleteId").val(id);
       $('#confirmType').val('module');
@@ -410,15 +351,14 @@ export class TaskManagementMastersComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  confirmDelete()
-  {
-    let deleteId=$('#deleteId').val();
-    let confirmType=$('#confirmType').val();
-    if(confirmType=="category"){
+  confirmDelete() {
+    let deleteId = $('#deleteId').val();
+    let confirmType = $('#confirmType').val();
+    if (confirmType == "category") {
       this.deleteCategory(deleteId);
-    } else if(confirmType=="project"){
+    } else if (confirmType == "project") {
       this.deleteProject(deleteId);
-    } else if(confirmType=="module"){
+    } else if (confirmType == "module") {
       this.deleteModule(deleteId);
     }
   }
@@ -426,7 +366,7 @@ export class TaskManagementMastersComponent implements OnInit {
 
   //#endregion
 
-  
+
 
   //#region Task Department
 
@@ -441,27 +381,12 @@ export class TaskManagementMastersComponent implements OnInit {
     const data = {};
     let message = "";
     if (id == "0") {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(department.toString())
-        .set(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(department.toString()).set(data);
       message = "Task Department Added Successfully!!!";
     } else {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(id.toString())
-        .delete();
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(id.toString()).delete();
 
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(department.toString())
-        .set(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(department.toString()).set(data);
       message = "Task Department Updated Successfully!!!";
     }
     $("#departmentId").val("0");
@@ -474,16 +399,8 @@ export class TaskManagementMastersComponent implements OnInit {
   }
 
   deleteTaskDepartment(id: any) {
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("TaskManagement")
-      .collection("Tasks")
-      .doc(id.toString())
-      .delete();
-    this.commonService.setAlertMessage(
-      "success",
-      "Project deleted successfully !!!"
-    );
+    this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(id.toString()).delete();
+    this.commonService.setAlertMessage("success", "Project deleted successfully !!!");
     setTimeout(() => {
       this.getMainTask();
     }, 200);
@@ -499,10 +416,7 @@ export class TaskManagementMastersComponent implements OnInit {
     let mainCategory = $("#ddlMainCategory").val();
     let category = $("#txtCategory").val();
     if (mainCategory == "0") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select Main Category !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please select Main Category !!!");
       return;
     }
     if (category == "") {
@@ -515,41 +429,15 @@ export class TaskManagementMastersComponent implements OnInit {
     };
     let message = "";
     if (id == "0") {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(mainCategory.toString())
-        .collection("Category")
-        .add(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Category").add(data);
       message = "Category Added Successfully!!!";
     } else {
       if (mainCatId != mainCategory) {
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(mainCatId.toString())
-          .collection("Category")
-          .doc(id.toString())
-          .delete();
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCatId.toString()).collection("Category").doc(id.toString()).delete();
 
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(mainCategory.toString())
-          .collection("Category")
-          .add(data);
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Category").add(data);
       } else {
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(mainCategory.toString())
-          .collection("Category")
-          .doc(id.toString())
-          .update(data);
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Category").doc(id.toString()).update(data);
       }
       message = "Category Updated Successfully!!!";
     }
@@ -568,18 +456,8 @@ export class TaskManagementMastersComponent implements OnInit {
   deleteCategory(id: any) {
     let categoryDetail = this.categoryList.find((item) => item.id == id);
     if (categoryDetail != undefined) {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(categoryDetail.mainCategory.toString())
-        .collection("Category")
-        .doc(id.toString())
-        .delete();
-      this.commonService.setAlertMessage(
-        "success",
-        "Category deleted successfully !!!"
-      );
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(categoryDetail.mainCategory.toString()).collection("Category").doc(id.toString()).delete();
+      this.commonService.setAlertMessage("success", "Category deleted successfully !!!");
       this.isMaincatNew = false;
       setTimeout(() => {
         this.getMainTask();
@@ -613,19 +491,9 @@ export class TaskManagementMastersComponent implements OnInit {
         const data = {
           Category: projectCategoryList,
         };
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(projectDetail.mainCategory.toString())
-          .collection("Projects")
-          .doc(projectId.toString())
-          .set(data);
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(projectDetail.mainCategory.toString()).collection("Projects").doc(projectId.toString()).set(data);
       }
-      this.commonService.setAlertMessage(
-        "success",
-        "Project category updated successfully !!!"
-      );
+      this.commonService.setAlertMessage("success", "Project category updated successfully !!!");
       setTimeout(() => {
         this.getMainTask();
       }, 600);
@@ -639,10 +507,7 @@ export class TaskManagementMastersComponent implements OnInit {
     let mainCategory = $("#ddlMainProjectCategory").val();
     let project = $("#txtProject").val();
     if (mainCategory == "0") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select Main Category !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please select Main Category !!!");
       return;
     }
     if (project == "") {
@@ -652,37 +517,16 @@ export class TaskManagementMastersComponent implements OnInit {
     const data = {};
     let message = "";
     if (id == "0") {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(mainCategory.toString())
-        .collection("Projects")
-        .doc(project.toString())
-        .set(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Projects").doc(project.toString()).set(data);
       message = "Project Added Successfully!!!";
     } else {
       let deleteCategory = mainCategory;
       if (projectmaincatId != mainCategory) {
         deleteCategory = projectmaincatId;
       }
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(deleteCategory.toString())
-        .collection("Projects")
-        .doc(id.toString())
-        .delete();
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(deleteCategory.toString()).collection("Projects").doc(id.toString()).delete();
 
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(mainCategory.toString())
-        .collection("Projects")
-        .doc(project.toString())
-        .set(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Projects").doc(project.toString()).set(data);
       message = "Project Updated Successfully!!!";
     }
     $("#projectId").val("0");
@@ -700,18 +544,8 @@ export class TaskManagementMastersComponent implements OnInit {
   deleteProject(id: any) {
     let projectDetail = this.projectList.find((item) => item.id == id);
     if (projectDetail != undefined) {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(projectDetail.mainCategory.toString())
-        .collection("Projects")
-        .doc(id.toString())
-        .delete();
-      this.commonService.setAlertMessage(
-        "success",
-        "Project deleted successfully !!!"
-      );
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(projectDetail.mainCategory.toString()).collection("Projects").doc(id.toString()).delete();
+      this.commonService.setAlertMessage("success", "Project deleted successfully !!!");
       this.isMaincatNew = false;
       setTimeout(() => {
         this.getMainTask();
@@ -727,10 +561,7 @@ export class TaskManagementMastersComponent implements OnInit {
     this.moduleProjectList = [];
     let mainCategory = $("#ddlMainModuleCategory").val();
     if (mainCategory == "0") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select main category !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please select main category !!!");
       return;
     }
     let projectList = this.projectList.filter(
@@ -755,10 +586,7 @@ export class TaskManagementMastersComponent implements OnInit {
     let module = $("#txtModule").val();
 
     if (mainCategory == "0") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select main category !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please select main category !!!");
       return;
     }
     if (project == "0") {
@@ -775,49 +603,15 @@ export class TaskManagementMastersComponent implements OnInit {
     };
     let message = "";
     if (id == "0") {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(mainCategory.toString())
-        .collection("Projects")
-        .doc(project.toString())
-        .collection("Modules")
-        .add(data);
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Projects").doc(project.toString()).collection("Modules").add(data);
       message = "Module Added Successfully!!!";
     } else {
       if (projectid != project) {
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(maincatid.toString())
-          .collection("Projects")
-          .doc(projectid.toString())
-          .collection("Modules")
-          .doc(id.toString())
-          .delete();
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(maincatid.toString()).collection("Projects").doc(projectid.toString()).collection("Modules").doc(id.toString()).delete();
 
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(mainCategory.toString())
-          .collection("Projects")
-          .doc(project.toString())
-          .collection("Modules")
-          .add(data);
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Projects").doc(project.toString()).collection("Modules").add(data);
       } else {
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("TaskManagement")
-          .collection("Tasks")
-          .doc(mainCategory.toString())
-          .collection("Projects")
-          .doc(project.toString())
-          .collection("Modules")
-          .doc(id.toString())
-          .update(data);
+        this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(mainCategory.toString()).collection("Projects").doc(project.toString()).collection("Modules").doc(id.toString()).update(data);
       }
       message = "Module Updated Successfully!!!";
     }
@@ -836,20 +630,8 @@ export class TaskManagementMastersComponent implements OnInit {
   deleteModule(id: any) {
     let moduleDetail = this.taskList.find((item) => item.id == id);
     if (moduleDetail != undefined) {
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("TaskManagement")
-        .collection("Tasks")
-        .doc(moduleDetail.mainCategory.toString())
-        .collection("Projects")
-        .doc(moduleDetail.project.toString())
-        .collection("Modules")
-        .doc(id.toString())
-        .delete();
-      this.commonService.setAlertMessage(
-        "success",
-        "Module deleted successfully !!!"
-      );
+      this.dbFireStore.collection("UserManagement").doc("TaskManagement").collection("Tasks").doc(moduleDetail.mainCategory.toString()).collection("Projects").doc(moduleDetail.project.toString()).collection("Modules").doc(id.toString()).delete();
+      this.commonService.setAlertMessage("success", "Module deleted successfully !!!");
       this.isMaincatNew = false;
       setTimeout(() => {
         this.getMainTask();
