@@ -124,7 +124,7 @@
                                         <i class="fas fa-search" (click)="filterData();"></i>
                                     </div>
                                 </div>
-                                <div class="col-md-12 text-right ml-20">
+                                <div class="col-md-12 text-right p-r ml-20">
                                     <select class="filter-select filter-input" id="ddlUser" (change)="filterData();">
                                         <option value="0">
                                             All Users
@@ -162,7 +162,31 @@
                                         </option>
                                     </select>
                                     <i class="fas fa-filter" data-toggle="collapse" data-parent="#accordion" href="#collapsethree" aria-expanded="true" aria-controls="collapsethree"></i>
-                                </div>
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+                                            <div class="panel panel-default">
+                                              <div class="panel-heading" role="tab" id="headingthree">
+                                                <h4 class="panel-title">
+                                                </h4>
+                                              </div>
+                                              <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
+                                                <div class="panel-body">
+                                                  <div class="row">
+                                                    <div class="col-md-12 text-left">
+                                                      <div class="setting-box">
+                                                        <p class="active-filter" id="#"> Order by Time</p>
+                                                      </div>
+                                                      <div class="setting-box">
+                                                        <p id="#"> Order by Address</p>
+                                                      </div>
+            
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        
+                                        </div>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -187,29 +211,7 @@
                             </div>
                         </div>
 
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
-                                <div class="panel panel-default">
-                                  <div class="panel-heading" role="tab" id="headingthree">
-                                    <h4 class="panel-title">
-                                    </h4>
-                                  </div>
-                                  <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
-                                    <div class="panel-body">
-                                      <div class="row">
-                                        <div class="col-md-12 text-left">
-                                          <div class="setting-box">
-                                            <p class="active-filter" id="#"> Order by Time</p>
-                                          </div>
-                                          <div class="setting-box">
-                                            <p id="#"> Order by Address</p>
-                                          </div>
 
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
 
                     </div>
                 </div>

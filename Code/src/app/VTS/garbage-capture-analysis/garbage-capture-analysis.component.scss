@@ -1454,17 +1454,20 @@ cursor: pointer;
   width: 165px;
   z-index: 11111;
 }
+.p-r{
+  position: relative;
+}
 .panel-collapse{
   background: #fff;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid lightgray;
   height: 90px;
-  position: fixed;
-  top: 28.5%;
-  left: 35%;
-  transform: translateX(-50%) translateY(-50%);
+  position: absolute;
+  top: 48px;
+  right: 18px;
   box-shadow: 0 .2rem 1rem rgba(0,0,0,.15)!important;
+  z-index: 11111;
 }
 .panel-collapse p{
   margin: 0px!important;
