@@ -1422,7 +1422,8 @@ export class CommonService {
               if (wardNos == wardNo) {
                 this.wardBoundary = new google.maps.KmlLayer({
                   url: data[wardNos].toString(),
-                  map: map
+                  map: map,
+                  clickable:false
                 });
               }
             }

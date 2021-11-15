@@ -93,6 +93,7 @@ import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
 import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
 import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
+import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-test-purpose.component';
 
 @NgModule({
   imports: [
@@ -190,7 +191,8 @@ import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
     VtsRouteComponent,
     CreateRouteComponent,
     CreateWardLinePathComponent,
-    TestRouteComponent
+    TestRouteComponent,
+    JmapsTestPurposeComponent
   ]
 })
 

@@ -86,6 +86,7 @@ import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
 import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
 import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
 import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
+import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-test-purpose.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -190,6 +191,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/create-route', component: CreateRouteComponent },
     { path: 'sikar/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'sikar/test-route', component: TestRouteComponent },
+    { path: 'sikar/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -283,6 +285,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/create-route', component: CreateRouteComponent },
     { path: 'sikar/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'sikar/:id/test-route', component: TestRouteComponent },
+    { path: 'sikar/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
 
     //jaipur-greater
@@ -377,6 +380,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/create-route', component: CreateRouteComponent },
     { path: 'jaipur-greater/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'jaipur-greater/test-route', component: TestRouteComponent },
+    { path: 'jaipur-greater/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -470,6 +474,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/create-route', component: CreateRouteComponent },
     { path: 'jaipur-greater/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'jaipur-greater/:id/test-route', component: TestRouteComponent },
+    { path: 'jaipur-greater/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -563,6 +568,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/create-route', component: CreateRouteComponent },
     { path: 'reengus/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'reengus/test-route', component: TestRouteComponent },
+    { path: 'reengus/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -656,6 +662,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/create-route', component: CreateRouteComponent },
     { path: 'reengus/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'reengus/:id/test-route', component: TestRouteComponent },
+    { path: 'reengus/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -749,6 +756,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/create-route', component: CreateRouteComponent },
     { path: 'shahpura/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'shahpura/test-route', component: TestRouteComponent },
+    { path: 'shahpura/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -842,6 +850,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/create-route', component: CreateRouteComponent },
     { path: 'shahpura/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'shahpura/:id/test-route', component: TestRouteComponent },
+    { path: 'shahpura/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -935,6 +944,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/create-route', component: CreateRouteComponent },
     { path: 'test/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'test/test-route', component: TestRouteComponent },
+    { path: 'test/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1028,6 +1038,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/create-route', component: CreateRouteComponent },
     { path: 'test/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'test/:id/test-route', component: TestRouteComponent },
+    { path: 'test/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1121,6 +1132,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/create-route', component: CreateRouteComponent },
     { path: 'demo/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'demo/test-route', component: TestRouteComponent },
+    { path: 'demo/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1213,4 +1225,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/create-route', component: CreateRouteComponent },
     { path: 'demo/:id/create-ward-line-path', component: CreateWardLinePathComponent },
     { path: 'demo/:id/test-route', component: TestRouteComponent },
+    { path: 'demo/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
 ]; 
