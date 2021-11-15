@@ -43,6 +43,7 @@ export class FleetMonitorComponent {
   currentMonthName: any;
   currentYear: any;
   cityName: any;
+  instancesList:any[];
   workerDetails: WorkderDetails =
     {
       vehicleNo: '',
@@ -56,8 +57,10 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.instancesList=[];
+    this.cityName=localStorage.getItem("cityName");
+    this.db=this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href,this.cityName);
     this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
@@ -84,8 +87,9 @@ export class FleetMonitorComponent {
   }
 
   setKml() {
-    this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
+   let kmlInstance= this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
       wardPath => {
+        this.instancesList.push({instances:kmlInstance});
         new google.maps.KmlLayer({
           url: wardPath.toString(),
           map: this.map
@@ -123,6 +127,7 @@ export class FleetMonitorComponent {
 
             let workerDetails = this.db.list(workerDetailsdbPath).valueChanges().subscribe(
               workerData => {
+                this.instancesList.push({instances:workerDetails});
 
                 if (workerData.length > 0) {
                   this.getLineStatus(wardNo, Number(totalLines));
@@ -176,6 +181,7 @@ export class FleetMonitorComponent {
 
         let currentDtatus = this.db.object(cureentStatusDPath).valueChanges().subscribe(
           statusId => {
+            this.instancesList.push({instances:currentDtatus});
 
             let vehiclePath = '../assets/img/tipper-green.png';
 
@@ -191,6 +197,7 @@ export class FleetMonitorComponent {
               let driver = this.db.object(driverIdPath).valueChanges().subscribe(
                 driverId => {
 
+                  this.instancesList.push({instances:driver});
 
 
                   let cardswapentriesPath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/' + driverId + '/card-swap-entries';
@@ -198,6 +205,7 @@ export class FleetMonitorComponent {
                   let cardSwapEntries = this.db.list(cardswapentriesPath).valueChanges().subscribe(
                     cardSwapEntriesData => {
 
+                      this.instancesList.push({instances:cardSwapEntries});
                       let cardEntiresArr = cardSwapEntriesData.toString().split(',');
 
                       if (cardEntiresArr[cardEntiresArr.length - 1] == 'Out') {
@@ -338,6 +346,14 @@ export class FleetMonitorComponent {
             }
           });
       });
+  }
+  ngOnDestroy(){
+    if(this.instancesList.length>0)
+    {
+      for(let i=0;i<this.instancesList.length;i++){
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 
 }

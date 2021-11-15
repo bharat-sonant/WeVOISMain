@@ -1,5 +1,3 @@
-import { FinanceComponent } from "./../../finance-report/finance/finance.component";
-import { LineCardMappingComponent } from "./../../line-card-mapping/line-card-mapping.component";
 /// <reference types="@types/googlemaps" />
 import { Component } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
@@ -21,15 +19,15 @@ export class HaltsComponent {
   public map: google.maps.Map;
   constructor(
     private router: Router,
-    public fs:FirebaseService,
+    public fs: FirebaseService,
     private mapService: MapService,
     private commonService: CommonService,
     private modalService: NgbModal
-  ) {}
-  db:any;
+  ) { }
+  db: any;
   zoneList: any[];
   selectedDate: any;
-  toDayDate:any;
+  toDayDate: any;
   public selectedZone: any;
   marker = new google.maps.Marker();
   haltInfo: any[];
@@ -54,26 +52,21 @@ export class HaltsComponent {
     helperName: "---",
     helperMobile: "---",
     totalBreakHours: "00:00",
-    wardHalt:"00.00"
+    wardHalt: "00.00"
   };
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     if (localStorage.getItem("haltDisableAccess") == "1") {
       this.ishaltDisableAccess = true;
     }
-    this.cityName = localStorage.getItem("cityName");
     this.bounds = new google.maps.LatLngBounds();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.setTodayDate();
     $("#txtDate").val(this.selectedDate);
-    this.currentMonth = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date(this.selectedDate).getFullYear();
     this.minHalt = 5;
     this.setMapHeight();
@@ -95,101 +88,85 @@ export class HaltsComponent {
   getHaltList() {
     this.haltList = [];
     this.haltDataInfo = [];
-    this.haltDetails.wardHalt="00.00";
-    let totalWardHalts=0;
+    this.haltDetails.wardHalt = "00.00";
+    let totalWardHalts = 0;
     if (this.zoneList.length > 0) {
       for (let i = 1; i < this.zoneList.length; i++) {
-        let haltInfoPath =
-          "HaltInfo/" +
-          this.zoneList[i]["zoneNo"] +
-          "/" +
-          this.currentYear +
-          "/" +
-          this.currentMonth +
-          "/" +
-          this.selectedDate;
-        let haltInfoData = this.db
-          .list(haltInfoPath)
-          .valueChanges()
-          .subscribe((haltData) => {
-            haltInfoData.unsubscribe();
-            let zoneNo = this.zoneList[i]["zoneNo"];
-            //let zoneName = this.zoneList[i]["zoneName"].replace("Ward ", "");
-            let zoneName = this.zoneList[i]["zoneName"];
-            let totalBreak = 0;
-            if (haltData.length > 0) {
-              for (let index = 0; index < haltData.length; index++) {
-                if (haltData[index]["haltType"] != "network-off") {
-                  let duration =
-                    haltData[index]["duration"] != undefined
-                      ? haltData[index]["duration"]
-                      : 0;
-                  if (duration > this.minHalt) {
-                    totalBreak += duration;
-                    if (haltData[index]["location"] != null) {
-                      let removeReason = "0";
-                      let canRemove = "yes";
-                      let remark = "";
-                      if (haltData[index]["canRemove"] != null) {
-                        canRemove = haltData[index]["canRemove"];
-                      }
-                      if (haltData[index]["removeReason"] != null) {
-                        removeReason = haltData[index]["removeReason"];
-                      }
-                      if (haltData[index]["remark"] != null) {
-                        remark = haltData[index]["remark"];
-                      }
-                      let latlng = haltData[index]["location"]
-                        .split(":")[1]
-                        .split(",");
-                      let lt = $.trim(latlng[0]).replace("(", "");
-                      let lg = $.trim(latlng[1]).replace(")", "");
-                      this.haltDataInfo.push({
-                        index: index,
-                        zoneNo: zoneNo,
-                        time: haltData[index]["startTime"],
-                        duration: duration,
-                        type: haltData[index]["haltType"],
-                        location: haltData[index]["locality"],
-                        lat: lt,
-                        lng: lg,
-                        removeReason: removeReason,
-                        canRemove: canRemove,
-                        remark: remark,
-                        ishaltDisableAccess:this.ishaltDisableAccess
-                      });
+        let haltInfoPath = "HaltInfo/" + this.zoneList[i]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.selectedDate;
+        let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
+          haltInfoData.unsubscribe();
+          let zoneNo = this.zoneList[i]["zoneNo"];
+          //let zoneName = this.zoneList[i]["zoneName"].replace("Ward ", "");
+          let zoneName = this.zoneList[i]["zoneName"];
+          let totalBreak = 0;
+          if (haltData.length > 0) {
+            for (let index = 0; index < haltData.length; index++) {
+              if (haltData[index]["haltType"] != "network-off") {
+                let duration =                  haltData[index]["duration"] != undefined                    ? haltData[index]["duration"]                    : 0;
+                if (duration > this.minHalt) {
+                  totalBreak += duration;
+                  if (haltData[index]["location"] != null) {
+                    let removeReason = "0";
+                    let canRemove = "yes";
+                    let remark = "";
+                    if (haltData[index]["canRemove"] != null) {
+                      canRemove = haltData[index]["canRemove"];
                     }
+                    if (haltData[index]["removeReason"] != null) {
+                      removeReason = haltData[index]["removeReason"];
+                    }
+                    if (haltData[index]["remark"] != null) {
+                      remark = haltData[index]["remark"];
+                    }
+                    let latlng = haltData[index]["location"]                      .split(":")[1]                      .split(",");
+                    let lt = $.trim(latlng[0]).replace("(", "");
+                    let lg = $.trim(latlng[1]).replace(")", "");
+                    this.haltDataInfo.push({
+                      index: index,
+                      zoneNo: zoneNo,
+                      time: haltData[index]["startTime"],
+                      duration: duration,
+                      type: haltData[index]["haltType"],
+                      location: haltData[index]["locality"],
+                      lat: lt,
+                      lng: lg,
+                      removeReason: removeReason,
+                      canRemove: canRemove,
+                      remark: remark,
+                      ishaltDisableAccess: this.ishaltDisableAccess
+                    });
                   }
                 }
               }
             }
-            let divClass = this.getClass(totalBreak, "divClass");
-            let haltClass = this.getClass(totalBreak, "haltClass");
-            let displayIndex = 1;
-            if (totalBreak == 0) {
-              displayIndex = 2;
-            }
-            totalWardHalts=totalWardHalts+totalBreak;
-            this.haltDetails.wardHalt=this.commonService.getHrs(totalWardHalts);
-            this.haltList.push({
-              zoneNo: zoneNo,
-              zoneName: zoneName,
-              totalBreak: totalBreak,
-              totalBreakHours: this.commonService.getHrs(totalBreak),
-              divClass: divClass,
-              haltClass: haltClass,
-              displayIndex: displayIndex,
-            });
-            // this.haltList = this.commonService.transform(this.haltList, "displayIndex");
-            if (this.haltList.length == this.zoneList.length - 1) {
-              let haltDetail = this.haltList.find(
-                (item) => item.totalBreak > 0
-              );
-              if (haltDetail != undefined) {
-                this.getZoneDetail(haltDetail.zoneNo);
-              }
-            }
+          }
+          let divClass = this.getClass(totalBreak, "divClass");
+          let haltClass = this.getClass(totalBreak, "haltClass");
+          let displayIndex = 1;
+          if (totalBreak == 0) {
+            displayIndex = 2;
+          }
+          totalWardHalts = totalWardHalts + totalBreak;
+          this.haltDetails.wardHalt = this.commonService.getHrs(totalWardHalts);
+          this.haltList.push({
+            zoneNo: zoneNo,
+            zoneName: zoneName,
+            totalBreak: totalBreak,
+            totalBreakHours: this.commonService.getHrs(totalBreak),
+            divClass: divClass,
+            haltClass: haltClass,
+            displayIndex: displayIndex,
           });
+          // this.haltList = this.commonService.transform(this.haltList, "displayIndex");
+          if (this.haltList.length == this.zoneList.length - 1) {
+            let haltDetail = this.haltList.find(
+              (item) => item.totalBreak > 0
+            );
+            if (haltDetail != undefined) {
+              this.getZoneDetail(haltDetail.zoneNo);
+            }
+          }
+        });
       }
     }
   }
@@ -212,10 +189,7 @@ export class HaltsComponent {
     for (let i = 0; i < this.haltDataInfo.length; i++) {
       if (this.haltDataInfo[i]["zoneNo"] == zoneNo) {
         let divClass = this.getClass(0, "listClass");
-        let haltClass = this.getClass(
-          this.haltDataInfo[i]["duration"],
-          "haltClass"
-        );
+        let haltClass = this.getClass(          this.haltDataInfo[i]["duration"],          "haltClass"        );
         if (this.haltDataList.length == 0) {
           divClass = this.getClass(1, "listClass");
         }
@@ -263,7 +237,7 @@ export class HaltsComponent {
           removeReason: removeReason,
           canRemove: canRemove,
           remark: remark,
-          ishaltDisableAccess:this.ishaltDisableAccess
+          ishaltDisableAccess: this.ishaltDisableAccess
         });
         this.setMarker(
           0,
@@ -574,7 +548,7 @@ export class HaltsComponent {
         "error",
         "Please select current or previos date!!!"
       );
-      this.selectedDate=this.toDayDate;
+      this.selectedDate = this.toDayDate;
       $('#txtDate').val(this.selectedDate);
       //return;
     }
@@ -706,5 +680,5 @@ export class haltDetail {
   helperName: string;
   helperMobile: string;
   totalBreakHours: string;
-  wardHalt:string;
+  wardHalt: string;
 }

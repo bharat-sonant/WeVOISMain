@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";

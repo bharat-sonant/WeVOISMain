@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
   todayDate: any;
   currentMonthName: any;
   currentYear: any;
-
+  instancesList: any[];
 
   public lineBigDashboardChartType;
   public gradientStroke;
@@ -38,7 +38,8 @@ export class DashboardComponent implements OnInit {
   public lineBigDashboardChartOptions: any;
   public lineBigDashboardChartLabels: Array<any>;
   public lineBigDashboardChartColors: Array<any>;
-  db:any;
+  db: any;
+  cityyName:any;
 
   dashboardData: dashboardSummary =
     {
@@ -48,11 +49,13 @@ export class DashboardComponent implements OnInit {
       wasteCollected: '0'
     };
 
-  constructor(public fs:FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));    
+    this.instancesList = [];
+    this.cityyName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityyName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityyName);
     this.todayDate = this.commonService.setTodayDate();//"2019-07-24";
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();
@@ -72,6 +75,7 @@ export class DashboardComponent implements OnInit {
     this.getWardCollection();
     this.getWardWorkProgressData(this.todayDate);
     let drawProgress = interval(60000).subscribe((val) => {
+      this.instancesList.push({ instances: drawProgress });
       this.workDone = [];
       this.wards = [];
       this.getWardWorkProgressData(this.todayDate);
@@ -79,12 +83,12 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  getWardCollection()
-  {
-    let collectionInstance=this.db.object("WardTrips/"+this.currentYear+"/"+this.currentMonthName+"/"+this.todayDate+"/totalWasteCollection").valueChanges().subscribe(
-      data=>{
-        if(data !=null){
-          this.dashboardData.wasteCollected=data.toString();
+  getWardCollection() {
+    let collectionInstance = this.db.object("WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/totalWasteCollection").valueChanges().subscribe(
+      data => {
+        this.instancesList.push({ instances: collectionInstance });
+        if (data != null) {
+          this.dashboardData.wasteCollected = data.toString();
         }
       }
     );
@@ -176,6 +180,7 @@ export class DashboardComponent implements OnInit {
 
     let vehicleData = this.db.list('Vehicles').valueChanges().subscribe(
       data => {
+        this.instancesList.push({ instances: vehicleData });
 
         let activeVehicleCount = 0;
 
@@ -196,6 +201,7 @@ export class DashboardComponent implements OnInit {
       // check duty status
       let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + this.zoneList[index]["zoneNo"] + "").valueChanges().subscribe(
         data => {
+          this.instancesList.push({ instances: getRealTimeWardDetails });
 
           if (data != null) {
             let status = data["activityStatus"];
@@ -211,6 +217,7 @@ export class DashboardComponent implements OnInit {
   getpeopleAtWork() {
     let peopleAtWork = this.db.object('RealTimeDetails/peopleOnWork').valueChanges().subscribe(
       data => {
+        this.instancesList.push({ instances: peopleAtWork });
         this.dashboardData.peopleAtWork = data.toString();
         setTimeout(() => {
           this.dashboardData.wardCompleted = this.wardCompletedCount.toString();
@@ -233,6 +240,7 @@ export class DashboardComponent implements OnInit {
           // get total lines in the ward        
           let wardLines = this.db.list('Defaults/WardLines/' + this.zoneList[index]["zoneNo"]).valueChanges().subscribe(
             zoneLine => {
+              this.instancesList.push({ instances: wardLines });
               let totalLines = zoneLine.length;
               // total compelted lines
               for (let index = 0; index < data.length; index++) {
@@ -383,6 +391,14 @@ export class DashboardComponent implements OnInit {
 
     this.lineBigDashboardChartType = 'line';
 
+  }
+
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 
 }

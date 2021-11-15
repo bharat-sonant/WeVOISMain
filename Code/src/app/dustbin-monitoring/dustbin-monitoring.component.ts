@@ -20,7 +20,7 @@ export class DustbinMonitoringComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private router: Router, public fs:FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(private router: Router, public fs: FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   selectedDate: any;
@@ -67,12 +67,13 @@ export class DustbinMonitoringComponent {
   pickedDustbinUrl: any;
   assignedDustbinUrl: any;
   defaultDustbinUrl: any;
-  cityName:any;
-  db:any;
+  cityName: any;
+  db: any;
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.cityName = localStorage.getItem('cityName');
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;
