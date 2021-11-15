@@ -107,7 +107,7 @@
             <div class="card" style="margin-top:-6px;  height: 85vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-9 text-left">
+                        <div class="col-md-9 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-5 pr-0">
                                     <div class="main-heading mt-10">
@@ -153,7 +153,7 @@
                                             {{zone.zoneName}}
                                         </option>
                                     </select>
-                                    <select class="filter-select filter-input" id="ddlWard" (change)="filterData();">
+                                    <select class="filter-select mr-32 filter-input" id="ddlWard" (change)="filterData();">
                                         <option value="0">
                                             All Ward
                                         </option>
@@ -161,6 +161,7 @@
                                             {{ward.wardName}}
                                         </option>
                                     </select>
+                                    <i class="fas fa-filter" data-toggle="collapse" data-parent="#accordion" href="#collapsethree" aria-expanded="true" aria-controls="collapsethree"></i>
                                 </div>
                             </div>
                         </div>
@@ -185,6 +186,31 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading" role="tab" id="headingthree">
+                                    <h4 class="panel-title">
+                                    </h4>
+                                  </div>
+                                  <div id="collapsethree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingthree">
+                                    <div class="panel-body">
+                                      <div class="row">
+                                        <div class="col-md-12 text-left">
+                                          <div class="setting-box">
+                                            <p class="active-filter" id="#"> Order by Time</p>
+                                          </div>
+                                          <div class="setting-box">
+                                            <p id="#"> Order by Address</p>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -246,7 +272,7 @@
         <div class="col-md-12 col-lg-12 col-xl-6 pr-13 mob-pr-10 mob-res pad-pl-0">
             <div class="fix-h">
                 <div class="row right-scroll">
-                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px; padding-left: 5px!important;padding-right: 10px!important;">
+                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px; padding-left: 5px!important;padding-right: 7px!important;">
                         <div class="image-box">
                             <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title="" alt="">
                             <div class="image-heading">
@@ -254,7 +280,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;padding-left: 10px!important;">
+                    <div class="col-md-6 mob-10 pl-3 pr-0" style="padding-bottom:1.5vh!important; margin-top: -6px;padding-left: 7px!important;">
                         <div class="image-box">
                             <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""  alt="">
                             <div class="image-heading">
