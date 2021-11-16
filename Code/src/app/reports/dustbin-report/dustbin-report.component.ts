@@ -55,10 +55,11 @@ export class DustbinReportComponent implements OnInit {
   preSelectedMarker: any;
   highPriority: any;
   db: any;
-
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.userId = localStorage.getItem('userID');
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
@@ -1369,7 +1370,7 @@ export class DustbinReportComponent implements OnInit {
                             pickTime = statusData["endTime"].split(' ')[1].toString().substring(0, 5);
                           }
                           this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                            dustbinDetail[d] = icon + " At " + pickTime + " by  " + employee["name"]+" <b>(W)</b>";
+                            dustbinDetail[d] = icon + " At " + pickTime + " by  " + employee["name"] + " <b>(W)</b>";
                           });
                         }
                       }

@@ -15,15 +15,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class UserAddComponent implements OnInit {
   //public userForm: FormGroup;
-  constructor(
-    private router: Router,
-    public dbFireStore: AngularFirestore,
-    public usrService: UserService,
-    private actRoute: ActivatedRoute,
-    public commonService: CommonService,
-    public toastr: ToastrService,
-    public db: AngularFireDatabase
-  ) {}
+  constructor(private router: Router, public dbFireStore: AngularFirestore, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
 
   usr: Users;
   toDayDate: any;
@@ -43,128 +35,97 @@ export class UserAddComponent implements OnInit {
 
     if (id != null) {
       this.usrid = id;
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("Users")
-        .collection("Users")
-        .doc(this.userid)
-        .get()
-        .subscribe((doc) => {
-          this.usrid = doc.data()["userId"];
-          $("#name").val(doc.data()["name"]);
-          $("#name").val(doc.data()["name"]);
-          $("#userType").val(doc.data()["userType"]);
-          $("#mobile").val(doc.data()["mobile"]);
-          $("#email").val(doc.data()["email"]);
-          $("#password").val(doc.data()["password"]);
-          $("#expiryDate").val(doc.data()["expiryDate"]);
-          if (doc.data()["officeAppUserId"] != null) {
-            $("#officeAppUserId").val(doc.data()["officeAppUserId"]);
+      this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").doc(this.userid).get().subscribe((doc) => {
+        this.usrid = doc.data()["userId"];
+        $("#name").val(doc.data()["name"]);
+        $("#name").val(doc.data()["name"]);
+        $("#userType").val(doc.data()["userType"]);
+        $("#mobile").val(doc.data()["mobile"]);
+        $("#email").val(doc.data()["email"]);
+        $("#password").val(doc.data()["password"]);
+        $("#expiryDate").val(doc.data()["expiryDate"]);
+        if (doc.data()["officeAppUserId"] != null) {
+          $("#officeAppUserId").val(doc.data()["officeAppUserId"]);
+        }
+        if (doc.data()["empLocation"] != null) {
+          $("#empLocation").val(doc.data()["empLocation"]);
+        }
+        if (doc.data()["notificationHalt"] == "1") {
+          (<HTMLInputElement>(document.getElementById("notificationHalt"))).checked = true;
+        }
+        if (doc.data()["notificationMobileDataOff"] == 1) {
+          (<HTMLInputElement>(document.getElementById("notificationMobileDataOff"))).checked = true;
+        }
+        if (doc.data()["notificationSkippedLines"] == 1) {
+          (<HTMLInputElement>(document.getElementById("notificationSkippedLines"))).checked = true;
+        }
+        if (doc.data()["notificationPickDustbins"] == 1) {
+          (<HTMLInputElement>(document.getElementById("notificationPickDustbins"))).checked = true;
+        }
+        if (doc.data()["notificationGeoSurfing"] == 1) {
+          (<HTMLInputElement>(document.getElementById("notificationGeoSurfing"))).checked = true;
+        }
+        if (doc.data()["isTaskManager"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isTaskManager"))).checked = true;
+        }
+        if (doc.data()["haltDisableAccess"] != undefined) {
+          if (doc.data()["haltDisableAccess"] == 1) {
+            (<HTMLInputElement>(document.getElementById("haltDisableAccess"))).checked = true;
           }
-          if (doc.data()["empLocation"] != null) {
-            $("#empLocation").val(doc.data()["empLocation"]);
-          }
-          if (doc.data()["notificationHalt"] == "1") {
-            (<HTMLInputElement>(
-              document.getElementById("notificationHalt")
-            )).checked = true;
-          }
-          if (doc.data()["notificationMobileDataOff"] == 1) {
-            (<HTMLInputElement>(
-              document.getElementById("notificationMobileDataOff")
-            )).checked = true;
-          }
-          if (doc.data()["notificationSkippedLines"] == 1) {
-            (<HTMLInputElement>(
-              document.getElementById("notificationSkippedLines")
-            )).checked = true;
-          }
-          if (doc.data()["notificationPickDustbins"] == 1) {
-            (<HTMLInputElement>(
-              document.getElementById("notificationPickDustbins")
-            )).checked = true;
-          }
-          if (doc.data()["notificationGeoSurfing"] == 1) {
-            (<HTMLInputElement>(
-              document.getElementById("notificationGeoSurfing")
-            )).checked = true;
-          }
-          if (doc.data()["isTaskManager"] == 1) {
-            (<HTMLInputElement>(
-              document.getElementById("isTaskManager")
-            )).checked = true;
-          }
-          if (doc.data()["haltDisableAccess"] != undefined) {
-            if (doc.data()["haltDisableAccess"] == 1) {
-              (<HTMLInputElement>(
-                document.getElementById("haltDisableAccess")
-              )).checked = true;
-            }
-          }
-        });
+        }
+      });
     } else {
       this.userRecord = [];
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("Users")
-        .collection("Users")
-        .get()
-        .subscribe((ss) => {
-          const document = ss.docs;
-          document.forEach((doc) => {
-            this.userRecord.push({ userId: doc.data()["userId"] });
-          });
-          if (this.userRecord.length == 0) {
-            this.usrid = 1;
-          } else {
-            this.userRecord=this.commonService.transform(this.userRecord,"userId");
-           // var sorted = this.userRecord.sort();
-            this.usrid =
-              this.userRecord[this.userRecord.length - 1]["userId"] + 1;
-             
-          }
+      this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
+        const document = ss.docs;
+        document.forEach((doc) => {
+          this.userRecord.push({ userId: doc.data()["userId"] });
         });
+        if (this.userRecord.length == 0) {
+          this.usrid = 1;
+        } else {
+          this.userRecord = this.commonService.transform(this.userRecord, "userId");
+          // var sorted = this.userRecord.sort();
+          this.usrid =
+            this.userRecord[this.userRecord.length - 1]["userId"] + 1;
+
+        }
+      });
     }
   }
 
   getUsers() {
-    let MUser = this.db
-      .list("Users/")
-      .valueChanges()
-      .subscribe((mdata) => {
-        MUser.unsubscribe();
-        for (let i = 0; i < mdata.length; i++) {
-          const dish = {
-            userId: mdata[i]["userId"],
-            name: mdata[i]["name"],
-            userType: mdata[i]["userType"],
-            mobile: mdata[i]["mobile"],
-            email: mdata[i]["email"],
-            password: mdata[i]["password"],
-            creattionDate: mdata[i]["creattionDate"],
-            isDelete: mdata[i]["isDelete"],
-            notificationHalt: 0,
-            notificationMobileDataOff: 0,
-            notificationSkippedLines: 0,
-            notificationPickDustbins: 0,
-            expiryDate: 0,
-            notificationGeoSurfing: 0,
-            officeAppUserId: "0",
-            isTaskManager: 0,
-            haltDisableAccess:0
-          };
-          this.usrService.AddUser(dish);
-        }
-      });
+    let MUser = this.db.list("Users/").valueChanges().subscribe((mdata) => {
+      MUser.unsubscribe();
+      for (let i = 0; i < mdata.length; i++) {
+        const dish = {
+          userId: mdata[i]["userId"],
+          name: mdata[i]["name"],
+          userType: mdata[i]["userType"],
+          mobile: mdata[i]["mobile"],
+          email: mdata[i]["email"],
+          password: mdata[i]["password"],
+          creattionDate: mdata[i]["creattionDate"],
+          isDelete: mdata[i]["isDelete"],
+          notificationHalt: 0,
+          notificationMobileDataOff: 0,
+          notificationSkippedLines: 0,
+          notificationPickDustbins: 0,
+          expiryDate: 0,
+          notificationGeoSurfing: 0,
+          officeAppUserId: "0",
+          isTaskManager: 0,
+          haltDisableAccess: 0
+        };
+        this.usrService.AddUser(dish);
+      }
+    });
   }
 
   submitData() {
     const id = this.actRoute.snapshot.paramMap.get("id");
     if ($("#userType").val() == "0") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please Select User Type !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please Select User Type !!!");
       return;
     }
     if ($("#name").val() == "") {
@@ -184,10 +145,7 @@ export class UserAddComponent implements OnInit {
     }
     let emailChk = $("#email").val();
     if (this.validateEmail(emailChk) == false) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please Enter Valid Email ID !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please Enter Valid Email ID !!!");
       return;
     } else {
       if (this.userRecord != null) {
@@ -195,17 +153,9 @@ export class UserAddComponent implements OnInit {
           if (this.usrid == null) {
             if (emailChk == this.userRecord[i]["email"]) {
               if (this.userRecord[i]["isDelete"] == "0") {
-                this.commonService.setAlertMessage(
-                  "error",
-                  "Email Id " + emailChk + " already exist with active user !!!"
-                );
+                this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with active user !!!");
               } else if (this.userRecord[i]["isDelete"] == "1") {
-                this.commonService.setAlertMessage(
-                  "error",
-                  "Email Id " +
-                    emailChk +
-                    " already exist with deleted user !!!"
-                );
+                this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with deleted user !!!");
               }
               return;
             }
@@ -215,17 +165,9 @@ export class UserAddComponent implements OnInit {
               this.usrid != this.userRecord[i]["userId"]
             ) {
               if (this.userRecord[i]["isDelete"] == "0") {
-                this.commonService.setAlertMessage(
-                  "error",
-                  "Email Id " + emailChk + " already exist with active user !!!"
-                );
+                this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with active user !!!");
               } else if (this.userRecord[i]["isDelete"] == "1") {
-                this.commonService.setAlertMessage(
-                  "error",
-                  "Email Id " +
-                    emailChk +
-                    " already exist with deleted user !!!"
-                );
+                this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with deleted user !!!");
               }
               return;
             }
@@ -244,7 +186,7 @@ export class UserAddComponent implements OnInit {
     let notificationSkippedLines: any = 0;
     let notificationPickDustbins: any = 0;
     let notificationGeoSurfing: any = 0;
-    let haltDisableAccess:any=0;
+    let haltDisableAccess: any = 0;
     let userId: any = this.usrid;
     let name: any = $("#name").val();
     let userType: any = $("#userType").val();
@@ -262,21 +204,13 @@ export class UserAddComponent implements OnInit {
     }
     let element = <HTMLInputElement>document.getElementById("notificationHalt");
     if (element.checked == true) notificationHalt = 1;
-    element = <HTMLInputElement>(
-      document.getElementById("notificationMobileDataOff")
-    );
+    element = <HTMLInputElement>(document.getElementById("notificationMobileDataOff"));
     if (element.checked == true) notificationMobileDataOff = 1;
-    element = <HTMLInputElement>(
-      document.getElementById("notificationSkippedLines")
-    );
+    element = <HTMLInputElement>(document.getElementById("notificationSkippedLines"));
     if (element.checked == true) notificationSkippedLines = 1;
-    element = <HTMLInputElement>(
-      document.getElementById("notificationPickDustbins")
-    );
+    element = <HTMLInputElement>(document.getElementById("notificationPickDustbins"));
     if (element.checked == true) notificationPickDustbins = 1;
-    element = <HTMLInputElement>(
-      document.getElementById("notificationGeoSurfing")
-    );
+    element = <HTMLInputElement>(document.getElementById("notificationGeoSurfing"));
     if (element.checked == true) notificationGeoSurfing = 1;
     element = <HTMLInputElement>document.getElementById("isTaskManager");
     if (element.checked == true) isTaskManager = 1;
@@ -300,7 +234,7 @@ export class UserAddComponent implements OnInit {
       notificationGeoSurfing: notificationGeoSurfing,
       officeAppUserId: officeAppUserId,
       isTaskManager: isTaskManager,
-      haltDisableAccess:haltDisableAccess
+      haltDisableAccess: haltDisableAccess
     };
 
     if (id != null) {
@@ -323,10 +257,7 @@ export class UserAddComponent implements OnInit {
 
   chkEmail() {
     if (this.validateEmail($("#email").val()) == false) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please Enter Valid Email ID !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please Enter Valid Email ID !!!");
       return;
     }
   }
@@ -335,10 +266,7 @@ export class UserAddComponent implements OnInit {
     let mobileValue = $("#mobile").val();
     if (mobileValue.toString().length != 10) {
       if (this.validateEmail($("#email").val()) == false) {
-        this.commonService.setAlertMessage(
-          "error",
-          "Please Enter Valid Mobile N0. !!!"
-        );
+        this.commonService.setAlertMessage("error", "Please Enter Valid Mobile N0. !!!");
         return;
       }
     }

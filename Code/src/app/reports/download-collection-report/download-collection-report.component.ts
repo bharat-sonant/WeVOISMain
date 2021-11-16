@@ -52,27 +52,18 @@ export class DownloadCollectionReportComponent {
   polylines = [];
   partailDoneCount: number;
   reportImages: any[];
-  constructor(
-    public fs: FirebaseService,
-    private mapService: MapService,
-    private commonService: CommonService,
-    private httpService: HttpClient,
-    private toastr: ToastrService
-  ) {}
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
 
   reportCount: number;
-db:any;
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.progress = 0;
     this.getZoneList();
     this.reportImages = [];
-    //this.selectedDate = "2019-07-20";
-    //this.prepareReport();
   }
 
   setDate(filterVal: any) {
@@ -140,225 +131,133 @@ db:any;
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-
-    this.db
-      .object("Defaults/KmlBoundary/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((wardPath) => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map,
-        });
-      });
+    this.commonService.setKML(this.selectedZone, this.map);
   }
 
   drawZoneAllLines() {
-    let wardLines = this.db
-      .object("Defaults/WardLines/" + this.selectedZone)
-      .valueChanges()
-      .subscribe((zoneLine) => {
-        for (let i = 1; i < 10000; i++) {
-          var line = zoneLine[i];
-          if (line == undefined) {
-            break;
-          }
-
-          var path = [];
-          for (let j = 0; j < line.points.length; j++) {
-            path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-          }
-
-          this.allLines.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+    let wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
+      for (let i = 1; i < 10000; i++) {
+        var line = zoneLine[i];
+        if (line == undefined) {
+          break;
         }
 
-        this.drawRealTimePloylines();
-      });
+        var path = [];
+        for (let j = 0; j < line.points.length; j++) {
+          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
+        }
+
+        this.allLines.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+      }
+
+      this.drawRealTimePloylines();
+    });
   }
 
   drawRealTimePloylines() {
     this.currentYear = this.selectedDate.split("-")[0];
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
 
-    let dbPathLineCompleted =
-      "WasteCollectionInfo/" +
-      this.selectedZone +
-      "/" +
-      this.currentYear +
-      "/" +
-      this.currentMonthName +
-      "/" +
-      this.selectedDate +
-      "/LineStatus";
+    let dbPathLineCompleted = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
 
-    let lineCompletedRecords = this.db
-      .object(dbPathLineCompleted)
-      .valueChanges()
-      .subscribe((data) => {
-        if (data != null) {
-          for (let index = 1; index <= this.allLines.length; index++) {
-            if (data[index] != undefined) {
-              let lineData = this.allLines.find((item) => item.lineNo == index);
-              if (data[index]["Status"] != "undefined") {
-                lineData.color = this.setLineColor(data, index);
-                this.setStatusCounts(data, index);
-              }
+    let lineCompletedRecords = this.db.object(dbPathLineCompleted).valueChanges().subscribe((data) => {
+      if (data != null) {
+        for (let index = 1; index <= this.allLines.length; index++) {
+          if (data[index] != undefined) {
+            let lineData = this.allLines.find((item) => item.lineNo == index);
+            if (data[index]["Status"] != "undefined") {
+              lineData.color = this.setLineColor(data, index);
+              this.setStatusCounts(data, index);
             }
           }
         }
+      }
 
-        for (let index = 0; index < this.polylines.length; index++) {
-          this.polylines[index].setMap(null);
-        }
+      for (let index = 0; index < this.polylines.length; index++) {
+        this.polylines[index].setMap(null);
+      }
 
-        this.polylines = [];
+      this.polylines = [];
 
-        for (let index = 0; index < this.allLines.length; index++) {
-          let lineData = this.allLines.find((item) => item.lineNo == index + 1);
-          let line = new google.maps.Polyline({
-            path: lineData.latlng,
-            strokeColor: lineData.color,
-            strokeWeight: 2,
-          });
+      for (let index = 0; index < this.allLines.length; index++) {
+        let lineData = this.allLines.find((item) => item.lineNo == index + 1);
+        let line = new google.maps.Polyline({
+          path: lineData.latlng,
+          strokeColor: lineData.color,
+          strokeWeight: 2,
+        });
 
-          this.polylines.push(line);
-          this.totalLineCount++;
-        }
+        this.polylines.push(line);
+        this.totalLineCount++;
+      }
 
-        for (let index = 0; index < this.polylines.length; index++) {
-          this.polylines[index].setMap(this.map);
-        }
+      for (let index = 0; index < this.polylines.length; index++) {
+        this.polylines[index].setMap(this.map);
+      }
 
-        lineCompletedRecords.unsubscribe();
+      lineCompletedRecords.unsubscribe();
 
-        this.getWardAssignmentInformation();
-      });
+      this.getWardAssignmentInformation();
+    });
   }
 
   getWardAssignmentInformation() {
     this.currentYear = this.selectedDate.split("-")[0];
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
 
     if (new Date(this.selectedDate) < new Date("2019-08-01")) {
-      let driverDataDbPath =
-        "WasteCollectionInfo/" +
-        this.selectedZone +
-        "/" +
-        this.currentYear +
-        "/" +
-        this.currentMonthName +
-        "/" +
-        this.selectedDate +
-        "/DriverData";
-      let driverInfo = this.db
-        .object(driverDataDbPath)
-        .valueChanges()
-        .subscribe((driverData) => {
-          // Set Driver details
-          this.reportData.driverName =
-            driverData != null ? driverData["dName"] : "Not Assigned";
-          this.reportData.vehicleNo =
-            driverData != null ? driverData["vNo"] : "Not Assigned";
+      let driverDataDbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/DriverData";
+      let driverInfo = this.db.object(driverDataDbPath).valueChanges().subscribe((driverData) => {
+        // Set Driver details
+        this.reportData.driverName = driverData != null ? driverData["dName"] : "Not Assigned";
+        this.reportData.vehicleNo = driverData != null ? driverData["vNo"] : "Not Assigned";
 
-          driverInfo.unsubscribe();
+        driverInfo.unsubscribe();
 
-          let ReaderDataPath =
-            "WasteCollectionInfo/" +
-            this.selectedZone +
-            "/" +
-            this.selectedDate +
-            "/ReaderData";
-          let readerInfo = this.db
-            .object(ReaderDataPath)
-            .valueChanges()
-            .subscribe((readerData) => {
-              // Set Driver helper Details
-              this.reportData.helperName =
-                readerData != null ? readerData["dName"] : "Not Assigned";
-              this.reportData.zoneName = this.selectedZoneName;
-              this.reportData.reportDate = this.selectedDate;
+        let ReaderDataPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedDate + "/ReaderData";
+        let readerInfo = this.db.object(ReaderDataPath).valueChanges().subscribe((readerData) => {
+          // Set Driver helper Details
+          this.reportData.helperName =
+            readerData != null ? readerData["dName"] : "Not Assigned";
+          this.reportData.zoneName = this.selectedZoneName;
+          this.reportData.reportDate = this.selectedDate;
 
-              this.drawChart();
-              readerInfo.unsubscribe();
-            });
+          this.drawChart();
+          readerInfo.unsubscribe();
         });
+      });
     } else {
-      let workDetailsPath =
-        "WasteCollectionInfo/" +
-        this.selectedZone +
-        "/" +
-        this.currentYear +
-        "/" +
-        this.currentMonthName +
-        "/" +
-        this.selectedDate +
-        "/WorkerDetails";
+      let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/WorkerDetails";
 
-      let workDetails = this.db
-        .object(workDetailsPath)
-        .valueChanges()
-        .subscribe((workerData) => {
-          if (workerData != null) {
-            let driverPath =
-              "Employees/" + workerData["driver"] + "/GeneralDetails";
+      let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
+        workDetails.unsubscribe();
+        if (workerData != null) {
+          this.commonService.getEmplyeeDetailByEmployeeId(workerData["driver"]).then((employee) => {
+            this.reportData.driverName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+          });
 
-            let driver = this.db
-              .object(driverPath)
-              .valueChanges()
-              .subscribe((driverData) => {
-                let helperPath =
-                  "Employees/" + workerData["helper"] + "/GeneralDetails";
+          this.commonService.getEmplyeeDetailByEmployeeId(workerData["helper"]).then((employee) => {
+            this.reportData.helperName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+          });
+          this.reportData.vehicleNo = workerData != null ? workerData["vehicle"] : "Not Assigned";
+          this.reportData.zoneName = this.selectedZoneName;
+          this.reportData.reportDate = this.selectedDate;
+          this.drawChart();
 
-                let helper = this.db
-                  .object(helperPath)
-                  .valueChanges()
-                  .subscribe((helperData) => {
-                    let helperName;
-                    if (helperData == null) {
-                      helperName = "Not Assigned";
-                    } else {
-                      helperName = helperData["name"];
-                      if (helperName == null) {
-                        helperName = "Not Assigned";
-                      }
-                    }
-
-                    this.reportData.driverName =
-                      driverData != null
-                        ? driverData["name"].toUpperCase()
-                        : "Not Assigned";
-                    this.reportData.helperName =
-                      helperData != null
-                        ? helperName.toUpperCase()
-                        : "Not Assigned";
-                    this.reportData.vehicleNo =
-                      workerData != null
-                        ? workerData["vehicle"]
-                        : "Not Assigned";
-                    this.reportData.zoneName = this.selectedZoneName;
-                    this.reportData.reportDate = this.selectedDate;
-                    this.drawChart();
-                  });
-              });
-          } else {
-            this.reportData.driverName = "Not Assigned";
-            this.reportData.helperName = "Not Assigned";
-            this.reportData.vehicleNo = "Not Assigned";
-            this.reportData.zoneName = this.selectedZoneName;
-            this.reportData.reportDate = this.selectedDate;
-            this.drawChart();
-          }
-        });
+        } else {
+          this.reportData.driverName = "Not Assigned";
+          this.reportData.helperName = "Not Assigned";
+          this.reportData.vehicleNo = "Not Assigned";
+          this.reportData.zoneName = this.selectedZoneName;
+          this.reportData.reportDate = this.selectedDate;
+          this.drawChart();
+        }
+      });
     }
   }
 
   drawChart() {
-    let pending =
-      this.totalLineCount -
-      (this.completeCount + this.skipCount + this.partailDoneCount);
+    let pending = this.totalLineCount - (this.completeCount + this.skipCount + this.partailDoneCount);
 
     let chart = new CanvasJS.Chart("chartContainer", {
       animationEnabled: true,
@@ -467,25 +366,12 @@ db:any;
   }
 
   downloadPDFReport() {
-    let pdf = new jspdf({
-      orientation: "landscape",
-      unit: "mm",
-      format: [850, 550],
-    });
+    let pdf = new jspdf({ orientation: "landscape", unit: "mm", format: [850, 550], });
 
     var position = 0;
 
     for (let index = 0; index < this.reportImages.length; index++) {
-      pdf.addImage(
-        this.reportImages[index]["name"],
-        "PNG",
-        0,
-        position,
-        pdf.internal.pageSize.getWidth(),
-        pdf.internal.pageSize.getHeight(),
-        this.zoneList[index],
-        "FAST"
-      );
+      pdf.addImage(this.reportImages[index]["name"], "PNG", 0, position, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight(), this.zoneList[index], "FAST");
 
       if (index != this.reportImages.length - 1) {
         pdf.addPage();

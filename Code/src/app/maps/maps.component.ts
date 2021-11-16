@@ -84,7 +84,7 @@ export class MapsComponent {
   skipLineList: any[];
   mapRefrence: any;
   completedLines: any;
-
+  instancesList: any[];
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -108,10 +108,10 @@ export class MapsComponent {
   };
 
   ngOnInit() {
+    this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(this.cityName);
-
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.toDayDate);
@@ -345,16 +345,13 @@ export class MapsComponent {
   getWardData() {
     this.setDefaultWard();
     if (this.selectedDate == this.toDayDate) {
-
       this.showVehicleMovement();
     }
     this.getWardLines();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
-
     this.getParshadHouse();
-
   }
 
   setDate(filterVal: any, type: string) {
@@ -390,14 +387,11 @@ export class MapsComponent {
     this.selectedZone = this.activeZone;
     this.setDateFilterDefault();
     if (this.selectedDate == this.toDayDate) {
-
       this.showVehicleMovement();
-
     } else {
       this.marker.setMap(null);
     }
     this.getWardLines();
-    //this.getAllLinesFromJson();
     this.getProgressDetail();
     this.getEmployeeData();
   }
@@ -440,12 +434,7 @@ export class MapsComponent {
   }
 
   setKml() {
-    this.db.object("Defaults/KmlBoundary/" + this.selectedZone).valueChanges().subscribe((wardPath) => {
-      this.zoneKML = new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: this.map,
-      });
-    });
+    this.commonService.setKML(this.selectedZone, this.map);
   }
 
   showVehicleMovement() {
@@ -455,6 +444,7 @@ export class MapsComponent {
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != undefined) {
+        this.instancesList.push({ instances: this.vehicleLocationInstance });
         dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
         let statusInstance = this.db.object(dbPath).valueChanges().subscribe((statusData) => {
           statusInstance.unsubscribe();
@@ -481,17 +471,14 @@ export class MapsComponent {
     });
   }
 
-
   getWardLines() {
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-
     let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         if (data != null) {
           lineMapRefrenceInstance.unsubscribe();
           this.mapRefrence = data.toString();
           dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-
           let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
             wardLineCount.unsubscribe();
             if (lineCount != null) {
@@ -515,7 +502,6 @@ export class MapsComponent {
       }
     );
   }
-
 
   getAllLinesFromJson() {
     this.completedLines = 0;
@@ -577,12 +563,10 @@ export class MapsComponent {
     }
   }
 
-
-
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
-      //lineStatus.unsubscribe();
+      this.instancesList.push({ instances: lineStatus });
       this.wardLineInstanceList.push({ lineStatus });
       if (this.selectedDate != this.toDayDate) {
         lineStatus.unsubscribe();
@@ -608,7 +592,6 @@ export class MapsComponent {
         this.polylines[index].setMap(this.map);
 
         let userType = localStorage.getItem("userType");
-        // if (this.isWardLines == true) {
         if (userType == "Internal User") {
           let lat = latlng[0]["lat"];
           let lng = latlng[0]["lng"];
@@ -635,10 +618,10 @@ export class MapsComponent {
             this.isWardLines = false;
           }
         }
-        //}
       }
     });
   }
+
   getParshadHouse() {
     let dbPath = "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
@@ -661,7 +644,6 @@ export class MapsComponent {
             scaledSize: new google.maps.Size(45, 30),
           },
         });
-        // this.wardDefaultMarkers.push({ marker });
       }
     });
   }
@@ -671,9 +653,7 @@ export class MapsComponent {
     let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
       wardLengthDetails.unsubscribe();
       if (wardLengthData != null) {
-        this.progressData.wardLength = (
-          parseFloat(wardLengthData.toString()) / 1000
-        ).toFixed(2);
+        this.progressData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
       } else {
         this.progressData.wardLength = "0.00";
       }
@@ -689,6 +669,7 @@ export class MapsComponent {
     }
     if (this.selectedDate == this.toDayDate) {
       this.lastLineInstance = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
+        this.instancesList.push({ instances: this.lastLineInstance });
         if (lastLine != null) {
           this.progressData.currentLine = Number(lastLine) + 1;
         }
@@ -698,6 +679,7 @@ export class MapsComponent {
       totalLineData.unsubscribe();
       let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
       this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
+        this.instancesList.push({ instances: this.workerDetails });
         if (workerData != null) {
           // if (workerData["completedLines"] != null) {
           //   this.progressData.completedLines = workerData["completedLines"];
@@ -715,9 +697,7 @@ export class MapsComponent {
             this.progressData.workPercentage = "0%";
           }
           if (workerData["wardCoveredDistance"] != null) {
-            this.progressData.coveredLength = (
-              parseFloat(workerData["wardCoveredDistance"]) / 1000
-            ).toFixed(2);
+            this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
           } else {
             this.progressData.coveredLength = "0.00";
           }
@@ -739,7 +719,6 @@ export class MapsComponent {
     let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
       workDetails.unsubscribe();
-
       if (workerData != undefined) {
         let driverList = workerData["driver"].toString().split(",");
         let helperList = workerData["helper"].toString().split(",");
@@ -922,7 +901,7 @@ export class MapsComponent {
         houseInstance.unsubscribe();
         if (houseData.length > 0) {
           this.totalWardHouse = Number(this.totalWardHouse) + houseData.length;
-         // console.log(houseData.length);
+          // console.log(houseData.length);
           for (let j = 0; j < houseData.length; j++) {
             if (houseData[j]["latLng"] != null) {
               let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[0];
@@ -977,7 +956,7 @@ export class MapsComponent {
                   });
                 }
               }
-              
+
               setTimeout(() => {
                 this.progressData.houses = this.totalWardHouse;
               }, 1500);
@@ -994,7 +973,7 @@ export class MapsComponent {
     this.progressData.cardNotScaned = 0;
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/ImagesData";
     this.notScanInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      // notScanInstance.unsubscribe();
+      this.instancesList.push({ instances: this.notScanInstance });
       if (this.selectedDate != this.toDayDate) {
         this.notScanInstance.unsubscribe();
       }
@@ -1040,7 +1019,7 @@ export class MapsComponent {
       this.progressData.cardNotScaned = 0;
       let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/ImagesData";
       this.notScanInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
-        // notScanInstance.unsubscribe();
+        this.instancesList.push({ instances: this.notScanInstance });
         if (this.selectedDate != this.toDayDate) {
           this.notScanInstance.unsubscribe();
         }
@@ -1066,9 +1045,10 @@ export class MapsComponent {
   getScanedCard(cardNo: any, markerType: any) {
     let scanCardPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + cardNo + "/scanBy";
     let scanInfo = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
+      scanInfo.unsubscribe();
       let houseDetails = this.houseList.find((item) => item.cardNo == cardNo);
       if (houseDetails != undefined) {
-        scanInfo.unsubscribe();
+
         if (this.showAllScanedCard == true) {
           if (scanBy != undefined) {
             this.progressData.scanedHouses =
@@ -1099,6 +1079,7 @@ export class MapsComponent {
   getRecentCardDetail() {
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/recentScanned";
     this.cardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      this.instancesList.push({ instances: this.cardInstance });
       if (this.selectedDate != this.toDayDate) {
         this.cardInstance.unsubscribe();
       }
@@ -1124,7 +1105,6 @@ export class MapsComponent {
 
   setMarkerCurrent(cardNo: any) {
     let element = <HTMLInputElement>document.getElementById("isHouse");
-
     if (this.currentMarker != null) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
         if (this.houseMarkerList[i]["cardNo"] == this.currentMarker) {
@@ -1136,8 +1116,7 @@ export class MapsComponent {
             cardDetail.markerType = "green";
             cardDetail.isActive = false;
             if (element.checked == true) {
-              let imgUrl =
-                "../assets/img/" + cardDetail.markerType + "-home.png";
+              let imgUrl = "../assets/img/" + cardDetail.markerType + "-home.png";
 
               let marker = new google.maps.Marker({
                 position: {
@@ -1218,13 +1197,8 @@ export class MapsComponent {
             );
             if (timeDiff < 3) {
               time = time.split(":")[0] + ":" + time.split(":")[1];
-              let message =
-                name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
-              this.commonService.setAlertMessageWithLeftPosition(
-                "success",
-                message,
-                "alert alert-houses "
-              );
+              let message = name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
+              this.commonService.setAlertMessageWithLeftPosition("success", message, "alert alert-houses ");
             }
           }
         });
@@ -1279,13 +1253,8 @@ export class MapsComponent {
           height = (windowHeight * 90) / 100;
           let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
           let divHeight = height - 50 + "px";
-          $("div .modal-content")
-            .parent()
-            .css("max-width", "" + width + "px")
-            .css("margin-top", marginTop);
-          $("div .modal-content")
-            .css("height", height + "px")
-            .css("width", "" + width + "px");
+          $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+          $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
           $("div .modal-dialog-centered").css("margin-top", marginTop);
           $("#divStatus").css("height", divHeight);
         }
@@ -1294,7 +1263,14 @@ export class MapsComponent {
         }
       }
     );
+  }
 
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 }
 

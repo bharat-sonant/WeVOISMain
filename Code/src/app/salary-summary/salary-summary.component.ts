@@ -16,11 +16,7 @@ import * as CanvasJS from "../../assets/canvasjs.min";
   styleUrls: ["./salary-summary.component.scss"],
 })
 export class SalarySummaryComponent implements OnInit {
-  constructor(
-    public fs: FirebaseService,
-    private commonService: CommonService,
-    private modalService: NgbModal
-  ) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedDate: any;
   currentMonth: any;
@@ -28,9 +24,9 @@ export class SalarySummaryComponent implements OnInit {
   currentDate: any;
   monthSalaryList: any[] = [];
   yearList: any;
-
+  cityName: any;
   public selectedYear: any;
-db:any;
+  db: any;
   monthSalaryListShow: any[] = [];
   salaryData: salaryDetail = {
     totalSalary: "0.00",
@@ -38,15 +34,11 @@ db:any;
   };
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.currentDate = this.commonService.setTodayDate();
-    this.currentMonth = this.commonService.getCurrentMonthName(
-      new Date(this.currentDate).getMonth()
-    );
+    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.currentDate).getMonth());
     this.currentYear = new Date().getFullYear();
     this.getYear();
     this.getLastUpdate();
@@ -59,15 +51,12 @@ db:any;
 
   getLastUpdate() {
     let dbPath = "FinanceSummary/Salary/lastUpdateDate";
-    let lastUpdateInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        lastUpdateInstance.unsubscribe();
-        if (data != null) {
-          this.salaryData.lastUpdateTime = data.toString();
-        }
-      });
+    let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      lastUpdateInstance.unsubscribe();
+      if (data != null) {
+        this.salaryData.lastUpdateTime = data.toString();
+      }
+    });
   }
 
   getYear() {
@@ -95,28 +84,18 @@ db:any;
         salary: "0.00",
       });
 
-      let dbPath =
-        "FinanceSummary/Salary/" +
-        this.selectedYear +
-        "/" +
-        monthName +
-        "/salary";
-      let salaryInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          salaryInstance.unsubscribe();
-          if (data != null) {
-            let monthDetail = this.monthSalaryList.find(
-              (item) => item.id === i
-            );
-            if (monthDetail != undefined) {
-              monthDetail.salary = Number(data).toFixed(2);
-            }
-          } else {
-            // this.getCurrentMonthSalary(i, monthName);
+      let dbPath = "FinanceSummary/Salary/" + this.selectedYear + "/" + monthName + "/salary";
+      let salaryInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        salaryInstance.unsubscribe();
+        if (data != null) {
+          let monthDetail = this.monthSalaryList.find((item) => item.id === i);
+          if (monthDetail != undefined) {
+            monthDetail.salary = Number(data).toFixed(2);
           }
-        });
+        } else {
+          // this.getCurrentMonthSalary(i, monthName);
+        }
+      });
     }
   }
 
@@ -127,14 +106,9 @@ db:any;
       let monthName = this.commonService.getCurrentMonthName(i - 1);
       this.getCurrentMonthSalary(i, monthName);
     }
-    let time =
-      new Date().toTimeString().split(" ")[0].split(":")[0] +
-      ":" +
-      new Date().toTimeString().split(" ")[0].split(":")[1];
+    let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
     let updateTime = this.currentDate + " " + time;
-    this.db
-      .object("FinanceSummary/Salary/")
-      .update({ lastUpdateDate: updateTime });
+    this.db.object("FinanceSummary/Salary/").update({ lastUpdateDate: updateTime });
     this.salaryData.lastUpdateTime = updateTime;
     setTimeout(() => {
       this.getMonthSalaryGraph();
@@ -153,11 +127,7 @@ db:any;
   }
 
   getCurrentMonthSalary(index: any, monthName: any) {
-    let days = new Date(
-      parseInt(this.selectedYear),
-      parseInt(index),
-      0
-    ).getDate();
+    let days = new Date(parseInt(this.selectedYear), parseInt(index), 0).getDate();
     let rowTo = days;
     if (index == Number(this.commonService.setTodayDate().split("-")[1])) {
       rowTo = parseInt(this.commonService.setTodayDate().split("-")[2]);
@@ -165,53 +135,25 @@ db:any;
 
     let monthSalary = 0;
     for (let i = 1; i <= rowTo; i++) {
-      let monthDate =
-        this.selectedYear +
-        "-" +
-        (index < 10 ? "0" : "") +
-        index +
-        "-" +
-        (i < 10 ? "0" : "") +
-        i;
-      let dbPath =
-        "DailyWorkDetail/" +
-        this.selectedYear +
-        "/" +
-        monthName +
-        "/" +
-        monthDate;
-      let monthSalaryInfo = this.db
-        .list(dbPath)
-        .valueChanges()
-        .subscribe((salaryData) => {
-          if (salaryData != null) {
-            for (let j = 0; j < salaryData.length; j++) {
-              if (salaryData[j]["today-wages"] != null) {
-                monthSalary += parseFloat(salaryData[j]["today-wages"]);
-              }
+      let monthDate = this.selectedYear + "-" + (index < 10 ? "0" : "") + index + "-" + (i < 10 ? "0" : "") + i;
+      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/" + monthDate;
+      let monthSalaryInfo = this.db.list(dbPath).valueChanges().subscribe((salaryData) => {
+        if (salaryData != null) {
+          for (let j = 0; j < salaryData.length; j++) {
+            if (salaryData[j]["today-wages"] != null) {
+              monthSalary += parseFloat(salaryData[j]["today-wages"]);
             }
-            if (i == rowTo) {
-              let monthDetail = this.monthSalaryList.find(
-                (item) => item.id === index
-              );
-              if (monthDetail != undefined) {
-                monthDetail.salary = monthSalary.toFixed(2);
-              }
-            }
-            this.db
-              .object(
-                "FinanceSummary/Salary/" +
-                this.selectedYear +
-                "/" +
-                monthName +
-                ""
-              )
-              .update({
-                salary: monthSalary,
-              });
           }
-          monthSalaryInfo.unsubscribe();
-        });
+          if (i == rowTo) {
+            let monthDetail = this.monthSalaryList.find((item) => item.id === index);
+            if (monthDetail != undefined) {
+              monthDetail.salary = monthSalary.toFixed(2);
+            }
+          }
+          this.db.object("FinanceSummary/Salary/" + this.selectedYear + "/" + monthName + "").update({ salary: monthSalary, });
+        }
+        monthSalaryInfo.unsubscribe();
+      });
     }
   }
 
@@ -221,10 +163,7 @@ db:any;
       for (let index = 0; index < this.monthSalaryList.length; index++) {
         chartData.push({
           y: parseFloat(this.monthSalaryList[index]["salary"]),
-          label:
-            this.monthSalaryList[index]["month"] +
-            " " +
-            this.monthSalaryList[index]["year"],
+          label: this.monthSalaryList[index]["month"] + " " + this.monthSalaryList[index]["year"],
         });
       }
       this.drawChartCurrentDay(chartData);
@@ -236,7 +175,7 @@ db:any;
       animationEnabled: true,
       theme: "light2", // "light1", "light2", "dark1", "dark2"
       axisY: {
-       // title: "Salary (in month)",
+        // title: "Salary (in month)",
         titleFontSize: 20,
         labelFontSize: 12,
       },

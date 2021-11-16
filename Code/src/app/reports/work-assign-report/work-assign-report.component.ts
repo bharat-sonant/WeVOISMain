@@ -17,10 +17,12 @@ export class WorkAssignReportComponent implements OnInit {
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
-  db:any;
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
@@ -35,6 +37,7 @@ export class WorkAssignReportComponent implements OnInit {
     let dbPath = "WhoAssignWork/" + year + "/" + monthName + "/" + this.selectedDate;
     let workData = this.db.object(dbPath).valueChanges().subscribe(
       Data => {
+        workData.unsubscribe();
         var keyArray = Object.keys(Data);
         for (let index = 0; index < keyArray.length; index++) {
           let empId = keyArray[index];
@@ -45,32 +48,23 @@ export class WorkAssignReportComponent implements OnInit {
             for (let i = 0; i < assignedList.length; i++) {
               if (assignedList[i] != null) {
                 if (detail == "") {
-                  detail ="<b>"+ i+".</b> Work assigned for " + assignedList[i]["task"] + " at " + assignedList[i]["time"];
+                  detail = "<b>" + i + ".</b> Work assigned for " + assignedList[i]["task"] + " at " + assignedList[i]["time"];
                 }
                 else {
-                  detail = detail + "<br/><b>" + i+".</b> Work assigned for " + assignedList[i]["task"] + " at " + assignedList[i]["time"];
+                  detail = detail + "<br/><b>" + i + ".</b> Work assigned for " + assignedList[i]["task"] + " at " + assignedList[i]["time"];
                 }
               }
             }
             this.workList[index]["detail"] = detail;
-            dbPath = "Employees/"+empId+"/GeneralDetails/name";
-            let employeeData = this.db.object(dbPath).valueChanges().subscribe(
-              empData => {
-                if(empData!=null)
-                {
-                  let workDetails = this.workList.find(item => item.empId == empId);
-                  if (workDetails != undefined) {
-                    workDetails.name=empData;
-                  }
-                }
 
-
-                employeeData.unsubscribe();
-
-              });
+            this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+              let workDetails = this.workList.find(item => item.empId == empId);
+              if (workDetails != undefined) {
+                workDetails.name = employee["name"];
+              }
+            });
           }
         }
-        workData.unsubscribe();
       });
   }
 

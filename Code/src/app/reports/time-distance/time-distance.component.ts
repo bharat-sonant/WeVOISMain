@@ -43,7 +43,7 @@ export class TimeDistanceComponent implements OnInit {
   maxDistance: any[];
   days: number;
 
- 
+
   graphHeaderData: graphHeaders =
     {
       date: '',
@@ -88,13 +88,14 @@ export class TimeDistanceComponent implements OnInit {
   public stepSize: number;
 
   endInterval: any;
-  db:any;
-
+  db: any;
+  cityName: any;
   constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.todayDate = this.commonService.setTodayDate();
     this.zoneList = this.mapService.getZones(this.todayDate);
     this.zoneList.splice(0, 1);
@@ -116,7 +117,7 @@ export class TimeDistanceComponent implements OnInit {
 
         if (data.length > 0) {
           $("#divNoRecord").hide();
-          
+
           this.getGrpahDataTodayAndLastFiveDays(15);
         } else {
           $("#divNoRecord").show();
@@ -173,7 +174,7 @@ export class TimeDistanceComponent implements OnInit {
   getData(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
 
     let dbPath = 'WasteCollectionInfo/' + this.activeZone + '/' + date + '/LineStatus';
-   
+
     let wardLineData = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         let lineCompleted = 0;
@@ -253,7 +254,7 @@ export class TimeDistanceComponent implements OnInit {
           this.maxDistance.push(Math.max.apply(null, distanceCollection));
 
           let wardLines = this.db.object('WardLines/' + this.activeZone).valueChanges().subscribe(
-            lines => {           
+            lines => {
               if (this.days == 2) {
                 this.graphHeaderData.workprogress = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
               }
@@ -290,7 +291,7 @@ export class TimeDistanceComponent implements OnInit {
           if (this.days == 5) {
             this.getData(interval, this.time4, this.distance4, this.getFormattedDate(Number(this.days) - 1));
           }
-          
+
 
         } else {
           this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));

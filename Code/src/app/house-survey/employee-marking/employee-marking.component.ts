@@ -322,12 +322,8 @@ export class EmployeeMarkingComponent implements OnInit {
     }
     if (id == "0") {
       if (this.userList.length > 0) {
-        this.userList = this.commonService.transformString(
-          this.userList,
-          "empId"
-        );
-        this.lastEmpId =
-          Number(this.userList[this.userList.length - 1]["empId"]) + 1;
+        this.userList = this.commonService.transformString(this.userList, "empId");
+        this.lastEmpId = Number(this.userList[this.userList.length - 1]["empId"]) + 1;
       }
 
       let dbPath = "EntityMarkingData/MarkerAppAccess/" + this.lastEmpId;

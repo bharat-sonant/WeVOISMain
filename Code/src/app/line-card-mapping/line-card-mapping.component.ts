@@ -42,6 +42,7 @@ export class LineCardMappingComponent {
   isFirst = true;
   previousLine: any;
   db: any;
+  cityName: any;
   cardDetails: CardDetails = {
     mobile: "",
     address: "",
@@ -61,8 +62,9 @@ export class LineCardMappingComponent {
   };
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();
@@ -300,12 +302,7 @@ export class LineCardMappingComponent {
           const cardNo = keyArray[index];
           let cardData = data[cardNo];
           if (cardData["latLng"] != undefined) {
-            let latLng = cardData["latLng"]
-              .toString()
-              .replace("(", "")
-              .replace(")", "")
-              .split(",");
-
+            let latLng = cardData["latLng"].toString().replace("(", "").replace(")", "").split(",");
             let url = "../assets/img/red-home.png";
             if (cardData["phaseNo"] == "1") {
               url = "../assets/img/blue-home.png";

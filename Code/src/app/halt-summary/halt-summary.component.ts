@@ -46,7 +46,7 @@ export class HaltSummaryComponent implements OnInit {
   halperSalary: any;
   totalSalary: any;
   db: any;
-
+  instancesList: any[];
   public map: google.maps.Map;
   marker = new google.maps.Marker();
   public bounds: any;
@@ -133,6 +133,7 @@ export class HaltSummaryComponent implements OnInit {
     };
 
   ngOnInit() {
+    this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -165,6 +166,7 @@ export class HaltSummaryComponent implements OnInit {
     let dbPath = "Settings/Salary";
     let salaryData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.instancesList.push({ instances: salaryData });
         this.driveySalary = data["driver_salary_per_hour"];
         this.halperSalary = data["helper_salary_per_hour"];
         this.totalSalary = parseFloat(this.driveySalary) + parseFloat(this.halperSalary);
@@ -196,24 +198,17 @@ export class HaltSummaryComponent implements OnInit {
     this.haltDataShow.monthPercent = this.haltData.monthPercent;
     this.haltDataShow.monthProfitLose = this.haltData.monthProfitLose;
     this.haltDataShow.monthSalary = this.haltData.monthSalary;
-
     this.setProfitLose();
-
   }
-
 
   getHaltDataRealTime() {
-
     let toDayHaltInfoPath = 'HaltInfo';
-
     let haltInfoData = this.db.object(toDayHaltInfoPath).valueChanges().subscribe(
       haltData => {
+        this.instancesList.push({ instances: haltInfoData });
         this.getHaltDataToday();
       });
-
   }
-
-
 
   getHaltDataToday() {
     let halt = 0;
@@ -230,11 +225,8 @@ export class HaltSummaryComponent implements OnInit {
       let monthName = this.commonService.getCurrentMonthName(new Date(haltDate).getMonth());
 
       let toDayHaltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
-
       let haltInfoData = this.db.list(toDayHaltInfoPath).valueChanges().subscribe(
         haltData => {
-
-
           if (haltData.length > 0) {
             for (let index = 0; index < haltData.length; index++) {
               if (haltData[index]["haltType"] != "network-off") {
@@ -271,14 +263,11 @@ export class HaltSummaryComponent implements OnInit {
           haltInfoData.unsubscribe();
         });
     }
-
   }
-
 
   getHaltDataMonth() {
     let monthHalt = 0;
     let monthHaltApproved = 0;
-
     for (let index = 1; index < this.zoneList.length; index++) {
       let ward = this.zoneList[index]["zoneNo"];
       let d = new Date();
@@ -292,7 +281,6 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
-
             if (haltMonthData.length > 0) {
               for (let index = 0; index < haltMonthData.length; index++) {
                 if (haltMonthData[index]["haltType"] != "network-off") {
@@ -317,11 +305,7 @@ export class HaltSummaryComponent implements OnInit {
             haltInfoMonthData.unsubscribe();
           });
       }
-
     }
-
-
-
   }
 
   getHaltDataWeek() {
@@ -334,9 +318,7 @@ export class HaltSummaryComponent implements OnInit {
       this.weekHaltList.push({ wDate: wDate, day: dayList, halt: "0", haltMin: 0, unApproved: "0", unApprovedMin: 0, approved: "0", approvedMin: 0, salary: "0", percent: "0", class: "fas fa-long-arrow-alt-down", percentUnApproved: "0", classUnApproved: "fas fa-long-arrow-alt-down", percentApproved: "0", classApproved: "fas fa-long-arrow-alt-down", percentSalary: "0", classSalary: "fas fa-long-arrow-alt-down" });
     }
 
-
     for (let i = 1; i <= 8; i++) {
-
       let lastDayHalt = 0;
       for (let index = 0; index < this.zoneList.length; index++) {
         let haltDate = this.commonService.getPreviousDate(this.currentDate, (i - 1));
@@ -398,17 +380,12 @@ export class HaltSummaryComponent implements OnInit {
                 if (this.weekHaltList[j]["day"] == dayf) {
                   this.weekHaltList[j]["haltMin"] = parseInt(this.weekHaltList[j]["haltMin"]) + totalHalt;
                   this.weekHaltList[j]["halt"] = (this.commonService.getHrs(parseInt(this.weekHaltList[j]["haltMin"])));
-
                   this.weekHaltList[j]["approvedMin"] = parseInt(this.weekHaltList[j]["approvedMin"]) + haltApproved1;
                   this.weekHaltList[j]["approved"] = (this.commonService.getHrs(parseInt(this.weekHaltList[j]["approvedMin"])));
-
                   this.weekHaltList[j]["unApprovedMin"] = parseInt(this.weekHaltList[j]["unApprovedMin"]) + haltUnApproved;
                   this.weekHaltList[j]["unApproved"] = (this.commonService.getHrs(parseInt(this.weekHaltList[j]["unApprovedMin"])));
                   this.weekHaltList[j]["salary"] = ((parseInt(this.weekHaltList[j]["approvedMin"]) / 60) * parseFloat(this.totalSalary)).toFixed(2);
-
-
                 }
-
               }
               if (i == 2) {
                 this.haltData.lastDaySalery = ((lastDayHalt) / 60 * parseFloat(this.totalSalary)).toFixed(2);
@@ -416,7 +393,6 @@ export class HaltSummaryComponent implements OnInit {
               this.haltData.weekSalary = ((haltApproved) / 60 * parseFloat(this.totalSalary)).toFixed(2);
               this.haltData.weekHalt = this.commonService.getHrs(halt);
               this.haltData.weekHaltApproved = this.commonService.getHrs(haltApproved);
-
             }
             haltInfoData.unsubscribe();
           });
@@ -425,10 +401,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   drawChartCurrentDay(chartData: any) {
-
-
     let chart = new CanvasJS.Chart("chartContainer", {
-
       animationEnabled: true,
       theme: "light2", // "light1", "light2", "dark1", "dark2"
       axisY: {
@@ -472,10 +445,7 @@ export class HaltSummaryComponent implements OnInit {
       let chartData = [];
       for (let i = 0; i < this.weekHaltList.length; i++) {
         let haltHour = this.weekHaltList[i]["approved"].toString().replace(":", ".");
-
         chartData.push({ y: parseFloat(haltHour), label: this.weekHaltList[i]["wDate"] });
-
-
       }
       this.drawChartCurrentDay(chartData);
     }
@@ -489,10 +459,8 @@ export class HaltSummaryComponent implements OnInit {
       for (let i = 7; i < 14; i++) {
         let haltDate = this.commonService.getPreviousDate(this.currentDate, i);
         let monthName = this.commonService.getCurrentMonthName(Number(haltDate.split('-')[1]) - 1);
-
         let year = haltDate.split("-")[0];
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
-
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             if (haltData.length > 0) {
@@ -514,7 +482,6 @@ export class HaltSummaryComponent implements OnInit {
               }
             }
             this.haltData.lastWeekSalary = ((haltApproved) / 60 * parseFloat(this.totalSalary)).toFixed(2);
-
             haltInfoData.unsubscribe();
           });
       }
@@ -537,7 +504,6 @@ export class HaltSummaryComponent implements OnInit {
         let monthDate = year + '-' + (monthPre < 10 ? '0' : '') + monthPre + '-' + (i < 10 ? '0' : '') + i;
         let fullMonth = this.commonService.getCurrentMonthName(new Date(monthDate).getMonth());
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + fullMonth + '/' + monthDate;
-
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
@@ -564,7 +530,6 @@ export class HaltSummaryComponent implements OnInit {
     }
   }
 
-
   setPerformar() {
     this.dailyPerformerList = [];
     this.dailyPerformer = [];
@@ -574,7 +539,6 @@ export class HaltSummaryComponent implements OnInit {
     this.monthPerformer = [];
     if (this.haltList.length > 0) {
       //Week halt performance
-
       for (let i = 0; i < this.haltList.length; i++) {
         if (this.haltList[i]["dayMin1"] != "0" && this.haltList[i]["dayMin2"] != "0" && this.haltList[i]["dayMin3"] != "0" && this.haltList[i]["dayMin4"] != "0" && this.haltList[i]["dayMin5"] != "0" && this.haltList[i]["dayMin6"] != "0" && this.haltList[i]["dayMin7"] != "0") {
           let weekHalt = parseInt(this.haltList[i]["dayMin1"]) + parseInt(this.haltList[i]["dayMin2"]) + parseInt(this.haltList[i]["dayMin3"]) + parseInt(this.haltList[i]["dayMin4"]) + parseInt(this.haltList[i]["dayMin5"]) + parseInt(this.haltList[i]["dayMin6"]) + parseInt(this.haltList[i]["dayMin7"]);
@@ -585,7 +549,6 @@ export class HaltSummaryComponent implements OnInit {
       this.weekPerformerList = this.commonService.transform(this.weekPerformerList, "haltMin");
       for (let i = 0; i < 5; i++) {
         this.weekPerformer.push({ driverName: this.weekPerformerList[i]["driverName"], halt: this.weekPerformerList[i]["halt"], driverName2: "", halt2: "0" });
-
       }
       let k = 0;
       for (let i = this.weekPerformerList.length - 1; i > this.weekPerformerList.length - 6; i--) {
@@ -604,14 +567,12 @@ export class HaltSummaryComponent implements OnInit {
       this.dailyPerformerList = this.commonService.transform(this.dailyPerformerList, "haltMin");
       for (let i = 0; i < 5; i++) {
         this.dailyPerformer.push({ driverName: this.dailyPerformerList[i]["driverName"], halt: this.dailyPerformerList[i]["halt"], driverName2: "", halt2: "0" });
-
       }
       k = 0;
       for (let i = this.dailyPerformerList.length - 1; i > this.dailyPerformerList.length - 6; i--) {
         this.dailyPerformer[k]["driverName2"] = this.dailyPerformerList[i]["driverName"];
         this.dailyPerformer[k]["halt2"] = this.dailyPerformerList[i]["halt"];
         k++;
-
       }
     }
   }
@@ -709,7 +670,6 @@ export class HaltSummaryComponent implements OnInit {
           this.weekHaltList[i]["classSalary"] = "fas fa-long-arrow-alt-up";
         }
       }
-
     }
   }
 
@@ -720,116 +680,109 @@ export class HaltSummaryComponent implements OnInit {
     let month = d.getMonth() + 1;
     let year = d.getFullYear();
     for (let i = 1; i < 8; i++) {
-
       let dataDate = this.commonService.getPreviousDate(this.currentDate, (i - 1));
-
       let monthName = this.commonService.getCurrentMonthName(new Date(dataDate).getMonth());
       let year = dataDate.split("-")[0];
-
       for (let index = 1; index < this.zoneList.length; index++) {
         let ward = this.zoneList[index]["zoneNo"];
         // Get Driver data
         let workerDataPath = 'WasteCollectionInfo/' + ward + '/' + dataDate + '/WorkerDetails';
-
         let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
           workerInfo => {
             if (workerInfo) {
+              this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["driver"]).then((employee) => {
 
-              let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-
-              let driver = this.db.object(driverPath).valueChanges().subscribe(
-                driverData => {
-                  let driverName = driverData["name"];
-                  if (this.haltList.length > 0) {
-                    let lineData = this.haltList.find(item => item.driverName == driverData["name"]);
-                    if (lineData == null) {
-                      this.haltList.push({ driverName: driverData != null ? (driverData["name"]) : "---", day1: "0", day2: "0", day3: "0", day4: "0", day5: "0", day6: "0", day7: "0", dayMin1: 0, dayMin2: 0, dayMin3: 0, dayMin4: 0, dayMin5: 0, dayMin6: 0, dayMin7: 0 })
-                    }
+                let driverName = employee["name"];
+                if (this.haltList.length > 0) {
+                  let lineData = this.haltList.find(item => item.driverName == employee["name"]);
+                  if (lineData == null) {
+                    this.haltList.push({ driverName: employee != null ? (employee["name"]) : "---", day1: "0", day2: "0", day3: "0", day4: "0", day5: "0", day6: "0", day7: "0", dayMin1: 0, dayMin2: 0, dayMin3: 0, dayMin4: 0, dayMin5: 0, dayMin6: 0, dayMin7: 0 })
                   }
-                  else {
-                    this.haltList.push({ driverName: driverData != null ? (driverData["name"]) : "---", day1: "0", day2: "0", day3: "0", day4: "0", day5: "0", day6: "0", day7: "0", dayMin1: 0, dayMin2: 0, dayMin3: 0, dayMin4: 0, dayMin5: 0, dayMin6: 0, dayMin7: 0 })
-                  }
-                  this.haltList = this.commonService.transform(this.haltList, "driverName");
-                  let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + dataDate;
-                  let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
-                    haltMonthData => {
-                      if (haltMonthData.length > 0) {
-                        let totalBreak = 0;
-                        for (let i = 0; i < haltMonthData.length; i++) {
-                          if (haltMonthData[i]["haltType"] != "network-off") {
-                            let duration = haltMonthData[i]["duration"] != undefined ? haltMonthData[i]["duration"] : 0;
-                            if (duration > this.minHalt) {
-                              if (haltMonthData[i]["canRemove"] != null) {
-                                if (haltMonthData[i]["canRemove"] == "yes") {
-                                  totalBreak += duration;
-                                }
-                              }
-                              else {
-                                totalBreak += duration;
-                              }
+                }
+                else {
+                  this.haltList.push({ driverName: employee != null ? (employee["name"]) : "---", day1: "0", day2: "0", day3: "0", day4: "0", day5: "0", day6: "0", day7: "0", dayMin1: 0, dayMin2: 0, dayMin3: 0, dayMin4: 0, dayMin5: 0, dayMin6: 0, dayMin7: 0 })
+                }
+                this.haltList = this.commonService.transform(this.haltList, "driverName");
+              let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + dataDate;
+              let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
+                haltMonthData => {
+                  if (haltMonthData.length > 0) {
+                    let totalBreak = 0;
+                    for (let i = 0; i < haltMonthData.length; i++) {
+                      if (haltMonthData[i]["haltType"] != "network-off") {
+                        let duration = haltMonthData[i]["duration"] != undefined ? haltMonthData[i]["duration"] : 0;
+                        if (duration > this.minHalt) {
+                          if (haltMonthData[i]["canRemove"] != null) {
+                            if (haltMonthData[i]["canRemove"] == "yes") {
+                              totalBreak += duration;
                             }
                           }
-                        }
-                        if (i == 1) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin1"] = parseInt(this.haltList[j]["dayMin1"]) + totalBreak;
-                              this.haltList[j]["day1"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin1"])));
-                            }
-                          }
-                        }
-                        if (i == 2) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin2"] = parseInt(this.haltList[j]["dayMin2"]) + totalBreak;
-                              this.haltList[j]["day2"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin2"])));
-                            }
-                          }
-                        }
-                        if (i == 3) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin3"] = parseInt(this.haltList[j]["dayMin3"]) + totalBreak;
-                              this.haltList[j]["day3"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin3"])));
-                            }
-                          }
-                        }
-                        if (i == 4) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin4"] = parseInt(this.haltList[j]["dayMin4"]) + totalBreak;
-                              this.haltList[j]["day4"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin4"])));
-                            }
-                          }
-                        }
-                        if (i == 5) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin5"] = parseInt(this.haltList[j]["dayMin5"]) + totalBreak;
-                              this.haltList[j]["day5"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin5"])));
-                            }
-                          }
-                        }
-                        if (i == 6) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin6"] = parseInt(this.haltList[j]["dayMin6"]) + totalBreak;
-                              this.haltList[j]["day6"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin6"])));
-                            }
-                          }
-                        }
-                        if (i == 7) {
-                          for (let j = 0; j < this.haltList.length; j++) {
-                            if (this.haltList[j]["driverName"] == driverName) {
-                              this.haltList[j]["dayMin7"] = parseInt(this.haltList[j]["dayMin7"]) + totalBreak;
-                              this.haltList[j]["day7"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin7"])));
-                            }
+                          else {
+                            totalBreak += duration;
                           }
                         }
                       }
-                      haltInfoMonthData.unsubscribe();
-                    });
+                    }
+                    if (i == 1) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin1"] = parseInt(this.haltList[j]["dayMin1"]) + totalBreak;
+                          this.haltList[j]["day1"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin1"])));
+                        }
+                      }
+                    }
+                    if (i == 2) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin2"] = parseInt(this.haltList[j]["dayMin2"]) + totalBreak;
+                          this.haltList[j]["day2"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin2"])));
+                        }
+                      }
+                    }
+                    if (i == 3) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin3"] = parseInt(this.haltList[j]["dayMin3"]) + totalBreak;
+                          this.haltList[j]["day3"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin3"])));
+                        }
+                      }
+                    }
+                    if (i == 4) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin4"] = parseInt(this.haltList[j]["dayMin4"]) + totalBreak;
+                          this.haltList[j]["day4"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin4"])));
+                        }
+                      }
+                    }
+                    if (i == 5) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin5"] = parseInt(this.haltList[j]["dayMin5"]) + totalBreak;
+                          this.haltList[j]["day5"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin5"])));
+                        }
+                      }
+                    }
+                    if (i == 6) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin6"] = parseInt(this.haltList[j]["dayMin6"]) + totalBreak;
+                          this.haltList[j]["day6"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin6"])));
+                        }
+                      }
+                    }
+                    if (i == 7) {
+                      for (let j = 0; j < this.haltList.length; j++) {
+                        if (this.haltList[j]["driverName"] == driverName) {
+                          this.haltList[j]["dayMin7"] = parseInt(this.haltList[j]["dayMin7"]) + totalBreak;
+                          this.haltList[j]["day7"] = (this.commonService.getHrs(parseInt(this.haltList[j]["dayMin7"])));
+                        }
+                      }
+                    }
+                  }
+                  haltInfoMonthData.unsubscribe();
                 });
+              });
             }
             workerDetails.unsubscribe();
           });
@@ -873,7 +826,6 @@ export class HaltSummaryComponent implements OnInit {
       let year = d.getFullYear();
       let haltDate = "";
       for (let i = 1; i <= today; i++) {
-
         haltDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (i < 10 ? '0' : '') + i;
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + this.currentMonth + '/' + haltDate;
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
@@ -1022,7 +974,6 @@ export class HaltSummaryComponent implements OnInit {
         let monthDate = d.getFullYear() + '-' + (monthPre < 10 ? '0' : '') + monthPre + '-' + (i < 10 ? '0' : '') + i;
         let fullMonth = this.commonService.getCurrentMonthName(new Date(monthDate).getMonth());
         let haltInfoMonthPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + fullMonth + '/' + monthDate;
-
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
@@ -1046,16 +997,13 @@ export class HaltSummaryComponent implements OnInit {
             haltInfoMonthData.unsubscribe();
           });
       }
-
     }
-
   }
 
   getZoneList() {
     this.zoneList = [];
     this.zoneList = this.mapService.getlatestZones();
   }
-
 
   getHaltDataTodayDetail() {
     if (this.allMarkers.length > 0) {
@@ -1076,9 +1024,7 @@ export class HaltSummaryComponent implements OnInit {
       let haltDate = "";
       haltDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (today < 10 ? '0' : '') + today;
       let monthName = this.commonService.getCurrentMonthName(new Date(haltDate).getMonth());
-
       let toDayHaltInfoPath = 'HaltInfo/' + this.zoneList[i]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
-
       let haltInfoData = this.db.list(toDayHaltInfoPath).valueChanges().subscribe(
         haltData => {
 
@@ -1104,7 +1050,6 @@ export class HaltSummaryComponent implements OnInit {
                   haltUnApproved = totalHalt - haltApproved;
                   this.zoneHaltList.push({ zoneNo: this.zoneList[i]["zoneNo"], location: haltData[index]["location"], duration: haltData[index]["duration"], startTime: haltData[index]["startTime"] });
 
-
                   let latlng = haltData[index]["location"].split(':')[1].split(',');
                   let lt = $.trim(latlng[0]).replace("(", "");
                   let lg = $.trim(latlng[1]).replace(")", "");
@@ -1129,7 +1074,6 @@ export class HaltSummaryComponent implements OnInit {
                   this.map.fitBounds(this.bounds);
 
                   let contentString = 'Start Time : ' + haltData[index]["startTime"] + ' <br/> Break Time : ' + haltData[index]["duration"];
-
                   let infowindow = new google.maps.InfoWindow({
                     content: contentString
                   });
@@ -1146,19 +1090,13 @@ export class HaltSummaryComponent implements OnInit {
             let unApproved = this.commonService.getHrs(haltUnApproved);
             let haltSalary = ((haltApproved / 60) * parseFloat(this.totalSalary)).toFixed(2);
             let workerDataPath = 'WasteCollectionInfo/' + this.zoneList[i]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + haltDate + '/WorkerDetails';
-
             let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
               workerInfo => {
+                workerDetails.unsubscribe();
                 if (workerInfo) {
-
-                  let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-
-                  let driver = this.db.object(driverPath).valueChanges().subscribe(
-                    driverData => {
-
-                      this.todayHaltList.push({ driverName: driverData != null ? (driverData["name"]) : "---", zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"].replace("Ward ", ""), halt: halt, approved: approved, unApproved: unApproved, salary: haltSalary, bgColor: "" });
-
-                    });
+                  this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["driver"]).then((employee) => {
+                    this.todayHaltList.push({ driverName: employee["name"] != null ? employee["name"].toUpperCase() : "---", zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"].replace("Ward ", ""), halt: halt, approved: approved, unApproved: unApproved, salary: haltSalary, bgColor: "" });
+                  });
                 }
               });
           }
@@ -1166,23 +1104,19 @@ export class HaltSummaryComponent implements OnInit {
           haltInfoData.unsubscribe();
         });
     }
-
   }
 
   getMarkerName(breakTime: number) {
-
     let markerColor: any;
     if (breakTime <= 10) {
       markerColor = "green";
     } else if (breakTime > 10 && breakTime <= 20) {
       markerColor = "orange";
     } else { markerColor = "red"; }
-
     return markerColor;
   }
 
   setMap() {
-
     var mapstyle = new google.maps.StyledMapType(
       [
         {
@@ -1244,7 +1178,6 @@ export class HaltSummaryComponent implements OnInit {
           });
 
           let contentString = 'Start Time : ' + this.zoneHaltList[i]["startTime"] + ' <br/> Break Time : ' + this.zoneHaltList[i]["duration"];
-
           let infowindow = new google.maps.InfoWindow({
             content: contentString
           });
@@ -1256,23 +1189,16 @@ export class HaltSummaryComponent implements OnInit {
         }
       }
     }
-
   }
 
   openMapModel(content: any) {
-
-    //if (breakTime == "0:00") { return; }
     this.getHaltDataTodayDetail();
-
-
     this.modalService.open(content, { size: 'lg' });
     let height = $(window).height();
     $('div .modal-content').parent().css("max-width", ($(window).width() - 250) + "px").css("margin-top", "10px");
     $('div .modal-content').css("height", (height - 40) + "px");
     $('#divMap').css("height", (height - 65) + "px");
     this.setMap();
-    //this.setKml(wardno);
-    //this.showBreaksOnMap(wardno);
   }
 
   closeMapModel() {
@@ -1283,11 +1209,16 @@ export class HaltSummaryComponent implements OnInit {
     }
     this.modalService.dismissAll();
   }
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
+  }
 }
-
 
 export class haltDetail {
-
   todayHalt: string;
   todayHaltUnApproved: string;
   todayHaltApproved: string;
@@ -1324,13 +1255,9 @@ export class haltDetail {
   date6: string;
   date7: string;
   date8: string;
-
-
 }
 
-
 export class haltDetailShow {
-
   todayHalt: string;
   todayHaltUnApproved: string;
   todayHaltApproved: string;
@@ -1367,6 +1294,4 @@ export class haltDetailShow {
   date6: string;
   date7: string;
   date8: string;
-
-
 }

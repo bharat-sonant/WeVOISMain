@@ -161,13 +161,7 @@ export class DownloadWardwiseReportComponent {
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-
-    this.db.object("Defaults/KmlBoundary/" + this.selectedZone).valueChanges().subscribe((wardPath) => {
-      new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: this.map,
-      });
-    });
+    this.commonService.setKML(this.selectedZone, this.map);    
   }
 
   drawZoneAllLines() {

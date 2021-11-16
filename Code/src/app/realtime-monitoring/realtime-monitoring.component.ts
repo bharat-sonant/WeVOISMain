@@ -172,12 +172,10 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    //this.commonService.setCityData();
     let element = <HTMLAnchorElement>(document.getElementById("wardProgressLink"));
     element.href = this.cityName + "/ward-monitoring-report";
     this.bounds = new google.maps.LatLngBounds();
     this.toDayDate = this.commonService.setTodayDate();
-    // localStorage.setItem('employee', JSON.stringify(null));
     let lineStatusDate = localStorage.getItem("lineStatusDate");
     if (lineStatusDate != null) {
       if (this.toDayDate != lineStatusDate) {
@@ -205,7 +203,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
     this.setWorkNotStarted();
-    // this.setWardCompleted();
     setTimeout(() => {
       this.getWardsStatusWise();
     }, 1000);
@@ -275,92 +272,9 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (dutyOutTime != undefined) {
           this.db.object("RealTimeDetails/WardDetails/" + element["zoneNo"]).set({ activityStatus: "completed", isOnDuty: "no", });
         }
-
-        /*
-        if (workerData.length == 0) {
-          this.db.object('RealTimeDetails/WardDetails/' + element["zoneNo"]).set({
-            activityStatus: 'workNotStarted',
-            isOnDuty: 'no'
-          });
-        }*/
       });
     }
   }
-
-  /*
-  getAssignedWardList() {
-
-    let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate).valueChanges().subscribe(
-      data => {
-        this.assignedWards = [];
-        for (let index = 0; index < data.length; index++) {
-          for (let j = 1; j < 10; j++) {
-            let taskData = data[index]["task" + j];
-            if (taskData == undefined) { break; }
-            let task = taskData["task"];
-            let zoneData = this.allZones.find(item => item.zoneNo == task);
-            if (zoneData != undefined) {
-              let zoneDetails = this.assignedWards.find(item => item.zoneNo == task);
-              if (zoneDetails == undefined) {
-                this.assignedWards.push({ zoneNo: zoneData["zoneNo"], zoneName: zoneData["zoneName"] });
-              }
-            }
-          }
-        }
-
-        for (let index = 1; index < this.allZones.length; index++) {
-          let ZoneNo = this.allZones[index]["zoneNo"];
-          let isAssigned = this.assignedWards.find(item => item.zoneNo == this.allZones[index]["zoneNo"]);
-          if (isAssigned == undefined) {
-            let setWardStatus = this.db.object("RealTimeDetails/WardDetails/" + ZoneNo).valueChanges().subscribe(
-              data => {
-                setWardStatus.unsubscribe();
-                this.db.object('RealTimeDetails/WardDetails/' + ZoneNo).set({
-                  activityStatus: 'workNotStarted',
-                  isOnDuty: 'no'
-                });
-
-              });
-          }
-          else {
-            let driverDetail = this.db.object("WasteCollectionInfo/" + this.allZones[index]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails/driver").valueChanges().subscribe(
-              driverdata => {
-                if (driverdata != null) {
-                  let driverId = driverdata;
-                  let workStartTimePath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.toDayDate + '/' + driverId;
-
-                  let workStarts = this.db.object(workStartTimePath).valueChanges().subscribe(
-                    startData => {
-                      workStarts.unsubscribe();
-                      if (startData != null) {
-                        let endTime = "";
-                        for (let k = 10; k > 0; k--) {
-                          if (startData["task" + k + ""] != null) {
-                            if (startData["task" + k + ""]["task"] == this.allZones[index]["zoneNo"]) {
-                              if (Object.keys(startData["task" + k + ""]["in-out"])[1] != null) {
-                                endTime = this.commonService.tConvert(Object.keys(startData["task" + k + ""]["in-out"])[1]);
-                              }
-                              break;
-                            }
-                          }
-                        }
-                        if (endTime != "") {
-                          this.db.object('RealTimeDetails/WardDetails/' + this.allZones[index]["zoneNo"]).update({
-                            activityStatus: 'completed',
-                            isOnDuty: 'no'
-                          });
-                        }
-                      }
-                    });
-                }
-                driverDetail.unsubscribe();
-              });
-          }
-        }
-        // workDetails.unsubscribe();
-      });
-  }
-*/
 
   getWardsStatusWise() {
     let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe((data) => {
@@ -475,7 +389,6 @@ export class RealtimeMonitoringComponent implements OnInit {
         } else {
           this.workerDetails.wardName = "WARD " + this.selectedZone;
         }
-        //this.getAssignedWardList();
         this.initGrpahProperties();
         this.initTimeDistance();
         this.drawWorkProgress();
@@ -760,8 +673,6 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
     if (zoneDetails != undefined) {
-      //this.workerDetails.startTime = zoneDetails.dutyOnTime;
-      //this.workerDetails.endTime = zoneDetails.dutyOffTime;
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
       this.workerDetails.wardKM = zoneDetails.wardKM;
       if (zoneDetails.tripCount != null) {
@@ -779,9 +690,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getDistanceCovered(this.selectedZone);
     this.showHaltTime();
     this.getWardInTime();
-    //this.clearAllOnMap();
-    //this.setMap();
-    //this.setKml();
     this.clearAllOnMap();
     this.getRemarks(this.selectedZone);
     this.getTotalTime(this.selectedZone);
@@ -801,7 +709,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     let dbPath = "GeoGraphicallySurfingHistory/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "";
     this.wardInInfo = this.db.object(dbPath).valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: this.wardInInfo });
-      // geoInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -960,7 +867,6 @@ export class RealtimeMonitoringComponent implements OnInit {
           }
         }
       }
-      // remarkData.unsubscribe();
     });
   }
 
@@ -1052,13 +958,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setKmlHalt(wardNo: string) {
-    let kmlInstance = this.db.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
-      this.instancesList.push({ instances: kmlInstance });
-      new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: this.mapHalt,
-      });
-    });
+    this.commonService.setKML(wardNo, this.mapHalt);
   }
 
   getMarkerName(breakTime: number) {
@@ -1074,9 +974,8 @@ export class RealtimeMonitoringComponent implements OnInit {
     return markerColor;
   }
 
-  showBreaksOnMap(wardno: string) {
+  showBreaksOnMap() {
     this.haltMarkerList = [];
-    //this.bounds=[];
     for (let index = 0; index < this.todayHaltList.length; index++) {
       if (this.todayHaltList[index]["lat"] != null) {
         let lt = this.todayHaltList[index]["lat"];
@@ -1124,7 +1023,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.setKmlHalt(this.selectedZone);
     }, 200);
     this.getFixedGeoLocation();
-    this.showBreaksOnMap(this.selectedZone);
+    this.showBreaksOnMap();
   }
 
   closeMapModelHalt() {
@@ -1133,7 +1032,6 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getHaltMap(index: any) {
     if (this.haltMarkerList.length > 0) {
-      // this.getFixedGeoLocation();
       for (let i = 0; i < this.haltMarkerList.length; i++) {
         let height = 50;
         let point1 = 25;
@@ -1220,7 +1118,6 @@ export class RealtimeMonitoringComponent implements OnInit {
           $("#appStatusH3").css("color", "red");
         }
       }
-      //application.unsubscribe();
     });
   }
 
@@ -1244,7 +1141,6 @@ export class RealtimeMonitoringComponent implements OnInit {
           }
         }
       }
-      //application.unsubscribe();
     });
   }
 
@@ -1284,7 +1180,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     let windowHeight = $(window).height();
     let height = 325;
     let width = 550;
-    //height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 26 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -1368,7 +1263,6 @@ export class RealtimeMonitoringComponent implements OnInit {
           let vehicleName = vehicleArray[index][0];
           let status = vehicleArray[index][1]["status"];
           if (status == "1") {
-            // if (vehicleName != "TestVehicle") {
             total += 1;
             this.workerDetails.totalUnAssignedVehicle = total.toString();
             let dbPath = "VehicleNotAssignedReasons/" + vehicleName + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
@@ -1428,7 +1322,6 @@ export class RealtimeMonitoringComponent implements OnInit {
         let dbPath = "VehicleNotAssignedReasons/" + vehicle + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
         this.db.object(dbPath).update({ reason: reason, userId: userId, updatedBy: updatedBy, });
       }
-      // this.getUnassignedVehicle();
       this.commonService.setAlertMessage("success", "Vehicle Not Assigned Reason Added Successfully !!!");
     }
   }
@@ -1489,15 +1382,12 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.initTimeDistance();
     this.drawWorkProgress();
     this.wardLineStatus = [];
-    //this.clearAllOnMap();
     let wardLocalStorage = JSON.parse(localStorage.getItem("wardLineStorage"));
     if (wardLocalStorage != null) {
       let wardDetails = wardLocalStorage.find((item) => item.ward == this.selectedZone);
       if (wardDetails != undefined) {
         this.wardLineStatus = wardDetails.data;
         this.workerDetails.lastUpdateTime = wardDetails.time;
-        //this.setMap();
-        //this.setKml();
         this.clearAllOnMap();
         this.getLinesFromJson();
         this.getGrpahDataTodayAndLastFiveDays(15);
@@ -1536,8 +1426,6 @@ export class RealtimeMonitoringComponent implements OnInit {
       localStorage.setItem("wardLineStorage", JSON.stringify(wardLocalStorage));
       this.initTimeDistance();
       this.drawWorkProgress();
-      //this.setMap();
-      //this.setKml();
       this.clearAllOnMap();
       this.getLinesFromJson();
       this.getGrpahDataTodayAndLastFiveDays(15);
@@ -1591,9 +1479,6 @@ export class RealtimeMonitoringComponent implements OnInit {
   drawWorkProgress() {
     this.lineBigDashboardChartData = [
       {
-        //pointBorderWidth: 1,
-        //pointHoverRadius: 7,
-        //pointHoverBorderWidth: 2,
         pointRadius: 5,
         fill: true,
         borderWidth: 1,
@@ -1616,14 +1501,9 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     let intervalStart = this.workerDetails.startTime;
 
-    //let intervalEnd = new Date(new Date(this.getFormattedDate(0) + " " + intervalStart).getTime() + intervalInMinutes * 60000);
-
-    //this.time.push(timeInterval + timePeriod + " ~ 0");
-
     this.time.push(timeInterval + " ~0");
     this.distance.push(distanceCovered + 0.05);
     this.maxDistance.push(Math.max.apply(null, this.distance));
-    // this.days = Number(this.days) + 1;
     this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
     this.graphOptions();
   }
@@ -1644,7 +1524,6 @@ export class RealtimeMonitoringComponent implements OnInit {
       let intervalStart = this.graphData[0]["startTime"];
       let endTime = this.graphData[0]["endTime"];
 
-      // This is just a patch due to bad this.wardLineStatus
       if (intervalStart > endTime) {
         intervalStart = endTime;
       }
@@ -1815,18 +1694,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setKml() {
-    let kmlInstance = this.db.object("Defaults/KmlBoundary/" + this.selectedZone).valueChanges().subscribe((wardPath) => {
-      this.instancesList.push({ instances: kmlInstance });
-      let marker = new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: this.map,
-      });
-      this.zoneKML.push({ marker });
-    });
+    let marker = this.commonService.setKML(this.selectedZone, this.map);
+    this.zoneKML.push({ marker });
   }
 
   showVehicleMovement() {
-    //let dbPath="RealTimeDetails/WardDetails/"+this.selectedZone;
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != undefined) {
@@ -1917,10 +1789,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
 
     for (let index = 0; index < this.allLines.length; index++) {
-      // if (this.polylines[index] != undefined) {
-      //    this.polylines[index].setMap(null);
-      //  }
-      //  this.polylines = [];
       let lineNo = index + 1;
       let status = null;
       if (this.wardLineStatus != null) {
@@ -2050,13 +1918,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   openMapModelGarage(content: any) {
-    //this.getUnassignedVehicle();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 880;
     let width = 570;
     height = (windowHeight * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2);
     let divHeight = height - 90 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");

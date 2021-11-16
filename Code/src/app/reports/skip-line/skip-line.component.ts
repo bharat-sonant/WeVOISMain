@@ -14,13 +14,8 @@ import { MapService } from "../../services/map/map.service";
   styleUrls: ["./skip-line.component.scss"],
 })
 export class SkipLineComponent implements OnInit {
-  constructor(
-    public fs: FirebaseService,
-    private mapService: MapService,
-    private commonService: CommonService,
-    private httpService: HttpClient
-  ) {}
-  db:any;
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient) { }
+  db: any;
   index: any;
   studentDetail: any;
   zoneList: any[];
@@ -37,13 +32,11 @@ export class SkipLineComponent implements OnInit {
   activeZone: any;
   vehicleLocationFirstTime: any;
   skippedLines: any[];
-
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
 
     this.getZoneList();
   }
@@ -65,41 +58,33 @@ export class SkipLineComponent implements OnInit {
     this.skippedLines = [];
     let i = 0;
     for (let index = 0; index < this.zoneList.length; index++) {
-      let dbPath =
-        "WasteCollectionInfo/" +
-        this.zoneList[index]["zoneNo"] +
-        "/" +
-        this.selectedDate +
-        "/LineStatus";
+      let dbPath = "WasteCollectionInfo/" + this.zoneList[index]["zoneNo"] + "/" + this.selectedDate + "/LineStatus";
 
-      let lineData = this.db
-        .list(dbPath)
-        .valueChanges()
-        .subscribe((data) => {
-          if (data.length > 0) {
-            let wardInserted = false;
+      let lineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
+        if (data.length > 0) {
+          let wardInserted = false;
 
-            for (let j = 0; j < data.length; j++) {
-              if (data[j]["Status"] == "skip") {
-                if (!wardInserted) {
-                  this.skippedLines.push({
-                    wardName: "Ward " + this.zoneList[index]["zoneNo"],
-                    lines: [],
-                  });
-                  wardInserted = true;
-                  i++;
-                }
-
-                this.skippedLines[i - 1].lines.push({
-                  lineNo: "Line " + (j + 1),
-                  reason: data[j]["Reason"],
+          for (let j = 0; j < data.length; j++) {
+            if (data[j]["Status"] == "skip") {
+              if (!wardInserted) {
+                this.skippedLines.push({
+                  wardName: "Ward " + this.zoneList[index]["zoneNo"],
+                  lines: [],
                 });
+                wardInserted = true;
+                i++;
               }
-            }
 
-            lineData.unsubscribe();
+              this.skippedLines[i - 1].lines.push({
+                lineNo: "Line " + (j + 1),
+                reason: data[j]["Reason"],
+              });
+            }
           }
-        });
+
+          lineData.unsubscribe();
+        }
+      });
     }
   }
 }

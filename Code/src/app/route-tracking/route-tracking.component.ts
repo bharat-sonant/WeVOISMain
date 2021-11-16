@@ -74,7 +74,7 @@ export class RouteTrackingComponent {
   isReset = false;
   savedDataList: any[] = [];
   routePath: any[] = [];
-
+  instancesList: any[];
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -84,6 +84,7 @@ export class RouteTrackingComponent {
     };
 
   ngOnInit() {
+    this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.setSpeed(Number($('#ddlSpeed').val()));
@@ -253,13 +254,7 @@ export class RouteTrackingComponent {
   }
 
   setKml() {
-    let kml = this.db.object('Defaults/KmlBoundary/' + this.selectedZoneNo).valueChanges().subscribe(
-      wardPath => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map
-        });
-      });
+    let kml = this.commonService.setKML(this.selectedZoneNo, this.map);
     this.allKml.push({ kml });
   }
 
@@ -306,6 +301,7 @@ export class RouteTrackingComponent {
           let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
           this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
+              this.instancesList.push({ instances: this.vehicleLocationInstance });
               if (data != undefined) {
                 dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
                 let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -634,6 +630,7 @@ export class RouteTrackingComponent {
     let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
     let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
       routePath => {
+        vehicleTracking.unsubscribe();
         if (routePath != null) {
           this.routePathStore = [];
           let lineData = [];
@@ -663,7 +660,6 @@ export class RouteTrackingComponent {
                   let lat = lineData[lineData.length - 1]["lat"];
                   let lng = lineData[lineData.length - 1]["lng"];
                   let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
-
                   let distanceInMeter = distance * 1000;
                   totalDistance += distanceInMeter;
                   lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
@@ -758,7 +754,6 @@ export class RouteTrackingComponent {
           }
           this.savedDataList.push({ wardNo: this.selectedZone, date: this.selectedDate, routePath: routePath });
           localStorage.setItem('savedRouteData', JSON.stringify(this.savedDataList));
-          vehicleTracking.unsubscribe();
         }
       });
   }
@@ -1244,6 +1239,14 @@ export class RouteTrackingComponent {
           $('#playStop').removeClass("fas fa-stop-circle");
           $('#playStop').addClass("fab fa-youtube");
         }
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
       }
     }
   }

@@ -14,16 +14,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
   styleUrls: ["./user-access.component.scss"],
 })
 export class UserAccessComponent implements OnInit {
-  constructor(
-    public httpService: HttpClient,
-    public dbFireStore: AngularFirestore,
-    private router: Router,
-    public usrService: UserService,
-    private actRoute: ActivatedRoute,
-    public commonService: CommonService,
-    public toastr: ToastrService,
-    public db: AngularFireDatabase
-  ) {}
+  constructor(public httpService: HttpClient, public dbFireStore: AngularFirestore, private router: Router, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
   userid: any;
   accessList: any[];
   portalAccessList: any[];
@@ -37,8 +28,6 @@ export class UserAccessComponent implements OnInit {
   };
 
   ngOnInit() {
-    //this.setPortalPages();
-    //this.getPortalPages();
     this.cityName = localStorage.getItem("cityName");
     const id = this.actRoute.snapshot.paramMap.get("id");
     this.getUserAccess(id);
@@ -47,195 +36,164 @@ export class UserAccessComponent implements OnInit {
   setPortalPages() {
     let portalAccessList = [];
     let dbPath = "Defaults/PortalSectionAccess";
-    let pagesInstance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        pagesInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              portalAccessList.push({
-                parentId: 0,
-                pageID: index,
-                name: data[index]["name"],
-                img: data[index]["img"],
-                position: data[index]["position"],
-                url: data[index]["url"],
-              });
-              if (data[index]["SubPages"] != null) {
-                let data2 = data[index]["SubPages"];
-                let keyArray2 = Object.keys(data2);
-                if (keyArray2.length > 0) {
-                  for (let j = 0; j < keyArray2.length; j++) {
-                    let index2 = keyArray2[j];
-                    portalAccessList.push({
-                      parentId: index,
-                      pageID: index2,
-                      name: data2[index2]["name"],
-                      img: data2[index2]["img"],
-                      position: data2[index2]["position"],
-                      url: data2[index2]["url"],
-                    });
-                    if (data2[index2]["SubPages"] != null) {
-                      let data3 = data2[index2]["SubPages"];
-                      let keyArray3 = Object.keys(data3);
-                      for (let k = 0; k < keyArray3.length; k++) {
-                        let index3 = keyArray3[k];
-                        portalAccessList.push({
-                          parentId: index2,
-                          pageID: index3,
-                          name: data3[index3]["name"],
-                          img: data3[index3]["img"],
-                          position: data3[index3]["position"],
-                          url: data3[index3]["url"],
-                        });
-                      }
+    let pagesInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      pagesInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            portalAccessList.push({
+              parentId: 0,
+              pageID: index,
+              name: data[index]["name"],
+              img: data[index]["img"],
+              position: data[index]["position"],
+              url: data[index]["url"],
+            });
+            if (data[index]["SubPages"] != null) {
+              let data2 = data[index]["SubPages"];
+              let keyArray2 = Object.keys(data2);
+              if (keyArray2.length > 0) {
+                for (let j = 0; j < keyArray2.length; j++) {
+                  let index2 = keyArray2[j];
+                  portalAccessList.push({
+                    parentId: index,
+                    pageID: index2,
+                    name: data2[index2]["name"],
+                    img: data2[index2]["img"],
+                    position: data2[index2]["position"],
+                    url: data2[index2]["url"],
+                  });
+                  if (data2[index2]["SubPages"] != null) {
+                    let data3 = data2[index2]["SubPages"];
+                    let keyArray3 = Object.keys(data3);
+                    for (let k = 0; k < keyArray3.length; k++) {
+                      let index3 = keyArray3[k];
+                      portalAccessList.push({
+                        parentId: index2,
+                        pageID: index3,
+                        name: data3[index3]["name"],
+                        img: data3[index3]["img"],
+                        position: data3[index3]["position"],
+                        url: data3[index3]["url"],
+                      });
                     }
                   }
                 }
               }
             }
-            let pagesData = JSON.stringify(portalAccessList);
-            const aa = {
-              pages: pagesData,
-            };
-            this.dbFireStore
-              .collection("UserManagement")
-              .doc("PortalSectionAccess")
-              .collection("Pages")
-              .add(aa);
           }
+          let pagesData = JSON.stringify(portalAccessList);
+          const aa = {
+            pages: pagesData,
+          };
+          this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").add(aa);
         }
-      });
+      }
+    });
   }
 
   getUserAccess(userKey) {
     this.selectedCity = $("#ddlCity").val();
     this.userAccessPages = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("Users")
-      .collection("Users")
-      .doc(userKey)
-      .get()
-      .subscribe((doc) => {
-        this.userDetail.name = doc.data()["name"];
-        this.userDetail.userType = doc.data()["userType"];
-        this.userid = doc.data()["userId"].toString();
-        this.dbFireStore
-          .collection("UserManagement")
-          .doc("UserAccess")
-          .collection("UserAccess")
-          .doc(this.userid)
-          .collection(this.selectedCity)
-          .doc(this.selectedCity)
-          .get()
-          .subscribe((doc) => {
-            if (doc.data() == undefined) {
-              this.saveType = "add";
-            } else {
-              if (doc.data()["pageId"] != null) {
-                let pageId = doc.data()["pageId"];
-                let dataList = pageId.toString().split(",");
-                for (let i = 0; i < dataList.length; i++) {
-                  this.userAccessPages.push({ pageId: dataList[i].trim() });
-                }
-                this.saveType = "update";
-              }
+    this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").doc(userKey).get().subscribe((doc) => {
+      this.userDetail.name = doc.data()["name"];
+      this.userDetail.userType = doc.data()["userType"];
+      this.userid = doc.data()["userId"].toString();
+      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).get().subscribe((doc) => {
+        if (doc.data() == undefined) {
+          this.saveType = "add";
+        } else {
+          if (doc.data()["pageId"] != null) {
+            let pageId = doc.data()["pageId"];
+            let dataList = pageId.toString().split(",");
+            for (let i = 0; i < dataList.length; i++) {
+              this.userAccessPages.push({ pageId: dataList[i].trim() });
             }
-            this.getPortalPages();
-          });
+            this.saveType = "update";
+          }
+        }
+        this.getPortalPages();
       });
+    });
   }
 
   getPortalPages() {
     this.portalAccessList = [];
     this.accessList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("PortalSectionAccess")
-      .collection("Pages")
-      .doc("gR6kziY4rXIv7yIgIK4g")
-      .get()
-      .subscribe((doc) => {
-        let pageList = JSON.parse(doc.data()["pages"]);
-        let firstData = pageList.filter((e) => e.parentId === 0);
-        if (firstData.length > 0) {
-          for (let i = 0; i < firstData.length; i++) {
-            let index = firstData[i]["pageID"];
-            let sno = firstData[i]["position"];
-            let name = firstData[i]["name"];
-            let isCheck = "";
-            let pageAccess = this.userAccessPages.find(
-              (item) => item.pageId == index
-            );
-            if (pageAccess != undefined) {
-              isCheck = "checked";
-            }
-            let secondLevel = [];
-            this.accessList.push({
-              sno: sno,
-              pageID: index,
-              name: name,
-              ischeck: isCheck,
-              secondLevel: secondLevel,
-            });
-            let secondData = pageList.filter((e) => e.parentId === index);
-            if (secondData.length > 0) {
-              for (let j = 0; j < secondData.length; j++) {
-                index = secondData[j]["pageID"];
-                sno = secondData[j]["position"];
-                name = secondData[j]["name"];
-                isCheck = "";
-                let pageAccess = this.userAccessPages.find(
-                  (item) => item.pageId == index
-                );
-                if (pageAccess != undefined) {
-                  isCheck = "checked";
-                }
-                let thirdLevel = [];
-
-                secondLevel.push({
-                  sno: sno,
-                  pageID: index,
-                  name: name,
-                  ischeck: isCheck,
-                  thirdLevel: thirdLevel,
-                });
-                let thirdData = pageList.filter((e) => e.parentId === index);
-                if (thirdData.length > 0) {
-                  for (let k = 0; k < thirdData.length; k++) {
-                    index = thirdData[k]["pageID"];
-                    sno = thirdData[k]["position"];
-                    name = thirdData[k]["name"];
-                    isCheck = "";
-                    let pageAccess = this.userAccessPages.find(
-                      (item) => item.pageId == index
-                    );
-                    if (pageAccess != undefined) {
-                      isCheck = "checked";
-                    }
-                    thirdLevel.push({
-                      sno: sno,
-                      pageID: index,
-                      name: name,
-                      ischeck: isCheck,
-                    });
-                  }
-                  secondLevel[secondLevel.length - 1]["thirdLevel"] =
-                    thirdLevel;
-                }
+    this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").doc("gR6kziY4rXIv7yIgIK4g").get().subscribe((doc) => {
+      let pageList = JSON.parse(doc.data()["pages"]);
+      let firstData = pageList.filter((e) => e.parentId === 0);
+      if (firstData.length > 0) {
+        for (let i = 0; i < firstData.length; i++) {
+          let index = firstData[i]["pageID"];
+          let sno = firstData[i]["position"];
+          let name = firstData[i]["name"];
+          let isCheck = "";
+          let pageAccess = this.userAccessPages.find(
+            (item) => item.pageId == index
+          );
+          if (pageAccess != undefined) {
+            isCheck = "checked";
+          }
+          let secondLevel = [];
+          this.accessList.push({
+            sno: sno,
+            pageID: index,
+            name: name,
+            ischeck: isCheck,
+            secondLevel: secondLevel,
+          });
+          let secondData = pageList.filter((e) => e.parentId === index);
+          if (secondData.length > 0) {
+            for (let j = 0; j < secondData.length; j++) {
+              index = secondData[j]["pageID"];
+              sno = secondData[j]["position"];
+              name = secondData[j]["name"];
+              isCheck = "";
+              let pageAccess = this.userAccessPages.find(
+                (item) => item.pageId == index
+              );
+              if (pageAccess != undefined) {
+                isCheck = "checked";
               }
+              let thirdLevel = [];
 
-              this.accessList[this.accessList.length - 1]["secondLevel"] =
-                secondLevel;
+              secondLevel.push({
+                sno: sno,
+                pageID: index,
+                name: name,
+                ischeck: isCheck,
+                thirdLevel: thirdLevel,
+              });
+              let thirdData = pageList.filter((e) => e.parentId === index);
+              if (thirdData.length > 0) {
+                for (let k = 0; k < thirdData.length; k++) {
+                  index = thirdData[k]["pageID"];
+                  sno = thirdData[k]["position"];
+                  name = thirdData[k]["name"];
+                  isCheck = "";
+                  let pageAccess = this.userAccessPages.find((item) => item.pageId == index);
+                  if (pageAccess != undefined) {
+                    isCheck = "checked";
+                  }
+                  thirdLevel.push({
+                    sno: sno,
+                    pageID: index,
+                    name: name,
+                    ischeck: isCheck,
+                  });
+                }
+                secondLevel[secondLevel.length - 1]["thirdLevel"] = thirdLevel;
+              }
             }
+
+            this.accessList[this.accessList.length - 1]["secondLevel"] = secondLevel;
           }
         }
-      });
+      }
+    });
   }
 
   saveData() {
@@ -286,27 +244,11 @@ export class UserAccessComponent implements OnInit {
       pageId: accessPages,
     };
     if (this.saveType == "add") {
-      this.dbFireStore
-        .doc("UserManagement/UserAccess")
-        .collection("UserAccess")
-        .doc(this.userid)
-        .collection(this.selectedCity)
-        .doc(this.selectedCity)
-        .set(aa);
+      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).set(aa);
     } else {
-      this.dbFireStore
-        .doc("UserManagement/UserAccess")
-        .collection("UserAccess")
-        .doc(this.userid)
-        .collection(this.selectedCity)
-        .doc(this.selectedCity)
-        .update(aa);
+      this.dbFireStore.doc("UserManagement/UserAccess").collection("UserAccess").doc(this.userid).collection(this.selectedCity).doc(this.selectedCity).update(aa);
     }
-    this.toastr.error(
-      "Portal Accesss Updated Successfully for " +
-        this.selectedCity +
-        " City !!!",
-      "",
+    this.toastr.error("Portal Accesss Updated Successfully for " + this.selectedCity + " City !!!", "",
       {
         timeOut: 6000,
         enableHtml: true,

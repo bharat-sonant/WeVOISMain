@@ -442,7 +442,6 @@ export class WardSurveyAnalysisComponent {
       if (lineNo != "1") {
         this.lineNo = Number(lineNo) - 1;
         $("#txtLineNo").val(this.lineNo);
-
         this.clearLineData();
         this.getHouseLineData();
       }
@@ -504,11 +503,11 @@ export class WardSurveyAnalysisComponent {
               if (data[i]["createdDate"] != null) {
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-                  
-                  if(data[i]["surveyorId"]=="-1"){
+
+                  if (data[i]["surveyorId"] == "-1") {
                     imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
-                  else{
+                  else {
                     imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                 }
@@ -827,7 +826,6 @@ export class WardSurveyAnalysisComponent {
                 }
               }
             );
-            //this.commonService.setAlertMessage("error", "You can not delete this marker. This is related to house marker !!!");
           }
         }
       }
@@ -1413,10 +1411,9 @@ export class WardSurveyAnalysisComponent {
         rfidInstance.unsubscribe();
         if (rfidData != null) {
           let date = rfidData["createdDate"].split(' ')[0];
-          let surveyorId = rfidData["surveyorId"];          
+          let surveyorId = rfidData["surveyorId"];
           let rfid = rfidData["rfid"];
           rfidData["cardNo"] = cardNumber;
-          //rfidData["cardImage"] = null;
           let name = rfidData["name"];
           if (name == "No name" || name == "No" || name == "NA" || name == "Na" || name == "Naam") {
             let random = Math.floor(Math.random() * this.nameList.length);
@@ -1424,10 +1421,10 @@ export class WardSurveyAnalysisComponent {
           }
           dbPath = "EntitySurveyData/HistoryRFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).update(rfidData);
-          rfidData["surveyorId"]="-1";
+          rfidData["surveyorId"] = "-1";
           dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + cardNumber;
           this.db.object(dbPath).update(rfidData);
-          
+
           dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).remove();
 

@@ -21,10 +21,12 @@ export class VehicleReportComponent implements OnInit {
   vehicleDataList: any[] = [];
   vehicleDetailList: any[];
   yearList: any[];
-  db:any;
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];

@@ -10,29 +10,21 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./ward-work-percentage.component.scss"],
 })
 export class WardWorkPercentageComponent implements OnInit {
-  constructor(
-    private commonService: CommonService,
-    public toastr: ToastrService,
-    public fs: FirebaseService,
-    private mapService: MapService
-  ) {}
+  constructor(private commonService: CommonService, public toastr: ToastrService, public fs: FirebaseService, private mapService: MapService) { }
   workList: any[] = [];
   zoneList: any[] = [];
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
-  db:any;
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $("#txtDate").val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
     this.getZoneList();
     this.onSubmit();
@@ -58,49 +50,28 @@ export class WardWorkPercentageComponent implements OnInit {
           totalLines: 0,
         });
         let zoneNo = this.zoneList[i]["zoneNo"];
-        let dbPath =
-          "WasteCollectionInfo/" +
-          zoneNo +
-          "/" +
-          year +
-          "/" +
-          monthName +
-          "/" +
-          this.selectedDate +
-          "/Summary/workPercentage";
-        let workDetail = this.db
-          .object(dbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            workDetail.unsubscribe();
-            if (data != null) {
-              let workDetails = this.workList.find(
-                (item) => item.zoneNo == zoneNo
-              );
-              if (workDetails != undefined) {
-                workDetails.percentage = data + "%";
-              }
-            } else {
-              let workDetails = this.workList.find(
-                (item) => item.zoneNo == zoneNo
-              );
-              if (workDetails != undefined) {
-                workDetails.percentage = "0%";
-              }
+        let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/Summary/workPercentage";
+        let workDetail = this.db.object(dbPath).valueChanges().subscribe((data) => {
+          workDetail.unsubscribe();
+          if (data != null) {
+            let workDetails = this.workList.find((item) => item.zoneNo == zoneNo);
+            if (workDetails != undefined) {
+              workDetails.percentage = data + "%";
             }
-          });
-        let totalLineData = this.db
-          .object("WardLines/" + zoneNo)
-          .valueChanges()
-          .subscribe((totalLines) => {
-            let zoneDetails = this.workList.find(
-              (item) => item.zoneNo == zoneNo
-            );
-            if (zoneDetails != undefined) {
-              zoneDetails.totalLines = totalLines;
+          } else {
+            let workDetails = this.workList.find((item) => item.zoneNo == zoneNo);
+            if (workDetails != undefined) {
+              workDetails.percentage = "0%";
             }
-            totalLineData.unsubscribe();
-          });
+          }
+        });
+        let totalLineData = this.db.object("WardLines/" + zoneNo).valueChanges().subscribe((totalLines) => {
+          let zoneDetails = this.workList.find((item) => item.zoneNo == zoneNo);
+          if (zoneDetails != undefined) {
+            zoneDetails.totalLines = totalLines;
+          }
+          totalLineData.unsubscribe();
+        });
       }
     }
   }
@@ -121,55 +92,29 @@ export class WardWorkPercentageComponent implements OnInit {
       new Date(this.selectedDate).getMonth()
     );
     let year = this.selectedDate.split("-")[0];
-    let dbPath =
-      "WasteCollectionInfo/" +
-      zoneNo +
-      "/" +
-      year +
-      "/" +
-      monthName +
-      "/" +
-      this.selectedDate +
-      "/LineStatus";
-    let lineStatus = this.db
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((lineStatusData) => {
-        lineStatus.unsubscribe();
-        let completedCount = 0;
+    let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/LineStatus";
+    let lineStatus = this.db.list(dbPath).valueChanges().subscribe((lineStatusData) => {
+      lineStatus.unsubscribe();
+      let completedCount = 0;
 
-        for (let index = 0; index < lineStatusData.length; index++) {
-          if (lineStatusData[index]["start-time"] != null) {
-            if (lineStatusData[index]["Status"] == "LineCompleted") {
-              completedCount++;
-            }
+      for (let index = 0; index < lineStatusData.length; index++) {
+        if (lineStatusData[index]["start-time"] != null) {
+          if (lineStatusData[index]["Status"] == "LineCompleted") {
+            completedCount++;
           }
         }
-        let zoneDetails = this.workList.find((item) => item.zoneNo == zoneNo);
-        if (zoneDetails != undefined) {
-          let totalLines = zoneDetails.totalLines;
-          let workPercentage = (completedCount * 100) / totalLines;
-          zoneDetails.percentage = workPercentage.toFixed(0) + "%";
-          this.db
-            .object(
-              "WasteCollectionInfo/" +
-                zoneNo +
-                "/" +
-                year +
-                "/" +
-                monthName +
-                "/" +
-                this.selectedDate +
-                "/Summary"
-            )
-            .update({
-              workPercentage: workPercentage.toFixed(0),
-            });
-          if (type == "single") {
-            this.showAlert(zoneDetails.zoneName);
-          }
+      }
+      let zoneDetails = this.workList.find((item) => item.zoneNo == zoneNo);
+      if (zoneDetails != undefined) {
+        let totalLines = zoneDetails.totalLines;
+        let workPercentage = (completedCount * 100) / totalLines;
+        zoneDetails.percentage = workPercentage.toFixed(0) + "%";
+        this.db.object("WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/Summary").update({ workPercentage: workPercentage.toFixed(0), });
+        if (type == "single") {
+          this.showAlert(zoneDetails.zoneName);
         }
-      });
+      }
+    });
   }
 
   showAlert(name: any) {

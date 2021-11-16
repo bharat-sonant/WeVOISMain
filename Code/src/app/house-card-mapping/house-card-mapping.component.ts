@@ -39,15 +39,15 @@ export class HouseCardMappingComponent {
   previousScannedCard: any[];
   todayScannedCard: any[];
   allCards: any[];
-  db:any;
-
+  db: any;
+  cityName: any;
+  instancesList: any[];
   ngOnInit() {
-
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.instancesList = [];
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
-    //this.setHeight();
-    //this.getZoneList();
     this.getZones();
     this.setMap();
   }
@@ -68,21 +68,13 @@ export class HouseCardMappingComponent {
   }
 
   setKml() {
-    this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
-      wardPath => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map
-        });
-      });
+    this.commonService.setKML(this.selectedZone, this.map);
   }
 
   getZones() {
-
     this.zoneList = [];
     this.zoneList.push({ zoneNo: "0", zoneName: "-- Select Zone --" });
     let allZones = this.mapService.getZones(this.toDayDate);
-
     for (let index = 0; index < allZones.length; index++) {
       let dbPathLineCompleted = 'WasteCollectionInfo/' + allZones[index]["zoneNo"] + '/' + this.toDayDate + '/LineStatus';
       let zonesData = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
@@ -104,23 +96,21 @@ export class HouseCardMappingComponent {
     this.polylines = [];
     this.setMap();
     this.setKml();
-    //this.getCardScanHistory();
     this.showVehicleMovement();
     this.getLinesFromJson();
-    let vehicleInterval = interval(10000).subscribe((val) => { this.showVehicleMovement(); });
+    let vehicleInterval = interval(10000).subscribe((val) => {
+      this.instancesList.push({ instances: vehicleInterval });
+      this.showVehicleMovement();
+    });
   }
 
   getCardScanHistory() {
-
     this.previousScannedCard = [];
-
     let cardData = this.db.object('HousesCollectionHistory/' + this.selectedZone).valueChanges().subscribe(
       cards => {
-
+        this.instancesList.push({ instances: cardData });
         if (cards != null) {
-
           var keyArray = Object.keys(cards);
-
           for (let index = 0; index < keyArray.length; index++) {
             const element = keyArray[index];
 
@@ -129,86 +119,65 @@ export class HouseCardMappingComponent {
               this.previousScannedCard.push({ 'card': element });
             }
           }
-
           this.getLinesFromJson();
-
         }
-
       });
-
   }
 
   showVehicleMovement() {
-
     let vehicleLocation = this.db.object('CurrentLocationInfo/' + this.selectedZone + '/CurrentLoc').valueChanges().subscribe(
       data => {
-
+        vehicleLocation.unsubscribe();
         if (data != undefined) {
-          vehicleLocation.unsubscribe();
           this.marker.setMap(null);
           this.marker = new google.maps.Marker({
             position: { lat: data["lat"], lng: data["lng"] },
             map: this.map,
             icon: '../assets/img/tipper-green.png',
-
           });
         }
       });
   }
-
-
 
   getLinesFromJson() {
 
     //this.httpService.get('../assets/jsons/' + this.selectedZone + '.json').forEach(
     let wardLines = this.db.object('Defaults/WardLines/' + this.selectedZone).valueChanges().subscribe(
       zoneLine => {
-
+        this.instancesList.push({ instances: wardLines });
         var linePath = [];
         for (let i = 1; i < 10000; i++) {
-
           var line = zoneLine[i];
           if (line == undefined) { break; }
           var path = [];
           for (let j = 0; j < line.points.length; j++) {
             path.push({ lat: line.points[j][0], lng: line.points[j][1] });
           }
-
           linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
         }
-
         this.allLines = linePath;
         this.plotLinesOnMap(zoneLine);
-
       });
   }
 
 
   plotLinesOnMap(zoneLine: any) {
-
-
     let lastLineDone = this.db.object('WasteCollectionInfo/LastLineCompleted/' + this.selectedZone).valueChanges().subscribe(
       lastLine => {
-
+        lastLineDone.unsubscribe();
         this.polylines = [];
         for (let index = 0; index < this.allLines.length; index++) {
-          //for (let index = 0; index < 20; index++) {
-
           let lineNo = index + 1;
           let dbPathLineStatus = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.toDayDate + '/LineStatus/' + lineNo + '/Status';
-
           let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe(
             status => {
-
-
+              this.instancesList.push({ instances: lineStatus });
               if (this.polylines[index] != undefined) {
                 this.polylines[index].setMap(null);
               }
 
               let lineData = this.allLines.find(item => item.lineNo == lineNo);
-
               if (lineData != undefined) {
-
                 let line = new google.maps.Polyline({
                   path: lineData.latlng,
                   strokeColor: this.commonService.getLineColor(status),
@@ -223,26 +192,16 @@ export class HouseCardMappingComponent {
                 if (status != null || Number(lastLine) == (lineNo - 1)) {
                   checkMarkerDetails = true;
                 }
-
                 this.plotMarkersOnMap(zoneLine[lineNo].Houses, lineNo, checkMarkerDetails);
-                lastLineDone.unsubscribe();
               }
-
             });
         }
       });
-
   }
 
-
-
   plotMarkersOnMap(houseData: any, lineNo: number, needToCheckMarkerScannedDetails: boolean) {
-
-
     for (let j = 0; j < houseData.length; j++) {
-
       if (needToCheckMarkerScannedDetails) {
-
         let time;
         if (this.selectedZone == 28) {
           time = 'scan-time';
@@ -253,6 +212,7 @@ export class HouseCardMappingComponent {
 
         let scanInfo = this.db.object(scanCardPath).valueChanges().subscribe(
           scanTime => {
+            this.instancesList.push({ instances: scanInfo });
             if (scanTime != null) {
               this.plotHouses('green', houseData[j]);
             } else {
@@ -265,10 +225,7 @@ export class HouseCardMappingComponent {
               } else {
                 this.plotHouses('red', houseData[j]);
               }
-
             }
-
-
           });
       } else {
         this.plotHouses('red', houseData[j]);
@@ -289,4 +246,11 @@ export class HouseCardMappingComponent {
     });
   }
 
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
+  }
 }

@@ -68,7 +68,7 @@ export class MultipleMapsComponent {
   currentMonthName: any;
   currentYear: any;
   cityName: any;
-
+  instancesList:any[];
   markerWard1 = new google.maps.Marker();
   markerWard2 = new google.maps.Marker();
   markerWard3 = new google.maps.Marker();
@@ -79,6 +79,7 @@ export class MultipleMapsComponent {
   constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   ngOnInit() {
+    this.instancesList=[];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -215,12 +216,7 @@ export class MultipleMapsComponent {
   }
 
   setMapBoundary(selectedZone: any, map: any) {
-    this.db.object("Defaults/KmlBoundary/" + selectedZone).valueChanges().subscribe((wardPath) => {
-      new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: map,
-      });
-    });
+    this.commonService.setKML(selectedZone, map);   
   }
 
   showVehicleMovement(selectedZone: any, vehicleStatusInstance: any, vehicleLocationInstance: any) {
@@ -229,12 +225,14 @@ export class MultipleMapsComponent {
     }
 
     vehicleStatusInstance = this.db.object("CurrentLocationInfo/" + selectedZone + "/StatusId").valueChanges().subscribe((statusId) => {
+      this.instancesList.push({ instances: vehicleStatusInstance }); 
       if (statusId != undefined) {
         if (vehicleLocationInstance != undefined) {
           vehicleLocationInstance.unsubscribe();
         }
 
         vehicleLocationInstance = this.db.object("CurrentLocationInfo/" + selectedZone + "/CurrentLoc/location").valueChanges().subscribe((data) => {
+          this.instancesList.push({ instances: vehicleStatusInstance }); 
           if (data != undefined) {
             let vehicleIcon = "../assets/img/tipper-green.png";
             if (statusId == "3") {
@@ -318,6 +316,7 @@ export class MultipleMapsComponent {
 
   getLinesFromJson(selectedZone: any) {
     let wardLines = this.db.object("Defaults/WardLines/" + selectedZone).valueChanges().subscribe((zoneLine) => {
+      this.instancesList.push({ instances: wardLines }); 
       var linePath = [];
       for (let i = 1; i < 2000; i++) {
         var line = zoneLine[i];
@@ -360,12 +359,14 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesWard1 = [];
       for (let index = 0; index < this.allLinesWard1.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
           if (this.polylinesWard1[index] != undefined) {
             this.polylinesWard1[index].setMap(null);
           }
@@ -397,12 +398,14 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap1(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesWard2 = [];
       for (let index = 0; index < this.allLinesWard2.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
           if (this.polylinesWard2[index] != undefined) {
             this.polylinesWard2[index].setMap(null);
           }
@@ -436,12 +439,14 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap2(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesWard3 = [];
       for (let index = 0; index < this.allLinesWard3.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
           if (this.polylinesWard3[index] != undefined) {
             this.polylinesWard3[index].setMap(null);
           }
@@ -475,12 +480,14 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap3(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesWard4 = [];
       for (let index = 0; index < this.allLinesWard4.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
           if (this.polylinesWard4[index] != undefined) {
             this.polylinesWard4[index].setMap(null);
           }
@@ -514,12 +521,14 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap4(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesMarketRoute1 = [];
       for (let index = 0; index < this.allLinesMarketRoute1.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
           if (this.polylinesMarketRoute1[index] != undefined) {
             this.polylinesMarketRoute1[index].setMap(null);
           }
@@ -553,16 +562,15 @@ export class MultipleMapsComponent {
 
   plotLinesOnMap5(selectedZone: any) {
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      this.instancesList.push({ instances: lastLineDone }); 
       this.polylinesMarketRoute2 = [];
       for (let index = 0; index < this.allLinesMarketRoute2.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
-        let lineStatus = this.db
-          .object(dbPathLineStatus)
-          .valueChanges()
-          .subscribe((status) => {
-            if (this.polylinesMarketRoute2[index] != undefined) {
+        let lineStatus = this.db          .object(dbPathLineStatus)          .valueChanges()          .subscribe((status) => {
+          this.instancesList.push({ instances: lineStatus }); 
+          if (this.polylinesMarketRoute2[index] != undefined) {
               this.polylinesMarketRoute2[index].setMap(null);
             }
 
@@ -591,5 +599,12 @@ export class MultipleMapsComponent {
           });
       }
     });
+  }
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 }

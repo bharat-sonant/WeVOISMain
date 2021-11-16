@@ -86,17 +86,6 @@ export class FleetMonitorComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
-    let kmlInstance = this.db.object('Defaults/KmlBoundary/' + this.selectedZone).valueChanges().subscribe(
-      wardPath => {
-        this.instancesList.push({ instances: kmlInstance });
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.map
-        });
-      });
-  }
-
   getZones() {
     this.zoneList = [];
     this.zoneList.push({ zoneNo: "0", zoneName: "-- Select Zone --" });
@@ -223,6 +212,7 @@ export class FleetMonitorComponent {
 
                         let dbPath = this.db
                         let details = this.workerDetails;
+                        let commonService = this.commonService;
 
                         this.marker.addListener('click', function () {
                           let myFirebase = this.firebase;
@@ -239,73 +229,21 @@ export class FleetMonitorComponent {
                               $('#helperMsgD').hide();
                               $('#helperMsgM').hide();
                               $('#detailD').show();
-                              let driverList = workerData["driver"].toString().split(',');
-                              let helperList = workerData["helper"].toString().split(',');
-                              let driverId = driverList[driverList.length - 1].trim();
-                              let helperId = helperList[helperList.length - 1].trim();
-                              this.employeeDetail = JSON.parse(localStorage.getItem("employee"));
-                              if (this.employeeDetail != null) {
-                                let driverDetails = this.employeeDetail.find(item => item.userName == driverId);
-                                if (driverDetails != undefined) {
-                                  details.driverName = driverDetails.name != null ? (driverDetails.name.toUpperCase()) : "Not Assigned";
-                                  details.driverMobile = driverDetails.mobile != null ? (driverDetails.mobile) : "---";
-                                  details.driverImageUrl = driverDetails.profilePhotoURL != null && driverDetails.profilePhotoURL != "" ? (driverDetails.profilePhotoURL) : "../../assets/img/internal-user.png";
-                                }
-                                else {
-                                  let driverPath = 'Employees/' + driverId + '/GeneralDetails';
-                                  let driver = dbPath.object(driverPath).valueChanges().subscribe(
-                                    driverData => {
-                                      driver.unsubscribe();
-                                      this.employeeDetail.push({ userName: driverData["userName"], name: driverData["name"], mobile: driverData["mobile"], profilePhotoURL: driverData["profilePhotoURL"] });
-                                      details.driverName = (driverData["name"]).toUpperCase();
-                                      details.driverMobile = driverData["mobile"];
-                                      details.driverImageUrl = driverData["profilePhotoURL"] != null && driverData["profilePhotoURL"] != "" ? (driverData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                                    });
-                                }
-                                let helperDetails = this.employeeDetail.find(item => item.userName == helperId);
-                                if (helperDetails != undefined) {
-                                  details.helperName = helperDetails.name != null ? (helperDetails.name.toUpperCase()) : "Not Assigned";
-                                  details.helperMobile = helperDetails.mobile != null ? (helperDetails.mobile) : "---";
-                                  details.helperImageUrl = helperDetails.profilePhotoURL != null && helperDetails.profilePhotoURL != "" ? (helperDetails.profilePhotoURL) : "../../assets/img/internal-user.png";
-                                }
-                                else {
-                                  let helperPath = 'Employees/' + helperId + '/GeneralDetails';
-                                  let helper = dbPath.object(helperPath).valueChanges().subscribe(
-                                    helperData => {
-                                      helper.unsubscribe();
-                                      this.employeeDetail.push({ userName: helperData["userName"], name: helperData["name"], mobile: helperData["mobile"], profilePhotoURL: helperData["profilePhotoURL"] });
-                                      details.helperName = (helperData["name"]).toUpperCase();
-                                      details.helperMobile = helperData["mobile"];
-                                      details.helperImageUrl = helperData["profilePhotoURL"] != null && helperData["profilePhotoURL"] != "" ? (helperData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                      localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                                    });
-                                }
 
-                              }
-                              else {
-                                this.employeeDetail = [];
-                                let driverPath = 'Employees/' + workerData["driver"] + '/GeneralDetails';
-                                let driver = dbPath.object(driverPath).valueChanges().subscribe(
-                                  driverData => {
-                                    driver.unsubscribe();
-                                    this.employeeDetail.push({ userName: driverData["userName"], name: driverData["name"], mobile: driverData["mobile"], profilePhotoURL: driverData["profilePhotoURL"] });
-                                    details.driverName = (driverData["name"]).toUpperCase();
-                                    details.driverMobile = driverData["mobile"];
-                                    details.driverImageUrl = driverData["profilePhotoURL"] != null && driverData["profilePhotoURL"] != "" ? (driverData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                                  });
-                                let helperPath = 'Employees/' + workerData["helper"] + '/GeneralDetails';
-                                let helper = dbPath.object(helperPath).valueChanges().subscribe(
-                                  helperData => {
-                                    helper.unsubscribe();
-                                    this.employeeDetail.push({ userName: helperData["userName"], name: helperData["name"], mobile: helperData["mobile"], profilePhotoURL: helperData["profilePhotoURL"] });
-                                    details.helperName = (helperData["name"]).toUpperCase();
-                                    details.helperMobile = helperData["mobile"];
-                                    details.helperImageUrl = helperData["profilePhotoURL"] != null && helperData["profilePhotoURL"] != "" ? (helperData["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                    localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                                  });
-                              }
+                              commonService.getEmplyeeDetailByEmployeeId(workerData["driver"]).then((employee) => {
+                                details.driverName = (employee["name"]).toUpperCase();
+                                details.driverMobile = employee["mobile"];
+                                details.driverImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
+                                localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                              });
+
+                              commonService.getEmplyeeDetailByEmployeeId(workerData["helper"]).then((employee) => {
+                                details.helperName = (employee["name"]).toUpperCase();
+                                details.helperMobile = employee["mobile"];
+                                details.helperImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
+                                localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
+                              });
+
                             });
                         });
                         this.map.fitBounds(this.bounds);

@@ -78,7 +78,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     this.houseData.totalDays = "0";
     this.lineMarkerList = [];
 
-
     let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
       this.houseData.name = userDetail.name;
@@ -160,7 +159,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
   }
 
-
   getRfidCount(userId: any) {
     if (this.zoneList.length > 0) {
       for (let i = 0; i < this.zoneList.length; i++) {
@@ -195,11 +193,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
             }
             if (i == this.zoneList.length - 1) {
-             // setTimeout(() => {
-                this.getSummary();
-             // }, 2000);
-              
-
+              this.getSummary();
             }
           }
         );
@@ -209,7 +203,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   getSummary() {
     if (this.lineMarkerList.length > 0) {
-
       let surved = 0;
       let revisit = 0;
       let rfid = 0;
@@ -229,7 +222,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         this.houseData.totalDays = this.lineMarkerList.length.toString();
         this.houseData.average = ((surved + revisit + rfid) / this.lineMarkerList.length).toFixed(2);
       }
-
     }
   }
 
@@ -320,25 +312,22 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       return;
     }
     this.dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "";
-    let lineInstance = this.db
-      .object(this.dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        lineInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (data[index]["ApproveStatus"] != null) {
-                if (data[index]["ApproveStatus"]["status"] == "Confirm") {
-                  this.lineList.push({ lineNo: index, isChecked: 0 });
-                }
+    let lineInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+      lineInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (data[index]["ApproveStatus"] != null) {
+              if (data[index]["ApproveStatus"]["status"] == "Confirm") {
+                this.lineList.push({ lineNo: index, isChecked: 0 });
               }
             }
           }
         }
-      });
+      }
+    });
   }
 
   saveAssignment() {

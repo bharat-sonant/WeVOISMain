@@ -27,11 +27,12 @@ export class VehiclePartReportComponent implements OnInit {
   isOnLoad = false;
   dateDataListStore: any[];
   dateDataList: any[];
-  db:any;
-
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.dateDataList = [];
     this.dateDataListStore = [];
     this.toDayDate = this.commonService.setTodayDate();

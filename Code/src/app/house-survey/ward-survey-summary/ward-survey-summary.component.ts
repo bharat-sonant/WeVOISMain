@@ -38,7 +38,6 @@ export class WardSurveySummaryComponent implements OnInit {
   };
 
   ngOnInit() {
-    //localStorage.setItem("wardNameNotCorrectList",null);
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -53,10 +52,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalRevisit = 0;
   }
 
-
   getWardProgressList() {
-
-
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
@@ -209,9 +205,6 @@ export class WardSurveySummaryComponent implements OnInit {
                 if (lineDetail != undefined) {
                   lineDetail.survyed = Number(data);
                 }
-              }
-              else {
-                //this.getSurvedData(wardNo, i);
               }
             }
           );
@@ -413,7 +406,6 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyDateList = dateList.sort((a, b) =>
             b.dateOrder > a.dateOrder ? 1 : -1
           );
-          // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -450,7 +442,6 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyDateList = dateList.sort((a, b) =>
             b.dateOrder > a.dateOrder ? 1 : -1
           );
-          // this.surveyDateList = this.commonService.transformNumeric(dateList, "-dateOrder");
         }
       }
     );
@@ -487,13 +478,11 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyDateList = dateList.sort((a, b) =>
             b.dateOrder > a.dateOrder ? 1 : -1
           );
-          //  this.surveyDateList = this.commonService.transformString(dateList, "-dateOrder");
         }
       }
     );
   }
 }
-
 
 export class surveyDatail {
   totalLines: number;

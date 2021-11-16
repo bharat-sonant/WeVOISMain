@@ -69,7 +69,7 @@ export class DustbinMonitoringComponent {
   defaultDustbinUrl: any;
   cityName: any;
   db: any;
-
+  instancesList:any[];
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -87,6 +87,7 @@ export class DustbinMonitoringComponent {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.activeZone = 0;
     this.assignedBinList = [];
+    this.instancesList=[];
     this.getDefaultImageUrl();
     this.getDustbins();
     setTimeout(() => {
@@ -363,6 +364,7 @@ export class DustbinMonitoringComponent {
                       dbPath = "RealTimeDetails/WardDetails/BinLifting/" + vehicle;
                       let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
                         dutyData => {
+                          this.instancesList.push({ instances: vehicleDutyData });
                           if (dutyData != null) {
                             if (dutyData["isOnDuty"] != "yes") {
                               let lat = lineData[lineData.length - 1]["lat"];
@@ -808,5 +810,13 @@ export class DustbinMonitoringComponent {
 
   showImageDetail() {
     this.router.navigate(['/' + this.cityName + '/3A/dustbin-analysis']);
+  }
+
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 }

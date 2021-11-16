@@ -21,10 +21,8 @@ export class CommonService {
 
   setTodayDate() {
     let d = new Date();
-
     let month = d.getMonth() + 1;
     let day = d.getDate();
-
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
@@ -38,7 +36,6 @@ export class CommonService {
     let day = d.getDate();
     let hour = d.getHours();
     let min = d.getMinutes();
-
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day + " " + (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min);
   }
 
@@ -232,19 +229,6 @@ export class CommonService {
     return mapProp;
   }
 
-  getKmlPathFromStorage(wardName: any) {
-    this.fsDb
-      .object("Defaults/KmlBoundary/storagePathUrl")
-      .valueChanges()
-      .subscribe((path) => {
-        this.db
-          .object("Defaults/KmlBoundary/" + wardName)
-          .valueChanges()
-          .subscribe((wardPath) => {
-            return path + "" + wardPath;
-          });
-      });
-  }
 
   getLineColor(status: any) {
     if (status == "LineCompleted") {
@@ -352,9 +336,7 @@ export class CommonService {
 
   tConvert(time: any) {
     // Check correct time format and split into components
-    time = time
-      .toString()
-      .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
     if (time.length > 1) {
       // If time format correct
@@ -380,7 +362,6 @@ export class CommonService {
       }
     }
   }
-
 
   transform(array: Array<any>, args: string): Array<any> {
     if (typeof args[0] === "undefined") {
@@ -462,22 +443,11 @@ export class CommonService {
   }
 
   getMinuteToHHMM(minutes: any) {
-    return (
-      (parseFloat(minutes) / 60).toFixed(2).split(".")[0] +
-      " hr " +
-      (parseFloat((parseFloat(minutes) / 60).toFixed(2).split(".")[1]) * 60)
-        .toString()
-        .slice(0, 2) +
-      " min"
-    );
+    return ((parseFloat(minutes) / 60).toFixed(2).split(".")[0] + " hr " + (parseFloat((parseFloat(minutes) / 60).toFixed(2).split(".")[1]) * 60).toString().slice(0, 2) + " min");
   }
 
   getCurrentTime() {
-    return (
-      new Date().toTimeString().split(" ")[0].split(":")[0] +
-      ":" +
-      new Date().toTimeString().split(" ")[0].split(":")[1]
-    );
+    return (new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1]);
   }
 
   gteHrsAndMinutesOnly(time: string) {
@@ -502,36 +472,24 @@ export class CommonService {
       if (employeeData == undefined) {
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
         let employeeDbPath = "Employees/" + employeeId + "/GeneralDetails";
-        let employee = this.fsDb
-          .object(employeeDbPath)
-          .valueChanges()
-          .subscribe((data) => {
-            employee.unsubscribe();
-            let designationDbPath =
-              "Defaults/Designations/" + data["designationId"] + "/name";
-            let designation = this.db
-              .object(designationDbPath)
-              .valueChanges()
-              .subscribe((designationData) => {
-                designation.unsubscribe();
-                employeeList.push({
-                  userName: data["userName"],
-                  name: data["name"],
-                  mobile: data["mobile"],
-                  profilePhotoURL: data["profilePhotoURL"],
-                  designation: designationData,
-                });
-                localStorage.setItem(
-                  "employeeList",
-                  JSON.stringify(employeeList)
-                );
-                let list = JSON.parse(localStorage.getItem("employeeList"));
-                let employeeData = list.find(
-                  (item) => item.userName == employeeId
-                );
-                resolve(employeeData);
-              });
+        let employee = this.fsDb.object(employeeDbPath).valueChanges().subscribe((data) => {
+          employee.unsubscribe();
+          let designationDbPath = "Defaults/Designations/" + data["designationId"] + "/name";
+          let designation = this.db.object(designationDbPath).valueChanges().subscribe((designationData) => {
+            designation.unsubscribe();
+            employeeList.push({
+              userName: data["userName"],
+              name: data["name"],
+              mobile: data["mobile"],
+              profilePhotoURL: data["profilePhotoURL"],
+              designation: designationData,
+            });
+            localStorage.setItem("employeeList", JSON.stringify(employeeList));
+            let list = JSON.parse(localStorage.getItem("employeeList"));
+            let employeeData = list.find((item) => item.userName == employeeId);
+            resolve(employeeData);
           });
+        });
       } else {
         resolve(employeeData);
       }
@@ -617,7 +575,6 @@ export class CommonService {
   }
 
   chkUserPageAccess(pageURL: any, city: any) {
-
     let urlCity = pageURL.split("/")[pageURL.split("/").length - 3];
     if (city != urlCity) {
       urlCity = pageURL.split("/")[pageURL.split("/").length - 4];
@@ -650,26 +607,21 @@ export class CommonService {
 
   getWardLines(newDb: any, wardNo: any) {
     return new Promise((resolve) => {
-      let wardLineCount = newDb
-        .object("WardLines/" + wardNo + "")
-        .valueChanges()
-        .subscribe((lineCount) => {
-          wardLineCount.unsubscribe();
-          if (lineCount != null) {
-            resolve(lineCount);
-          }
-        });
+      let wardLineCount = newDb.object("WardLines/" + wardNo + "").valueChanges().subscribe((lineCount) => {
+        wardLineCount.unsubscribe();
+        if (lineCount != null) {
+          resolve(lineCount);
+        }
+      });
     });
   }
 
   getWardKML(newDb: any, wardNo: any) {
     return new Promise((resolve) => {
-      newDb
-        .object("Defaults/KmlBoundary/" + wardNo)
-        .valueChanges()
-        .subscribe((wardPath) => {
-          resolve(wardPath);
-        });
+     let boundaryInstance= newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
+      boundaryInstance.unsubscibe();
+      resolve(wardPath);
+      });
     });
   }
 
@@ -702,143 +654,131 @@ export class CommonService {
       wardCheckList.push({ wardNo: "31" });
     }
     let dbPath = "Defaults/CircleWiseWards/Circle1";
-    let zoneInstance = newDb
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        zoneInstance.unsubscribe();
-        if (data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            let zoneNo = data[i];
-            let zoneName = data[i];
-            if (data[i].toString().includes("mkt1")) {
-              zoneName = "Market 1";
-            } else if (data[i].toString().includes("mkt2")) {
-              zoneName = "Market 2";
-            } else if (data[i].toString().includes("mkt3")) {
-              zoneName = "Market 3";
-            } else if (data[i].toString().includes("mkt4")) {
-              zoneName = "Market 4";
-            } else {
-              zoneName = "Ward " + data[i];
-            }
-            let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
-            if (wardDetail == undefined) {
-              zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-            }
+    let zoneInstance = newDb.list(dbPath).valueChanges().subscribe((data) => {
+      zoneInstance.unsubscribe();
+      if (data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          let zoneNo = data[i];
+          let zoneName = data[i];
+          if (data[i].toString().includes("mkt1")) {
+            zoneName = "Market 1";
+          } else if (data[i].toString().includes("mkt2")) {
+            zoneName = "Market 2";
+          } else if (data[i].toString().includes("mkt3")) {
+            zoneName = "Market 3";
+          } else if (data[i].toString().includes("mkt4")) {
+            zoneName = "Market 4";
+          } else {
+            zoneName = "Ward " + data[i];
           }
-          localStorage.setItem("markerZone", JSON.stringify(zoneList));
+          let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
+          if (wardDetail == undefined) {
+            zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+          }
         }
-      });
+        localStorage.setItem("markerZone", JSON.stringify(zoneList));
+      }
+    });
   }
 
   setFixedLoctions(newDb: any) {
     let fixedLocation = [];
     let dbLocationPath = "Defaults/GeoLocations/FixedLocations";
-    let locationDetail = newDb
-      .list(dbLocationPath)
-      .valueChanges()
-      .subscribe((locationPath) => {
-        locationDetail.unsubscribe();
-        for (let i = 0; i < locationPath.length; i++) {
-          fixedLocation.push({
-            name: locationPath[i]["name"],
-            address: locationPath[i]["address"],
-            img: locationPath[i]["img"],
-            lat: locationPath[i]["lat"],
-            lng: locationPath[i]["lng"],
-          });
-        }
-        localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
-      });
+    let locationDetail = newDb.list(dbLocationPath).valueChanges().subscribe((locationPath) => {
+      locationDetail.unsubscribe();
+      for (let i = 0; i < locationPath.length; i++) {
+        fixedLocation.push({
+          name: locationPath[i]["name"],
+          address: locationPath[i]["address"],
+          img: locationPath[i]["img"],
+          lat: locationPath[i]["lat"],
+          lng: locationPath[i]["lng"],
+        });
+      }
+      localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
+    });
   }
 
   setVehicle(newDb: any) {
     let vehicleList = [];
     let dbPath = "Vehicles";
-    let vehicleInstance = newDb
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((vehicle) => {
-        vehicleInstance.unsubscribe();
-        if (vehicle != null) {
-          vehicleList.push({ vehicle: "Select Vehicle" });
-          vehicleList.push({ vehicle: "Drum/Can" });
-          vehicleList.push({ vehicle: "Motor Cycle" });
-          let keyArrray = Object.keys(vehicle);
-          if (keyArrray.length > 0) {
-            for (let i = 0; i < keyArrray.length; i++) {
-              if (keyArrray[i] != "NotApplicable") {
-                vehicleList.push({ vehicle: keyArrray[i] });
-              }
+    let vehicleInstance = newDb.object(dbPath).valueChanges().subscribe((vehicle) => {
+      vehicleInstance.unsubscribe();
+      if (vehicle != null) {
+        vehicleList.push({ vehicle: "Select Vehicle" });
+        vehicleList.push({ vehicle: "Drum/Can" });
+        vehicleList.push({ vehicle: "Motor Cycle" });
+        let keyArrray = Object.keys(vehicle);
+        if (keyArrray.length > 0) {
+          for (let i = 0; i < keyArrray.length; i++) {
+            if (keyArrray[i] != "NotApplicable") {
+              vehicleList.push({ vehicle: keyArrray[i] });
             }
           }
-          localStorage.setItem("vehicle", JSON.stringify(vehicleList));
         }
-      });
+        localStorage.setItem("vehicle", JSON.stringify(vehicleList));
+      }
+    });
   }
 
   setDustbin(newDb: any) {
     let dustbinList = [];
     let dbPath = "DustbinData/DustbinDetails";
-    let dustbinInstance = newDb
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((dustbin) => {
-        dustbinInstance.unsubscribe();
-        if (dustbin != null) {
-          let keyArrray = Object.keys(dustbin);
-          if (keyArrray.length > 0) {
-            for (let i = 0; i < keyArrray.length; i++) {
-              let index = keyArrray[i];
-              let pickFrequency = 0;
-              let isDisabled = "no";
-              let isBroken = false;
-              if (dustbin[index]["pickFrequency"] != null) {
-                pickFrequency = Number(dustbin[index]["pickFrequency"]);
-              }
-              if (dustbin[index]["isDisabled"] != null) {
-                isDisabled = dustbin[index]["isDisabled"];
-              }
-              if (dustbin[index]["isBroken"] != null) {
-                isBroken = dustbin[index]["isBroken"];
-              }
-              dustbinList.push({
-                zone: dustbin[index]["zone"],
-                dustbin: keyArrray[i],
-                address: dustbin[index]["address"],
-                type: dustbin[index]["type"],
-                pickFrequency: pickFrequency,
-                lat: dustbin[index]["lat"],
-                lng: dustbin[index]["lng"],
-                isAssigned: dustbin[index]["isAssigned"],
-                spelledRight: dustbin[index]["spelledRight"],
-                ward: dustbin[index]["ward"],
-                isDisabled: isDisabled,
-                isBroken: isBroken,
-              });
+    let dustbinInstance = newDb.object(dbPath).valueChanges().subscribe((dustbin) => {
+      dustbinInstance.unsubscribe();
+      if (dustbin != null) {
+        let keyArrray = Object.keys(dustbin);
+        if (keyArrray.length > 0) {
+          for (let i = 0; i < keyArrray.length; i++) {
+            let index = keyArrray[i];
+            let pickFrequency = 0;
+            let isDisabled = "no";
+            let isBroken = false;
+            if (dustbin[index]["pickFrequency"] != null) {
+              pickFrequency = Number(dustbin[index]["pickFrequency"]);
             }
+            if (dustbin[index]["isDisabled"] != null) {
+              isDisabled = dustbin[index]["isDisabled"];
+            }
+            if (dustbin[index]["isBroken"] != null) {
+              isBroken = dustbin[index]["isBroken"];
+            }
+            dustbinList.push({
+              zone: dustbin[index]["zone"],
+              dustbin: keyArrray[i],
+              address: dustbin[index]["address"],
+              type: dustbin[index]["type"],
+              pickFrequency: pickFrequency,
+              lat: dustbin[index]["lat"],
+              lng: dustbin[index]["lng"],
+              isAssigned: dustbin[index]["isAssigned"],
+              spelledRight: dustbin[index]["spelledRight"],
+              ward: dustbin[index]["ward"],
+              isDisabled: isDisabled,
+              isBroken: isBroken,
+            });
           }
-          localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         }
-      });
+        localStorage.setItem("dustbin", JSON.stringify(dustbinList));
+      }
+    });
   }
 
   setWardKML(newDb: any) {
     let dbPath = "Defaults/KmlBoundary/";
-    let wardLinesInstance = newDb.object(dbPath).valueChanges().subscribe(
+    let wardKMLInstance = newDb.object(dbPath).valueChanges().subscribe(
       data => {
-        wardLinesInstance.unsubscribe();
+        wardKMLInstance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
-          let wardLineList = [];
+          let wardKMLList = [];
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNo = keyArray[i];
               let kmlUrl = data[wardNo];
-              wardLineList.push({ wardNo: wardNo, kmlUrl: kmlUrl });
+              wardKMLList.push({ wardNo: wardNo, kmlUrl: kmlUrl });
             }
-            localStorage.setItem("wardKMList", JSON.stringify(wardLineList));
+            localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
           }
         }
       }
@@ -869,200 +809,158 @@ export class CommonService {
   setMarkingWards(newDb: any) {
     let markingWards = [];
     let dbPath = "Defaults/MarkingWards";
-    let wardDetail = newDb
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        if (data.length > 0) {
-          markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
-          for (let index = 0; index < data.length; index++) {
-            if (
-              !data[index].toString().includes("Test") &&
-              data[index] != "OfficeWork" &&
-              data[index] != "FixedWages" &&
-              data[index] != "BinLifting" &&
-              data[index] != "GarageWork" &&
-              data[index] != "Compactor" &&
-              data[index] != "SegregationWork" &&
-              data[index] != "GeelaKachra" &&
-              data[index] != "SecondHelper" &&
-              data[index] != "ThirdHelper"
-            ) {
-              if (data[index].toString().includes("mkt")) {
-                markingWards.push({
-                  zoneNo: data[index],
-                  zoneName:
-                    "Market " + data[index].toString().replace("mkt", ""),
-                });
-              } else if (data[index].toString().includes("MarketRoute1")) {
-                markingWards.push({ zoneNo: data[index], zoneName: "Market 1" });
-              } else if (data[index].toString().includes("MarketRoute2")) {
-                markingWards.push({ zoneNo: data[index], zoneName: "Market 2" });
-              } else if (data[index].toString() == "WetWaste") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 1" });
-              } else if (data[index].toString() == "WetWaste1") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 2" });
-              } else if (data[index].toString() == "WetWaste2") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 3" });
-              } else if (data[index].toString() == "WetWaste4") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 4" });
-              } else if (data[index].toString() == "WetWaste5") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 5" });
-              } else if (data[index].toString() == "WetWaste6") {
-                markingWards.push({ zoneNo: data[index], zoneName: "Wet 6" });
-              } else if (data[index].toString() == "CompactorTracking1") {
-                markingWards.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking1",
-                });
-              } else if (data[index].toString() == "CompactorTracking2") {
-                markingWards.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking2",
-                });
-              } else {
-                markingWards.push({
-                  zoneNo: data[index],
-                  zoneName: "Ward " + data[index],
-                });
-              }
+    let wardDetail = newDb.list(dbPath).valueChanges().subscribe((data) => {
+      if (data.length > 0) {
+        markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
+        for (let index = 0; index < data.length; index++) {
+          if (!data[index].toString().includes("Test") && data[index] != "OfficeWork" && data[index] != "FixedWages" && data[index] != "BinLifting" && data[index] != "GarageWork" && data[index] != "Compactor" && data[index] != "SegregationWork" && data[index] != "GeelaKachra" && data[index] != "SecondHelper" && data[index] != "ThirdHelper") {
+            if (data[index].toString().includes("mkt")) {
+              markingWards.push({
+                zoneNo: data[index],
+                zoneName:
+                  "Market " + data[index].toString().replace("mkt", ""),
+              });
+            } else if (data[index].toString().includes("MarketRoute1")) {
+              markingWards.push({ zoneNo: data[index], zoneName: "Market 1" });
+            } else if (data[index].toString().includes("MarketRoute2")) {
+              markingWards.push({ zoneNo: data[index], zoneName: "Market 2" });
+            } else if (data[index].toString() == "WetWaste") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 1" });
+            } else if (data[index].toString() == "WetWaste1") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 2" });
+            } else if (data[index].toString() == "WetWaste2") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 3" });
+            } else if (data[index].toString() == "WetWaste4") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 4" });
+            } else if (data[index].toString() == "WetWaste5") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 5" });
+            } else if (data[index].toString() == "WetWaste6") {
+              markingWards.push({ zoneNo: data[index], zoneName: "Wet 6" });
+            } else if (data[index].toString() == "CompactorTracking1") {
+              markingWards.push({
+                zoneNo: data[index],
+                zoneName: "CompactorTracking1",
+              });
+            } else if (data[index].toString() == "CompactorTracking2") {
+              markingWards.push({
+                zoneNo: data[index],
+                zoneName: "CompactorTracking2",
+              });
+            } else {
+              markingWards.push({
+                zoneNo: data[index],
+                zoneName: "Ward " + data[index],
+              });
             }
           }
-          localStorage.setItem("markingWards", JSON.stringify(markingWards));
         }
-        wardDetail.unsubscribe();
-      });
+        localStorage.setItem("markingWards", JSON.stringify(markingWards));
+      }
+      wardDetail.unsubscribe();
+    });
   }
 
-
   setZones(newDb: any) {
-
     let letestZone = [];
     let dbPath = "Defaults/AvailableWard";
-    let wardDetail = newDb
-      .list(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        if (data.length > 0) {
-          letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
-          for (let index = 0; index < data.length; index++) {
-            if (
-              !data[index].toString().includes("Test") &&
-              data[index] != "OfficeWork" &&
-              data[index] != "FixedWages" &&
-              data[index] != "BinLifting" &&
-              data[index] != "GarageWork" &&
-              data[index] != "Compactor" &&
-              data[index] != "SegregationWork" &&
-              data[index] != "GeelaKachra" &&
-              data[index] != "SecondHelper" &&
-              data[index] != "ThirdHelper"
-            ) {
-              if (data[index].toString().includes("mkt")) {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName:
-                    "Market " + data[index].toString().replace("mkt", ""),
-                });
-              } else if (data[index].toString().includes("MarketRoute1")) {
-                letestZone.push({ zoneNo: data[index], zoneName: "Market 1" });
-              } else if (data[index].toString().includes("MarketRoute2")) {
-                letestZone.push({ zoneNo: data[index], zoneName: "Market 2" });
-              } else if (data[index].toString() == "WetWaste") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 1" });
-              } else if (data[index].toString() == "WetWaste1") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 2" });
-              } else if (data[index].toString() == "WetWaste2") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 3" });
-              } else if (data[index].toString() == "WetWaste4") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 4" });
-              } else if (data[index].toString() == "WetWaste5") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 5" });
-              } else if (data[index].toString() == "WetWaste6") {
-                letestZone.push({ zoneNo: data[index], zoneName: "Wet 6" });
-              } else if (data[index].toString() == "CompactorTracking1") {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking1",
-                });
-              } else if (data[index].toString() == "CompactorTracking2") {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "CompactorTracking2",
-                });
-              } else {
-                letestZone.push({
-                  zoneNo: data[index],
-                  zoneName: "Ward " + data[index],
-                });
-              }
+    let wardDetail = newDb.list(dbPath).valueChanges().subscribe((data) => {
+      if (data.length > 0) {
+        letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
+        for (let index = 0; index < data.length; index++) {
+          if (!data[index].toString().includes("Test") && data[index] != "OfficeWork" && data[index] != "FixedWages" && data[index] != "BinLifting" && data[index] != "GarageWork" && data[index] != "Compactor" && data[index] != "SegregationWork" && data[index] != "GeelaKachra" && data[index] != "SecondHelper" && data[index] != "ThirdHelper") {
+            if (data[index].toString().includes("mkt")) {
+              letestZone.push({
+                zoneNo: data[index],
+                zoneName:
+                  "Market " + data[index].toString().replace("mkt", ""),
+              });
+            } else if (data[index].toString().includes("MarketRoute1")) {
+              letestZone.push({ zoneNo: data[index], zoneName: "Market 1" });
+            } else if (data[index].toString().includes("MarketRoute2")) {
+              letestZone.push({ zoneNo: data[index], zoneName: "Market 2" });
+            } else if (data[index].toString() == "WetWaste") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 1" });
+            } else if (data[index].toString() == "WetWaste1") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 2" });
+            } else if (data[index].toString() == "WetWaste2") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 3" });
+            } else if (data[index].toString() == "WetWaste4") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 4" });
+            } else if (data[index].toString() == "WetWaste5") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 5" });
+            } else if (data[index].toString() == "WetWaste6") {
+              letestZone.push({ zoneNo: data[index], zoneName: "Wet 6" });
+            } else if (data[index].toString() == "CompactorTracking1") {
+              letestZone.push({
+                zoneNo: data[index],
+                zoneName: "CompactorTracking1",
+              });
+            } else if (data[index].toString() == "CompactorTracking2") {
+              letestZone.push({
+                zoneNo: data[index],
+                zoneName: "CompactorTracking2",
+              });
+            } else {
+              letestZone.push({
+                zoneNo: data[index],
+                zoneName: "Ward " + data[index],
+              });
             }
           }
-          localStorage.setItem("latest-zones", JSON.stringify(letestZone));
         }
-        wardDetail.unsubscribe();
-      });
+        localStorage.setItem("latest-zones", JSON.stringify(letestZone));
+      }
+      wardDetail.unsubscribe();
+    });
   }
 
   setWebPortalUsers() {
     let userList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("Users")
-      .collection("Users")
-      .get()
-      .subscribe((ss) => {
-        const document = ss.docs;
-
-        document.forEach((doc) => {
-          let imgUrl = "internal-user.png";
-          let utitle = "Internal User";
-          if (doc.data()["userType"] == "External User") {
-            imgUrl = "external-user.png";
-            utitle = "External User";
-          }
-          let haltDisableAccess = 0;
-          if (doc.data()["haltDisableAccess"] != undefined) {
-            haltDisableAccess = doc.data()["haltDisableAccess"];
-          }
-          if (doc.data()["isDelete"] == "0") {
-            userList.push({
-              userKey: doc.id,
-              userId: doc.data()["userId"],
-              name: doc.data()["name"],
-              email: doc.data()["email"],
-              password: doc.data()["password"],
-              userType: doc.data()["userType"],
-              expiryDate: doc.data()["expiryDate"],
-              notificationHalt: doc.data()["notificationHalt"],
-              notificationMobileDataOff:
-                doc.data()["notificationMobileDataOff"],
-              notificationSkippedLines: doc.data()["notificationSkippedLines"],
-              notificationPickDustbins: doc.data()["notificationPickDustbins"],
-              notificationGeoSurfing: doc.data()["notificationGeoSurfing"],
-              officeAppUserId: doc.data()["officeAppUserId"],
-              isTaskManager: doc.data()["isTaskManager"],
-              haltDisableAccess: haltDisableAccess,
-            });
-          }
-        });
-        localStorage.setItem("webPortalUserList", JSON.stringify(userList));
+    this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
+      const document = ss.docs;
+      document.forEach((doc) => {
+        let imgUrl = "internal-user.png";
+        let utitle = "Internal User";
+        if (doc.data()["userType"] == "External User") {
+          imgUrl = "external-user.png";
+          utitle = "External User";
+        }
+        let haltDisableAccess = 0;
+        if (doc.data()["haltDisableAccess"] != undefined) {
+          haltDisableAccess = doc.data()["haltDisableAccess"];
+        }
+        if (doc.data()["isDelete"] == "0") {
+          userList.push({
+            userKey: doc.id,
+            userId: doc.data()["userId"],
+            name: doc.data()["name"],
+            email: doc.data()["email"],
+            password: doc.data()["password"],
+            userType: doc.data()["userType"],
+            expiryDate: doc.data()["expiryDate"],
+            notificationHalt: doc.data()["notificationHalt"],
+            notificationMobileDataOff:
+              doc.data()["notificationMobileDataOff"],
+            notificationSkippedLines: doc.data()["notificationSkippedLines"],
+            notificationPickDustbins: doc.data()["notificationPickDustbins"],
+            notificationGeoSurfing: doc.data()["notificationGeoSurfing"],
+            officeAppUserId: doc.data()["officeAppUserId"],
+            isTaskManager: doc.data()["isTaskManager"],
+            haltDisableAccess: haltDisableAccess,
+          });
+        }
       });
+      localStorage.setItem("webPortalUserList", JSON.stringify(userList));
+    });
   }
 
   setPortalPages() {
     let portalAccessList = [];
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("PortalSectionAccess")
-      .collection("Pages")
-      .doc("gR6kziY4rXIv7yIgIK4g")
-      .get()
-      .subscribe((doc) => {
-        let pageList = JSON.parse(doc.data()["pages"]);
-        portalAccessList = this.transform(pageList, "position");
-        localStorage.setItem("portalAccess", JSON.stringify(portalAccessList));
-      });
+    this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").doc("gR6kziY4rXIv7yIgIK4g").get().subscribe((doc) => {
+      let pageList = JSON.parse(doc.data()["pages"]);
+      portalAccessList = this.transform(pageList, "position");
+      localStorage.setItem("portalAccess", JSON.stringify(portalAccessList));
+    });
   }
 
   setUserAccess(userid: any) {
@@ -1073,60 +971,42 @@ export class CommonService {
       let city = cityList[i]["city"];
       let name = cityList[i]["name"];
       let portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-      this.dbFireStore
-        .collection("UserManagement")
-        .doc("UserAccess")
-        .collection("UserAccess")
-        .doc(userid.toString())
-        .collection(city)
-        .doc(city)
-        .get()
-        .subscribe((doc) => {
-          let pageId = doc.data()["pageId"];
-          if (pageId != null) {
-            let dataList = pageId.toString().split(",");
-            for (let i = 0; i < dataList.length; i++) {
-              let accessDetails = portalAccessList.find(
-                (item) => item.pageID == dataList[i].trim()
-              );
-              if (accessDetails != undefined) {
-                accessList.push({
-                  city: city,
-                  userId: userid,
-                  parentId: accessDetails.parentId,
-                  pageId: accessDetails.pageID,
-                  name: accessDetails.name,
-                  url: accessDetails.url,
-                  position: accessDetails.position,
-                  img: accessDetails.img,
-                });
-              }
+      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
+        let pageId = doc.data()["pageId"];
+        if (pageId != null) {
+          let dataList = pageId.toString().split(",");
+          for (let i = 0; i < dataList.length; i++) {
+            let accessDetails = portalAccessList.find((item) => item.pageID == dataList[i].trim());
+            if (accessDetails != undefined) {
+              accessList.push({
+                city: city,
+                userId: userid,
+                parentId: accessDetails.parentId,
+                pageId: accessDetails.pageID,
+                name: accessDetails.name,
+                url: accessDetails.url,
+                position: accessDetails.position,
+                img: accessDetails.img,
+              });
             }
-            accessCity.push({ city: city, name: name });
           }
-          accessList = this.transform(accessList, "position");
-          localStorage.setItem("userAccessList", JSON.stringify(accessList));
-          localStorage.setItem("accessCity", JSON.stringify(accessCity));
-        });
+          accessCity.push({ city: city, name: name });
+        }
+        accessList = this.transform(accessList, "position");
+        localStorage.setItem("userAccessList", JSON.stringify(accessList));
+        localStorage.setItem("accessCity", JSON.stringify(accessCity));
+      });
     }
   }
 
   checkUserCity(userid: any, city: any) {
     let isAccess = false;
-    this.dbFireStore
-      .collection("UserManagement")
-      .doc("UserAccess")
-      .collection("UserAccess")
-      .doc(userid.toString())
-      .collection(city)
-      .doc(city)
-      .get()
-      .subscribe((doc) => {
-        let pageId = doc.data()["pageId"];
-        if (pageId != null) {
-          return (isAccess = true);
-        }
-      });
+    this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
+      let pageId = doc.data()["pageId"];
+      if (pageId != null) {
+        return (isAccess = true);
+      }
+    });
   }
 
   setNotificationPermissions(userId: any) {
@@ -1172,8 +1052,6 @@ export class CommonService {
       }, 1000);
     }
   }
-
-
 
   setKML(zoneNo: any, map: any) {
     let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
@@ -1235,18 +1113,7 @@ export class CommonService {
             for (let i = 1; i < keyArray.length; i++) {
               let index = keyArray[i];
               if (data[index] != null) {
-                if (
-                  !data[index].toString().includes("Test") &&
-                  data[index] != "OfficeWork" &&
-                  data[index] != "FixedWages" &&
-                  data[index] != "BinLifting" &&
-                  data[index] != "GarageWork" &&
-                  data[index] != "Compactor" &&
-                  data[index] != "SegregationWork" &&
-                  data[index] != "GeelaKachra" &&
-                  data[index] != "SecondHelper" &&
-                  data[index] != "ThirdHelper"
-                ) {
+                if (!data[index].toString().includes("Test") && data[index] != "OfficeWork" && data[index] != "FixedWages" && data[index] != "BinLifting" && data[index] != "GarageWork" && data[index] != "Compactor" && data[index] != "SegregationWork" && data[index] != "GeelaKachra" && data[index] != "SecondHelper" && data[index] != "ThirdHelper") {
                   if (data[index].toString().includes("mkt")) {
                     zoneList.push({
                       zoneNo: data[index],
@@ -1363,8 +1230,6 @@ export class CommonService {
     });
   }
 
-
-
   getCircleWiseWard() {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
@@ -1423,7 +1288,7 @@ export class CommonService {
                 this.wardBoundary = new google.maps.KmlLayer({
                   url: data[wardNos].toString(),
                   map: map,
-                  clickable:false
+                  clickable: false
                 });
               }
             }
@@ -1461,7 +1326,7 @@ export class CommonService {
       let userData = userList.find((item) => item.userId == userId);
       if (userData == undefined) {
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-        let userDbPath = "WastebinMonitor/Users/"+userId;
+        let userDbPath = "WastebinMonitor/Users/" + userId;
         let userDataInstance = this.fsDb.object(userDbPath).valueChanges().subscribe((data) => {
           userDataInstance.unsubscribe();
           userList.push({ userId: userId, name: data["name"], email: data["email"] });
@@ -1475,6 +1340,4 @@ export class CommonService {
       }
     });
   }
-
-
 }

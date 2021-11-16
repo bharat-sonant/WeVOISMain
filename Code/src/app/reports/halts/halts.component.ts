@@ -17,13 +17,7 @@ import { FirebaseService } from "../../firebase.service";
 export class HaltsComponent {
   require: any;
   public map: google.maps.Map;
-  constructor(
-    private router: Router,
-    public fs: FirebaseService,
-    private mapService: MapService,
-    private commonService: CommonService,
-    private modalService: NgbModal
-  ) { }
+  constructor(private router: Router, public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   zoneList: any[];
   selectedDate: any;
@@ -102,7 +96,7 @@ export class HaltsComponent {
           if (haltData.length > 0) {
             for (let index = 0; index < haltData.length; index++) {
               if (haltData[index]["haltType"] != "network-off") {
-                let duration =                  haltData[index]["duration"] != undefined                    ? haltData[index]["duration"]                    : 0;
+                let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
                 if (duration > this.minHalt) {
                   totalBreak += duration;
                   if (haltData[index]["location"] != null) {
@@ -118,7 +112,7 @@ export class HaltsComponent {
                     if (haltData[index]["remark"] != null) {
                       remark = haltData[index]["remark"];
                     }
-                    let latlng = haltData[index]["location"]                      .split(":")[1]                      .split(",");
+                    let latlng = haltData[index]["location"].split(":")[1].split(",");
                     let lt = $.trim(latlng[0]).replace("(", "");
                     let lg = $.trim(latlng[1]).replace(")", "");
                     this.haltDataInfo.push({
@@ -189,7 +183,7 @@ export class HaltsComponent {
     for (let i = 0; i < this.haltDataInfo.length; i++) {
       if (this.haltDataInfo[i]["zoneNo"] == zoneNo) {
         let divClass = this.getClass(0, "listClass");
-        let haltClass = this.getClass(          this.haltDataInfo[i]["duration"],          "haltClass"        );
+        let haltClass = this.getClass(this.haltDataInfo[i]["duration"], "haltClass");
         if (this.haltDataList.length == 0) {
           divClass = this.getClass(1, "listClass");
         }
@@ -223,37 +217,8 @@ export class HaltsComponent {
           point2 = 50;
           this.preSelectedMarker = 0;
         }
-        this.haltDataList.push({
-          index: index,
-          id: i,
-          time: time,
-          duration: duration,
-          type: type,
-          location: location,
-          lat: lat,
-          lng: lng,
-          divClass: divClass,
-          haltClass: haltClass,
-          removeReason: removeReason,
-          canRemove: canRemove,
-          remark: remark,
-          ishaltDisableAccess: this.ishaltDisableAccess
-        });
-        this.setMarker(
-          0,
-          lat,
-          lng,
-          duration,
-          time,
-          imageUrl,
-          height,
-          point1,
-          point2,
-          "",
-          "",
-          "halt",
-          isAnimation
-        );
+        this.haltDataList.push({ index: index, id: i, time: time, duration: duration, type: type, location: location, lat: lat, lng: lng, divClass: divClass, haltClass: haltClass, removeReason: removeReason, canRemove: canRemove, remark: remark, ishaltDisableAccess: this.ishaltDisableAccess });
+        this.setMarker(0, lat, lng, duration, time, imageUrl, height, point1, point2, "", "", "halt", isAnimation);
       }
     }
   }
@@ -268,21 +233,7 @@ export class HaltsComponent {
         let height = 50;
         let point1 = 25;
         let point2 = 31;
-        this.setMarker(
-          0,
-          Lat,
-          Lng,
-          0,
-          0,
-          imageUrl,
-          height,
-          point1,
-          point2,
-          this.fixdGeoLocations[i]["name"],
-          this.fixdGeoLocations[i]["address"],
-          "fixed",
-          false
-        );
+        this.setMarker(0, Lat, Lng, 0, 0, imageUrl, height, point1, point2, this.fixdGeoLocations[i]["name"], this.fixdGeoLocations[i]["address"], "fixed", false);
       }
     }
   }
@@ -302,21 +253,7 @@ export class HaltsComponent {
     let imageUrl =
       "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
     this.bounds.extend({ lat: Number(lt), lng: Number(lg) });
-    this.setMarker(
-      i,
-      lt,
-      lg,
-      duration,
-      time,
-      imageUrl,
-      height,
-      point1,
-      point2,
-      "",
-      "",
-      "preSelected",
-      isAnimation
-    );
+    this.setMarker(i, lt, lg, duration, time, imageUrl, height, point1, point2, "", "", "preSelected", isAnimation);
 
     i = index;
     this.haltMarkerList[i]["marker"].setMap(null);
@@ -332,38 +269,10 @@ export class HaltsComponent {
     duration = this.haltDataList[i]["duration"];
     imageUrl = "../../../assets/img/" + this.getMarkerName(duration) + ".svg";
     this.bounds.extend({ lat: Number(lt), lng: Number(lg) });
-    this.setMarker(
-      i,
-      lt,
-      lg,
-      duration,
-      time,
-      imageUrl,
-      height,
-      point1,
-      point2,
-      "",
-      "",
-      "selected",
-      isAnimation
-    );
+    this.setMarker(i, lt, lg, duration, time, imageUrl, height, point1, point2, "", "", "selected", isAnimation);
   }
 
-  setMarker(
-    i: any,
-    lat: any,
-    lng: any,
-    duration: any,
-    time: any,
-    imageUrl: any,
-    height: any,
-    point1: any,
-    point2: any,
-    name: any,
-    location: any,
-    type: any,
-    isAnimation: any
-  ) {
+  setMarker(i: any, lat: any, lng: any, duration: any, time: any, imageUrl: any, height: any, point1: any, point2: any, name: any, location: any, type: any, isAnimation: any) {
     let lt = lat;
     let lg = lng;
     let markerURL = imageUrl;
@@ -390,8 +299,7 @@ export class HaltsComponent {
       },
     });
 
-    let contentString =
-      "Start Time : " + time + " <br/> Break Time : " + duration;
+    let contentString = "Start Time : " + time + " <br/> Break Time : " + duration;
     if (type == "fixed") {
       contentString = "<b>" + name + "</b>: " + location;
     }
@@ -417,46 +325,30 @@ export class HaltsComponent {
     let zoneDetail = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetail != undefined) {
       if (zoneDetail.driverId == null) {
-        let workerDataPath =
-          "WasteCollectionInfo/" +
-          zoneNo +
-          "/" +
-          this.currentYear +
-          "/" +
-          this.currentMonth +
-          "/" +
-          this.selectedDate +
-          "/WorkerDetails";
-        let workerDetails = this.db
-          .object(workerDataPath)
-          .valueChanges()
-          .subscribe((workerInfo) => {
-            workerDetails.unsubscribe();
-            if (workerInfo != null) {
-              let driverList = workerInfo["driver"].toString().split(",");
-              let helperList = workerInfo["helper"].toString().split(",");
-              let driverId = driverList[driverList.length - 1].trim();
-              let helperId = helperList[helperList.length - 1].trim();
-              zoneDetail.driverId = driverId;
-              zoneDetail.helperId = helperId;
-              this.commonService
-                .getEmplyeeDetailByEmployeeId(driverId)
-                .then((employee) => {
-                  zoneDetail.driverName = employee["name"];
-                  zoneDetail.driverMobile = employee["mobile"];
-                  this.haltDetails.driverName = employee["name"];
-                  this.haltDetails.driverMobile = employee["mobile"];
-                });
-              this.commonService
-                .getEmplyeeDetailByEmployeeId(helperId)
-                .then((employee) => {
-                  zoneDetail.helperName = employee["name"];
-                  zoneDetail.helperMobile = employee["mobile"];
-                  this.haltDetails.helperName = employee["name"];
-                  this.haltDetails.helperMobile = employee["mobile"];
-                });
-            }
-          });
+        let workerDataPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.selectedDate + "/WorkerDetails";
+        let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe((workerInfo) => {
+          workerDetails.unsubscribe();
+          if (workerInfo != null) {
+            let driverList = workerInfo["driver"].toString().split(",");
+            let helperList = workerInfo["helper"].toString().split(",");
+            let driverId = driverList[driverList.length - 1].trim();
+            let helperId = helperList[helperList.length - 1].trim();
+            zoneDetail.driverId = driverId;
+            zoneDetail.helperId = helperId;
+            this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+              zoneDetail.driverName = employee["name"];
+              zoneDetail.driverMobile = employee["mobile"];
+              this.haltDetails.driverName = employee["name"];
+              this.haltDetails.driverMobile = employee["mobile"];
+            });
+            this.commonService.getEmplyeeDetailByEmployeeId(helperId).then((employee) => {
+              zoneDetail.helperName = employee["name"];
+              zoneDetail.helperMobile = employee["mobile"];
+              this.haltDetails.helperName = employee["name"];
+              this.haltDetails.helperMobile = employee["mobile"];
+            });
+          }
+        });
       } else {
         this.haltDetails.driverName = zoneDetail.driverName;
         this.haltDetails.driverMobile = zoneDetail.driverMobile;
@@ -523,38 +415,22 @@ export class HaltsComponent {
       document.getElementById("haltMap"),
       mapProp
     );
-
-    //this.mapHalt.mapTypes.set('styled_map', mapstyle);
-    //this.mapHalt.setMapTypeId('styled_map');
   }
 
   setKmlHalt(wardNo: string) {
-    this.db
-      .object("Defaults/KmlBoundary/" + wardNo)
-      .valueChanges()
-      .subscribe((wardPath) => {
-        new google.maps.KmlLayer({
-          url: wardPath.toString(),
-          map: this.mapHalt,
-        });
-      });
+    this.commonService.setKML(wardNo, this.mapHalt);
   }
 
   setDate(filterVal: any) {
     this.selectedDate = filterVal;
     if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
       this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage(
-        "error",
-        "Please select current or previos date!!!"
-      );
+      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       this.selectedDate = this.toDayDate;
       $('#txtDate').val(this.selectedDate);
       //return;
     }
-    this.currentMonth = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
+    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     this.getHaltList();
   }
@@ -575,13 +451,8 @@ export class HaltsComponent {
     let height = 240;
     let width = 350;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     for (let i = 0; i < this.haltDataList.length; i++) {
       if (i == id) {
@@ -607,63 +478,37 @@ export class HaltsComponent {
     );
     let year = new Date(this.selectedDate).getFullYear();
 
-    let dbPath =
-      "HaltInfo/" +
-      this.selectedZone +
-      "/" +
-      year +
-      "/" +
-      monthName +
-      "/" +
-      this.selectedDate +
-      "/" +
-      time;
+    let dbPath = "HaltInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + time;
     if ($("#type").val() == "disable") {
       // if ($("#txtRemark").val() == "") {
       //   this.commonService.setAlertMessage("error", "Please enter remark !!!");
       //   return;
       // }
 
-      this.db.object(dbPath).update({
-        canRemove: "no",
-        remark: remark,
-      });
+      this.db.object(dbPath).update({ canRemove: "no", remark: remark, });
 
       this.haltDataList[id]["canRemove"] = "no";
       this.haltDataList[id]["remark"] = remark;
       let index = this.haltDataList[id]["index"];
-      let haltDetail = this.haltDataInfo.find(
-        (item) => item.index == index && item.zoneNo == this.selectedZone
-      );
+      let haltDetail = this.haltDataInfo.find((item) => item.index == index && item.zoneNo == this.selectedZone);
       if (haltDetail != undefined) {
         haltDetail.canRemove = "no";
         haltDetail.remark = remark;
       }
 
-      this.commonService.setAlertMessage(
-        "success",
-        "halt disabled successfully !!!"
-      );
+      this.commonService.setAlertMessage("success", "halt disabled successfully !!!");
     } else {
-      this.db.object(dbPath).update({
-        canRemove: "yes",
-        remark: remark,
-      });
+      this.db.object(dbPath).update({ canRemove: "yes", remark: remark, });
       this.haltDataList[id]["canRemove"] = "yes";
       this.haltDataList[id]["remark"] = $("#txtRemark").val();
       let index = this.haltDataList[id]["index"];
-      let haltDetail = this.haltDataInfo.find(
-        (item) => item.index == index && item.zoneNo == this.selectedZone
-      );
+      let haltDetail = this.haltDataInfo.find((item) => item.index == index && item.zoneNo == this.selectedZone);
       if (haltDetail != undefined) {
         haltDetail.canRemove = "yes";
         haltDetail.remark = $("#txtRemark").val();
       }
 
-      this.commonService.setAlertMessage(
-        "success",
-        "halt enabled successfully !!!"
-      );
+      this.commonService.setAlertMessage("success", "halt enabled successfully !!!");
     }
     $("#txtRemark").val("");
     $("#type").val("0");

@@ -41,27 +41,7 @@ export class HomeComponent implements OnInit {
       this.getUserAccess();
     }
   }
-
-  getBreakDustbin() {
-    let dbPath = "DustbinData/DustbinDetails";
-    let instance = this.db.list(dbPath).valueChanges().subscribe((data) => {
-      instance.unsubscribe();
-      if (data.length > 0) {
-        for (let i = 0; i < data.length; i++) {
-          let zone = data[i]["zone"];
-          let ward = data[i]["ward"];
-          if (data[i]["isBroken"] != null) {
-            if (data[i]["isBroken"] == true) {
-              console.log(
-                "Zone: " + zone + "  address: " + data[i]["address"]
-              );
-            }
-          }
-        }
-      }
-    });
-  }
-
+  
   setRemark() {
     this.db.object("Defaults/MarkingWards").update({
       "1": "1_34_35",

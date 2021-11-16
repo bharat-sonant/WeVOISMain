@@ -152,13 +152,10 @@ export class PortalServicesComponent implements OnInit {
         workDetails.unsubscribe();
         if (workerData != null) {
           let driverId = workerData;
-          let driverPath = "Employees/" + driverId + "/GeneralDetails";
-          let drivers = this.db.object(driverPath).valueChanges().subscribe((driverData) => {
-            drivers.unsubscribe();
-            if (driverData != null) {
-              this.db.object("WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails").update({ driverName: driverData["name"], });
-            }
+          this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+            this.db.object("WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails").update({ driverName: employee["name"], });
           });
+          
 
           let dbPath = "DailyWorkDetail/" + year + "/" + monthName + "/" + monthDate + "/" + driverId;
           let monthSalaryInfo = this.db.object(dbPath).valueChanges().subscribe((data) => {

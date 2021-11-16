@@ -76,88 +76,82 @@ export class HaltReportComponent implements OnInit {
           workerInfo => {
             setTimeout(() => {
               if (workerInfo) {
-                let driverPath = 'Employees/' + workerInfo["driver"] + "/GeneralDetails";
-                let driver = this.db.object(driverPath).valueChanges().subscribe(
-                  driverData => {
-                    driver.unsubscribe();
-                    let helperPath = 'Employees/' + workerInfo["helper"] + "/GeneralDetails";
-                    let helper = this.db.object(helperPath).valueChanges().subscribe(
-                      helperData => {
-                        helper.unsubscribe();
-                        let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + dataDate;
-                        let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
-                          haltData => {
-                            let totalBreak = 0;
-                            if (haltData.length > 0) {
-                              for (let index = 0; index < haltData.length; index++) {
 
-                                if (haltData[index]["haltType"] != "network-off") {
-                                  let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-                                  if (duration > this.minHalt) {
-                                    totalBreak += duration;
-                                  }
-                                }
+                this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["driver"]).then((driverData) => {
+
+                  this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["helper"]).then((helperData) => {
+                    let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonth + '/' + dataDate;
+                    let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
+                      haltData => {
+                        let totalBreak = 0;
+                        if (haltData.length > 0) {
+                          for (let index = 0; index < haltData.length; index++) {
+
+                            if (haltData[index]["haltType"] != "network-off") {
+                              let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
+                              if (duration > this.minHalt) {
+                                totalBreak += duration;
                               }
                             }
-
-                            haltDateData.push(
-                              {
-                                wardNo: this.zoneList[index]["zoneNo"],
-                                ward: 'Ward ' + this.zoneList[index]["zoneNo"],
-                                driver: driverData != null ? (driverData["name"]) : "---",
-                                helper: helperData != null ? (helperData["name"]) : "---",
-                                breakTotal: parseFloat(this.commonService.getHrs(totalBreak).replace(":", ".")),
-                                breakBGColor: this.commonService.getBreakTimeBGColor(totalBreak),
-                                cursorType: totalBreak == 0 ? 'not-allowed' : 'pointer'
-                              });
-                            haltInfoData.unsubscribe();
-                            for (let i = 0; i < haltDateData.length; i++) {
-                              let rowIndex = 0;
-                              if (i == 0) {
-                                this.haltMonthlyListDriver = [];
-                                let driverName = haltDateData[i]["driver"];
-                                let breakTotal = haltDateData[i]["breakTotal"];
-
-                                this.haltMonthlyListDriver.push({
-                                  driver: haltDateData != null ? driverName : "---",
-                                  breakTotal: parseFloat(breakTotal),
-                                });
-                              }
-                              else {
-                                let driverName = haltDateData[i]["driver"];
-                                let haltTime = 0;
-
-                                let breakTotal = haltDateData[i]["breakTotal"];
-                                let isdata: boolean = false;
-                                for (let j = 0; j < this.haltMonthlyListDriver.length; j++) {
-                                  if (driverName == this.haltMonthlyListDriver[j]["driver"]) {
-                                    haltTime = parseFloat(this.haltMonthlyListDriver[j]["breakTotal"]) + parseFloat(haltDateData[i]["breakTotal"]);
-                                    isdata = true;
-                                    rowIndex = j;
-                                  }
-                                }
-                                if (isdata == true) {
-                                  this.haltMonthlyListDriver[rowIndex]["breakTotal"] = haltTime;
-                                }
-                                else {
-                                  this.haltMonthlyListDriver.push(
-                                    {
-                                      driver: driverName != null ? (driverName) : "---",
-                                      breakTotal: breakTotal
-                                    });
-                                }
-                              }
-                            }
+                          }
+                        }
+                        haltDateData.push(
+                          {
+                            wardNo: this.zoneList[index]["zoneNo"],
+                            ward: 'Ward ' + this.zoneList[index]["zoneNo"],
+                            driver: driverData != null ? (driverData["name"]) : "---",
+                            helper: helperData != null ? (helperData["name"]) : "---",
+                            breakTotal: parseFloat(this.commonService.getHrs(totalBreak).replace(":", ".")),
+                            breakBGColor: this.commonService.getBreakTimeBGColor(totalBreak),
+                            cursorType: totalBreak == 0 ? 'not-allowed' : 'pointer'
                           });
+                        haltInfoData.unsubscribe();
+                        for (let i = 0; i < haltDateData.length; i++) {
+                          let rowIndex = 0;
+                          if (i == 0) {
+                            this.haltMonthlyListDriver = [];
+                            let driverName = haltDateData[i]["driver"];
+                            let breakTotal = haltDateData[i]["breakTotal"];
+
+                            this.haltMonthlyListDriver.push({
+                              driver: haltDateData != null ? driverName : "---",
+                              breakTotal: parseFloat(breakTotal),
+                            });
+                          }
+                          else {
+                            let driverName = haltDateData[i]["driver"];
+                            let haltTime = 0;
+
+                            let breakTotal = haltDateData[i]["breakTotal"];
+                            let isdata: boolean = false;
+                            for (let j = 0; j < this.haltMonthlyListDriver.length; j++) {
+                              if (driverName == this.haltMonthlyListDriver[j]["driver"]) {
+                                haltTime = parseFloat(this.haltMonthlyListDriver[j]["breakTotal"]) + parseFloat(haltDateData[i]["breakTotal"]);
+                                isdata = true;
+                                rowIndex = j;
+                              }
+                            }
+                            if (isdata == true) {
+                              this.haltMonthlyListDriver[rowIndex]["breakTotal"] = haltTime;
+                            }
+                            else {
+                              this.haltMonthlyListDriver.push(
+                                {
+                                  driver: driverName != null ? (driverName) : "---",
+                                  breakTotal: breakTotal
+                                });
+                            }
+                          }
+                        }
                       });
                   });
+                });
               }
             }, 500);
             workerDetails.unsubscribe();
           });
       }
     }
-
   }
 
   getHaltDriverData() {

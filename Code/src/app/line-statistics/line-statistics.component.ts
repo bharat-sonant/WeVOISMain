@@ -112,18 +112,15 @@ export class LineStatisticsComponent implements OnInit {
   checkTodayWorkStatus() {
     let dbPath = "WasteCollectionInfo/" + this.activeZone + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.todayDate + "/LineStatus";
     let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
+      wardLineData.unsubscribe();
       this.graphHeaderData.date = this.getDate(0);
       this.graphHeaderData.workprogress = "0";
-
       if (data.length > 0) {
         $("#divNoRecord").hide();
-
         this.getGrpahDataTodayAndLastFiveDays(15);
       } else {
         $("#divNoRecord").show();
       }
-
-      wardLineData.unsubscribe();
     });
   }
 
@@ -177,6 +174,7 @@ export class LineStatisticsComponent implements OnInit {
     let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
       let lineCompleted = 0;
       if (data.length > 0) {
+        wardLineData.unsubscribe();
         data = this.commonService.transformString(data, "start-time");
         let intervalInMinutes = interval;
         let timePeriod = 100 / (60 / intervalInMinutes) / 100;
@@ -271,6 +269,7 @@ export class LineStatisticsComponent implements OnInit {
         this.maxDistance.push(Math.max.apply(null, distanceCollection));
 
         let wardLines = this.db.object("WardLines/" + this.activeZone).valueChanges().subscribe((lines) => {
+          wardLines.unsubscribe();
           if (this.days == 2) {
             this.graphHeaderData.workprogress = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
@@ -286,8 +285,6 @@ export class LineStatisticsComponent implements OnInit {
           if (this.days == 6) {
             this.graphHeaderData.workprogress4 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
-
-          wardLines.unsubscribe();
         });
       }
 
@@ -309,8 +306,6 @@ export class LineStatisticsComponent implements OnInit {
         this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
         this.graphOptions();
       }
-
-      wardLineData.unsubscribe();
     });
   }
 
@@ -432,7 +427,6 @@ export class LineStatisticsComponent implements OnInit {
         data: this.distance,
       },
     ];
-
     this.lineBigDashboardChartLabels = this.time;
   }
 
@@ -445,7 +439,6 @@ export class LineStatisticsComponent implements OnInit {
         data: this.distance1,
       },
     ];
-
     this.lineBigDashboardChartLabels1 = this.time1;
   }
 
@@ -458,7 +451,6 @@ export class LineStatisticsComponent implements OnInit {
         data: this.distance2,
       },
     ];
-
     this.lineBigDashboardChartLabels2 = this.time2;
   }
 
@@ -471,7 +463,6 @@ export class LineStatisticsComponent implements OnInit {
         data: this.distance3,
       },
     ];
-
     this.lineBigDashboardChartLabels3 = this.time3;
   }
 
@@ -484,7 +475,6 @@ export class LineStatisticsComponent implements OnInit {
         data: this.distance4,
       },
     ];
-
     this.lineBigDashboardChartLabels4 = this.time4;
   }
 
@@ -497,10 +487,9 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   getFormattedDate(days: any) {
-    let date = new Date(      new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24    );
+    let date = new Date(new Date(this.todayDate).getTime() - Number(days) * 1000 * 60 * 60 * 24);
     let day = new Date(date).getDate().toString();
     let month = (new Date(date).getMonth() + 1).toString();
-
     let year = new Date(date).getFullYear().toString();
     if (day.length == 1) {
       day = "0" + day;

@@ -61,7 +61,7 @@ export class MapCardReviewComponent {
   zoneKML: any;
   parhadhouseMarker: any;
   allMatkers: any[] = [];
-
+  instancesList:any[];
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -83,6 +83,7 @@ export class MapCardReviewComponent {
   };
 
   ngOnInit() {
+    this.instancesList=[];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
@@ -126,12 +127,7 @@ export class MapCardReviewComponent {
   }
 
   setKml() {
-    this.db.object("Defaults/KmlBoundary/" + this.selectedZone).valueChanges().subscribe((wardPath) => {
-      this.zoneKML = new google.maps.KmlLayer({
-        url: wardPath.toString(),
-        map: this.map,
-      });
-    });
+    this.commonService.setKML(this.selectedZone, this.map);   
   }
 
   changeZoneSelection(filterVal: any) {
@@ -234,6 +230,7 @@ export class MapCardReviewComponent {
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+      this.instancesList.push({ instances: lineStatus });  
       if (wardNo == this.selectedZone) {
         if (this.polylines[index] != undefined) {
           this.polylines[index].setMap(null);
@@ -370,6 +367,14 @@ export class MapCardReviewComponent {
       },
     });
     this.houseMarkerList.push({ marker });
+  }
+  
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 }
 export class progressDetail {

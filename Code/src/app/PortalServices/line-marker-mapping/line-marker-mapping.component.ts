@@ -395,10 +395,7 @@ export class LineMarkerMappingComponent {
       return;
     }
     if (this.selectedCardDetails[0]["lineNo"] == $("#txtNewLine").val()) {
-      this.commonService.setAlertMessage(
-        "error",
-        "Sorry! cards can't be move on same line"
-      );
+      this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
     $('#divLoader').show();

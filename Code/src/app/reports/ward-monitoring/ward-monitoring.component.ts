@@ -61,12 +61,13 @@ export class WardMonitoringComponent {
   db: any;
   mapRefrence: any;
   wardLines: any;
-
+  cityName: any;
   constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private httpService: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.selectedZoneNo = "0";
@@ -150,7 +151,7 @@ export class WardMonitoringComponent {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-    
+
     let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         lineMapRefrenceInstance.unsubscribe();

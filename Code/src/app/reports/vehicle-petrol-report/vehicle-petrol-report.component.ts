@@ -43,21 +43,13 @@ export class VehiclePetrolReportComponent implements OnInit {
   public lineBigDashboardChartLabels: Array<any>;
   public lineBigDashboardChartColors: Array<any>;
 
-  constructor(
-    public fs: FirebaseService,
-    private modalService: NgbModal,
-    public toastr: ToastrService,
-    private mapService: MapService,
-    public httpService: HttpClient,
-    private commonService: CommonService
-  ) {}
+  constructor(public fs: FirebaseService, private modalService: NgbModal, public toastr: ToastrService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
   db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(
-      window.location.href,
-      localStorage.getItem("cityName")
-    );
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getVehicle();
     $("#divLoader").show();
@@ -70,22 +62,19 @@ export class VehiclePetrolReportComponent implements OnInit {
     let vehicleStorageList = JSON.parse(localStorage.getItem("vehicle"));
     if (vehicleStorageList == null) {
       let dbPath = "Vehicles";
-      let vehicleInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe((vehicle) => {
-          vehicleInstance.unsubscribe();
-          if (vehicle != null) {
-            let keyArrray = Object.keys(vehicle);
-            if (keyArrray.length > 0) {
-              for (let i = 0; i < keyArrray.length; i++) {
-                if (keyArrray[i] != "NotApplicable") {
-                  this.vehicleList.push({ vehicle: keyArrray[i] });
-                }
+      let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe((vehicle) => {
+        vehicleInstance.unsubscribe();
+        if (vehicle != null) {
+          let keyArrray = Object.keys(vehicle);
+          if (keyArrray.length > 0) {
+            for (let i = 0; i < keyArrray.length; i++) {
+              if (keyArrray[i] != "NotApplicable") {
+                this.vehicleList.push({ vehicle: keyArrray[i] });
               }
             }
           }
-        });
+        }
+      });
     } else {
       if (vehicleStorageList.length > 0) {
         for (let i = 3; i < vehicleStorageList.length; i++) {
@@ -113,56 +102,39 @@ export class VehiclePetrolReportComponent implements OnInit {
           let monthName = this.commonService.getCurrentMonthName(
             parseInt(monthDate.toString().split("-")[1]) - 1
           );
-          let dbPath =
-            "Inventory/PetrolData/" +
-            year +
-            "/" +
-            monthName +
-            "/" +
-            monthDate +
-            "/" +
-            this.vehicleList[i]["vehicle"] +
-            "";
-          let vehicleInstance = this.db
-            .object(dbPath)
-            .valueChanges()
-            .subscribe((data) => {
-              vehicleInstance.unsubscribe();
-              if (data != null) {
-                let keyArray = Object.keys(data);
-                if (keyArray.length > 0) {
-                  for (let k = 0; k < keyArray.length - 1; k++) {
-                    let index = keyArray[k];
-                    if (data[index]["isDelete"] == 0) {
-                      this.vehicleDataList.push({
-                        vehicle: this.vehicleList[i]["vehicle"],
-                        km: data[index]["vehicleMeterReading"],
-                        petrol: data[index]["liters"],
-                        average: 0,
-                        petrolConsumption: 0,
-                        amount: data[index]["amount"],
-                        price: data[index]["price"],
-                        date: monthDate,
-                      });
-                    }
+          let dbPath = "Inventory/PetrolData/" + year + "/" + monthName + "/" + monthDate + "/" + this.vehicleList[i]["vehicle"] + "";
+          let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+            vehicleInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let k = 0; k < keyArray.length - 1; k++) {
+                  let index = keyArray[k];
+                  if (data[index]["isDelete"] == 0) {
+                    this.vehicleDataList.push({
+                      vehicle: this.vehicleList[i]["vehicle"],
+                      km: data[index]["vehicleMeterReading"],
+                      petrol: data[index]["liters"],
+                      average: 0,
+                      petrolConsumption: 0,
+                      amount: data[index]["amount"],
+                      price: data[index]["price"],
+                      date: monthDate,
+                    });
                   }
                 }
               }
-            });
+            }
+          });
         }
       }
       setTimeout(() => {
         if (this.vehicleDataList.length > 0) {
           this.vehiclePetrolList = [];
           let vehicles = [];
-          this.vehicleDataList = this.commonService.transform(
-            this.vehicleDataList,
-            "km"
-          );
+          this.vehicleDataList = this.commonService.transform(this.vehicleDataList, "km");
           for (let i = 0; i < this.vehicleList.length; i++) {
-            let vehicleDetails = this.vehicleDataList.find(
-              (item) => item.vehicle == this.vehicleList[i]["vehicle"]
-            );
+            let vehicleDetails = this.vehicleDataList.find((item) => item.vehicle == this.vehicleList[i]["vehicle"]);
             if (vehicleDetails != undefined) {
               let totalPetrol = 0;
               let totalAmount = 0;
@@ -173,10 +145,7 @@ export class VehiclePetrolReportComponent implements OnInit {
               let average = 0;
               let dataList = [];
               for (let j = 0; j < this.vehicleDataList.length; j++) {
-                if (
-                  this.vehicleList[i]["vehicle"] ==
-                  this.vehicleDataList[j]["vehicle"]
-                ) {
+                if (this.vehicleList[i]["vehicle"] == this.vehicleDataList[j]["vehicle"]) {
                   dataList.push({
                     km: this.vehicleDataList[j]["km"],
                     petrol: this.vehicleDataList[j]["petrol"],
@@ -185,12 +154,8 @@ export class VehiclePetrolReportComponent implements OnInit {
                 }
               }
               for (let j = 0; j < dataList.length; j++) {
-                totalAmount =
-                  totalAmount +
-                  Number(Number(dataList[j]["amount"]).toFixed(2));
-                totalPetrol =
-                  totalPetrol +
-                  Number(Number(dataList[j]["petrol"]).toFixed(2));
+                totalAmount = totalAmount + Number(Number(dataList[j]["amount"]).toFixed(2));
+                totalPetrol = totalPetrol + Number(Number(dataList[j]["petrol"]).toFixed(2));
                 if (j != dataList.length - 1) {
                   petrol = petrol + Number(dataList[j]["petrol"]);
                 }
@@ -242,11 +207,11 @@ export class VehiclePetrolReportComponent implements OnInit {
         }
 
         $("#divLoader").hide();
-        if(this.vehiclePetrolList.length>0){
-        setTimeout(() => {
-          this.getVehicleDetail(this.vehiclePetrolList[0]["vehicle"], 0);
-        }, 1000);
-      }
+        if (this.vehiclePetrolList.length > 0) {
+          setTimeout(() => {
+            this.getVehicleDetail(this.vehiclePetrolList[0]["vehicle"], 0);
+          }, 1000);
+        }
       }, 12000);
     }
   }
@@ -318,11 +283,7 @@ export class VehiclePetrolReportComponent implements OnInit {
           }
         } else {
           for (let i = 0; i < this.vehicleAllPetrolList.length; i++) {
-            if (
-              this.vehicleAllPetrolList[i]["vehicle"]
-                .toString()
-                .includes(vehicle)
-            ) {
+            if (this.vehicleAllPetrolList[i]["vehicle"].toString().includes(vehicle)) {
               this.vehiclePetrolList.push({
                 vehicle: this.vehicleAllPetrolList[i]["vehicle"],
                 km: this.vehicleAllPetrolList[i]["km"],
@@ -332,12 +293,8 @@ export class VehiclePetrolReportComponent implements OnInit {
                   this.vehicleAllPetrolList[i]["petrolConsumption"].toFixed(2)
                 ),
               });
-              this.totalLiters =
-                this.totalLiters +
-                Number(this.vehicleAllPetrolList[i]["petrolConsumption"]);
-              this.totalAmount =
-                this.totalAmount +
-                Number(this.vehicleAllPetrolList[i]["amount"]);
+              this.totalLiters = this.totalLiters + Number(this.vehicleAllPetrolList[i]["petrolConsumption"]);
+              this.totalAmount = this.totalAmount + Number(this.vehicleAllPetrolList[i]["amount"]);
             }
           }
         }

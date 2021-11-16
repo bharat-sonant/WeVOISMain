@@ -200,7 +200,9 @@ export class Cms1Component implements OnInit {
                         time = data[lineNo]["Time"];
                       }
                       else {
-                        time = data[lineNo];
+                        if (data[lineNo]["Status"] == null) {
+                          time = data[lineNo];
+                        }
                       }
                       let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
                       if (lineDetail != undefined) {
@@ -246,7 +248,9 @@ export class Cms1Component implements OnInit {
                       time = data[lineNo]["Time"];
                     }
                     else {
-                      time = data[lineNo];
+                      if (data[lineNo]["Status"] == null) {
+                        time = data[lineNo];
+                      }
                     }
                     let lineDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
                     if (lineDetail != undefined) {
@@ -273,6 +277,65 @@ export class Cms1Component implements OnInit {
         }
       }
     });
+  }
+
+  getJulyData()
+  {
+    let month=7;
+    for(let i=1;i<=150;i++){
+    let dbPath="WasteCollectionInfo/"+i+"/2021/July";
+    let dataInstance=this.db.object(dbPath).valueChanges().subscribe(
+      data=>{
+        if(data!=null){
+          console.log(i);
+        }
+      }
+    );
+    }
+
+  }
+
+  setSummary() {
+    let year = Number($('#txtYear').val());
+    let wardNo = Number($('#txtWardNo').val());
+    let month = Number($('#txtMonth').val());
+    if (wardNo == 0) {
+      this.commonService.setAlertMessage("error", "Please enter ward No.");
+      return;
+    }
+    if (month == 0) {
+      this.commonService.setAlertMessage("error", "Please enter month or date");
+      return;
+    }
+    for (let j = 1; j <= 150; j++) {
+      wardNo = j;
+      let days = new Date(year, month, 0).getDate();
+      for (let i = 1; i <= days; i++) {
+        let monthDate = year + '-' + (month < 10 ? '0' : '') + month + '-' + (i < 10 ? '0' : '') + i;
+        let monthName = this.commonService.getCurrentMonthName(new Date(monthDate).getMonth());
+        let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+        let wasteInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            wasteInstance.unsubscribe();
+            if (data != null) {
+              if (data["wardCoveredDistance"] != null) {
+                this.db.database.ref(dbPath + "/wardCoveredDistance").set(null);
+              }
+              if (data["completedLines"] != null) {
+                this.db.database.ref(dbPath + "/completedLines").set(null);
+              }
+              if (data["workPercentage"] != null) {
+                this.db.database.ref(dbPath + "/workPercentage").set(null);
+              }
+              if (data["analysedBy"] != null) {
+                this.db.database.ref(dbPath + "/analysisDoneBy").set(data["analysedBy"]);
+                this.db.database.ref(dbPath + "/analysedBy").set(null);
+              }
+              console.log(data);
+            }
+          });
+      }
+    }
   }
 
   setWardTotalLength() {

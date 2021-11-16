@@ -22,11 +22,12 @@ export class RemarkReportComponent implements OnInit {
   currentMonthName: any;
   currentYear: any;
   filterList: any[] = [];
-  db:any;
-
+  db: any;
+  cityName: any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
@@ -82,12 +83,10 @@ export class RemarkReportComponent implements OnInit {
     else if (this.selectedCategory != "0" && this.selectedZone == "0") {
       this.getCategoryRemark();
     }
-    else if(this.selectedCategory=="0" && this.selectedZone!="0")
-    {
+    else if (this.selectedCategory == "0" && this.selectedZone != "0") {
       this.getWardRemark();
     }
-    else if(this.selectedZone!="0" && this.selectedCategory!="0")
-    {
+    else if (this.selectedZone != "0" && this.selectedCategory != "0") {
       this.getWardRemark();
     }
   }
