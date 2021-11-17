@@ -9,14 +9,14 @@
         Route Analysis
       </div>
       <div class="col-md-7 col-xl-8 ipad-pl-25">
-        <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;" (click)="setDate('','previous');">
+        <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;" >
           << </button>
-            <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-            <button class="btn btn-primary ipad-btn" (click)="setDate('','next');" style="margin-left: 0px!important;">
+            <input id="txtDate" class="date-input" type="date" >
+            <button class="btn btn-primary ipad-btn"  style="margin-left: 0px!important;">
               >>
             </button>
             <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
-              (change)="changeZoneSelection($event.target.value)">
+              >
               <option value="0">
                 --Select Zone--
               </option>
@@ -24,7 +24,7 @@
                 {{zone.zoneName}}
               </option>
             </select>
-            <select class="caret-select ipad-ipt-2" id="ddlWard" (change)="changeWardSelection($event.target.value)">
+            <select class="caret-select ipad-ipt-2" id="ddlWard" >
               <option value="0">
                 --Select--
               </option>
@@ -68,41 +68,41 @@
                   <div class="col-md-12 text-left">
                     <div class="setting-box">
                       <p id="showLines"> Hide Red Lines</p>
-                      <button type="button" class="btn btn-main btn-success" (click)="showRedLines();"><i
+                      <button type="button" class="btn btn-main btn-success" ><i
                           class="fas fa-grip-lines-vertical"></i></button>
                     </div>
                     <div class="setting-box">
   
                       <p id="showBoundries"> Hide Boundaries</p>
   
-                      <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
+                      <button type="button" class="btn btn-main btn-success" ><i
                           class="fas fa-grip-lines-vertical"></i></button>
                     </div>
                     <div class="setting-box">
                       <p> Select All</p>
-                      <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i
+                      <button type="button" class="btn btn-main btn-success" ><i
                           class="far fa-window-restore"></i></button>
                     </div>
                     <div class="setting-box">
                       <p> Reset All</p>
-                      <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i
+                      <button type="button" class="btn btn-main btn-success" ><i
                           class="fas fa-check-double"></i></button>
                     </div>
                     <div class="setting-box">
                       <p class="previous-data"><b>Get Previous Data</b></p> <br>
                       <input class="date-input date" id="txtPreDate" type="date"
-                        (change)="setPreDate($event.target.value)">
-                      <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
+                        >
+                      <button type="button" class="btn btn-success" >Get</button>
                     </div>
                     <div class="setting-box" style="padding-bottom: 10px!important;">
   
-                      <button (click)="getNextPrevious('pre');" class="btn-primary"
+                      <button  class="btn-primary"
                         style="background-color: #0ba118!important;">
                         << </button>
-                          <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
+                          <input id="txtStrokeWeight" type="text" 
                             autocomplete="off" class="date-input"
                             style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                          <button (click)="getNextPrevious('next');" class="btn-primary"
+                          <button  class="btn-primary"
                             style="background-color: #0ba118!important;">
                             >>
                           </button>
@@ -134,18 +134,18 @@
       <div class="navbar-nav">
         <div class="row">
           <div class="col-2 pr-0 ">
-            <button class="btn btn-primary " (click)="setDate('','previous');">
+            <button class="btn btn-primary " >
               << </button>
           </div>
           <div class="col-8 pl-0">
-            <input id="txtDateNav" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+            <input id="txtDateNav" class="date-input" type="date" >
           </div>
           <div class="col-2 pl-0">
-            <button class="btn btn-primary" (click)="setDate('','next');"> >> </button>
+            <button class="btn btn-primary" > >> </button>
           </div>
           <div class="col-12 pr-25 pl-5 mob-pl-15 mob-pr-15">
             <select class="caret-select" id="ddlZoneNav" style="width: 150px;"
-              (change)="changeZoneSelection($event.target.value)">
+              >
               <option value="0">
                 --Select Zone--
               </option>
@@ -155,7 +155,7 @@
             </select>
           </div>
           <div class="col-12 mt-10 pr-25 pl-5 mob-pl-15 mob-pr-15">
-            <select class="caret-select" id="ddlWardNav" (change)="changeWardSelection($event.target.value)">
+            <select class="caret-select" id="ddlWardNav" >
               <option value="0">
                 --Select--
               </option>
@@ -195,40 +195,40 @@
                     <div class="col-md-12 text-left">
                       <div class="setting-box">
                         <p id="showLinesNav"> Hide Red Lines</p>
-                        <button type="button" class="btn btn-main btn-success" (click)="showRedLines();"><i
+                        <button type="button" class="btn btn-main btn-success" ><i
                             class="fas fa-grip-lines-vertical"></i></button>
                       </div>
                       <div class="setting-box">
                         <p id="showBoundriesNav"> Hide Boundaries</p>
   
-                        <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
+                        <button type="button" class="btn btn-main btn-success" ><i
                             class="fas fa-grip-lines-vertical"></i></button>
                       </div>
                       <div class="setting-box">
                         <p> Select All</p>
-                        <button type="button" class="btn btn-main btn-success" (click)="selectAll();"><i
+                        <button type="button" class="btn btn-main btn-success"><i
                             class="far fa-window-restore"></i></button>
                       </div>
                       <div class="setting-box">
                         <p> Reset All</p>
-                        <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i
+                        <button type="button" class="btn btn-main btn-success" ><i
                             class="fas fa-check-double"></i></button>
                       </div>
                       <div class="setting-box">
                         <p class="previous-data"><b>Get Previous Data</b></p> <br>
                         <input class="date-input date-input-mob-1 date" id="txtPreDateNav" type="date"
-                          (change)="setPreDate($event.target.value)">
-                        <button type="button" class="btn btn-success" (click)="setPreviousData()">Get</button>
+                         >
+                        <button type="button" class="btn btn-success" >Get</button>
                       </div>
                       <div class="setting-box" style="padding-bottom: 10px!important;">
   
-                        <button (click)="getNextPrevious('pre');" class="btn-primary mob-btn-primary"
+                        <button class="btn-primary mob-btn-primary"
                           style="background-color: #0ba118!important;">
                           << </button>
                             <input class="date-input-mob-2 date-input" id="txtStrokeWeightNav" type="text"
-                              (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
+                               autocomplete="off"
                               style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                            <button (click)="getNextPrevious('next');" class="btn-primary mob-btn-primary"
+                            <button class="btn-primary mob-btn-primary"
                               style="background-color: #0ba118!important;">
                               >>
                             </button>
@@ -270,7 +270,7 @@
               <div class="seprater"  style="display: none;">
                 <div class="lines-left" style="margin-top: 7px;padding: 5px;padding-bottom: 0px;">
                   {{progressData.lastShowDate}}
-                  <i class="fas fa-sync-alt" (click)="resetData();"
+                  <i class="fas fa-sync-alt" 
                     style="cursor: pointer; float:right; color:green;"></i>
                 </div>
               </div>
@@ -303,7 +303,7 @@
               <div>
                 <input id="txtVehicle" type="text" autocomplete="off"
                   style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-                <button (click)="addVehicle();"
+                <button 
                   style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
                   Add Vehicle
                 </button>
@@ -328,7 +328,7 @@
                               <tr *ngFor="let dt of vehicleList, let i=index">
                                 <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
                                 <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
-                                    style="float:right; color:red; cursor: pointer;" (click)="removeVehicle(i)"></i></td>
+                                    style="float:right; color:red; cursor: pointer;" ></i></td>
                               </tr>
                             </tbody>
                           </table>
@@ -346,7 +346,7 @@
   
               </div>
               <div class="d-ib">
-                <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Analysis
+                <button class="VTS-button"  style="margin-left: 10px!important;">Analysis
                   Done</button>
               </div>
             </div>
@@ -366,7 +366,7 @@
       <div class="seprater" style="display: none;">
         <div class="lines-left" style="margin-top: -10px; padding-bottom: 10px;">
           {{progressData.lastShowDate}}
-          <i class="fas fa-sync-alt" (click)="resetData();" style="cursor: pointer; float:right; color:green;"></i>
+          <i class="fas fa-sync-alt"  style="cursor: pointer; float:right; color:green;"></i>
         </div>
       </div>
       <div style="padding:15px 15px 15px 10px; border-bottom: 1px solid lightgray;">
@@ -399,7 +399,7 @@
       <div>
         <input id="txtVehicleNav" type="text" autocomplete="off"
           style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-        <button (click)="addVehicle();"
+        <button 
           style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
           Add Vehicle
         </button>
@@ -424,7 +424,7 @@
                       <tr *ngFor="let dt of vehicleList, let i=index">
                         <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
                         <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
-                            style="float:right; color:red; cursor: pointer;" (click)="removeVehicle(i)"></i></td>
+                            style="float:right; color:red; cursor: pointer;" ></i></td>
                       </tr>
                     </tbody>
                   </table>
@@ -442,7 +442,7 @@
   
       </div>
       <div class="d-ib">
-        <button class="VTS-button" (click)="saveVTSTrackingDone();" style="margin-left: 10px!important;">Analysis
+        <button class="VTS-button"  style="margin-left: 10px!important;">Analysis
           Done</button>
       </div>
     </div>
@@ -460,11 +460,11 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-6" style="text-align: center;">
-              <button class="btn btn-success " (click)="resetAllLines();" style="background-color: #0ba118;">
+              <button class="btn btn-success "  style="background-color: #0ba118;">
                 Confirm</button>
             </div>
             <div class="col-md-6" style="text-align: center;">
-              <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
+              <button class="btn btn-danger " > Cancel</button>
             </div>
           </div>
         </div>
