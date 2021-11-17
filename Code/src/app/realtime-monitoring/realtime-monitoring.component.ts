@@ -622,28 +622,10 @@ export class RealtimeMonitoringComponent implements OnInit {
       let driverList = zoneDetails.driverId.toString().split(",");
       let helperList = zoneDetails.helperId.toString().split(",");
       let vehicleList = zoneDetails.vehicleNo.toString().split(",");
-      this.employeeDetail = JSON.parse(localStorage.getItem("employee"));
-      if (this.employeeDetail != null) {
-        let driverDetails = this.employeeDetail.find((item) => item.userName == driverList[driverList.length - 1]);
-        if (driverDetails != undefined) {
-          this.workerDetails.driverName = driverDetails.name != null ? driverDetails.name.toUpperCase() : "Not Assigned";
-          this.workerDetails.driverMobile = driverDetails.mobile != null ? driverDetails.mobile : "---";
-          this.workerDetails.driverImageUrl = driverDetails.profilePhotoURL != null && driverDetails.profilePhotoURL != "" ? driverDetails.profilePhotoURL : "../../assets/img/internal-user.png";
-        } else {
-          this.getEmployee(driverList[driverList.length - 1], "driver");
-        }
-        let helperDetails = this.employeeDetail.find((item) => item.userName == helperList[helperList.length - 1]);
-        if (helperDetails != undefined) {
-          this.workerDetails.helperName = helperDetails.name != null ? helperDetails.name.toUpperCase() : "Not Assigned";
-          this.workerDetails.helperMobile = helperDetails.mobile != null ? helperDetails.mobile : "---";
-          this.workerDetails.helperImageUrl = helperDetails.profilePhotoURL != null && helperDetails.profilePhotoURL != "" ? helperDetails.profilePhotoURL : "../../assets/img/internal-user.png";
-        } else {
-          this.getEmployee(helperList[helperList.length - 1], "helper");
-        }
-      } else {
-        this.getEmployee(driverList[driverList.length - 1], "driver");
-        this.getEmployee(helperList[helperList.length - 1], "helper");
-      }
+
+      this.getEmployee(driverList[driverList.length - 1], "driver");
+      this.getEmployee(helperList[helperList.length - 1], "helper");
+
       this.workerDetails.vehicleNo = vehicleList[vehicleList.length - 1];
       this.getApplicationStatus(driverList[driverList.length - 1]);
     }
