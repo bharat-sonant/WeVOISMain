@@ -622,10 +622,8 @@ export class RealtimeMonitoringComponent implements OnInit {
       let driverList = zoneDetails.driverId.toString().split(",");
       let helperList = zoneDetails.helperId.toString().split(",");
       let vehicleList = zoneDetails.vehicleNo.toString().split(",");
-
       this.getEmployee(driverList[driverList.length - 1], "driver");
       this.getEmployee(helperList[helperList.length - 1], "helper");
-
       this.workerDetails.vehicleNo = vehicleList[vehicleList.length - 1];
       this.getApplicationStatus(driverList[driverList.length - 1]);
     }
