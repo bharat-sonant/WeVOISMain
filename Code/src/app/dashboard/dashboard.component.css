@@ -19,13 +19,13 @@ box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);}
 
 
 .mg-top{margin-top: 15px;}
-.box-2-1{padding: 20px;   background-color: #ebecf1; border-radius:8px; 
+.box-2-1{padding: 20px;   background-color: #fff; border-radius:8px; 
 transition: 0.5s;
 -webkit-box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);
 -moz-box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);
 box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);}
 .box-2-1 h1{font-size: 40px; font-weight: bold; color:#333;  transition: 0.5s;}
-.box-2-1 a{font-size: 12px; font-weight: normal; color: #707070!important; letter-spacing: 0.4px; text-transform: uppercase;}
+.box-2-1 a{font-size: 12px!important; font-weight: normal; color: #707070!important; letter-spacing: 0.4px; text-transform: uppercase;}
 .box-2-1 img{
   width: 40px;
   transition: 0.5s;
@@ -184,7 +184,7 @@ background: -o-linear-gradient(left, rgba(40,207,219,1) 0%, rgba(89,127,232,1) 1
 background: -ms-linear-gradient(left, rgba(40,207,219,1) 0%, rgba(89,127,232,1) 100%);
 background: linear-gradient(to right, rgba(40,207,219,1) 0%, rgba(89,127,232,1) 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#28cfdb', endColorstr='#597fe8', GradientType=1 );}
-.box-2-1 a{font-size: 10px; font-weight: normal; color: #fff; letter-spacing: 0.4px;}
+
 
 .boxes .img-bg-2{ width: 50px; height: 50px; background-color: #fff; border-radius:50%;
   background: rgba(247,89,150,1);
@@ -331,7 +331,13 @@ box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);}
   }
   
  }
+ /* Small devices (landscape phones, less than 768px) */
+ @media  (min-width: 767.99px) and (max-width: 991.98px) {
+  .mt-10{
+    margin-bottom: 10px!important;
+  }
 
+}
 
 
 
@@ -340,7 +346,7 @@ box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);}
   display:block;
   left: 0;
   top:90%;
-  margin:8px auto;
+  margin:9px auto;
   height: 5px;
   background-color: #0ba118;
   width: 0%;
@@ -356,7 +362,7 @@ box-shadow: 0px 0px 5px 0px rgba(214,214,214,1);}
   width: 100%;
 }
 .b-anim:hover span {
-    color: #676567;
+    color: #0ba118;
 }
 
 

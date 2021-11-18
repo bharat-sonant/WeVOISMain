@@ -356,3 +356,32 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 
+/* X-Small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) { 
+    .sidebar-wrapper {
+        width: 250px;
+    }
+    .sidebar-wrapper p{
+        opacity: 1!important;
+    }
+
+
+ }
+ /* Small devices (landscape phones, less than 768px) */
+ @media  (min-width: 767.99px) and (max-width: 991.98px) {
+    .sidebar-wrapper {
+        width: 250px;
+    }
+    .sidebar-wrapper p{
+        opacity: 1!important;
+    }
+
+  }
+
+
+
+
+
+
+
+
