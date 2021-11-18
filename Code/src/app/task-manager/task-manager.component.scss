@@ -383,16 +383,21 @@ textarea:hover{
 }
 .add-new-btn .btn-success{
   cursor: cell;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: normal;
   border-radius: 30px;
-  padding: 15px 25px;
-  background: #0ba118!important;
+  padding: 20px 25px;
   box-shadow: 0 .2rem 1rem rgba(0,0,0,.15)!important;
+
+  background: #fff!important;
+  color: #0ba118;
+  border:1px solid #0ba118;
 
 }
 .add-new-btn .btn-success:hover{
-  background: #19ca28!important;
+  background: #0ba118!important;
+  color: #fff;
+  border:1px solid #fff;
 }
 .table{
   width: 100%;
