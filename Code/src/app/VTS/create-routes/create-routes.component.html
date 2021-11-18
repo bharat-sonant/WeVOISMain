@@ -56,9 +56,10 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let dt of routeList, let i=index">
-                                <td class="text-left">{{dt.routeName}}
-                                    <input type="checkbox" id="chkRoute{{i}}" (change)="getRouteSelect(i);" [checked]="dt.isShow==1"
-                                        style="float: right;">
+                                <td class="text-left">
+                                    <input type="radio" id="chkRoute{{i}}" (change)="getRouteSelect(i);"
+                                        [checked]="dt.isShow==1">
+                                    {{dt.routeName}}
                                 </td>
                             </tr>
                         </tbody>
@@ -79,16 +80,19 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <input id="txtRouteName" type="text" class="date-input" style="width: 100%!important;" placeholder="Route Name">
+                        <input id="txtRouteName" type="text" class="date-input" style="width: 100%!important;"
+                            placeholder="Route Name">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-success w-100 submit-btn" style="margin-left: 5px;" (click)="createRoute()">
+                        <button type="button" class="btn btn-success w-100 submit-btn" style="margin-left: 5px;"
+                            (click)="createRoute()">
                             Create Route</button>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-danger w-100 cancel-btn"  style="margin-left: -6px;" (click)="closeModel()">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" style="margin-left: -6px;"
+                            (click)="closeModel()">
                             Cancel</button>
                     </div>
                 </div>

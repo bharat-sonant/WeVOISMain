@@ -59,7 +59,7 @@ export class CreateRoutesComponent implements OnInit {
     localStorage.removeItem("routeLines");
   }
 
-  resetAll(){
+  resetAll() {
     localStorage.removeItem("routeLines");
     $(this.lblSelectedRoute).html("");
     this.routeList = [];
@@ -98,13 +98,20 @@ export class CreateRoutesComponent implements OnInit {
     }
     let dbPath = "Route/" + this.selectedWard + "/" + routeKey;
     this.db.object(dbPath).update(data);
-    let routeList=JSON.parse(localStorage.getItem("routeLines"));
-    if(routeList!=null){
-      this.routeList=routeList;
+    let routeList = JSON.parse(localStorage.getItem("routeLines"));
+    if (routeList != null) {
+      this.routeList = routeList;
     }
-    let routeLines=[];
-    this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 0,routeLines:routeLines });
-    localStorage.setItem("routeLines",JSON.stringify(this.routeList));
+    let routeLines = [];
+    this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 1, routeLines: routeLines });
+
+    localStorage.setItem("routeLines", JSON.stringify(this.routeList));
+    setTimeout(() => {
+      let element = <HTMLInputElement>document.getElementById("chkRoute" + (this.routeList.length - 1));
+      element.checked = true;
+      this.getRouteSelect(this.routeList.length - 1);
+    }, 200);
+
     this.closeModel();
 
   }
@@ -163,9 +170,9 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getRouteSelect(index: any) {
-    let routeList=JSON.parse(localStorage.getItem("routeLines"));
-    if(routeList!=null){
-      this.routeList=routeList;
+    let routeList = JSON.parse(localStorage.getItem("routeLines"));
+    if (routeList != null) {
+      this.routeList = routeList;
     }
     if (this.routeList.length > 0) {
       for (let i = 0; i < this.routeList.length; i++) {
@@ -176,10 +183,10 @@ export class CreateRoutesComponent implements OnInit {
             $(this.lblSelectedRoute).html(this.routeList[i]["routeKey"]);
             this.setPolyLineOption(this.routeList[i]["routeLines"]);
           }
-          else{
+          else {
             this.routeList[i]["isShow"] = 0;
             $(this.lblSelectedRoute).html("");
-            let list=[];
+            let list = [];
             this.setPolyLineOption(list);
           }
         }
@@ -188,7 +195,7 @@ export class CreateRoutesComponent implements OnInit {
         }
       }
     }
-    localStorage.setItem("routeLines",JSON.stringify(this.routeList));
+    localStorage.setItem("routeLines", JSON.stringify(this.routeList));
   }
 
   setPolyLineOption(lineList: any) {
@@ -206,7 +213,7 @@ export class CreateRoutesComponent implements OnInit {
           strokeOpacity: 1.0,
           strokeWeight: 4
         }
-        line.setOptions(polyOptions);        
+        line.setOptions(polyOptions);
       }
     }
   }
@@ -285,7 +292,7 @@ export class CreateRoutesComponent implements OnInit {
       }
       if (routeLines.length > 0) {
         for (let i = 0; i < routeLines.length; i++) {
-          if (routeLines[i]["routekey"] != routeKey) {
+          if (routeLines[i]["routeKey"] != routeKey) {
             let lineInRoutes = routeLines[i]["routeLines"];
             let detail = lineInRoutes.find(item => item.lineNo == lineNo);
             if (detail != undefined) {

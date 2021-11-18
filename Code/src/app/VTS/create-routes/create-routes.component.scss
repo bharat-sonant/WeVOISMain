@@ -646,16 +646,16 @@
     }
     .tableFixHead {
     overflow-y: auto;
-    height: 295px;
+    height: 400px;
     }
     
     .tableFixHead thead th {
     position: sticky;
     top: 0;
-    background-color: #0ba118;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
     font-size: 13px;
-    z-index: 33333;
+    z-index: 222;
     }
     table {
     border-collapse: collapse;
