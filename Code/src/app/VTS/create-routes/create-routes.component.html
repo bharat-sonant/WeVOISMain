@@ -7,6 +7,12 @@
         <div class="main-headers hide-on-ipad"
             style="position: absolute; z-index: 999; margin-left: 45%; margin-top: 15px;">
             Create Route
+
+        </div>
+        <div style="z-index: 9999; position: absolute; right: 0px; font-size: 10px; text-align: center; padding-top: 5px; padding-right: 16px; cursor: pointer;"
+            (click)="openModel(contentCreateRoute)"><i class="fas fa-plus" style="color:#0ba118; font-size: 32px;"></i>
+            <br />
+            Create Route
         </div>
         <div class="col-md-12 col-xl-12 ipad-pl-25">
             <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
@@ -26,6 +32,7 @@
                     {{ward.wardName}}
                 </option>
             </select>
+
         </div>
     </div>
 </section>
@@ -35,13 +42,7 @@
 
 <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
     <div class="col-md-12" style="margin-top: 10px;margin-bottom: 10px;    padding-right: 5px;">
-
-        <div style="padding-bottom: 10px;">
-            <input type="text" class="date-input" style="float: left;">
-            <button class="VTS-button" (click)="createRoute();" style="margin-left: 10px!important;">Create
-                Route</button>
-        </div>
-
+        <label id="lblSelectedRoute" style="display:none;"></label>
         <div class="dth">
             <div class="table-bg">
                 <div class="tableFixHead">
@@ -55,8 +56,8 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let dt of routeList, let i=index">
-                                <td class="text-left">{{dt.route}}
-                                    <input type="checkbox" id="chkRoute{{i}}" [checked]="dt.isShow==1"
+                                <td class="text-left">{{dt.routeName}}
+                                    <input type="checkbox" id="chkRoute{{i}}" (change)="getRouteSelect(i);" [checked]="dt.isShow==1"
                                         style="float: right;">
                                 </td>
                             </tr>
@@ -67,3 +68,31 @@
         </div>
     </div>
 </div>
+
+<ng-template #contentCreateRoute>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">
+                    Enter Route Name</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="txtRouteName" type="text" class="date-input" style="width: 100%!important;" placeholder="Route Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" style="margin-left: 5px;" (click)="createRoute()">
+                            Create Route</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn"  style="margin-left: -6px;" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
