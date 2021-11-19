@@ -146,6 +146,23 @@ export class CreateRoutesComponent implements OnInit {
 
   }
 
+  
+  getCurrentStrokeWeight(event: any) {
+    if (event.key == "Enter") {
+      let strokeWeight = $(this.txtStrokeWeight).val();
+      if (strokeWeight == "") {
+        if (strokeWeight == "") {
+          this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+          return;
+        }
+      }
+      this.strokeWeight = Number(strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+      this.setStrokeWeight();
+    }
+  }
+
   updateRoute() {
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     let routeKey = $(this.updateRouteKey).val();
