@@ -189,11 +189,11 @@ export class VtsReportComponent {
   plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
-    let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+    let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       lineStatus.unsubscribe();
       let strockColor = "#fa0505";
-      if (status == "LineCompleted") {
+      if (status !=null) {
         strockColor = "#0ba118";
       }
       let line = new google.maps.Polyline({
@@ -233,17 +233,18 @@ export class VtsReportComponent {
             }
           }
         }
-        if (workerData["workPercentage"] != null) {
-          this.percentage = Number(workerData["workPercentage"]);
+        if (workerData["workPerc"] != null) {
+          this.percentage = Number(workerData["workPerc"]);
         }
-        if (workerData["wardCoveredDistance"] != null) {
-          this.reportData.coveredLength = (parseFloat(workerData["wardCoveredDistance"].toString()) / 1000).toFixed(3) + "";
+        if (workerData["coveredLength"] != null) {
+          this.reportData.coveredLength = (parseFloat(workerData["coveredLength"].toString()) / 1000).toFixed(3) + "";
         }
       }
     });
   }
 
   drawChart() {
+    console.log(this.percentage);
     let pending = 100 - Number(this.percentage);
     let chart = new CanvasJS.Chart("chartContainer", {
       animationEnabled: true,

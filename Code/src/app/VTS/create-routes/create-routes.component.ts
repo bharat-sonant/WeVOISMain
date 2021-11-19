@@ -18,7 +18,8 @@ export class CreateRoutesComponent implements OnInit {
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, private modalService: NgbModal, public httpService: HttpClient, private commonService: CommonService) { }
   db: any;
-  cityName: any
+  cityName: any;
+  toDayDate: any;
   selectedWard: any;
   wardBoundary: any;
   wardKML: any;
@@ -34,9 +35,18 @@ export class CreateRoutesComponent implements OnInit {
   strockColorDone = "#0ba118";
   txtRouteName = "#txtRouteName";
   lblSelectedRoute = "#lblSelectedRoute";
+  txtStrokeWeight = "#txtStrokeWeight";
+  txtApplicableDate = '#txtApplicableDate';
+  lblHeading = "#lblHeading";
+  btnUpdate = "#btnUpdate";
+  txtUpdateDate = "#txtUpdateDate";
+  updateKey = "#updateKey";
+  updateRouteKey = "#updateRouteKey";
   userId: any;
+  strokeWeight = 4;
 
   ngOnInit() {
+    localStorage.removeItem("routeLines");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -57,6 +67,12 @@ export class CreateRoutesComponent implements OnInit {
     this.getZoneList();
     this.userId = localStorage.getItem("userID");
     localStorage.removeItem("routeLines");
+    if (localStorage.getItem("strokeWeight") != null) {
+      this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      this.toDayDate = this.commonService.setTodayDate();
+
+    }
   }
 
   resetAll() {
@@ -78,6 +94,11 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   createRoute() {
+    let applicableDate = $(this.txtApplicableDate).val();
+    if (applicableDate == "") {
+      this.commonService.setAlertMessage("error", "Please enter applicable date !!!");
+      return;
+    }
     let routeName = $(this.txtRouteName).val();
     if (routeName == "") {
       this.commonService.setAlertMessage("error", "Please enter route name !!!");
@@ -91,29 +112,75 @@ export class CreateRoutesComponent implements OnInit {
       return;
     }
 
+    const Routes = {
+      lastRouteKey: 1,
+      1: {
+        startDate: applicableDate
+      }
+    }
+
     const data = {
       name: routeName,
       createdBy: this.userId,
-      creationDate: this.commonService.getTodayDateTime()
+      creationDate: this.commonService.getTodayDateTime(),
+      Routes: Routes
     }
     let dbPath = "Route/" + this.selectedWard + "/" + routeKey;
+
     this.db.object(dbPath).update(data);
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
       this.routeList = routeList;
     }
     let routeLines = [];
-    this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 1, routeLines: routeLines });
-
+    let route = [];
+    route.push({ key: 1, startDate: applicableDate, endDate: "---", routeLines: routeLines });
+    this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 1, lastRouteKey: 1, route: route });
     localStorage.setItem("routeLines", JSON.stringify(this.routeList));
     setTimeout(() => {
       let element = <HTMLInputElement>document.getElementById("chkRoute" + (this.routeList.length - 1));
       element.checked = true;
       this.getRouteSelect(this.routeList.length - 1);
     }, 200);
-
     this.closeModel();
 
+  }
+
+  updateRoute() {
+    let routeList = JSON.parse(localStorage.getItem("routeLines"));
+    let routeKey = $(this.updateRouteKey).val();
+    let key = $(this.updateKey).val();
+    if ($(this.btnUpdate).html() == "Create New") {
+      let routeDetail = routeList.find(item => item.routeKey == routeKey);
+      if (routeDetail != undefined) {
+        key = routeDetail.route[0]["key"];
+        let startDate = routeDetail.route[0]["startDate"];
+        let applicableDate = $(this.txtUpdateDate).val();
+        let dat1 = new Date(startDate);
+        let dat2 = new Date(applicableDate.toString());
+        if (dat2 < dat1) {
+          this.commonService.setAlertMessage("error", "Applicable date cna't be less than " + startDate);
+          return;
+        }
+        let endDate = this.commonService.getPreviousDate(applicableDate, 1);
+        routeDetail.route[0]["endDate"] = endDate;
+        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/endDate";
+        this.db.database.ref(dbPath).set(endDate);
+        let lastRouteKey = Number(routeDetail.lastRouteKey) + 1;
+        routeDetail.lastRouteKey = lastRouteKey;
+        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/lastRouteKey";
+        this.db.database.ref(dbPath).set(lastRouteKey);
+        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + lastRouteKey + "/startDate";
+        this.db.database.ref(dbPath).set(applicableDate);
+        let routeLines = [];
+        routeDetail.route.push({ key: lastRouteKey, startDate: applicableDate, endDate: "---", routeLines: routeLines });
+        routeDetail.route = routeDetail.route.sort((a, b) =>
+          Number(b.key) > Number(a.key) ? 1 : -1
+        );
+        localStorage.setItem("routeLines", JSON.stringify(routeList));
+        this.routeList = routeList;
+      }
+    }
   }
 
   getRoutes() {
@@ -129,10 +196,36 @@ export class CreateRoutesComponent implements OnInit {
               let routeKey = keyArray[i];
               let routeName = data[routeKey]["name"];
               let isShow = 0;
+              let lastRouteKey = 1;
               let routeLines = [];
+              let route = [];
               if (i == 0) {
                 isShow = 1;
               }
+
+              if (data[routeKey]["Routes"] != null) {
+                let obj = data[routeKey]["Routes"];
+                let routeArray = Object.keys(obj);
+                for (let j = routeArray.length - 1; j >= 0; j--) {
+                  let key = routeArray[j];
+                  console.log(key);
+                  if (key == "lastRouteKey") {
+                    lastRouteKey = Number(obj[key]);
+                    console.log(lastRouteKey);
+                  }
+                  else {
+                    let startDate = obj[key]["startDate"];
+                    let endDate = "---";
+                    if (obj[key]["endDate"] != null) {
+                      endDate = obj[key]["endDate"];
+                    }
+                    route.push({ key: Number(key), startDate: startDate, endDate: endDate, routeLines: routeLines });
+                  }
+                }
+
+              }
+
+
               if (data[routeKey]["routeLines"] != null) {
                 let list = data[routeKey]["routeLines"].toString().split(',');
                 if (list.length > 0) {
@@ -161,7 +254,7 @@ export class CreateRoutesComponent implements OnInit {
                   }
                 }
               }
-              this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: isShow, routeLines: routeLines });
+              this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: isShow, route: route, routeLines: routeLines, lastRouteKey: lastRouteKey });
             }
             localStorage.setItem("routeLines", JSON.stringify(this.routeList));
           }
@@ -250,7 +343,7 @@ export class CreateRoutesComponent implements OnInit {
                   let line = new google.maps.Polyline({
                     path: latLng,
                     strokeColor: strockColor,
-                    strokeWeight: 4,
+                    strokeWeight: this.strokeWeight,
                   });
                   this.polylines[index] = line;
                   this.polylines[index].setMap(this.map);
@@ -337,7 +430,7 @@ export class CreateRoutesComponent implements OnInit {
       var polyOptions = {
         strokeColor: stockColor,
         strokeOpacity: 1.0,
-        strokeWeight: 4
+        strokeWeight: this.strokeWeight
       }
       line.setOptions(polyOptions);
       polylines[index]["strokeColor"] = stockColor;
@@ -392,20 +485,86 @@ export class CreateRoutesComponent implements OnInit {
     $("#divMap").css("height", $(window).height() - 80);
   }
 
+  getNextPrevious(type: any) {
+    let strokeWeight = $(this.txtStrokeWeight).val();
+    if (strokeWeight == "") {
 
-  openModel(content: any) {
+      this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
+      return;
+
+    }
+    if (type == "pre") {
+      if (strokeWeight != "1") {
+        this.strokeWeight = Number(strokeWeight) - 1;
+        $(this.txtStrokeWeight).val(this.strokeWeight);
+        localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+        this.setStrokeWeight();
+      }
+    } else if (type == "next") {
+      this.strokeWeight = Number(strokeWeight) + 1;
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+      this.setStrokeWeight();
+    }
+  }
+
+  setStrokeWeight() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          let line = this.polylines[i];
+          var polyOptions = {
+            strokeColor: this.polylines[i]["strokeColor"],
+            strokeOpacity: 1.0,
+            strokeWeight: this.strokeWeight
+          }
+          line.setOptions(polyOptions);
+        }
+      }
+    }
+  }
+
+  openModel(content: any, type: any, routeKey: any, key: any) {
     if ($(this.ddlWard).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 200;
+    let height = 250;
     let width = 400;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
+    if (type == "createRoute") {
+      $(this.txtApplicableDate).val(this.toDayDate);
+    }
+    else {
+      let routeList = JSON.parse(localStorage.getItem("routeLines"));
+      let routeName = "";
+      let keyData = "";
+      let routeDetail = routeList.find(item => item.routeKey == routeKey);
+      if (routeDetail != undefined) {
+        routeName = routeDetail.routeName;
+        let keyList = routeDetail.route;
+        let keyDetail = keyList.find(item => item.key == key);
+        if (keyDetail != undefined) {
+          keyData = keyDetail.startDate;
+        }
+      }
+      if (type == "createNew") {
+        $(this.btnUpdate).html("Create New");
+        $(this.lblHeading).html("Create New for " + routeName);
+        $(this.txtUpdateDate).val(this.toDayDate);
+      }
+      else {
+        $(this.btnUpdate).html("Update");
+        $(this.lblHeading).html("Update for " + routeName + " - " + keyData);
+      }
+      $(this.updateRouteKey).val(routeKey);
+      $(this.updateKey).val(key);
+    }
   }
 
 

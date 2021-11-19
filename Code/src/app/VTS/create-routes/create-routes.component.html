@@ -2,19 +2,15 @@
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
 <!------------Desktop Navbar Start------------->
+
+
 <section class="header">
     <div class="row no-gutters">
         <div class="main-headers hide-on-ipad"
             style="position: absolute; z-index: 999; margin-left: 45%; margin-top: 15px;">
             Create Route
-
         </div>
-        <div style="z-index: 9999; position: absolute; right: 0px; font-size: 10px; text-align: center; padding-top: 5px; padding-right: 16px; cursor: pointer;"
-            (click)="openModel(contentCreateRoute)"><i class="fas fa-plus" style="color:#0ba118; font-size: 32px;"></i>
-            <br />
-            Create Route
-        </div>
-        <div class="col-md-12 col-xl-12 ipad-pl-25">
+        <div class="col-md-7 col-xl-8 ipad-pl-25">
             <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
                 (change)="changeZoneSelection($event.target.value)">
                 <option value="0">
@@ -32,8 +28,60 @@
                     {{ward.wardName}}
                 </option>
             </select>
-
         </div>
+
+        <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
+            <div class="fix-home">
+                <div class="float-second" style="margin-top: 10px; cursor: pointer;"
+                    (click)="openModel(contentCreateRoute,'createRoute',0,0)">
+                    <span class="house"> <i class="fas fa-plus" style="color:#0ba118; font-size: 20px;"></i></span><br>
+                    <h6 style="font-size: 9px!important;">Create Route</h6>
+                </div>
+                <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+                    <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+                        aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
+                        <h6 style="font-size: 9px!important;">Settings</h6>
+                    </button>
+
+                </div>
+            </div>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
+                style="border-radius: 5px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingtwo">
+                        <h4 class="panel-title">
+                        </h4>
+                    </div>
+                    <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel"
+                        aria-labelledby="headingtwo">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 text-left">
+                                    <div class="setting-box" style="padding-bottom: 10px!important;">
+                                        <button (click)="getNextPrevious('pre');" class="btn-primary"
+                                            style="background-color: #0ba118!important;">
+                                            << </button>
+                                                <input id="txtStrokeWeight" type="text"
+                                                    (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
+                                                    class="date-input"
+                                                    style="text-align: center; width: 170px; font-weight: bold;"
+                                                    value="4" />
+                                                <button (click)="getNextPrevious('next');" class="btn-primary"
+                                                    style="background-color: #0ba118!important;">
+                                                    >>
+                                                </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="col-md-12 main-headers ipad-desk-hide">
+        ROUTE ANALYSIS
+      </div> -->
     </div>
 </section>
 <!------------Desktop Navbar End------------->
@@ -46,7 +94,7 @@
         <div class="dth">
             <div class="table-bg">
                 <div class="tableFixHead">
-                    <table class="table table-hover">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th class="text-left" scope="col" style="text-align: left!important;">
@@ -59,7 +107,20 @@
                                 <td class="text-left">
                                     <input type="radio" id="chkRoute{{i}}" (change)="getRouteSelect(i);"
                                         [checked]="dt.isShow==1">
-                                    {{dt.routeName}}
+                                    {{dt.routeName}} <i class="fas fa-plus" style="color:#0ba118; float: right;"
+                                        (click)="openModel(contentUpdateRoute,'createNew',dt.routeKey,0)"></i><br />
+                                    <table class="table">
+                                        <tbody>
+                                            <tr *ngFor="let data of dt.route, let j=index">
+                                                <td class="text-left">
+                                                    {{data.startDate}} to {{data.endDate}} <i class="fas fa-edit"
+                                                        style="float: right; color: blue;"
+                                                        [hidden]="data.endDate!='---'"
+                                                        (click)="openModel(contentUpdateRoute,'update',dt.routeKey,data.key)"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </td>
                             </tr>
                         </tbody>
@@ -80,6 +141,12 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
+                        <input id="txtApplicableDate" type="date" class="date-input date" style="width: 100%!important;"
+                            placeholder="Applicable Date">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <input id="txtRouteName" type="text" class="date-input" style="width: 100%!important;"
                             placeholder="Route Name">
                     </div>
@@ -88,6 +155,41 @@
                     <div class="col-md-6">
                         <button type="button" class="btn btn-success w-100 submit-btn" style="margin-left: 5px;"
                             (click)="createRoute()">
+                            Create Route</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" style="margin-left: -6px;"
+                            (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #contentUpdateRoute>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <input type="hidden" id="updateRouteKey" value="0">
+                <input type="hidden" id="updateKey" value="0">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">
+                    <label id="lblHeading"></label>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="txtUpdateDate" type="date" class="date-input date" style="width: 100%!important;"
+                            placeholder="Applicable Date">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <button id="btnUpdate" type="button" class="btn btn-success w-100 submit-btn"
+                            style="margin-left: 5px;" (click)="updateRoute()">
                             Create Route</button>
                     </div>
                     <div class="col-md-6">
