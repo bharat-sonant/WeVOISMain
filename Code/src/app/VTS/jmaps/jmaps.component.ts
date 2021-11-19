@@ -328,7 +328,6 @@ export class JmapsComponent implements OnInit {
     this.getWardLineLength();
     this.getProgressFromLocalStorage();
     this.setWardBoundary();
-    this.getWardLines();
   }
 
   showLoader() {
@@ -342,6 +341,7 @@ export class JmapsComponent implements OnInit {
     this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
       if (lengthList != null) {
         this.wardLineLengthList = JSON.parse(lengthList);
+        this.getWardLines();
       }
     });
   }
@@ -368,7 +368,6 @@ export class JmapsComponent implements OnInit {
           this.showHideAnalysisDoneHtml("show");
         }
         if (summaryDetail.vehicles != "") {
-
           localStorage.setItem("jmapVehicleList", summaryDetail.vehicles);
           let vechileList = summaryDetail.vehicles.split(',');
           if (vechileList.length > 0) {
@@ -410,7 +409,6 @@ export class JmapsComponent implements OnInit {
           this.progressData.coveredLengthMeter = 0;
         }
         if (summaryData["vehicles"] != null) {
-
           vehicles = summaryData["vehicles"];
           localStorage.setItem("jmapVehicleList", vehicles);
           let vechileList = summaryData["vehicles"].split(',');
@@ -500,7 +498,6 @@ export class JmapsComponent implements OnInit {
             else {
               this.plotLinesOnMap();
             }
-
           }
         }
       }
@@ -553,8 +550,7 @@ export class JmapsComponent implements OnInit {
             }
             this.setLinesLocalStorage(lineNo, latlngs, strockColor);
             this.setClickInstance(line, lineNo, i);
-          }
-        );
+          });
       }
     }
   }
@@ -599,8 +595,8 @@ export class JmapsComponent implements OnInit {
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         dist = Number(lineDetail.dist);
-        let wardTotalLength = progresData.totalWardLength;
-        let wardCoveredDistance = progresData.coveredLengthMeter;
+        let wardTotalLength = Number(progresData.totalWardLength);
+        let wardCoveredDistance = Number(progresData.coveredLengthMeter);
         let workPercentage = 0;
         stockColor = lineDetail.color;
         if (stockColor == strockColorNotDone) {
