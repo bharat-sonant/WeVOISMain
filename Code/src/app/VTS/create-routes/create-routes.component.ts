@@ -146,7 +146,7 @@ export class CreateRoutesComponent implements OnInit {
 
   }
 
-  
+
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
       let strokeWeight = $(this.txtStrokeWeight).val();
@@ -166,16 +166,16 @@ export class CreateRoutesComponent implements OnInit {
   updateRoute() {
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     let routeKey = $(this.updateRouteKey).val();
+    let applicableDate = $(this.txtUpdateDate).val();
     let key = $(this.updateKey).val();
     if ($(this.btnUpdate).html() == "Create New") {
       let routeDetail = routeList.find(item => item.routeKey == routeKey);
       if (routeDetail != undefined) {
         key = routeDetail.route[0]["key"];
         let startDate = routeDetail.route[0]["startDate"];
-        let applicableDate = $(this.txtUpdateDate).val();
         let dat1 = new Date(startDate);
         let dat2 = new Date(applicableDate.toString());
-        if (dat2 < dat1) {
+        if (dat2 <= dat1) {
           this.commonService.setAlertMessage("error", "Applicable date cna't be less than " + startDate);
           return;
         }
@@ -196,6 +196,37 @@ export class CreateRoutesComponent implements OnInit {
         );
         localStorage.setItem("routeLines", JSON.stringify(routeList));
         this.routeList = routeList;
+        this.closeModel();
+      }
+    }
+    else {
+      let routeDetail = routeList.find(item => item.routeKey == routeKey);
+      if (routeDetail != undefined) {
+        if (routeDetail.route.length > 1) {
+          let preKey = routeDetail.route[1]["key"];
+          let startDate = routeDetail.route[1]["startDate"];
+
+          let dat1 = new Date(startDate);
+          let dat2 = new Date(applicableDate.toString());
+          if (startDate == applicableDate) {
+            this.commonService.setAlertMessage("error", "Applicable date cna't be equal than " + startDate);
+            return;
+          }
+          if (dat2 < dat1) {
+            this.commonService.setAlertMessage("error", "Applicable date cna't be less than " + startDate);
+            return;
+          }
+          let endDate = this.commonService.getPreviousDate(applicableDate, 1);
+          routeDetail.route[1]["endDate"] = endDate;
+          let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + preKey + "/endDate";
+          this.db.database.ref(dbPath).set(endDate);
+        }
+        routeDetail.route[0]["startDate"] = applicableDate;
+        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/startDate";
+        this.db.database.ref(dbPath).set(applicableDate);
+        localStorage.setItem("routeLines", JSON.stringify(routeList));
+        this.routeList = routeList;
+        this.closeModel();
       }
     }
   }
@@ -578,6 +609,7 @@ export class CreateRoutesComponent implements OnInit {
       else {
         $(this.btnUpdate).html("Update");
         $(this.lblHeading).html("Update for " + routeName + " - " + keyData);
+        $(this.txtUpdateDate).val(keyData);
       }
       $(this.updateRouteKey).val(routeKey);
       $(this.updateKey).val(key);
