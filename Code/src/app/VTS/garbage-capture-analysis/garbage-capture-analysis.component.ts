@@ -40,7 +40,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     zone: "---",
     ward: "---",
     timeResolved: "---",
-    latLngResolved: "---"
+    latLngResolved: "---",
+    distance: "---"
   };
 
   // html id's
@@ -63,7 +64,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   divLoader = "#divLoader";
   divMessage = "#divMessage";
   dataId = "#dataId";
-  collapsethree="#collapsethree";
+  collapsethree = "#collapsethree";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -73,6 +74,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.setUsersPermission();
     this.setDefaultArray();
     this.selectedOption = "0";
     this.setDefaultDate();
@@ -93,11 +95,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   setUsersPermission() {
     this.userType = localStorage.getItem("userType");
     if (this.userType == "External User") {
-      $(this.topPenality).hide();
-      $(this.topPenalityNav).hide();
-      $(this.leftPenality).hide();
+     // $(this.topPenality).hide();
+     // $(this.topPenalityNav).hide();
+     // $(this.leftPenality).hide();
       $(this.divAnalysis).hide();
-      $(this.tblPenalty).hide();
+     // $(this.tblPenalty).hide();
     }
   }
 
@@ -182,14 +184,14 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.panalty = sum;
   }
 
-  getOrderBy(orderBy:any){
-    this.progressList=this.commonService.transformNumeric(this.progressList,orderBy);
-    this.allProgressList=this.commonService.transformNumeric(this.allProgressList,orderBy);
+  getOrderBy(orderBy: any) {
+    this.progressList = this.commonService.transformNumeric(this.progressList, orderBy);
+    this.allProgressList = this.commonService.transformNumeric(this.allProgressList, orderBy);
     this.hideOrdeBy();
-    
+
   }
 
-  hideOrdeBy(){
+  hideOrdeBy() {
     let element = <HTMLElement>document.getElementById("collapsethree");
     let className = element.className;
     $("#collapsethree").removeClass(className);
@@ -224,6 +226,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.panalty = 0;
     this.progressData.totalCount = 0;
     this.progressData.totalPenalty = 0;
+
     this.resetDetail();
   }
 
@@ -344,9 +347,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (objData[imageId]["ward"] != null) {
                     ward = objData[imageId]["ward"];
                   }
-                  let timeStemp=new Date(this.commonService.setTodayDate()+" "+ data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward,timeStemp:timeStemp });
-                  this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward,timeStemp:timeStemp });
+                  let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
+                  this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp });
+                  this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
@@ -398,9 +401,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (data[imageId]["ward"] != null) {
                     ward = data[imageId]["ward"];
                   }
-                  let timeStemp=new Date(this.commonService.setTodayDate()+" "+ data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward,timeStemp:timeStemp });
-                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward,timeStemp:timeStemp });
+                  let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
+                  this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp });
+                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
@@ -513,6 +516,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.address = "---";
     this.progressData.zone = "---";
     this.progressData.ward = "---";
+    this.progressData.distance = "---";
     $(this.txtPanalty).val(0);
     $(this.dataId).val(0);
     let element = <HTMLImageElement>document.getElementById("mainImage");
@@ -532,6 +536,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.zone = this.progressList[index]["zone"];
       this.progressData.ward = this.progressList[index]["ward"];
       $(this.txtPanalty).val(this.progressList[index]["penalty"]);
+
       $(this.dataId).val(index);
       let city = this.commonService.getFireStoreCity();
       let imageName = this.progressList[index]["imageUrl"];
@@ -546,11 +551,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       element.src = imageURL;
       let imageId = this.progressList[index]["imageId"];
 
-      this.getResolvedData(imageId);
+      this.getResolvedData(imageId, this.progressData.latLng);
     }
   }
 
-  getResolvedData(imageId: any) {
+  getResolvedData(imageId: any, latLng: any) {
+
     let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/BvgAction";
     let resolvedInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -568,6 +574,18 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
           }
           let element = <HTMLImageElement>document.getElementById("mainImageResolved");
           element.src = imageURL;
+          let lat1 = Number(latLng.split(',')[0]);
+          let lng1 = Number(latLng.split(',')[1]);
+          let lat2 = Number(data["latlng"].split(',')[0]);
+          let lng2 = Number(data["latlng"].split(',')[1]);
+          let distance = this.commonService.getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2);
+
+          if (distance > 1000) {
+            this.progressData.distance = (distance / 1000).toFixed(3) + " KM";
+          }
+          else {
+            this.progressData.distance = (distance).toFixed(3) + " Meter";
+          }
         }
       }
     );
@@ -659,6 +677,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
   }
+
+
 }
 
 export class progressDetail {
@@ -674,4 +694,5 @@ export class progressDetail {
   ward: string;
   timeResolved: string;
   latLngResolved: string;
+  distance: string;
 }
