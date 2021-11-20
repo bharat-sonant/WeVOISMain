@@ -782,19 +782,8 @@ export class JmapsComponent implements OnInit {
             let coveredLength = 0;
             for (let j = 0; j < keyArray.length; j++) {
               let lineNo = keyArray[j];
-              let time = "00:00:58";
-              if (data[lineNo]["Time"] != null) {
-                time = data[lineNo]["Time"];
-              }
-              else {
-                if (data[lineNo]["Status"] == null) {
-                  time = data[lineNo];
-                }
-              }
               let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
               if (lineDetail != undefined) {
-                dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-                this.db.database.ref(dbPath).set(time);
                 coveredLength = coveredLength + Number(lineDetail.length);
               }
             }
