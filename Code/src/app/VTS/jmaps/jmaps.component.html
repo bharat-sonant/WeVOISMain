@@ -267,10 +267,10 @@
       <div class="panel-body mob-panel-body">
         <div id="divJaipurGreaterDetail">
           <div class="jaipur-line-details-box">
-            <div class="seprater"  style="display: none;">
+            <div class="seprater">
               <div class="lines-left" style="margin-top: 7px;padding: 5px;padding-bottom: 0px;">
-                {{progressData.lastShowDate}}
-                <i class="fas fa-sync-alt" (click)="resetData();"
+                Re-Calculate 
+                <i class="fas fa-sync-alt" (click)="reCalculateData();"
                   style="cursor: pointer; float:right; color:green;"></i>
               </div>
             </div>
@@ -363,10 +363,10 @@
 <div class="hide-on-mob" id="divJaipurGreaterDetail">
   <div class="jaipur-line-details-box">
 
-    <div class="seprater" style="display: none;">
-      <div class="lines-left" style="margin-top: -10px; padding-bottom: 10px;">
-        {{progressData.lastShowDate}}
-        <i class="fas fa-sync-alt" (click)="resetData();" style="cursor: pointer; float:right; color:green;"></i>
+    <div class="seprater">
+      <div class="lines-left" style="margin-top: -10px; padding-bottom: 10px; font-size: 12px;">
+        Re-Calculate
+        <i class="fas fa-sync-alt" (click)="reCalculateData();" style="cursor: pointer; float:right; color:green;"></i>
       </div>
     </div>
     <div style="padding:15px 15px 15px 10px; border-bottom: 1px solid lightgray;">

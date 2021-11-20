@@ -770,6 +770,49 @@ export class JmapsComponent implements OnInit {
     this.getWardData();
   }
 
+  reCalculateData() {
+
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+    let wasteInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        wasteInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            let coveredLength = 0;
+            for (let j = 0; j < keyArray.length; j++) {
+              let lineNo = keyArray[j];
+              let time = "00:00:58";
+              if (data[lineNo]["Time"] != null) {
+                time = data[lineNo]["Time"];
+              }
+              else {
+                if (data[lineNo]["Status"] == null) {
+                  time = data[lineNo];
+                }
+              }
+              let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
+              if (lineDetail != undefined) {
+                dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+                this.db.database.ref(dbPath).set(time);
+                coveredLength = coveredLength + Number(lineDetail.length);
+              }
+            }
+            let workPerc = Math.round((coveredLength * 100) /Number(this.progressData.totalWardLength));
+            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+            const data1 = {
+              coveredLength: coveredLength.toFixed(0),
+              workPerc: workPerc
+            }
+            this.db.object(dbPath).update(data1);
+            this.resetData();
+          }
+        }
+      }
+    );
+
+  }
+
   resetAllLines() {
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
