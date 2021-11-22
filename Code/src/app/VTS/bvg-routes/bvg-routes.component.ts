@@ -114,7 +114,8 @@ export class BvgRoutesComponent implements OnInit {
             strokeWeight: 4,
           });
           this.polylines[0] = line;
-          this.polylines[0].setMap(this.map);         
+          this.polylines[0].setMap(this.map);
+         
           this.map.fitBounds(this.bounds);
         }
       });
