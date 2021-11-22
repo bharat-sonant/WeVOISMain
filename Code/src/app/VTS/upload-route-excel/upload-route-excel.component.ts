@@ -3,7 +3,6 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from "../../services/common/common.service";
 import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
-import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-upload-route-excel',
@@ -99,20 +98,25 @@ export class UploadRouteExcelComponent implements OnInit {
       }
       if (this.vehicleList.length > 0) {
         let fileName = "main";
-        this.saveJsonFile(this.vehicleList, fileName);
+        let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
+        this.db.database.ref(dbPath).set(this.vehicleList);
+        // this.saveJsonFile(this.vehicleList, fileName);
         if (this.routeList.length > 0) {
           for (let i = 0; i < this.vehicleList.length; i++) {
-            let routeDetailList = this.routeList.filter(item => item.vehicle == this.vehicleList[i]["vehicle"]);
-            if (routeDetailList.length > 0) {
-              this.saveJsonFile(routeDetailList, this.vehicleList[i]["vehicle"]);
+            let routeDetail = this.routeList.find(item => item.vehicle == this.vehicleList[i]["vehicle"]);
+            if (routeDetail!=undefined) {
+              this.saveRealTimeData(routeDetail.points, this.vehicleList[i]["vehicle"]);
+              // this.saveJsonFile(routeDetailList, this.vehicleList[i]["vehicle"]);
             }
           }
-
         }
       }
-
     }
+  }
 
+  saveRealTimeData(listArray: any, fileName: any) {
+    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
+    this.db.database.ref(dbPath).set(listArray);
   }
 
   saveJsonFile(listArray: any, fileName: any) {

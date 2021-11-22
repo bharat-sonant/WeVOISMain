@@ -24,6 +24,7 @@ export class BvgRoutesComponent implements OnInit {
   vehicleList: any[];
   polylines = [];
   lines: any[];
+  public bounds: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -76,44 +77,47 @@ export class BvgRoutesComponent implements OnInit {
 
 
   getRouteVehicles() {
-    let dbPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FBVGRouteJson%2F" + this.selectedDate + "%2Fmain.json?alt=media";
-    this.httpService.get(dbPath).subscribe(data => {
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        for (let i = 0; i < keyArray.length; i++) {
-          let index = keyArray[i];
-          let vehicle = data[index]["vehicle"];
-          let isShow = 0;
-          if (i == 0) {
-            isShow = 1;
-            this.getRouteData(vehicle, 2);
+    let dbPath = "BVGRoutes/" + this.selectedDate + "/main";
+    let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        vehicleInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let vehicle = data[i]["vehicle"];
+            let isShow = 0;
+            if (i == 0) {
+              isShow = 1;
+              this.getRouteData(vehicle, i);
+            }
+            this.vehicleList.push({ vehicle: vehicle, isShow: isShow });
           }
-          this.vehicleList.push({ vehicle: vehicle, isShow: isShow });
         }
-      }
-    });
+      });
   }
 
   getRouteData(vehicle: any, index: any) {
-    let dbPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FBVGRouteJson%2F" + this.selectedDate + "%2F" + vehicle + ".json?alt=media";
-    this.httpService.get(dbPath).subscribe(data => {
-      if (data != null) {
-        let points = data[0]["points"];
-        let latLng = [];
-        for (let i = 0; i < points.length; i++) {
-          latLng.push({ lat: Number(points[i]["lat"]), lng: Number(points[i]["lng"]) });
+    this.bounds = new google.maps.LatLngBounds();
+    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + vehicle;
+    let routeInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        routeInstance.unsubscribe();
+        if (data.length > 0) {
+          let latLng = [];
+          for (let i = 0; i < data.length; i++) {
+            latLng.push({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
+            this.bounds.extend({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
+          }
+          let strockColor = "red";
+          let line = new google.maps.Polyline({
+            path: latLng,
+            strokeColor: strockColor,
+            strokeWeight: 4,
+          });
+          this.polylines[0] = line;
+          this.polylines[0].setMap(this.map);         
+          this.map.fitBounds(this.bounds);
         }
-        let strockColor = "red";
-        let line = new google.maps.Polyline({
-          path: latLng,
-          strokeColor: strockColor,
-          strokeWeight: 4,
-        });
-        this.polylines[index] = line;
-        this.polylines[index].setMap(this.map);
-      }
-    });
-
+      });
   }
 
   changeRef(index: any) {
