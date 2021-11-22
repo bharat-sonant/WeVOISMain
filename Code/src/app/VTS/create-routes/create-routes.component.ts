@@ -239,7 +239,6 @@ export class CreateRoutesComponent implements OnInit {
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
-
             for (let i = 0; i < keyArray.length; i++) {
               let routeKey = keyArray[i];
               let routeName = data[routeKey]["name"];
@@ -256,10 +255,8 @@ export class CreateRoutesComponent implements OnInit {
                 let routeArray = Object.keys(obj);
                 for (let j = routeArray.length - 1; j >= 0; j--) {
                   let key = routeArray[j];
-                  console.log(key);
                   if (key == "lastRouteKey") {
                     lastRouteKey = Number(obj[key]);
-                    console.log(lastRouteKey);
                   }
                   else {
                     let startDate = obj[key]["startDate"];
@@ -267,38 +264,40 @@ export class CreateRoutesComponent implements OnInit {
                     if (obj[key]["endDate"] != null) {
                       endDate = obj[key]["endDate"];
                     }
-                    route.push({ key: Number(key), startDate: startDate, endDate: endDate, routeLines: routeLines });
-                  }
-                }
-
-              }
-
-
-              if (data[routeKey]["routeLines"] != null) {
-                let list = data[routeKey]["routeLines"].toString().split(',');
-                if (list.length > 0) {
-                  for (let i = 0; i < list.length; i++) {
-                    routeLines.push({ lineNo: list[i] });
-                  }
-                }
-              }
-              if (i == 0) {
-                $(this.lblSelectedRoute).html(routeKey);
-                if (routeLines.length > 0) {
-                  for (let j = 0; j < routeLines.length; j++) {
-                    let lineNo = routeLines[j]["lineNo"];
-                    let lineDetail = this.lines.find(item => item.lineNo == lineNo);
-                    if (lineDetail != undefined) {
-                      let index = lineDetail.index;
-                      let line = new google.maps.Polyline(this.polylines[index]);
-                      var polyOptions = {
-                        strokeColor: this.strockColorDone,
-                        strokeOpacity: 1.0,
-                        strokeWeight: 4
+                    if (obj[key]["routeLines"] != null) {
+                      let list = data[routeKey]["routeLines"].toString().split(',');
+                      if (list.length > 0) {
+                        for (let k = 0; k < list.length; k++) {
+                          routeLines.push({ lineNo: list[i] });
+                        }
                       }
-                      line.setOptions(polyOptions);
-                      this.polylines[index]["strokeColor"] = this.strockColorDone;
                     }
+
+                    let cssClass = "";
+                    if (j == routeArray.length - 2) {
+                      cssClass = "active";
+                      if (i == 0) {
+                        $(this.lblSelectedRoute).html(routeKey + "-" + key);
+                        if (routeLines.length > 0) {
+                          for (let k = 0; k < routeLines.length; k++) {
+                            let lineNo = routeLines[k]["lineNo"];
+                            let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+                            if (lineDetail != undefined) {
+                              let index = lineDetail.index;
+                              let line = new google.maps.Polyline(this.polylines[index]);
+                              var polyOptions = {
+                                strokeColor: this.strockColorDone,
+                                strokeOpacity: 1.0,
+                                strokeWeight: 4
+                              }
+                              line.setOptions(polyOptions);
+                            }
+                          }
+                        }
+                      }
+                    }
+
+                    route.push({ key: Number(key), startDate: startDate, endDate: endDate, routeLines: routeLines, cssClass: cssClass });
                   }
                 }
               }
@@ -418,11 +417,13 @@ export class CreateRoutesComponent implements OnInit {
     let lblSelectedRoute = this.lblSelectedRoute;
 
     google.maps.event.addListener(line, 'click', function (h) {
-      let routeKey = $(lblSelectedRoute).html();
-      if (routeKey == "") {
+      let routeKeyElement = $(lblSelectedRoute).html();
+      if (routeKeyElement == "") {
         commonServices.setAlertMessage("error", "Please create or select route !!!");
         return;
       }
+      let routeKey = routeKeyElement.split('-')[0];
+      let key = routeKeyElement.split('-')[1];
       let stockColor = strockColorNotDone;
       let isOtherLine = false;
       let routeName = "";
@@ -431,10 +432,11 @@ export class CreateRoutesComponent implements OnInit {
       if (routeLines == null) {
         routeLines = [];
       }
+      /*
       if (routeLines.length > 0) {
         for (let i = 0; i < routeLines.length; i++) {
           if (routeLines[i]["routeKey"] != routeKey) {
-            let lineInRoutes = routeLines[i]["routeLines"];
+            let lineInRoutes = routeLines[i]["route"]["routeLines"];
             let detail = lineInRoutes.find(item => item.lineNo == lineNo);
             if (detail != undefined) {
               isOtherLine = true;
@@ -448,31 +450,37 @@ export class CreateRoutesComponent implements OnInit {
         commonServices.setAlertMessage("error", "This line already in " + routeName + " !!!");
         return;
       }
-
+*/
       let routeDetail = routeLines.find(item => item.routeKey == routeKey);
       if (routeDetail != undefined) {
         let routeLinesData = "";
-        let lineDetail = routeDetail.routeLines.find(item => item.lineNo == lineNo);
-        if (lineDetail == undefined) {
-          routeDetail.routeLines.push({ lineNo: lineNo });
-          stockColor = strockColorDone;
-        }
-        else {
-          let list = routeDetail.routeLines.filter(item => item.lineNo != lineNo);
-          routeDetail.routeLines = list;
-          stockColor = strockColorNotDone;
-
-        }
-        let list = routeDetail.routeLines;
-        for (let i = 0; i < list.length; i++) {
-          if (i == 0) {
-            routeLinesData = list[i]["lineNo"];
+        let route = routeDetail.route;
+        let keyDetail = route.find(item => item.key == key);
+        if (keyDetail != undefined) {
+          let keyRoutesLines = keyDetail.routeLines;
+          let lineDetail = keyRoutesLines.find(item => item.lineNo == lineNo);
+          if (lineDetail == undefined) {
+            keyRoutesLines.push({ lineNo: lineNo });
+            stockColor = strockColorDone;
           }
           else {
-            routeLinesData = routeLinesData + "," + list[i]["lineNo"];
+            let list = keyRoutesLines.filter(item => item.lineNo != lineNo);
+            keyRoutesLines = list;
+            stockColor = strockColorNotDone;
           }
+          keyDetail.routeLines = keyRoutesLines;          
+
+          let list = keyDetail.routeLines;
+          for (let i = 0; i < list.length; i++) {
+            if (i == 0) {
+              routeLinesData = list[i]["lineNo"];
+            }
+            else {
+              routeLinesData = routeLinesData + "," + list[i]["lineNo"];
+            }
+          }
+          dbEvent.database.ref("Route/" + selectedWard + "/" + routeKey + "/Routes/" + key + "/routeLines").set(routeLinesData);
         }
-        dbEvent.database.ref("Route/" + selectedWard + "/" + routeKey + "/routeLines").set(routeLinesData);
       }
       localStorage.setItem("routeLines", JSON.stringify(routeLines));
       var polyOptions = {

@@ -111,7 +111,7 @@
                                         (click)="openModel(contentUpdateRoute,'createNew',dt.routeKey,0)"></i><br />
                                     <table class="table">
                                         <tbody>
-                                            <tr *ngFor="let data of dt.route, let j=index">
+                                            <tr *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}" style="cursor: pointer;">
                                                 <td class="text-left">
                                                     {{data.startDate}} to {{data.endDate}} <i class="fas fa-edit"
                                                         style="float: right; color: blue;"

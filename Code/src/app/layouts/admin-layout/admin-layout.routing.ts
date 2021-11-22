@@ -88,6 +88,8 @@ import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/cre
 import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
 import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-test-purpose.component';
 import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
+import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
+import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -194,6 +196,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/test-route', component: TestRouteComponent },
     { path: 'sikar/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'sikar/create-routes', component: CreateRoutesComponent },
+    { path: 'sikar/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'sikar/bvg-routes', component: BvgRoutesComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -289,6 +293,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/test-route', component: TestRouteComponent },
     { path: 'sikar/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'sikar/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'sikar/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'sikar/:id/bvg-routes', component: BvgRoutesComponent },
 
 
     //jaipur-greater
@@ -385,6 +391,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/test-route', component: TestRouteComponent },
     { path: 'jaipur-greater/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'jaipur-greater/create-routes', component: CreateRoutesComponent },
+    { path: 'jaipur-greater/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'jaipur-greater/bvg-routes', component: BvgRoutesComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -480,6 +488,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/test-route', component: TestRouteComponent },
     { path: 'jaipur-greater/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'jaipur-greater/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'jaipur-greater/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'jaipur-greater/:id/bvg-routes', component: BvgRoutesComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -575,6 +585,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/test-route', component: TestRouteComponent },
     { path: 'reengus/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'reengus/create-routes', component: CreateRoutesComponent },
+    { path: 'reengus/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'reengus/bvg-routes', component: BvgRoutesComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -670,6 +682,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/test-route', component: TestRouteComponent },
     { path: 'reengus/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'reengus/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'reengus/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'reengus/:id/bvg-routes', component: BvgRoutesComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -765,6 +779,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/test-route', component: TestRouteComponent },
     { path: 'shahpura/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'shahpura/create-routes', component: CreateRoutesComponent },
+    { path: 'shahpura/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'shahpura/bvg-routes', component: BvgRoutesComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -860,6 +876,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/test-route', component: TestRouteComponent },
     { path: 'shahpura/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'shahpura/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'shahpura/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'shahpura/:id/bvg-routes', component: BvgRoutesComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -955,6 +973,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/test-route', component: TestRouteComponent },
     { path: 'test/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'test/create-routes', component: CreateRoutesComponent },
+    { path: 'test/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'test/bvg-routes', component: BvgRoutesComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1050,6 +1070,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/test-route', component: TestRouteComponent },
     { path: 'test/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'test/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'test/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'test/:id/bvg-routes', component: BvgRoutesComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1145,6 +1167,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/test-route', component: TestRouteComponent },
     { path: 'demo/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'demo/create-routes', component: CreateRoutesComponent },
+    { path: 'demo/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'demo/bvg-routes', component: BvgRoutesComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1239,4 +1263,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/test-route', component: TestRouteComponent },
     { path: 'demo/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'demo/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'demo/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'demo/:id/bvg-routes', component: BvgRoutesComponent },
 ]; 

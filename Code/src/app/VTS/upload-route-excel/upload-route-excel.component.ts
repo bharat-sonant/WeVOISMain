@@ -1,0 +1,142 @@
+import { Component, OnInit } from '@angular/core';
+import { FirebaseService } from "../../firebase.service";
+import { CommonService } from "../../services/common/common.service";
+import { AngularFireStorage } from "angularfire2/storage";
+import * as XLSX from 'xlsx';
+import { timeStamp } from 'console';
+
+@Component({
+  selector: 'app-upload-route-excel',
+  templateUrl: './upload-route-excel.component.html',
+  styleUrls: ['./upload-route-excel.component.scss']
+})
+export class UploadRouteExcelComponent implements OnInit {
+
+  constructor(private storage: AngularFireStorage, private fs: FirebaseService, private commonService: CommonService) { }
+  db: any;
+  cityName: any;
+  selectedDate: any;
+  fileRouteList: any[];
+  vehicleList: any[];
+  file: any;
+  arrayBuffer: any;
+  routeList: any[];
+  fileDate: any;
+  first_sheet_name: any;
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.selectedDate = this.commonService.setTodayDate();
+    $('#txtDate').val(this.selectedDate);
+
+  }
+
+  resetAll() {
+    this.routeList = [];
+    this.vehicleList = [];
+  }
+
+  onFileChanged(event) {
+    $('#divLoader').show();
+    this.fileRouteList = [];
+    this.file = event.target.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(this.file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      this.fileDate = this.commonService.getDateConvert(this.first_sheet_name);
+
+
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      // console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
+      this.fileRouteList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      $('#divLoader').hide();
+    }
+  }
+
+  setDate(filterVal: any) {
+    this.selectedDate = filterVal;
+  }
+
+  saveData() {
+    this.resetAll();
+    if (this.first_sheet_name == "") {
+      this.commonService.setAlertMessage("error", "Please select file !!!");
+      return;
+    }
+    if (this.selectedDate != this.fileDate) {
+      this.commonService.setAlertMessage("error", "Please select correct date !!!");
+      return;
+    }
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+      this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
+    }, 1000);
+    if (this.fileRouteList.length > 0) {
+      for (let i = 0; i < this.fileRouteList.length; i++) {
+        let vehicle = this.fileRouteList[i]["vehicleName"];
+        let lat = this.fileRouteList[i]["latitude"];
+        let lng = this.fileRouteList[i]["longitude"];
+        let vehicleDetail = this.routeList.find(item => item.vehicle == vehicle);
+        if (vehicleDetail == undefined) {
+          this.vehicleList.push({ vehicle: vehicle });
+          let points = [];
+          points.push({ lat: lat, lng: lng });
+          this.routeList.push({ vehicle: vehicle, points: points });
+        }
+        else {
+          vehicleDetail.points.push({ lat: lat, lng: lng });
+        }
+      }
+      if (this.vehicleList.length > 0) {
+        let fileName = "main";
+        this.saveJsonFile(this.vehicleList, fileName);
+        if (this.routeList.length > 0) {
+          for (let i = 0; i < this.vehicleList.length; i++) {
+            let routeDetailList = this.routeList.filter(item => item.vehicle == this.vehicleList[i]["vehicle"]);
+            if (routeDetailList.length > 0) {
+              this.saveJsonFile(routeDetailList, this.vehicleList[i]["vehicle"]);
+            }
+          }
+
+        }
+      }
+
+    }
+
+  }
+
+  saveJsonFile(listArray: any, fileName: any) {
+    var jsonFile = JSON.stringify(listArray);
+    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+    const path = "" + this.commonService.getFireStoreCity() + "/BVGRouteJson/" + this.selectedDate + "/" + fileName + ".json";
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
+  }
+}

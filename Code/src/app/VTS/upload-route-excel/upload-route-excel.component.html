@@ -1,0 +1,50 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 main-headers">
+            Upload Route Excel
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-7 pl-0 pr-7">
+            <div class="card" style="margin-top:-6px;  height: 85vh!important">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-left">
+                            <h5>
+                               Upload Route Excel
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1" style="margin-left: 10px;">
+                                <input id="txtDate" type="date" class="date-input" (change)="setDate($event.target.value)">
+                            </div>
+                            <div class="col-md-12 pr-1" style="margin-left: 10px; padding-top: 10px;">
+                                
+                                <div class="file-upload-wrapper">
+                                  <input id="fileUpload" type="file" name="file" class="file-upload-field" placeholder="" value=""
+                                    (change)="onFileChanged($event)">
+                                </div>
+                             </div>
+                            <div class="col-md-12 pr-1 text-left" style=" padding-top: 10px;">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="saveData();">SAVE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-----NeW Work Start------->
+    </div>
+</div>

@@ -312,6 +312,53 @@ export class CommonService {
     }
   }
 
+  getDateConvert(value: any) {
+    let list = value.split(' ');
+    let day = list[0];
+    let monthName = list[1];
+    let year = list[2];
+    let month = "00"
+    if (monthName == "Jan") {
+      month = "01";
+    }
+    else if (monthName == "Feb") {
+      month = "02";
+    }
+    else if (monthName == "Mar") {
+      month = "03";
+    }
+    else if (monthName == "Apr") {
+      month = "04";
+    }
+    else if (monthName == "May") {
+      month = "05";
+    }
+    else if (monthName == "Jun") {
+      month = "06";
+    }
+    else if (monthName == "Jul") {
+      month = "07";
+    }
+    else if (monthName == "Aug") {
+      month = "08";
+    }
+    else if (monthName == "Sep") {
+      month = "09";
+    }
+    else if (monthName == "Oct") {
+      month = "10";
+    }
+    else if (monthName == "Nov") {
+      month = "11";
+    }
+    else if (monthName == "Dec") {
+      month = "12";
+    }
+
+    return year + "-" + month + "-" + day;
+
+  }
+
   getCurrentMonthShortName(monthNumber: number) {
     var d = new Date();
     var month = new Array();
@@ -618,9 +665,9 @@ export class CommonService {
 
   getWardKML(newDb: any, wardNo: any) {
     return new Promise((resolve) => {
-     let boundaryInstance= newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
-      boundaryInstance.unsubscibe();
-      resolve(wardPath);
+      let boundaryInstance = newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
+        boundaryInstance.unsubscibe();
+        resolve(wardPath);
       });
     });
   }
