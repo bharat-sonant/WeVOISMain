@@ -134,13 +134,14 @@ export class CreateRoutesComponent implements OnInit {
     }
     let routeLines = [];
     let route = [];
-    route.push({ key: 1, startDate: applicableDate, endDate: "---", routeLines: routeLines });
+    let cssClass = "active";
+    route.push({ key: 1, startDate: applicableDate, endDate: "---", routeLines: routeLines, cssClass: cssClass });
     this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 1, lastRouteKey: 1, route: route });
     localStorage.setItem("routeLines", JSON.stringify(this.routeList));
     setTimeout(() => {
       let element = <HTMLInputElement>document.getElementById("chkRoute" + (this.routeList.length - 1));
       element.checked = true;
-      this.getRouteSelect(this.routeList.length - 1);
+      this.getRouteSelect(this.routeList.length - 1, 0);
     }, 200);
     this.closeModel();
 
@@ -190,10 +191,11 @@ export class CreateRoutesComponent implements OnInit {
         dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + lastRouteKey + "/startDate";
         this.db.database.ref(dbPath).set(applicableDate);
         let routeLines = [];
-        routeDetail.route.push({ key: lastRouteKey, startDate: applicableDate, endDate: "---", routeLines: routeLines });
+        routeDetail.route.push({ key: lastRouteKey, startDate: applicableDate, endDate: "---", routeLines: routeLines, cssClass: "" });
         routeDetail.route = routeDetail.route.sort((a, b) =>
           Number(b.key) > Number(a.key) ? 1 : -1
         );
+        key = lastRouteKey;
         localStorage.setItem("routeLines", JSON.stringify(routeList));
         this.routeList = routeList;
         this.closeModel();
@@ -229,6 +231,7 @@ export class CreateRoutesComponent implements OnInit {
         this.closeModel();
       }
     }
+    this.getRouteSelect(routeKey, key);
   }
 
   getRoutes() {
@@ -265,7 +268,7 @@ export class CreateRoutesComponent implements OnInit {
                       endDate = obj[key]["endDate"];
                     }
                     if (obj[key]["routeLines"] != null) {
-                      let list = data[routeKey]["routeLines"].toString().split(',');
+                      let list = obj[key]["routeLines"].toString().split(',');
                       if (list.length > 0) {
                         for (let k = 0; k < list.length; k++) {
                           routeLines.push({ lineNo: list[i] });
@@ -275,8 +278,8 @@ export class CreateRoutesComponent implements OnInit {
 
                     let cssClass = "";
                     if (j == routeArray.length - 2) {
-                      cssClass = "active";
                       if (i == 0) {
+                        cssClass = "active";
                         $(this.lblSelectedRoute).html(routeKey + "-" + key);
                         if (routeLines.length > 0) {
                           for (let k = 0; k < routeLines.length; k++) {
@@ -296,7 +299,6 @@ export class CreateRoutesComponent implements OnInit {
                         }
                       }
                     }
-
                     route.push({ key: Number(key), startDate: startDate, endDate: endDate, routeLines: routeLines, cssClass: cssClass });
                   }
                 }
@@ -309,30 +311,56 @@ export class CreateRoutesComponent implements OnInit {
       });
   }
 
-  getRouteSelect(index: any) {
+  getRouteSelect(routeKey: any, key: any) {
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
       this.routeList = routeList;
     }
+    let list=[];
     if (this.routeList.length > 0) {
       for (let i = 0; i < this.routeList.length; i++) {
-        if (i == index) {
-          let element = <HTMLInputElement>document.getElementById("chkRoute" + index);
-          if (element.checked == true) {
-            this.routeList[i]["isShow"] = 1;
-            $(this.lblSelectedRoute).html(this.routeList[i]["routeKey"]);
-            this.setPolyLineOption(this.routeList[i]["routeLines"]);
+        if (this.routeList[i]["routeKey"] == routeKey) {
+          let element = <HTMLInputElement>document.getElementById("chkRoute" + i);
+          element.checked = true;
+          this.routeList[i]["isShow"] = 1;
+          let selectedRoute=routeKey;
+          
+          if (this.routeList[i]["route"] != null) {
+            for (let j = 0; j < this.routeList[i]["route"].length; j++) {
+              if (key == 0) {
+                if (j == 0) {
+                  this.routeList[i]["route"][j]["cssClass"] = "active";
+                  selectedRoute=selectedRoute+"-"+this.routeList[i]["route"][j]["key"];
+                  list=this.routeList[i]["route"][j]["routeLines"];
+                }
+                else {
+                  this.routeList[i]["route"][j]["cssClass"] = "";
+                }
+              }
+              else {
+                if (this.routeList[i]["route"][j]["key"] == key) {
+                  selectedRoute=selectedRoute+"-"+this.routeList[i]["route"][j]["key"];
+                  this.routeList[i]["route"][j]["cssClass"] = "active";
+                  list=this.routeList[i]["route"][j]["routeLines"];
+                }
+                else {
+                  this.routeList[i]["route"][j]["cssClass"] = "";
+                }
+              }
+            }
           }
-          else {
-            this.routeList[i]["isShow"] = 0;
-            $(this.lblSelectedRoute).html("");
-            let list = [];
-            this.setPolyLineOption(list);
-          }
+          $(this.lblSelectedRoute).html(selectedRoute);
+           
         }
         else {
           this.routeList[i]["isShow"] = 0;
+          if (this.routeList[i]["route"] != null) {
+            for (let j = 0; j < this.routeList[i]["route"].length; j++) {
+              this.routeList[i]["route"][j]["cssClass"] = "";
+            }
+          }
         }
+        this.setPolyLineOption(list);
       }
     }
     localStorage.setItem("routeLines", JSON.stringify(this.routeList));
@@ -468,7 +496,7 @@ export class CreateRoutesComponent implements OnInit {
             keyRoutesLines = list;
             stockColor = strockColorNotDone;
           }
-          keyDetail.routeLines = keyRoutesLines;          
+          keyDetail.routeLines = keyRoutesLines;
 
           let list = keyDetail.routeLines;
           for (let i = 0; i < list.length; i++) {

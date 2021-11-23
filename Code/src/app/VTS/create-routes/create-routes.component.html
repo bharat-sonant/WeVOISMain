@@ -105,13 +105,15 @@
                         <tbody>
                             <tr *ngFor="let dt of routeList, let i=index">
                                 <td class="text-left">
-                                    <input type="radio" id="chkRoute{{i}}" (change)="getRouteSelect(i);"
+                                    <input type="radio" id="chkRoute{{i}}" (change)="getRouteSelect(dt.routeKey,0);"
                                         [checked]="dt.isShow==1">
                                     {{dt.routeName}} <i class="fas fa-plus" style="color:#0ba118; float: right;"
                                         (click)="openModel(contentUpdateRoute,'createNew',dt.routeKey,0)"></i><br />
                                     <table class="table">
                                         <tbody>
-                                            <tr *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}" style="cursor: pointer;">
+                                            <tr *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}"
+                                                style="cursor: pointer;"
+                                                (click)="getRouteSelect(dt.routeKey,data.key);">
                                                 <td class="text-left">
                                                     {{data.startDate}} to {{data.endDate}} <i class="fas fa-edit"
                                                         style="float: right; color: blue;"
