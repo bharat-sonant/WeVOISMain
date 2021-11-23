@@ -38,7 +38,6 @@ export class BvgRoutesComponent implements OnInit {
 
   setDefault() {
     this.selectedDate = this.commonService.setTodayDate();
-    this.selectedDate = "2021-09-01";
     $('#txtDate').val(this.selectedDate);
     this.vehicleList = [];
   }
