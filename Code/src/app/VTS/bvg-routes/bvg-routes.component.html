@@ -13,6 +13,9 @@
                 << </span></button>
             <input id="txtDate"  class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" />
             <button class="btn-hvr" (click)="setDate('','next');" style="margin-left: 0px!important;"><span style="color: #fff;">>></span></button>
+            &nbsp;&nbsp;
+            <input type="checkbox" id="chkShowLines" checked="checked" (change)="showHideLines()"> Show Lines &nbsp;
+            <input type="checkbox" id="chkShowMarker" checked="checked" (change)="showHideMarkers()"> Show Markers
         </div>
     </div>
 </section>

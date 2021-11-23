@@ -24,7 +24,12 @@ export class BvgRoutesComponent implements OnInit {
   vehicleList: any[];
   polylines = [];
   lines: any[];
+  markerList: any[];
   public bounds: any;
+  chkShowLines = "#chkShowLines";
+  chkShowMarker = "#chkShowMarker";
+  showMarker: any;
+  showLines: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -40,10 +45,15 @@ export class BvgRoutesComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.vehicleList = [];
+    this.markerList = [];
+    this.lines = [];
+    this.showMarker = true;
+    this.showLines = true;
   }
 
   clearAll() {
     this.vehicleList = [];
+    this.lines = [];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -52,6 +62,12 @@ export class BvgRoutesComponent implements OnInit {
       }
     }
     this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        this.markerList[i]["marker"].setMap(null);
+      }
+    }
+    this.markerList = [];
   }
 
 
@@ -95,6 +111,7 @@ export class BvgRoutesComponent implements OnInit {
   }
 
   getRouteData(vehicle: any, index: any) {
+    this.lines = [];
     this.bounds = new google.maps.LatLngBounds();
     let dbPath = "BVGRoutes/" + this.selectedDate + "/" + vehicle;
     let routeInstance = this.db.list(dbPath).valueChanges().subscribe(
@@ -105,19 +122,45 @@ export class BvgRoutesComponent implements OnInit {
           for (let i = 0; i < data.length; i++) {
             latLng.push({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
             this.bounds.extend({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
+            if (this.showMarker == true) {
+              this.setMarker(Number(data[i]["lat"]), Number(data[i]["lng"]));
+            }
           }
-          let strockColor = "red";
-          let line = new google.maps.Polyline({
-            path: latLng,
-            strokeColor: strockColor,
-            strokeWeight: 4,
-          });
-          this.polylines[0] = line;
-          this.polylines[0].setMap(this.map);
-         
+
+          this.lines = latLng;
+          if (this.showLines == true) {
+            let strockColor = "red";
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: strockColor,
+              strokeWeight: 4,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(this.map);
+          }
+          
           this.map.fitBounds(this.bounds);
         }
       });
+  }
+
+
+  setMarker(lat: any, lng: any) {
+    let lt = lat;
+    let lg = lng;
+    let markerURL = "../../../assets/img/greenmarker.png";
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lt), lng: Number(lg) },
+      map: this.map,
+      icon: {
+        url: markerURL,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(10, 15),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    this.markerList.push({ marker });
   }
 
   changeRef(index: any) {
@@ -129,6 +172,12 @@ export class BvgRoutesComponent implements OnInit {
       }
     }
     this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        this.markerList[i]["marker"].setMap(null);
+      }
+    }
+    this.markerList = [];
     for (let i = 0; i < this.vehicleList.length; i++) {
       if (i == index) {
         this.vehicleList[i]["isShow"] = 1;
@@ -149,6 +198,48 @@ export class BvgRoutesComponent implements OnInit {
   setHeight() {
     $(".navbar-toggler").show();
     $("#divMap").css("height", $(window).height() - 80);
+  }
+
+  showHideLines() {
+    let element = <HTMLInputElement>document.getElementById("chkShowLines");
+    if (element.checked == true) {
+      this.showLines = true;
+      let strockColor = "red";
+      let line = new google.maps.Polyline({
+        path: this.lines,
+        strokeColor: strockColor,
+        strokeWeight: 4,
+      });
+      this.polylines[0] = line;
+      this.polylines[0].setMap(this.map);
+      this.map.fitBounds(this.bounds);
+    }
+    else {
+      this.showLines = false;
+      this.polylines[0].setMap(null);
+    }
+  }
+
+  showHideMarkers() {
+    let element = <HTMLInputElement>document.getElementById("chkShowMarker");
+    if (element.checked == true) {
+      this.showMarker = true;
+      if (this.lines.length > 0) {
+        for (let i = 0; i < this.lines.length; i++) {
+          this.setMarker(Number(this.lines[i]["lat"]), Number(this.lines[i]["lng"]));
+        }
+
+      }
+    }
+    else {
+      this.showMarker = false;
+      if (this.markerList.length > 0) {
+        for (let i = 0; i < this.markerList.length; i++) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+      this.markerList = [];
+    }
   }
 
 }
