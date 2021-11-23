@@ -29,7 +29,6 @@ export class UploadRouteExcelComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
-
   }
 
   resetAll() {
@@ -52,11 +51,10 @@ export class UploadRouteExcelComponent implements OnInit {
       var workbook = XLSX.read(bstr, { type: "binary" });
       this.first_sheet_name = workbook.SheetNames[0];
       this.fileDate = this.commonService.getDateConvert(this.first_sheet_name);
-
-
       var worksheet = workbook.Sheets[this.first_sheet_name];
       // console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
       this.fileRouteList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(this.fileRouteList);
       $('#divLoader').hide();
     }
   }
