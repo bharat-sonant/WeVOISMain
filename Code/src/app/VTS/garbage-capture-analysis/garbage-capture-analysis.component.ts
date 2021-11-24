@@ -43,8 +43,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     latLngResolved: "---",
     distance: "---",
     resolvedBy: "---",
-    totalResolved:0,
-    resolved:0
+    totalResolved: 0,
+    resolved: 0
   };
 
   // html id's
@@ -188,8 +188,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getOrderBy(orderBy: any) {
-    this.progressList = this.commonService.transformNumeric(this.progressList, orderBy);
-    this.allProgressList = this.commonService.transformNumeric(this.allProgressList, orderBy);
+    if (orderBy == "resolved") {
+      this.progressList = this.progressList.sort((a, b) =>
+        b.isResolved > a.isResolved ? 1 : -1
+      );
+
+      this.allProgressList = this.commonService.transformNumeric(this.allProgressList, "-isResolved");
+    }
+    else {
+      this.progressList = this.commonService.transformNumeric(this.progressList, orderBy);
+      this.allProgressList = this.commonService.transformNumeric(this.allProgressList, orderBy);
+    }
     this.hideOrdeBy();
 
   }
@@ -229,7 +238,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.panalty = 0;
     this.progressData.totalCount = 0;
     this.progressData.totalPenalty = 0;
-    this.progressData.totalResolved=0;
+    this.progressData.totalResolved = 0;
     this.resetDetail();
   }
 
@@ -317,7 +326,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
-    
+
     this.progressList = [];
     this.allProgressList = [];
     this.getCategorySummary();
@@ -765,6 +774,6 @@ export class progressDetail {
   latLngResolved: string;
   distance: string;
   resolvedBy: string;
-  totalResolved:number;
-  resolved:number;
+  totalResolved: number;
+  resolved: number;
 }
