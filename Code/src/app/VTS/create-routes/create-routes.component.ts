@@ -141,7 +141,7 @@ export class CreateRoutesComponent implements OnInit {
     setTimeout(() => {
       let element = <HTMLInputElement>document.getElementById("chkRoute" + (this.routeList.length - 1));
       element.checked = true;
-      this.getRouteSelect(this.routeList.length - 1, 0);
+      this.getRouteSelect(routeKey, 0);
     }, 200);
     this.closeModel();
 
@@ -247,7 +247,7 @@ export class CreateRoutesComponent implements OnInit {
               let routeName = data[routeKey]["name"];
               let isShow = 0;
               let lastRouteKey = 1;
-              let routeLines = [];
+
               let route = [];
               if (i == 0) {
                 isShow = 1;
@@ -262,6 +262,7 @@ export class CreateRoutesComponent implements OnInit {
                     lastRouteKey = Number(obj[key]);
                   }
                   else {
+                    let routeLines = [];
                     let startDate = obj[key]["startDate"];
                     let endDate = "---";
                     if (obj[key]["endDate"] != null) {
@@ -271,7 +272,7 @@ export class CreateRoutesComponent implements OnInit {
                       let list = obj[key]["routeLines"].toString().split(',');
                       if (list.length > 0) {
                         for (let k = 0; k < list.length; k++) {
-                          routeLines.push({ lineNo: list[i] });
+                          routeLines.push({ lineNo: list[k] });
                         }
                       }
                     }
@@ -291,7 +292,7 @@ export class CreateRoutesComponent implements OnInit {
                               var polyOptions = {
                                 strokeColor: this.strockColorDone,
                                 strokeOpacity: 1.0,
-                                strokeWeight: 4
+                                strokeWeight: this.strokeWeight
                               }
                               line.setOptions(polyOptions);
                             }
@@ -303,35 +304,41 @@ export class CreateRoutesComponent implements OnInit {
                   }
                 }
               }
-              this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: isShow, route: route, routeLines: routeLines, lastRouteKey: lastRouteKey });
+              this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: isShow, route: route, lastRouteKey: lastRouteKey });
             }
             localStorage.setItem("routeLines", JSON.stringify(this.routeList));
+            console.log(this.routeList);
           }
         }
       });
   }
 
   getRouteSelect(routeKey: any, key: any) {
+    this.resetPolyLineOption();
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
       this.routeList = routeList;
     }
-    let list=[];
+
     if (this.routeList.length > 0) {
       for (let i = 0; i < this.routeList.length; i++) {
+
         if (this.routeList[i]["routeKey"] == routeKey) {
           let element = <HTMLInputElement>document.getElementById("chkRoute" + i);
           element.checked = true;
           this.routeList[i]["isShow"] = 1;
-          let selectedRoute=routeKey;
-          
+          let selectedRoute = routeKey;
+
           if (this.routeList[i]["route"] != null) {
             for (let j = 0; j < this.routeList[i]["route"].length; j++) {
+              let list = [];
               if (key == 0) {
                 if (j == 0) {
                   this.routeList[i]["route"][j]["cssClass"] = "active";
-                  selectedRoute=selectedRoute+"-"+this.routeList[i]["route"][j]["key"];
-                  list=this.routeList[i]["route"][j]["routeLines"];
+                  selectedRoute = selectedRoute + "-" + this.routeList[i]["route"][j]["key"];
+                  list = this.routeList[i]["route"][j]["routeLines"];
+                  console.log(list);
+                  this.setPolyLineOption(list);
                 }
                 else {
                   this.routeList[i]["route"][j]["cssClass"] = "";
@@ -339,9 +346,12 @@ export class CreateRoutesComponent implements OnInit {
               }
               else {
                 if (this.routeList[i]["route"][j]["key"] == key) {
-                  selectedRoute=selectedRoute+"-"+this.routeList[i]["route"][j]["key"];
+                  selectedRoute = selectedRoute + "-" + this.routeList[i]["route"][j]["key"];
                   this.routeList[i]["route"][j]["cssClass"] = "active";
-                  list=this.routeList[i]["route"][j]["routeLines"];
+                  list = this.routeList[i]["route"][j]["routeLines"];
+                  this.setPolyLineOption(list);
+                  console.log(list);
+
                 }
                 else {
                   this.routeList[i]["route"][j]["cssClass"] = "";
@@ -350,7 +360,6 @@ export class CreateRoutesComponent implements OnInit {
             }
           }
           $(this.lblSelectedRoute).html(selectedRoute);
-           
         }
         else {
           this.routeList[i]["isShow"] = 0;
@@ -360,28 +369,44 @@ export class CreateRoutesComponent implements OnInit {
             }
           }
         }
-        this.setPolyLineOption(list);
+
       }
     }
     localStorage.setItem("routeLines", JSON.stringify(this.routeList));
   }
 
-  setPolyLineOption(lineList: any) {
+  resetPolyLineOption() {
     if (this.lines.length > 0) {
       for (let i = 0; i < this.lines.length; i++) {
         let strokeColor = this.strockColorNotDone;
-        let lineDetail = lineList.find(item => item.lineNo == this.lines[i]["lineNo"]);
-        if (lineDetail != undefined) {
-          strokeColor = this.strockColorDone;
-        }
-
         let line = new google.maps.Polyline(this.polylines[i]);
         var polyOptions = {
           strokeColor: strokeColor,
           strokeOpacity: 1.0,
-          strokeWeight: 4
+          strokeWeight: this.strokeWeight
         }
         line.setOptions(polyOptions);
+      }
+    }
+  }
+
+
+
+  setPolyLineOption(lineList: any) {
+    if(lineList.length>0){
+      for(let i=0;i<lineList.length;i++){
+        let lineNo=lineList[i]["lineNo"];
+        let lineDetail=this.lines.find(item=>item.lineNo==lineNo);
+        if(lineDetail!=undefined){
+          let index=lineDetail.index;
+          let line = new google.maps.Polyline(this.polylines[index]);
+        var polyOptions = {
+          strokeColor: this.strockColorDone,
+          strokeOpacity: 1.0,
+          strokeWeight: this.strokeWeight
+        }
+        line.setOptions(polyOptions);
+        }
       }
     }
   }
@@ -460,11 +485,11 @@ export class CreateRoutesComponent implements OnInit {
       if (routeLines == null) {
         routeLines = [];
       }
-      /*
+
       if (routeLines.length > 0) {
         for (let i = 0; i < routeLines.length; i++) {
           if (routeLines[i]["routeKey"] != routeKey) {
-            let lineInRoutes = routeLines[i]["route"]["routeLines"];
+            let lineInRoutes = routeLines[i]["route"][0]["routeLines"];
             let detail = lineInRoutes.find(item => item.lineNo == lineNo);
             if (detail != undefined) {
               isOtherLine = true;
@@ -474,17 +499,23 @@ export class CreateRoutesComponent implements OnInit {
           }
         }
       }
-      if (isOtherLine == true) {
-        commonServices.setAlertMessage("error", "This line already in " + routeName + " !!!");
-        return;
-      }
-*/
+
+
       let routeDetail = routeLines.find(item => item.routeKey == routeKey);
       if (routeDetail != undefined) {
         let routeLinesData = "";
         let route = routeDetail.route;
+
         let keyDetail = route.find(item => item.key == key);
         if (keyDetail != undefined) {
+          if (keyDetail.endDate != "---") {
+            commonServices.setAlertMessage("error", "sorry you can add lines only in current route !!!");
+            return;
+          }
+          if (isOtherLine == true) {
+            commonServices.setAlertMessage("error", "This line already in " + routeName + " !!!");
+            return;
+          }
           let keyRoutesLines = keyDetail.routeLines;
           let lineDetail = keyRoutesLines.find(item => item.lineNo == lineNo);
           if (lineDetail == undefined) {
@@ -651,7 +682,6 @@ export class CreateRoutesComponent implements OnInit {
       $(this.updateKey).val(key);
     }
   }
-
 
   closeModel() {
     this.modalService.dismissAll();

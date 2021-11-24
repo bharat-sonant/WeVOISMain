@@ -113,6 +113,9 @@ export class CommonService {
     else if (cityName == "shahpura") {
       latLng.push({ lat: 27.385250, lng: 75.963074 });
     }
+    else if (cityName == "kishangarh") {
+      latLng.push({ lat: 26.5948983, lng: 74.8162661 });
+    }
 
     return latLng;
   }
