@@ -86,6 +86,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.resetData();
     this.setMonthYear();
     this.getTotals();
+    let element = <HTMLButtonElement>document.getElementById("btnAnalysis");
+    element.disabled = true;
   }
 
   setDefaultArray() {
@@ -98,11 +100,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   setUsersPermission() {
     this.userType = localStorage.getItem("userType");
     if (this.userType == "External User") {
-      // $(this.topPenality).hide();
-      // $(this.topPenalityNav).hide();
-      // $(this.leftPenality).hide();
       $(this.divAnalysis).hide();
-      // $(this.tblPenalty).hide();
     }
   }
 
@@ -200,7 +198,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.allProgressList = this.commonService.transformNumeric(this.allProgressList, orderBy);
     }
     this.hideOrdeBy();
-
   }
 
   hideOrdeBy() {
@@ -326,7 +323,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
-
     this.progressList = [];
     this.allProgressList = [];
     this.getCategorySummary();
@@ -343,7 +339,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
               if (imageId != null) {
                 if (data[imageId]["user"] != null) {
                   let user = "";
-                  let status = "कचरा उठा लिया है";
+                  let isClean = "कचरा उठा लिया है";
                   let penalty = 0;
                   let latLng = "";
                   let zone = "---";
@@ -351,9 +347,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   let isAnalysis = false;
                   let isResolved = 0;
                   let BvgAction = null;
+                  let status = "";
                   let userId = objData[imageId]["user"];
                   if (objData[imageId]["isClean"] == true) {
-                    status = "कचरा नहीं उठाया";
+                    isClean = "कचरा नहीं उठाया";
                   }
                   if (objData[imageId]["isAnalysis"] != null) {
                     isAnalysis = true;
@@ -370,6 +367,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (objData[imageId]["ward"] != null) {
                     ward = objData[imageId]["ward"];
                   }
+                  if (objData[imageId]["status"] != null) {
+                    status = objData[imageId]["status"];
+                  }
                   if (objData[imageId]["BvgAction"] != null) {
                     isResolved = 1;
                     const bvgData = {
@@ -382,8 +382,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction });
-                  this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: status, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction });
+                  this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
@@ -410,7 +410,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                 let imageId = keyArray[i];
                 if (data[imageId]["user"] != null) {
                   let user = "";
-                  let status = "कचरा उठा लिया है";
+                  let isClean = "कचरा उठा लिया है";
                   let penalty = 0;
                   let latLng = "";
                   let zone = "---";
@@ -418,9 +418,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   let isAnalysis = false;
                   let isResolved = 0;
                   let BvgAction = null;
+                  let status = "";
                   let userId = data[imageId]["user"];
                   if (data[imageId]["isClean"] == true) {
-                    status = "कचरा नहीं उठाया";
+                    isClean = "कचरा नहीं उठाया";
                   }
                   if (data[imageId]["isAnalysis"] != null) {
                     isAnalysis = true;
@@ -440,6 +441,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (data[imageId]["BvgAction"] != null) {
                     isResolved = 1;
                   }
+                  if (data[imageId]["status"] != null) {
+                    status = data[imageId]["status"];
+                  }
                   if (data[imageId]["BvgAction"] != null) {
                     isResolved = 1;
                     const bvgData = {
@@ -452,8 +456,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction });
-                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: status, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction });
+                  this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
@@ -462,7 +466,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                 }
               }
-              console.log(this.progressList);
             }
           }
           else {
@@ -570,11 +573,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.distance = "---";
     this.progressData.resolvedBy = "---";
     $(this.txtPanalty).val(0);
-    $(this.dataId).val(0);
+    $(this.dataId).val("-1");
     let element = <HTMLImageElement>document.getElementById("mainImage");
     element.src = this.imageNoFoundURL;
     element = <HTMLImageElement>document.getElementById("mainImageResolved");
     element.src = this.imageNoFoundURL;
+    let elementInput = <HTMLInputElement>document.getElementById("rdoReject");
+    elementInput.checked = false;
+    elementInput = <HTMLInputElement>document.getElementById("rdoAccept");
+    elementInput.checked = false;
+    let elementButton = <HTMLButtonElement>document.getElementById("btnAnalysis");
+    elementButton.disabled = true;
   }
 
   getCaptureData(index: any) {
@@ -591,7 +600,17 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       $(this.dataId).val(index);
       let city = this.commonService.getFireStoreCity();
       let imageName = this.progressList[index]["imageUrl"];
-      let imageURL = this.imageNoFoundURL;
+      let imageURL = this.imageNoFoundURL; let elementButton = <HTMLButtonElement>document.getElementById("btnAnalysis");
+      if (this.progressList[index]["status"] == "Reject") {
+        let element = <HTMLInputElement>document.getElementById("rdoReject");
+        element.checked = true;
+        elementButton.disabled = false;
+      }
+      else if (this.progressList[index]["status"] == "Accept") {
+        let element = <HTMLInputElement>document.getElementById("rdoAccept");
+        element.checked = true;
+        elementButton.disabled = false;
+      }
       if (imageName.split('~')[0] != "2021") {
         imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
@@ -690,15 +709,44 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     let imageId = this.progressList[Number(index)]["imageId"];
     let prePenalty = this.progressList[Number(index)]["penalty"];
     let penalty = $(this.txtPanalty).val();
+    let status = null;
+    let element = <HTMLInputElement>document.getElementById("rdoReject");
+    if (element.checked == true) {
+      status = "Reject";
+    }
+    element = <HTMLInputElement>document.getElementById("rdoAccept");
+    if (element.checked == true) {
+      status = "Accept";
+    }
+
     if (penalty == "") {
       penalty = 0;
     }
     if (imageId != "0") {
       let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId;
-      this.db.object(dbPath).update({ isAnalysis: 'yes', penalty: penalty });
+      this.db.object(dbPath).update({ isAnalysis: 'yes', penalty: penalty, status: status });
       this.setPenaltyCounts(prePenalty, penalty);
       this.progressList[Number(index)]["isAnalysis"] = true;
       this.progressList[Number(index)]["penalty"] = penalty;
+      this.progressList[Number(index)]["status"] = status;
+      let dataDetail = this.allProgressList.find(item => item.imageId == imageId);
+      if (dataDetail != undefined) {
+        dataDetail.isAnalysis = true;
+        dataDetail.penalty = penalty;
+        dataDetail.status = status;
+      }
+      this.commonService.setAlertMessage("success","Analysis done successfully !!!");      
+    }
+  }
+
+  enableSaveData(rdo: any) {
+    if (this.progressList.length > 0) {
+      let elementButton = <HTMLButtonElement>document.getElementById("btnAnalysis");
+      elementButton.disabled = false;
+    }
+    else {
+      let element = <HTMLInputElement>document.getElementById(rdo);
+      element.checked = false;
     }
   }
 

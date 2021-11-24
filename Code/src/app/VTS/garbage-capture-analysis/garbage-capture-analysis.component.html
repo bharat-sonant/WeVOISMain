@@ -196,7 +196,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -245,7 +244,7 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of progressList; let i=index"
-                                                style="cursor: pointer;" (click)="getCaptureData(i);">
+                                                style="cursor: pointer!important;" (click)="getCaptureData(i);">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     <i class="fas fa-circle" style="color: green;"
                                                         [hidden]="data.isResolved==0"></i> {{data.address}} <span
@@ -354,7 +353,6 @@
                                     <div class="inner-data address-info border-none pad-pl-20">
                                         <p class="para-text"><b><i class="fas fa-map-marker-alt"></i> Address :</b></p>
                                         <h3 class="address" style="display:inline;"> {{progressData.address}}</h3>
-
                                     </div>
                                 </div>
                             </div>
@@ -365,7 +363,14 @@
                             <div class="row bg-white">
                                 <div class="col-md-4 br-1">
                                     <div class="inner-data bg-dark final-blk">
-                                        <h3> <b>Image Analysis</b> </h3>
+                                        <h3> <b>Image Analysis</b><br/>
+                                            <div style="float: left; display:inline-flex; width: 50%;">
+                                            <input id="rdoReject"  type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  >Reject</div>
+                                            <div style="float: right; display:inline-flex; width: 50%;">
+                                            <input id="rdoAccept"  type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" > Accept</div>
+                                        </h3>
+                                       
+                                        
                                     </div>
                                 </div>
                                 <div class="col-md-5 br-1 text-center">
@@ -378,20 +383,15 @@
                                 </div>
                                 <div class="col-md-3 bg-dark btn-data mt-10 ">
                                     <div class="inner-data final-blk">
-                                        <button type="button" class="btn btn-success"
+                                        <button id="btnAnalysis" type="button" class="btn btn-success"
                                             (click)="analysis();">SAVE</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
