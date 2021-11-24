@@ -228,6 +228,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.resetDetail();
     this.resetDefaultValues();
     this.hideOrdeBy();
+    $(this.ddlCategory).val("1");
   }
 
   resetProgressData() {
@@ -236,6 +237,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.totalCount = 0;
     this.progressData.totalPenalty = 0;
     this.progressData.totalResolved = 0;
+    $(this.ddlCategory).val("1");
     this.resetDetail();
   }
 
@@ -382,7 +384,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  if (isClean == "कचरा नहीं उठाया") {
+                    this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  }
                   this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
@@ -456,8 +460,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
-                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  if (isClean == "कचरा नहीं उठाया") {
+                    this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  } this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
@@ -735,7 +740,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         dataDetail.penalty = penalty;
         dataDetail.status = status;
       }
-      this.commonService.setAlertMessage("success","Analysis done successfully !!!");      
+      this.commonService.setAlertMessage("success", "Analysis done successfully !!!");
     }
   }
 
