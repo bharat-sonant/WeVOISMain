@@ -362,16 +362,29 @@
                         <div class="inner-box main-final-blk">
                             <div class="row bg-white">
                                 <div class="col-md-4 br-1">
-                                    <div class="inner-data bg-dark final-blk">
-                                        <h3> <b>Image Analysis</b><br/>
-                                            <div style="float: left; display:inline-flex; width: 50%;">
-                                            <input id="rdoReject"  type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  >Reject</div>
-                                            <div style="float: right; display:inline-flex; width: 50%;">
-                                            <input id="rdoAccept"  type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" > Accept</div>
-                                        </h3>
-                                       
-                                        
-                                    </div>
+                                    <div class="row pl-10">
+                                        <div class="col-md-12">
+                                            <h3 style="margin-top:15px!important"> <b>Image Analysis</b> </h3> <br>
+                                            <div class="radio-grp mt-min-10">
+                                            <div class="radio-left ">
+                                                <input id="rdoReject" class="rd0" type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  ><span>Reject</span>
+                                            </div>
+                                            <div class="radio-right">
+                                                <input id="rdoAccept" class="rd0" type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" ><span>Accept</span>
+                                            </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="col-md-6 mt-min-10">
+                                            <div>
+                                                <input id="rdoReject"  type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  ><span>Reject</span></div>
+                                        </div>
+                                        <div class="col-md-6 mt-min-10">
+                                            <div>
+                                                <input id="rdoAccept"  type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" ><span>Accept</span> 
+                                            </div>
+                                    </div> -->
+                                </div>
                                 </div>
                                 <div class="col-md-5 br-1 text-center">
                                     <div class="inner-data final-blk">
