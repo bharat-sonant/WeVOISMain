@@ -307,7 +307,6 @@ export class CreateRoutesComponent implements OnInit {
               this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: isShow, route: route, lastRouteKey: lastRouteKey });
             }
             localStorage.setItem("routeLines", JSON.stringify(this.routeList));
-            console.log(this.routeList);
           }
         }
       });
@@ -337,7 +336,6 @@ export class CreateRoutesComponent implements OnInit {
                   this.routeList[i]["route"][j]["cssClass"] = "active";
                   selectedRoute = selectedRoute + "-" + this.routeList[i]["route"][j]["key"];
                   list = this.routeList[i]["route"][j]["routeLines"];
-                  console.log(list);
                   this.setPolyLineOption(list);
                 }
                 else {
@@ -350,7 +348,6 @@ export class CreateRoutesComponent implements OnInit {
                   this.routeList[i]["route"][j]["cssClass"] = "active";
                   list = this.routeList[i]["route"][j]["routeLines"];
                   this.setPolyLineOption(list);
-                  console.log(list);
 
                 }
                 else {
