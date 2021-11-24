@@ -1409,4 +1409,33 @@ export class CommonService {
   deg2rad(deg: any) {
     return deg * (Math.PI / 180)
   }
+
+
+  getBVGUserById(userId: string) {
+    return new Promise((resolve) => {
+      let userList = JSON.parse(localStorage.getItem("bvgUserList"));
+      if (userList == undefined) {
+        userList = [];
+      }
+      let userData = userList.find((item) => item.userId == userId);
+      if (userData == undefined) {
+        this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+        let userDbPath = "WastebinMonitor/BVGUsers/"+userId+"/name";
+        let user = this.fsDb.object(userDbPath).valueChanges().subscribe((data) => {
+          user.unsubscribe();
+          userList.push({
+            userId: userId,
+            name: data
+          });
+          localStorage.setItem("bvgUserList", JSON.stringify(userList));
+          let list = JSON.parse(localStorage.getItem("bvgUserList"));
+          let userData = list.find((item) => item.userId == userId);
+          resolve(userData);
+
+        });
+      } else {
+        resolve(userData);
+      }
+    });
+  }
 }
