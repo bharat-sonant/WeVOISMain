@@ -364,30 +364,24 @@
                                 <div class="col-md-4 br-1">
                                     <div class="row pl-10">
                                         <div class="col-md-12">
-                                            <h3 style="margin-top:15px!important"> <b>Image Analysis</b> </h3> <br>
+                                            <h3 style="margin-top:15px!important"> <b>Image Analysis</b> 
+                                                
+                                            </h3> <br>
+                                           
                                             <div class="radio-grp mt-min-10">
-                                            <div class="radio-left ">
-                                                <input id="rdoReject" class="rd0" type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  ><span>Reject</span>
-                                            </div>
-                                            <div class="radio-right">
-                                                <input id="rdoAccept" class="rd0" type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" ><span>Accept</span>
-                                            </div>
+                                                <input id="rdoReject" class="rd0" type="radio" name="group1"
+                                                style="width: 20px;"
+                                                (change)="enableSaveData('rdoReject');"><span>Reject</span>
+                                                <input id="rdoAccept" class="rd0" type="radio" name="group1"
+                                                style="width: 20px;"
+                                                (change)="enableSaveData('rdoAccept');"><span>Accept</span>                                               
                                             </div>
                                         </div>
-
-                                        <!-- <div class="col-md-6 mt-min-10">
-                                            <div>
-                                                <input id="rdoReject"  type="radio" name="group1" style="width: 20px;" (change)="enableSaveData('rdoReject')"  ><span>Reject</span></div>
-                                        </div>
-                                        <div class="col-md-6 mt-min-10">
-                                            <div>
-                                                <input id="rdoAccept"  type="radio" name="group1"  style="width: 20px;" (change)="enableSaveData('rdoAccept')" ><span>Accept</span> 
-                                            </div>
-                                    </div> -->
-                                </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-5 br-1 text-center">
                                     <div class="inner-data final-blk">
+                                       
                                         <span><img src="../../../assets/img/penalty-bag.svg"
                                                 class="img-fluid penalty-icon" title="Penalty" alt="Penalty"></span>
                                         <input id="txtPanalty" class="text-box" type="number" placeholder="Penalty"
