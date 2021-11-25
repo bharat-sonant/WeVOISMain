@@ -1508,5 +1508,22 @@ vertical-align: middle;
 margin-right: 4px;
 }
 
-
-
+.img-text h3{
+  font-size: 11px;
+  margin: 0px !important;
+  width: 60%;
+  float: left;
+  margin-top: 5px!important;
+}
+.img-text span{
+  float: right;
+  margin-right: 10px;
+  font-weight: bold;
+  color: #0ba118;
+  font-size: 20px;
+}
+.f-all{
+  position: relative;
+  top: -14px;
+  right: 7px;
+}

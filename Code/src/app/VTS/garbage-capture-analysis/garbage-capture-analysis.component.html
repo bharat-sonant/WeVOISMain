@@ -34,7 +34,7 @@
                     <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                     <h6>Penalty</h6>
                 </div>
-                <div id="topPenality" class="float-first">
+                <div id="topPenality" class="float-first" style="display:none;">
                     <span class="house"><i class="fas fa-check-double" style="color:green"></i>
                         {{progressData.totalResolved}}</span><br>
                     <h6>Resolved</h6>
@@ -199,12 +199,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" style="padding-left:0px!important;">
                             <div class="row">
-                                <div class="col-md-12">
-                                    IMAGES :<span style="font-weight: bold;
-                                    color: #0ba118;
-                                    font-size: 20px;"> {{progressData.count}}</span>
+                                <div class="col-md-12 img-text" style="border-bottom: 1px solid lightgray;">
+                                    <h3>IMAGES :</h3><span> {{progressData.count}}</span>
                                 </div>
                                 <div class="col-md-12 mt-15">
                                     <div class="f-all">
@@ -224,6 +222,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
                 <div class="card-body">
