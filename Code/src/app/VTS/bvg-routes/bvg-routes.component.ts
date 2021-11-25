@@ -28,6 +28,7 @@ export class BvgRoutesComponent implements OnInit {
   public bounds: any;
   chkShowLines = "#chkShowLines";
   chkShowMarker = "#chkShowMarker";
+  divLoader = "#divLoader";
   showMarker: any;
   showLines: any;
 
@@ -111,35 +112,42 @@ export class BvgRoutesComponent implements OnInit {
   }
 
   getRouteData(vehicle: any, index: any) {
+    $('#divLoader').show();
     this.lines = [];
     this.bounds = new google.maps.LatLngBounds();
     let dbPath = "BVGRoutes/" + this.selectedDate + "/" + vehicle;
-    let routeInstance = this.db.list(dbPath).valueChanges().subscribe(
+    let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeInstance.unsubscribe();
-        if (data.length > 0) {
-          let latLng = [];
-          for (let i = 0; i < data.length; i++) {
-            latLng.push({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
-            this.bounds.extend({ lat: Number(data[i]["lat"]), lng: Number(data[i]["lng"]) });
-            if (this.showMarker == true) {
-              this.setMarker(Number(data[i]["lat"]), Number(data[i]["lng"]));
+        if (data != null) {
+          let list = data.toString().split("~");
+          console.log(list);
+          if (list.length > 0) {
+            let latLng = [];
+            for (let i = 0; i < list.length; i++) {
+              let lat = list[i].split(',')[0];
+              let lng = list[i].split(',')[1];
+              latLng.push({ lat: Number(lat), lng: Number(lng) });
+              this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+              if (this.showMarker == true) {
+                this.setMarker(Number(lat), Number(lng));
+              }
             }
-          }
+            this.lines = latLng;
+            if (this.showLines == true) {
+              let strockColor = "red";
+              let line = new google.maps.Polyline({
+                path: latLng,
+                strokeColor: strockColor,
+                strokeWeight: 4,
+              });
+              this.polylines[0] = line;
+              this.polylines[0].setMap(this.map);
+            }
 
-          this.lines = latLng;
-          if (this.showLines == true) {
-            let strockColor = "red";
-            let line = new google.maps.Polyline({
-              path: latLng,
-              strokeColor: strockColor,
-              strokeWeight: 4,
-            });
-            this.polylines[0] = line;
-            this.polylines[0].setMap(this.map);
+            this.map.fitBounds(this.bounds);
+            $('#divLoader').hide();
           }
-          
-          this.map.fitBounds(this.bounds);
         }
       });
   }

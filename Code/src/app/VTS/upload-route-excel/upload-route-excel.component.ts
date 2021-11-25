@@ -54,7 +54,6 @@ export class UploadRouteExcelComponent implements OnInit {
       var worksheet = workbook.Sheets[this.first_sheet_name];
       // console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
       this.fileRouteList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      console.log(this.fileRouteList);
       $('#divLoader').hide();
     }
   }
@@ -74,24 +73,26 @@ export class UploadRouteExcelComponent implements OnInit {
       return;
     }
     $('#divLoader').show();
-    setTimeout(() => {
-      $('#divLoader').hide();
-      this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-    }, 1000);
+
     if (this.fileRouteList.length > 0) {
       for (let i = 0; i < this.fileRouteList.length; i++) {
         let vehicle = this.fileRouteList[i]["vehicleName"];
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
+
         let vehicleDetail = this.routeList.find(item => item.vehicle == vehicle);
         if (vehicleDetail == undefined) {
           this.vehicleList.push({ vehicle: vehicle });
           let points = [];
-          points.push({ lat: lat, lng: lng });
-          this.routeList.push({ vehicle: vehicle, points: points });
+          let latLng = lat + "," + lng;
+          let latLngString = latLng;
+          points.push({ latLng });
+          this.routeList.push({ vehicle: vehicle, points: points, latLngString: latLngString });
         }
         else {
-          vehicleDetail.points.push({ lat: lat, lng: lng });
+          let latLng = lat + "," + lng;
+          vehicleDetail.latLngString  = vehicleDetail.latLngString  + "~" + latLng;
+          vehicleDetail.points.push({ latLng });
         }
       }
       if (this.vehicleList.length > 0) {
@@ -102,19 +103,23 @@ export class UploadRouteExcelComponent implements OnInit {
         if (this.routeList.length > 0) {
           for (let i = 0; i < this.vehicleList.length; i++) {
             let routeDetail = this.routeList.find(item => item.vehicle == this.vehicleList[i]["vehicle"]);
-            if (routeDetail!=undefined) {
-              this.saveRealTimeData(routeDetail.points, this.vehicleList[i]["vehicle"]);
+            if (routeDetail != undefined) {
+              this.saveRealTimeData(routeDetail.points, this.vehicleList[i]["vehicle"], routeDetail.latLngString);
               // this.saveJsonFile(routeDetailList, this.vehicleList[i]["vehicle"]);
             }
           }
+          setTimeout(() => {
+            $('#divLoader').hide();
+            this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
+          }, 2000);
         }
       }
     }
   }
 
-  saveRealTimeData(listArray: any, fileName: any) {
-    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
-    this.db.database.ref(dbPath).set(listArray);
+  saveRealTimeData(listArray: any, fileName: any, latLngString: any) {
+      let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
+     this.db.database.ref(dbPath).set(latLngString);
   }
 
   saveJsonFile(listArray: any, fileName: any) {
