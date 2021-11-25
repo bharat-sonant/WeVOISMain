@@ -7,7 +7,7 @@ import { FirebaseAppConfig,_firebaseAppFactory } from "angularfire2";
 })
 export class FirebaseService {
   private _db: AngularFireDatabase;
-  public fireBase:any
+  public fireBase:any;
   constructor(public zone:NgZone) { }
 
   

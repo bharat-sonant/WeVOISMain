@@ -340,6 +340,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
               let imageId = keyArray[i];
               if (imageId != null) {
                 if (data[imageId]["user"] != null) {
+                  let resolved = 0;
                   let user = "";
                   let isClean = "कचरा उठा लिया है";
                   let penalty = 0;
@@ -374,6 +375,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                   if (objData[imageId]["BvgAction"] != null) {
                     isResolved = 1;
+                    resolved = resolved + 1;
                     const bvgData = {
                       user: objData[imageId]["BvgAction"]["user"],
                       imageRef: objData[imageId]["BvgAction"]["imageRef"],
@@ -394,6 +396,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (i == keyArray.length - 2) {
                     $(this.divLoader).hide();
                   }
+                  this.progressData.resolved = resolved;
                 }
               }
             }
@@ -410,9 +413,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
             $(this.divMessage).hide();
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
+              let resolved = 0;
               for (let i = 0; i < keyArray.length - 1; i++) {
                 let imageId = keyArray[i];
                 if (data[imageId]["user"] != null) {
+
                   let user = "";
                   let isClean = "कचरा उठा लिया है";
                   let penalty = 0;
@@ -450,6 +455,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                   if (data[imageId]["BvgAction"] != null) {
                     isResolved = 1;
+                    resolved = resolved + 1;
                     const bvgData = {
                       user: data[imageId]["BvgAction"]["user"],
                       imageRef: data[imageId]["BvgAction"]["imageRef"],
@@ -469,8 +475,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   if (i == keyArray.length - 2) {
                     $(this.divLoader).hide();
                   }
+
                 }
               }
+              this.progressData.resolved = resolved;
             }
           }
           else {
@@ -577,6 +585,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.ward = "---";
     this.progressData.distance = "---";
     this.progressData.resolvedBy = "---";
+    this.progressData.resolved = 0;
     $(this.txtPanalty).val(0);
     $(this.dataId).val("-1");
     let element = <HTMLImageElement>document.getElementById("mainImage");
