@@ -573,6 +573,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
       }
     );
+
+    this.progressData.resolved = 0;
   }
 
   resetDetail() {
@@ -585,7 +587,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.progressData.ward = "---";
     this.progressData.distance = "---";
     this.progressData.resolvedBy = "---";
-    this.progressData.resolved = 0;
     $(this.txtPanalty).val(0);
     $(this.dataId).val("-1");
     let element = <HTMLImageElement>document.getElementById("mainImage");
