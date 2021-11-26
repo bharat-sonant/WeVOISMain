@@ -97,6 +97,7 @@ import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-te
 import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
 import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
+import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
 
 @NgModule({
   imports: [
@@ -198,7 +199,8 @@ import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
     JmapsTestPurposeComponent,
     CreateRoutesComponent,
     UploadRouteExcelComponent,
-    BvgRoutesComponent
+    BvgRoutesComponent,
+    VtsAnalysisComponent
   ]
 })
 

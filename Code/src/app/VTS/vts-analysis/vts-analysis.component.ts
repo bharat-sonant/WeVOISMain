@@ -1,0 +1,190 @@
+/// <reference types="@types/googlemaps" />
+
+import { Component, ViewChild, OnInit } from "@angular/core";
+import { AngularFireModule } from "angularfire2";
+import { HttpClient } from "@angular/common/http";
+//services
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+
+@Component({
+  selector: 'app-vts-analysis',
+  templateUrl: './vts-analysis.component.html',
+  styleUrls: ['./vts-analysis.component.scss']
+})
+export class VtsAnalysisComponent implements OnInit {
+
+  @ViewChild("gmap", null) gmap: any;
+  public map: google.maps.Map;
+  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  db: any;
+  public selectedWard: any;
+  wardList: any[];
+  marker = new google.maps.Marker();
+  cityName: any;
+  toDayDate: any;
+  selectedDate: any;
+  currentMonthName: any;
+  currentYear: any;
+  wardLines: any;
+  lines: any[];
+  polylines = [];
+  vtsPolylines = [];
+  invisibleImageUrl = "../assets/img/invisible-location.svg";
+  wardBoundary: any;
+  strokeWeight = 4;
+  vehicleList: any[];
+  zoneList: any[];
+  wardLineLengthList: any[];
+  userId: any;
+  isBoundaryShow = true;
+  isLineShow = true;
+  strockColorNotDone = "#fa0505";
+  strockColorDone = "#0ba118";
+  progressData: progressDetail = {
+    totalWardLength: 0,
+    wardLength: "0",
+    coveredLength: "0",
+    workPercentage: "0%",
+    coveredLengthMeter: 0,
+    workPercentageNumber: 0,
+    penalty: 0,
+    lastShowDate: this.commonService.getTodayDateTime()
+  };
+
+  showBoundries = "#showBoundries";
+  showBoundriesNav = "#showBoundriesNav";
+  showLines = "#showLines";
+  showLinesNav = "#showLinesNav";
+  ddlZone = "#ddlZone";
+  ddlZoneNav = "#ddlZoneNav";
+  txtDate = "#txtDate";
+  txtDateNav = "#txtDateNav";
+  txtPreDate = "#txtPreDate";
+  txtPreDateNav = "#txtPreDateNav";
+  txtStrokeWeight = "#txtStrokeWeight";
+  txtStrokeWeightNav = "#txtStrokeWeightNav";
+  iconDone = "#iconDone";
+  iconPending = "#iconPending";
+  iconDoneNav = "#iconDoneNav";
+  iconPendingNav = "#iconPendingNav";
+  txtPenalty = "#txtPenalty";
+  txtPenaltyNav = "#txtPenaltyNav";
+  ddlWard = "#ddlWard";
+  ddlWardNav = "#ddlWardNav";
+  txtVehicle = "#txtVehicle";
+  txtVehicleNav = "#txtVehicleNav";
+  divLoader = "#divLoader";
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setDefault();    
+  }
+
+  setDefault() {
+    this.selectedWard = "0";
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.getZoneList();
+    this.setDefaultArrayList();
+    this.setDefaultLocalStorage();
+    this.setDefaultDate();
+    this.setHeight();
+    this.setMaps();
+  }
+
+  getZoneList() {
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
+    });
+  }
+
+  setDefaultArrayList() {
+    this.lines = [];
+    this.polylines = [];
+    this.vtsPolylines = [];
+    this.vehicleList = [];
+    this.wardLineLengthList = [];
+  }
+
+  setDefaultLocalStorage() {
+    this.userId = localStorage.getItem("userID");
+    if (localStorage.getItem("strokeWeight") != null) {
+      this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
+    }
+  }
+
+  setDefaultDate() {
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtPreDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
+    $(this.txtPreDateNav).val(this.selectedDate);
+  }
+
+  setDate(filterVal: any, type: string) {
+    if (type == "current") {
+      this.selectedDate = filterVal;
+    } else if (type == "next") {
+      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
+      this.selectedDate = nextDate;
+    } else if (type == "previous") {
+      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
+      this.selectedDate = previousDate;
+    }
+    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
+      this.selectedDate = this.toDayDate;
+      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
+      return;
+    }
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateNav).val(this.selectedDate);
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
+  }
+
+  changeZoneSelection(filterVal: any) {
+    $(this.ddlZone).val(filterVal);
+    $(this.ddlZoneNav).val(filterVal);
+    this.selectedWard = 0;
+    this.wardList = [];
+    let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
+    if (zoneDetail != undefined) {
+      let wardList = zoneDetail.wardList;
+      for (let i = 1; i < wardList.length; i++) {
+        this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
+      }
+    }
+  }
+
+  setMaps() {
+    let mapProp = this.commonService.initMapProperties();
+    this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+    this.map.setOptions({ clickableIcons: false });
+  }
+
+  
+  setHeight() {
+    $(".navbar-toggler").show();
+    $("#divMap").css("height", $(window).height() - 80);
+  }
+
+}
+
+
+export class progressDetail {
+  totalWardLength: number;
+  wardLength: string;
+  coveredLength: string;
+  workPercentage: string;
+  coveredLengthMeter: number;
+  workPercentageNumber: number;
+  penalty: number;
+  lastShowDate: string;
+}

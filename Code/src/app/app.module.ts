@@ -113,6 +113,18 @@ if (city != null) {
     databaseName = "dtdreengus";
     databaseURL = "https://dtdreengus.firebaseio.com";
   }
+  else if (city == 'kishangarh') {
+    firebase = {
+      apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+      authDomain: "dtdnavigator.firebaseapp.com",
+      databaseURL: "https://dtdkishangarh.firebaseio.com",
+      projectId: "dtdnavigator",
+      storageBucket: "dtdnavigator.appspot.com",
+      messagingSenderId: "381118272786",
+    };
+    databaseName="dtdkishangarh";
+    databaseURL= "https://dtdkishangarh.firebaseio.com";
+  }
 }
 
 

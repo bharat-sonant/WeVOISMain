@@ -116,7 +116,6 @@ export class CommonService {
     else if (cityName == "kishangarh") {
       latLng.push({ lat: 26.5948983, lng: 74.8162661 });
     }
-
     return latLng;
   }
 
