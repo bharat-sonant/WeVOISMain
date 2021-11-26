@@ -24,7 +24,7 @@
                 {{zone.zoneName}}
               </option>
             </select>
-            <select class="caret-select ipad-ipt-2" id="ddlWard" >
+            <select class="caret-select ipad-ipt-2" id="ddlWard"  (change)="changeWardSelection($event.target.value)">
               <option value="0">
                 --Select--
               </option>

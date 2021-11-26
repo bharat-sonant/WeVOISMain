@@ -128,6 +128,90 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtPreDateNav).val(this.selectedDate);
   }
 
+  
+  changeWardSelection(filterVal: any) {
+    $(this.ddlWard).val(filterVal);
+    $(this.ddlWardNav).val(filterVal);
+    this.selectedWard = filterVal;
+    this.resetMap();
+    this.setWardBoundary();
+    this.setWardLines();
+  }
+
+  resetMap(){
+    this.lines=[];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
+  }
+
+  setWardBoundary() {
+    this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+      this.wardBoundary = wardKML;
+    });
+  }
+
+  setWardLines(){
+    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
+      if (data != null) {
+        var keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            this.wardLines = keyArray.length;
+            let lineNo = keyArray[i];
+            if (data[lineNo] != null) {
+              var latLng = [];
+              if (data[lineNo]["points"] != undefined) {
+                if (data[lineNo]["points"].length > 0) {
+                  for (let j = 0; j < data[lineNo]["points"].length; j++) {
+                    latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                  }
+                  let dist = 0;
+                  let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
+                  if (lineDetail != undefined) {
+                    dist = Number(lineDetail.length);
+                  }
+                  this.lines.push({
+                    lineNo: lineNo,
+                    latlng: latLng,
+                    color: this.strockColorNotDone,
+                    dist: dist
+                  });
+                }
+              }
+            }
+          }
+          this.plotLinesOnMap();          
+        }
+      }
+    });
+  }
+  
+  plotLinesOnMap() {
+    if (this.lines.length > 0) {
+      for (let i = 0; i < this.lines.length; i++) {
+        let lineNo = this.lines[i]["lineNo"];
+        let latlngs = this.lines[i]["latlng"];
+        let line = new google.maps.Polyline({
+          path: latlngs,
+          strokeColor: this.strockColorNotDone,
+          strokeWeight: this.strokeWeight,
+        });
+        this.polylines[i] = line;
+        this.polylines[i].setMap(this.map);
+      }
+    }
+  }
+
   setDate(filterVal: any, type: string) {
     if (type == "current") {
       this.selectedDate = filterVal;
@@ -147,6 +231,7 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
+    this.resetMap();
   }
 
   changeZoneSelection(filterVal: any) {
@@ -161,6 +246,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
+    this.resetMap();
   }
 
   setMaps() {
