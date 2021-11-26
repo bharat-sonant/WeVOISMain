@@ -232,6 +232,8 @@ export class VtsAnalysisComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     this.resetMap();
+    this.setWardBoundary();
+    this.setWardLines();
   }
 
   changeZoneSelection(filterVal: any) {
