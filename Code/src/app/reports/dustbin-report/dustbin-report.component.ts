@@ -156,23 +156,27 @@ export class DustbinReportComponent implements OnInit {
               let planArray = Object.keys(planObject);
               for (let j = 0; j < planArray.length; j++) {
                 let dustbinAssigned = 0;
+                let bins = "";
+                let dustbinPicked = 0;
+                let highPriority = "";
                 if (planObject[planArray[j]]["bins"] != undefined) {
-                  let bins = planObject[planArray[j]]["bins"];
+                  bins = planObject[planArray[j]]["bins"];
                   if (bins != "") {
                     dustbinAssigned = bins.toString().split(',').length;
                   }
-                  let dustbinPicked = 0;
+
                   if (planObject[planArray[j]]["pickedDustbin"] != undefined) {
                     if (planObject[planArray[j]]["pickedDustbin"] != "") {
                       dustbinPicked = planObject[planArray[j]]["pickedDustbin"].toString().split(',').length;
                     }
                   }
-                  let highPriority = "";
+
                   if (planObject[planArray[j]]["highPriority"] != null) {
                     highPriority = planObject[planArray[j]]["highPriority"];
                   }
-                  this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
+
                 }
+                this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
                 if (j == planArray.length - 1) {
                   this.removeAssignedPlan();
                 }
@@ -824,7 +828,7 @@ export class DustbinReportComponent implements OnInit {
         let spanId = 'sp-' + this.dustbinList[i]["dustbin"] + '-' + day;
         $('#' + labelId).html("");
         $('#' + spanId).hide();
-        let planDetails = this.planList.find(item => Number(item.date.split('-')[2]) == j);
+        let planDetails = this.planList.find(item => Number(item.date.split('-')[2]) == j && item.date.split('-')[1] == this.selectedMonth && item.date.split('-')[0] == this.selectedYear);
         if (planDetails != undefined) {
           if (planDetails.bins != "" && j > Number(this.toDayDate.split('-')[2])) {
             $('#' + spanId).show();
