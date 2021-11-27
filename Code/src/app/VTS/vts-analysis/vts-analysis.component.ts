@@ -128,16 +128,6 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtPreDateNav).val(this.selectedDate);
   }
 
-  changeWardSelection(filterVal: any) {
-    $(this.ddlWard).val(filterVal);
-    $(this.ddlWardNav).val(filterVal);
-    this.selectedWard = filterVal;
-    this.showHideBoundariesHtml();
-    this.setWardBoundary();
-    this.setWardLines();
-    this.getWardTotalLength();
-  }
-
   //#region region set StrokWeight
 
   getCurrentStrokeWeight(event: any, type: any) {
@@ -208,16 +198,16 @@ export class VtsAnalysisComponent implements OnInit {
 
   //#region Total Ward Length
   getWardTotalLength() {
-    this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
-      if (totalLength != null) {
-        this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
-        this.progressData.totalWardLength = Number(totalLength);
-      }
-      else {
-        this.progressData.wardLength = "0.00";
-        this.progressData.totalWardLength = 0;
-      }
-    });
+    this.progressData.wardLength = "0.00";
+    this.progressData.totalWardLength = 0;
+    if (this.selectedWard != "0") {
+      this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
+        if (totalLength != null) {
+          this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
+          this.progressData.totalWardLength = Number(totalLength);
+        }
+      });
+    }
   }
 
   //#endregion
@@ -357,9 +347,6 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
-    this.setWardBoundary();
-    this.showHideBoundariesHtml();
-    this.setWardLines();
   }
 
   changeZoneSelection(filterVal: any) {
@@ -377,6 +364,17 @@ export class VtsAnalysisComponent implements OnInit {
     this.setWardBoundary();
     this.showHideBoundariesHtml();
     this.setWardLines();
+    this.getWardTotalLength();
+  }
+
+  changeWardSelection(filterVal: any) {
+    $(this.ddlWard).val(filterVal);
+    $(this.ddlWardNav).val(filterVal);
+    this.selectedWard = filterVal;
+    this.setWardBoundary();
+    this.showHideBoundariesHtml();
+    this.setWardLines();
+    this.getWardTotalLength();
   }
 
   //#endregion
