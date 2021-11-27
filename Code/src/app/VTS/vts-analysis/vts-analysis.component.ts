@@ -242,7 +242,6 @@ export class VtsAnalysisComponent implements OnInit {
       });
     }
     this.showHideBoundariesHtml();
-    this.setStrokeWeight();
     this.hideSetting();
   }
 
@@ -320,8 +319,18 @@ export class VtsAnalysisComponent implements OnInit {
         });
         this.polylines[i] = line;
         this.polylines[i].setMap(this.map);
+
+        this.setClickInstance(line, lineNo, i);
       }
     }
+  }
+
+  setClickInstance(line: any, lineNo: any, index: any) {
+    
+    google.maps.event.addListener(line, 'click', function (h) {
+      alert("instance created");
+      
+    });
   }
 
   //#endregion
