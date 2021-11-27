@@ -357,9 +357,8 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
-
-    this.showHideBoundariesHtml();
     this.setWardBoundary();
+    this.showHideBoundariesHtml();
     this.setWardLines();
   }
 
@@ -376,6 +375,7 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.setWardBoundary();
+    this.showHideBoundariesHtml();
     this.setWardLines();
   }
 
