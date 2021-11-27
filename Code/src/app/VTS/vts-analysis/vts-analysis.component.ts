@@ -361,10 +361,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
-    this.setWardBoundary();
-    this.showHideBoundariesHtml();
-    this.setWardLines();
-    this.getWardTotalLength();
+    this.changeWardSelection("0");
   }
 
   changeWardSelection(filterVal: any) {
