@@ -350,9 +350,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   changeZoneSelection(filterVal: any) {
-    $(this.ddlZone).val(filterVal);
-    $(this.ddlZoneNav).val(filterVal);
-    this.selectedWard = 0;
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
     if (zoneDetail != undefined) {
