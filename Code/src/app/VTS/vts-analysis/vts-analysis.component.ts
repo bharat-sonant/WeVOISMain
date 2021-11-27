@@ -80,7 +80,7 @@ export class VtsAnalysisComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.setDefault();    
+    this.setDefault();
   }
 
   setDefault() {
@@ -128,18 +128,151 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtPreDateNav).val(this.selectedDate);
   }
 
-  
   changeWardSelection(filterVal: any) {
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
-    this.resetMap();
+    this.showHideBoundariesHtml();
     this.setWardBoundary();
     this.setWardLines();
+    this.getWardTotalLength();
   }
 
-  resetMap(){
-    this.lines=[];
+  //#region region set StrokWeight
+
+  getCurrentStrokeWeight(event: any, type: any) {
+    if (event.key == "Enter") {
+      let strokeWeight = "";
+      if (type == "web") {
+        strokeWeight = $(this.txtStrokeWeight).val().toString();
+      }
+      else {
+        strokeWeight = $(this.txtStrokeWeightNav).val().toString();
+      }
+      if (strokeWeight == "") {
+        this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+        return;
+      }
+      this.strokeWeight = Number(strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+      this.setStrokeWeight();
+    }
+  }
+
+  getNextPrevious(type: any) {
+    let strokeWeight = $(this.txtStrokeWeight).val();
+    if (strokeWeight == "") {
+      strokeWeight = $(this.txtStrokeWeightNav).val();
+      if (strokeWeight == "") {
+        this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
+        return;
+      }
+    }
+    if (type == "pre") {
+      if (strokeWeight != "1") {
+        this.strokeWeight = Number(strokeWeight) - 1;
+        $(this.txtStrokeWeight).val(this.strokeWeight);
+        $(this.txtStrokeWeightNav).val(this.strokeWeight);
+        localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+        this.setStrokeWeight();
+      }
+    } else if (type == "next") {
+      this.strokeWeight = Number(strokeWeight) + 1;
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      $(this.txtStrokeWeightNav).val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+      this.setStrokeWeight();
+    }
+  }
+
+  setStrokeWeight() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          let line = this.polylines[i];
+          var polyOptions = {
+            strokeColor: this.polylines[i]["strokeColor"],
+            strokeOpacity: 1.0,
+            strokeWeight: this.strokeWeight
+          }
+          line.setOptions(polyOptions);
+        }
+      }
+    }
+  }
+
+  //#endregion
+
+
+  //#region Total Ward Length
+  getWardTotalLength() {
+    this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
+      if (totalLength != null) {
+        this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
+        this.progressData.totalWardLength = Number(totalLength);
+      }
+      else {
+        this.progressData.wardLength = "0.00";
+        this.progressData.totalWardLength = 0;
+      }
+    });
+  }
+
+  //#endregion
+
+  //#region Ward Boundary  
+
+  setWardBoundary() {
+    this.isBoundaryShow = true;
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
+    if (this.selectedWard != "0") {
+      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+        this.wardBoundary = wardKML;
+      });
+    }
+  }
+
+  showBounderis() {
+    if (this.isBoundaryShow == true) {
+      this.isBoundaryShow = false;
+      if (this.wardBoundary != null) {
+        this.wardBoundary.setMap(null);
+      }
+      this.wardBoundary = null;
+    }
+    else {
+      this.isBoundaryShow = true;
+      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+        this.wardBoundary = wardKML;
+      });
+    }
+    this.showHideBoundariesHtml();
+    this.setStrokeWeight();
+    this.hideSetting();
+  }
+
+  showHideBoundariesHtml() {
+    if (this.isBoundaryShow == true) {
+      $(this.showBoundries).html("Hide Boundaries");
+      $(this.showBoundriesNav).html("Hide Boundaries");
+    }
+    else {
+      $(this.showBoundries).html("Show Boundaries");
+      $(this.showBoundriesNav).html("Show Boundaries");
+    }
+  }
+
+  //#endregion
+
+  //#region Ward Lines
+
+  setWardLines() {
+    this.lines = [];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -148,54 +281,43 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.polylines = [];
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
-    this.wardBoundary = null;
-  }
-
-  setWardBoundary() {
-    this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-      this.wardBoundary = wardKML;
-    });
-  }
-
-  setWardLines(){
-    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
-      if (data != null) {
-        var keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            this.wardLines = keyArray.length;
-            let lineNo = keyArray[i];
-            if (data[lineNo] != null) {
-              var latLng = [];
-              if (data[lineNo]["points"] != undefined) {
-                if (data[lineNo]["points"].length > 0) {
-                  for (let j = 0; j < data[lineNo]["points"].length; j++) {
-                    latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+    if (this.selectedWard != "0") {
+      this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
+        if (data != null) {
+          var keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              this.wardLines = keyArray.length;
+              let lineNo = keyArray[i];
+              if (data[lineNo] != null) {
+                var latLng = [];
+                if (data[lineNo]["points"] != undefined) {
+                  if (data[lineNo]["points"].length > 0) {
+                    for (let j = 0; j < data[lineNo]["points"].length; j++) {
+                      latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                    }
+                    let dist = 0;
+                    let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
+                    if (lineDetail != undefined) {
+                      dist = Number(lineDetail.length);
+                    }
+                    this.lines.push({
+                      lineNo: lineNo,
+                      latlng: latLng,
+                      color: this.strockColorNotDone,
+                      dist: dist
+                    });
                   }
-                  let dist = 0;
-                  let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
-                  if (lineDetail != undefined) {
-                    dist = Number(lineDetail.length);
-                  }
-                  this.lines.push({
-                    lineNo: lineNo,
-                    latlng: latLng,
-                    color: this.strockColorNotDone,
-                    dist: dist
-                  });
                 }
               }
             }
+            this.plotLinesOnMap();
           }
-          this.plotLinesOnMap();          
         }
-      }
-    });
+      });
+    }
   }
-  
+
   plotLinesOnMap() {
     if (this.lines.length > 0) {
       for (let i = 0; i < this.lines.length; i++) {
@@ -211,6 +333,10 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
   }
+
+  //#endregion
+
+  //#region   Top  Left Filter
 
   setDate(filterVal: any, type: string) {
     if (type == "current") {
@@ -231,7 +357,8 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
-    this.resetMap();
+
+    this.showHideBoundariesHtml();
     this.setWardBoundary();
     this.setWardLines();
   }
@@ -248,8 +375,11 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
-    this.resetMap();
+    this.setWardBoundary();
+    this.setWardLines();
   }
+
+  //#endregion
 
   setMaps() {
     let mapProp = this.commonService.initMapProperties();
@@ -257,14 +387,21 @@ export class VtsAnalysisComponent implements OnInit {
     this.map.setOptions({ clickableIcons: false });
   }
 
-  
+
   setHeight() {
     $(".navbar-toggler").show();
     $("#divMap").css("height", $(window).height() - 80);
   }
 
-}
 
+  hideSetting() {
+    let element = <HTMLElement>document.getElementById("collapsetwo");
+    let className = element.className;
+    $("#collapsetwo").removeClass(className);
+    $("#collapsetwo").addClass("panel-collapse collapse in");
+  }
+
+}
 
 export class progressDetail {
   totalWardLength: number;

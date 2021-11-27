@@ -75,7 +75,7 @@
   
                       <p id="showBoundries"> Hide Boundaries</p>
   
-                      <button type="button" class="btn btn-main btn-success" ><i
+                      <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
                           class="fas fa-grip-lines-vertical"></i></button>
                     </div>
                     <div class="setting-box">
@@ -96,13 +96,13 @@
                     </div>
                     <div class="setting-box" style="padding-bottom: 10px!important;">
   
-                      <button  class="btn-primary"
-                        style="background-color: #0ba118!important;">
+                      <button  class="btn-primary" (click)="getNextPrevious('pre');"
+                        style="background-color: #0ba118!important;" >
                         << </button>
-                          <input id="txtStrokeWeight" type="text" 
+                          <input id="txtStrokeWeight" type="text"  (keyup)="getCurrentStrokeWeight($event,'web');"
                             autocomplete="off" class="date-input"
                             style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                          <button  class="btn-primary"
+                          <button  class="btn-primary" (click)="getNextPrevious('next');"
                             style="background-color: #0ba118!important;">
                             >>
                           </button>
@@ -134,18 +134,18 @@
       <div class="navbar-nav">
         <div class="row">
           <div class="col-2 pr-0 ">
-            <button class="btn btn-primary " >
+            <button class="btn btn-primary "  (click)="setDate('','previous');">
               << </button>
           </div>
           <div class="col-8 pl-0">
-            <input id="txtDateNav" class="date-input" type="date" >
+            <input id="txtDateNav" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
           </div>
           <div class="col-2 pl-0">
-            <button class="btn btn-primary" > >> </button>
+            <button class="btn btn-primary" (click)="setDate('','next');"> >> </button>
           </div>
           <div class="col-12 pr-25 pl-5 mob-pl-15 mob-pr-15">
             <select class="caret-select" id="ddlZoneNav" style="width: 150px;"
-              >
+            (change)="changeZoneSelection($event.target.value)">
               <option value="0">
                 --Select Zone--
               </option>
@@ -155,7 +155,7 @@
             </select>
           </div>
           <div class="col-12 mt-10 pr-25 pl-5 mob-pl-15 mob-pr-15">
-            <select class="caret-select" id="ddlWardNav" >
+            <select class="caret-select" id="ddlWardNav" (change)="changeWardSelection($event.target.value)">
               <option value="0">
                 --Select--
               </option>
@@ -201,7 +201,7 @@
                       <div class="setting-box">
                         <p id="showBoundriesNav"> Hide Boundaries</p>
   
-                        <button type="button" class="btn btn-main btn-success" ><i
+                        <button type="button" class="btn btn-main btn-success" (click)="showBounderis();"><i
                             class="fas fa-grip-lines-vertical"></i></button>
                       </div>
                       <div class="setting-box">
@@ -222,13 +222,13 @@
                       </div>
                       <div class="setting-box" style="padding-bottom: 10px!important;">
   
-                        <button class="btn-primary mob-btn-primary"
+                        <button (click)="getNextPrevious('pre');" class="btn-primary mob-btn-primary"
                           style="background-color: #0ba118!important;">
                           << </button>
                             <input class="date-input-mob-2 date-input" id="txtStrokeWeightNav" type="text"
                                autocomplete="off"
-                              style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                            <button class="btn-primary mob-btn-primary"
+                               (keyup)="getCurrentStrokeWeight($event,'mob');"  style="text-align: center; width: 170px; font-weight: bold;" value="4" />
+                            <button class="btn-primary mob-btn-primary" (click)="getNextPrevious('next');"
                               style="background-color: #0ba118!important;">
                               >>
                             </button>
