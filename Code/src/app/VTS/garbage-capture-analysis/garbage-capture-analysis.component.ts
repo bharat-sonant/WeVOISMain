@@ -28,6 +28,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   currentYear: any;
   imageNoFoundURL = "../../../assets/img/img-not-available-01.jpg";
   userType: any;
+  filterList: any[];
+  rowsProgressList: any;
   progressData: progressDetail = {
     category: "---",
     time: "00.00",
@@ -73,6 +75,14 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
+  }
+
+  onContainerScroll() {
+    let element = <HTMLElement>document.getElementById("divList");
+    if ((element.offsetHeight + element.scrollTop) >= element.scrollHeight) {
+      this.rowsProgressList = this.rowsProgressList + 50;
+      this.progressList = this.filterList.slice(0, this.rowsProgressList);
+    }
   }
 
   setDefault() {
@@ -134,6 +144,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   filterData() {
+    let element = <HTMLElement>document.getElementById("divList");
+    element.scrollTop=0;
+    this.rowsProgressList = 50;
+    this.filterList = [];
     if (this.allProgressList.length > 0) {
       this.resetDetail();
       let userId = $(this.ddlUser).val();
@@ -151,9 +165,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       if (time2 != "") {
         dat2 = new Date(this.selectedDate + " " + time2);
       }
-      let filterList = this.allProgressList;
+      this.filterList = this.allProgressList;
       if (userId != "0") {
-        filterList = filterList.filter((item) => item.userId == userId);
+        this.filterList = this.filterList.filter((item) => item.userId == userId);
       }
       if (category != "0") {
         if (category == "1") {
@@ -162,33 +176,33 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         else {
           category = "कचरा उठा लिया है";
         }
-        filterList = filterList.filter((item) => item.isClean == category);
+        this.filterList = this.filterList.filter((item) => item.isClean == category);
       }
       if (zone != "0") {
-        filterList = filterList.filter((item) => item.zone == zone);
+        this.filterList = this.filterList.filter((item) => item.zone == zone);
       }
       if (ward != "0") {
-        filterList = filterList.filter((item) => item.ward == ward);
+        this.filterList = this.filterList.filter((item) => item.ward == ward);
       }
       if (time1 != "") {
-        filterList = filterList.filter((item) => new Date(this.selectedDate + " " + item.time) >= dat1);
+        this.filterList = this.filterList.filter((item) => new Date(this.selectedDate + " " + item.time) >= dat1);
       }
       if (time2 != "") {
-        filterList = filterList.filter((item) => new Date(this.selectedDate + " " + item.time) <= dat2);
+        this.filterList = this.filterList.filter((item) => new Date(this.selectedDate + " " + item.time) <= dat2);
       }
-      this.progressList = filterList;
-      this.progressData.count = this.progressList.length;
+      this.progressList = this.filterList.slice(0, 50);
+      this.progressData.count = this.filterList.length;
       let sum = 0;
       let resolved = 0;
-      for (let i = 0; i < this.progressList.length; i++) {
-        sum = sum + Number(this.progressList[i]["penalty"]);
-        if (this.progressList[i]["isResolved"] == 1) {
+      for (let i = 0; i < this.filterList.length; i++) {
+        sum = sum + Number(this.filterList[i]["penalty"]);
+        if (this.filterList[i]["isResolved"] == 1) {
           resolved = resolved + 1;
         }
-
       }
       this.progressData.panalty = sum;
       this.progressData.resolved = resolved;
+      $(this.divLoader).hide();
     }
   }
 
@@ -336,7 +350,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.allProgressList = [];
     this.getCategorySummary();
     $(this.divLoader).show();
-    this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.commonService.getFireStoreCity() + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
+    let imageInstance = this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.commonService.getFireStoreCity() + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
+      imageInstance.unsubscribe();
       if (data != null) {
         if (data[this.selectedOption] != null) {
           $(this.divMessage).hide();
@@ -393,22 +408,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  if (isClean == "कचरा नहीं उठाया") {
-                    this.progressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
-                  }
                   this.allProgressList.push({ userId: userId, imageId: imageId, address: objData[imageId]["address"], isClean: isClean, time: objData[imageId]["time"], penalty: penalty, user: user, imageUrl: objData[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
                   if (i == keyArray.length - 2) {
-                    if (this.selectedOption == "2") {
-                      setTimeout(() => {
-                        $(this.divLoader).hide();
-                      }, 6000);
-                    }
-                    else {
-                      $(this.divLoader).hide();
-                    }
+                    this.filterData();
                   }
                   this.progressData.resolved = resolved;
                 }
@@ -479,21 +484,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     BvgAction = bvgData;
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
-                  if (isClean == "कचरा नहीं उठाया") {
-                    this.progressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
-                  } this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+                  this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
                   if (i == keyArray.length - 2) {
-                    if (this.selectedOption == "2") {
-                      setTimeout(() => {
-                        $(this.divLoader).hide();
-                      }, 7000);
-                    }
-                    else {
-                      $(this.divLoader).hide();
-                    }
+                    this.filterData();
                   }
                 }
               }
@@ -716,7 +712,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         else {
           this.progressData.distance = (distance).toFixed(3) + " M";
         }
-
         this.commonService.getBVGUserById(userId).then((user) => {
           this.progressData.resolvedBy = user["name"] != null ? user["name"] : "---";
         });
