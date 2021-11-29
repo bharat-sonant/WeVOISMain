@@ -311,7 +311,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setClickInstance(line: any, lineNo: any, index: any) {
-    let progresData = this.progressData;
     let lines = this.lines;
     let polylines = this.polylines;
     let strockColorNotDone = this.strockColorNotDone;
@@ -335,31 +334,17 @@ export class VtsAnalysisComponent implements OnInit {
         if (lineLngthDetail != undefined) {
           dist = Number(lineLngthDetail.length);
         }
-        let wardTotalLength = Number(progresData.totalWardLength);
-        let wardCoveredDistance = Number(progresData.coveredLengthMeter);
-        let workPercentage = 0;
         stockColor = lineDetail.color;
         if (stockColor == strockColorNotDone) {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(time);
           lineDetail.color = strockColorDone;
           stockColor = lineDetail.color;
-          wardCoveredDistance = wardCoveredDistance + dist;
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.color = strockColorNotDone;
           stockColor = lineDetail.color;
-          wardCoveredDistance = wardCoveredDistance - dist;
         }
-        if (wardCoveredDistance > 0) {
-          workPercentage = Math.round((wardCoveredDistance * 100) / wardTotalLength);
-        }
-        const data1 = {
-          coveredLength: wardCoveredDistance.toFixed(0),
-          workPerc: workPercentage
-        }
-        dbEvent.object(dbEventPath + "/Summary").update(data1);
-        progresData.coveredLengthMeter = wardCoveredDistance;
         var polyOptions = {
           strokeColor: stockColor,
           strokeOpacity: 1.0,
@@ -381,7 +366,6 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.polylines = [];
-    this.progressData.coveredLengthMeter=0;
     if (this.selectedWard != "0") {
       this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
         if (lengthList != null) {

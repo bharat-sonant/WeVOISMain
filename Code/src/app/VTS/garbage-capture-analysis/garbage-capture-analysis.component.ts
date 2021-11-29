@@ -30,6 +30,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   userType: any;
   filterList: any[];
   rowsProgressList: any;
+  orderBy: any;
   progressData: progressDetail = {
     category: "---",
     time: "00.00",
@@ -80,7 +81,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   onContainerScroll() {
     let element = <HTMLElement>document.getElementById("divList");
     if ((element.offsetHeight + element.scrollTop) >= element.scrollHeight) {
-      this.rowsProgressList = this.rowsProgressList + 50;
+      this.rowsProgressList = this.rowsProgressList + 15;
       this.progressList = this.filterList.slice(0, this.rowsProgressList);
     }
   }
@@ -96,6 +97,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.resetData();
     this.setMonthYear();
     this.getTotals();
+    this.orderBy = "timeStemp";
     let element = <HTMLButtonElement>document.getElementById("btnAnalysis");
     element.disabled = true;
   }
@@ -145,10 +147,18 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   filterData() {
     let element = <HTMLElement>document.getElementById("divList");
-    element.scrollTop=0;
-    this.rowsProgressList = 50;
+    element.scrollTop = 0;
+    this.rowsProgressList = 15;
     this.filterList = [];
     if (this.allProgressList.length > 0) {
+      if (this.orderBy == "resolved") {
+        this.allProgressList = this.allProgressList.sort((a, b) =>
+          b.isResolved > a.isResolved ? 1 : -1
+        );
+      }
+      else {
+        this.allProgressList = this.commonService.transformNumeric(this.allProgressList, this.orderBy);
+      }
       this.resetDetail();
       let userId = $(this.ddlUser).val();
       let category = $(this.ddlCategory).val();
@@ -190,7 +200,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       if (time2 != "") {
         this.filterList = this.filterList.filter((item) => new Date(this.selectedDate + " " + item.time) <= dat2);
       }
-      this.progressList = this.filterList.slice(0, 50);
+      this.progressList = this.filterList.slice(0, this.rowsProgressList);
       this.progressData.count = this.filterList.length;
       let sum = 0;
       let resolved = 0;
@@ -207,17 +217,8 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getOrderBy(orderBy: any) {
-    if (orderBy == "resolved") {
-      this.progressList = this.progressList.sort((a, b) =>
-        b.isResolved > a.isResolved ? 1 : -1
-      );
-
-      this.allProgressList = this.commonService.transformNumeric(this.allProgressList, "-isResolved");
-    }
-    else {
-      this.progressList = this.commonService.transformNumeric(this.progressList, orderBy);
-      this.allProgressList = this.commonService.transformNumeric(this.allProgressList, orderBy);
-    }
+    this.orderBy = orderBy;
+    this.filterData();
     this.hideOrdeBy();
   }
 
