@@ -212,7 +212,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   //#endregion
 
-  //#region Ward Boundary  
+  //#region Ward Boundary
 
   setWardBoundary() {
     this.isBoundaryShow = true;
@@ -317,41 +317,38 @@ export class VtsAnalysisComponent implements OnInit {
     let strockColorDone = this.strockColorDone;
     let userId = this.userId;
     let dbEvent = this.db;
+    let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     let wardLineLengthList = this.wardLineLengthList;
     google.maps.event.addListener(line, 'click', function (h) {
       let dist = 0;
-      let date = new Date();
-      let hour = date.getHours();
-      let min = date.getMinutes();
-      let second = date.getSeconds();
-      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+      let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId;
-      let stockColor = strockColorNotDone;
+      let strokeColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         let lineLngthDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
         if (lineLngthDetail != undefined) {
           dist = Number(lineLngthDetail.length);
         }
-        stockColor = lineDetail.color;
-        if (stockColor == strockColorNotDone) {
+        strokeColor = lineDetail.color;
+        if (strokeColor == strockColorNotDone) {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(time);
           lineDetail.color = strockColorDone;
-          stockColor = lineDetail.color;
+          strokeColor = lineDetail.color;
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.color = strockColorNotDone;
-          stockColor = lineDetail.color;
+          strokeColor = lineDetail.color;
         }
         var polyOptions = {
-          strokeColor: stockColor,
+          strokeColor: strokeColor,
           strokeOpacity: 1.0,
           strokeWeight: Number(localStorage.getItem("strokeWeight"))
         }
         line.setOptions(polyOptions);
-        polylines[index]["strokeColor"] = stockColor;
+        polylines[index]["strokeColor"] = strokeColor;
       }
     });
   }

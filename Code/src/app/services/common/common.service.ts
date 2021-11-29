@@ -499,6 +499,14 @@ export class CommonService {
     return (new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1]);
   }
 
+  getCurrentTimeWithSecond() {
+    let date = new Date();
+    let hour = date.getHours();
+    let min = date.getMinutes();
+    let second = date.getSeconds();
+    return (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+  }
+
   gteHrsAndMinutesOnly(time: string) {
     let hrsAndMinutes = "";
     if (time != "") {
@@ -1419,7 +1427,7 @@ export class CommonService {
       let userData = userList.find((item) => item.userId == userId);
       if (userData == undefined) {
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-        let userDbPath = "WastebinMonitor/BVGUsers/"+userId+"/name";
+        let userDbPath = "WastebinMonitor/BVGUsers/" + userId + "/name";
         let user = this.fsDb.object(userDbPath).valueChanges().subscribe((data) => {
           user.unsubscribe();
           userList.push({
@@ -1437,4 +1445,5 @@ export class CommonService {
       }
     });
   }
+
 }
