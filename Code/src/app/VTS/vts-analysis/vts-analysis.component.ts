@@ -261,15 +261,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Lines
 
   setWardLines() {
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
+
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -285,16 +277,10 @@ export class VtsAnalysisComponent implements OnInit {
                     for (let j = 0; j < data[lineNo]["points"].length; j++) {
                       latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
                     }
-                    let dist = 0;
-                    let lineDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
-                    if (lineDetail != undefined) {
-                      dist = Number(lineDetail.length);
-                    }
                     this.lines.push({
                       lineNo: lineNo,
                       latlng: latLng,
-                      color: this.strockColorNotDone,
-                      dist: dist
+                      color: this.strockColorNotDone
                     });
                   }
                 }
@@ -312,25 +298,112 @@ export class VtsAnalysisComponent implements OnInit {
       for (let i = 0; i < this.lines.length; i++) {
         let lineNo = this.lines[i]["lineNo"];
         let latlngs = this.lines[i]["latlng"];
-        let line = new google.maps.Polyline({
-          path: latlngs,
-          strokeColor: this.strockColorNotDone,
-          strokeWeight: this.strokeWeight,
-        });
-        this.polylines[i] = line;
-        this.polylines[i].setMap(this.map);
-
-        this.setClickInstance(line, lineNo, i);
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+          status => {
+            lineStatusInstance.unsubscribe();
+            let strockColor = this.strockColorNotDone;
+            if (status != null) {
+              strockColor = this.strockColorDone;
+            }
+            let line = new google.maps.Polyline({
+              path: latlngs,
+              strokeColor: strockColor,
+              strokeWeight: this.strokeWeight,
+            });
+            let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.color = strockColor;
+            }
+            this.polylines[i] = line;
+            this.polylines[i].setMap(this.map);
+            this.setClickInstance(line, lineNo, i);
+          });
       }
     }
   }
 
   setClickInstance(line: any, lineNo: any, index: any) {
-    
+    let progresData = this.progressData;
+    let lines = this.lines;
+    let polylines = this.polylines;
+    let strockColorNotDone = this.strockColorNotDone;
+    let strockColorDone = this.strockColorDone;
+    let userId = this.userId;
+    let dbEvent = this.db;
+    let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+    let wardLineLengthList = this.wardLineLengthList;
     google.maps.event.addListener(line, 'click', function (h) {
-      alert("instance created");
-      
+      let dist = 0;
+      let date = new Date();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      let second = date.getSeconds();
+      let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
+      time = time + "-" + userId;
+      let stockColor = strockColorNotDone;
+      let lineDetail = lines.find(item => item.lineNo == lineNo);
+      if (lineDetail != undefined) {
+        let lineLngthDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
+        if (lineLngthDetail != undefined) {
+          dist = Number(lineLngthDetail.length);
+        }
+        let wardTotalLength = Number(progresData.totalWardLength);
+        let wardCoveredDistance = Number(progresData.coveredLengthMeter);
+        let workPercentage = 0;
+        stockColor = lineDetail.color;
+        if (stockColor == strockColorNotDone) {
+          dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(time);
+          lineDetail.color = strockColorDone;
+          stockColor = lineDetail.color;
+          wardCoveredDistance = wardCoveredDistance + dist;
+        }
+        else {
+          dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
+          lineDetail.color = strockColorNotDone;
+          stockColor = lineDetail.color;
+          wardCoveredDistance = wardCoveredDistance - dist;
+        }
+        if (wardCoveredDistance > 0) {
+          workPercentage = Math.round((wardCoveredDistance * 100) / wardTotalLength);
+        }
+        const data1 = {
+          coveredLength: wardCoveredDistance.toFixed(0),
+          workPerc: workPercentage
+        }
+        dbEvent.object(dbEventPath + "/Summary").update(data1);
+        progresData.workPercentage = workPercentage + "%";
+        progresData.coveredLengthMeter = wardCoveredDistance;
+        progresData.coveredLength = (wardCoveredDistance / 1000).toFixed(2);
+        var polyOptions = {
+          strokeColor: stockColor,
+          strokeOpacity: 1.0,
+          strokeWeight: Number(localStorage.getItem("strokeWeight"))
+        }
+        line.setOptions(polyOptions);
+        polylines[index]["strokeColor"] = stockColor;
+      }
     });
+  }
+
+  getWardLineLength() {
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.selectedWard != "0") {
+      this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
+        if (lengthList != null) {
+          this.wardLineLengthList = JSON.parse(lengthList);
+          this.setWardLines();
+        }
+      });
+    }
   }
 
   //#endregion
@@ -376,7 +449,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.selectedWard = filterVal;
     this.setWardBoundary();
     this.showHideBoundariesHtml();
-    this.setWardLines();
+    this.getWardLineLength();
     this.getWardTotalLength();
   }
 
