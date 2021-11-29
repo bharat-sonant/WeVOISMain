@@ -319,18 +319,12 @@ export class VtsAnalysisComponent implements OnInit {
     let dbEvent = this.db;
     let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-    let wardLineLengthList = this.wardLineLengthList;
     google.maps.event.addListener(line, 'click', function (h) {
-      let dist = 0;
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId;
       let strokeColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
-        let lineLngthDetail = wardLineLengthList.find(item => item.lineNo == lineNo);
-        if (lineLngthDetail != undefined) {
-          dist = Number(lineLngthDetail.length);
-        }
         strokeColor = lineDetail.color;
         if (strokeColor == strockColorNotDone) {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(time);
