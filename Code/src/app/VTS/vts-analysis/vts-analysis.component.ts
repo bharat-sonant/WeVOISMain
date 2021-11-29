@@ -298,27 +298,14 @@ export class VtsAnalysisComponent implements OnInit {
       for (let i = 0; i < this.lines.length; i++) {
         let lineNo = this.lines[i]["lineNo"];
         let latlngs = this.lines[i]["latlng"];
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
-          status => {
-            lineStatusInstance.unsubscribe();
-            let strockColor = this.strockColorNotDone;
-            if (status != null) {
-              strockColor = this.strockColorDone;
-            }
-            let line = new google.maps.Polyline({
-              path: latlngs,
-              strokeColor: strockColor,
-              strokeWeight: this.strokeWeight,
-            });
-            let lineDetail = this.lines.find(item => item.lineNo == lineNo);
-            if (lineDetail != undefined) {
-              lineDetail.color = strockColor;
-            }
-            this.polylines[i] = line;
-            this.polylines[i].setMap(this.map);
-            this.setClickInstance(line, lineNo, i);
-          });
+        let line = new google.maps.Polyline({
+          path: latlngs,
+          strokeColor: this.strockColorNotDone,
+          strokeWeight: this.strokeWeight,
+        });
+        this.polylines[i] = line;
+        this.polylines[i].setMap(this.map);
+        this.setClickInstance(line, lineNo, i);
       }
     }
   }
@@ -372,9 +359,7 @@ export class VtsAnalysisComponent implements OnInit {
           workPerc: workPercentage
         }
         dbEvent.object(dbEventPath + "/Summary").update(data1);
-        progresData.workPercentage = workPercentage + "%";
         progresData.coveredLengthMeter = wardCoveredDistance;
-        progresData.coveredLength = (wardCoveredDistance / 1000).toFixed(2);
         var polyOptions = {
           strokeColor: stockColor,
           strokeOpacity: 1.0,
@@ -396,6 +381,7 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.polylines = [];
+    this.progressData.coveredLengthMeter=0;
     if (this.selectedWard != "0") {
       this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
         if (lengthList != null) {
