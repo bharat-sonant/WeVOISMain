@@ -347,25 +347,6 @@ export class VtsAnalysisComponent implements OnInit {
     });
   }
 
-  getWardLineLength() {
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.selectedWard != "0") {
-      this.commonService.getWardLineLength(this.selectedWard).then((lengthList: any) => {
-        if (lengthList != null) {
-          this.wardLineLengthList = JSON.parse(lengthList);
-          this.setWardLines();
-        }
-      });
-    }
-  }
 
   //#endregion
 
@@ -410,7 +391,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.selectedWard = filterVal;
     this.setWardBoundary();
     this.showHideBoundariesHtml();
-    this.getWardLineLength();
+    this.setWardLines();
     this.getWardTotalLength();
   }
 
