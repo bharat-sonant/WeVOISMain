@@ -312,6 +312,10 @@ export class VtsAnalysisComponent implements OnInit {
             if (status != null) {
               strokeColor = this.strockColorDone;
             }
+            let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.color = strokeColor;
+            }
             let line = new google.maps.Polyline({
               path: latlngs,
               strokeColor: strokeColor,
