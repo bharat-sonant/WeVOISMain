@@ -304,14 +304,23 @@ export class VtsAnalysisComponent implements OnInit {
       for (let i = 0; i < this.lines.length; i++) {
         let lineNo = this.lines[i]["lineNo"];
         let latlngs = this.lines[i]["latlng"];
-        let line = new google.maps.Polyline({
-          path: latlngs,
-          strokeColor: this.strockColorNotDone,
-          strokeWeight: this.strokeWeight,
-        });
-        this.polylines[i] = line;
-        this.polylines[i].setMap(this.map);
-        this.setClickInstance(line, lineNo, i);
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+          status => {
+            lineStatusInstance.unsubscribe();
+            let strokeColor = this.strockColorNotDone;
+            if (status != null) {
+              strokeColor = this.strockColorDone;
+            }
+            let line = new google.maps.Polyline({
+              path: latlngs,
+              strokeColor: strokeColor,
+              strokeWeight: this.strokeWeight,
+            });
+            this.polylines[i] = line;
+            this.polylines[i].setMap(this.map);
+            this.setClickInstance(line, lineNo, i);
+          });
       }
     }
   }

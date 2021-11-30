@@ -415,8 +415,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   this.getUserName(imageId, userId);
                   if (i == keyArray.length - 2) {
                     this.filterData();
-                  }
-                  this.progressData.resolved = resolved;
+                  }                  
                 }
               }
             }
@@ -494,7 +493,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                 }
               }
-              this.progressData.resolved = resolved;
             }
           }
           else {
