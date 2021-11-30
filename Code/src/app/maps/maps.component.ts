@@ -191,7 +191,7 @@ export class MapsComponent {
       this.vehicleLocationInstance.unsubscribe();
       this.vehicleLocationInstance = null;
     }
-
+    
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
       this.zoneKML = null;
@@ -434,7 +434,7 @@ export class MapsComponent {
   }
 
   setKml() {
-    this.commonService.setKML(this.selectedZone, this.map);
+   this.zoneKML= this.commonService.setKML(this.selectedZone, this.map);
   }
 
   showVehicleMovement() {

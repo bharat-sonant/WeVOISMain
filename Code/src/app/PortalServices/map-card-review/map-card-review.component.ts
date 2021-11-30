@@ -127,7 +127,7 @@ export class MapCardReviewComponent {
   }
 
   setKml() {
-    this.commonService.setKML(this.selectedZone, this.map);   
+   this.zoneKML= this.commonService.setKML(this.selectedZone, this.map);   
   }
 
   changeZoneSelection(filterVal: any) {
