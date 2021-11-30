@@ -933,15 +933,13 @@ font-size: 20px;
 position: absolute;
 right: 8px;
 }
-.btn-data{
-margin-top: 0px!important;
-}
+
 .btn-data .btn-success{
 height: 32px;
 padding: 8px 20px!important;
-margin-top: -20px;
+
 font-size: 12px;
-margin-bottom: 0px!important;
+
 }
 .border-none{
 border: none!important;
@@ -966,7 +964,7 @@ border-radius: 5px!important;
 .info-box{
 background: #fff;
 border:1px solid lightgray;
-min-height: 18.5vh;
+min-height: 19.5vh;
 border-radius: 5px;
 }
 .image-box{
@@ -985,16 +983,35 @@ border-radius: 5px;
   margin-top: 10px;
   }
 .main-top{
-  height:  (83vh - (18vh + 10vh));
+  height:  (83vh - (20vh + 8vh)); 
 }
 .main-mid{
-  height:  (83vh - (55vh + 10vh));
+  height:  (83vh - (55.4vh + 8vh)); 
 }
 .main-final-blk{
-height:  (83vh - (55vh + 18vh));
+height:  (83vh - (57vh + 18vh));
 }
 .main-content{
 margin-top: -35px;
+}
+.m-blk{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -15px;
+}
+.l-blk{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -2px!important;
+    border-left: 1px solid lightgray;
+}
+.d-blk{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0px;
 }
 .main-headers{
 text-align:center;
@@ -1103,7 +1120,7 @@ display: none;
 }
 .mob-res{
 height: 85vh;
-overflow-y: scroll;
+overflow-y: hidden;
 overflow-x: hidden;
 margin-top: -6px!important;
 }
@@ -1539,12 +1556,10 @@ cursor: pointer;
 }
 .radio-grp{
   width: 100%;
-  display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-
+    margin-top: -15px;
+    text-align: center;
 }
+
 .radio-left{
   width: 49%;
   float: left;
