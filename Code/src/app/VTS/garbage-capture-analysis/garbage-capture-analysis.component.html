@@ -287,8 +287,8 @@
         <div class="col-md-12 col-lg-12 col-xl-6 pr-13 mob-pr-10 mob-res pad-pl-0">
             <div class="fix-h">
                 <div class="row right-scroll">
-                    <div class="col-md-6 mob-10 pl-3 pr-0"
-                        style="padding-bottom:1.5vh!important; margin-top: -6px; padding-left: 5px!important;padding-right: 7px!important;">
+                    <div class="col-md-6 main-top mob-10 pl-3 pr-0"
+                        style="margin-bottom:1vh!important; margin-top: -6px; padding-left: 5px!important;padding-right: 7px!important;">
                         <div class="image-box">
                             <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""
                                 alt="">
@@ -297,8 +297,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mob-10 pl-3 pr-0"
-                        style="padding-bottom:1.5vh!important; margin-top: -6px;padding-left: 7px!important;">
+                    <div class="col-md-6 main-top mob-10 pl-3 pr-0"
+                        style="margin-bottom:1vh!important; margin-top: -6px;padding-left: 7px!important;">
                         <div class="image-box">
                             <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid"
                                 title="" alt="">
@@ -307,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 pl-5 pr-0" style="padding-bottom:1.5vh!important;">
+                    <div class="col-md-12 pl-5 pr-0 main-mid" style="margin-bottom:1.7vh!important;">
                         <input id="dataId" type="hidden" value="0">
                         <div class="info-box">
                             <div class="row">
@@ -361,17 +361,12 @@
                             </div>
                         </div>
                     </div>
-                    <div id="divAnalysis" class="col-md-12 pr-0 pl-20">
+                    <div id="divAnalysis" class="col-md-12 pr-0 pl-5">
                         <div class="inner-box main-final-blk">
-                            <div class="row bg-white">
+                            <div class="row">
                                 <div class="col-md-4 br-1">
-                                    <div class="row pl-10">
-                                        <div class="col-md-12">
-                                            <h3 style="margin-top:15px!important"> <b>Image Analysis</b> 
-                                                
-                                            </h3> <br>
                                            
-                                            <div class="radio-grp mt-min-10">
+                                            <div class="radio-grp ">
                                                 <input id="rdoReject" class="rd0" type="radio" name="group1"
                                                 style="width: 20px;"
                                                 (change)="enableSaveData('rdoReject');"><span>Reject</span>
@@ -379,8 +374,6 @@
                                                 style="width: 20px;"
                                                 (change)="enableSaveData('rdoAccept');"><span>Accept</span>                                               
                                             </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="col-md-5 br-1 text-center">
                                     <div class="inner-data final-blk">
@@ -391,7 +384,7 @@
                                             value="0" />
                                     </div>
                                 </div>
-                                <div class="col-md-3 bg-dark btn-data mt-10 ">
+                                <div class="col-md-3  btn-data mt-10 ">
                                     <div class="inner-data final-blk">
                                         <button id="btnAnalysis" type="button" class="btn btn-success"
                                             (click)="analysis();">SAVE</button>
