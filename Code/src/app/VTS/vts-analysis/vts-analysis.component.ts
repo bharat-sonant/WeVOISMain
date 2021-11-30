@@ -30,7 +30,6 @@ export class VtsAnalysisComponent implements OnInit {
   wardLines: any;
   lines: any[];
   polylines = [];
-  vtsPolylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   wardBoundary: any;
   strokeWeight = 4;
@@ -103,7 +102,6 @@ export class VtsAnalysisComponent implements OnInit {
   setDefaultArrayList() {
     this.lines = [];
     this.polylines = [];
-    this.vtsPolylines = [];
     this.vehicleList = [];
     this.wardLineLengthList = [];
   }
@@ -261,7 +259,15 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Lines
 
   setWardLines() {
-
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
