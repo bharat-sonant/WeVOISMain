@@ -495,14 +495,13 @@ font-weight: bold;
 
 .table-heading h3{
 line-height: 15px;
-font-size: 10px;
+font-size: 9px;
 font-weight: normal;
 text-transform: uppercase;
 color: #707070;
 margin-bottom: 15px;
 margin-top: 6px;
 border-right: 1px solid lightgray;
-letter-spacing: 0.5px;
 }
 .table-heading .tbl-points{
 font-weight: bold;
@@ -510,7 +509,7 @@ font-weight: bold;
 //background: #0ba11714;
 color: #0ba118;
 // padding: 5px 10px;
-font-size: 20px;
+font-size: 14px;
 }
 .font-bold{
 color: #000;
@@ -1000,21 +999,19 @@ margin-top: -35px;
   padding-right:5px!important;
 }
 .img-1{
-  border-bottom: 1px solid lightgray;
+
   justify-content: left;
    border-right: 1px solid lightgray;
    border-top: 1px solid lightgray;
 }
 .img-2{
   padding-left: 0px!important;
-   border-bottom: 1px solid lightgray;
   justify-content: left;
    border-right: 1px solid lightgray;
    border-top: 1px solid lightgray;
 }
 .img-3{
   padding-left: 0px!important;
-  border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-top: 1px solid lightgray;
   justify-content: left;
@@ -1022,7 +1019,6 @@ margin-top: -35px;
 }
 .img-4{
   padding-left: 0px!important;
-  border-bottom: 1px solid lightgray;
   justify-content: left;
   border-top: 1px solid lightgray;
   padding-left:10px;
@@ -1608,18 +1604,18 @@ margin-right: 4px;
 }
 
 .img-text h3{
-  font-size: 11px;
+  font-size: 10px;
   margin: 0px !important;
-  width: 60%;
+  width: 48%;
   float: left;
-  margin-top: 5px!important;
+  margin-top: 3px!important;
 }
 .img-text span{
   float: right;
   margin-right: 10px;
   font-weight: bold;
   color: #0ba118;
-  font-size: 20px;
+  font-size: 14px;
 }
 .f-all{
   position: relative;
