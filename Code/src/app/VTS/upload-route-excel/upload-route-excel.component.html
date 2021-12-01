@@ -16,7 +16,7 @@
                     <div class="row">
                         <div class="col-md-12 text-left">
                             <h5>
-                               Upload Route Excel
+                                Upload Route Excel
                             </h5>
                         </div>
                     </div>
@@ -25,22 +25,37 @@
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1" style="margin-left: 10px;">
-                                <input id="txtDate" type="date" class="date-input" (change)="setDate($event.target.value)">
+                                <input id="txtDate" type="date" class="date-input"
+                                    (change)="setDate($event.target.value)">
                             </div>
                             <div class="col-md-12 pr-1" style="margin-left: 10px; padding-top: 10px;">
-                                
+
                                 <div class="file-upload-wrapper">
-                                  <input id="fileUpload" type="file" name="file" class="file-upload-field" placeholder="" value=""
-                                    (change)="onFileChanged($event)">
+                                    <input id="fileUpload" type="file" name="file" class="file-upload-field"
+                                        placeholder="" value="" (change)="onFileChanged($event)">
                                 </div>
-                             </div>
+                            </div>
                             <div class="col-md-12 pr-1 text-left" style=" padding-top: 10px;">
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-success"
-                                        (click)="saveData();">SAVE</button>
+                                    <button type="button" class="btn btn-success" (click)="saveData();">SAVE</button>
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 pr-1" style="margin-left: 10px;">
+                                <b>Check these points in excel before upload sheet :-</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pr-1" style="margin-left: 10px;">
+                                <b>1. </b>In excel sheet name should be like : 02 Sep 2021<br/>
+                                <b>2. </b> Check column name  which are required<br/>
+                                &nbsp;&nbsp;a) vehicleName<br/>
+                                &nbsp;&nbsp;b) latitude<br/>
+                                &nbsp;&nbsp;c) longitude<br/>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>

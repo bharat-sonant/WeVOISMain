@@ -79,22 +79,28 @@ export class UploadRouteExcelComponent implements OnInit {
         let vehicle = this.fileRouteList[i]["vehicleName"];
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
-
-        let vehicleDetail = this.routeList.find(item => item.vehicle == vehicle);
-        if (vehicleDetail == undefined) {
-          this.vehicleList.push({ vehicle: vehicle });
-          let points = [];
-          let latLng = lat + "," + lng;
-          let latLngString = latLng;
-          points.push({ latLng });
-          this.routeList.push({ vehicle: vehicle, points: points, latLngString: latLngString });
-        }
-        else {
-          let latLng = lat + "," + lng;
-          vehicleDetail.latLngString  = vehicleDetail.latLngString  + "~" + latLng;
-          vehicleDetail.points.push({ latLng });
+        if (vehicle != "") {
+          if (lat != "") {
+            if (lng != "") {
+              let vehicleDetail = this.routeList.find(item => item.vehicle == vehicle);
+              if (vehicleDetail == undefined) {
+                this.vehicleList.push({ vehicle: vehicle });
+                let points = [];
+                let latLng = lat + "," + lng;
+                let latLngString = latLng;
+                points.push({ latLng });
+                this.routeList.push({ vehicle: vehicle, points: points, latLngString: latLngString });
+              }
+              else {
+                let latLng = lat + "," + lng;
+                vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLng;
+                vehicleDetail.points.push({ latLng });
+              }
+            }
+          }
         }
       }
+      console.log(this.routeList);
       if (this.vehicleList.length > 0) {
         let fileName = "main";
         let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
@@ -118,8 +124,8 @@ export class UploadRouteExcelComponent implements OnInit {
   }
 
   saveRealTimeData(listArray: any, fileName: any, latLngString: any) {
-      let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
-     this.db.database.ref(dbPath).set(latLngString);
+    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
+    this.db.database.ref(dbPath).set(latLngString);
   }
 
   saveJsonFile(listArray: any, fileName: any) {
