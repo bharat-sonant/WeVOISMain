@@ -867,7 +867,7 @@ border-bottom: 1px solid lightgray;
 }
 .inner-data h3{
 color: #333;
-font-size: 14px;
+font-size: 12px;
 margin: 0px!important;
 }
 .inner-data .address{
@@ -965,7 +965,7 @@ border-radius: 5px!important;
 .info-box{
 background: #fff;
 border:1px solid lightgray;
-min-height: 26vh;
+min-height: 19vh;
 border-radius: 5px;
 }
 .image-box{
@@ -976,18 +976,19 @@ border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 49vh!important;
+  height: 56vh!important;
   overflow: hidden;
   }
   .image-box img{
-  height: 45vh;
+  height: 48vh;
   margin-top: 10px;
+  border-radius: 0px;
   }
 .main-top{
-  height:  (83vh - (26vh + 8vh)); 
+  height:  (83vh - (19vh + 8vh)); 
 }
 .main-mid{
-  height:  (83vh - (49.5vh + 8vh)); 
+  height:  (83vh - (56.5vh + 8vh)); 
 }
 .main-final-blk{
 height:  (83vh - (49vh + 26vh));
@@ -995,11 +996,42 @@ height:  (83vh - (49vh + 26vh));
 .main-content{
 margin-top: -35px;
 }
+.pr-5{
+  padding-right:5px!important;
+}
+.img-1{
+  border-bottom: 1px solid lightgray;
+  justify-content: left;
+   border-right: 1px solid lightgray;
+   border-top: 1px solid lightgray;
+}
+.img-2{
+  padding-left: 0px!important;
+   border-bottom: 1px solid lightgray;
+  justify-content: left;
+   border-right: 1px solid lightgray;
+   border-top: 1px solid lightgray;
+}
+.img-3{
+  padding-left: 0px!important;
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  border-top: 1px solid lightgray;
+  justify-content: left;
+  padding-left:10px!important;
+}
+.img-4{
+  padding-left: 0px!important;
+  border-bottom: 1px solid lightgray;
+  justify-content: left;
+  border-top: 1px solid lightgray;
+  padding-left:10px;
+}
 .m-blk{
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: -15px;
+  margin-top: -10px;
 }
 .l-blk{
   display: flex;
@@ -1377,6 +1409,9 @@ overflow-x:scroll;
 .pad-mob-b-10{
 margin-bottom: 10px!important;
 } 
+.pad-pl-20{
+  padding-left:20px!important;
+}
 .date-input {
 height: 32px;
 width: 128px;

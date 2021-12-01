@@ -290,8 +290,23 @@
                     <div class="col-md-6 main-top mob-10 pl-3 pr-0"
                         style="margin-bottom:1.7vh!important; margin-top: -6px; padding-left: 5px!important;padding-right: 7px!important;">
                         <div class="image-box">
-                            <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title=""
-                                alt="">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                            <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title="" alt="">
+                        </div>
+                        <div class="col-md-4 img-1 text-left pr-0">
+                            <div class="inner-data pad-pl-20" style="border-right:none!important;border-bottom:none!important;">
+                                <h3>  {{progressData.time}} </h3>
+                                <p><i class="far fa-clock pr-5"></i> <b>Time</b></p>
+                            </div>
+                        </div>
+                        <div class="col-md-8 img-2 text-left pr-0">
+                            <div class="inner-data mob-pl-25" style="border-right:none!important;border-bottom:none!important;">
+                                <h3>  {{progressData.latLng}} </h3>
+                                <p><i class="fas fa-chalkboard pr-5"></i> <b>Lat-Lng</b></p>
+                            </div>
+                        </div>
+                            </div>
                             <div class="image-heading">
                                 <h3>Before Resolved</h3>
                             </div>
@@ -300,8 +315,25 @@
                     <div class="col-md-6 main-top mob-10 pl-3 pr-0"
                         style="margin-bottom:1.7vh!important; margin-top: -6px;padding-left: 7px!important;">
                         <div class="image-box">
-                            <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid"
-                                title="" alt="">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid"
+                                    title="" alt="">
+                                </div>
+                                <div class="col text-left pr-0 img-3">
+                                    <div class="inner-data mob-pl-25" style="border-right:none!important;border-bottom:none!important;">
+                                        <h3>  {{progressData.timeResolved}} </h3>
+                                        <p><i class="far fa-clock pr-5"></i> <b>Date Time</b></p>
+                                    </div>
+                                </div>
+                                <div class="col text-left img-4">
+                                    <div class="inner-data mob-pl-25"style="border-right:none!important;border-bottom:none!important;">
+                                        <h3> {{progressData.latLngResolved}} </h3>
+                                        <p><i class="fas fa-chalkboard pr-5"></i> <b>Lat-Lng</b></p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="image-heading">
                                 <h3>After Resolved</h3>
                             </div>
@@ -311,35 +343,10 @@
                         <input id="dataId" type="hidden" value="0">
                         <div class="info-box">
                             <div class="row">
-                                <div class="col-md-2 text-left pr-0" style="border-bottom: 1px solid lightgray;
-                                justify-content: left; border-right: 1px solid lightgray;">
-                                    <div class="inner-data pad-pl-20" style="border-right:none!important;border-bottom:none!important;">
-                                        <h3> <b> {{progressData.time}}</b> </h3>
-                                        <p><i class="far fa-clock"></i> Time</p>
-                                    </div>
-                                </div>
-                                <div class="col text-left pr-0" style="padding-left: 0px!important; border-bottom: 1px solid lightgray;
-                                justify-content: left; border-right: 1px solid lightgray;">
-                                    <div class="inner-data mob-pl-25" style="border-right:none!important;border-bottom:none!important;">
-                                        <h3> <b> {{progressData.latLng}}</b> </h3>
-                                        <p><i class="fas fa-chalkboard"></i> Lat-Lng</p>
-                                    </div>
-                                </div>
-                                <div class="col text-left pr-0" style="padding-left: 0px!important;border-bottom: 1px solid lightgray;
-                                    justify-content: left; border-right: 1px solid lightgray;">
-                                    <div class="inner-data mob-pl-25" style="border-right:none!important;border-bottom:none!important;">
-                                        <h3> <b> {{progressData.timeResolved}}</b> </h3>
-                                        <p><i class="far fa-clock"></i> Date Time</p>
-                                    </div>
-                                </div>
-                                <div class="col text-left pl-0" style="padding-left: 0px!important;border-bottom: 1px solid lightgray; justify-content: left;">
-                                    <div class="inner-data mob-pl-25"style="border-right:none!important;border-bottom:none!important;">
-                                        <h3> <b> {{progressData.latLngResolved}}</b> </h3>
-                                        <p><i class="fas fa-chalkboard"></i> Lat-Lng</p>
-                                    </div>
-                                </div>
+
+
                                 <div class="col-md-12 text-left">
-                                    <div class="inner-data" style=" float: left; width: 25%!important;">
+                                    <div class="inner-data pad-pl-20" style=" float: left; width: 25%!important;">
                                             <h3 class="address" style="display:inline;"> {{progressData.zone}}</h3> <br>
                                         <p class="para-text"><b><i class="far fa-clock"></i> Zone :</b></p>
                                     </div>
