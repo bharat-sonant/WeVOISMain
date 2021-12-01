@@ -69,7 +69,7 @@ export class UploadRouteExcelComponent implements OnInit {
       return;
     }
     if (this.selectedDate != this.fileDate) {
-      this.commonService.setAlertMessage("error", "Please select correct date !!!");
+      this.commonService.setAlertMessage("error", "Please select correct date or check sheet name !!!");
       return;
     }
     $('#divLoader').show();
@@ -79,6 +79,21 @@ export class UploadRouteExcelComponent implements OnInit {
         let vehicle = this.fileRouteList[i]["vehicleName"];
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
+        if (vehicle == undefined) {
+          this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
+          $('#divLoader').hide();
+          return;
+        }
+        if (lat == undefined) {
+          this.commonService.setAlertMessage("error", "Column name latitude is not correct");
+          $('#divLoader').hide();
+          return;
+        }
+        if (lng == undefined) {
+          this.commonService.setAlertMessage("error", "Column name longitude is not correct");
+          $('#divLoader').hide();
+          return;
+        }
         if (vehicle != "") {
           if (lat != "") {
             if (lng != "") {
