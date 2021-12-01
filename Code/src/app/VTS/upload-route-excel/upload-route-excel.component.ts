@@ -52,7 +52,6 @@ export class UploadRouteExcelComponent implements OnInit {
       this.first_sheet_name = workbook.SheetNames[0];
       this.fileDate = this.commonService.getDateConvert(this.first_sheet_name);
       var worksheet = workbook.Sheets[this.first_sheet_name];
-      // console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
       this.fileRouteList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       $('#divLoader').hide();
     }
@@ -66,10 +65,12 @@ export class UploadRouteExcelComponent implements OnInit {
     this.resetAll();
     if (this.first_sheet_name == "") {
       this.commonService.setAlertMessage("error", "Please select file !!!");
+      $('#fileUpload').val("");
       return;
     }
     if (this.selectedDate != this.fileDate) {
       this.commonService.setAlertMessage("error", "Please select correct date or check sheet name !!!");
+      $('#fileUpload').val("");
       return;
     }
     $('#divLoader').show();
@@ -82,16 +83,19 @@ export class UploadRouteExcelComponent implements OnInit {
         if (vehicle == undefined) {
           this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
           $('#divLoader').hide();
+          $('#fileUpload').val("");
           return;
         }
         if (lat == undefined) {
           this.commonService.setAlertMessage("error", "Column name latitude is not correct");
           $('#divLoader').hide();
+          $('#fileUpload').val("");
           return;
         }
         if (lng == undefined) {
           this.commonService.setAlertMessage("error", "Column name longitude is not correct");
           $('#divLoader').hide();
+          $('#fileUpload').val("");
           return;
         }
         if (vehicle != "") {
@@ -115,7 +119,6 @@ export class UploadRouteExcelComponent implements OnInit {
           }
         }
       }
-      console.log(this.routeList);
       if (this.vehicleList.length > 0) {
         let fileName = "main";
         let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
