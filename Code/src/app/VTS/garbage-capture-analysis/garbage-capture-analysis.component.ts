@@ -4,6 +4,7 @@ import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-garbage-capture-analysis',
@@ -12,7 +13,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class GarbageCaptureAnalysisComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private modalService: NgbModal, private actRoute: ActivatedRoute, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   progressList: any[];
@@ -31,6 +32,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   filterList: any[];
   rowsProgressList: any;
   orderBy: any;
+  storageCityName: any;
   progressData: progressDetail = {
     category: "---",
     time: "00.00",
@@ -80,7 +82,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   onContainerScroll() {
     let element = <HTMLElement>document.getElementById("divList");
-    if ((element.offsetHeight + element.scrollTop) >= element.scrollHeight) {
+    if ((element.offsetHeight + element.scrollTop + 10) >= element.scrollHeight) {
       this.rowsProgressList = this.rowsProgressList + 15;
       this.progressList = this.filterList.slice(0, this.rowsProgressList);
     }
@@ -88,6 +90,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.storageCityName = this.commonService.getFireStoreCity();
     this.setUsersPermission();
     this.setDefaultArray();
     this.selectedOption = "0";
@@ -351,7 +354,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.allProgressList = [];
     this.getCategorySummary();
     $(this.divLoader).show();
-    let imageInstance = this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.commonService.getFireStoreCity() + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
+    let imageInstance = this.httpService.get("../../assets/jsons/WastebinMonitor/" + this.storageCityName + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + ".json").subscribe(data => {
       imageInstance.unsubscribe();
       if (data != null) {
         if (data[this.selectedOption] != null) {
@@ -359,7 +362,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
           let objData = data[this.selectedOption];
           let keyArray = Object.keys(objData);
           if (keyArray.length > 0) {
-            for (let i = 1; i < keyArray.length - 1; i++) {
+            for (let i = 1; i < keyArray.length; i++) {
               let imageId = keyArray[i];
               if (imageId != null) {
                 if (data[imageId]["user"] != null) {
@@ -413,9 +416,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
-                  if (i == keyArray.length - 2) {
-                    this.filterData();
-                  }                  
+                }
+                if (i == keyArray.length - 1) {
+                  this.filterData();
                 }
               }
             }
@@ -432,10 +435,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               let resolved = 0;
-              for (let i = 0; i < keyArray.length - 1; i++) {
+              for (let i = 0; i < keyArray.length; i++) {
                 let imageId = keyArray[i];
                 if (data[imageId]["user"] != null) {
-
                   let user = "";
                   let isClean = "कचरा उठा लिया है";
                   let penalty = 0;
@@ -485,12 +487,13 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   }
                   let timeStemp = new Date(this.commonService.setTodayDate() + " " + data[imageId]["time"]).getTime();
                   this.allProgressList.push({ userId: userId, imageId: imageId, address: data[imageId]["address"], isClean: isClean, time: data[imageId]["time"], penalty: penalty, user: user, imageUrl: data[imageId]["imageRef"], isAnalysis: isAnalysis, latLng: latLng, userType: this.userType, zone: zone, ward: ward, timeStemp: timeStemp, isResolved: isResolved, BvgAction: BvgAction, status: status });
+
                   let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId + "/penalty";
                   this.getPenalty(imageId, dbPath);
                   this.getUserName(imageId, userId);
-                  if (i == keyArray.length - 2) {
-                    this.filterData();
-                  }
+                }
+                if (i == keyArray.length - 1) {
+                  this.filterData();
                 }
               }
             }
@@ -587,7 +590,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
       }
     );
-
     this.progressData.resolved = 0;
   }
 
@@ -627,7 +629,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       this.progressData.ward = this.progressList[index]["ward"];
       $(this.txtPanalty).val(this.progressList[index]["penalty"]);
       $(this.dataId).val(index);
-      let city = this.commonService.getFireStoreCity();
+
       let imageName = this.progressList[index]["imageUrl"];
       let imageURL = this.imageNoFoundURL; let elementButton = <HTMLButtonElement>document.getElementById("btnAnalysis");
       if (this.progressList[index]["status"] == "Reject") {
@@ -641,10 +643,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         elementButton.disabled = false;
       }
       if (imageName.split('~')[0] != "2021") {
-        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
       else {
-        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
       }
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
@@ -692,11 +694,12 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         this.progressData.timeResolved = BvgAction["date"] + " " + BvgAction["time"];
         this.progressData.latLngResolved = BvgAction["latlng"];
         let imageURL = this.imageNoFoundURL;
+
         if (imageName.split('~')[0] != "2021") {
-          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
         }
         else {
-          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
         }
         let element = <HTMLImageElement>document.getElementById("mainImageResolved");
         element.src = imageURL;
@@ -730,6 +733,108 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         $("#tr" + i).addClass("active");
       }
     }
+  }
+
+  openModel(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 170;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  deleteData() {
+    let index = $(this.dataId).val();
+    let imageId = this.progressList[Number(index)]["imageId"];
+    let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId;
+    let deleteInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        deleteInstance.unsubscribe();
+        let dbSavePath = "WastebinMonitor/ImagesData_Deleted/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption + "/" + imageId;
+        this.db.database.ref(dbSavePath).update(data);
+        this.db.object(dbSavePath).update({ deletedBy: localStorage.getItem("userID") });
+        this.db.database.ref(dbPath).set(null);
+        this.setTotalCounts();
+        let list = [];
+        list = this.progressList.filter(item => item.imageId != imageId);
+        if (list.length > 0) {
+          this.progressList = list;
+        }
+        list = this.filterList.filter(item => item.imageId != imageId);
+        if (list.length > 0) {
+          this.filterList = list;
+        }
+        list = this.allProgressList.filter(item => item.imageId != imageId);
+        if (list.length > 0) {
+          this.allProgressList = list;
+        }
+        this.resetDetail();
+        this.commonService.setAlertMessage("success", "Data deleted successfully !!!");
+        this.closeModel();
+      });
+  }
+
+  setTotalCounts() {
+    let dbPath = "WastebinMonitor/Summary/CategoryWise/totalCount";
+    let totalInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        totalInstance.unsubscribe();
+        let total = 0;
+        if (count != null) {
+          total = Number(count) - 1;
+        }
+        dbPath = "WastebinMonitor/Summary/CategoryWise";
+        this.db.object(dbPath).update({ totalCount: total });
+      }
+    );
+
+    dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption + "/totalCount";
+    let categoryInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        categoryInstance.unsubscribe();
+        let total = 0;
+        if (count != null) {
+          total = Number(count) - 1;
+        }
+        dbPath = "WastebinMonitor/Summary/CategoryWise/" + this.selectedOption;
+        this.db.object(dbPath).update({ totalCount: total });
+      }
+    );
+
+    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption + "/totalCount";
+    let dateInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        dateInstance.unsubscribe();
+        let total = 0;
+        if (count != null) {
+          total = Number(count) - 1;
+        }
+        dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/" + this.selectedOption;
+        this.db.object(dbPath).update({ totalCount: total });
+        this.progressData.count = total;
+      }
+    );
+
+    dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/totalCount";
+    let dateWiseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      count => {
+        dateWiseInstance.unsubscribe();
+        let total = 0;
+        if (count != null) {
+          total = Number(count) - 1;
+        }
+        dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate;
+        this.db.object(dbPath).update({ totalCount: total });
+        this.progressData.totalCount = total;
+      }
+    );
   }
 
   analysis() {
