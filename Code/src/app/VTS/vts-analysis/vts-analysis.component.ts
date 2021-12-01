@@ -138,7 +138,7 @@ export class VtsAnalysisComponent implements OnInit {
         strokeWeight = $(this.txtStrokeWeightNav).val().toString();
       }
       if (strokeWeight == "") {
-        this.commonService.setAlertMessage("error", "Please enter line no. !!!");
+        this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
         return;
       }
       this.strokeWeight = Number(strokeWeight);
@@ -154,7 +154,7 @@ export class VtsAnalysisComponent implements OnInit {
     if (strokeWeight == "") {
       strokeWeight = $(this.txtStrokeWeightNav).val();
       if (strokeWeight == "") {
-        this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
+        this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
         return;
       }
     }
