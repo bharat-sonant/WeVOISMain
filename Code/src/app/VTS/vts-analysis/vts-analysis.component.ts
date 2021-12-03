@@ -427,6 +427,33 @@ export class VtsAnalysisComponent implements OnInit {
 
   //#endregion
 
+  //#region 
+
+  selectAll() {
+    if (this.lines.length > 0) {
+      for (let j = 0; j < this.lines.length; j++) {
+        let line = new google.maps.Polyline(this.polylines[j]);
+        var polyOptions = {
+          strokeColor: this.strockColorDone,
+          strokeOpacity: 1.0,
+          strokeWeight: this.strokeWeight
+        }
+        let lineNo = this.lines[j]["lineNo"];
+        this.polylines[j]["strokeColor"] = this.strockColorDone;
+        this.lines[j]["color"] = this.strockColorDone;
+        line.setOptions(polyOptions);
+        let time = this.commonService.getCurrentTimeWithSecond();
+        time = time + "-" + this.userId;
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        this.db.database.ref(dbPath).set(time);
+      }
+    }
+    this.commonService.setAlertMessage("success","All lines selected !!!");
+    this.closeModel();
+
+  }
+  //#endregion
+
   setMaps() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
@@ -445,6 +472,24 @@ export class VtsAnalysisComponent implements OnInit {
     let className = element.className;
     $("#collapsetwo").removeClass(className);
     $("#collapsetwo").addClass("panel-collapse collapse in");
+  }
+
+  
+  openModel(content: any) {
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let height = 145;
+    let width = 350;
+    let marginTop = "0px";
+    marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+    this.hideSetting();
   }
 
 }
