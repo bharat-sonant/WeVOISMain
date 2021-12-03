@@ -476,6 +476,11 @@ export class VtsAnalysisComponent implements OnInit {
 
   
   openModel(content: any) {
+    if(this.selectedWard=="0"){
+      this.commonService.setAlertMessage("error","Please select ward !!!");
+      this.hideSetting();
+      return;
+    }
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let height = 145;
@@ -485,6 +490,7 @@ export class VtsAnalysisComponent implements OnInit {
     $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
     $('div .modal-dialog-centered').css("margin-top", "26px");
+    this.hideSetting();
   }
 
   closeModel() {
