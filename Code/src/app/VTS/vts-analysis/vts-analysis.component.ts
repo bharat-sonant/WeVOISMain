@@ -42,6 +42,8 @@ export class VtsAnalysisComponent implements OnInit {
   isLineShow = true;
   strockColorNotDone = "#fa0505";
   strockColorDone = "#0ba118";
+  vtsVehicleList: any[];
+  vtsPolylines = [];
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -106,6 +108,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.vehicleList = [];
     this.wardLineLengthList = [];
     this.wardLineStatus = [];
+    this.vtsVehicleList = [];
   }
 
   setDefaultLocalStorage() {
@@ -188,23 +191,6 @@ export class VtsAnalysisComponent implements OnInit {
           line.setOptions(polyOptions);
         }
       }
-    }
-  }
-
-  //#endregion
-
-
-  //#region Total Ward Length
-  getWardTotalLength() {
-    this.progressData.wardLength = "0.00";
-    this.progressData.totalWardLength = 0;
-    if (this.selectedWard != "0") {
-      this.commonService.getWardTotalLength(this.selectedWard).then((totalLength) => {
-        if (totalLength != null) {
-          this.progressData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(2);
-          this.progressData.totalWardLength = Number(totalLength);
-        }
-      });
     }
   }
 
@@ -401,6 +387,8 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
+    this.vtsVehicleList = [];
+    this.changeWardSelection(this.selectedWard);
   }
 
   changeZoneSelection(filterVal: any) {
@@ -416,13 +404,21 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
+    if (this.vtsPolylines.length > 0) {
+      for (let i = 0; i < this.vtsPolylines.length; i++) {
+        if (this.vtsPolylines[i] != null) {
+          this.vtsPolylines[i].setMap(null);
+        }
+      }
+    }
+    this.vtsPolylines = [];
+    this.vehicleList = [];
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
     this.setWardBoundary();
     this.showHideBoundariesHtml();
     this.getWardLineStatus();
-    this.getWardTotalLength();
   }
 
   //#endregion
@@ -440,7 +436,7 @@ export class VtsAnalysisComponent implements OnInit {
         }
         let lineNo = this.lines[j]["lineNo"];
         this.polylines[j]["strokeColor"] = this.strockColorDone;
-        this.lines[j]["color"] = this.strockColorDone;
+        this.lines[j]["strokeColor"] = this.strockColorDone;
         line.setOptions(polyOptions);
         let time = this.commonService.getCurrentTimeWithSecond();
         time = time + "-" + this.userId;
@@ -448,10 +444,124 @@ export class VtsAnalysisComponent implements OnInit {
         this.db.database.ref(dbPath).set(time);
       }
     }
-    this.commonService.setAlertMessage("success","All lines selected !!!");
+    this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
-
   }
+
+  //#endregion
+
+  //#region vehicle 
+
+  addVehicle() {
+    let vehicleNo = $(this.txtVehicle).val().toString().trim();
+    if (this.selectedWard == "0" || this.selectedWard == null) {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+    if (vehicleNo == "") {
+      vehicleNo = $('#txtVehicleNav').val().toString().trim();
+      if (vehicleNo == "") {
+        this.commonService.setAlertMessage("error", "Please enter vehicle no. !!!");
+        return;
+      }
+    }
+    let vehicleDetail = this.vehicleList.find(item => item.vehicle == vehicleNo);
+    if (vehicleDetail != undefined) {
+      this.commonService.setAlertMessage("error", "This vehicle already added !!!");
+      return;
+    }
+    let latLng = [];
+    this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng });
+    $(this.txtVehicle).val("");
+    $(this.txtVehicleNav).val("");
+    this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
+  }
+
+  getVtsRoute(vehicle: any, index: any) {
+    let element = <HTMLInputElement>document.getElementById("chkVehicle" + index);
+    if (element.checked == true) {
+      if (this.vtsPolylines[index] != null) {
+        this.vtsPolylines[index].setMap(this.map);
+      }
+      else {
+        if (this.vtsVehicleList.length > 0) {
+          this.getVtsVehicleRoute(vehicle, index);
+        }
+        else {
+          this.getVTSVehicle(vehicle, index);
+        }
+      }
+    }
+    else {
+      if (this.vtsPolylines[index] != null) {
+        this.vtsPolylines[index].setMap(null);
+      }
+    }
+  }
+
+  getVTSVehicle(vehicle: any, index: any) {
+    let dbPath = "BVGRoutes/" + this.selectedDate + "/main";
+    let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        vehicleInstance.unsubscribe();
+        if (data.length > 0) {
+          this.vtsVehicleList = data;
+        }
+        this.getVtsVehicleRoute(vehicle, index);
+      });
+  }
+
+  getVtsVehicleRoute(vehicle: any, index: any) {
+    let detail = this.vtsVehicleList.find(item => item.vehicle == vehicle);
+    if (detail != undefined) {
+      let dbPath = "BVGRoutes/" + this.selectedDate + "/" + vehicle;
+      let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          routeInstance.unsubscribe();
+          if (data != null) {
+            let routeList = data.toString().split('~');
+            if (routeList.length > 0) {
+              let latLng = [];
+              for (let i = 0; i < routeList.length; i++) {
+                let lat = routeList[i].split(',')[0];
+                let lng = routeList[i].split(',')[1];
+                latLng.push({ lat: Number(lat), lng: Number(lng) });
+              }
+              let strockColor = this.getVTSLineColor(index);
+              let line = new google.maps.Polyline({
+                path: latLng,
+                strokeColor: strockColor,
+                strokeWeight: 4,
+              });
+              this.vtsPolylines[index] = line;
+              this.vtsPolylines[index].setMap(this.map);
+            }
+          }
+        }
+      );
+    }
+    else {
+      this.commonService.setAlertMessage("error", "Sorry this vehicle not run on selected date !!!");
+    }
+  }
+
+  getVTSLineColor(index: any) {
+    let color = "#0614f4";
+    if (index == 1) {
+      color = "orange";
+    }
+    else if (index == 2) {
+      color = "#ea06f4";
+    }
+    else if (index == 3) {
+      color = "#03fef7";
+    }
+    else if (index == 4) {
+      color = "#eafe03";
+    }
+    return color;
+  }
+
   //#endregion
 
   setMaps() {
@@ -474,10 +584,10 @@ export class VtsAnalysisComponent implements OnInit {
     $("#collapsetwo").addClass("panel-collapse collapse in");
   }
 
-  
+
   openModel(content: any) {
-    if(this.selectedWard=="0"){
-      this.commonService.setAlertMessage("error","Please select ward !!!");
+    if (this.selectedWard == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
       this.hideSetting();
       return;
     }

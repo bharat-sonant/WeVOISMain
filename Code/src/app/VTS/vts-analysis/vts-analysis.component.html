@@ -302,7 +302,7 @@
               <div>
                 <input id="txtVehicle" type="text" autocomplete="off"
                   style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-                <button 
+                <button (click)="addVehicle();"
                   style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
                   Add Vehicle
                 </button>
@@ -326,8 +326,9 @@
                               <!---->
                               <tr *ngFor="let dt of vehicleList, let i=index">
                                 <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
-                                <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
-                                    style="float:right; color:red; cursor: pointer;" ></i></td>
+                                <td class="text-left">{{dt.vehicle}} 
+                                  <input type="checkbox" style="float:right;">
+                                </td>
                               </tr>
                             </tbody>
                           </table>
@@ -359,7 +360,7 @@
   <!----Map Content on Mobile End----->
   
   <!----Map Content on Desktop Start----->
-  <div class="hide-on-mob" id="divJaipurGreaterDetail">
+  <div class="hide-on-mob" id="divJaipurGreaterDetail" style="display: none;">
     <div class="jaipur-line-details-box">
   
       <div class="seprater" style="display: none;">
@@ -398,7 +399,7 @@
       <div>
         <input id="txtVehicleNav" type="text" autocomplete="off"
           style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-        <button 
+        <button  (click)="addVehicle();"
           style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
           Add Vehicle
         </button>
@@ -422,8 +423,9 @@
                       <!---->
                       <tr *ngFor="let dt of vehicleList, let i=index">
                         <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
-                        <td class="text-left">{{dt.vehicle}} <i class="far fa-trash-alt"
-                            style="float:right; color:red; cursor: pointer;" ></i></td>
+                        <td class="text-left">{{dt.vehicle}} 
+                        <input id="chkVehicle{{i}}" type="checkbox" style="float:right" (change)="getVtsRoute(dt.vehicle,i)"> 
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -438,7 +440,6 @@
       <div class="d-ib">
         <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
         <input class="penalty-input" id="txtPenaltyNav" type="number" min="1" autocomplete="off" value="0" />
-  
       </div>
       <div class="d-ib">
         <button class="VTS-button"  style="margin-left: 10px!important;">Analysis
