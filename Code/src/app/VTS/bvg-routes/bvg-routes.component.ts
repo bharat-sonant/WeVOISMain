@@ -20,6 +20,8 @@ export class BvgRoutesComponent implements OnInit {
   db: any;
   cityName: any
   selectedDate: any;
+  year:any;
+  monthName:any;
   selectedVehicle: any;
   vehicleList: any[];
   polylines = [];
@@ -93,7 +95,10 @@ export class BvgRoutesComponent implements OnInit {
 
 
   getRouteVehicles() {
-    let dbPath = "BVGRoutes/" + this.selectedDate + "/main";
+    this.year = this.selectedDate.split('-')[0];
+    let month = this.selectedDate.split('-')[1];
+    this.monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
+    let dbPath = "BVGRoutes/" + this.year + "/" + this.monthName + "/" + this.selectedDate + "/main";
     let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         vehicleInstance.unsubscribe();
@@ -101,10 +106,6 @@ export class BvgRoutesComponent implements OnInit {
           for (let i = 0; i < data.length; i++) {
             let vehicle = data[i]["vehicle"];
             let isShow = 0;
-            if (i == 0) {
-              isShow = 1;
-              this.getRouteData(vehicle, i);
-            }
             this.vehicleList.push({ vehicle: vehicle, isShow: isShow });
           }
         }
@@ -115,7 +116,7 @@ export class BvgRoutesComponent implements OnInit {
     $('#divLoader').show();
     this.lines = [];
     this.bounds = new google.maps.LatLngBounds();
-    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + vehicle;
+    let dbPath = "BVGRoutes/" + this.year + "/" + this.monthName + "/" + this.selectedDate + "/" + vehicle;
     let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeInstance.unsubscribe();
