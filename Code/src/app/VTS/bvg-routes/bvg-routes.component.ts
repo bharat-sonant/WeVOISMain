@@ -122,7 +122,6 @@ export class BvgRoutesComponent implements OnInit {
         routeInstance.unsubscribe();
         if (data != null) {
           let list = data.toString().split("~");
-          console.log(list);
           if (list.length > 0) {
             let latLng = [];
             for (let i = 0; i < list.length; i++) {

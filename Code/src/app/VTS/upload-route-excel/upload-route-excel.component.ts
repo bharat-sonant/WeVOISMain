@@ -14,7 +14,6 @@ export class UploadRouteExcelComponent implements OnInit {
   constructor(private storage: AngularFireStorage, private fs: FirebaseService, private commonService: CommonService) { }
   db: any;
   cityName: any;
-  selectedDate: any;
   fileRouteList: any[];
   vehicleList: any[];
   file: any;
@@ -27,8 +26,6 @@ export class UploadRouteExcelComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.selectedDate = this.commonService.setTodayDate();
-    $('#txtDate').val(this.selectedDate);
   }
 
   resetAll() {
@@ -36,54 +33,51 @@ export class UploadRouteExcelComponent implements OnInit {
     this.vehicleList = [];
   }
 
-  onFileChanged(event) {
-    $('#divLoader').show();
-    this.fileRouteList = [];
-    this.file = event.target.files[0];
-    let fileReader = new FileReader();
-    fileReader.readAsArrayBuffer(this.file);
-    fileReader.onload = (e) => {
-      this.arrayBuffer = fileReader.result;
-      var data = new Uint8Array(this.arrayBuffer);
-      var arr = new Array();
-      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-      var bstr = arr.join("");
-      var workbook = XLSX.read(bstr, { type: "binary" });
-      this.first_sheet_name = workbook.SheetNames[0];
-      this.fileDate = this.commonService.getDateConvert(this.first_sheet_name);
-      var worksheet = workbook.Sheets[this.first_sheet_name];
-      this.fileRouteList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      $('#divLoader').hide();
-    }
-  }
-
-  setDate(filterVal: any) {
-    this.selectedDate = filterVal;
-  }
-
-  saveData() {
+  saveDataMultiple() {
     this.resetAll();
-    if (this.first_sheet_name == "") {
-      this.commonService.setAlertMessage("error", "Please select file !!!");
-      $('#fileUpload').val("");
-      return;
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    for (let i = 0; i < element.files.length; i++) {
+      let file = element.files[i];
+      let fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        this.arrayBuffer = fileReader.result;
+        var data = new Uint8Array(this.arrayBuffer);
+        var arr = new Array();
+        for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+        var bstr = arr.join("");
+        var workbook = XLSX.read(bstr, { type: "binary" });
+        this.first_sheet_name = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[this.first_sheet_name];
+        let fileList=XLSX.utils.sheet_to_json(worksheet, { raw: true });
+        this.saveData(fileList);
+      }
     }
+    setTimeout(() => {
+      $('#fileUpload').val("");
+      $('#divLoader').hide();
+      this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
+    }, 2000);
+  }
+
+  saveData(fileList:any) {
+    
     $('#divLoader').show();
 
-    if (this.fileRouteList.length > 0) {
-      for (let i = 0; i < this.fileRouteList.length; i++) {
-        let date = this.getExcelDatetoDate(this.fileRouteList[i]["Date"]);
-        let vehicle = this.fileRouteList[i]["Vehicle Name"];
-        let lat = this.fileRouteList[i]["latitude"];
-        let lng = this.fileRouteList[i]["longitude"];
+    if (fileList.length > 0) {
+      for (let i = 0; i < fileList.length; i++) {
+        let date = this.getExcelDatetoDate(fileList[i]["Date"]);
+        let vehicle = fileList[i]["Vehicle Name"];
+        let lat = fileList[i]["latitude"];
+        let lng = fileList[i]["longitude"];
         if (vehicle == undefined) {
-          vehicle = this.fileRouteList[i]["VehicleName"];
+          vehicle = fileList[i]["VehicleName"];
           if (vehicle == undefined) {
-            vehicle = this.fileRouteList[i]["vhicleName"];
+            vehicle = fileList[i]["vhicleName"];
             if (vehicle == undefined) {
-              vehicle = this.fileRouteList[i]["vhiclename"];
+              vehicle = fileList[i]["vhiclename"];
               if (vehicle == undefined) {
-                vehicle = this.fileRouteList[i]["Vhiclename"];
+                vehicle = fileList[i]["Vhiclename"];
                 if (vehicle == undefined) {
                   this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
                   $('#divLoader').hide();
@@ -140,7 +134,7 @@ export class UploadRouteExcelComponent implements OnInit {
           let date = this.routeList[i]["date"];
           let year = date.split('-')[0];
           let month = date.split('-')[1];
-          let monthName = this.commonService.getCurrentMonthName(Number(month)-1);
+          let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
           let vehicles = this.routeList[i]["vehicles"];
           if (vehicles.length > 0) {
             let vehicleList = [];
@@ -154,11 +148,7 @@ export class UploadRouteExcelComponent implements OnInit {
           }
         }
       }
-      setTimeout(() => {
-        $('#fileUpload').val("");
-        $('#divLoader').hide();
-        this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-      }, 2000);
+      
     }
   }
 
