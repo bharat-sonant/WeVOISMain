@@ -68,16 +68,12 @@ export class UploadRouteExcelComponent implements OnInit {
       $('#fileUpload').val("");
       return;
     }
-    if (this.selectedDate != this.fileDate) {
-      this.commonService.setAlertMessage("error", "Please select correct date or check sheet name !!!");
-      $('#fileUpload').val("");
-      return;
-    }
     $('#divLoader').show();
 
     if (this.fileRouteList.length > 0) {
       for (let i = 0; i < this.fileRouteList.length; i++) {
-        let vehicle = this.fileRouteList[i]["vehicleName"];
+        let date = this.getExcelDatetoDate(this.fileRouteList[i]["Date"]);
+        let vehicle = this.fileRouteList[i]["Vehicle Name"];
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
         if (vehicle == undefined) {
@@ -101,73 +97,63 @@ export class UploadRouteExcelComponent implements OnInit {
         if (vehicle != "") {
           if (lat != "") {
             if (lng != "") {
-              let vehicleDetail = this.routeList.find(item => item.vehicle == vehicle);
-              if (vehicleDetail == undefined) {
-                this.vehicleList.push({ vehicle: vehicle });
-                let points = [];
-                let latLng = lat + "," + lng;
-                let latLngString = latLng;
-                points.push({ latLng });
-                this.routeList.push({ vehicle: vehicle, points: points, latLngString: latLngString });
+              let latLng = lat + "," + lng;
+              let dateDetail = this.routeList.find(item => item.date == date);
+              if (dateDetail != undefined) {
+                let vehicles = dateDetail.vehicles;
+                let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
+                if (vehicleDetail != undefined) {
+                  let latLngString = latLng;
+                  vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
+                }
+                else {
+                  let latLngString = latLng;
+                  vehicles.push({ vehicle: vehicle, latLngString: latLngString });
+                  dateDetail.vehicles = vehicles;
+                }
               }
               else {
-                let latLng = lat + "," + lng;
-                vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLng;
-                vehicleDetail.points.push({ latLng });
+                let vehicles = [];
+                let latLngString = latLng;
+                vehicles.push({ vehicle: vehicle, latLngString: latLngString });
+                this.routeList.push({ date: date, vehicles: vehicles });
               }
             }
           }
         }
       }
-      if (this.vehicleList.length > 0) {
-        let fileName = "main";
-        let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
-        this.db.database.ref(dbPath).set(this.vehicleList);
-        // this.saveJsonFile(this.vehicleList, fileName);
-        if (this.routeList.length > 0) {
-          for (let i = 0; i < this.vehicleList.length; i++) {
-            let routeDetail = this.routeList.find(item => item.vehicle == this.vehicleList[i]["vehicle"]);
-            if (routeDetail != undefined) {
-              this.saveRealTimeData(routeDetail.points, this.vehicleList[i]["vehicle"], routeDetail.latLngString);
-              // this.saveJsonFile(routeDetailList, this.vehicleList[i]["vehicle"]);
+      if (this.routeList.length > 0) {
+        for (let i = 0; i < this.routeList.length; i++) {
+          let date = this.routeList[i]["date"];
+          let vehicles = this.routeList[i]["vehicles"];
+          if (vehicles.length > 0) {
+            let vehicleList = [];
+            for (let j = 0; j < vehicles.length; j++) {
+              vehicleList.push({ vehicle: vehicles[j]["vehicle"] });
+              this.saveRealTimeData(date,vehicles[j]["vehicle"], vehicles[j]["latLngString"]);
             }
+            let dbPath = "BVGRoutes/" + date + "/main";
+            this.db.database.ref(dbPath).set(vehicleList);
           }
-          setTimeout(() => {
-            $('#divLoader').hide();
-            this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-          }, 2000);
         }
       }
+      setTimeout(() => {
+        $('#fileUpload').val("");
+        $('#divLoader').hide();
+        this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
+      }, 2000);
     }
   }
 
-  saveRealTimeData(listArray: any, fileName: any, latLngString: any) {
-    let dbPath = "BVGRoutes/" + this.selectedDate + "/" + fileName;
+  saveRealTimeData(date:any,fileName: any, latLngString: any) {
+    let dbPath = "BVGRoutes/" + date + "/" + fileName;
     this.db.database.ref(dbPath).set(latLngString);
   }
 
-  saveJsonFile(listArray: any, fileName: any) {
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + this.commonService.getFireStoreCity() + "/BVGRouteJson/" + this.selectedDate + "/" + fileName + ".json";
-
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
-
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
+  getExcelDatetoDate(serial: any) {
+    var utc_days = Math.floor(serial - 25569);
+    var utc_value = utc_days * 86400;
+    var date_info = new Date(utc_value * 1000);
+    return this.commonService.getDateWithDate(date_info);
   }
 }
