@@ -74,14 +74,28 @@ export class UploadRouteExcelComponent implements OnInit {
       for (let i = 0; i < this.fileRouteList.length; i++) {
         let date = this.getExcelDatetoDate(this.fileRouteList[i]["Date"]);
         let vehicle = this.fileRouteList[i]["Vehicle Name"];
+
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
         if (vehicle == undefined) {
-          this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
-          $('#divLoader').hide();
-          $('#fileUpload').val("");
-          return;
+          vehicle = this.fileRouteList[i]["VehicleName"];
+          if (vehicle == undefined) {
+            vehicle = this.fileRouteList[i]["vhicleName"];
+            if (vehicle == undefined) {
+              vehicle = this.fileRouteList[i]["vhiclename"];
+              if (vehicle == undefined) {
+                vehicle = this.fileRouteList[i]["Vhiclename"];
+                if (vehicle == undefined) {
+                  this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
+                  $('#divLoader').hide();
+                  $('#fileUpload').val("");
+                  return;
+                }
+              }
+            }
+          }
         }
+
         if (lat == undefined) {
           this.commonService.setAlertMessage("error", "Column name latitude is not correct");
           $('#divLoader').hide();
@@ -130,7 +144,7 @@ export class UploadRouteExcelComponent implements OnInit {
             let vehicleList = [];
             for (let j = 0; j < vehicles.length; j++) {
               vehicleList.push({ vehicle: vehicles[j]["vehicle"] });
-              this.saveRealTimeData(date,vehicles[j]["vehicle"], vehicles[j]["latLngString"]);
+              this.saveRealTimeData(date, vehicles[j]["vehicle"], vehicles[j]["latLngString"]);
             }
             let dbPath = "BVGRoutes/" + date + "/main";
             this.db.database.ref(dbPath).set(vehicleList);
@@ -145,7 +159,7 @@ export class UploadRouteExcelComponent implements OnInit {
     }
   }
 
-  saveRealTimeData(date:any,fileName: any, latLngString: any) {
+  saveRealTimeData(date: any, fileName: any, latLngString: any) {
     let dbPath = "BVGRoutes/" + date + "/" + fileName;
     this.db.database.ref(dbPath).set(latLngString);
   }
