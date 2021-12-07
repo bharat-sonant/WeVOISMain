@@ -327,7 +327,8 @@
                               <tr *ngFor="let dt of vehicleList, let i=index">
                                 <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
                                 <td class="text-left">{{dt.vehicle}} 
-                                  <input type="checkbox" style="float:right;">
+                                  <span style="float:right;">{{dt.message}}
+                                  <input type="checkbox" [hidden]="dt.showCheckBox==0"></span>
                                 </td>
                               </tr>
                             </tbody>
@@ -424,7 +425,8 @@
                       <tr *ngFor="let dt of vehicleList, let i=index">
                         <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
                         <td class="text-left">{{dt.vehicle}} 
-                        <input id="chkVehicle{{i}}" type="checkbox" style="float:right" (change)="getVtsRoute(dt.vehicle,i)"> 
+                          <span style="float:right;">{{dt.message}}
+                            <input id="chkVehicle{{i}}" type="checkbox" [hidden]="dt.showCheckBox==0"  (change)="getVtsRoute(dt.vehicle,i)"></span>
                         </td>
                       </tr>
                     </tbody>

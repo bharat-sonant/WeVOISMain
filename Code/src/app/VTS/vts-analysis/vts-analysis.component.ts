@@ -453,6 +453,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region vehicle 
 
   addVehicle() {
+
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -470,8 +471,32 @@ export class VtsAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("error", "This vehicle already added !!!");
       return;
     }
+    if (this.vtsVehicleList.length == 0) {
+      let dbPath = "BVGRoutes/" + this.selectedDate + "/main";
+      let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          vehicleInstance.unsubscribe();
+          if (data.length > 0) {
+            this.vtsVehicleList = data;
+          }
+          this.addVehicleList(vehicleNo);
+        });
+    }
+    else {
+      this.addVehicleList(vehicleNo);
+    }
+  }
+
+  addVehicleList(vehicleNo: any) {
     let latLng = [];
-    this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng });
+    let message = "Route not Imported";
+    let showCheckBox = 0;
+    let detail = this.vtsVehicleList.find(item => item.vehicle == vehicleNo);
+    if (detail != undefined) {
+      message = "Show Route";
+      showCheckBox = 1;
+    }
+    this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message });
     $(this.txtVehicle).val("");
     $(this.txtVehicleNav).val("");
     this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
@@ -484,12 +509,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.vtsPolylines[index].setMap(this.map);
       }
       else {
-        if (this.vtsVehicleList.length > 0) {
-          this.getVtsVehicleRoute(vehicle, index);
-        }
-        else {
-          this.getVTSVehicle(vehicle, index);
-        }
+        this.getVtsVehicleRoute(vehicle, index);
       }
     }
     else {
@@ -497,18 +517,6 @@ export class VtsAnalysisComponent implements OnInit {
         this.vtsPolylines[index].setMap(null);
       }
     }
-  }
-
-  getVTSVehicle(vehicle: any, index: any) {
-    let dbPath = "BVGRoutes/" + this.selectedDate + "/main";
-    let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        vehicleInstance.unsubscribe();
-        if (data.length > 0) {
-          this.vtsVehicleList = data;
-        }
-        this.getVtsVehicleRoute(vehicle, index);
-      });
   }
 
   getVtsVehicleRoute(vehicle: any, index: any) {
