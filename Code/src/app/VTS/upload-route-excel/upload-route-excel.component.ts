@@ -74,7 +74,6 @@ export class UploadRouteExcelComponent implements OnInit {
       for (let i = 0; i < this.fileRouteList.length; i++) {
         let date = this.getExcelDatetoDate(this.fileRouteList[i]["Date"]);
         let vehicle = this.fileRouteList[i]["Vehicle Name"];
-
         let lat = this.fileRouteList[i]["latitude"];
         let lng = this.fileRouteList[i]["longitude"];
         if (vehicle == undefined) {
@@ -139,14 +138,18 @@ export class UploadRouteExcelComponent implements OnInit {
       if (this.routeList.length > 0) {
         for (let i = 0; i < this.routeList.length; i++) {
           let date = this.routeList[i]["date"];
+          let year = date.split('-')[0];
+          let month = date.split('-')[1];
+          let monthName = this.commonService.getCurrentMonthName(Number(month)-1);
           let vehicles = this.routeList[i]["vehicles"];
           if (vehicles.length > 0) {
             let vehicleList = [];
             for (let j = 0; j < vehicles.length; j++) {
               vehicleList.push({ vehicle: vehicles[j]["vehicle"] });
-              this.saveRealTimeData(date, vehicles[j]["vehicle"], vehicles[j]["latLngString"]);
+              let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/" + vehicles[j]["vehicle"];
+              this.db.database.ref(dbPath).set(vehicles[j]["latLngString"]);
             }
-            let dbPath = "BVGRoutes/" + date + "/main";
+            let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/main";
             this.db.database.ref(dbPath).set(vehicleList);
           }
         }
@@ -157,11 +160,6 @@ export class UploadRouteExcelComponent implements OnInit {
         this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
       }, 2000);
     }
-  }
-
-  saveRealTimeData(date: any, fileName: any, latLngString: any) {
-    let dbPath = "BVGRoutes/" + date + "/" + fileName;
-    this.db.database.ref(dbPath).set(latLngString);
   }
 
   getExcelDatetoDate(serial: any) {
