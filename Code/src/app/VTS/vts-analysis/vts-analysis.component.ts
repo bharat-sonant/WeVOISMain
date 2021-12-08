@@ -472,7 +472,7 @@ export class VtsAnalysisComponent implements OnInit {
       return;
     }
     if (this.vtsVehicleList.length == 0) {
-      let dbPath = "BVGRoutes/"+this.currentYear+"/"+this.currentMonthName+"/" + this.selectedDate + "/main";
+      let dbPath = "BVGRoutes/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/main";
       let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
           vehicleInstance.unsubscribe();
@@ -522,7 +522,7 @@ export class VtsAnalysisComponent implements OnInit {
   getVtsVehicleRoute(vehicle: any, index: any) {
     let detail = this.vtsVehicleList.find(item => item.vehicle == vehicle);
     if (detail != undefined) {
-      let dbPath = "BVGRoutes/"+this.currentYear+"/"+this.currentMonthName+"/" + this.selectedDate + "/" + vehicle;
+      let dbPath = "BVGRoutes/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + vehicle;
       let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           routeInstance.unsubscribe();
