@@ -448,12 +448,71 @@ export class VtsAnalysisComponent implements OnInit {
     this.closeModel();
   }
 
+  
+  resetAllLines() {
+    if (this.lines.length > 0) {
+      for (let j = 0; j < this.lines.length; j++) {
+        let line = new google.maps.Polyline(this.polylines[j]);
+        var polyOptions = {
+          strokeColor: this.strockColorNotDone,
+          strokeOpacity: 1.0,
+          strokeWeight: this.strokeWeight
+        }
+        line.setOptions(polyOptions);
+        let lineNo = this.lines[j]["lineNo"];
+        this.polylines[j]["strokeColor"] = this.strockColorNotDone;
+        this.lines[j]["color"] = this.strockColorNotDone;
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+        this.db.database.ref(dbPath).set(null);
+      }
+
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
+      this.db.database.ref(dbPath).set(null);
+      let date = this.commonService.getTodayDateTime();
+      this.db.object(dbPath).update({ resetBy: this.userId, resetDateTime: date });
+      this.commonService.setAlertMessage("success", "All lines resetted !!!");
+      this.closeModel();
+    }
+  }
+
+  
+  setPreviousData() {
+    let date = $(this.txtPreDate).val().toString();
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
+    let year = date.split("-")[0];
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
+    let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        preDataInstance.unsubscribe();
+        if (data != null) {
+          if (data["LineStatus"] != null) {
+            let obj = data["LineStatus"];
+            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+            if (obj != null) {
+              let keyArray = Object.keys(obj);
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let newPath = dbPath + "/" + lineNo;
+                this.db.database.ref(newPath).set(obj[lineNo]);
+              }
+            }
+            this.getWardLineStatus();
+            $(this.txtPreDate).val("");
+          }
+        }
+      });
+    this.hideSetting();
+  }
+
   //#endregion
 
   //#region vehicle 
 
   addVehicle() {
-
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");

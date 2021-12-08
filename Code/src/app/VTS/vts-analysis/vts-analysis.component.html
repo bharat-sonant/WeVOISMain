@@ -37,12 +37,12 @@
   
       <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
         <div class="fix-home">
-          <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
+          <div class="float-first" style="margin-left: 10px; margin-top: 14px; display: none;">
             <i id="iconDone" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
             <i id="iconPending" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
             <h6 id="divTracking" style="font-size: 9px!important;">Analysis</h6>
           </div>
-          <div class="float-second" style="margin-top: 10px;">
+          <div class="float-second" style="margin-top: 10px;display: none;">
             <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
                 class="img-fluid header-penalty" alt=""> </span><br>
             <h6 style="font-size: 9px!important;">Penalty</h6>
@@ -80,17 +80,16 @@
                     </div>
                     <div class="setting-box">
                       <p> Reset All</p>
-                      <button type="button" class="btn btn-main btn-success" ><i
+                      <button type="button" class="btn btn-main btn-success"  (click)="openModel(contentPlanConfirm)"><i
                           class="fas fa-check-double"></i></button>
                     </div>
                     <div class="setting-box">
                       <p class="previous-data"><b>Get Previous Data</b></p> <br>
                       <input class="date-input date" id="txtPreDate" type="date"
                         >
-                      <button type="button" class="btn btn-success" >Get</button>
+                      <button type="button" class="btn btn-success" (click)="setPreviousData();">Get</button>
                     </div>
-                    <div class="setting-box" style="padding-bottom: 10px!important;">
-  
+                    <div class="setting-box" style="padding-bottom: 10px!important;">  
                       <button  class="btn-primary" (click)="getNextPrevious('pre');"
                         style="background-color: #0ba118!important;" >
                         << </button>
@@ -100,8 +99,7 @@
                           <button  class="btn-primary" (click)="getNextPrevious('next');"
                             style="background-color: #0ba118!important;">
                             >>
-                          </button>
-  
+                          </button>  
                     </div>
                   </div>
                 </div>
@@ -161,7 +159,7 @@
           </div>
   
           <div class="col-4 mt-10 pr-0">
-            <div class="mb-home  text-left">
+            <div class="mb-home  text-left" style="display: none;">
               <i id="iconDoneNav" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
               <i id="iconPendingNav" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
               <h6 id="divTrackingNav" style="font-size: 9px!important;">Analysis</h6>
@@ -201,14 +199,14 @@
                       </div>
                       <div class="setting-box">
                         <p> Reset All</p>
-                        <button type="button" class="btn btn-main btn-success" ><i
+                        <button type="button" class="btn btn-main btn-success" (click)="openModel(contentPlanConfirm)"><i
                             class="fas fa-check-double"></i></button>
                       </div>
                       <div class="setting-box">
                         <p class="previous-data"><b>Get Previous Data</b></p> <br>
                         <input class="date-input date-input-mob-1 date" id="txtPreDateNav" type="date"
                          >
-                        <button type="button" class="btn btn-success" >Get</button>
+                        <button type="button" class="btn btn-success" (click)="setPreviousData();">Get</button>
                       </div>
                       <div class="setting-box" style="padding-bottom: 10px!important;">
   
@@ -428,7 +426,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+    <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px; display: none;">
       <div class="d-ib">
         <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
         <input class="penalty-input" id="txtPenaltyNav" type="number" min="1" autocomplete="off" value="0" />
@@ -475,7 +473,7 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-6" style="text-align: center;">
-              <button class="btn btn-success "  style="background-color: #0ba118;">
+              <button class="btn btn-success " (click)="resetAllLines();"  style="background-color: #0ba118;">
                 Confirm</button>
             </div>
             <div class="col-md-6" style="text-align: center;">
