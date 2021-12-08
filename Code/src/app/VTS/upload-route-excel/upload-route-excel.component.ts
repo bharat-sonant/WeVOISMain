@@ -137,7 +137,6 @@ export class UploadRouteExcelComponent implements OnInit {
         }
       }
       if (this.routeList.length > 0) {
-        console.log(this.routeList);
         for (let i = 0; i < this.routeList.length; i++) {
           let date = this.routeList[i]["date"];
           let year = date.split('-')[0];
