@@ -20,8 +20,8 @@ export class BvgRoutesComponent implements OnInit {
   db: any;
   cityName: any
   selectedDate: any;
-  year:any;
-  monthName:any;
+  year: any;
+  monthName: any;
   selectedVehicle: any;
   vehicleList: any[];
   polylines = [];
@@ -121,34 +121,39 @@ export class BvgRoutesComponent implements OnInit {
       data => {
         routeInstance.unsubscribe();
         if (data != null) {
-          let list = data.toString().split("~");
-          if (list.length > 0) {
-            let latLng = [];
-            for (let i = 0; i < list.length; i++) {
-              let lat = list[i].split(',')[0];
-              let lng = list[i].split(',')[1];
-              latLng.push({ lat: Number(lat), lng: Number(lng) });
-              this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
-              if (this.showMarker == true) {
-                this.setMarker(Number(lat), Number(lng));
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let list = data[index].toString().split("~");
+              if (list.length > 0) {
+                let latLng = [];
+                for (let j = 0; j < list.length; j++) {
+                  let lat = list[j].split(',')[0];
+                  let lng = list[j].split(',')[1];
+                  latLng.push({ lat: Number(lat), lng: Number(lng) });
+                  this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+                  if (this.showMarker == true) {
+                    this.setMarker(Number(lat), Number(lng));
+                  }
+                }
+                this.lines = latLng;
+                if (this.showLines == true) {
+                  let strockColor = "red";
+                  let line = new google.maps.Polyline({
+                    path: latLng,
+                    strokeColor: strockColor,
+                    strokeWeight: 4,
+                  });
+                  this.polylines[i] = line;
+                  this.polylines[i].setMap(this.map);
+                }
+                this.map.fitBounds(this.bounds);
               }
             }
-            this.lines = latLng;
-            if (this.showLines == true) {
-              let strockColor = "red";
-              let line = new google.maps.Polyline({
-                path: latLng,
-                strokeColor: strockColor,
-                strokeWeight: 4,
-              });
-              this.polylines[0] = line;
-              this.polylines[0].setMap(this.map);
-            }
-
-            this.map.fitBounds(this.bounds);
-            $('#divLoader').hide();
           }
         }
+        $('#divLoader').hide();
       });
   }
 
@@ -249,5 +254,4 @@ export class BvgRoutesComponent implements OnInit {
       this.markerList = [];
     }
   }
-
 }

@@ -49,7 +49,7 @@ export class UploadRouteExcelComponent implements OnInit {
         var workbook = XLSX.read(bstr, { type: "binary" });
         this.first_sheet_name = workbook.SheetNames[0];
         var worksheet = workbook.Sheets[this.first_sheet_name];
-        let fileList=XLSX.utils.sheet_to_json(worksheet, { raw: true });
+        let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
         this.saveData(fileList);
       }
     }
@@ -57,11 +57,11 @@ export class UploadRouteExcelComponent implements OnInit {
       $('#fileUpload').val("");
       $('#divLoader').hide();
       this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-    }, 2000);
+    }, 3000);
   }
 
-  saveData(fileList:any) {
-    
+  saveData(fileList: any) {
+
     $('#divLoader').show();
 
     if (fileList.length > 0) {
@@ -111,18 +111,25 @@ export class UploadRouteExcelComponent implements OnInit {
                 let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
                 if (vehicleDetail != undefined) {
                   let latLngString = latLng;
+                  let points = vehicleDetail.points;
+                  points.push({ latLng: latLng });
+                  vehicleDetail.points = points;
                   vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
                 }
                 else {
                   let latLngString = latLng;
-                  vehicles.push({ vehicle: vehicle, latLngString: latLngString });
+                  let points = [];
+                  points.push({ latLng: latLng });
+                  vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
                   dateDetail.vehicles = vehicles;
                 }
               }
               else {
                 let vehicles = [];
                 let latLngString = latLng;
-                vehicles.push({ vehicle: vehicle, latLngString: latLngString });
+                let points = [];
+                points.push({ latLng: latLng });
+                vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
                 this.routeList.push({ date: date, vehicles: vehicles });
               }
             }
@@ -130,25 +137,70 @@ export class UploadRouteExcelComponent implements OnInit {
         }
       }
       if (this.routeList.length > 0) {
+        console.log(this.routeList);
         for (let i = 0; i < this.routeList.length; i++) {
           let date = this.routeList[i]["date"];
           let year = date.split('-')[0];
           let month = date.split('-')[1];
           let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
           let vehicles = this.routeList[i]["vehicles"];
-          if (vehicles.length > 0) {
-            let vehicleList = [];
-            for (let j = 0; j < vehicles.length; j++) {
-              vehicleList.push({ vehicle: vehicles[j]["vehicle"] });
-              let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/" + vehicles[j]["vehicle"];
-              this.db.database.ref(dbPath).set(vehicles[j]["latLngString"]);
+
+          let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/main";
+          let mainInstance = this.db.list(dbPath).valueChanges().subscribe(
+            data => {
+              mainInstance.unsubscribe();
+              let vehicleList = data;
+              for (let j = 0; j < vehicles.length; j++) {
+                let detail = vehicleList.find(item => item.vehicle == vehicles[j]["vehicle"]);
+                if (detail == undefined) {
+                  vehicleList.push({ vehicle: vehicles[j]["vehicle"] });
+                  let latLngString = vehicles[j]["latLngString"];
+                  let dbPathVehicle = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/" + vehicles[j]["vehicle"] + "/0";
+                  this.db.database.ref(dbPathVehicle).set(latLngString);
+                }
+                else {
+                  let dbPathVehicle = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/" + vehicles[j]["vehicle"];
+                  let vehicleInstance = this.db.list(dbPathVehicle).valueChanges().subscribe(
+                    vehicleData => {
+                      vehicleInstance.unsubscribe();
+                      let isData = false;
+                      let latLngString = vehicles[j]["latLngString"];
+                      let updateIndex = -1;
+                      if (vehicleData.length > 0) {
+                        let newLatLngList = vehicles[j]["points"];
+                        for (let k = 0; k < vehicleData.length; k++) {
+                          let count = 0;
+                          let oldLatLngList = vehicleData[k].split('~');
+                          for (let l = 0; l < oldLatLngList.length; l++) {
+                            let latLngDetail = newLatLngList.find(item => item.latLng == oldLatLngList[l]);
+                            if (latLngDetail != undefined) {
+                              count = count + 1;
+                              let percentage = Number(((count / newLatLngList.length) * 100).toFixed(0));
+                              if (percentage >= 50) {
+                                isData = true;
+                                updateIndex = k;
+                                k = vehicleData.length;
+                                l = oldLatLngList.length;
+                              }
+                            }
+                          }
+                        }
+                      }
+                      if (isData == false) {
+                        this.db.database.ref(dbPathVehicle + "/" + vehicleData.length).set(latLngString);
+                      }
+                      else {
+                        this.db.database.ref(dbPathVehicle + "/" + updateIndex).set(latLngString);
+                      }
+                    }
+                  );
+                }
+              }
+              this.db.database.ref(dbPath).set(vehicleList);
             }
-            let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/main";
-            this.db.database.ref(dbPath).set(vehicleList);
-          }
+          );
         }
       }
-      
     }
   }
 
