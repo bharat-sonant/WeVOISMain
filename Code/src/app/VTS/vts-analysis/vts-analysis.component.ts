@@ -539,7 +539,7 @@ export class VtsAnalysisComponent implements OnInit {
               let line = new google.maps.Polyline({
                 path: latLng,
                 strokeColor: strockColor,
-                strokeWeight: 4,
+                strokeWeight: 1,
               });
               this.vtsPolylines[index] = line;
               this.vtsPolylines[index].setMap(this.map);
