@@ -1,7 +1,5 @@
 'use strict';
-
 /// <reference types="@types/googlemaps" />
-
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../../services/common/common.service';
@@ -45,7 +43,6 @@ export class VtsReportComponent {
   lines: any[];
   txtPenalty = "#txtPenalty";
   chart: any;
-
 
   constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient) { }
 
@@ -104,7 +101,6 @@ export class VtsReportComponent {
 
   setKml() {
     this.commonService.setWardBoundary(this.selectedWardNo, this.map).then((wardKML: any) => {
-
     });
   }
 
