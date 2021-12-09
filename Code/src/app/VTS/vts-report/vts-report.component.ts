@@ -210,7 +210,9 @@ export class VtsReportComponent {
         let startDate = new Date(this.routeMainList[i]["startDate"]);
         let endDate = new Date(this.routeMainList[i]["endDate"]);
         if (selectedDate >= startDate && selectedDate <= endDate) {
-          this.routeList.push({ routeKey: this.routeMainList[i]["routeKey"], routeName: this.routeMainList[i]["routeName"], key: this.routeMainList[i]["key"], routeLines: this.routeMainList[i]["routeLines"] });
+          if (this.routeMainList[i]["routeLines"].length > 0) {
+            this.routeList.push({ routeKey: this.routeMainList[i]["routeKey"], routeName: this.routeMainList[i]["routeName"], key: this.routeMainList[i]["key"], routeLines: this.routeMainList[i]["routeLines"] });
+          }
         }
       }
     }
