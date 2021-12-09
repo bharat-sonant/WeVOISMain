@@ -21,6 +21,7 @@ export class VtsReportComponent {
   wardList: any[];
   routeMainList: any[];
   routeList: any[];
+  wardLineLengthList: any[];
   reportData: ReportData =
     {
       zoneName: "--",
@@ -28,7 +29,6 @@ export class VtsReportComponent {
       vehicleNo: "--",
       wardLength: "0.000",
       coveredLength: "0.000"
-
     };
   selectedWardNo: any;
   selectedWardName: any;
@@ -43,7 +43,6 @@ export class VtsReportComponent {
   cityName: any;
   percentage: any;
   lines: any[];
-  routeData: any;
 
   constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient) { }
 
@@ -62,8 +61,10 @@ export class VtsReportComponent {
     this.commonService.getZoneWiseWard().then((zoneList: any) => {
       this.zoneList = JSON.parse(zoneList);
     });
+    this.routeMainList = [];
     this.routeList = [];
     this.wardList = [];
+    this.wardLineLengthList = [];
     this.setMap();
     this.setContainerHeight();
     this.percentage = 0;
@@ -79,7 +80,9 @@ export class VtsReportComponent {
   changeZoneSelection(filterVal: any) {
     this.selectedWardNo = "0";
     this.selectedWardName = "---";
-    this.resetAll();
+    this.routeMainList = [];
+    this.routeList = [];
+    this.showReport();
     this.drawChart();
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
@@ -98,10 +101,13 @@ export class VtsReportComponent {
 
   setKml() {
     this.commonService.setWardBoundary(this.selectedWardNo, this.map).then((wardKML: any) => {
+
     });
   }
 
   changeWardSelection(filterVal: any) {
+    this.routeMainList = [];
+    this.routeList = [];
     this.selectedWardNo = filterVal;
     if (filterVal != "0") {
       this.selectedWardName = "Ward " + filterVal;
@@ -109,9 +115,17 @@ export class VtsReportComponent {
     else {
       this.selectedWardName = "---";
     }
+    this.getWardLineLength();
     this.getRoute();
+  }
 
-    this.showReport();
+  getWardLineLength() {
+    this.commonService.getWardLineLength(this.selectedWardNo).then((lengthList: any) => {
+      if (lengthList != null) {
+        this.wardLineLengthList = JSON.parse(lengthList);
+        this.showReport();
+      }
+    });
   }
 
   changeRouteSelection(filterVal: any) {
@@ -122,44 +136,46 @@ export class VtsReportComponent {
   getRoute() {
     this.routeMainList = [];
     this.routeList = [];
-    let dbPath = "Route/" + this.selectedWardNo;
-    let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        routeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let routeKey = keyArray[i];
-              let routeName = data[routeKey]["name"];
-              let routeObject = data[routeKey]["Routes"];
-              let routeKeyArray = Object.keys(routeObject);
-              if (routeKeyArray.length > 0) {
-                for (let j = 0; j < routeKeyArray.length - 1; j++) {
-                  let key = routeKeyArray[j];
-                  let startDate = routeObject[key]["startDate"];
-                  let endDate = this.selectedDate;
-                  if (routeObject[key]["endDate"] != null) {
-                    endDate = routeObject[key]["endDate"];
-                  }
-                  let routeLines = [];
-                  if (routeObject[key]["routeLines"] != null) {
-                    let list = routeObject[key]["routeLines"].split(',');
-                    if (list.length > 0) {
-                      for (let k = 0; k < list.length; k++) {
-                        routeLines.push({ lineNo: list[k] });
+    if (this.selectedWardNo != "0") {
+      let dbPath = "Route/" + this.selectedWardNo;
+      let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          routeInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let routeKey = keyArray[i];
+                let routeName = data[routeKey]["name"];
+                let routeObject = data[routeKey]["Routes"];
+                let routeKeyArray = Object.keys(routeObject);
+                if (routeKeyArray.length > 0) {
+                  for (let j = 0; j < routeKeyArray.length - 1; j++) {
+                    let key = routeKeyArray[j];
+                    let startDate = routeObject[key]["startDate"];
+                    let endDate = this.commonService.setTodayDate();
+                    if (routeObject[key]["endDate"] != null) {
+                      endDate = routeObject[key]["endDate"];
+                    }
+                    let routeLines = [];
+                    if (routeObject[key]["routeLines"] != null) {
+                      let list = routeObject[key]["routeLines"].split(',');
+                      if (list.length > 0) {
+                        for (let k = 0; k < list.length; k++) {
+                          routeLines.push({ lineNo: list[k], isDone: 0 });
+                        }
                       }
                     }
+                    this.routeMainList.push({ routeKey: routeKey, routeName: routeName, key: key, startDate: startDate, endDate: endDate, routeLines: routeLines });
                   }
-                  this.routeMainList.push({ routeKey: routeKey, routeName: routeName, key: key, startDate: startDate, endDate: endDate, routeLines: routeLines });
                 }
               }
+              this.getRouteList();
             }
-            this.getRouteList();
           }
         }
-      }
-    );
+      );
+    }
   }
 
   getRouteList() {
@@ -176,6 +192,8 @@ export class VtsReportComponent {
   }
 
   setDate(filterVal: any, type: string) {
+    this.routeList = [];
+    this.selectedRouteNo="0";
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -190,6 +208,7 @@ export class VtsReportComponent {
       return;
     }
     $("#txtDate").val(this.selectedDate);
+    this.getRouteList();
     this.showReport();
   }
 
@@ -209,8 +228,8 @@ export class VtsReportComponent {
     this.reportData.wardLength = "0.000";
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
-        if(this.polylines[i]!=undefined){
-        this.polylines[i].setMap(null);
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
         }
       }
     }
@@ -219,47 +238,49 @@ export class VtsReportComponent {
   }
 
   getAllLinesFromJson() {
-    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWardNo + ".json").subscribe(data => {
-      if (data != null) {
-        var keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            this.wardLines = keyArray.length;
-            let lineNo = keyArray[i];
-            let routeDetail = this.routeList.find(item => item.routeKey == this.selectedRouteNo);
-            if (routeDetail != undefined) {
-              let routeLines = routeDetail.routeLines;
-              let lineDetail = routeLines.find(item => item.lineNo == lineNo);
-              if (lineDetail != undefined) {
-                if (data[lineNo] != null) {
-                  var latLng = [];
-                  if (data[lineNo]["points"] != undefined) {
-                    if (data[lineNo]["points"].length > 0) {
-                      for (let j = 0; j < data[lineNo]["points"].length; j++) {
-                        latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+      this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWardNo + ".json").subscribe(data => {
+        if (data != null) {
+          let routeLines = [];
+          var keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              this.wardLines = keyArray.length;
+              let lineNo = keyArray[i];
+              let routeDetail = this.routeList.find(item => item.routeKey == this.selectedRouteNo);
+              if (routeDetail != undefined) {
+                routeLines = routeDetail.routeLines;
+                let lineDetail = routeLines.find(item => item.lineNo == lineNo);
+                if (lineDetail != undefined) {
+                  if (data[lineNo] != null) {
+                    var latLng = [];
+                    if (data[lineNo]["points"] != undefined) {
+                      if (data[lineNo]["points"].length > 0) {
+                        for (let j = 0; j < data[lineNo]["points"].length; j++) {
+                          latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                        }
+                        this.lines.push({
+                          lineNo: lineNo,
+                          latlng: latLng,
+                          color: "#fa0505",
+                        });
+                        this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedWardNo, routeLines);
                       }
-                      this.lines.push({
-                        lineNo: lineNo,
-                        latlng: latLng,
-                        color: "#fa0505",
-                      });
-                      this.plotLineOnMap(lineNo, latLng, i - 1, this.selectedWardNo);
                     }
                   }
                 }
               }
             }
           }
+          setTimeout(() => {
+            this.getSummary(routeLines);
+            this.drawChart();
+          }, 1000);
         }
-        this.getSummary();
-        setTimeout(() => {
-          this.drawChart();
-        }, 1000);
-      }
-    });
+      });
+    
   }
 
-  plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any) {
+  plotLineOnMap(lineNo: any, latlngs: any, i: any, wardNo: any, routeLines: any) {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
@@ -268,52 +289,47 @@ export class VtsReportComponent {
       let strockColor = "#fa0505";
       if (status != null) {
         strockColor = "#0ba118";
+        let lineDetail = routeLines.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          lineDetail.isDone = 1;
+        }
+      }
+      else{
+        let lineDetail = routeLines.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          lineDetail.isDone = 0;
+        }
       }
       let line = new google.maps.Polyline({
         path: latlngs,
         strokeColor: strockColor,
         strokeWeight: 2,
       });
+
       this.polylines[i] = line;
       this.polylines[i].setMap(this.map);
     });
   }
 
-  getSummary() {
-    this.commonService.getWardTotalLength(this.selectedWardNo).then((totalLength) => {
-      if (totalLength != null) {
-        this.reportData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(3);
-      }
-      else {
-        this.reportData.wardLength = "0.000";
-      }
-    });
-
-    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedWardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    let workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
-      workerDetails.unsubscribe();
-      if (workerData != null) {
-        if (workerData["vehicles"] != null) {
-          let vechileList = workerData["vehicles"].split(',');
-          if (vechileList.length > 0) {
-            for (let i = 0; i < vechileList.length; i++) {
-              if (i == 0) {
-                this.reportData.vehicleNo = vechileList[i];
-              }
-              else {
-                this.reportData.vehicleNo = this.reportData.vehicleNo + ", " + vechileList[i];
-              }
-            }
+  getSummary(routeLines: any) {
+    if (routeLines.length > 0) {
+      let totalLength = 0;
+      let coveredLength = 0;
+      for (let i = 0; i < routeLines.length; i++) {
+        let lineNo = routeLines[i]["lineNo"];
+        let isDone = routeLines[i]["isDone"];
+        let lengthDetail = this.wardLineLengthList.find(item => item.lineNo == lineNo);
+        if (lengthDetail != undefined) {
+          totalLength = totalLength + Number(lengthDetail.length);
+          if (isDone == 1) {
+            coveredLength = coveredLength + Number(lengthDetail.length);
           }
         }
-        if (workerData["workPerc"] != null) {
-          this.percentage = Number(workerData["workPerc"]);
-        }
-        if (workerData["coveredLength"] != null) {
-          this.reportData.coveredLength = (parseFloat(workerData["coveredLength"].toString()) / 1000).toFixed(3) + "";
-        }
       }
-    });
+      this.reportData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(3);
+      this.reportData.coveredLength = (parseFloat(coveredLength.toString()) / 1000).toFixed(3) + "";
+      this.percentage = (coveredLength / totalLength) * 100;
+    }
   }
 
   drawChart() {
