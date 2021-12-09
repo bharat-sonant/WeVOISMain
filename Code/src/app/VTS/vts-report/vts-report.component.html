@@ -17,8 +17,20 @@
               </select>
               <select class="caret-select" id="ddlWard" style="width: 150px;"
                 (change)="changeWardSelection($event.target.value)">
+                <option value="0">
+                    --Select Ward--
+                  </option>
                 <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
                   {{ward.wardName}}
+                </option>
+              </select>
+              <select class="caret-select" id="ddlRoutes" style="width: 150px;"
+                (change)="changeRouteSelection($event.target.value)">
+                <option value="0">
+                    --Select Route--
+                  </option>
+                <option *ngFor="let route of routeList" value={{route.routeKey}}>
+                  {{route.routeName}}
                 </option>
               </select>
               </div>
@@ -27,7 +39,6 @@
 </div>
 <div class="main-content report-content" id="divReport">
     <div class="card">
-
         <div class="row no-gutters">
             <div class="col-md-6">
                 <div class="card-header ">
