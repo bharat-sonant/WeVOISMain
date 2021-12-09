@@ -710,24 +710,24 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   getVTSLineColor(index: any) {
-    let color = "#034fa1";
+    let color = "#0478bc";
     if (index == 1) {
-      color = "#040274";
-    }
-    else if (index == 2) {
       color = "#6c0000";
     }
-    else if (index == 3) {
-      color = "#028b7e";
-    }
-    else if (index == 4) {
+    else if (index == 2) {
       color = "#5c12eb";
     }
-    else if (index == 5) {
+    else if (index == 3) {
       color = "#9e00a1";
     }
-    else if (index == 6) {
+    else if (index == 4) {
+      color = "#040274";
+    }
+    else if (index == 5) {
       color = "#494a49";
+    }
+    else if (index == 6) {
+      color = "#028b7e";
     }
     return color;
   }
