@@ -419,6 +419,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.setWardBoundary();
     this.showHideBoundariesHtml();
     this.getWardLineStatus();
+    this.getVehicles();
   }
 
   //#endregion
@@ -448,7 +449,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.closeModel();
   }
 
-  
+
   resetAllLines() {
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
@@ -475,7 +476,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-  
+
   setPreviousData() {
     let date = $(this.txtPreDate).val().toString();
     if (date == "") {
@@ -512,6 +513,88 @@ export class VtsAnalysisComponent implements OnInit {
 
   //#region vehicle 
 
+  getVehicles() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
+    let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        vehicleInstance.unsubscribe();
+        if (data != null) {
+          let list = data.split(',');
+          if (list.length > 0) {
+            for (let i = 0; i < list.length; i++) {
+              let vehicleNo = list[i];
+              let latLng = [];
+              let message = "Route not Imported";
+              let showCheckBox = 0;
+              if (this.vtsVehicleList.length == 0) {
+                let dbPath = "BVGRoutes/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/main";
+                let vehicleInstance = this.db.list(dbPath).valueChanges().subscribe(
+                  data => {
+                    vehicleInstance.unsubscribe();
+                    if (data.length > 0) {
+                      this.vtsVehicleList = data;
+                    }
+                    let detail = this.vtsVehicleList.find(item => item.vehicle == vehicleNo);
+                    if (detail != undefined) {
+                      message = "Show Route";
+                      showCheckBox = 1;
+                    }
+                    this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message });
+                  });
+              }
+              else {
+                let detail = this.vtsVehicleList.find(item => item.vehicle == vehicleNo);
+                if (detail != undefined) {
+                  message = "Show Route";
+                  showCheckBox = 1;
+                }
+                this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message });
+              }
+            }
+          }
+        }
+      }
+    );
+  }
+
+
+  removeVehicle(index: any) {
+    let vehicleList = [];
+    let vehicles = "";
+    for (let i = 0; i < this.vehicleList.length; i++) {
+      if (i != index) {
+        let latLng = [];
+        let message = "Route not Imported";
+        let showCheckBox = 0;
+        let detail = this.vtsVehicleList.find(item => item.vehicle == this.vehicleList[i]["vehicle"]);
+        if (detail != undefined) {
+          message = "Show Route";
+          showCheckBox = 1;
+        }
+        vehicleList.push({ vehicle: this.vehicleList[i]["vehicle"], latLng: latLng, showCheckBox: showCheckBox, message: message });
+        if (vehicles != "") { vehicles = vehicles + "," }
+        vehicles = vehicles + this.vehicleList[i]["vehicle"];
+      }
+    }
+    this.vehicleList = vehicleList;
+    if (this.vtsPolylines.length > 0) {
+      for (let i = 0; i < this.vtsPolylines.length; i++) {
+        if (this.vtsPolylines[i] != undefined) {
+          this.vtsPolylines[i].setMap(null);
+        }
+      }
+    }
+    if (vehicles != "") {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      this.db.object(dbPath).update({ vehicles: vehicles });
+    }
+    else {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
+      this.db.database.ref(dbPath).set(null);
+    }
+    this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
+  }
+
   addVehicle() {
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
@@ -544,6 +627,9 @@ export class VtsAnalysisComponent implements OnInit {
     else {
       this.addVehicleList(vehicleNo);
     }
+    $(this.txtVehicle).val("");
+    $(this.txtVehicleNav).val("");
+    this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
   }
 
   addVehicleList(vehicleNo: any) {
@@ -556,9 +642,20 @@ export class VtsAnalysisComponent implements OnInit {
       showCheckBox = 1;
     }
     this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message });
-    $(this.txtVehicle).val("");
-    $(this.txtVehicleNav).val("");
-    this.commonService.setAlertMessage("success", "Vehicle added successfully !!!");
+    let vehicles = "";
+    if (this.vehicleList != null) {
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        if (i == 0) {
+          vehicles = this.vehicleList[i]["vehicle"];
+        }
+        else {
+          vehicles = vehicles + "," + this.vehicleList[i]["vehicle"];
+        }
+      }
+    }
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    this.db.object(dbPath).update({ vehicles: vehicles });
+
   }
 
   getVtsRoute(vehicle: any, index: any) {
@@ -598,7 +695,7 @@ export class VtsAnalysisComponent implements OnInit {
               let line = new google.maps.Polyline({
                 path: latLng,
                 strokeColor: strockColor,
-                strokeWeight: 1,
+                strokeWeight: 2,
               });
               this.vtsPolylines[index] = line;
               this.vtsPolylines[index].setMap(this.map);
@@ -613,18 +710,24 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   getVTSLineColor(index: any) {
-    let color = "#0614f4";
+    let color = "#034fa1";
     if (index == 1) {
-      color = "orange";
+      color = "#040274";
     }
     else if (index == 2) {
-      color = "#ea06f4";
+      color = "#6c0000";
     }
     else if (index == 3) {
-      color = "#03fef7";
+      color = "#028b7e";
     }
     else if (index == 4) {
-      color = "#eafe03";
+      color = "#5c12eb";
+    }
+    else if (index == 5) {
+      color = "#9e00a1";
+    }
+    else if (index == 6) {
+      color = "#494a49";
     }
     return color;
   }

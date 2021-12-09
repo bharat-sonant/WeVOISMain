@@ -317,6 +317,7 @@
                                 <td class="text-left">{{dt.vehicle}} 
                                   <span style="float:right;">{{dt.message}}
                                   <input type="checkbox" [hidden]="dt.showCheckBox==0"></span>
+                                  <i class="fas fa-times" style="color: red;"></i>
                                 </td>
                               </tr>
                             </tbody>
@@ -411,10 +412,12 @@
                     <tbody>
                       <!---->
                       <tr *ngFor="let dt of vehicleList, let i=index">
-                        <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
+                        <td style="vertical-align: top; width: 20px;">{{i+1}}</td>
                         <td class="text-left">{{dt.vehicle}} 
                           <span style="float:right;">{{dt.message}}
-                            <input id="chkVehicle{{i}}" type="checkbox" [hidden]="dt.showCheckBox==0"  (change)="getVtsRoute(dt.vehicle,i)"></span>
+                            <input id="chkVehicle{{i}}" type="checkbox" [hidden]="dt.showCheckBox==0"  (change)="getVtsRoute(dt.vehicle,i)">
+                           &nbsp; <i class="fas fa-times" style="color: red;cursor: pointer;" (click)="removeVehicle(i)"></i>
+                          </span>
                         </td>
                       </tr>
                     </tbody>
