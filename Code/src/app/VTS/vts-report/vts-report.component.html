@@ -3,37 +3,38 @@
         <div class="row">
             <div class="col-md-12" style=" padding-left: 20px; padding-top: 4px;">
                 <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
-                    << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" />
+                        << </span></button>
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date"
+                    (change)="setDate($event.target.value,'current')" />
                 <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
                 <select class="caret-select" id="ddlZone" style="width: 150px;"
-                (change)="changeZoneSelection($event.target.value)">
-                <option value="0">
-                    --Select Zone--
-                  </option>
-                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
-                  {{zone.zoneName}}
-                </option>
-              </select>
-              <select class="caret-select" id="ddlWard" style="width: 150px;"
-                (change)="changeWardSelection($event.target.value)">
-                <option value="0">
-                    --Select Ward--
-                  </option>
-                <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
-                  {{ward.wardName}}
-                </option>
-              </select>
-              <select class="caret-select" id="ddlRoutes" style="width: 150px;"
-                (change)="changeRouteSelection($event.target.value)">
-                <option value="0">
-                    --Select Route--
-                  </option>
-                <option *ngFor="let route of routeList" value={{route.routeKey}}>
-                  {{route.routeName}}
-                </option>
-              </select>
-              </div>
+                    (change)="changeZoneSelection($event.target.value)">
+                    <option value="0">
+                        --Select Zone--
+                    </option>
+                    <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                        {{zone.zoneName}}
+                    </option>
+                </select>
+                <select class="caret-select" id="ddlWard" style="width: 150px;"
+                    (change)="changeWardSelection($event.target.value)">
+                    <option value="0">
+                        --Select Ward--
+                    </option>
+                    <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+                        {{ward.wardName}}
+                    </option>
+                </select>
+                <select class="caret-select" id="ddlRoutes" style="width: 150px;"
+                    (change)="changeRouteSelection($event.target.value)">
+                    <option value="0">
+                        --Select Route--
+                    </option>
+                    <option *ngFor="let route of routeList" value={{route.routeKey}}>
+                        {{route.routeName}}
+                    </option>
+                </select>
+            </div>
         </div>
     </div>
 </div>
@@ -46,7 +47,7 @@
                         VTS Report
                         <span style="font-size: 10px;">(As per the analysis of VTS data provided by BVG)</span>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="col-md-6">
@@ -58,14 +59,10 @@
             </div>
             <div class="col-md-5 col-xl-4 ">
                 <div class="col-md-12" id="divGeneralData">
-                    <table class="tbl" cellpadding="0" cellspacing="0">                       
+                    <table class="tbl" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td class="report-left-td">Date   </td>
+                            <td class="report-left-td">Date </td>
                             <td class="report-right-td">{{reportData.reportDate}}</td>
-                        </tr> 
-                        <tr>
-                            <td class="report-left-td">Vehicle No </td>
-                            <td class="report-right-td">{{reportData.vehicleNo}}</td>
                         </tr>
                         <tr>
                             <td class="report-left-td">Total Length </td>
@@ -83,10 +80,28 @@
                             style="height: 320px; width: 100%; margin-left:auto;margin-right:auto;  ">
                         </div>
                         <div class="divPatch">
-                              <div class="divPatch1"> &nbsp;</div>
-                            <div class="divPatch2"> &nbsp; </div>  
+                            <div class="divPatch1"> &nbsp;</div>
+                            <div class="divPatch2"> &nbsp; </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12" id="divGeneralData">
+                    <table class="tbl" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="report-right-td">
+                                <div class="d-ib">
+                                    <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon"
+                                        alt="Penalty" title="Penalty">
+                                    <input class="penalty-input" id="txtPenalty" type="number" min="0"
+                                        autocomplete="off" value="0" />
+
+                                </div>
+                                <div class="d-ib">
+                                    <button class="VTS-button" style="margin-left: 10px!important;" (click)="savePenalty();">Save</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="col-md-7 col-xl-8 " id="divRptRight">
