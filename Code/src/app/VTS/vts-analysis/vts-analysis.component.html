@@ -386,13 +386,12 @@
   
   <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
     <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
-      <div>
-        <input id="txtVehicleNav" type="text" autocomplete="off"
-          style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-        <button  (click)="addVehicle();"
-          style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
-          Add Vehicle
-        </button>
+      <div class="popup-box">
+        <input class="txt-inpt" id="txtVehicleNav" type="text" autocomplete="off"/>
+        <div class="add-icon">
+          <i class="fas fa-plus-circle"></i> <br> <p>Add Vehicle</p>
+        </div>
+        
       </div>
     </div>
     <div id="myBox">
@@ -402,19 +401,13 @@
             <div class="dth">
               <div class="table-bg">
                 <div class="tableFixHead">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col"><b>Sno</b></th>
-                        <th class="text-left" scope="col" style="text-align: left!important;"><b>Vehicle</b></th>
-                      </tr>
-                    </thead>
+                  <table class="table table-hover" style="margin-top: 6px!important;">
                     <tbody>
                       <!---->
                       <tr *ngFor="let dt of vehicleList, let i=index">
-                        <td style="vertical-align: top; width: 20px;">{{i+1}}</td>
-                        <td class="text-left">{{dt.vehicle}} 
-                          <span style="float:right;">{{dt.message}}
+                        <td style="vertical-align: top; width: 20px;border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;"><b>{{i+1}}</b></td>
+                        <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">{{dt.vehicle}} 
+                          <span class="tbl-span" style="float:right;border-right: 0.5px solid #ededed;">    <input type="checkbox" class="form-check-input" id="exampleCheck1">  {{dt.message}}
                             <input id="chkVehicle{{i}}" type="checkbox" [hidden]="dt.showCheckBox==0"  (change)="getVtsRoute(dt.vehicle,i)">
                            &nbsp; <i class="fas fa-times" style="color: red;cursor: pointer;" (click)="removeVehicle(i)"></i>
                           </span>
@@ -439,6 +432,19 @@
           Done</button>
       </div>
     </div>
+  </div>
+
+  <div class="msg-box">
+    <div class="f-msg">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1"> 
+    <p>I have checked this Map carefully, Hence Approving </p>
+  </div>
+  <div class="r-msg">
+    <button type="button" class="btn w-100 btn-success">Approve</button> 
+  </div> <hr class="mt-100">
+  <div class="apr-msg">
+    <h3 style="color:#0ba118"><b>Approved By</b> <span> <b> Harendra Singh on 6 Dec 2020</b></span></h3>
+  </div>
   </div>
   <!----Map Content on Desktop End----->
 
