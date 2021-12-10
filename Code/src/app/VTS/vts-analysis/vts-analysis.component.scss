@@ -1380,7 +1380,7 @@
     }  
   .msg-box{
   background: #fff;
-  height: 132px;
+  height: 58px;
   width: 290px;
   padding: 10px;
   position: absolute;
@@ -1390,11 +1390,11 @@
   border-radius: 5px;
   }
   .f-msg{
-  width: 265px;
+  width: 165px;
   float: left;
   }
   .f-msg p{
-  font-size: 12px;
+  font-size: 10px;
   color:#333;
   margin-left: 25px!important;
   text-transform: capitalize;
@@ -1409,13 +1409,12 @@
   .r-msg .btn-success{
     margin-top: 0px!important;
     background: #0ba118!important;
-    text-transform: uppercase;   
-     margin-right: 10px;
+    text-transform: uppercase; 
     width: 80px!important;
     border: 1px solid #fff;
     transition: 0.5s;
     position: relative;
-    top: -28px;
+    top: 0px;
   }
   .r-msg .btn-success:hover{
     background: #fff!important;
@@ -1448,6 +1447,16 @@
 color: red;
   }
   
-  
+  .alert-box{
+    background: #fff;
+    min-height: 58px;
+    width: 290px;
+    padding: 10px;
+    position: absolute;
+    right: 15px;
+    top: 440px;
+    box-shadow: 0 1px 5px 1px #80bd7b;
+    border-radius: 5px;
+    } 
   
   
