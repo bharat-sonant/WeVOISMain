@@ -7,7 +7,7 @@
                 <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date"
                     (change)="setDate($event.target.value,'current')" />
                 <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
-                <select class="caret-select" id="ddlZone" style="width: 150px;"
+                <select class="caret-select" id="ddlZone"
                     (change)="changeZoneSelection($event.target.value)">
                     <option value="0">
                         --Select Zone--
@@ -16,7 +16,7 @@
                         {{zone.zoneName}}
                     </option>
                 </select>
-                <select class="caret-select" id="ddlWard" style="width: 150px;"
+                <select class="caret-select" id="ddlWard"
                     (change)="changeWardSelection($event.target.value)">
                     <option value="0">
                         --Select Ward--
@@ -25,7 +25,7 @@
                         {{ward.wardName}}
                     </option>
                 </select>
-                <select class="caret-select" id="ddlRoutes" style="width: 150px;"
+                <select class="caret-select" id="ddlRoutes"
                     (change)="changeRouteSelection($event.target.value)">
                     <option value="0">
                         --Select Route--
@@ -84,24 +84,6 @@
                             <div class="divPatch2"> &nbsp; </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12" id="divGeneralData">
-                    <table class="tbl" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="report-right-td">
-                                <div class="d-ib">
-                                    <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon"
-                                        alt="Penalty" title="Penalty">
-                                    <input class="penalty-input" id="txtPenalty" type="number" min="0"
-                                        autocomplete="off" value="0" />
-
-                                </div>
-                                <div class="d-ib">
-                                    <button class="VTS-button" style="margin-left: 10px!important;" (click)="savePenalty();">Save</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
                 </div>
             </div>
             <div class="col-md-7 col-xl-8 " id="divRptRight">

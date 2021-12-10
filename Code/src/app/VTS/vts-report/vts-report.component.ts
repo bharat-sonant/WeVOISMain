@@ -29,8 +29,6 @@ export class VtsReportComponent {
       coveredLength: "0.000"
     };
   selectedWardNo: any;
-  selectedWardName: any;
-  selectedRouteName: any;
   selectedRouteNo: any;
   selectedDate: any;
   polylines = [];
@@ -54,36 +52,42 @@ export class VtsReportComponent {
   }
 
   setDefault() {
-    this.selectedDate = this.commonService.setTodayDate();
-    $('#txtDate').val(this.selectedDate);
-    this.selectedWardNo = "0";
-    this.selectedWardName = "---";
-    this.commonService.getZoneWiseWard().then((zoneList: any) => {
-      this.zoneList = JSON.parse(zoneList);
-    });
+    this.percentage = 0;
+    this.selectedWardNo="0";
+    this.setDefaultDate();
+    this.setDefaultArray();
+    this.getZoneList();
+    this.setMap();
+    this.setContainerHeight();
+  }
+
+  setDefaultArray(){
     this.routeMainList = [];
     this.routeList = [];
     this.wardList = [];
     this.wardLineLengthList = [];
-    this.setMap();
-    this.setContainerHeight();
-    this.percentage = 0;
     this.lines = [];
+  }
+
+  setDefaultDate(){
+    this.selectedDate = this.commonService.setTodayDate();
+    $('#txtDate').val(this.selectedDate);
+    this.reportData.reportDate = this.selectedDate;
+  }
+
+  getZoneList(){
+    this.commonService.getZoneWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
+    });
   }
 
   setContainerHeight() {
     $('#divMap').css("height", $(window).height() - 180);
-    $('#divGraph').css("height", $(window).height() - $("#divGeneralData").height() - 260);
-    $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 250);
+    $('#divGraph').css("height", $(window).height() - $("#divGeneralData").height() - 189);
+    $('#chartContainer').css("height", $(window).height() - $("#divGeneralData").height() - 203);
   }
 
   changeZoneSelection(filterVal: any) {
-    this.selectedWardNo = "0";
-    this.selectedRouteNo = "0";
-    this.setReportHeader();
-    this.routeMainList = [];
-    this.routeList = [];
-    this.showReport();
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
     if (zoneDetail != undefined) {
@@ -92,6 +96,23 @@ export class VtsReportComponent {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
+    this.changeWardSelection("0");
+  }
+
+  changeWardSelection(filterVal: any) {
+    this.selectedWardNo = filterVal;
+    this.setMap();
+    this.setKml();
+    this.getWardLineLength();
+    this.getRoute();
+    this.changeRouteSelection("0");
+  }
+
+  changeRouteSelection(filterVal: any) {
+    this.resetAll();
+    this.selectedRouteNo = filterVal;
+    this.setReportHeader();
+    this.getAllLinesFromJson();
   }
 
   setMap() {
@@ -104,52 +125,32 @@ export class VtsReportComponent {
     });
   }
 
-  changeWardSelection(filterVal: any) {
-    this.selectedRouteNo = "0";
-    this.selectedWardNo = "0";
-    this.routeMainList = [];
-    this.routeList = [];
-    this.selectedWardNo = filterVal;
-    this.setMap();
-    this.setKml();
-    this.setReportHeader();
-    this.getWardLineLength();
-    this.getRoute();
-  }
-
   getWardLineLength() {
     if (this.selectedWardNo != "0") {
       this.commonService.getWardLineLength(this.selectedWardNo).then((lengthList: any) => {
         if (lengthList != null) {
           this.wardLineLengthList = JSON.parse(lengthList);
-          this.showReport();
         }
       });
     }
-  }
-
-  changeRouteSelection(filterVal: any) {
-    this.selectedRouteNo = filterVal;
-    this.setReportHeader();
-    this.showReport();
   }
 
   setReportHeader() {
     if (this.selectedRouteNo != "0") {
       let routeDetail = this.routeMainList.find(item => item.routeKey == this.selectedRouteNo);
       if (routeDetail != undefined) {
-        this.selectedWardName = "Ward " + this.selectedWardNo + " [" + routeDetail.routeName + "]";
+        this.reportData.zoneName = "Ward " + this.selectedWardNo + " [" + routeDetail.routeName + "]";
       }
       else {
-        this.selectedWardName = "Ward " + this.selectedWardNo;
+        this.reportData.zoneName = "Ward " + this.selectedWardNo;
       }
     }
     else {
       if (this.selectedWardNo != "0") {
-        this.selectedWardName = "Ward " + this.selectedWardNo;
+        this.reportData.zoneName = "Ward " + this.selectedWardNo;
       }
       else {
-        this.selectedWardName = "---";
+        this.reportData.zoneName = "---";
       }
     }
   }
@@ -200,6 +201,7 @@ export class VtsReportComponent {
   }
 
   getRouteList() {
+    this.routeList=[];
     if (this.routeMainList.length > 0) {
       let selectedDate = new Date(this.selectedDate);
       for (let i = 0; i < this.routeMainList.length; i++) {
@@ -215,9 +217,6 @@ export class VtsReportComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    this.routeList = [];
-    this.selectedRouteNo = "0";
-    this.setReportHeader();
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -233,27 +232,18 @@ export class VtsReportComponent {
     }
     $("#txtDate").val(this.selectedDate);
     this.getRouteList();
-    this.showReport();
-  }
-
-  showReport() {
-    this.resetAll();
-    this.setMap();
-    this.setKml();
-    this.getAllLinesFromJson();
+    this.changeRouteSelection("0");
   }
 
   resetAll() {
-    this.reportData.zoneName = this.selectedWardName;
     this.reportData.reportDate = this.selectedDate;
     this.percentage = 0;
     this.reportData.coveredLength = "0.000";
     this.reportData.vehicleNo = "---";
     this.reportData.wardLength = "0.000";
-    $(this.txtPenalty).val("0");
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
+        if (this.polylines[i] != null) {
           this.polylines[i].setMap(null);
         }
       }
@@ -333,7 +323,6 @@ export class VtsReportComponent {
         strokeColor: strockColor,
         strokeWeight: 2,
       });
-
       this.polylines[i] = line;
       this.polylines[i].setMap(this.map);
     });
@@ -357,15 +346,6 @@ export class VtsReportComponent {
       this.reportData.wardLength = (parseFloat(totalLength.toString()) / 1000).toFixed(3);
       this.reportData.coveredLength = (parseFloat(coveredLength.toString()) / 1000).toFixed(3) + "";
       this.percentage = Number(((coveredLength / totalLength) * 100).toFixed(2));
-      let dbPath = "WasteCollectionInfo/" + this.selectedWardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/Routes/" + this.selectedRouteNo;
-      let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          summaryInstance.unsubscribe();
-          if (data != null) {
-            $(this.txtPenalty).val(data["penalty"]);
-          }
-        }
-      );
       this.drawChart();
     }
   }
@@ -383,7 +363,7 @@ export class VtsReportComponent {
       },
       data: [{
         type: "doughnut",
-        showInLegend: false,
+        showInLegend: true,
         indexLabel: "#percent%",
         indexLabelPlacement: "inside",
         indexLabelFontColor: "navy",
@@ -395,24 +375,6 @@ export class VtsReportComponent {
       }]
     });
     this.chart.render();
-  }
-
-  savePenalty() {
-    if (this.selectedRouteNo == "0") {
-      this.commonService.setAlertMessage("error", "Please select route !!!");
-      return;
-    }
-    let penalty = $(this.txtPenalty).val();
-    if (penalty == "") {
-      penalty = 0;
-    }
-    let dbPath = "WasteCollectionInfo/" + this.selectedWardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/Routes/" + this.selectedRouteNo;
-    const data = {
-      penalty: penalty,
-      penaltizedBy: localStorage.getItem("userID")
-    }
-    this.db.object(dbPath).update(data);
-    this.commonService.setAlertMessage("success", "Penalty added successfully !!!");
   }
 }
 
