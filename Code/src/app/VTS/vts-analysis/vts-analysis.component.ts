@@ -81,6 +81,7 @@ export class VtsAnalysisComponent implements OnInit {
   txtVehicleNav = "#txtVehicleNav";
   divLoader = "#divLoader";
   approvalName = "#approvalName";
+  divApproved = "#divApproved";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -97,6 +98,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.setDefaultDate();
     this.setHeight();
     this.setMaps();
+    $(this.divApproved).hide();
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     btnElement.disabled = true;
   }
@@ -277,6 +279,8 @@ export class VtsAnalysisComponent implements OnInit {
             if (userData != undefined) {
               $(this.approvalName).html(userData["name"] + " on " + analysisTime);
             }
+
+            $(this.divApproved).show();
           }
         }
         else {
@@ -463,6 +467,7 @@ export class VtsAnalysisComponent implements OnInit {
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     element.checked = false;
     btnElement.disabled = true;
+    $(this.divApproved).hide();
     this.setWardBoundary();
     this.showHideBoundariesHtml();
     this.getWardLineStatus();
@@ -573,6 +578,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     let message = "Thanks " + localStorage.getItem("userName") + " for approving this map !!!";
     this.commonService.setAlertMessage("success", message);
+    $(this.divApproved).show();
   }
 
   //#endregion
@@ -580,7 +586,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region vehicle 
 
   getVehicles(vehicles: any) {
-
+    this.vehicleList = [];
     let list = vehicles.split(',');
     if (list.length > 0) {
       for (let i = 0; i < list.length; i++) {
@@ -618,8 +624,6 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
   }
-
-
 
   removeVehicle(index: any) {
     let vehicleList = [];
