@@ -405,11 +405,10 @@
                     <tbody>
                       <!---->
                       <tr *ngFor="let dt of vehicleList, let i=index">
-                        <td style="vertical-align: top; width: 20px;border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;"><b>{{i+1}}</b></td>
                         <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">{{dt.vehicle}} 
-                          <span class="tbl-span" style="float:right;border-right: 0.5px solid #ededed;">    <input type="checkbox" class="form-check-input" id="exampleCheck1">  {{dt.message}}
-                            <input id="chkVehicle{{i}}" type="checkbox" [hidden]="dt.showCheckBox==0"  (change)="getVtsRoute(dt.vehicle,i)">
-                           &nbsp; <i class="fas fa-times" style="color: red;cursor: pointer;" (click)="removeVehicle(i)"></i>
+                          <span class="tbl-span" style="float:right;margin-top: -1px;    color: #ff0000;">     {{dt.message}}
+                            <input id="chkVehicle{{i}}" type="checkbox"  (change)="getVtsRoute(dt.vehicle,i)">
+                           &nbsp; <i class="fas fa-times" style="color: red;cursor: pointer; font-size: 16px;" (click)="removeVehicle(i)"></i>
                           </span>
                         </td>
                       </tr>
@@ -443,7 +442,7 @@
     <button type="button" class="btn w-100 btn-success">Approve</button> 
   </div> <hr class="mt-100">
   <div class="apr-msg">
-    <h3 style="color:#0ba118"><b>Approved By</b> <span> <b> Harendra Singh on 6 Dec 2020</b></span></h3>
+    <h3 style="color:#0ba118"><b>Approved By</b> <br> <span> <b> Harendra Singh on 6 Dec 2020</b></span></h3>
   </div>
   </div>
   <!----Map Content on Desktop End----->
