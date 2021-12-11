@@ -37,10 +37,10 @@
 
     <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
       <div class="fix-home">
-        <div class="float-first" style="margin-left: 10px; margin-top: 14px; display: none;">
-          <i id="iconDone" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
-          <i id="iconPending" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
-          <h6 id="divTracking" style="font-size: 9px!important;">Analysis</h6>
+        <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
+          <i id="iconDone" (click)="showHideMarkers('hide');" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important; cursor: pointer;"></i>
+          <i id="iconPending" (click)="showHideMarkers('show');" class="fas fa-times" style="color:red; font-size: 20px!important; cursor: pointer;"></i> <br>
+          <h6 id="divTracking" style="font-size: 9px!important;">Show Markers</h6>
         </div>
         <div class="float-second" style="margin-top: 10px;display: none;">
           <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"

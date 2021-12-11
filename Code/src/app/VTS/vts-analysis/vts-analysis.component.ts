@@ -1,5 +1,3 @@
-import { element } from 'protractor';
-
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild, OnInit } from "@angular/core";
@@ -46,6 +44,10 @@ export class VtsAnalysisComponent implements OnInit {
   strockColorDone = "#0ba118";
   vtsVehicleList: any[];
   vtsPolylines = [];
+  markerList: any[];
+  vtsMarkerList: any[];
+
+  isShowMarker = false;
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -101,6 +103,7 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.divApproved).hide();
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     btnElement.disabled = true;
+    $(this.iconDone).hide();
   }
 
   activateApprovalButton() {
@@ -127,6 +130,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.wardLineLengthList = [];
     this.wardLineStatus = [];
     this.vtsVehicleList = [];
+    this.markerList = [];
   }
 
   setDefaultLocalStorage() {
@@ -319,6 +323,14 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.markerList = [];
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -460,6 +472,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     this.vtsPolylines = [];
     this.vehicleList = [];
+    this.markerList = [];
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
@@ -500,7 +513,6 @@ export class VtsAnalysisComponent implements OnInit {
     this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
   }
-
 
   resetAllLines() {
     if (this.lines.length > 0) {
@@ -587,6 +599,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   getVehicles(vehicles: any) {
     this.vehicleList = [];
+    this.markerList = [];
     let list = vehicles.split(',');
     if (list.length > 0) {
       for (let i = 0; i < list.length; i++) {
@@ -733,6 +746,17 @@ export class VtsAnalysisComponent implements OnInit {
     if (element.checked == true) {
       if (this.vtsPolylines[index] != null) {
         this.vtsPolylines[index].setMap(this.map);
+        if (this.isShowMarker == true) {
+          if (this.markerList.length > 0) {
+            for (let i = 0; i < this.markerList.length; i++) {
+              if (this.markerList[i]["marker"] != null) {
+                if (this.markerList[i]["index"] == index) {
+                  this.markerList[i]["marker"].setMap(this.map);
+                }
+              }
+            }
+          }
+        }
       }
       else {
         this.getVtsVehicleRoute(vehicle, index);
@@ -741,6 +765,15 @@ export class VtsAnalysisComponent implements OnInit {
     else {
       if (this.vtsPolylines[index] != null) {
         this.vtsPolylines[index].setMap(null);
+        if (this.markerList.length > 0) {
+          for (let i = 0; i < this.markerList.length; i++) {
+            if (this.markerList[i]["marker"] != null) {
+              if (this.markerList[i]["index"] == index) {
+                this.markerList[i]["marker"].setMap(null);
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -760,6 +793,7 @@ export class VtsAnalysisComponent implements OnInit {
                 let lat = routeList[i].split(',')[0];
                 let lng = routeList[i].split(',')[1];
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
+                this.setVtsRouteMarker(index, lat, lng);
               }
               let strockColor = this.getVTSLineColor(index);
               let line = new google.maps.Polyline({
@@ -776,6 +810,67 @@ export class VtsAnalysisComponent implements OnInit {
     }
     else {
       this.commonService.setAlertMessage("error", "Sorry this vehicle not run on selected date !!!");
+    }
+  }
+
+  setVtsRouteMarker(index: any, lat: any, lng: any) {
+    let lt = lat;
+    let lg = lng;
+    let markerURL = "../../../assets/img/greenmarker.png";
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lt), lng: Number(lg) },
+      map: this.map,
+      icon: {
+        url: markerURL,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(10, 15),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    this.markerList.push({ index: index, marker: marker });
+    if (this.isShowMarker == false) {
+      marker.setMap(null);
+    }
+  }
+
+  showHideMarkers(showStatus: any) {
+    if (showStatus == 'hide') {
+      this.isShowMarker = false;
+      $(this.iconDone).hide();
+      $(this.iconPending).show();
+    }
+    else {
+      this.isShowMarker = true;
+      $(this.iconDone).show();
+      $(this.iconPending).hide();
+    }
+    if (this.isShowMarker == true) {
+      if (this.vehicleList.length > 0) {
+        for (let i = 0; i < this.vehicleList.length; i++) {
+          let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
+          if (element.checked == true) {
+            if (this.markerList.length > 0) {
+              for (let j = 0; j < this.markerList.length; j++) {
+                if (this.markerList[j]["marker"] != null) {
+                  if (this.markerList[j]["index"] == i) {
+                    this.markerList[j]["marker"].setMap(this.map);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      if (this.markerList.length > 0) {
+        for (let i = 0; i < this.markerList.length; i++) {
+          if (this.markerList[i]["marker"] != null) {
+            this.markerList[i]["marker"].setMap(null);
+          }
+        }
+      }
     }
   }
 
