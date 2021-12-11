@@ -45,7 +45,6 @@ export class VtsAnalysisComponent implements OnInit {
   vtsVehicleList: any[];
   vtsPolylines = [];
   markerList: any[];
-  vtsMarkerList: any[];
 
   isShowMarker = false;
   progressData: progressDetail = {
@@ -816,7 +815,7 @@ export class VtsAnalysisComponent implements OnInit {
   setVtsRouteMarker(index: any, lat: any, lng: any) {
     let lt = lat;
     let lg = lng;
-    let markerURL = "../../../assets/img/greenmarker.png";
+    let markerURL = "../../../assets/img/bluemarker.png";
     let marker = new google.maps.Marker({
       position: { lat: Number(lt), lng: Number(lg) },
       map: this.map,
