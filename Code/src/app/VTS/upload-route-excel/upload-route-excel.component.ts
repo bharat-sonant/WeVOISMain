@@ -70,6 +70,8 @@ export class UploadRouteExcelComponent implements OnInit {
         let vehicle = fileList[i]["Vehicle Name"];
         let lat = fileList[i]["latitude"];
         let lng = fileList[i]["longitude"];
+        let speed = fileList[i]["speed"];
+
         if (vehicle == undefined) {
           vehicle = fileList[i]["VehicleName"];
           if (vehicle == undefined) {
@@ -104,33 +106,35 @@ export class UploadRouteExcelComponent implements OnInit {
         if (vehicle != "") {
           if (lat != "") {
             if (lng != "") {
-              let latLng = lat + "," + lng;
-              let dateDetail = this.routeList.find(item => item.date == date);
-              if (dateDetail != undefined) {
-                let vehicles = dateDetail.vehicles;
-                let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
-                if (vehicleDetail != undefined) {
-                  let latLngString = latLng;
-                  let points = vehicleDetail.points;
-                  points.push({ latLng: latLng });
-                  vehicleDetail.points = points;
-                  vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
+              if (speed != "") {
+                let latLng = lat + "," + lng + "," + speed;
+                let dateDetail = this.routeList.find(item => item.date == date);
+                if (dateDetail != undefined) {
+                  let vehicles = dateDetail.vehicles;
+                  let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
+                  if (vehicleDetail != undefined) {
+                    let latLngString = latLng;
+                    let points = vehicleDetail.points;
+                    points.push({ latLng: latLng });
+                    vehicleDetail.points = points;
+                    vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
+                  }
+                  else {
+                    let latLngString = latLng;
+                    let points = [];
+                    points.push({ latLng: latLng });
+                    vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
+                    dateDetail.vehicles = vehicles;
+                  }
                 }
                 else {
+                  let vehicles = [];
                   let latLngString = latLng;
                   let points = [];
                   points.push({ latLng: latLng });
                   vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
-                  dateDetail.vehicles = vehicles;
+                  this.routeList.push({ date: date, vehicles: vehicles });
                 }
-              }
-              else {
-                let vehicles = [];
-                let latLngString = latLng;
-                let points = [];
-                points.push({ latLng: latLng });
-                vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
-                this.routeList.push({ date: date, vehicles: vehicles });
               }
             }
           }
@@ -143,7 +147,6 @@ export class UploadRouteExcelComponent implements OnInit {
           let month = date.split('-')[1];
           let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
           let vehicles = this.routeList[i]["vehicles"];
-
           let dbPath = "BVGRoutes/" + year + "/" + monthName + "/" + date + "/main";
           let mainInstance = this.db.list(dbPath).valueChanges().subscribe(
             data => {

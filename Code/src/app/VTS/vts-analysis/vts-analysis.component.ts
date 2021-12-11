@@ -469,6 +469,13 @@ export class VtsAnalysisComponent implements OnInit {
         }
       }
     }
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i]["marker"] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
     this.vtsPolylines = [];
     this.vehicleList = [];
     this.markerList = [];
@@ -791,8 +798,12 @@ export class VtsAnalysisComponent implements OnInit {
               for (let i = 0; i < routeList.length; i++) {
                 let lat = routeList[i].split(',')[0];
                 let lng = routeList[i].split(',')[1];
+                let speed = 0;
+                if (routeList[i].split(',')[2] != null) {
+                  speed = Number(routeList[i].split(',')[2]);
+                }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
-                this.setVtsRouteMarker(index, lat, lng);
+                this.setVtsRouteMarker(index, speed, lat, lng);
               }
               let strockColor = this.getVTSLineColor(index);
               let line = new google.maps.Polyline({
@@ -812,10 +823,13 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-  setVtsRouteMarker(index: any, lat: any, lng: any) {
+  setVtsRouteMarker(index: any, speed: any, lat: any, lng: any) {
     let lt = lat;
     let lg = lng;
     let markerURL = "../../../assets/img/bluemarker.png";
+    if (speed > 15) {
+      markerURL = "../../../assets/img/maroonmarker.png";
+    }
     let marker = new google.maps.Marker({
       position: { lat: Number(lt), lng: Number(lg) },
       map: this.map,
@@ -827,7 +841,7 @@ export class VtsAnalysisComponent implements OnInit {
         origin: new google.maps.Point(0, 0),
       },
     });
-    this.markerList.push({ index: index, marker: marker });
+    this.markerList.push({ index: index, speed: speed, marker: marker });
     if (this.isShowMarker == false) {
       marker.setMap(null);
     }
