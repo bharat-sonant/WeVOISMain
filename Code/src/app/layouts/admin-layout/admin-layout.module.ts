@@ -98,6 +98,7 @@ import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.com
 import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
 import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
+import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
 
 @NgModule({
   imports: [
@@ -200,7 +201,8 @@ import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.compon
     CreateRoutesComponent,
     UploadRouteExcelComponent,
     BvgRoutesComponent,
-    VtsAnalysisComponent
+    VtsAnalysisComponent,
+    PenaltySummaryComponent
   ]
 })
 

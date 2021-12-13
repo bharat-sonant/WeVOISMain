@@ -61,9 +61,7 @@ export class UploadRouteExcelComponent implements OnInit {
   }
 
   saveData(fileList: any) {
-
     $('#divLoader').show();
-
     if (fileList.length > 0) {
       for (let i = 0; i < fileList.length; i++) {
         let date = "";
