@@ -66,7 +66,15 @@ export class UploadRouteExcelComponent implements OnInit {
 
     if (fileList.length > 0) {
       for (let i = 0; i < fileList.length; i++) {
-        let date = this.getExcelDatetoDate(fileList[i]["Date"]);
+        let date = "";
+        let dat = fileList[i]["Date"];
+        let dat1 = dat.toString().split('-');
+        if (dat1.length > 1) {
+          date = dat1[2] + "-" + dat1[1] + "-" + dat1[0];
+        }
+        else {
+          date = this.getExcelDatetoDate(fileList[i]["Date"]);
+        }
         let vehicle = fileList[i]["Vehicle Name"];
         let lat = fileList[i]["latitude"];
         let lng = fileList[i]["longitude"];
@@ -75,11 +83,11 @@ export class UploadRouteExcelComponent implements OnInit {
         if (vehicle == undefined) {
           vehicle = fileList[i]["VehicleName"];
           if (vehicle == undefined) {
-            vehicle = fileList[i]["vhicleName"];
+            vehicle = fileList[i]["vehicleName"];
             if (vehicle == undefined) {
-              vehicle = fileList[i]["vhiclename"];
+              vehicle = fileList[i]["vehiclename"];
               if (vehicle == undefined) {
-                vehicle = fileList[i]["Vhiclename"];
+                vehicle = fileList[i]["Vehiclename"];
                 if (vehicle == undefined) {
                   this.commonService.setAlertMessage("error", "Column name vehicleName is not correct");
                   $('#divLoader').hide();
@@ -106,36 +114,35 @@ export class UploadRouteExcelComponent implements OnInit {
         if (vehicle != "") {
           if (lat != "") {
             if (lng != "") {
-              if (speed != "") {
-                let latLng = lat + "," + lng + "," + speed;
-                let dateDetail = this.routeList.find(item => item.date == date);
-                if (dateDetail != undefined) {
-                  let vehicles = dateDetail.vehicles;
-                  let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
-                  if (vehicleDetail != undefined) {
-                    let latLngString = latLng;
-                    let points = vehicleDetail.points;
-                    points.push({ latLng: latLng });
-                    vehicleDetail.points = points;
-                    vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
-                  }
-                  else {
-                    let latLngString = latLng;
-                    let points = [];
-                    points.push({ latLng: latLng });
-                    vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
-                    dateDetail.vehicles = vehicles;
-                  }
+              let latLng = lat + "," + lng + "," + speed;
+              let dateDetail = this.routeList.find(item => item.date == date);
+              if (dateDetail != undefined) {
+                let vehicles = dateDetail.vehicles;
+                let vehicleDetail = vehicles.find(item => item.vehicle == vehicle);
+                if (vehicleDetail != undefined) {
+                  let latLngString = latLng;
+                  let points = vehicleDetail.points;
+                  points.push({ latLng: latLng });
+                  vehicleDetail.points = points;
+                  vehicleDetail.latLngString = vehicleDetail.latLngString + "~" + latLngString;
                 }
                 else {
-                  let vehicles = [];
                   let latLngString = latLng;
                   let points = [];
                   points.push({ latLng: latLng });
                   vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
-                  this.routeList.push({ date: date, vehicles: vehicles });
+                  dateDetail.vehicles = vehicles;
                 }
               }
+              else {
+                let vehicles = [];
+                let latLngString = latLng;
+                let points = [];
+                points.push({ latLng: latLng });
+                vehicles.push({ vehicle: vehicle, points: points, latLngString: latLngString });
+                this.routeList.push({ date: date, vehicles: vehicles });
+              }
+
             }
           }
         }
