@@ -92,13 +92,13 @@ export class PenaltySummaryComponent implements OnInit {
         let penalty = [];
         let dayList = [];
 
-        this.wardList.push({ wardNo: wardList[i], routes: routes, penalty: penalty, dayList: dayList });
+        this.wardList.push({ wardNo: wardList[i], routes: routes, wardPenalty: "0.00", penalty: penalty, dayList: dayList });
         for (let j = 1; j <= this.rowTo; j++) {
           let wardDetail = this.wardList.find(item => item.wardNo == wardList[i]);
           if (wardDetail != undefined) {
             let dayPenalty = [];
             let d = "day" + j;
-            wardDetail.dayList.push({ day: d, dayPenalty: dayPenalty,totalLength:"0.00",coveredLength:"0.00",percentage:"0.00" });
+            wardDetail.dayList.push({ day: d, dayPenalty: dayPenalty, totalLength: "0.00", coveredLength: "0.00", percentage: "0.00" });
           }
         }
       }
@@ -144,7 +144,7 @@ export class PenaltySummaryComponent implements OnInit {
                       }
                     }
                   }
-                  routes.push({ routeKey: routeKey, routeName: routeName, routeDetailList: routeDetailList });
+                  routes.push({ routeKey: routeKey, routeName: routeName, totalLength: "0.000", routeDetailList: routeDetailList });
                   penalty.push({ penalty: "0.00" });
                   for (let m = 0; m < dayList.length; m++) {
                     let dayPenalty = dayList[m]["dayPenalty"];
@@ -228,25 +228,37 @@ export class PenaltySummaryComponent implements OnInit {
           }
         }
       }
-      let workPercentage=Number((( coveredLength / totalLength) * 100).toFixed(2));
+      let workPercentage = Number(((coveredLength / totalLength) * 100).toFixed(2));
       let percentage = Number((((totalLength - coveredLength) / totalLength) * 100).toFixed(2));
       let penalty = (2000 * Number(percentage) / 100).toFixed(2);
-      this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
-      console.log("ward: " + wardNo + " day :" + day + " percentage :" + percentage + " penalty :" + penalty);
-
       let wardDetail = this.wardList.find(item => item.wardNo == wardNo);
       if (wardDetail != undefined) {
+        let dayList = wardDetail.dayList;
+        if (Number(penalty) == 2000) {
+          for (let i = 0; i < dayList.length; i++) {
+            let dayPenalty = dayList[i]["dayPenalty"];
+            if (dayPenalty[routeIndex]["penalty"] == "2000.00") {
+              penalty = "2500.00";
+              i = dayList.length;
+            }
+          }
+        }
+        wardDetail.routes[routeIndex]["totalLength"]=(Number(totalLength)/1000).toFixed(3);
+        this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
+        //console.log("ward: " + wardNo + " day :" + day + " percentage :" + percentage + " penalty :" + penalty);
+
         let penaltyList = wardDetail.penalty;
         penaltyList[routeIndex]["penalty"] = (Number(penaltyList[routeIndex]["penalty"]) + Number(penalty)).toFixed(2);
-        let dayList = wardDetail.dayList;
+
         let d = "day" + Number(day);
         let dayDetail = dayList.find(item => item.day == d);
+
         if (dayDetail != undefined) {
           dayDetail.dayPenalty[routeIndex]["totalLength"] = totalLength;
-          dayDetail.dayPenalty[routeIndex]["coveredLength"] = coveredLength;
+          dayDetail.dayPenalty[routeIndex]["coveredLength"] = (Number(coveredLength) / 1000).toFixed(3);
           dayDetail.dayPenalty[routeIndex]["percentage"] = workPercentage;
           dayDetail.dayPenalty[routeIndex]["penalty"] = penalty;
-
+          wardDetail.wardPenalty = (Number(wardDetail.wardPenalty) + Number(penalty)).toFixed(2);
           let totalDayDetail = this.dayList.find(item => item.day == day);
           if (totalDayDetail != undefined) {
             totalDayDetail.total = (Number(totalDayDetail.total) + Number(penalty)).toFixed(2);
