@@ -46,7 +46,7 @@
                 <div>
                     <div class="table-bg">
                         <div class="tableFixHead">
-                            <table class="table table-hover">
+                            <table id="excel-table" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col" style="width: 200px!important;">
@@ -69,7 +69,7 @@
                                             style="vertical-align: top; font-weight: bold;width:200px!important;">
                                             <div style="width: 100px; padding-bottom: 35px;" *ngFor="let route of dt.routes">
                                                 {{route.routeName}}<br/>
-                                                T : {{route.totalLength}} KM
+                                                T : {{route.totalLength}} Km
                                             </div>
                                         </td>
                                         <td class="text-center"
@@ -84,7 +84,7 @@
                                         <td class=" text-left" style="vertical-align: top;"
                                             *ngFor="let days of dt.dayList">
                                             <div style="width: 100%; padding-bottom: 10px; " *ngFor="let dayPenalty of days.dayPenalty">
-                                                C : {{dayPenalty.coveredLength}} KM<br/>
+                                                C : {{dayPenalty.coveredLength}} Km<br/>
                                                 WP : {{dayPenalty.percentage}}%<br/>
                                               <b> P : ₹ {{dayPenalty.penalty}}</b>
                                             </div>
@@ -94,8 +94,6 @@
                                         <th scope="col" class="thFixed"></th>
                                         <th scope="col" class="thFixed1"></th>
                                         <th scope="col" class="thFixed2" style="font-weight: bold;">Total</th>
-                                        <th scope="col" class="tdBorder thFixed3"
-                                            style="font-weight: bold; display: none;">Total</th>
                                         <th scope="col" class="text-center" *ngFor="let days of dayList"><span
                                                 style="padding-left: 50px; padding-right: 50px;">{{days.total}}</span>
                                         </th>
@@ -110,9 +108,9 @@
     </div>
 </section>
 
-<div style="position: absolute; z-index: 999; top:12px; right:333px; color: #fff; text-align: center; font-size: 10px; display: none;" >
+<div style="position: absolute; z-index: 999; top:12px; right:333px; color: #fff; text-align: center; font-size: 10px;" >
     
-    <i class="fas fa-file-export" style="color: #fff; font-size: 30px; cursor: pointer;" (click)="exportToExcel();"></i><br/>
+    <i class="fas fa-file-export" style="color: #fff; font-size: 30px; cursor: pointer;" (click)="exportexcel();"></i><br/>
     Export to Excel
 </div>
 

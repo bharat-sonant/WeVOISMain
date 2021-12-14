@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { FirebaseService } from "../../firebase.service";
 import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-penalty-summary',
@@ -30,8 +29,6 @@ export class PenaltySummaryComponent implements OnInit {
       totalPenalty: "0"
     };
 
-
-
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -39,19 +36,95 @@ export class PenaltySummaryComponent implements OnInit {
     this.setDefault();
   }
 
-  exportToExcel() {
+  exportexcel(): void {
+    let htmlString = "";
     if (this.wardList.length > 0) {
-      const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-      const EXCEL_EXTENSION = '.xls';
-
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.wardList);
-      const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
-      const data: Blob = new Blob([excelBuffer], {
-        type: EXCEL_TYPE
-      });
-      FileSaver.saveAs(data, "fileName" + new Date().getTime() + EXCEL_EXTENSION);
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Ward";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Route";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Total";
+      htmlString += "</td>";
+      for (let i = 1; i <= this.rowTo; i++) {
+        htmlString += "<td>";
+        htmlString += (i < 10 ? '0' : '') + i + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + " [Work]";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += (i < 10 ? '0' : '') + i + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + " [Penalty]";
+        htmlString += "</td>";
+      }
+      htmlString += "</tr>";
+      for (let i = 0; i < this.wardList.length; i++) {
+        let wardNo = this.wardList[i]["wardNo"];
+        let routes = this.wardList[i]["routes"];
+        let penalty = this.wardList[i]["penalty"];
+        let dayList = this.wardList[i]["dayList"];
+        if (routes.length > 0) {
+          for (let j = 0; j < routes.length; j++) {
+            htmlString += "<tr>";
+            if (j == 0) {
+              htmlString += "<td>";
+              htmlString += wardNo;
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += routes[j]["routeName"] + " [" + routes[j]["totalLength"] + " Km]";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += penalty[j]["penalty"];
+              htmlString += "</td>";
+              for (let k = 0; k < dayList.length; k++) {
+                let dayPenalty = dayList[k]["dayPenalty"];
+                htmlString += "<td>";
+                htmlString += dayPenalty[j]["coveredLength"] + " Km [" + dayPenalty[j]["percentage"] + "%]";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += dayPenalty[j]["penalty"];
+                htmlString += "</td>";
+              }
+            }
+            else {
+              htmlString += "<td>";
+              htmlString += "";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += routes[j]["routeName"] + " [" + routes[j]["totalLength"] + " Km]";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += penalty[j]["penalty"];
+              htmlString += "</td>";
+              for (let k = 0; k < dayList.length; k++) {
+                let dayPenalty = dayList[k]["dayPenalty"];
+                htmlString += "<td>";
+                htmlString += dayPenalty[j]["coveredLength"] + " Km [" + dayPenalty[j]["percentage"] + "%]";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += dayPenalty[j]["penalty"];
+                htmlString += "</td>";
+              }
+            }
+          }
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "</table>";
     }
+
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    let fileName = "Penalty-" + this.selectedZone + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
+    XLSX.writeFile(wb, fileName);
   }
 
   setDefault() {
@@ -218,8 +291,8 @@ export class PenaltySummaryComponent implements OnInit {
                                 }
                                 lineList.push({ lineNo: lineNo, lineLength: lineLength });
                               }
-                              if(totalLength>0){
-                              this.getPenalty(wardNo, j, lineList, workDate, totalLength, this.dayList[i]["day"]);
+                              if (totalLength > 0) {
+                                this.getPenalty(wardNo, j, lineList, workDate, totalLength, this.dayList[i]["day"]);
                               }
                             }
                           }
@@ -253,7 +326,7 @@ export class PenaltySummaryComponent implements OnInit {
       }
       let workPercentage = Number(((coveredLength / totalLength) * 100).toFixed(2));
       let percentage = Number((((totalLength - coveredLength) / totalLength) * 100).toFixed(2));
-      let penalty = (2000 * Number(percentage) / 100).toFixed(2);
+      let penalty = Math.round((2000 * Number(percentage) / 100)).toFixed(2);
       let wardDetail = this.wardList.find(item => item.wardNo == wardNo);
       if (wardDetail != undefined) {
         let dayList = wardDetail.dayList;
@@ -266,7 +339,7 @@ export class PenaltySummaryComponent implements OnInit {
             }
           }
         }
-        wardDetail.routes[routeIndex]["totalLength"] = (Number(totalLength) / 1000).toFixed(3);
+        wardDetail.routes[routeIndex]["totalLength"] = (Number(totalLength) / 1000).toFixed(1);
         this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
         //console.log("ward: " + wardNo + " day :" + day + " percentage :" + percentage + " penalty :" + penalty);
 
@@ -278,7 +351,7 @@ export class PenaltySummaryComponent implements OnInit {
 
         if (dayDetail != undefined) {
           dayDetail.dayPenalty[routeIndex]["totalLength"] = totalLength;
-          dayDetail.dayPenalty[routeIndex]["coveredLength"] = (Number(coveredLength) / 1000).toFixed(3);
+          dayDetail.dayPenalty[routeIndex]["coveredLength"] = (Number(coveredLength) / 1000).toFixed(1);
           dayDetail.dayPenalty[routeIndex]["percentage"] = workPercentage;
           dayDetail.dayPenalty[routeIndex]["penalty"] = penalty;
           wardDetail.wardPenalty = (Number(wardDetail.wardPenalty) + Number(penalty)).toFixed(2);
