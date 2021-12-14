@@ -98,7 +98,7 @@ export class PenaltySummaryComponent implements OnInit {
           if (wardDetail != undefined) {
             let dayPenalty = [];
             let d = "day" + j;
-            wardDetail.dayList.push({ day: d, dayPenalty: dayPenalty });
+            wardDetail.dayList.push({ day: d, dayPenalty: dayPenalty,totalLength:"0.00",coveredLength:"0.00",percentage:"0.00" });
           }
         }
       }
@@ -228,6 +228,7 @@ export class PenaltySummaryComponent implements OnInit {
           }
         }
       }
+      let workPercentage=Number((( coveredLength / totalLength) * 100).toFixed(2));
       let percentage = Number((((totalLength - coveredLength) / totalLength) * 100).toFixed(2));
       let penalty = (2000 * Number(percentage) / 100).toFixed(2);
       this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
@@ -241,7 +242,11 @@ export class PenaltySummaryComponent implements OnInit {
         let d = "day" + Number(day);
         let dayDetail = dayList.find(item => item.day == d);
         if (dayDetail != undefined) {
+          dayDetail.dayPenalty[routeIndex]["totalLength"] = totalLength;
+          dayDetail.dayPenalty[routeIndex]["coveredLength"] = coveredLength;
+          dayDetail.dayPenalty[routeIndex]["percentage"] = workPercentage;
           dayDetail.dayPenalty[routeIndex]["penalty"] = penalty;
+
           let totalDayDetail = this.dayList.find(item => item.day == day);
           if (totalDayDetail != undefined) {
             totalDayDetail.total = (Number(totalDayDetail.total) + Number(penalty)).toFixed(2);

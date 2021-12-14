@@ -67,20 +67,23 @@
                                             {{dt.wardNo}}</td>
                                         <td class="text-left"
                                             style="vertical-align: top; font-weight: bold;width:200px!important;">
-                                            <div style="width: 100%;" *ngFor="let route of dt.routes">
+                                            <div style="width: 200px; padding-bottom: 50px;" *ngFor="let route of dt.routes">
                                                 {{route.routeName}}
                                             </div>
                                         </td>
                                         <td class="text-center"
                                             style="vertical-align: top; font-weight: bold;width:200px!important;">
-                                            <div style="width: 100%;" *ngFor="let penalty of dt.penalty">
+                                            <div style="width: 200px; padding-bottom: 50px;" *ngFor="let penalty of dt.penalty">
                                                 ₹ {{penalty.penalty}}
                                             </div>
                                         </td>
-                                        <td class=" text-center" style="vertical-align: top;"
+                                        <td class=" text-left" style="vertical-align: top;"
                                             *ngFor="let days of dt.dayList">
-                                            <div style="width: 100%;" *ngFor="let dayPenalty of days.dayPenalty">
-                                                ₹ {{dayPenalty.penalty}}
+                                            <div style="width: 100%; " *ngFor="let dayPenalty of days.dayPenalty">
+                                                T : {{dayPenalty.totalLength}} m<br/>
+                                                C : {{dayPenalty.coveredLength}} m<br/>
+                                                WP : {{dayPenalty.percentage}}%<br/>
+                                               P : ₹ {{dayPenalty.penalty}}
                                             </div>
                                         </td>
                                     </tr>
