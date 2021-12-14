@@ -110,6 +110,12 @@
     </div>
 </section>
 
+<div style="position: absolute; z-index: 999; top:12px; right:333px; color: #fff; text-align: center; font-size: 10px; display: none;" >
+    
+    <i class="fas fa-file-export" style="color: #fff; font-size: 30px; cursor: pointer;" (click)="exportToExcel();"></i><br/>
+    Export to Excel
+</div>
+
 <div class="tracking-bg">
     <div class="main-info" style="padding-top: 10px;">
         <h1>Total Penalty : {{penaltyData.totalPenalty}}

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { FirebaseService } from "../../firebase.service";
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-penalty-summary',
@@ -28,11 +30,28 @@ export class PenaltySummaryComponent implements OnInit {
       totalPenalty: "0"
     };
 
+
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
+  }
+
+  exportToExcel() {
+    if (this.wardList.length > 0) {
+      const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      const EXCEL_EXTENSION = '.xls';
+
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.wardList);
+      const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+      const data: Blob = new Blob([excelBuffer], {
+        type: EXCEL_TYPE
+      });
+      FileSaver.saveAs(data, "fileName" + new Date().getTime() + EXCEL_EXTENSION);
+    }
   }
 
   setDefault() {
@@ -60,6 +79,7 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   getYear() {
+    this.penaltyData.totalPenalty = "0.00";
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
     for (let i = year - 2; i <= year; i++) {
@@ -74,6 +94,7 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   changeZoneSelection(filterVal: any) {
+    this.penaltyData.totalPenalty = "0.00";
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -197,7 +218,9 @@ export class PenaltySummaryComponent implements OnInit {
                                 }
                                 lineList.push({ lineNo: lineNo, lineLength: lineLength });
                               }
+                              if(totalLength>0){
                               this.getPenalty(wardNo, j, lineList, workDate, totalLength, this.dayList[i]["day"]);
+                              }
                             }
                           }
                         }
@@ -243,7 +266,7 @@ export class PenaltySummaryComponent implements OnInit {
             }
           }
         }
-        wardDetail.routes[routeIndex]["totalLength"]=(Number(totalLength)/1000).toFixed(3);
+        wardDetail.routes[routeIndex]["totalLength"] = (Number(totalLength) / 1000).toFixed(3);
         this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
         //console.log("ward: " + wardNo + " day :" + day + " percentage :" + percentage + " penalty :" + penalty);
 
