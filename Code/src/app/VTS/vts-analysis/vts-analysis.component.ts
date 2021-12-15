@@ -533,6 +533,30 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllLines() {
+    if(this.vehicleList.length>0){
+      for(let i=0;i<this.vehicleList.length;i++){
+        let element=<HTMLInputElement>document.getElementById("chkVehicle"+i);
+        if(element.checked==true){
+          element.checked=false;
+          if (this.vtsPolylines[i] != null) {
+            this.vtsPolylines[i].setMap(null);
+            if (this.isShowMarker == true) {
+              if (this.markerList.length > 0) {
+                for (let i = 0; i < this.markerList.length; i++) {
+                  if (this.markerList[i]["marker"] != null) {
+                    if (this.markerList[i]["index"] == i) {
+                      this.markerList[i]["marker"].setMap(null);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      this.vtsPolylines=[];
+      this.markerList=[];
+    }
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -550,6 +574,8 @@ export class VtsAnalysisComponent implements OnInit {
       }
 
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
+      this.db.object(dbPath + "/routeVehicles").set(null);
+      this.routeVehicleList = [];
       let date = this.commonService.getTodayDateTime();
       this.db.object(dbPath).update({ resetBy: this.userId, resetDateTime: date });
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
@@ -574,6 +600,7 @@ export class VtsAnalysisComponent implements OnInit {
           if (data["LineStatus"] != null) {
             let obj = data["LineStatus"];
             dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+            this.db.database.ref(dbPath).set(null);
             if (obj != null) {
               let keyArray = Object.keys(obj);
               for (let i = 0; i < keyArray.length; i++) {
@@ -586,6 +613,9 @@ export class VtsAnalysisComponent implements OnInit {
               if (data["Summary"]["vehicles"] != null) {
                 dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
                 this.db.object(dbPath).update({ vehicles: data["Summary"]["vehicles"] });
+              }
+              if (data["Summary"]["routeVehicles"] != null) {
+                this.db.database.ref(dbPath + "/routeVehicles").set(data["Summary"]["routeVehicles"]);
               }
             }
             this.getWardLineStatus();
@@ -761,7 +791,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   getVtsRoute(vehicle: any, index: any) {
     let element = <HTMLInputElement>document.getElementById("chkVehicle" + index);
-    if (element.checked == true) {
+    if (element.checked == true) {     
       if (this.vtsPolylines[index] != null) {
         this.vtsPolylines[index].setMap(this.map);
         if (this.isShowMarker == true) {
@@ -799,6 +829,15 @@ export class VtsAnalysisComponent implements OnInit {
   getVtsVehicleRoute(vehicle: any, index: any) {
     let detail = this.vtsVehicleList.find(item => item.vehicle == vehicle);
     if (detail != undefined) {
+      let isRoute = false;
+      let vehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicle);
+      if (vehicleDetail != null) {
+        isRoute = true;
+      }
+      else {
+        this.routeVehicleList.push({ vehicle: vehicle });
+        this.saveRouteVehicle(vehicle);
+      }
       let dbPath = "BVGRoutes/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + vehicle;
       let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -815,8 +854,9 @@ export class VtsAnalysisComponent implements OnInit {
                   speed = Number(routeList[i].split(',')[2]);
                 }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
-                this.getLinesInRoute(vehicle, Number(lat), Number(lng));
-
+                if (isRoute == false) {
+                  this.getLinesInRoute(vehicle, Number(lat), Number(lng));
+                }
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
               let strockColor = this.getVTSLineColor(index);
@@ -837,10 +877,23 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
+  saveRouteVehicle(vehicle: any) {
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/routeVehicles";
+    let routeVehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        routeVehicleInstance.unsubscribe();
+        let vehicles = vehicle;
+        if (data != null) {
+          vehicles = data + "," + vehicle;
+        }
+        this.db.object(dbPath).set(vehicles);
+      }
+    );
+  }
+
   getLinesInRoute(vehicle: any, lat: any, lng: any) {
     if (this.wardLineLatLng.length > 0) {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-
       for (let i = 0; i < this.wardLineLatLng.length; i++) {
         let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
         if (distance < 15) {
@@ -851,7 +904,7 @@ export class VtsAnalysisComponent implements OnInit {
             let time = this.commonService.getCurrentTimeWithSecond();
             time = time + "-" + this.userId;
             let strokeColor = lineDetail.strokeColor;
-           // this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+            this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
             lineDetail.strokeColor = this.strockColorDone;
             strokeColor = lineDetail.strokeColor;
             var polyOptions = {
