@@ -79,12 +79,22 @@ export class PenaltySummaryComponent implements OnInit {
               htmlString += "</td>";
               for (let k = 0; k < dayList.length; k++) {
                 let dayPenalty = dayList[k]["dayPenalty"];
+                if (dayPenalty[j]["coveredLength"] != undefined) {
                 htmlString += "<td>";
                 htmlString += dayPenalty[j]["coveredLength"] + " Km [" + dayPenalty[j]["percentage"] + "%]";
                 htmlString += "</td>";
                 htmlString += "<td>";
                 htmlString += dayPenalty[j]["penalty"];
                 htmlString += "</td>";
+                }
+                else{
+                  htmlString += "<td>";
+                  htmlString +="";
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += "";
+                  htmlString += "</td>";
+                }
               }
             }
             else {
@@ -99,12 +109,22 @@ export class PenaltySummaryComponent implements OnInit {
               htmlString += "</td>";
               for (let k = 0; k < dayList.length; k++) {
                 let dayPenalty = dayList[k]["dayPenalty"];
-                htmlString += "<td>";
-                htmlString += dayPenalty[j]["coveredLength"] + " Km [" + dayPenalty[j]["percentage"] + "%]";
-                htmlString += "</td>";
-                htmlString += "<td>";
-                htmlString += dayPenalty[j]["penalty"];
-                htmlString += "</td>";
+                if (dayPenalty[j]["coveredLength"] != undefined) {
+                  htmlString += "<td>";
+                  htmlString += dayPenalty[j]["coveredLength"] + " Km [" + dayPenalty[j]["percentage"] + "%]";
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += dayPenalty[j]["penalty"];
+                  htmlString += "</td>";
+                }
+                else{
+                  htmlString += "<td>";
+                  htmlString +="";
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += "";
+                  htmlString += "</td>";
+                }
               }
             }
           }
@@ -324,8 +344,8 @@ export class PenaltySummaryComponent implements OnInit {
           }
         }
       }
-      totalLength=(totalLength/1000).toFixed(1);
-      coveredLength=Number((coveredLength/1000).toFixed(1));
+      totalLength = (totalLength / 1000).toFixed(1);
+      coveredLength = Number((coveredLength / 1000).toFixed(1));
       let workPercentage = Number(((coveredLength / totalLength) * 100).toFixed(2));
       let percentage = Number((((totalLength - coveredLength) / totalLength) * 100).toFixed(2));
       let penalty = Math.round((2000 * Number(percentage) / 100)).toFixed(2);
