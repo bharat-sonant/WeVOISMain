@@ -7,6 +7,8 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { timeStamp } from "console";
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 
 @Component({
   selector: 'app-vts-analysis',
@@ -45,6 +47,7 @@ export class VtsAnalysisComponent implements OnInit {
   vtsVehicleList: any[];
   vtsPolylines = [];
   markerList: any[];
+  wardLineLatLng: any[];
 
   isShowMarker = false;
   progressData: progressDetail = {
@@ -130,6 +133,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.wardLineStatus = [];
     this.vtsVehicleList = [];
     this.markerList = [];
+    this.wardLineLatLng = [];
   }
 
   setDefaultLocalStorage() {
@@ -330,6 +334,7 @@ export class VtsAnalysisComponent implements OnInit {
       }
     }
     this.markerList = [];
+    this.wardLineLatLng = [];
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -344,6 +349,7 @@ export class VtsAnalysisComponent implements OnInit {
                   if (data[lineNo]["points"].length > 0) {
                     for (let j = 0; j < data[lineNo]["points"].length; j++) {
                       latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
                     }
                     let strokeColor = this.strockColorNotDone;
                     let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
@@ -359,6 +365,8 @@ export class VtsAnalysisComponent implements OnInit {
                 }
               }
             }
+
+            console.log(this.wardLineLatLng);
             this.plotLinesOnMap();
           }
         }
@@ -803,6 +811,8 @@ export class VtsAnalysisComponent implements OnInit {
                   speed = Number(routeList[i].split(',')[2]);
                 }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
+                this.getLinesInRoute(Number(lat), Number(lng));
+
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
               let strockColor = this.getVTSLineColor(index);
@@ -820,6 +830,46 @@ export class VtsAnalysisComponent implements OnInit {
     }
     else {
       this.commonService.setAlertMessage("error", "Sorry this vehicle not run on selected date !!!");
+    }
+  }
+
+  getLinesInRoute(lat: any, lng: any) {
+    if (this.wardLineLatLng.length > 0) {
+      for (let i = 0; i < this.wardLineLatLng.length; i++) {
+        let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
+        if (distance < 20) {
+          let lineNo = this.wardLineLatLng[i]["lineNo"];
+          let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+            let time = this.commonService.getCurrentTimeWithSecond();
+            time = time + "-" + this.userId;
+            let strokeColor = lineDetail.strokeColor;
+            if (strokeColor == this.strockColorNotDone) {
+              //this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              lineDetail.strokeColor = this.strockColorDone;
+              strokeColor = lineDetail.strokeColor;
+            }
+            else {
+              //this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(null);
+              lineDetail.strokeColor = this.strockColorNotDone;
+              strokeColor = lineDetail.strokeColor;
+            }
+            var polyOptions = {
+              strokeColor: strokeColor,
+              strokeOpacity: 1.0,
+              strokeWeight: Number(localStorage.getItem("strokeWeight"))
+            }
+            for (let j = 0; j < this.lines.length; j++) {
+              if (this.lines[j]["lineNo"] == lineNo) {
+                let line = new google.maps.Polyline(this.polylines[j]);
+                line.setOptions(polyOptions);
+                this.polylines[j]["strokeColor"] = strokeColor;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
