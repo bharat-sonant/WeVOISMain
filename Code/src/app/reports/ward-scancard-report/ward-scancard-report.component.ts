@@ -212,7 +212,7 @@ export class WardScancardReportComponent implements OnInit {
           }
         }
       }
-      this.selectedCircle = "Circle2";
+      this.selectedCircle = "Circle1";
 
       this.onSubmit();
       circleWiseWard.unsubscribe();

@@ -77,7 +77,6 @@ import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-anal
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
 import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
-import { WardHaltReportComponent } from '../../reports/ward-halt-report/ward-halt-report.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
@@ -180,7 +179,6 @@ import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summa
     WardSurveySummaryComponent,
     MapCardReviewComponent,
     WardMarkingSummaryComponent,
-    WardHaltReportComponent,
     WardScancardReportComponent,
     LineMarkerMappingComponent,
     VehicleAssignedComponent,

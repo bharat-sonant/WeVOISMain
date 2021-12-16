@@ -610,6 +610,9 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (distanceData != null) {
         this.workerDetails.totalKM = (parseFloat(distanceData.toString()) / 1000).toFixed(2);
       }
+      else{
+        this.workerDetails.totalKM="0.00";
+      }
       distanceCovered.unsubscribe();
     });
   }

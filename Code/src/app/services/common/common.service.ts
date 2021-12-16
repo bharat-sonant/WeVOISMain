@@ -26,7 +26,7 @@ export class CommonService {
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
-  getDateWithDate(d:any) {
+  getDateWithDate(d: any) {
     let month = d.getMonth() + 1;
     let day = d.getDate();
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
@@ -741,6 +741,9 @@ export class CommonService {
         }
         localStorage.setItem("markerZone", JSON.stringify(zoneList));
       }
+      else{
+        localStorage.setItem("markerZone", JSON.stringify(zoneList));
+      }
     });
   }
 
@@ -749,16 +752,21 @@ export class CommonService {
     let dbLocationPath = "Defaults/GeoLocations/FixedLocations";
     let locationDetail = newDb.list(dbLocationPath).valueChanges().subscribe((locationPath) => {
       locationDetail.unsubscribe();
-      for (let i = 0; i < locationPath.length; i++) {
-        fixedLocation.push({
-          name: locationPath[i]["name"],
-          address: locationPath[i]["address"],
-          img: locationPath[i]["img"],
-          lat: locationPath[i]["lat"],
-          lng: locationPath[i]["lng"],
-        });
+      if (locationPath.length > 0) {
+        for (let i = 0; i < locationPath.length; i++) {
+          fixedLocation.push({
+            name: locationPath[i]["name"],
+            address: locationPath[i]["address"],
+            img: locationPath[i]["img"],
+            lat: locationPath[i]["lat"],
+            lng: locationPath[i]["lng"],
+          });
+        }
+        localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
       }
-      localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
+      else {
+        localStorage.setItem("fixedLocation", JSON.stringify(fixedLocation));
+      }
     });
   }
 
@@ -779,6 +787,9 @@ export class CommonService {
             }
           }
         }
+        localStorage.setItem("vehicle", JSON.stringify(vehicleList));
+      }
+      else {
         localStorage.setItem("vehicle", JSON.stringify(vehicleList));
       }
     });
@@ -824,6 +835,9 @@ export class CommonService {
         }
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
       }
+      else {
+        localStorage.setItem("dustbin", JSON.stringify(dustbinList));
+      }
     });
   }
 
@@ -832,9 +846,9 @@ export class CommonService {
     let wardKMLInstance = newDb.object(dbPath).valueChanges().subscribe(
       data => {
         wardKMLInstance.unsubscribe();
+        let wardKMLList = [];
         if (data != null) {
-          let keyArray = Object.keys(data);
-          let wardKMLList = [];
+          let keyArray = Object.keys(data);          
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNo = keyArray[i];
@@ -843,6 +857,9 @@ export class CommonService {
             }
             localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
           }
+        }
+        else{
+          localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
         }
       }
     );
@@ -853,9 +870,9 @@ export class CommonService {
     let wardLinesInstance = newDb.object(dbPath).valueChanges().subscribe(
       data => {
         wardLinesInstance.unsubscribe();
+        let wardLineCountList = [];
         if (data != null) {
           let keyArray = Object.keys(data);
-          let wardLineCountList = [];
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNo = keyArray[i];
@@ -864,6 +881,12 @@ export class CommonService {
             }
             localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
           }
+          else {
+            localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
+          }
+        }
+        else {
+          localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
         }
       }
     );
@@ -919,6 +942,9 @@ export class CommonService {
         }
         localStorage.setItem("markingWards", JSON.stringify(markingWards));
       }
+      else{
+        localStorage.setItem("markingWards", JSON.stringify(markingWards));
+      }
       wardDetail.unsubscribe();
     });
   }
@@ -971,6 +997,9 @@ export class CommonService {
             }
           }
         }
+        localStorage.setItem("latest-zones", JSON.stringify(letestZone));
+      }
+      else {
         localStorage.setItem("latest-zones", JSON.stringify(letestZone));
       }
       wardDetail.unsubscribe();
