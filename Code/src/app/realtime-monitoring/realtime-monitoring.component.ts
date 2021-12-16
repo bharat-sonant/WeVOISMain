@@ -610,8 +610,8 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (distanceData != null) {
         this.workerDetails.totalKM = (parseFloat(distanceData.toString()) / 1000).toFixed(2);
       }
-      else{
-        this.workerDetails.totalKM="0.00";
+      else {
+        this.workerDetails.totalKM = "0.00";
       }
       distanceCovered.unsubscribe();
     });
@@ -1731,15 +1731,17 @@ export class RealtimeMonitoringComponent implements OnInit {
       var linePath = [];
       for (let i = 1; i < 2000; i++) {
         var line = zoneLine[i];
-        if (line == undefined) {
-          break;
-        }
-        var path = [];
-        for (let j = 0; j < line.points.length; j++) {
-          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-        }
+        //if (line == undefined) {
+        //  break;
+       // }
+        if (line != undefined) {
+          var path = [];
+          for (let j = 0; j < line.points.length; j++) {
+            path.push({ lat: line.points[j][0], lng: line.points[j][1] });
+          }
 
-        linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+          linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+        }
       }
 
       this.allLines = linePath;
