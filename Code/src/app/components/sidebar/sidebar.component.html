@@ -4,7 +4,7 @@
       <img src="./assets/img/wevois-logo-white.png" style="display: none;" />
     </div>
   </a><br>
-  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml" style="display: none;" >
+  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml" style="display: none;">
     WeVOIS
   </a>
 </div>
@@ -121,7 +121,8 @@
               <div class="col-md-2 login-header back">
               </div>
               <div class="col-md-8 login-header text-center">
-                <p style="padding-top: 5px; cursor: pointer;" (click)="changeCity('test');"><span class="welcome-text" id="popUpCityName" >Sikar</span></p>
+                <p style="padding-top: 5px; cursor: pointer;" (click)="changeCity('test');"><span class="welcome-text"
+                    id="popUpCityName">Sikar</span></p>
               </div>
               <div class="col-md-2 back login-header">
                 <button type="button" class="close" (click)="closeMapModel();">
@@ -132,37 +133,49 @@
 
             <div class="login-body">
               <div class="row" style="display: flex; justify-content: center;">
-                <div id="sikarBox" class="login-box active-box" style="cursor: pointer; margin-right: 5px; display: none; "
-                    (click)="changeCity('sikar');">
-                    <p>
-                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
-                    </p>
-                  </div>
-                  <div id="reengusBox" class="login-box" style="cursor: pointer; margin-left: 5px; margin-right: 5px;  display: none;" (click)="changeCity('reengus');">
-                    <p>
-                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
-                    </p>
-                  </div>
-                  <div id="shahpuraBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px; display: none;"
-                    (click)="changeCity('shahpura');">
-                    <p>
-                      <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Shahpura
-                    </p>
-                  </div>
-                  <div id="jaipurGreaterBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px; display: none;"
+                <div id="sikarBox" class="login-box active-box"
+                  style="cursor: pointer; margin-right: 5px; display: none; " (click)="changeCity('sikar');">
+                  <p>
+                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
+                  </p>
+                </div>
+                <div id="reengusBox" class="login-box"
+                  style="cursor: pointer; margin-left: 5px; margin-right: 5px;  display: none;"
+                  (click)="changeCity('reengus');">
+                  <p>
+                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
+                  </p>
+                </div>
+                <div id="shahpuraBox" class="login-box"
+                  style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px; display: none;"
+                  (click)="changeCity('shahpura');">
+                  <p>
+                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Shahpura
+                  </p>
+                </div>
+                <div id="jaipurGreaterBox" class="login-box"
+                  style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px; display: none;"
                   (click)="changeCity('jaipur-greater');">
                   <p>
                     <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Greater
                   </p>
                 </div>
-                  <div id="demoBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px;  display: none; "
+                <div id="kishangarhBox" class="login-box"
+                  style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px; margin-right: 5px; display: none;"
+                  (click)="changeCity('kishangarh');">
+                  <p>
+                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Kishangarh
+                  </p>
+                </div>
+                <div id="demoBox" class="login-box"
+                  style="margin-bottom: 0px!important;cursor: pointer;margin-left: 5px;  display: none; "
                   (click)="changeCity('demo');">
                   <p>
                     <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Demo
                   </p>
                 </div>
-                
-              
+
+
               </div>
             </div>
 
