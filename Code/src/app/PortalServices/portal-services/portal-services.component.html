@@ -22,14 +22,6 @@
         </div>
         </div>
        </div>
-       <div id="divWorkPercentage"  class="col-md-2" style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-        <div class="more-cards rainbow"  (click)="goToPage('/8B/ward-work-percentage');">
-          <div class="vertical">
-            <i class="fas fa-percentage"></i> <br>
-          <h3>Work Percentage</h3>
-        </div>
-        </div>
-       </div>
        <div id="divMapReview"    class="col-md-2" style="padding-left: 17px; padding-right: 8px; padding-top: 25px; display: none;">
         <div class="more-cards rainbow" (click)="goToPage('/8E/map-card-review');">
           <div class="vertical">
@@ -86,47 +78,6 @@
         </div>
         </div>
        </div>
-      <div id="divReachCost" class="col-md-2" style="display: none;">
-        <div class="dashboard-widgets-update">
-          <div class="heading">Ward Reach Cost Data</div>
-          <div class="row" style="padding:10px; margin-top: 4px;">
-            <div class="col-md-6" style="padding-left: 10px; padding-right: 5px;">
-              <select id="ddlMonth" class="caret-select">
-                <option value="0">Month</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
-            </div>
-            <div class="col-md-6" style="padding-left: 10px; padding-right: 10px;">
-              <select id="ddlYear" class="caret-select">
-                <option value="0">Year</option>
-                <option value={{yer.year}} *ngFor="let yer of yearList">{{yer.year}}</option>
-              </select>
-            </div>
-            
-          </div>
-          <div class="row" style="padding:3px;">
-            <div class="col-md-6" style="padding-left: 18px; padding-right: 0px;">
-              <select id="ddlZone" class="caret-select">
-                <option value="{{zone.zoneNo}}" *ngFor="let zone of zoneList">{{zone.zoneName}}</option>
-              </select>
-            </div>
-            <div class="col-md-6" style="padding-left: 10px; padding-right: 0px;">
-              <button class="btn-update" (click)="setWardDutyDataAll();">Update</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="row">
       <div class="col-md-12 text-center home-footer">

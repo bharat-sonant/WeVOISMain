@@ -51,7 +51,6 @@ import { ReportsComponent } from '../../reports/reports/reports.component';
 import { RemarkReportComponent } from '../../reports/remark-report/remark-report.component';
 import { WorkAssignReportComponent } from '../../reports/work-assign-report/work-assign-report.component';
 import { PortalServicesComponent } from '../../PortalServices/portal-services/portal-services.component';
-import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-duty-data.component';
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
 import { InventoryComponent } from '../../Inventory/inventory/inventory.component';
@@ -155,7 +154,6 @@ import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summa
     RemarkReportComponent,
     WorkAssignReportComponent,
     PortalServicesComponent,
-    WardWorkPercentageComponent,
     WardDutyDataComponent,
     DustbinAnalysisComponent,
     InventoryComponent,
