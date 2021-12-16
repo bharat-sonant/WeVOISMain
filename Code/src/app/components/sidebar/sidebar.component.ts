@@ -644,8 +644,8 @@ export class SidebarComponent implements OnInit {
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 270;
-    let width = 820;
+    let height = 410;
+    let width = 465;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content")      .parent()      .css("max-width", "" + width + "px")      .css("margin-top", marginTop);
     $("div .modal-content")      .css("height", height + "px")      .css("width", "" + width + "px");
