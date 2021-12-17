@@ -40,6 +40,10 @@ export class HomeComponent implements OnInit {
     } else {
       this.getUserAccess();
     }
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 6000);
   }
   
   setRemark() {
