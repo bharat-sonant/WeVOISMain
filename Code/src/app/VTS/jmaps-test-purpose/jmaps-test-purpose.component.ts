@@ -980,13 +980,12 @@ export class JmapsTestPurposeComponent implements OnInit {
 
 
   getLinesInRoute(lat: any, lng: any, speed: any) {
-
     if (speed <= 15) {
       if (this.wardLineLatLng.length > 0) {
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
         for (let i = 0; i < this.wardLineLatLng.length; i++) {
           let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
-          if (distance < 3) {
+          if (distance < 5) {
             let lineNo = this.wardLineLatLng[i]["lineNo"];
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
