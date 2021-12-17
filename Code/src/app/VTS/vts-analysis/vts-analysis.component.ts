@@ -7,7 +7,6 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { count } from "rxjs/operators";
 
 @Component({
   selector: 'app-vts-analysis',
@@ -323,7 +322,6 @@ export class VtsAnalysisComponent implements OnInit {
     );
   }
 
-
   setWardLines() {
     this.lines = [];
     if (this.polylines.length > 0) {
@@ -348,119 +346,36 @@ export class VtsAnalysisComponent implements OnInit {
         if (data != null) {
           var keyArray = Object.keys(data);
           if (keyArray.length > 0) {
-            let newLineNo = 1;
             for (let i = 0; i < keyArray.length; i++) {
               this.wardLines = keyArray.length;
               let lineNo = keyArray[i];
-              //if (lineNo == "94") {
               if (data[lineNo] != null) {
                 var latLng = [];
                 if (data[lineNo]["points"] != undefined) {
                   if (data[lineNo]["points"].length > 0) {
                     for (let j = 0; j < data[lineNo]["points"].length; j++) {
-                      latLng = [];
-                      if (data[lineNo]["points"][j + 1] != null) {
-                        latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
-                        latLng.push({ lat: data[lineNo]["points"][j + 1][0], lng: data[lineNo]["points"][j + 1][1] });
-                       // this.wardLineLatLng.push({lineNo:newLineNo,lat:data[lineNo]["points"][j][0],lng:data[lineNo]["points"][j][1]});
-                        //this.wardLineLatLng.push({lineNo:newLineNo,lat:data[lineNo]["points"][j+1][0],lng:data[lineNo]["points"][j+1][1]});
-                        this.getPoints(newLineNo, data[lineNo]["points"][j][0], data[lineNo]["points"][j][1], data[lineNo]["points"][j + 1][0], data[lineNo]["points"][j + 1][1]);
-                        let strokeColor = this.strockColorNotDone;
-                        // let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == newLineNo);
-                        // if (wardLinsStatusDetail != undefined) {
-                        // strokeColor = this.strockColorDone;
-                        // }
-                        this.lines.push({
-                          lineNo: newLineNo,
-                          latlng: latLng,
-                          strokeColor: strokeColor
-                        });
-                        newLineNo++;
-                      }
-                      //this.setLineMarker(Number(data[lineNo]["points"][j][0]), Number(data[lineNo]["points"][j][1]))
+                      latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                     // this.setLineMarker(Number(data[lineNo]["points"][j][0]),Number(data[lineNo]["points"][j][1]))
                     }
+                    let strokeColor = this.strockColorNotDone;
+                    let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
+                    if (wardLinsStatusDetail != undefined) {
+                      strokeColor = this.strockColorDone;
+                    }
+                    this.lines.push({
+                      lineNo: lineNo,
+                      latlng: latLng,
+                      strokeColor: strokeColor
+                    });
                   }
                 }
               }
-              //  }
             }
             this.plotLinesOnMap();
           }
         }
       });
-    }
-  }
-
-  /*
-    setWardLines() {
-      this.lines = [];
-      if (this.polylines.length > 0) {
-        for (let i = 0; i < this.polylines.length; i++) {
-          if (this.polylines[i] != undefined) {
-            this.polylines[i].setMap(null);
-          }
-        }
-      }
-      this.polylines = [];
-      if (this.markerList.length > 0) {
-        for (let i = 0; i < this.markerList.length; i++) {
-          if (this.markerList[i] != null) {
-            this.markerList[i]["marker"].setMap(null);
-          }
-        }
-      }
-      this.markerList = [];
-      this.wardLineLatLng = [];
-      if (this.selectedWard != "0") {
-        this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
-          if (data != null) {
-            var keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                this.wardLines = keyArray.length;
-                let lineNo = keyArray[i];
-                let newLineNo=1;
-                //if (lineNo == "94") {
-                  if (data[lineNo] != null) {
-                    var latLng = [];
-                    if (data[lineNo]["points"] != undefined) {
-                      if (data[lineNo]["points"].length > 0) {
-                        for (let j = 0; j < data[lineNo]["points"].length; j++) {
-                          latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
-                          if (data[lineNo]["points"][j + 1] != null) {
-                            this.getPoints(lineNo, data[lineNo]["points"][j][0], data[lineNo]["points"][j][1], data[lineNo]["points"][j + 1][0], data[lineNo]["points"][j + 1][1]);
-                          }
-                          this.setLineMarker(Number(data[lineNo]["points"][j][0]), Number(data[lineNo]["points"][j][1]))
-                        }
-  
-                        let strokeColor = this.strockColorNotDone;
-                        let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
-                        if (wardLinsStatusDetail != undefined) {
-                          strokeColor = this.strockColorDone;
-                        }
-                        this.lines.push({
-                          lineNo: lineNo,
-                          latlng: latLng,
-                          strokeColor: strokeColor
-                        });
-                      }
-                    }
-                  }
-              //  }
-              }
-              this.plotLinesOnMap();
-            }
-          }
-        });
-      }
-    }
-    */
-
-  getPoints(lineNo: any, lat1: any, lng1: any, lat2: any, lng2: any) {
-    let d = Math.sqrt((lat1 - lat2) * (lat1 - lat2) + (lng1 - lng2) * (lng1 - lng2)) / 100;
-    let fi = Math.atan2(lng2 - lng1, lat2 - lat1);
-    for (let i = 0; i <= 100; i++) {
-      this.wardLineLatLng.push({ lineNo: lineNo, lat: (lat1 + i * d * Math.cos(fi)), lng: (lng1 + i * d * Math.sin(fi)) });
     }
   }
 
@@ -647,9 +562,9 @@ export class VtsAnalysisComponent implements OnInit {
               if (this.markerList.length > 0) {
                 for (let i = 0; i < this.markerList.length; i++) {
                   if (this.markerList[i]["marker"] != null) {
-                    // if (this.markerList[i]["index"] == i) {
-                    this.markerList[i]["marker"].setMap(null);
-                    // }
+                   // if (this.markerList[i]["index"] == i) {
+                      this.markerList[i]["marker"].setMap(null);
+                   // }
                   }
                 }
               }
@@ -930,7 +845,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   getVtsVehicleRoute(vehicle: any, index: any) {
-    
     let detail = this.vtsVehicleList.find(item => item.vehicle == vehicle);
     if (detail != undefined) {
       let isRoute = false;
@@ -959,7 +873,7 @@ export class VtsAnalysisComponent implements OnInit {
                 }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
                 if (isRoute == false) {
-                  this.getLinesInRoute(Number(lat), Number(lng), speed);
+                  this.getLinesInRoute(Number(lat), Number(lng),speed);
                 }
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
@@ -983,20 +897,19 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   getLinesInRoute(lat: any, lng: any, speed: any) {
-
     if (speed <= 15) {
       if (this.wardLineLatLng.length > 0) {
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
         for (let i = 0; i < this.wardLineLatLng.length; i++) {
           let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
-          if (distance < 3) {
+          if (distance < 20) {
             let lineNo = this.wardLineLatLng[i]["lineNo"];
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
               let time = this.commonService.getCurrentTimeWithSecond();
               time = time + "-" + this.userId;
               let strokeColor = lineDetail.strokeColor;
-              // this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
               lineDetail.strokeColor = this.strockColorDone;
               strokeColor = lineDetail.strokeColor;
               var polyOptions = {
@@ -1018,7 +931,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-
+  
   saveRouteVehicle(vehicle: any) {
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/routeVehicles";
     let routeVehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1028,7 +941,7 @@ export class VtsAnalysisComponent implements OnInit {
         if (data != null) {
           vehicles = data + "," + vehicle;
         }
-        // this.db.object(dbPath).set(vehicles);
+        this.db.object(dbPath).set(vehicles);
       }
     );
   }
