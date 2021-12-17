@@ -82,7 +82,6 @@ import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-map
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
-import { JmapsComponent } from '../../VTS/jmaps/jmaps.component';
 import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
 import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
@@ -184,7 +183,6 @@ import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summa
     VehicleAssignedComponent,
     LogBookComponent,
     WardScancardSummaryComponent,
-    JmapsComponent,
     GarbageCaptureAnalysisComponent,
     VtsReportComponent,
     VtsMonthlyReportComponent,
