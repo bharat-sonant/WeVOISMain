@@ -279,18 +279,17 @@ export class Cms1Component implements OnInit {
     });
   }
 
-  getJulyData()
-  {
-    let month=7;
-    for(let i=1;i<=150;i++){
-    let dbPath="WasteCollectionInfo/"+i+"/2021/July";
-    let dataInstance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
-        if(data!=null){
-          console.log(i);
+  getJulyData() {
+    let month = 7;
+    for (let i = 1; i <= 150; i++) {
+      let dbPath = "WasteCollectionInfo/" + i + "/2021/July";
+      let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          if (data != null) {
+            console.log(i);
+          }
         }
-      }
-    );
+      );
     }
 
   }
@@ -339,9 +338,9 @@ export class Cms1Component implements OnInit {
   }
 
   setWardTotalLength() {
-    for (let i = 1; i <= 1; i++) {
-      let wardNo = i;
-      this.httpService.get("../../assets/jsons/\WardLineLength/jaipur-greater/" + wardNo + ".json").subscribe(data => {
+    //for (let i = 136; i <= 136; i++) {
+      let wardNo = 143;
+      this.httpService.get("../../assets/jsons/WardLineLength/jaipur-greater/" + wardNo + ".json").subscribe(data => {
         if (data != null) {
           var keyArray = Object.keys(data);
           //console.log(data);
@@ -359,6 +358,41 @@ export class Cms1Component implements OnInit {
           }
         }
       })
-    }
+    //}
+  }
+
+  setWardLineLength() {
+    let lineLingthList = [];
+    let lengthStr = "";
+    let dbPath = "Defaults/WardLines/143";
+    let lineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        lineInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            lengthStr = "{";
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let points = data[lineNo]["points"];
+              if (points.length > 0) {
+                let distance=0;
+                for (let j = 0; j < points.length - 1; j++) {
+                  let lat1 = points[j][0];
+                  let lng1 = points[j][1];
+                  let lat2 = points[j + 1][0];
+                  let lng2 = points[j + 1][1];
+                  distance += this.commonService.getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2);
+                }
+                lengthStr += "p" + lineNo + "p:p" + distance.toFixed(0)+"p,";
+              }
+            }
+            lengthStr += "}";
+          }
+          console.log(lengthStr);
+
+        }
+      }
+    );
   }
 }

@@ -96,6 +96,7 @@ import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-r
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
 import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
 import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
+import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/field-executive-tracking.component';
 
 @NgModule({
   imports: [
@@ -196,7 +197,8 @@ import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summa
     UploadRouteExcelComponent,
     BvgRoutesComponent,
     VtsAnalysisComponent,
-    PenaltySummaryComponent
+    PenaltySummaryComponent,
+    FieldExecutiveTrackingComponent
   ]
 })
 

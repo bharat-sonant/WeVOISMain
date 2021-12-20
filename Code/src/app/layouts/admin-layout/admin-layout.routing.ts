@@ -89,6 +89,7 @@ import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-r
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
 import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
 import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
+import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/field-executive-tracking.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -196,6 +197,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/bvg-routes', component: BvgRoutesComponent },
     { path: 'sikar/vts-analysis', component: VtsAnalysisComponent },
     { path: 'sikar/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'sikar/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -292,6 +294,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'sikar/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'sikar/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'sikar/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
 
     //jaipur-greater
@@ -389,6 +392,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/bvg-routes', component: BvgRoutesComponent },
     { path: 'jaipur-greater/vts-analysis', component: VtsAnalysisComponent },
     { path: 'jaipur-greater/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'jaipur-greater/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -485,6 +489,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'jaipur-greater/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'jaipur-greater/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'jaipur-greater/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -581,6 +586,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/bvg-routes', component: BvgRoutesComponent },
     { path: 'reengus/vts-analysis', component: VtsAnalysisComponent },
     { path: 'reengus/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'reengus/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -677,6 +683,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'reengus/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'reengus/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'reengus/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -773,6 +780,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/bvg-routes', component: BvgRoutesComponent },
     { path: 'shahpura/vts-analysis', component: VtsAnalysisComponent },
     { path: 'shahpura/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'shahpura/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -869,6 +877,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'shahpura/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'shahpura/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'shahpura/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -965,6 +974,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/bvg-routes', component: BvgRoutesComponent },
     { path: 'test/vts-analysis', component: VtsAnalysisComponent },
     { path: 'test/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'test/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1061,6 +1071,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'test/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'test/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'test/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1157,6 +1168,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/bvg-routes', component: BvgRoutesComponent },
     { path: 'demo/vts-analysis', component: VtsAnalysisComponent },
     { path: 'demo/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'demo/field-executive-tracking', component: FieldExecutiveTrackingComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1252,6 +1264,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'demo/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'demo/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'demo/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
 
@@ -1350,6 +1363,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/bvg-routes', component: BvgRoutesComponent },
     { path: 'kishangarh/vts-analysis', component: VtsAnalysisComponent },
     { path: 'kishangarh/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'kishangarh/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 
     
     
@@ -1447,4 +1461,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/bvg-routes', component: BvgRoutesComponent },
     { path: 'kishangarh/:id/vts-analysis', component: VtsAnalysisComponent },
     { path: 'kishangarh/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'kishangarh/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
 ]; 
