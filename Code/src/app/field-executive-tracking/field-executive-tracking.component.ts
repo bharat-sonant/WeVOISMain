@@ -4,7 +4,6 @@ import { Component, ViewChild, OnInit } from "@angular/core";
 //services
 import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
-import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 
 @Component({
@@ -15,7 +14,7 @@ import { FirebaseService } from "../firebase.service";
 export class FieldExecutiveTrackingComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService) { }
   db: any;
   cityName: any;
   selectedDate: any;
@@ -27,12 +26,13 @@ export class FieldExecutiveTrackingComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     console.log(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.setDefault();
   }
 
   setDefault() {
-    this.executiveList = []; this.selectedDate = this.commonService.setTodayDate();
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.executiveList = []; 
+    this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.executiveId = 0;
     this.setHeight();
@@ -51,7 +51,8 @@ export class FieldExecutiveTrackingComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let executiveId = keyArray[i];
               let name = data[executiveId]["name"];
-              this.executiveList.push({ executiveId: executiveId, name: name });
+              let cssClass="";
+              this.executiveList.push({ executiveId: executiveId, name: name, cssClass:cssClass });
             }
           }
         }
@@ -59,9 +60,22 @@ export class FieldExecutiveTrackingComponent implements OnInit {
     );
   }
 
-  getExecutiveRoute(executiveId: any) {
+  getExecutiveRoute(executiveId: any,index:any){
+    for(let i=0;i<this.executiveList.length;i++){
+      if(this.executiveList[i]["executiveId"]==executiveId){
+        this.executiveList[i]["cssClass"]="active";
+        this.executiveId = executiveId;
+        this.getExecutiveRouteDetail();
+      }
+      else{
+        this.executiveList[i]["cssClass"]="";
+      }
+    }
+    
+  }
+
+  getExecutiveRouteDetail() {
     this.bounds = new google.maps.LatLngBounds();
-    this.executiveId = executiveId;
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
@@ -71,7 +85,7 @@ export class FieldExecutiveTrackingComponent implements OnInit {
     let year = this.selectedDate.split('-')[0];
     let month = this.selectedDate.split('-')[1];
     let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
-    let dbPath = "LocationHistory/" + executiveId + "/" + year + "/" + monthName + "/" + this.selectedDate;
+    let dbPath = "LocationHistory/" + this.executiveId + "/" + year + "/" + monthName + "/" + this.selectedDate;
     let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeInstance.unsubscribe();
@@ -100,16 +114,13 @@ export class FieldExecutiveTrackingComponent implements OnInit {
                   this.polylines[i].setMap(this.map);
                   this.map.fitBounds(this.bounds);
                 }
-
               }
             }
-
           }
         }
       }
     );
   }
-
 
   setDate(filterVal: any, type: string) {
     if (type == "current") {
@@ -126,15 +137,13 @@ export class FieldExecutiveTrackingComponent implements OnInit {
       return;
     }
     $("#txtDate").val(this.selectedDate);
-    this.getExecutiveRoute(this.executiveId);
+    this.getExecutiveRouteDetail();
   }
-
 
   setHeight() {
     $(".navbar-toggler").show();
     $("#divMap").css("height", $(window).height() - 80);
   }
-
 
   setMaps() {
     var mapstyle = new google.maps.StyledMapType([
@@ -149,5 +158,4 @@ export class FieldExecutiveTrackingComponent implements OnInit {
     this.map.mapTypes.set("styled_map", mapstyle);
     this.map.setMapTypeId("styled_map");
   }
-
 }
