@@ -172,7 +172,6 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   getYear() {
-    this.penaltyData.totalPenalty = "0.00";
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
     for (let i = year - 2; i <= year; i++) {
@@ -187,7 +186,6 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   changeZoneSelection(filterVal: any) {
-    this.penaltyData.totalPenalty = "0.00";
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -197,6 +195,7 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   getWard() {
+    this.penaltyData.totalPenalty = "0.00";
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == this.selectedZone);
     if (zoneDetail != undefined) {
