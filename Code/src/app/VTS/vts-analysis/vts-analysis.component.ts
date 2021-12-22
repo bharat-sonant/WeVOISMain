@@ -286,13 +286,14 @@ export class VtsAnalysisComponent implements OnInit {
             if (userData != undefined) {
               $(this.approvalName).html(userData["name"] + " on " + analysisTime);
             }
-
             $(this.divApproved).show();
           }
           if (data["routeVehicles"] != null) {
             let vehicles = data["routeVehicles"].split(',');
+            let latLngList = [];
+            let speedList = [];
             for (let i = 0; i < vehicles.length; i++) {
-              this.routeVehicleList.push({ vehicle: vehicles[i] });
+              this.routeVehicleList.push({ vehicle: vehicles[i], latLngList: latLngList, isRoute: true, speedList: speedList });
             }
           }
         }
@@ -301,7 +302,6 @@ export class VtsAnalysisComponent implements OnInit {
         }
       }
     );
-
   }
 
   getWardLineStatus() {
@@ -356,7 +356,6 @@ export class VtsAnalysisComponent implements OnInit {
                     for (let j = 0; j < data[lineNo]["points"].length; j++) {
                       latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
                       this.wardLineLatLng.push({ lineNo: lineNo, lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
-                     // this.setLineMarker(Number(data[lineNo]["points"][j][0]),Number(data[lineNo]["points"][j][1]))
                     }
                     let strokeColor = this.strockColorNotDone;
                     let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
@@ -377,23 +376,6 @@ export class VtsAnalysisComponent implements OnInit {
         }
       });
     }
-  }
-
-  setLineMarker(lat: any, lng: any) {
-    let lt = lat;
-    let lg = lng;
-    let markerURL = "../../../assets/img/black-dot.png";
-    let marker = new google.maps.Marker({
-      position: { lat: Number(lt), lng: Number(lg) },
-      map: this.map,
-      icon: {
-        url: markerURL,
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scaledSize: new google.maps.Size(10, 10),
-        origin: new google.maps.Point(0, 0),
-      },
-    });
   }
 
   plotLinesOnMap() {
@@ -450,7 +432,6 @@ export class VtsAnalysisComponent implements OnInit {
       }
     });
   }
-
 
   //#endregion
 
@@ -562,9 +543,7 @@ export class VtsAnalysisComponent implements OnInit {
               if (this.markerList.length > 0) {
                 for (let i = 0; i < this.markerList.length; i++) {
                   if (this.markerList[i]["marker"] != null) {
-                   // if (this.markerList[i]["index"] == i) {
-                      this.markerList[i]["marker"].setMap(null);
-                   // }
+                    this.markerList[i]["marker"].setMap(null);
                   }
                 }
               }
@@ -590,7 +569,6 @@ export class VtsAnalysisComponent implements OnInit {
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
         this.db.database.ref(dbPath).set(null);
       }
-
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
       this.db.object(dbPath + "/routeVehicles").set(null);
       this.routeVehicleList = [];
@@ -600,7 +578,6 @@ export class VtsAnalysisComponent implements OnInit {
       this.closeModel();
     }
   }
-
 
   setPreviousData() {
     let date = $(this.txtPreDate).val().toString();
@@ -707,9 +684,9 @@ export class VtsAnalysisComponent implements OnInit {
   removeVehicle(index: any) {
     let vehicleList = [];
     let vehicles = "";
+    let vehicleName = "";
     for (let i = 0; i < this.vehicleList.length; i++) {
       if (i != index) {
-        let latLng = [];
         let message = "Route not Imported";
         let showCheckBox = 0;
         let cssClass = "not-route-created";
@@ -719,9 +696,12 @@ export class VtsAnalysisComponent implements OnInit {
           showCheckBox = 1;
           cssClass = "";
         }
-        vehicleList.push({ vehicle: this.vehicleList[i]["vehicle"], latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
+        vehicleList.push({ vehicle: this.vehicleList[i]["vehicle"], showCheckBox: showCheckBox, message: message, cssClass: cssClass });
         if (vehicles != "") { vehicles = vehicles + "," }
         vehicles = vehicles + this.vehicleList[i]["vehicle"];
+      }
+      else {
+        vehicleName = this.vehicleList[i]["vehicle"];
       }
     }
     this.vehicleList = vehicleList;
@@ -740,7 +720,32 @@ export class VtsAnalysisComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
       this.db.database.ref(dbPath).set(null);
     }
+    if (vehicleName != "") {
+      this.removeRouteVehicle(vehicleName);
+    }
     this.commonService.setAlertMessage("success", "Vehicle deleted successfully !!!");
+  }
+
+  removeRouteVehicle(vehicle: any) {
+    let vehicleList = [];
+    let vehicles = "";
+    for (let i = 0; i < this.routeVehicleList.length; i++) {
+      if (this.routeVehicleList[i]["vehicle"] != vehicle) {
+        vehicleList.push({ vehicle: this.routeVehicleList[i]["vehicle"], latLngList: this.routeVehicleList[i]["latLngList"], isRoute: this.routeVehicleList[i]["isRoute"], speedList: this.routeVehicleList[i]["speedList"] });
+        if (vehicles != "") { vehicles = vehicles + "," }
+        vehicles = vehicles + this.vehicleList[i]["vehicle"];
+        this.vtsPolylines[i].setMap(this.map);
+      }
+    }
+    this.routeVehicleList = vehicleList;
+    if (vehicles != "") {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      this.db.object(dbPath).update({ routeVehicles: vehicles });
+    }
+    else {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/routeVehicles";
+      this.db.database.ref(dbPath).set(null);
+    }
   }
 
   addVehicle() {
@@ -781,7 +786,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   addVehicleList(vehicleNo: any) {
-    let latLng = [];
     let message = "Route not Imported";
     let showCheckBox = 0;
     let cssClass = "not-route-created";
@@ -791,7 +795,7 @@ export class VtsAnalysisComponent implements OnInit {
       showCheckBox = 1;
       cssClass = "";
     }
-    this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
+    this.vehicleList.push({ vehicle: vehicleNo, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
     let vehicles = "";
     if (this.vehicleList != null) {
       for (let i = 0; i < this.vehicleList.length; i++) {
@@ -847,14 +851,11 @@ export class VtsAnalysisComponent implements OnInit {
   getVtsVehicleRoute(vehicle: any, index: any) {
     let detail = this.vtsVehicleList.find(item => item.vehicle == vehicle);
     if (detail != undefined) {
-      let isRoute = false;
       let vehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicle);
-      if (vehicleDetail != null) {
-        isRoute = true;
-      }
-      else {
-        this.routeVehicleList.push({ vehicle: vehicle });
-        this.saveRouteVehicle(vehicle);
+      if (vehicleDetail == undefined) {
+        let latLngList = [];
+        let speedList = [];
+        this.routeVehicleList.push({ vehicle: vehicle, latLngList: latLngList, isRoute: false, speedList: speedList });
       }
       let dbPath = "BVGRoutes/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + vehicle;
       let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -864,18 +865,22 @@ export class VtsAnalysisComponent implements OnInit {
             let routeList = data.toString().split('~');
             if (routeList.length > 0) {
               let latLng = [];
+              let speedList = [];
               for (let i = 0; i < routeList.length; i++) {
                 let lat = routeList[i].split(',')[0];
                 let lng = routeList[i].split(',')[1];
                 let speed = 0;
                 if (routeList[i].split(',')[2] != null) {
                   speed = Number(routeList[i].split(',')[2]);
+                  speedList.push({ speed: Number(routeList[i].split(',')[2]) });
                 }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
-                if (isRoute == false) {
-                  this.getLinesInRoute(Number(lat), Number(lng),speed);
-                }
                 this.setVtsRouteMarker(index, speed, lat, lng);
+              }
+              let vehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicle);
+              if (vehicleDetail != null) {
+                vehicleDetail.latLngList = latLng;
+                vehicleDetail.speedList = speedList;
               }
               let strockColor = this.getVTSLineColor(index);
               let line = new google.maps.Polyline({
@@ -890,11 +895,40 @@ export class VtsAnalysisComponent implements OnInit {
         }
       );
     }
-    else {
-      this.commonService.setAlertMessage("error", "Sorry this vehicle not run on selected date !!!");
-    }
   }
 
+  selectLines() {
+    if (this.vehicleList.length > 0) {
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
+        if (element.checked == true) {
+          let vehicle = this.vehicleList[i]["vehicle"];
+          let vehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicle);
+          if (vehicleDetail != undefined) {
+            if (vehicleDetail.isRoute == false) {
+              vehicleDetail.isRoute = true;
+              this.saveRouteVehicle(vehicle);
+              let latLngList = vehicleDetail.latLngList;
+              let speedList = vehicleDetail.speedList;
+              if (latLngList.length > 0) {
+                for (let j = 0; j < latLngList.length; j++) {
+                  let lat = latLngList[j]["lat"];
+                  let lng = latLngList[j]["lng"];
+                  let speed = 0;
+                  if (speedList.length > 0) {
+                    if (speedList[j]["speed"] != null) {
+                      speed = speedList[j]["speed"];
+                    }
+                  }
+                  this.getLinesInRoute(lat, lng, speed);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   getLinesInRoute(lat: any, lng: any, speed: any) {
     if (speed <= 15) {
@@ -931,7 +965,6 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-  
   saveRouteVehicle(vehicle: any) {
     let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/routeVehicles";
     let routeVehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
