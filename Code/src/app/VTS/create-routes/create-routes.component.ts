@@ -46,7 +46,6 @@ export class CreateRoutesComponent implements OnInit {
   strokeWeight = 4;
 
   ngOnInit() {
-    localStorage.removeItem("routeLines");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -54,6 +53,7 @@ export class CreateRoutesComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.toDayDate = this.commonService.setTodayDate();
     this.polylines = [];
     this.wardKML = [];
     this.lines = [];
@@ -66,12 +66,9 @@ export class CreateRoutesComponent implements OnInit {
     this.setMaps();
     this.getZoneList();
     this.userId = localStorage.getItem("userID");
-    localStorage.removeItem("routeLines");
     if (localStorage.getItem("strokeWeight") != null) {
       this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
       $(this.txtStrokeWeight).val(this.strokeWeight);
-      this.toDayDate = this.commonService.setTodayDate();
-
     }
   }
 
@@ -79,6 +76,7 @@ export class CreateRoutesComponent implements OnInit {
     localStorage.removeItem("routeLines");
     $(this.lblSelectedRoute).html("");
     this.routeList = [];
+    this.lines=[];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -105,7 +103,6 @@ export class CreateRoutesComponent implements OnInit {
       return;
     }
     let routeKey = routeName.toString().replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "");
-
     let routeDetail = this.routeList.find(item => item.routeKey == routeKey);
     if (routeDetail != undefined) {
       this.commonService.setAlertMessage("error", "Route name already exist !!!");
@@ -126,7 +123,6 @@ export class CreateRoutesComponent implements OnInit {
       Routes: Routes
     }
     let dbPath = "Route/" + this.selectedWard + "/" + routeKey;
-
     this.db.object(dbPath).update(data);
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
@@ -144,9 +140,7 @@ export class CreateRoutesComponent implements OnInit {
       this.getRouteSelect(routeKey, 0);
     }, 200);
     this.closeModel();
-
   }
-
 
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
@@ -177,7 +171,7 @@ export class CreateRoutesComponent implements OnInit {
         let dat1 = new Date(startDate);
         let dat2 = new Date(applicableDate.toString());
         if (dat2 <= dat1) {
-          this.commonService.setAlertMessage("error", "Applicable date cna't be less than " + startDate);
+          this.commonService.setAlertMessage("error", "Applicable date can't be less than " + startDate);
           return;
         }
         let endDate = this.commonService.getPreviousDate(applicableDate, 1);
@@ -207,15 +201,14 @@ export class CreateRoutesComponent implements OnInit {
         if (routeDetail.route.length > 1) {
           let preKey = routeDetail.route[1]["key"];
           let startDate = routeDetail.route[1]["startDate"];
-
           let dat1 = new Date(startDate);
           let dat2 = new Date(applicableDate.toString());
           if (startDate == applicableDate) {
-            this.commonService.setAlertMessage("error", "Applicable date cna't be equal than " + startDate);
+            this.commonService.setAlertMessage("error", "Applicable date can't be equal than " + startDate);
             return;
           }
           if (dat2 < dat1) {
-            this.commonService.setAlertMessage("error", "Applicable date cna't be less than " + startDate);
+            this.commonService.setAlertMessage("error", "Applicable date can't be less than " + startDate);
             return;
           }
           let endDate = this.commonService.getPreviousDate(applicableDate, 1);
@@ -247,12 +240,10 @@ export class CreateRoutesComponent implements OnInit {
               let routeName = data[routeKey]["name"];
               let isShow = 0;
               let lastRouteKey = 1;
-
               let route = [];
               if (i == 0) {
                 isShow = 1;
               }
-
               if (data[routeKey]["Routes"] != null) {
                 let obj = data[routeKey]["Routes"];
                 let routeArray = Object.keys(obj);
@@ -313,21 +304,20 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getRouteSelect(routeKey: any, key: any) {
+    let element=<HTMLInputElement>document.getElementById("chkAll");
+    element.checked=false;
     this.resetPolyLineOption();
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
       this.routeList = routeList;
     }
-
     if (this.routeList.length > 0) {
       for (let i = 0; i < this.routeList.length; i++) {
-
         if (this.routeList[i]["routeKey"] == routeKey) {
           let element = <HTMLInputElement>document.getElementById("chkRoute" + i);
           element.checked = true;
           this.routeList[i]["isShow"] = 1;
           let selectedRoute = routeKey;
-
           if (this.routeList[i]["route"] != null) {
             for (let j = 0; j < this.routeList[i]["route"].length; j++) {
               let list = [];
@@ -348,7 +338,6 @@ export class CreateRoutesComponent implements OnInit {
                   this.routeList[i]["route"][j]["cssClass"] = "active";
                   list = this.routeList[i]["route"][j]["routeLines"];
                   this.setPolyLineOption(list);
-
                 }
                 else {
                   this.routeList[i]["route"][j]["cssClass"] = "";
@@ -366,10 +355,41 @@ export class CreateRoutesComponent implements OnInit {
             }
           }
         }
-
       }
     }
     localStorage.setItem("routeLines", JSON.stringify(this.routeList));
+  }
+
+  showAllRoute() {
+    this.resetPolyLineOption();
+    let selectedRoute = $(this.lblSelectedRoute).html();
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    if (element.checked == true) {
+      selectedRoute = selectedRoute + "-All";
+      $(this.lblSelectedRoute).html(selectedRoute);
+      let routeList = JSON.parse(localStorage.getItem("routeLines"));
+      if (routeList != null) {
+        this.routeList = routeList;
+      }
+      if (this.routeList.length > 0) {
+        for (let i = 0; i < this.routeList.length; i++) {
+          if (this.routeList[i]["route"] != null) {
+            for (let j = 0; j < this.routeList[i]["route"].length; j++) {
+              if (j == 0) {
+                let list = [];
+                list = this.routeList[i]["route"][j]["routeLines"];
+                this.setPolyLineOption(list);
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      selectedRoute = selectedRoute.replace("-All", "");
+      $(this.lblSelectedRoute).html(selectedRoute);
+      this.getRouteSelect(selectedRoute.split('-')[0], selectedRoute.split('-')[1]);
+    }
   }
 
   resetPolyLineOption() {
@@ -383,26 +403,26 @@ export class CreateRoutesComponent implements OnInit {
           strokeWeight: this.strokeWeight
         }
         line.setOptions(polyOptions);
+        this.polylines[i]["strokeColor"] = strokeColor;
       }
     }
   }
 
-
-
   setPolyLineOption(lineList: any) {
-    if(lineList.length>0){
-      for(let i=0;i<lineList.length;i++){
-        let lineNo=lineList[i]["lineNo"];
-        let lineDetail=this.lines.find(item=>item.lineNo==lineNo);
-        if(lineDetail!=undefined){
-          let index=lineDetail.index;
+    if (lineList.length > 0) {
+      for (let i = 0; i < lineList.length; i++) {
+        let lineNo = lineList[i]["lineNo"];
+        let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          let index = lineDetail.index;
           let line = new google.maps.Polyline(this.polylines[index]);
-        var polyOptions = {
-          strokeColor: this.strockColorDone,
-          strokeOpacity: 1.0,
-          strokeWeight: this.strokeWeight
-        }
-        line.setOptions(polyOptions);
+          var polyOptions = {
+            strokeColor: this.strockColorDone,
+            strokeOpacity: 1.0,
+            strokeWeight: this.strokeWeight
+          }
+          line.setOptions(polyOptions);
+          this.polylines[index]["strokeColor"] = this.strockColorDone;
         }
       }
     }
@@ -456,7 +476,6 @@ export class CreateRoutesComponent implements OnInit {
     });
   }
 
-
   setClickInstance(line: any, lineNo: any, index: any) {
     let dbEvent = this.db;
     let polylines = this.polylines;
@@ -470,6 +489,10 @@ export class CreateRoutesComponent implements OnInit {
       let routeKeyElement = $(lblSelectedRoute).html();
       if (routeKeyElement == "") {
         commonServices.setAlertMessage("error", "Please create or select route !!!");
+        return;
+      }
+      if (routeKeyElement.split('-').length > 2) {
+        commonServices.setAlertMessage("error", "You can not add line when you selected Show All Route !!!");
         return;
       }
       let routeKey = routeKeyElement.split('-')[0];
@@ -497,12 +520,10 @@ export class CreateRoutesComponent implements OnInit {
         }
       }
 
-
       let routeDetail = routeLines.find(item => item.routeKey == routeKey);
       if (routeDetail != undefined) {
         let routeLinesData = "";
         let route = routeDetail.route;
-
         let keyDetail = route.find(item => item.key == key);
         if (keyDetail != undefined) {
           if (keyDetail.endDate != "---") {
@@ -525,7 +546,6 @@ export class CreateRoutesComponent implements OnInit {
             stockColor = strockColorNotDone;
           }
           keyDetail.routeLines = keyRoutesLines;
-
           let list = keyDetail.routeLines;
           for (let i = 0; i < list.length; i++) {
             if (i == 0) {
@@ -600,10 +620,8 @@ export class CreateRoutesComponent implements OnInit {
   getNextPrevious(type: any) {
     let strokeWeight = $(this.txtStrokeWeight).val();
     if (strokeWeight == "") {
-
       this.commonService.setAlertMessage("error", "Please enter stroke weight. !!!");
       return;
-
     }
     if (type == "pre") {
       if (strokeWeight != "1") {
