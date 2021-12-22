@@ -8,12 +8,11 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 
 @Component({
-  selector: 'app-create-routes',
-  templateUrl: './create-routes.component.html',
-  styleUrls: ['./create-routes.component.scss']
+  selector: 'app-show-route',
+  templateUrl: './show-route.component.html',
+  styleUrls: ['./show-route.component.scss']
 })
-export class CreateRoutesComponent implements OnInit {
-
+export class ShowRouteComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, private modalService: NgbModal, public httpService: HttpClient, private commonService: CommonService) { }
@@ -33,15 +32,8 @@ export class CreateRoutesComponent implements OnInit {
   wardLines: any;
   strockColorNotDone = "#60c2ff";
   strockColorDone = "#0ba118";
-  txtRouteName = "#txtRouteName";
   lblSelectedRoute = "#lblSelectedRoute";
   txtStrokeWeight = "#txtStrokeWeight";
-  txtApplicableDate = '#txtApplicableDate';
-  lblHeading = "#lblHeading";
-  btnUpdate = "#btnUpdate";
-  txtUpdateDate = "#txtUpdateDate";
-  updateKey = "#updateKey";
-  updateRouteKey = "#updateRouteKey";
   userId: any;
   strokeWeight = 4;
 
@@ -91,57 +83,6 @@ export class CreateRoutesComponent implements OnInit {
     this.wardBoundary = null;
   }
 
-  createRoute() {
-    let applicableDate = $(this.txtApplicableDate).val();
-    if (applicableDate == "") {
-      this.commonService.setAlertMessage("error", "Please enter applicable date !!!");
-      return;
-    }
-    let routeName = $(this.txtRouteName).val();
-    if (routeName == "") {
-      this.commonService.setAlertMessage("error", "Please enter route name !!!");
-      return;
-    }
-    let routeKey = routeName.toString().replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "").replace(" ", "");
-    let routeDetail = this.routeList.find(item => item.routeKey == routeKey);
-    if (routeDetail != undefined) {
-      this.commonService.setAlertMessage("error", "Route name already exist !!!");
-      return;
-    }
-
-    const Routes = {
-      lastRouteKey: 1,
-      1: {
-        startDate: applicableDate
-      }
-    }
-
-    const data = {
-      name: routeName,
-      createdBy: this.userId,
-      creationDate: this.commonService.getTodayDateTime(),
-      Routes: Routes
-    }
-    let dbPath = "Route/" + this.selectedWard + "/" + routeKey;
-    this.db.object(dbPath).update(data);
-    let routeList = JSON.parse(localStorage.getItem("routeLines"));
-    if (routeList != null) {
-      this.routeList = routeList;
-    }
-    let routeLines = [];
-    let route = [];
-    let cssClass = "active";
-    route.push({ key: 1, startDate: applicableDate, endDate: "---", routeLines: routeLines, cssClass: cssClass });
-    this.routeList.push({ routeKey: routeKey, routeName: routeName, isShow: 1, lastRouteKey: 1, route: route });
-    localStorage.setItem("routeLines", JSON.stringify(this.routeList));
-    setTimeout(() => {
-      let element = <HTMLInputElement>document.getElementById("chkRoute" + (this.routeList.length - 1));
-      element.checked = true;
-      this.getRouteSelect(routeKey, 0);
-    }, 200);
-    this.closeModel();
-  }
-
   getCurrentStrokeWeight(event: any) {
     if (event.key == "Enter") {
       let strokeWeight = $(this.txtStrokeWeight).val();
@@ -156,75 +97,6 @@ export class CreateRoutesComponent implements OnInit {
       localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
       this.setStrokeWeight();
     }
-  }
-
-  updateRoute() {
-    let routeList = JSON.parse(localStorage.getItem("routeLines"));
-    let routeKey = $(this.updateRouteKey).val();
-    let applicableDate = $(this.txtUpdateDate).val();
-    let key = $(this.updateKey).val();
-    if ($(this.btnUpdate).html() == "Create New") {
-      let routeDetail = routeList.find(item => item.routeKey == routeKey);
-      if (routeDetail != undefined) {
-        key = routeDetail.route[0]["key"];
-        let startDate = routeDetail.route[0]["startDate"];
-        let dat1 = new Date(startDate);
-        let dat2 = new Date(applicableDate.toString());
-        if (dat2 <= dat1) {
-          this.commonService.setAlertMessage("error", "Applicable date can't be less than " + startDate);
-          return;
-        }
-        let endDate = this.commonService.getPreviousDate(applicableDate, 1);
-        routeDetail.route[0]["endDate"] = endDate;
-        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/endDate";
-        this.db.database.ref(dbPath).set(endDate);
-        let lastRouteKey = Number(routeDetail.lastRouteKey) + 1;
-        routeDetail.lastRouteKey = lastRouteKey;
-        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/lastRouteKey";
-        this.db.database.ref(dbPath).set(lastRouteKey);
-        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + lastRouteKey + "/startDate";
-        this.db.database.ref(dbPath).set(applicableDate);
-        let routeLines = [];
-        routeDetail.route.push({ key: lastRouteKey, startDate: applicableDate, endDate: "---", routeLines: routeLines, cssClass: "" });
-        routeDetail.route = routeDetail.route.sort((a, b) =>
-          Number(b.key) > Number(a.key) ? 1 : -1
-        );
-        key = lastRouteKey;
-        localStorage.setItem("routeLines", JSON.stringify(routeList));
-        this.routeList = routeList;
-        this.closeModel();
-      }
-    }
-    else {
-      let routeDetail = routeList.find(item => item.routeKey == routeKey);
-      if (routeDetail != undefined) {
-        if (routeDetail.route.length > 1) {
-          let preKey = routeDetail.route[1]["key"];
-          let startDate = routeDetail.route[1]["startDate"];
-          let dat1 = new Date(startDate);
-          let dat2 = new Date(applicableDate.toString());
-          if (startDate == applicableDate) {
-            this.commonService.setAlertMessage("error", "Applicable date can't be equal than " + startDate);
-            return;
-          }
-          if (dat2 < dat1) {
-            this.commonService.setAlertMessage("error", "Applicable date can't be less than " + startDate);
-            return;
-          }
-          let endDate = this.commonService.getPreviousDate(applicableDate, 1);
-          routeDetail.route[1]["endDate"] = endDate;
-          let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + preKey + "/endDate";
-          this.db.database.ref(dbPath).set(endDate);
-        }
-        routeDetail.route[0]["startDate"] = applicableDate;
-        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/startDate";
-        this.db.database.ref(dbPath).set(applicableDate);
-        localStorage.setItem("routeLines", JSON.stringify(routeList));
-        this.routeList = routeList;
-        this.closeModel();
-      }
-    }
-    this.getRouteSelect(routeKey, key);
   }
 
   getRoutes() {
@@ -465,7 +337,6 @@ export class CreateRoutesComponent implements OnInit {
                   });
                   this.polylines[index] = line;
                   this.polylines[index].setMap(this.map);
-                  this.setClickInstance(line, lineNo, index);
                   index = index + 1;
                 }
               }
@@ -474,99 +345,6 @@ export class CreateRoutesComponent implements OnInit {
         }
         this.getRoutes();
       }
-    });
-  }
-
-  setClickInstance(line: any, lineNo: any, index: any) {
-    let dbEvent = this.db;
-    let polylines = this.polylines;
-    let selectedWard = this.selectedWard;
-    let strockColorNotDone = this.strockColorNotDone;
-    let strockColorDone = this.strockColorDone;
-    let commonServices = this.commonService;
-    let lblSelectedRoute = this.lblSelectedRoute;
-
-    google.maps.event.addListener(line, 'click', function (h) {
-      let routeKeyElement = $(lblSelectedRoute).html();
-      if (routeKeyElement == "") {
-        commonServices.setAlertMessage("error", "Please create or select route !!!");
-        return;
-      }
-      if (routeKeyElement.split('-').length > 2) {
-        commonServices.setAlertMessage("error", "You can not add line when you selected Show All Route !!!");
-        return;
-      }
-      let routeKey = routeKeyElement.split('-')[0];
-      let key = routeKeyElement.split('-')[1];
-      let stockColor = strockColorNotDone;
-      let isOtherLine = false;
-      let routeName = "";
-
-      let routeLines = JSON.parse(localStorage.getItem("routeLines"));
-      if (routeLines == null) {
-        routeLines = [];
-      }
-
-      if (routeLines.length > 0) {
-        for (let i = 0; i < routeLines.length; i++) {
-          if (routeLines[i]["routeKey"] != routeKey) {
-            let lineInRoutes = routeLines[i]["route"][0]["routeLines"];
-            let detail = lineInRoutes.find(item => item.lineNo == lineNo);
-            if (detail != undefined) {
-              isOtherLine = true;
-              routeName = routeLines[i]["routeName"];
-              i = routeLines.length;
-            }
-          }
-        }
-      }
-
-      let routeDetail = routeLines.find(item => item.routeKey == routeKey);
-      if (routeDetail != undefined) {
-        let routeLinesData = "";
-        let route = routeDetail.route;
-        let keyDetail = route.find(item => item.key == key);
-        if (keyDetail != undefined) {
-          if (keyDetail.endDate != "---") {
-            commonServices.setAlertMessage("error", "sorry you can add lines only in current route !!!");
-            return;
-          }
-          if (isOtherLine == true) {
-            commonServices.setAlertMessage("error", "This line already in " + routeName + " !!!");
-            return;
-          }
-          let keyRoutesLines = keyDetail.routeLines;
-          let lineDetail = keyRoutesLines.find(item => item.lineNo == lineNo);
-          if (lineDetail == undefined) {
-            keyRoutesLines.push({ lineNo: lineNo });
-            stockColor = strockColorDone;
-          }
-          else {
-            let list = keyRoutesLines.filter(item => item.lineNo != lineNo);
-            keyRoutesLines = list;
-            stockColor = strockColorNotDone;
-          }
-          keyDetail.routeLines = keyRoutesLines;
-          let list = keyDetail.routeLines;
-          for (let i = 0; i < list.length; i++) {
-            if (i == 0) {
-              routeLinesData = list[i]["lineNo"];
-            }
-            else {
-              routeLinesData = routeLinesData + "," + list[i]["lineNo"];
-            }
-          }
-          dbEvent.database.ref("Route/" + selectedWard + "/" + routeKey + "/Routes/" + key + "/routeLines").set(routeLinesData);
-        }
-      }
-      localStorage.setItem("routeLines", JSON.stringify(routeLines));
-      var polyOptions = {
-        strokeColor: stockColor,
-        strokeOpacity: 1.0,
-        strokeWeight: this.strokeWeight
-      }
-      line.setOptions(polyOptions);
-      polylines[index]["strokeColor"] = stockColor;
     });
   }
 
@@ -653,53 +431,5 @@ export class CreateRoutesComponent implements OnInit {
         }
       }
     }
-  }
-
-  openModel(content: any, type: any, routeKey: any, key: any) {
-    if ($(this.ddlWard).val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select ward !!!");
-      return;
-    }
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 250;
-    let width = 400;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
-    if (type == "createRoute") {
-      $(this.txtApplicableDate).val(this.toDayDate);
-    }
-    else {
-      let routeList = JSON.parse(localStorage.getItem("routeLines"));
-      let routeName = "";
-      let keyData = "";
-      let routeDetail = routeList.find(item => item.routeKey == routeKey);
-      if (routeDetail != undefined) {
-        routeName = routeDetail.routeName;
-        let keyList = routeDetail.route;
-        let keyDetail = keyList.find(item => item.key == key);
-        if (keyDetail != undefined) {
-          keyData = keyDetail.startDate;
-        }
-      }
-      if (type == "createNew") {
-        $(this.btnUpdate).html("Create New");
-        $(this.lblHeading).html("Create New for " + routeName);
-        $(this.txtUpdateDate).val(this.toDayDate);
-      }
-      else {
-        $(this.btnUpdate).html("Update");
-        $(this.lblHeading).html("Update for " + routeName + " - " + keyData);
-        $(this.txtUpdateDate).val(keyData);
-      }
-      $(this.updateRouteKey).val(routeKey);
-      $(this.updateKey).val(key);
-    }
-  }
-
-  closeModel() {
-    this.modalService.dismissAll();
   }
 }
