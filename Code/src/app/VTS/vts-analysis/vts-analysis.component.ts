@@ -7,7 +7,6 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ConnectionService } from 'ng-connection-service';
 
 @Component({
   selector: 'app-vts-analysis',
