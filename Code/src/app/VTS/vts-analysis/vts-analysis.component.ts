@@ -322,8 +322,8 @@ export class VtsAnalysisComponent implements OnInit {
           }
           this.progressData.selectedLines = keyArray.length;
           this.progressData.savedLines = keyArray.length;
-          this.checkData();
         }
+        this.checkData();
         this.setWardLines();
       }
     );
@@ -563,6 +563,7 @@ export class VtsAnalysisComponent implements OnInit {
     btnElement.disabled = true;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
+    this.checkData();
     $(this.divApproved).hide();
     this.setWardBoundary();
     this.showHideBoundariesHtml();
