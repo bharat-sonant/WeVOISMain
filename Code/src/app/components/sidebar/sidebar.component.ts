@@ -657,6 +657,7 @@ export class SidebarComponent implements OnInit {
   }
 
   openModel(content: any, type: any) {
+    this.closeMapModel();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 150;
