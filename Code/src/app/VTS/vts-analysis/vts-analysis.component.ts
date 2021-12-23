@@ -17,7 +17,7 @@ import { ConnectionService } from 'ng-connection-service';
 export class VtsAnalysisComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(private connectionService: ConnectionService, public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
