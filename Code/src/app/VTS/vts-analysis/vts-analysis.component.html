@@ -436,6 +436,15 @@
     <button id="btnApprove" type="button" class="btn w-100 btn-success" (click)="approve();">Approve</button>
   </div>
 </div>
+<div class="line-count">
+  <div class="f-msg">
+    <p><b>{{progressData.selectedLines}}</b> Selected Lines<br/>
+      <b>{{progressData.savedLines}}</b> Saved Lines </p>
+  </div>
+  <div class="r-msg">
+    <img id="imgSync" src="../../../assets/img/green_data.svg" style="width: 40px; cursor: pointer;" (click)="getSavedLines();" >
+  </div>
+</div>
 <div id="divApproved" class="alert-box">
     <div class="apr-msg">
       <h3 style="color:#0ba118"><b>Approved By</b> <br> <span> <b id="approvalName"> Harendra Singh on 6 Dec

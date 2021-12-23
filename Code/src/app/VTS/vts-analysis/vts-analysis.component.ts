@@ -1,3 +1,4 @@
+import { ObjectUnsubscribedError } from 'rxjs';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild, OnInit } from "@angular/core";
@@ -7,6 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { checkAndUpdateTextDynamic } from '@angular/core/src/view/text';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -56,7 +58,9 @@ export class VtsAnalysisComponent implements OnInit {
     coveredLengthMeter: 0,
     workPercentageNumber: 0,
     penalty: 0,
-    lastShowDate: this.commonService.getTodayDateTime()
+    lastShowDate: this.commonService.getTodayDateTime(),
+    selectedLines: 0,
+    savedLines: 0
   };
 
   showBoundries = "#showBoundries";
@@ -316,6 +320,9 @@ export class VtsAnalysisComponent implements OnInit {
             let lineNo = keyArray[i];
             this.wardLineStatus.push({ lineNo: lineNo });
           }
+          this.progressData.selectedLines = keyArray.length;
+          this.progressData.savedLines = keyArray.length;
+          this.checkData();
         }
         this.setWardLines();
       }
@@ -397,6 +404,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setClickInstance(line: any, lineNo: any, index: any) {
+    let progressData = this.progressData;
     let lines = this.lines;
     let polylines = this.polylines;
     let strockColorNotDone = this.strockColorNotDone;
@@ -416,12 +424,29 @@ export class VtsAnalysisComponent implements OnInit {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(time);
           lineDetail.strokeColor = strockColorDone;
           strokeColor = lineDetail.strokeColor;
+          progressData.selectedLines = progressData.selectedLines + 1;
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.strokeColor = strockColorNotDone;
           strokeColor = lineDetail.strokeColor;
+          progressData.selectedLines = progressData.selectedLines - 1;
         }
+        let dataInstance = dbEvent.list(dbEventPath + "/LineStatus").valueChanges().subscribe(
+          data => {
+            dataInstance.unsubscribe();
+            if (data.length > 0) {
+              progressData.savedLines = data.length;
+              let element = <HTMLImageElement>document.getElementById("imgSync");
+              if (progressData.selectedLines != progressData.savedLines) {
+                element.src = "../../../assets/img/red_data.svg";
+              }
+              else {
+                element.src = "../../../assets/img/green_data.svg";
+              }
+            }
+          }
+        );
         var polyOptions = {
           strokeColor: strokeColor,
           strokeOpacity: 1.0,
@@ -431,6 +456,45 @@ export class VtsAnalysisComponent implements OnInit {
         polylines[index]["strokeColor"] = strokeColor;
       }
     });
+  }
+
+  checkData() {
+    let element = <HTMLImageElement>document.getElementById("imgSync");
+    if (this.progressData.selectedLines != this.progressData.savedLines) {
+      element.src = "../../../assets/img/red_data.svg";
+    }
+    else {
+      element.src = "../../../assets/img/green_data.svg";
+    }
+  }
+
+  getSavedLines() {
+    if (this.progressData.selectedLines == this.progressData.savedLines) {
+      this.commonService.setAlertMessage("error", "data already updated !!!");
+      return;
+    }
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+    if (this.lines.length > 0) {
+      let count = 0;
+      for (let i = 0; i < this.lines.length; i++) {
+        if (this.lines[i]["strokeColor"] == this.strockColorDone) {
+          let time = this.commonService.getCurrentTimeWithSecond();
+          time = time + "-" + this.userId;
+          this.db.database.ref(dbPath + "/LineStatus/" + this.lines[i]["lineNo"]).set(time);
+          count++;
+        }
+      }
+      this.progressData.savedLines = count;
+      let element = <HTMLImageElement>document.getElementById("imgSync");
+      if (this.progressData.selectedLines != this.progressData.savedLines) {
+        element.src = "../../../assets/img/red_data.svg";
+        this.commonService.setAlertMessage("error", "Data not updated. Please try again !!!");
+      }
+      else {
+        element.src = "../../../assets/img/green_data.svg";
+        this.commonService.setAlertMessage("success", "Data updated !!!");
+      }
+    }
   }
 
   //#endregion
@@ -497,6 +561,8 @@ export class VtsAnalysisComponent implements OnInit {
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     element.checked = false;
     btnElement.disabled = true;
+    this.progressData.selectedLines = 0;
+    this.progressData.savedLines = 0;
     $(this.divApproved).hide();
     this.setWardBoundary();
     this.showHideBoundariesHtml();
@@ -527,6 +593,9 @@ export class VtsAnalysisComponent implements OnInit {
         this.db.database.ref(dbPath).set(time);
       }
     }
+    this.progressData.selectedLines = this.lines.length;
+    this.progressData.savedLines = this.lines.length;
+    this.checkData();
     this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
   }
@@ -565,7 +634,7 @@ export class VtsAnalysisComponent implements OnInit {
         line.setOptions(polyOptions);
         let lineNo = this.lines[j]["lineNo"];
         this.polylines[j]["strokeColor"] = this.strockColorNotDone;
-        this.lines[j]["color"] = this.strockColorNotDone;
+        this.lines[j]["strokeColor"] = this.strockColorNotDone;
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
         this.db.database.ref(dbPath).set(null);
       }
@@ -574,6 +643,9 @@ export class VtsAnalysisComponent implements OnInit {
       this.routeVehicleList = [];
       let date = this.commonService.getTodayDateTime();
       this.db.object(dbPath).update({ resetBy: this.userId, resetDateTime: date });
+      this.progressData.selectedLines = 0;
+      this.progressData.savedLines = 0;
+      this.checkData();
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
       this.closeModel();
     }
@@ -1122,4 +1194,6 @@ export class progressDetail {
   workPercentageNumber: number;
   penalty: number;
   lastShowDate: string;
+  selectedLines: number;
+  savedLines: number;
 }

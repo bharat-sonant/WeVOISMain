@@ -1389,6 +1389,18 @@
   box-shadow: 0 1px 5px 1px #80bd7b;
   border-radius: 5px;
   }
+   
+  .line-count{
+    background: #fff;
+    height: 58px;
+    width: 290px;
+    padding: 10px;
+    position: absolute;
+    right: 15px;
+    top: 485px;
+    box-shadow: 0 1px 5px 1px #80bd7b;
+    border-radius: 5px;
+    }
   .f-msg{
   width: 165px;
   float: left;
@@ -1399,6 +1411,11 @@
   margin-left: 25px!important;
   text-transform: capitalize;
   }
+  .f-msg1 p{
+    font-size: 10px;
+    color:#333;
+    text-transform: capitalize;
+    }
   .f-msg input{
     margin-left: 5px;
   }
@@ -1454,7 +1471,7 @@ color: red;
     padding: 10px;
     position: absolute;
     right: 15px;
-    top: 440px;
+    top: 550px;
     box-shadow: 0 1px 5px 1px #80bd7b;
     border-radius: 5px;
     } 
