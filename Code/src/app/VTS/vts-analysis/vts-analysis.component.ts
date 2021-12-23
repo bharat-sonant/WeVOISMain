@@ -436,9 +436,7 @@ export class VtsAnalysisComponent implements OnInit {
         let dataInstance = dbEvent.list(dbEventPath + "/LineStatus").valueChanges().subscribe(
           data => {
             dataInstance.unsubscribe();
-            if (data.length > 0) {
-              progressData.savedLines = data.length;
-            }
+            progressData.savedLines = data.length;
             let element = <HTMLImageElement>document.getElementById("imgSync");
             if (progressData.selectedLines != progressData.savedLines) {
               element.src = "../../../assets/img/red_data.svg";
