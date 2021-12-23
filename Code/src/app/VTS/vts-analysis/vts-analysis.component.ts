@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ConnectionService } from 'ng-connection-service';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -16,7 +17,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class VtsAnalysisComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private connectionService: ConnectionService, public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
@@ -410,6 +411,10 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
+      if (localStorage.getItem("isConnected") == "no") {
+        commonService.setAlertMessage("error", "Please check internet connection !!!");
+        return;
+      }
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId;
       let strokeColor = strockColorNotDone;

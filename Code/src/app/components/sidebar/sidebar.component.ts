@@ -74,13 +74,15 @@ export class SidebarComponent implements OnInit {
       this.isConnected = isConnected;
       if (this.isConnected) {
         this.noInternetConnection = false;
+        localStorage.setItem("isConnected", "yes");
         this.openModel(this.contentInternetCheck, "Yes");
       }
       else {
         this.noInternetConnection = true;
+        localStorage.setItem("isConnected", "no");
         this.openModel(this.contentInternetCheck, "No");
       }
-    })
+    });
   }
 
   setDefault() {
