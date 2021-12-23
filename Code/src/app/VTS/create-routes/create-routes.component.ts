@@ -73,6 +73,8 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   resetAll() {
+    let element=<HTMLInputElement>document.getElementById("chkAll");
+    element.checked=false;
     localStorage.removeItem("routeLines");
     $(this.lblSelectedRoute).html("");
     this.routeList = [];

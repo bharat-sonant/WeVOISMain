@@ -602,6 +602,8 @@ export class SidebarComponent implements OnInit {
       for (let i = 0; i < userAccessList.length; i++) {
         if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
           this.isShow = false;
+          let dataClass = "dashboard-widgets";
+          
           k = k + 1;
           let element = <HTMLElement>document.getElementById("div" + k);
           if (element != undefined) {
@@ -629,13 +631,14 @@ export class SidebarComponent implements OnInit {
               });
             }
           }
+          
         }
       }
     }
   }
 
   clearAll() {
-    for (let k = 1; k <= 12; k++) {
+    for (let k = 1; k <= 18; k++) {
       $("#div" + k).hide();
       $("#divMob" + k).hide();
     }

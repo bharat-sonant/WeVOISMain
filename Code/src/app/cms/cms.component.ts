@@ -100,7 +100,7 @@ export class CmsComponent implements OnInit {
   }
 
   clearAll() {
-    for (let k = 1; k <= 12; k++) {
+    for (let k = 1; k <= 18; k++) {
       $("#div" + k).hide();
       $("#divMob" + k).hide();
     }

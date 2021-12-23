@@ -734,7 +734,6 @@ export class VtsAnalysisComponent implements OnInit {
         vehicleList.push({ vehicle: this.routeVehicleList[i]["vehicle"], latLngList: this.routeVehicleList[i]["latLngList"], isRoute: this.routeVehicleList[i]["isRoute"], speedList: this.routeVehicleList[i]["speedList"] });
         if (vehicles != "") { vehicles = vehicles + "," }
         vehicles = vehicles + this.vehicleList[i]["vehicle"];
-        this.vtsPolylines[i].setMap(this.map);
       }
     }
     this.routeVehicleList = vehicleList;
