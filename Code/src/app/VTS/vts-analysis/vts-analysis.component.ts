@@ -1,4 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild, OnInit } from "@angular/core";
@@ -8,7 +7,6 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { checkAndUpdateTextDynamic } from '@angular/core/src/view/text';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -16,7 +14,6 @@ import { checkAndUpdateTextDynamic } from '@angular/core/src/view/text';
   styleUrls: ['./vts-analysis.component.scss']
 })
 export class VtsAnalysisComponent implements OnInit {
-
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
@@ -32,7 +29,6 @@ export class VtsAnalysisComponent implements OnInit {
   wardLines: any;
   lines: any[];
   polylines = [];
-  invisibleImageUrl = "../assets/img/invisible-location.svg";
   wardBoundary: any;
   strokeWeight = 4;
   vehicleList: any[];
@@ -437,16 +433,16 @@ export class VtsAnalysisComponent implements OnInit {
             dataInstance.unsubscribe();
             if (data.length > 0) {
               progressData.savedLines = data.length;
-              let element = <HTMLImageElement>document.getElementById("imgSync");
-              if (progressData.selectedLines != progressData.savedLines) {
-                element.src = "../../../assets/img/red_data.svg";
-              }
-              else {
-                element.src = "../../../assets/img/green_data.svg";
-              }
             }
-          }
-        );
+            let element = <HTMLImageElement>document.getElementById("imgSync");
+            if (progressData.selectedLines != progressData.savedLines) {
+              element.src = "../../../assets/img/red_data.svg";
+            }
+            else {
+              element.src = "../../../assets/img/green_data.svg";
+            }
+          });
+
         var polyOptions = {
           strokeColor: strokeColor,
           strokeOpacity: 1.0,

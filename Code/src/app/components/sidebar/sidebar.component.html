@@ -187,3 +187,25 @@
   </div>
 </ng-template>
 <!--city Status End-->
+
+<!--No internet start-->
+<ng-template #contentInternetCheck>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Internet Status</h5>
+        <button type="button" class="close" (click)="closeMapModel();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div id="divMessage" class="col-md-12" style="text-align: center; font-size: 16px;">
+            Sorry No Internet Available. Please check internet !!!!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--No internet end-->

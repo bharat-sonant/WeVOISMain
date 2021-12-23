@@ -1,8 +1,7 @@
 
-import { Component, OnInit } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { interval, observable } from "rxjs";
+import { interval } from "rxjs";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 //services
@@ -11,14 +10,9 @@ import { FirebaseService } from "../../firebase.service";
 import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
-import {
-  ActivatedRoute,
-  Router,
-  NavigationEnd,
-  RouterLink,
-} from "@angular/router";
+import { Router, } from "@angular/router";
 import { CmsComponent } from "../../cms/cms.component";
-import { domainToUnicode } from "url";
+import { ConnectionService } from 'ng-connection-service';
 
 declare interface RouteInfo {
   path: string;
@@ -37,6 +31,7 @@ export const ROUTES: RouteInfo[] = [
   styleUrls: ["./sidebar.component.css"],
 })
 export class SidebarComponent implements OnInit {
+  @ViewChild("contentInternetCheck", null) contentInternetCheck: any;
   userid: any;
   isShow: any;
   accessList: any[];
@@ -50,7 +45,7 @@ export class SidebarComponent implements OnInit {
   };
   menuItems: any[];
 
-  constructor(public fb: FirebaseService, private modalService: NgbModal, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public router: Router) { }
+  constructor(private connectionService: ConnectionService, public fb: FirebaseService, private modalService: NgbModal, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public router: Router) { }
 
   zoneList: any[];
   toDayDate: any;
@@ -65,10 +60,27 @@ export class SidebarComponent implements OnInit {
   geoList: any[];
   cityName: any;
   accessCity: any[] = [];
+  isConnected = true;
+  noInternetConnection: boolean;
 
   ngOnInit() {
+    this.checkConnection();
     this.checkLoginDate();
     this.setDefault();
+  }
+
+  checkConnection() {
+    this.connectionService.monitor().subscribe(isConnected => {
+      this.isConnected = isConnected;
+      if (this.isConnected) {
+        this.noInternetConnection = false;
+        this.openModel(this.contentInternetCheck, "Yes");
+      }
+      else {
+        this.noInternetConnection = true;
+        this.openModel(this.contentInternetCheck, "No");
+      }
+    })
   }
 
   setDefault() {
@@ -603,7 +615,7 @@ export class SidebarComponent implements OnInit {
         if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
           this.isShow = false;
           let dataClass = "dashboard-widgets";
-          
+
           k = k + 1;
           let element = <HTMLElement>document.getElementById("div" + k);
           if (element != undefined) {
@@ -631,7 +643,7 @@ export class SidebarComponent implements OnInit {
               });
             }
           }
-          
+
         }
       }
     }
@@ -644,14 +656,32 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  openModel(content: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 150;
+    let width = 465;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    if (type == "Yes") {
+      $('#divMessage').html("Now internet is connected, enjoy your work !!!");
+    }
+    else {
+      $('#divMessage').html("Sorry! no internet available. Please check internet !!!");
+    }
+  }
+
   openCityModel(content: any) {
+    console.log(content);
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 410;
     let width = 465;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content")      .parent()      .css("max-width", "" + width + "px")      .css("margin-top", marginTop);
-    $("div .modal-content")      .css("height", height + "px")      .css("width", "" + width + "px");
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $("#popUpCityName").html(this.cityName);
     let elementSikar = <HTMLElement>document.getElementById("sikarBox");
