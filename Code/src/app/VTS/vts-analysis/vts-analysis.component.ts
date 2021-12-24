@@ -326,24 +326,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setWardLines() {
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.markerList = [];
-    this.wardLineLatLng = [];
+
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -410,7 +393,7 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-      if(commonService.checkInternetConnection()=="no"){
+      if (commonService.checkInternetConnection() == "no") {
         commonService.setAlertMessage("error", "Please check internet connection !!!");
         return;
       }
@@ -535,7 +518,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
-    if(this.commonService.checkInternetConnection()=="no"){
+    if (this.commonService.checkInternetConnection() == "no") {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
       return;
     }
@@ -556,6 +539,24 @@ export class VtsAnalysisComponent implements OnInit {
     this.vtsPolylines = [];
     this.vehicleList = [];
     this.markerList = [];
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.markerList = [];
+    this.wardLineLatLng = [];
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
@@ -565,12 +566,17 @@ export class VtsAnalysisComponent implements OnInit {
     btnElement.disabled = true;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
-    this.checkData();
     $(this.divApproved).hide();
-    this.setWardBoundary();
-    this.showHideBoundariesHtml();
-    this.getWardLineStatus();
-    this.getSummary();
+    $(this.divLoader).show();
+    setTimeout(() => {
+      this.checkData();
+      this.setWardBoundary();
+      this.showHideBoundariesHtml();
+      this.getWardLineStatus();
+      this.getSummary();
+      $(this.divLoader).hide();
+    }, 2000);
+
   }
 
   //#endregion
@@ -1180,7 +1186,7 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   openModel(content: any) {
-    if(this.commonService.checkInternetConnection()=="no"){
+    if (this.commonService.checkInternetConnection() == "no") {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
       return;
     }
