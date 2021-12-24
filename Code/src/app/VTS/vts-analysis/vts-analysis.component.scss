@@ -268,7 +268,7 @@
   /*************New Work CSS*****************/
   .driver-helper-box{
   width: 290px;
-  height: 345px;
+  min-height: 290px;
   background-color: #f3f3f3;
   box-shadow: 0 1px 5px 1px #80bd7b;
   position: absolute;
@@ -1385,7 +1385,7 @@
   padding: 10px;
   position: absolute;
   right: 15px;
-  top: 425px;
+  top: 373px;
   box-shadow: 0 1px 5px 1px #80bd7b;
   border-radius: 5px;
   }
@@ -1397,7 +1397,7 @@
     padding: 10px;
     position: absolute;
     right: 15px;
-    top: 493px;
+    top: 443px;
     box-shadow: 0 1px 5px 1px #80bd7b;
     border-radius: 5px;
     }
@@ -1471,7 +1471,7 @@ color: red;
     padding: 10px;
     position: absolute;
     right: 15px;
-    top: 540px;
+    top: 512px;
     box-shadow: 0 1px 5px 1px #80bd7b;
     border-radius: 5px;
     } 
@@ -1482,7 +1482,9 @@ color: red;
 .btn-success:hover{
   background: #11c921!important;
 }
-
+#myBox{
+  height:235px;
+}
 
 
 
