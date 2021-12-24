@@ -1,4 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
@@ -75,6 +74,10 @@ export class DustbinReportComponent implements OnInit {
   //#region Plan
 
   openModel(content: any, type: any, plan: any, dustbin: any, day: any) {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
@@ -862,6 +865,10 @@ export class DustbinReportComponent implements OnInit {
 
   openMapModel(date: any, planId: any) {
 
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.dustbinMarker = [];
     this.dustbinMapList = [];
     this.bounds = new google.maps.LatLngBounds();
@@ -1169,8 +1176,6 @@ export class DustbinReportComponent implements OnInit {
     );
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(document.getElementById("haltMap"), mapProp);
-    // this.map.mapTypes.set('styled_map', mapstyle);
-    // this.map.setMapTypeId('styled_map');
   }
 
   //#endregion
@@ -1196,6 +1201,10 @@ export class DustbinReportComponent implements OnInit {
   }
 
   changeSelection() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.dustbinList = [];
     let year = $('#ddlYear').val();
     let month = $('#ddlMonth').val();
