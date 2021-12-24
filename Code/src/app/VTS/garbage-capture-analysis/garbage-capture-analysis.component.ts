@@ -277,6 +277,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   changeOptionSelection(option: any) {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (option == "0") {
       this.commonService.setAlertMessage("error", "Please select option !!!");
       this.selectedOption = "0";
@@ -350,6 +354,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.progressList = [];
     this.allProgressList = [];
     this.getCategorySummary();
@@ -618,6 +626,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCaptureData(index: any) {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.startLoader();
     this.resetDetail();
     this.setActiveClass(index);
@@ -736,6 +748,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   openModel(content: any) {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 170;
@@ -838,6 +854,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   analysis() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     let index = $(this.dataId).val();
     let imageId = this.progressList[Number(index)]["imageId"];
     let prePenalty = this.progressList[Number(index)]["penalty"];
