@@ -268,7 +268,7 @@
   /*************New Work CSS*****************/
   .driver-helper-box{
   width: 290px;
-  height: 290px;
+  height: 345px;
   background-color: #f3f3f3;
   box-shadow: 0 1px 5px 1px #80bd7b;
   position: absolute;
@@ -1349,7 +1349,7 @@
   transition: 0.5s;
   }
   .add-icon:hover i{
-  color: #11eb23;
+  color: #11c921;
   }
   .add-icon:hover p{
   color: #333;
@@ -1385,19 +1385,19 @@
   padding: 10px;
   position: absolute;
   right: 15px;
-  top: 420px;
+  top: 425px;
   box-shadow: 0 1px 5px 1px #80bd7b;
   border-radius: 5px;
   }
    
   .line-count{
     background: #fff;
-    height: 45px;
+    height: 58px;
     width: 290px;
     padding: 10px;
     position: absolute;
     right: 15px;
-    top: 485px;
+    top: 493px;
     box-shadow: 0 1px 5px 1px #80bd7b;
     border-radius: 5px;
     }
@@ -1476,4 +1476,24 @@ color: red;
     border-radius: 5px;
     } 
   
+.btn-success{
+  background: #0ba118!important;
+}
+.btn-success:hover{
+  background: #11c921!important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
