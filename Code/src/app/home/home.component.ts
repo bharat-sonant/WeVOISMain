@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   db: any;
   userDetail: userDetail = {
     name: "",
+    cityName: "",
   };
 
   constructor(private commonService: CommonService, public dbFireStore: AngularFirestore, public fs: FirebaseService,) { }
@@ -41,11 +42,20 @@ export class HomeComponent implements OnInit {
       this.getUserAccess();
     }
     $('#divLoader').show();
+    this.userDetail.cityName = this.getCityName();
     setTimeout(() => {
       $('#divLoader').hide();
     }, 6000);
   }
-  
+
+  getCityName() {
+    let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
+    if (city == "Jaipur-greater") {
+      city = "Jaipur Greater";
+    }
+    return city;
+  }
+
   setRemark() {
     this.db.object("Defaults/MarkingWards").update({
       "1": "1_34_35",
@@ -213,4 +223,5 @@ export class HomeComponent implements OnInit {
 }
 export class userDetail {
   name: string;
+  cityName: string;
 }
