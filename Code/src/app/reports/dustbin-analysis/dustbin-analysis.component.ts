@@ -662,6 +662,10 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   saveDustbinAnalysis() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (this.binDetail.canDoAnalysis == "yes") {
       this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), });
       this.updatePendingAnalysis();
