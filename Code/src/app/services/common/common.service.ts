@@ -1481,4 +1481,8 @@ export class CommonService {
     });
   }
 
+  checkInternetConnection(){
+    return localStorage.getItem("isConnected");
+  }
+
 }

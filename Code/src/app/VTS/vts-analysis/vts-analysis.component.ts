@@ -410,7 +410,7 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-      if (localStorage.getItem("isConnected") == "no") {
+      if(commonService.checkInternetConnection()=="no"){
         commonService.setAlertMessage("error", "Please check internet connection !!!");
         return;
       }
@@ -535,6 +535,10 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
+    if(this.commonService.checkInternetConnection()=="no"){
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
         if (this.vtsPolylines[i] != null) {
@@ -574,6 +578,10 @@ export class VtsAnalysisComponent implements OnInit {
   //#region 
 
   selectAll() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -600,6 +608,10 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllLines() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
@@ -651,6 +663,10 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setPreviousData() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     let date = $(this.txtPreDate).val().toString();
     if (date == "") {
       this.commonService.setAlertMessage("error", "Please select date !!!");
@@ -819,6 +835,10 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   addVehicle() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -1160,6 +1180,10 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   openModel(content: any) {
+    if(this.commonService.checkInternetConnection()=="no"){
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if (this.selectedWard == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       this.hideSetting();

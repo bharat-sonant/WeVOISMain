@@ -489,6 +489,10 @@ export class CreateRoutesComponent implements OnInit {
     let lblSelectedRoute = this.lblSelectedRoute;
 
     google.maps.event.addListener(line, 'click', function (h) {
+      if (commonServices.checkInternetConnection() == "no") {
+        commonServices.setAlertMessage("error", "Please check internet connection !!!");
+        return;
+      }
       let routeKeyElement = $(lblSelectedRoute).html();
       if (routeKeyElement == "") {
         commonServices.setAlertMessage("error", "Please create or select route !!!");
@@ -587,7 +591,11 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
-    this.resetAll();
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
+    
     $(this.ddlWard).val(filterVal);
     this.selectedWard = filterVal;
     if (this.selectedWard == "0") {
@@ -658,6 +666,10 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   openModel(content: any, type: any, routeKey: any, key: any) {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
     if ($(this.ddlWard).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
