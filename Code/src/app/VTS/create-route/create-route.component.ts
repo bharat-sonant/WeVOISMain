@@ -46,7 +46,7 @@ export class CreateRouteComponent implements OnInit {
   }
 
   getCityBoundaryList() {
-    this.httpService.get("../../assets/jsons/WardBoundries/WardWise/" + this.cityName + ".json").subscribe(data => {
+    this.httpService.get("../../assets/jsons/WardBoundries/" + this.cityName + ".json").subscribe(data => {
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {

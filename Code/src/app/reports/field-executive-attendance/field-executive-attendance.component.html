@@ -1,0 +1,93 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-6" style="padding-left: 10px;">
+            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                style="width: 150px;">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList">{{yer.year}}</option>
+            </select>
+            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                style="width: 150px;">
+                <option value="0">Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select class="caret-select" id="ddlFieldExecutive" style="width: 150px;" (change)="changeSelection($event.target.value)">
+                <option value="0">
+                    --Select--
+                </option>
+                <option *ngFor="let dt of fieldExecutiveList" value={{dt.id}}>
+                    {{dt.name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-md-6" style="padding-left: 10px;padding-top: 10px;">
+            Field Executive Attendance
+
+        </div>
+    </div>
+</section>
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table id="excel-table" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 200px!important;">
+                                            Name</th>
+                                        <th scope="col" style="width:200px!important;">
+                                            Summary</th>
+                                        <th scope="col" class="text-center" *ngFor="let days of dayList"><span
+                                                style="padding-left: 50px; padding-right: 50px;">{{days.day}}</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of fieldExecutiveDataList, let i=index">
+                                        <td class=""
+                                            style="vertical-align: top; font-weight: bold;width:200px!important;">
+                                            {{dt.name}}</td>
+                                        <td class="text-left"
+                                            style="vertical-align: top; font-weight: bold;width:200px!important;">
+
+                                        </td>
+                                        <td class=" text-left" style="vertical-align: top;"
+                                            *ngFor="let days of dt.dayList">
+                                            <div style="width: 100%; padding-bottom: 10px; "
+                                                *ngFor="let dayPenalty of days.dayPenalty">
+                                                {{dayPenalty.coveredLength}} Km [{{dayPenalty.percentage}}%]<br />
+                                                <b>₹ {{dayPenalty.penalty}}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div
+    style="position: absolute; z-index: 999; top:12px; right:20px; color: #fff; text-align: center; font-size: 10px; display: none;">
+
+    <i class="fas fa-file-export" style="color: #fff; font-size: 30px; cursor: pointer;"
+        (click)="exportexcel();"></i><br />
+    Export to Excel
+</div>
