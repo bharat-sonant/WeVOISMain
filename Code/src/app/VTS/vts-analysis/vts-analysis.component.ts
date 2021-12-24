@@ -223,11 +223,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Boundary
 
   setWardBoundary() {
-    this.isBoundaryShow = true;
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
-    this.wardBoundary = null;
+    
     if (this.selectedWard != "0") {
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
@@ -326,24 +322,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setWardLines() {
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.markerList = [];
-    this.wardLineLatLng = [];
+
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -410,7 +389,7 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-      if(commonService.checkInternetConnection()=="no"){
+      if (commonService.checkInternetConnection() == "no") {
         commonService.setAlertMessage("error", "Please check internet connection !!!");
         return;
       }
@@ -500,6 +479,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region   Top  Left Filter
 
   setDate(filterVal: any, type: string) {
+    this.resetAllData();
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -519,10 +499,13 @@ export class VtsAnalysisComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
     this.vtsVehicleList = [];
-    this.changeWardSelection(this.selectedWard);
+    if (this.selectedWard != "0") {
+      this.changeWardSelection(this.selectedWard);
+    }
   }
 
   changeZoneSelection(filterVal: any) {
+    this.resetAllData();
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
     if (zoneDetail != undefined) {
@@ -531,14 +514,18 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
-    this.changeWardSelection("0");
   }
 
-  changeWardSelection(filterVal: any) {
-    if(this.commonService.checkInternetConnection()=="no"){
+  resetAllData() {
+    if (this.commonService.checkInternetConnection() == "no") {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
       return;
     }
+    this.isBoundaryShow = true;
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
         if (this.vtsPolylines[i] != null) {
@@ -556,21 +543,50 @@ export class VtsAnalysisComponent implements OnInit {
     this.vtsPolylines = [];
     this.vehicleList = [];
     this.markerList = [];
-    $(this.ddlWard).val(filterVal);
-    $(this.ddlWardNav).val(filterVal);
-    this.selectedWard = filterVal;
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.markerList = [];
+    this.wardLineLatLng = [];
     let element = <HTMLInputElement>document.getElementById("chkApprove");
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     element.checked = false;
     btnElement.disabled = true;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
-    this.checkData();
     $(this.divApproved).hide();
-    this.setWardBoundary();
-    this.showHideBoundariesHtml();
-    this.getWardLineStatus();
-    this.getSummary();
+  }
+
+  changeWardSelection(filterVal: any) {
+    $(this.ddlWard).val(filterVal);
+    $(this.ddlWardNav).val(filterVal);
+    this.selectedWard = filterVal;
+    this.resetAllData();
+    if (filterVal != "0") {
+      $(this.divLoader).show();
+      setTimeout(() => {
+        this.checkData();
+        this.setWardBoundary();
+        this.showHideBoundariesHtml();
+        this.getWardLineStatus();
+        this.getSummary();
+        $(this.divLoader).hide();
+      }, 2000);
+    }
+
   }
 
   //#endregion
@@ -1017,8 +1033,22 @@ export class VtsAnalysisComponent implements OnInit {
           }
         }
       }
+      setTimeout(() => {
+        let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+        let year = this.selectedDate.split("-")[0];
+        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + this.selectedDate;
+        let dataInstance = this.db.list(dbPath + "/LineStatus").valueChanges().subscribe(
+          data => {
+            dataInstance.unsubscribe();
+            this.progressData.savedLines = data.length;
+            this.progressData.selectedLines = data.length;
+            let element = <HTMLImageElement>document.getElementById("imgSync");
+            element.src = "../../../assets/img/green_data.svg";
+          });
+      }, 1000);
     }
   }
+
 
   getLinesInRoute(lat: any, lng: any, speed: any) {
     if (speed <= 15) {
@@ -1180,7 +1210,7 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   openModel(content: any) {
-    if(this.commonService.checkInternetConnection()=="no"){
+    if (this.commonService.checkInternetConnection() == "no") {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
       return;
     }
