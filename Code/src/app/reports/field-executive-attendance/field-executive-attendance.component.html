@@ -22,7 +22,8 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlFieldExecutive" style="width: 150px;" (change)="changeSelection($event.target.value)">
+            <select class="caret-select" id="ddlFieldExecutive" style="width: 150px;"
+                (change)="changeSelection($event.target.value)">
                 <option value="0">
                     --Select--
                 </option>
@@ -47,7 +48,7 @@
                             <table id="excel-table" class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 200px!important;">
+                                        <th scope="col" style="width: 400px!important;">
                                             Name</th>
                                         <th scope="col" style="width:200px!important;">
                                             Summary</th>
@@ -59,19 +60,14 @@
                                 <tbody>
                                     <tr *ngFor="let dt of fieldExecutiveDataList, let i=index">
                                         <td class=""
-                                            style="vertical-align: top; font-weight: bold;width:200px!important;">
+                                            style="vertical-align: top; font-weight: bold;width:400px!important;">
                                             {{dt.name}}</td>
                                         <td class="text-left"
                                             style="vertical-align: top; font-weight: bold;width:200px!important;">
-
                                         </td>
                                         <td class=" text-left" style="vertical-align: top;"
-                                            *ngFor="let days of dt.dayList">
-                                            <div style="width: 100%; padding-bottom: 10px; "
-                                                *ngFor="let dayPenalty of days.dayPenalty">
-                                                {{dayPenalty.coveredLength}} Km [{{dayPenalty.percentage}}%]<br />
-                                                <b>₹ {{dayPenalty.penalty}}</b>
-                                            </div>
+                                            *ngFor="let days of dt.dayList" [innerHtml]="days.attendance">
+
                                         </td>
                                     </tr>
                                 </tbody>

@@ -59,16 +59,91 @@ export class FieldExecutiveAttendanceComponent implements OnInit {
       return;
     }
     if (this.selectedFieldExecutive == "All") {
-      for (let i = 0; i < this.fieldExecutiveList.length; i++) {
-        this.fieldExecutiveDataList.push({ id: this.fieldExecutiveList[i]["id"], name: this.fieldExecutiveList[i]["name"] });
+      for (let i = 0; i < this.fieldExecutiveList.length - 1; i++) {
+        let summary = [];
+        let dayList = [];
+        this.fieldExecutiveDataList.push({ id: this.fieldExecutiveList[i]["id"], name: this.fieldExecutiveList[i]["name"], summary: summary, dayList: dayList });
+        for (let j = 1; j <= this.rowTo; j++) {
+          let detail = this.fieldExecutiveDataList.find(item => item.id == this.fieldExecutiveList[i]["id"]);
+          if (detail != undefined) {
+            let d = "day" + j;
+            detail.dayList.push({ day: d, attendance: "" });
+          }
+        }
       }
     }
     else {
-      let detail=this.fieldExecutiveList.find(item=>item.id==this.selectedFieldExecutive);
-      if(detail!=undefined){
-        this.fieldExecutiveDataList.push({ id: detail.id, name: detail.name });
+      let detail = this.fieldExecutiveList.find(item => item.id == this.selectedFieldExecutive);
+      if (detail != undefined) {
+        let summary = [];
+        let dayList = [];
+        this.fieldExecutiveDataList.push({ id: detail.id, name: detail.name, summary: summary, dayList: dayList });
+        for (let j = 1; j <= this.rowTo; j++) {
+          let details = this.fieldExecutiveDataList.find(item => item.id == this.selectedFieldExecutive);
+          if (details != undefined) {
+            let d = "day" + j;
+            details.dayList.push({ day: d, attendance: "" });
+          }
+        }
       }
     }
+
+    this.getMonthAttendance();
+  }
+
+  getMonthAttendance() {
+    if (this.fieldExecutiveDataList.length > 0) {
+      for (let i = 0; i < this.fieldExecutiveDataList.length; i++) {
+        let id = this.fieldExecutiveDataList[i]["id"];
+        for (let j = 0; j < this.dayList.length; j++) {
+          let attendanceDate = this.selectedYear + "-" + this.selectedMonth + "-" + this.dayList[j]["day"];
+          let monthName = this.commonService.getCurrentMonthName(new Date(attendanceDate).getMonth());
+          let dbPath = "FEAttendance/" + id + "/" + this.selectedYear + "/" + monthName + "/" + attendanceDate;
+          let attendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              attendanceInstance.unsubscribe();
+              if (data != null) {
+                let inTime = "00.00";
+                let outTime = "0.00";
+                if (data["inDetails"] != null) {
+                  if (data["inDetails"]["time"] != null) {
+                    inTime = data["inDetails"]["time"];
+                  }
+                }
+                if (data["outDetails"] != null) {
+                  if (data["outDetails"]["time"] != null) {
+                    outTime = data["outDetails"]["time"];
+                  }
+                }
+                console.log(this.dayList[j]["day"]);
+                console.log(inTime);
+                console.log(outTime);
+                let detail = this.fieldExecutiveDataList.find(item => item.id == id);
+                if (detail != undefined) {
+                  let dayList = detail.dayList;
+                  let dayDetail = dayList.find(item => item.day == "day" + this.dayList[j]["day"]);
+                  if (dayDetail != undefined) {
+                    dayDetail.attendance = "In :" + inTime + "<br/>Out : " + outTime;
+                  }
+                }
+                console.log(this.fieldExecutiveDataList)
+
+              }
+            }
+          );
+        }
+
+      }
+    }
+
+
+
+
+
+
+
+
+
   }
 
   getDays() {
