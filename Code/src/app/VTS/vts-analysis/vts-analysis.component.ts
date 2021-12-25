@@ -33,7 +33,6 @@ export class VtsAnalysisComponent implements OnInit {
   strokeWeight = 4;
   vehicleList: any[];
   zoneList: any[];
-  wardLineLengthList: any[];
   wardLineStatus: any[];
   userId: any;
   isBoundaryShow = true;
@@ -127,12 +126,68 @@ export class VtsAnalysisComponent implements OnInit {
     this.lines = [];
     this.polylines = [];
     this.vehicleList = [];
-    this.wardLineLengthList = [];
     this.wardLineStatus = [];
     this.vtsVehicleList = [];
     this.markerList = [];
     this.wardLineLatLng = [];
     this.routeVehicleList = [];
+  }
+
+  resetAllData() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
+    this.isBoundaryShow = true;
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
+    if (this.vtsPolylines.length > 0) {
+      for (let i = 0; i < this.vtsPolylines.length; i++) {
+        if (this.vtsPolylines[i] != null) {
+          this.vtsPolylines[i].setMap(null);
+        }
+      }
+    }
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i]["marker"] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.vtsPolylines = [];
+    this.vtsVehicleList = [];
+    this.vehicleList = [];
+    this.markerList = [];
+    this.routeVehicleList = [];
+    this.wardLineStatus = [];
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.markerList = [];
+    this.wardLineLatLng = [];
+    let element = <HTMLInputElement>document.getElementById("chkApprove");
+    let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
+    element.checked = false;
+    btnElement.disabled = true;
+    this.progressData.selectedLines = 0;
+    this.progressData.savedLines = 0;
+    $(this.divApproved).hide();
   }
 
   setDefaultLocalStorage() {
@@ -387,6 +442,7 @@ export class VtsAnalysisComponent implements OnInit {
     let userId = this.userId;
     let dbEvent = this.db;
     let commonService = this.commonService;
+    let toDayDate=this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
       if (commonService.checkInternetConnection() == "no") {
@@ -394,7 +450,7 @@ export class VtsAnalysisComponent implements OnInit {
         return;
       }
       let time = commonService.getCurrentTimeWithSecond();
-      time = time + "-" + userId;
+      time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
@@ -456,7 +512,7 @@ export class VtsAnalysisComponent implements OnInit {
       for (let i = 0; i < this.lines.length; i++) {
         if (this.lines[i]["strokeColor"] == this.strockColorDone) {
           let time = this.commonService.getCurrentTimeWithSecond();
-          time = time + "-" + this.userId;
+          time = time + "-" + this.userId + "-" + this.toDayDate;
           this.db.database.ref(dbPath + "/LineStatus/" + this.lines[i]["lineNo"]).set(time);
           count++;
         }
@@ -516,60 +572,6 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-  resetAllData() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
-    this.isBoundaryShow = true;
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
-    this.wardBoundary = null;
-    if (this.vtsPolylines.length > 0) {
-      for (let i = 0; i < this.vtsPolylines.length; i++) {
-        if (this.vtsPolylines[i] != null) {
-          this.vtsPolylines[i].setMap(null);
-        }
-      }
-    }
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i]["marker"] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.vtsPolylines = [];
-    this.vehicleList = [];
-    this.markerList = [];
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.markerList = [];
-    this.wardLineLatLng = [];
-    let element = <HTMLInputElement>document.getElementById("chkApprove");
-    let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
-    element.checked = false;
-    btnElement.disabled = true;
-    this.progressData.selectedLines = 0;
-    this.progressData.savedLines = 0;
-    $(this.divApproved).hide();
-  }
-
   changeWardSelection(filterVal: any) {
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
@@ -607,13 +609,16 @@ export class VtsAnalysisComponent implements OnInit {
           strokeWeight: this.strokeWeight
         }
         let lineNo = this.lines[j]["lineNo"];
+        if (this.lines[j]["strokeColor"] != this.strockColorDone) {
+          let time = this.commonService.getCurrentTimeWithSecond();
+          time = time + "-" + this.userId + "-" + this.toDayDate;
+          let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+          this.db.database.ref(dbPath).set(time);
+        }
         this.polylines[j]["strokeColor"] = this.strockColorDone;
         this.lines[j]["strokeColor"] = this.strockColorDone;
         line.setOptions(polyOptions);
-        let time = this.commonService.getCurrentTimeWithSecond();
-        time = time + "-" + this.userId;
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        this.db.database.ref(dbPath).set(time);
+
       }
     }
     this.progressData.selectedLines = this.lines.length;
@@ -1045,7 +1050,7 @@ export class VtsAnalysisComponent implements OnInit {
       if (routeVehicles != "") {
         this.saveRouteVehicle(routeVehicles);
       }
-      
+
       setTimeout(() => {
         let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
         let year = this.selectedDate.split("-")[0];
@@ -1058,7 +1063,7 @@ export class VtsAnalysisComponent implements OnInit {
             let element = <HTMLImageElement>document.getElementById("imgSync");
             element.src = "../../../assets/img/green_data.svg";
           });
-      }, 1000);
+      }, 2000);
     }
   }
 
@@ -1074,9 +1079,11 @@ export class VtsAnalysisComponent implements OnInit {
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
               let time = this.commonService.getCurrentTimeWithSecond();
-              time = time + "-" + this.userId;
+              time = time + "-" + this.userId + "-" + this.toDayDate;
               let strokeColor = lineDetail.strokeColor;
-              this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              if (lineDetail.strokeColor != this.strockColorDone) {
+                this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              }
               lineDetail.strokeColor = this.strockColorDone;
               strokeColor = lineDetail.strokeColor;
               var polyOptions = {
@@ -1123,7 +1130,7 @@ export class VtsAnalysisComponent implements OnInit {
               vehicles = vehicles + vehicleList[i];
             }
           }
-          vehicles=vehicles+","+data.toString();
+          vehicles = vehicles + "," + data.toString();
           this.db.object(dbPath).set(vehicles);
         }
       }
