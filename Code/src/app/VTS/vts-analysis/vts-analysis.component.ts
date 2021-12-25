@@ -683,6 +683,8 @@ export class VtsAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
       return;
     }
+    this.resetAllData();
+    this.setWardBoundary();
     let date = $(this.txtPreDate).val().toString();
     if (date == "") {
       this.commonService.setAlertMessage("error", "Please select date !!!");
