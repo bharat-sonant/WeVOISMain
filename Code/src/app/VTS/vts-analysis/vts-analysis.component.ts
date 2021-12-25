@@ -213,24 +213,26 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   getEventHistory() {
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
-    this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        console.log(data);
-        if (data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            let eventName = data[i]["eventName"];
-            let time = data[i]["time"];
-            let description = data[i]["description"];
-            let eventBy = data[i]["eventBy"];
-            let userData = this.commonService.getPortalUserDetailById(eventBy);
-            if (userData != undefined) {
-              this.eventHistoryList.push({ eventName: eventName, time: time, description: description, name: userData["name"] });
+    if (this.userId == "6" || this.userId == "4") {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
+      this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          console.log(data);
+          if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              let eventName = data[i]["eventName"];
+              let time = data[i]["time"];
+              let description = data[i]["description"];
+              let eventBy = data[i]["eventBy"];
+              let userData = this.commonService.getPortalUserDetailById(eventBy);
+              if (userData != undefined) {
+                this.eventHistoryList.push({ eventName: eventName, time: time, description: description, name: userData["name"] });
+              }
             }
           }
         }
-      }
-    );
+      );
+    }
   }
 
   setDefaultDate() {
@@ -631,9 +633,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.getWardLineStatus();
         this.getSummary();
         $(this.divLoader).hide();
-        if (this.userId == "6" || this.userId == "4") {
-          this.getEventHistory();
-        }
+        this.getEventHistory();
       }, 2000);
     }
 
@@ -731,6 +731,7 @@ export class VtsAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
       this.closeModel();
       this.saveEventHistory("Reset lines", "");
+      this.getEventHistory();
     }
   }
 
@@ -784,6 +785,7 @@ export class VtsAnalysisComponent implements OnInit {
         }
       });
     this.hideSetting();
+    this.getEventHistory();
   }
 
   approve() {
