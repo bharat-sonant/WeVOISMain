@@ -223,7 +223,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Boundary
 
   setWardBoundary() {
-    
+
     if (this.selectedWard != "0") {
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
@@ -982,6 +982,9 @@ export class VtsAnalysisComponent implements OnInit {
                   speed = Number(routeList[i].split(',')[2]);
                   speedList.push({ speed: Number(routeList[i].split(',')[2]) });
                 }
+                else {
+                  speedList.push({ speed: 0 });
+                }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
@@ -1007,6 +1010,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   selectLines() {
     if (this.vehicleList.length > 0) {
+      let routeVehicles = "";
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
         if (element.checked == true) {
@@ -1015,7 +1019,10 @@ export class VtsAnalysisComponent implements OnInit {
           if (vehicleDetail != undefined) {
             if (vehicleDetail.isRoute == false) {
               vehicleDetail.isRoute = true;
-              this.saveRouteVehicle(vehicle);
+              if (routeVehicles != "") {
+                routeVehicles = routeVehicles + ",";
+              }
+              routeVehicles = routeVehicles + vehicle;
               let latLngList = vehicleDetail.latLngList;
               let speedList = vehicleDetail.speedList;
               if (latLngList.length > 0) {
@@ -1035,6 +1042,10 @@ export class VtsAnalysisComponent implements OnInit {
           }
         }
       }
+      if (routeVehicles != "") {
+        this.saveRouteVehicle(routeVehicles);
+      }
+      
       setTimeout(() => {
         let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
         let year = this.selectedDate.split("-")[0];
@@ -1092,11 +1103,29 @@ export class VtsAnalysisComponent implements OnInit {
     let routeVehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeVehicleInstance.unsubscribe();
-        let vehicles = vehicle;
-        if (data != null) {
-          vehicles = data + "," + vehicle;
+        if (data == null) {
+          this.db.object(dbPath).set(vehicle);
         }
-        this.db.object(dbPath).set(vehicles);
+        else {
+          let vehicleList = vehicle.split(',');
+          let preVehicleList = data.split(',');
+          let vehicles = "";
+          for (let i = 0; i < vehicleList.length; i++) {
+            let isData = false;
+            for (let j = 0; j < preVehicleList.length; j++) {
+              if (vehicleList[i] == preVehicleList[j]) {
+                j = preVehicleList.length;
+                isData = true;
+              }
+            }
+            if (isData == false) {
+              if (vehicles != "") { vehicles = vehicles + "," };
+              vehicles = vehicles + vehicleList[i];
+            }
+          }
+          vehicles=vehicles+","+data.toString();
+          this.db.object(dbPath).set(vehicles);
+        }
       }
     );
   }
