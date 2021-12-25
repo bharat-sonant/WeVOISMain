@@ -3,6 +3,7 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
+import { AngularFireList } from 'angularfire2/database';
 //services
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
@@ -14,6 +15,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ['./vts-analysis.component.scss']
 })
 export class VtsAnalysisComponent implements OnInit {
+  eventRef: AngularFireList<any>;
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
@@ -44,7 +46,9 @@ export class VtsAnalysisComponent implements OnInit {
   markerList: any[];
   wardLineLatLng: any[];
   routeVehicleList: any[];
+  eventHistoryList: any[];
   isShowMarker = false;
+  eventInstance: any;
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -83,6 +87,7 @@ export class VtsAnalysisComponent implements OnInit {
   divLoader = "#divLoader";
   approvalName = "#approvalName";
   divApproved = "#divApproved";
+  divEventHistory = "#divEventHistory";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -131,6 +136,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.markerList = [];
     this.wardLineLatLng = [];
     this.routeVehicleList = [];
+    this.eventHistoryList = [];
   }
 
   resetAllData() {
@@ -163,6 +169,10 @@ export class VtsAnalysisComponent implements OnInit {
     this.markerList = [];
     this.routeVehicleList = [];
     this.wardLineStatus = [];
+    this.eventHistoryList = [];
+    if (this.eventInstance != null) {
+      this.eventInstance.unsubscribe();
+    }
     this.lines = [];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
@@ -197,6 +207,30 @@ export class VtsAnalysisComponent implements OnInit {
       $(this.txtStrokeWeight).val(this.strokeWeight);
       $(this.txtStrokeWeightNav).val(this.strokeWeight);
     }
+    if (this.userId == "6" || this.userId == "4") {
+      $(this.divEventHistory).show();
+    }
+  }
+
+  getEventHistory() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
+    this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        console.log(data);
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let eventName = data[i]["eventName"];
+            let time = data[i]["time"];
+            let description = data[i]["description"];
+            let eventBy = data[i]["eventBy"];
+            let userData = this.commonService.getPortalUserDetailById(eventBy);
+            if (userData != undefined) {
+              this.eventHistoryList.push({eventName:eventName,time:time,description:description,name:userData["name"]});
+            }
+          }
+        }
+      }
+    );
   }
 
   setDefaultDate() {
@@ -442,7 +476,8 @@ export class VtsAnalysisComponent implements OnInit {
     let userId = this.userId;
     let dbEvent = this.db;
     let commonService = this.commonService;
-    let toDayDate=this.toDayDate;
+    let toDayDate = this.toDayDate;
+    let eventRef = this.eventRef;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
       if (commonService.checkInternetConnection() == "no") {
@@ -452,6 +487,7 @@ export class VtsAnalysisComponent implements OnInit {
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
+      let description = "";
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         strokeColor = lineDetail.strokeColor;
@@ -460,12 +496,14 @@ export class VtsAnalysisComponent implements OnInit {
           lineDetail.strokeColor = strockColorDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines + 1;
+          description = "Line No " + lineNo + " added";
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.strokeColor = strockColorNotDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines - 1;
+          description = "Line No " + lineNo + " removed";
         }
         let dataInstance = dbEvent.list(dbEventPath + "/LineStatus").valueChanges().subscribe(
           data => {
@@ -487,6 +525,13 @@ export class VtsAnalysisComponent implements OnInit {
         }
         line.setOptions(polyOptions);
         polylines[index]["strokeColor"] = strokeColor;
+        eventRef = dbEvent.list(dbEventPath + "/EventHistory");
+        eventRef.push({
+          eventBy: userId,
+          eventName: "Line click event",
+          time: commonService.getCurrentTimeWithSecond(),
+          description: description
+        })
       }
     });
   }
@@ -586,6 +631,9 @@ export class VtsAnalysisComponent implements OnInit {
         this.getWardLineStatus();
         this.getSummary();
         $(this.divLoader).hide();
+        if (this.userId == "6" || this.userId == "4") {
+          this.getEventHistory();
+        }
       }, 2000);
     }
 
@@ -626,6 +674,8 @@ export class VtsAnalysisComponent implements OnInit {
     this.checkData();
     this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
+
+    this.saveEventHistory("Select all lines", "");
   }
 
   resetAllLines() {
@@ -680,6 +730,7 @@ export class VtsAnalysisComponent implements OnInit {
       this.checkData();
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
       this.closeModel();
+      this.saveEventHistory("Reset lines", "");
     }
   }
 
@@ -725,6 +776,7 @@ export class VtsAnalysisComponent implements OnInit {
             }
             this.getWardLineStatus();
             this.getSummary();
+            this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
             $(this.txtPreDate).val("");
           }
         }
@@ -1047,8 +1099,17 @@ export class VtsAnalysisComponent implements OnInit {
           }
         }
       }
+      let description = "No Vehicle data update";
       if (routeVehicles != "") {
         this.saveRouteVehicle(routeVehicles);
+        description = routeVehicles;
+      }
+
+      const data = {
+        eventBy: this.userId,
+        eventName: "Auto Apply",
+        time: this.commonService.getCurrentTimeWithSecond(),
+        description: description
       }
 
       setTimeout(() => {
@@ -1063,8 +1124,23 @@ export class VtsAnalysisComponent implements OnInit {
             let element = <HTMLImageElement>document.getElementById("imgSync");
             element.src = "../../../assets/img/green_data.svg";
           });
+        dbPath = dbPath + "/EventHistory";
+        this.saveEventHistory("Auto Apply", description);
       }, 2000);
     }
+  }
+
+  saveEventHistory(eventName: any, description: any) {
+    let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    let year = this.selectedDate.split("-")[0];
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + this.selectedDate + "/EventHistory";
+    this.eventRef = this.db.list(dbPath);
+    this.eventRef.push({
+      eventBy: this.userId,
+      eventName: eventName,
+      time: this.commonService.getCurrentTimeWithSecond(),
+      description: description
+    })
   }
 
 
