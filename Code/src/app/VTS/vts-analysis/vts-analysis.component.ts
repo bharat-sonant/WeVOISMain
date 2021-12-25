@@ -225,7 +225,7 @@ export class VtsAnalysisComponent implements OnInit {
             let eventBy = data[i]["eventBy"];
             let userData = this.commonService.getPortalUserDetailById(eventBy);
             if (userData != undefined) {
-              this.eventHistoryList.push({eventName:eventName,time:time,description:description,name:userData["name"]});
+              this.eventHistoryList.push({ eventName: eventName, time: time, description: description, name: userData["name"] });
             }
           }
         }
@@ -762,7 +762,9 @@ export class VtsAnalysisComponent implements OnInit {
               for (let i = 0; i < keyArray.length; i++) {
                 let lineNo = keyArray[i];
                 let newPath = dbPath + "/" + lineNo;
-                this.db.database.ref(newPath).set(obj[lineNo]);
+                let time = this.commonService.getCurrentTimeWithSecond();
+                time = time + "-" + this.userId + "-" + this.toDayDate;
+                this.db.database.ref(newPath).set(time);
               }
             }
             if (data["Summary"] != null) {
