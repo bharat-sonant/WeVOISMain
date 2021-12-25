@@ -3,6 +3,7 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
+import { AngularFireList } from 'angularfire2/database';
 //services
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
@@ -14,6 +15,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ['./vts-analysis.component.scss']
 })
 export class VtsAnalysisComponent implements OnInit {
+  eventRef: AngularFireList<any>;
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
@@ -33,7 +35,6 @@ export class VtsAnalysisComponent implements OnInit {
   strokeWeight = 4;
   vehicleList: any[];
   zoneList: any[];
-  wardLineLengthList: any[];
   wardLineStatus: any[];
   userId: any;
   isBoundaryShow = true;
@@ -45,7 +46,9 @@ export class VtsAnalysisComponent implements OnInit {
   markerList: any[];
   wardLineLatLng: any[];
   routeVehicleList: any[];
+  eventHistoryList: any[];
   isShowMarker = false;
+  eventInstance: any;
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -84,6 +87,7 @@ export class VtsAnalysisComponent implements OnInit {
   divLoader = "#divLoader";
   approvalName = "#approvalName";
   divApproved = "#divApproved";
+  divEventHistory = "#divEventHistory";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -127,12 +131,70 @@ export class VtsAnalysisComponent implements OnInit {
     this.lines = [];
     this.polylines = [];
     this.vehicleList = [];
-    this.wardLineLengthList = [];
     this.wardLineStatus = [];
     this.vtsVehicleList = [];
     this.markerList = [];
     this.wardLineLatLng = [];
     this.routeVehicleList = [];
+    this.eventHistoryList = [];
+  }
+
+  resetAllData() {
+    if (this.commonService.checkInternetConnection() == "no") {
+      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+      return;
+    }
+    this.isBoundaryShow = true;
+    if (this.wardBoundary != null) {
+      this.wardBoundary.setMap(null);
+    }
+    this.wardBoundary = null;
+    if (this.vtsPolylines.length > 0) {
+      for (let i = 0; i < this.vtsPolylines.length; i++) {
+        if (this.vtsPolylines[i] != null) {
+          this.vtsPolylines[i].setMap(null);
+        }
+      }
+    }
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i]["marker"] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.vtsPolylines = [];
+    this.vtsVehicleList = [];
+    this.vehicleList = [];
+    this.markerList = [];
+    this.routeVehicleList = [];
+    this.wardLineStatus = [];
+
+    this.lines = [];
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        if (this.markerList[i] != null) {
+          this.markerList[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.markerList = [];
+    this.wardLineLatLng = [];
+    let element = <HTMLInputElement>document.getElementById("chkApprove");
+    let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
+    element.checked = false;
+    btnElement.disabled = true;
+    this.progressData.selectedLines = 0;
+    this.progressData.savedLines = 0;
+    $(this.divApproved).hide();
   }
 
   setDefaultLocalStorage() {
@@ -141,6 +203,35 @@ export class VtsAnalysisComponent implements OnInit {
       this.strokeWeight = Number(localStorage.getItem("strokeWeight"));
       $(this.txtStrokeWeight).val(this.strokeWeight);
       $(this.txtStrokeWeightNav).val(this.strokeWeight);
+    }
+    if (this.userId == "6" || this.userId == "4" || this.userId == "11") {
+      $(this.divEventHistory).show();
+    }
+  }
+
+  getEventHistory() {
+    if (this.eventInstance != null) {
+      this.eventInstance.unsubscribe();
+    }
+    if (this.userId == "6" || this.userId == "4" || this.userId == "11") {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
+      this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          this.eventHistoryList = [];
+          if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              let eventName = data[i]["eventName"];
+              let time = data[i]["time"];
+              let description = data[i]["description"];
+              let eventBy = data[i]["eventBy"];
+              let userData = this.commonService.getPortalUserDetailById(eventBy);
+              if (userData != undefined) {
+                this.eventHistoryList.push({ eventName: eventName, time: time, description: description, name: userData["name"] });
+              }
+            }
+          }
+        }
+      );
     }
   }
 
@@ -223,7 +314,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Boundary
 
   setWardBoundary() {
-    
+
     if (this.selectedWard != "0") {
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
@@ -387,6 +478,8 @@ export class VtsAnalysisComponent implements OnInit {
     let userId = this.userId;
     let dbEvent = this.db;
     let commonService = this.commonService;
+    let toDayDate = this.toDayDate;
+    let eventRef = this.eventRef;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
       if (commonService.checkInternetConnection() == "no") {
@@ -394,8 +487,9 @@ export class VtsAnalysisComponent implements OnInit {
         return;
       }
       let time = commonService.getCurrentTimeWithSecond();
-      time = time + "-" + userId;
+      time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
+      let description = "";
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         strokeColor = lineDetail.strokeColor;
@@ -404,12 +498,14 @@ export class VtsAnalysisComponent implements OnInit {
           lineDetail.strokeColor = strockColorDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines + 1;
+          description = "Line No " + lineNo + " added";
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.strokeColor = strockColorNotDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines - 1;
+          description = "Line No " + lineNo + " removed";
         }
         let dataInstance = dbEvent.list(dbEventPath + "/LineStatus").valueChanges().subscribe(
           data => {
@@ -431,6 +527,13 @@ export class VtsAnalysisComponent implements OnInit {
         }
         line.setOptions(polyOptions);
         polylines[index]["strokeColor"] = strokeColor;
+        eventRef = dbEvent.list(dbEventPath + "/EventHistory");
+        eventRef.push({
+          eventBy: userId,
+          eventName: "Line click event",
+          time: commonService.getCurrentTimeWithSecond(),
+          description: description
+        })
       }
     });
   }
@@ -456,7 +559,7 @@ export class VtsAnalysisComponent implements OnInit {
       for (let i = 0; i < this.lines.length; i++) {
         if (this.lines[i]["strokeColor"] == this.strockColorDone) {
           let time = this.commonService.getCurrentTimeWithSecond();
-          time = time + "-" + this.userId;
+          time = time + "-" + this.userId + "-" + this.toDayDate;
           this.db.database.ref(dbPath + "/LineStatus/" + this.lines[i]["lineNo"]).set(time);
           count++;
         }
@@ -516,60 +619,6 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-  resetAllData() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
-    this.isBoundaryShow = true;
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
-    this.wardBoundary = null;
-    if (this.vtsPolylines.length > 0) {
-      for (let i = 0; i < this.vtsPolylines.length; i++) {
-        if (this.vtsPolylines[i] != null) {
-          this.vtsPolylines[i].setMap(null);
-        }
-      }
-    }
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i]["marker"] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.vtsPolylines = [];
-    this.vehicleList = [];
-    this.markerList = [];
-    this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.markerList = [];
-    this.wardLineLatLng = [];
-    let element = <HTMLInputElement>document.getElementById("chkApprove");
-    let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
-    element.checked = false;
-    btnElement.disabled = true;
-    this.progressData.selectedLines = 0;
-    this.progressData.savedLines = 0;
-    $(this.divApproved).hide();
-  }
-
   changeWardSelection(filterVal: any) {
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
@@ -584,6 +633,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.getWardLineStatus();
         this.getSummary();
         $(this.divLoader).hide();
+        this.getEventHistory();
       }, 2000);
     }
 
@@ -607,13 +657,16 @@ export class VtsAnalysisComponent implements OnInit {
           strokeWeight: this.strokeWeight
         }
         let lineNo = this.lines[j]["lineNo"];
+        if (this.lines[j]["strokeColor"] != this.strockColorDone) {
+          let time = this.commonService.getCurrentTimeWithSecond();
+          time = time + "-" + this.userId + "-" + this.toDayDate;
+          let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+          this.db.database.ref(dbPath).set(time);
+        }
         this.polylines[j]["strokeColor"] = this.strockColorDone;
         this.lines[j]["strokeColor"] = this.strockColorDone;
         line.setOptions(polyOptions);
-        let time = this.commonService.getCurrentTimeWithSecond();
-        time = time + "-" + this.userId;
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        this.db.database.ref(dbPath).set(time);
+
       }
     }
     this.progressData.selectedLines = this.lines.length;
@@ -621,6 +674,8 @@ export class VtsAnalysisComponent implements OnInit {
     this.checkData();
     this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
+
+    this.saveEventHistory("Select all lines", "");
   }
 
   resetAllLines() {
@@ -675,6 +730,8 @@ export class VtsAnalysisComponent implements OnInit {
       this.checkData();
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
       this.closeModel();
+      this.saveEventHistory("Reset lines", "");
+      this.getEventHistory();
     }
   }
 
@@ -706,7 +763,9 @@ export class VtsAnalysisComponent implements OnInit {
               for (let i = 0; i < keyArray.length; i++) {
                 let lineNo = keyArray[i];
                 let newPath = dbPath + "/" + lineNo;
-                this.db.database.ref(newPath).set(obj[lineNo]);
+                let time = this.commonService.getCurrentTimeWithSecond();
+                time = time + "-" + this.userId + "-" + this.toDayDate;
+                this.db.database.ref(newPath).set(time);
               }
             }
             if (data["Summary"] != null) {
@@ -720,11 +779,13 @@ export class VtsAnalysisComponent implements OnInit {
             }
             this.getWardLineStatus();
             this.getSummary();
+            this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
             $(this.txtPreDate).val("");
           }
         }
       });
     this.hideSetting();
+    this.getEventHistory();
   }
 
   approve() {
@@ -982,6 +1043,9 @@ export class VtsAnalysisComponent implements OnInit {
                   speed = Number(routeList[i].split(',')[2]);
                   speedList.push({ speed: Number(routeList[i].split(',')[2]) });
                 }
+                else {
+                  speedList.push({ speed: 0 });
+                }
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
@@ -1007,6 +1071,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   selectLines() {
     if (this.vehicleList.length > 0) {
+      let routeVehicles = "";
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
         if (element.checked == true) {
@@ -1015,7 +1080,10 @@ export class VtsAnalysisComponent implements OnInit {
           if (vehicleDetail != undefined) {
             if (vehicleDetail.isRoute == false) {
               vehicleDetail.isRoute = true;
-              this.saveRouteVehicle(vehicle);
+              if (routeVehicles != "") {
+                routeVehicles = routeVehicles + ",";
+              }
+              routeVehicles = routeVehicles + vehicle;
               let latLngList = vehicleDetail.latLngList;
               let speedList = vehicleDetail.speedList;
               if (latLngList.length > 0) {
@@ -1035,6 +1103,19 @@ export class VtsAnalysisComponent implements OnInit {
           }
         }
       }
+      let description = "No Vehicle data update";
+      if (routeVehicles != "") {
+        this.saveRouteVehicle(routeVehicles);
+        description = routeVehicles;
+      }
+
+      const data = {
+        eventBy: this.userId,
+        eventName: "Auto Apply",
+        time: this.commonService.getCurrentTimeWithSecond(),
+        description: description
+      }
+
       setTimeout(() => {
         let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
         let year = this.selectedDate.split("-")[0];
@@ -1047,8 +1128,23 @@ export class VtsAnalysisComponent implements OnInit {
             let element = <HTMLImageElement>document.getElementById("imgSync");
             element.src = "../../../assets/img/green_data.svg";
           });
-      }, 1000);
+        dbPath = dbPath + "/EventHistory";
+        this.saveEventHistory("Auto Apply", description);
+      }, 2000);
     }
+  }
+
+  saveEventHistory(eventName: any, description: any) {
+    let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    let year = this.selectedDate.split("-")[0];
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + this.selectedDate + "/EventHistory";
+    this.eventRef = this.db.list(dbPath);
+    this.eventRef.push({
+      eventBy: this.userId,
+      eventName: eventName,
+      time: this.commonService.getCurrentTimeWithSecond(),
+      description: description
+    })
   }
 
 
@@ -1063,9 +1159,11 @@ export class VtsAnalysisComponent implements OnInit {
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
               let time = this.commonService.getCurrentTimeWithSecond();
-              time = time + "-" + this.userId;
+              time = time + "-" + this.userId + "-" + this.toDayDate;
               let strokeColor = lineDetail.strokeColor;
-              this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              if (lineDetail.strokeColor != this.strockColorDone) {
+                this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+              }
               lineDetail.strokeColor = this.strockColorDone;
               strokeColor = lineDetail.strokeColor;
               var polyOptions = {
@@ -1092,11 +1190,29 @@ export class VtsAnalysisComponent implements OnInit {
     let routeVehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeVehicleInstance.unsubscribe();
-        let vehicles = vehicle;
-        if (data != null) {
-          vehicles = data + "," + vehicle;
+        if (data == null) {
+          this.db.object(dbPath).set(vehicle);
         }
-        this.db.object(dbPath).set(vehicles);
+        else {
+          let vehicleList = vehicle.split(',');
+          let preVehicleList = data.split(',');
+          let vehicles = "";
+          for (let i = 0; i < vehicleList.length; i++) {
+            let isData = false;
+            for (let j = 0; j < preVehicleList.length; j++) {
+              if (vehicleList[i] == preVehicleList[j]) {
+                j = preVehicleList.length;
+                isData = true;
+              }
+            }
+            if (isData == false) {
+              if (vehicles != "") { vehicles = vehicles + "," };
+              vehicles = vehicles + vehicleList[i];
+            }
+          }
+          vehicles = vehicles + "," + data.toString();
+          this.db.object(dbPath).set(vehicles);
+        }
       }
     );
   }
