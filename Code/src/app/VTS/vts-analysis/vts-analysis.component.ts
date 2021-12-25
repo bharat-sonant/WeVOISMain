@@ -169,10 +169,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.markerList = [];
     this.routeVehicleList = [];
     this.wardLineStatus = [];
-    this.eventHistoryList = [];
-    if (this.eventInstance != null) {
-      this.eventInstance.unsubscribe();
-    }
+
     this.lines = [];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
@@ -213,11 +210,14 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   getEventHistory() {
+    if (this.eventInstance != null) {
+      this.eventInstance.unsubscribe();
+    }
     if (this.userId == "6" || this.userId == "4") {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
       this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
-          console.log(data);
+          this.eventHistoryList = [];
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let eventName = data[i]["eventName"];
