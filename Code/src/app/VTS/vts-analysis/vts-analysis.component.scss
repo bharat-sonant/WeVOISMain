@@ -1500,6 +1500,20 @@ color: red;
   background: transparent; 
   -webkit-box-shadow: transparent; 
 }
+.event-history-box{
+  background: #fff;
+  min-height: 58px;
+  width: 290px;
+  padding: 10px;
+  position: absolute;
+  right: 15px;
+  top: 438px;
+  box-shadow: 0 1px 5px 1px #80bd7b;
+  border-radius: 5px;
+  } 
+
+
+
 
 :hover::-webkit-scrollbar {
   width: 8px;
