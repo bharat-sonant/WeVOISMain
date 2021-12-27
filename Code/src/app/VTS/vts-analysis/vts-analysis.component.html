@@ -406,7 +406,8 @@
                     <tr *ngFor="let dt of vehicleList, let i=index">
                       <td class="text-left"
                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                        {{dt.vehicle}}
+                        {{dt.vehicle}} <i class="far fa-check-square" [hidden]="dt.isDone==0"
+                        style="color: #0ba118; font-size: 12px!important;"></i>
                         <span class="tbl-span" style="float:right;margin-top: -1px; font-size: 10px; "> <span
                             class="{{dt.cssClass}}"> {{dt.message}}</span>
                           <input id="chkVehicle{{i}}" [hidden]="dt.showCheckBox==0" type="checkbox"
@@ -471,8 +472,8 @@
             <tr *ngFor="let dt of eventHistoryList, let i=index">
               <td class="text-left"
                 style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                {{dt.eventName}} by {{dt.name}}<br/>
-                at {{dt.time}} - {{dt.description}}
+                {{dt.name}} by {{dt.userName}}<br/>
+                at {{dt.time}} - {{dt.desc}}
               </td>
             </tr>
           </tbody>

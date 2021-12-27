@@ -220,13 +220,13 @@ export class VtsAnalysisComponent implements OnInit {
           this.eventHistoryList = [];
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
-              let eventName = data[i]["eventName"];
+              let name = data[i]["name"];
               let time = data[i]["time"];
-              let description = data[i]["description"];
-              let eventBy = data[i]["eventBy"];
+              let desc = data[i]["desc"];
+              let eventBy = data[i]["by"];
               let userData = this.commonService.getPortalUserDetailById(eventBy);
               if (userData != undefined) {
-                this.eventHistoryList.push({ eventName: eventName, time: time, description: description, name: userData["name"] });
+                this.eventHistoryList.push({ name: name, time: time, desc: desc, userName: userData["name"] });
               }
             }
           }
@@ -362,6 +362,14 @@ export class VtsAnalysisComponent implements OnInit {
       data => {
         approveInstance.unsubscribe();
         if (data != null) {
+          if (data["routeVehicles"] != null) {
+            let vehicles = data["routeVehicles"].split(',');
+            let latLngList = [];
+            let speedList = [];
+            for (let i = 0; i < vehicles.length; i++) {
+              this.routeVehicleList.push({ vehicle: vehicles[i], latLngList: latLngList, isRoute: true, speedList: speedList });
+            }
+          }
           if (data["vehicles"] != null) {
             this.getVehicles(data["vehicles"]);
           }
@@ -375,14 +383,7 @@ export class VtsAnalysisComponent implements OnInit {
             }
             $(this.divApproved).show();
           }
-          if (data["routeVehicles"] != null) {
-            let vehicles = data["routeVehicles"].split(',');
-            let latLngList = [];
-            let speedList = [];
-            for (let i = 0; i < vehicles.length; i++) {
-              this.routeVehicleList.push({ vehicle: vehicles[i], latLngList: latLngList, isRoute: true, speedList: speedList });
-            }
-          }
+
         }
         else {
           $(this.approvalName).html("");
@@ -479,7 +480,6 @@ export class VtsAnalysisComponent implements OnInit {
     let dbEvent = this.db;
     let commonService = this.commonService;
     let toDayDate = this.toDayDate;
-    let eventRef = this.eventRef;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
       if (commonService.checkInternetConnection() == "no") {
@@ -527,13 +527,17 @@ export class VtsAnalysisComponent implements OnInit {
         }
         line.setOptions(polyOptions);
         polylines[index]["strokeColor"] = strokeColor;
-        eventRef = dbEvent.list(dbEventPath + "/EventHistory");
-        eventRef.push({
-          eventBy: userId,
-          eventName: "Line click event",
-          time: commonService.getCurrentTimeWithSecond(),
-          description: description
-        })
+
+        let timestamp = new Date().getTime();
+        let dbPath = dbEventPath + "/EventHistory/" + timestamp;
+
+        const data = {
+          by: userId,
+          name: "Line click event",
+          time: toDayDate + " " + commonService.getCurrentTimeWithSecond(),
+          desc: description
+        }
+        dbEvent.database.ref(dbPath).set(data);
       }
     });
   }
@@ -731,7 +735,6 @@ export class VtsAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("success", "All lines resetted !!!");
       this.closeModel();
       this.saveEventHistory("Reset lines", "");
-      this.getEventHistory();
     }
   }
 
@@ -785,7 +788,6 @@ export class VtsAnalysisComponent implements OnInit {
         }
       });
     this.hideSetting();
-    this.getEventHistory();
   }
 
   approve() {
@@ -831,7 +833,12 @@ export class VtsAnalysisComponent implements OnInit {
                 showCheckBox = 1;
                 cssClass = "";
               }
-              this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
+              let isDone = 0;
+              let routeVehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicleNo);
+              if (routeVehicleDetail != undefined) {
+                isDone = 1;
+              }
+              this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
             });
         }
         else {
@@ -841,7 +848,12 @@ export class VtsAnalysisComponent implements OnInit {
             showCheckBox = 1;
             cssClass = "";
           }
-          this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
+          let isDone = 0;
+          let routeVehicleDetail = this.routeVehicleList.find(item => item.vehicle == vehicleNo);
+          if (routeVehicleDetail != undefined) {
+            isDone = 1;
+          }
+          this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
         }
       }
     }
@@ -958,13 +970,14 @@ export class VtsAnalysisComponent implements OnInit {
     let message = "Route not Imported";
     let showCheckBox = 0;
     let cssClass = "not-route-created";
+    let isDone = 0;
     let detail = this.vtsVehicleList.find(item => item.vehicle == vehicleNo);
     if (detail != undefined) {
       message = "Show Route";
       showCheckBox = 1;
       cssClass = "";
     }
-    this.vehicleList.push({ vehicle: vehicleNo, showCheckBox: showCheckBox, message: message, cssClass: cssClass });
+    this.vehicleList.push({ vehicle: vehicleNo, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
     let vehicles = "";
     if (this.vehicleList != null) {
       for (let i = 0; i < this.vehicleList.length; i++) {
@@ -1070,8 +1083,9 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   selectLines() {
+    let routeVehicles = "";
+    let description = "No Vehicle data update";
     if (this.vehicleList.length > 0) {
-      let routeVehicles = "";
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
         if (element.checked == true) {
@@ -1099,11 +1113,15 @@ export class VtsAnalysisComponent implements OnInit {
                   this.getLinesInRoute(lat, lng, speed);
                 }
               }
+              let delail = this.vehicleList.find(item => item.vehicle == vehicle);
+              if (delail != undefined) {
+                delail.isDone = 1;
+              }
             }
           }
         }
       }
-      let description = "No Vehicle data update";
+
       if (routeVehicles != "") {
         this.saveRouteVehicle(routeVehicles);
         description = routeVehicles;
@@ -1129,22 +1147,25 @@ export class VtsAnalysisComponent implements OnInit {
             element.src = "../../../assets/img/green_data.svg";
           });
         dbPath = dbPath + "/EventHistory";
-        this.saveEventHistory("Auto Apply", description);
+
       }, 2000);
     }
+    this.saveEventHistory("Auto Apply", description);
   }
 
   saveEventHistory(eventName: any, description: any) {
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + this.selectedDate + "/EventHistory";
-    this.eventRef = this.db.list(dbPath);
-    this.eventRef.push({
-      eventBy: this.userId,
-      eventName: eventName,
-      time: this.commonService.getCurrentTimeWithSecond(),
-      description: description
-    })
+    let timestamp = new Date().getTime();
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + this.selectedDate + "/EventHistory/" + timestamp;
+
+    const data = {
+      by: this.userId,
+      name: eventName,
+      time: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
+      desc: description
+    }
+    this.db.database.ref(dbPath).set(data);
   }
 
 
