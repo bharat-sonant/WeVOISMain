@@ -757,9 +757,13 @@ export class VtsAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select date !!!");
       return;
     }
+    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+    this.db.database.ref(dbPath).set(null);
+    dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
+    this.db.database.ref(dbPath).set(null);
     let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
     let year = date.split("-")[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
+    dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
     let preDataInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         preDataInstance.unsubscribe();
@@ -779,13 +783,14 @@ export class VtsAnalysisComponent implements OnInit {
               }
             }
           }
-        }
-        if (data["Summary"] != null) {
-          if (data["Summary"]["vehicles"] != null) {
-            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-            this.db.object(dbPath).update({ vehicles: data["Summary"]["vehicles"] });
+          if (data["Summary"] != null) {
+            if (data["Summary"]["vehicles"] != null) {
+              dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+              this.db.object(dbPath).update({ vehicles: data["Summary"]["vehicles"] });
+            }
           }
         }
+
         this.getWardLineStatus();
         this.getSummary();
         this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
@@ -1087,7 +1092,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   selectLines() {
-    let routeVehicles = "";    
+    let routeVehicles = "";
     let description = "No Vehicle data update";
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
