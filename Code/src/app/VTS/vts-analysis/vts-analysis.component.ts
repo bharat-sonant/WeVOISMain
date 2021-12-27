@@ -92,7 +92,14 @@ export class VtsAnalysisComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setEventHistoryHeight();
     this.setDefault();
+  }
+
+  setEventHistoryHeight() {
+    let windowHeight = $(window).height();
+    let element = <HTMLDivElement>document.getElementById("tblEventHistory");
+    element.style.height = (windowHeight - 480) + "px";
   }
 
   setDefault() {
