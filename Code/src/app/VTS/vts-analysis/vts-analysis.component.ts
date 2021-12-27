@@ -761,6 +761,8 @@ export class VtsAnalysisComponent implements OnInit {
     this.db.database.ref(dbPath).set(null);
     dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/vehicles";
     this.db.database.ref(dbPath).set(null);
+    dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/routeVehicles";
+    this.db.database.ref(dbPath).set(null);
     let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
     let year = date.split("-")[0];
     dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date;
