@@ -778,21 +778,18 @@ export class VtsAnalysisComponent implements OnInit {
                 this.db.database.ref(newPath).set(time);
               }
             }
-            if (data["Summary"] != null) {
-              if (data["Summary"]["vehicles"] != null) {
-                dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-                this.db.object(dbPath).update({ vehicles: data["Summary"]["vehicles"] });
-              }
-              if (data["Summary"]["routeVehicles"] != null) {
-                this.db.database.ref(dbPath + "/routeVehicles").set(data["Summary"]["routeVehicles"]);
-              }
-            }
-            this.getWardLineStatus();
-            this.getSummary();
-            this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
-            $(this.txtPreDate).val("");
           }
         }
+        if (data["Summary"] != null) {
+          if (data["Summary"]["vehicles"] != null) {
+            dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+            this.db.object(dbPath).update({ vehicles: data["Summary"]["vehicles"] });
+          }
+        }
+        this.getWardLineStatus();
+        this.getSummary();
+        this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
+        $(this.txtPreDate).val("");
       });
     this.hideSetting();
   }
@@ -1090,7 +1087,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   selectLines() {
-    let routeVehicles = "";
+    let routeVehicles = "";    
     let description = "No Vehicle data update";
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
@@ -1132,13 +1129,7 @@ export class VtsAnalysisComponent implements OnInit {
       if (routeVehicles != "") {
         this.saveRouteVehicle(routeVehicles);
         description = routeVehicles;
-      }
-
-      const data = {
-        eventBy: this.userId,
-        eventName: "Auto Apply",
-        time: this.commonService.getCurrentTimeWithSecond(),
-        description: description
+        this.commonService.setAlertMessage("success", "Auto route selection applied for vehicles " + routeVehicles);
       }
 
       setTimeout(() => {
@@ -1174,7 +1165,6 @@ export class VtsAnalysisComponent implements OnInit {
     }
     this.db.database.ref(dbPath).set(data);
   }
-
 
   getLinesInRoute(lat: any, lng: any, speed: any) {
     if (speed <= 15) {
