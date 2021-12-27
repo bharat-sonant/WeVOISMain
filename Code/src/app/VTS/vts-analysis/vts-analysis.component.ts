@@ -712,6 +712,7 @@ export class VtsAnalysisComponent implements OnInit {
             }
           }
         }
+        this.vehicleList[i]["isDone"]=0;
       }
       this.vtsPolylines = [];
       this.markerList = [];
