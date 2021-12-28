@@ -302,14 +302,13 @@ font-weight: 700;
 width: 100%;
 float: left;
 border-bottom: 1px solid lightgray;    
-height: 55px;
+min-height: 55px;
 }
 .main-box .designation{
 width: 50px;
 float: left;
 padding: 10px;
 text-align: center;
-border-right: 1px solid lightgray;
 }
 .designation h5{
 font-weight: bold;
@@ -319,8 +318,11 @@ color: #0ba118;
 text-shadow: 0 2px 2px #c8c8c8;
 }
 .main-box .all-details{
-float: left;
-padding: 10px;
+    float: right;
+    padding: 10px;
+    min-height: 50px;
+    width: calc(100% - 50px);
+    border-left: 1px solid lightgray;
 }
 .all-details h6{
 font-size: 12px;
