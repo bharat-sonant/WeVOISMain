@@ -528,9 +528,8 @@ export class CommonService {
       if (employeeList == undefined) {
         employeeList = [];
       }
-
       let employeeData = employeeList.find(
-        (item) => item.userName == employeeId
+        (item) => item.userName == employeeId && item.city == localStorage.getItem("cityName")
       );
       if (employeeData == undefined) {
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -546,6 +545,7 @@ export class CommonService {
               mobile: data["mobile"],
               profilePhotoURL: data["profilePhotoURL"],
               designation: designationData,
+              city: localStorage.getItem("cityName")
             });
             localStorage.setItem("employeeList", JSON.stringify(employeeList));
             let list = JSON.parse(localStorage.getItem("employeeList"));
@@ -741,7 +741,7 @@ export class CommonService {
         }
         localStorage.setItem("markerZone", JSON.stringify(zoneList));
       }
-      else{
+      else {
         localStorage.setItem("markerZone", JSON.stringify(zoneList));
       }
     });
@@ -848,7 +848,7 @@ export class CommonService {
         wardKMLInstance.unsubscribe();
         let wardKMLList = [];
         if (data != null) {
-          let keyArray = Object.keys(data);          
+          let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               let wardNo = keyArray[i];
@@ -858,7 +858,7 @@ export class CommonService {
             localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
           }
         }
-        else{
+        else {
           localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
         }
       }
@@ -942,7 +942,7 @@ export class CommonService {
         }
         localStorage.setItem("markingWards", JSON.stringify(markingWards));
       }
-      else{
+      else {
         localStorage.setItem("markingWards", JSON.stringify(markingWards));
       }
       wardDetail.unsubscribe();
@@ -1481,7 +1481,7 @@ export class CommonService {
     });
   }
 
-  checkInternetConnection(){
+  checkInternetConnection() {
     return localStorage.getItem("isConnected");
   }
 
