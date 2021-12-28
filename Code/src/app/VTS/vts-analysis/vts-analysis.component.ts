@@ -177,7 +177,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.markerList = [];
     this.routeVehicleList = [];
     this.wardLineStatus = [];
-    this.eventHistoryList=[];
+    this.eventHistoryList = [];
 
     this.lines = [];
     if (this.polylines.length > 0) {
@@ -228,7 +228,7 @@ export class VtsAnalysisComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
       this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
-          this.eventHistoryList=[];
+          this.eventHistoryList = [];
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let name = data[i]["name"];
@@ -325,7 +325,6 @@ export class VtsAnalysisComponent implements OnInit {
   //#region Ward Boundary
 
   setWardBoundary() {
-
     if (this.selectedWard != "0") {
       this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
         this.wardBoundary = wardKML;
@@ -394,7 +393,6 @@ export class VtsAnalysisComponent implements OnInit {
             }
             $(this.divApproved).show();
           }
-
         }
         else {
           $(this.approvalName).html("");
@@ -499,7 +497,6 @@ export class VtsAnalysisComponent implements OnInit {
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
-      let description = "";
       let lineDetail = lines.find(item => item.lineNo == lineNo);
       if (lineDetail != undefined) {
         strokeColor = lineDetail.strokeColor;
@@ -508,14 +505,12 @@ export class VtsAnalysisComponent implements OnInit {
           lineDetail.strokeColor = strockColorDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines + 1;
-          description = "Line No " + lineNo + " added";
         }
         else {
           dbEvent.database.ref(dbEventPath + "/LineStatus/" + lineNo).set(null);
           lineDetail.strokeColor = strockColorNotDone;
           strokeColor = lineDetail.strokeColor;
           progressData.selectedLines = progressData.selectedLines - 1;
-          description = "Line No " + lineNo + " removed";
         }
         let dataInstance = dbEvent.list(dbEventPath + "/LineStatus").valueChanges().subscribe(
           data => {
@@ -605,7 +600,6 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
-    this.vtsVehicleList = [];
     if (this.selectedWard != "0") {
       this.changeWardSelection(this.selectedWard);
     }
@@ -670,7 +664,6 @@ export class VtsAnalysisComponent implements OnInit {
         this.polylines[j]["strokeColor"] = this.strockColorDone;
         this.lines[j]["strokeColor"] = this.strockColorDone;
         line.setOptions(polyOptions);
-
       }
     }
     this.progressData.selectedLines = this.lines.length;
@@ -678,7 +671,6 @@ export class VtsAnalysisComponent implements OnInit {
     this.checkData();
     this.commonService.setAlertMessage("success", "All lines selected !!!");
     this.closeModel();
-
     this.saveEventHistory("Select all lines", "");
   }
 
@@ -719,13 +711,12 @@ export class VtsAnalysisComponent implements OnInit {
           strokeWeight: this.strokeWeight
         }
         line.setOptions(polyOptions);
-        let lineNo = this.lines[j]["lineNo"];
         this.polylines[j]["strokeColor"] = this.strockColorNotDone;
         this.lines[j]["strokeColor"] = this.strockColorNotDone;
-        let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
-        this.db.database.ref(dbPath).set(null);
       }
-      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/";
+      this.db.database.ref(dbPath).set(null);
+      dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/";
       this.db.object(dbPath + "/routeVehicles").set(null);
       this.routeVehicleList = [];
       let date = this.commonService.getTodayDateTime();
@@ -786,7 +777,6 @@ export class VtsAnalysisComponent implements OnInit {
             }
           }
         }
-
         this.getWardLineStatus();
         this.getSummary();
         this.saveEventHistory("Set Previous Data", "Date " + $(this.txtPreDate).val());
@@ -994,8 +984,10 @@ export class VtsAnalysisComponent implements OnInit {
         }
       }
     }
-    let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-    this.db.object(dbPath).update({ vehicles: vehicles });
+    if (vehicles != "") {
+      let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+      this.db.object(dbPath).update({ vehicles: vehicles });
+    }
   }
 
   getVtsRoute(vehicle: any, index: any) {
@@ -1059,11 +1051,8 @@ export class VtsAnalysisComponent implements OnInit {
                 let speed = 0;
                 if (routeList[i].split(',')[2] != null) {
                   speed = Number(routeList[i].split(',')[2]);
-                  speedList.push({ speed: Number(routeList[i].split(',')[2]) });
                 }
-                else {
-                  speedList.push({ speed: 0 });
-                }
+                speedList.push({ speed: speed });
                 latLng.push({ lat: Number(lat), lng: Number(lng) });
                 this.setVtsRouteMarker(index, speed, lat, lng);
               }
@@ -1145,8 +1134,6 @@ export class VtsAnalysisComponent implements OnInit {
             let element = <HTMLImageElement>document.getElementById("imgSync");
             element.src = "../../../assets/img/green_data.svg";
           });
-        dbPath = dbPath + "/EventHistory";
-
       }, 2000);
     }
     this.saveEventHistory("Auto Apply", description);
@@ -1261,7 +1248,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   showHideMarkers(showStatus: any) {
-
     if (showStatus == 'hide') {
       this.isShowMarker = false;
       $(this.iconDone).hide();
@@ -1332,12 +1318,10 @@ export class VtsAnalysisComponent implements OnInit {
     this.map.setOptions({ clickableIcons: false });
   }
 
-
   setHeight() {
     $(".navbar-toggler").show();
     $("#divMap").css("height", $(window).height() - 80);
   }
-
 
   hideSetting() {
     let element = <HTMLElement>document.getElementById("collapsetwo");
@@ -1345,7 +1329,6 @@ export class VtsAnalysisComponent implements OnInit {
     $("#collapsetwo").removeClass(className);
     $("#collapsetwo").addClass("panel-collapse collapse in");
   }
-
 
   openModel(content: any) {
     if (this.commonService.checkInternetConnection() == "no") {
