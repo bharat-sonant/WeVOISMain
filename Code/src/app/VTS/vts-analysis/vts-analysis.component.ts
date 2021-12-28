@@ -3,7 +3,6 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
-import { AngularFireList } from 'angularfire2/database';
 //services
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
@@ -15,7 +14,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ['./vts-analysis.component.scss']
 })
 export class VtsAnalysisComponent implements OnInit {
-  eventRef: AngularFireList<any>;
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
@@ -49,6 +47,8 @@ export class VtsAnalysisComponent implements OnInit {
   eventHistoryList: any[];
   isShowMarker = false;
   eventInstance: any;
+  isEventHistoryShow = false;
+  instancesList: any[];
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -144,6 +144,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.wardLineLatLng = [];
     this.routeVehicleList = [];
     this.eventHistoryList = [];
+    this.instancesList = [];
   }
 
   resetAllData() {
@@ -176,6 +177,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.markerList = [];
     this.routeVehicleList = [];
     this.wardLineStatus = [];
+    this.eventHistoryList=[];
 
     this.lines = [];
     if (this.polylines.length > 0) {
@@ -202,6 +204,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
     $(this.divApproved).hide();
+    this.clearListeners();
   }
 
   setDefaultLocalStorage() {
@@ -213,6 +216,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     if (this.userId == "6" || this.userId == "4" || this.userId == "11") {
       $(this.divEventHistory).show();
+      this.isEventHistoryShow = true;
     }
   }
 
@@ -220,11 +224,10 @@ export class VtsAnalysisComponent implements OnInit {
     if (this.eventInstance != null) {
       this.eventInstance.unsubscribe();
     }
-    if (this.userId == "6" || this.userId == "4" || this.userId == "11") {
+    if (this.isEventHistoryShow == true) {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
       this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
-          this.eventHistoryList = [];
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let name = data[i]["name"];
@@ -421,7 +424,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setWardLines() {
-
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -488,7 +490,7 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let toDayDate = this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-    google.maps.event.addListener(line, 'click', function (h) {
+    let clickInstance = google.maps.event.addListener(line, 'click', function (h) {
       if (commonService.checkInternetConnection() == "no") {
         commonService.setAlertMessage("error", "Please check internet connection !!!");
         return;
@@ -534,19 +536,9 @@ export class VtsAnalysisComponent implements OnInit {
         }
         line.setOptions(polyOptions);
         polylines[index]["strokeColor"] = strokeColor;
-
-        let timestamp = new Date().getTime();
-        let dbPath = dbEventPath + "/EventHistory/" + timestamp;
-
-        const data = {
-          by: userId,
-          name: "Line click event",
-          time: toDayDate + " " + commonService.getCurrentTimeWithSecond(),
-          desc: description
-        }
-        dbEvent.database.ref(dbPath).set(data);
       }
     });
+    this.instancesList.push({ instances: clickInstance });
   }
 
   checkData() {
@@ -712,7 +704,7 @@ export class VtsAnalysisComponent implements OnInit {
             }
           }
         }
-        this.vehicleList[i]["isDone"]=0;
+        this.vehicleList[i]["isDone"] = 0;
       }
       this.vtsPolylines = [];
       this.markerList = [];
@@ -1268,6 +1260,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   showHideMarkers(showStatus: any) {
+
     if (showStatus == 'hide') {
       this.isShowMarker = false;
       $(this.iconDone).hide();
@@ -1380,6 +1373,20 @@ export class VtsAnalysisComponent implements OnInit {
     this.hideSetting();
   }
 
+  clearListeners() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        google.maps.event.removeListener(this.instancesList[i]["instances"]);
+      }
+    }
+    this.instancesList = [];
+  }
+
+  ngOnDestroy() {
+    if (this.eventInstance != null) {
+      this.eventInstance.unsubscribe();
+    }
+  }
 }
 
 export class progressDetail {
