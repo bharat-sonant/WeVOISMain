@@ -228,6 +228,7 @@ export class VtsAnalysisComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/EventHistory";
       this.eventInstance = this.db.list(dbPath).valueChanges().subscribe(
         data => {
+          this.eventHistoryList=[];
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let name = data[i]["name"];
