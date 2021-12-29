@@ -1348,7 +1348,8 @@ export class CommonService {
   getZoneWiseWard() {
     return new Promise((resolve) => {
       let zoneList = [];
-      this.httpService.get("../../assets/jsons/CircleWiseWard/jaipur-greater.json").subscribe(data => {
+      let cityName = localStorage.getItem("cityName");
+      this.httpService.get("../../assets/jsons/CircleWiseWard/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
