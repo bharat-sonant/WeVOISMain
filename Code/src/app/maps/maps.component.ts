@@ -901,7 +901,6 @@ export class MapsComponent {
         houseInstance.unsubscribe();
         if (houseData.length > 0) {
           this.totalWardHouse = Number(this.totalWardHouse) + houseData.length;
-          // console.log(houseData.length);
           for (let j = 0; j < houseData.length; j++) {
             if (houseData[j]["latLng"] != null) {
               let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[0];

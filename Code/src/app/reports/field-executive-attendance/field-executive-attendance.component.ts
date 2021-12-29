@@ -115,9 +115,6 @@ export class FieldExecutiveAttendanceComponent implements OnInit {
                     outTime = data["outDetails"]["time"];
                   }
                 }
-                console.log(this.dayList[j]["day"]);
-                console.log(inTime);
-                console.log(outTime);
                 let detail = this.fieldExecutiveDataList.find(item => item.id == id);
                 if (detail != undefined) {
                   let dayList = detail.dayList;
@@ -126,8 +123,6 @@ export class FieldExecutiveAttendanceComponent implements OnInit {
                     dayDetail.attendance = "In :" + inTime + "<br/>Out : " + outTime;
                   }
                 }
-                console.log(this.fieldExecutiveDataList)
-
               }
             }
           );

@@ -61,7 +61,6 @@ export class CreateRouteComponent implements OnInit {
           }
           this.wardLatLngList.push({ ward: ward, latLngList: latLngList });
         }
-        // console.log(this.wardLatLngList);
       }
     });
   }

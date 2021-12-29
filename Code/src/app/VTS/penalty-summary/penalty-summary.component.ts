@@ -362,8 +362,7 @@ export class PenaltySummaryComponent implements OnInit {
         }
         wardDetail.routes[routeIndex]["totalLength"] = (Number(totalLength)).toFixed(1);
         this.penaltyData.totalPenalty = (Number(this.penaltyData.totalPenalty) + Number(penalty)).toFixed(2);
-        //console.log("ward: " + wardNo + " day :" + day + " percentage :" + percentage + " penalty :" + penalty);
-
+        
         let penaltyList = wardDetail.penalty;
         penaltyList[routeIndex]["penalty"] = (Number(penaltyList[routeIndex]["penalty"]) + Number(penalty)).toFixed(2);
 
@@ -389,7 +388,6 @@ export class PenaltySummaryComponent implements OnInit {
     this.selectedYear = filterVal;
     this.getDays();
     this.getWard();
-
   }
 
   changeMonthSelection(filterVal: any) {

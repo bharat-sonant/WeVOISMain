@@ -169,7 +169,6 @@ export class TestRouteComponent implements OnInit {
 
   
   changeRef(index: any) {
-    console.log(index)
     let element = <HTMLInputElement>document.getElementById("chk" + index);
     if (element.checked == true) {
       this.vehicleList[index]["isShow"] = 1;

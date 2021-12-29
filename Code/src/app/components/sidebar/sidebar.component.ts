@@ -677,7 +677,6 @@ export class SidebarComponent implements OnInit {
   }
 
   openCityModel(content: any) {
-    console.log(content);
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 410;

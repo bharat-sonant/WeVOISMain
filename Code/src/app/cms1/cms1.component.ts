@@ -339,8 +339,8 @@ export class Cms1Component implements OnInit {
 
   setWardTotalLength() {
     //for (let i = 136; i <= 136; i++) {
-      let wardNo = 43;
-      this.httpService.get("../../assets/jsons/WardLineLength/jaipur-greater/" + wardNo + ".json").subscribe(data => {
+      let wardNo = 1000;
+      this.httpService.get("../../assets/jsons/WardLineLength/test/" + wardNo + ".json").subscribe(data => {
         if (data != null) {
           var keyArray = Object.keys(data);
           //console.log(data);
@@ -364,7 +364,7 @@ export class Cms1Component implements OnInit {
   setWardLineLength() {
     let lineLingthList = [];
     let lengthStr = "";
-    let dbPath = "Defaults/WardLines/43";
+    let dbPath = "Defaults/WardLines/1000";
     let lineInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         lineInstance.unsubscribe();
