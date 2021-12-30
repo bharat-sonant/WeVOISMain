@@ -201,6 +201,8 @@ export class VtsAnalysisComponent implements OnInit {
     let btnElement = <HTMLButtonElement>document.getElementById("btnApprove");
     element.checked = false;
     btnElement.disabled = true;
+    let vehicleElement = <HTMLInputElement>document.getElementById("chkSelectAll");
+    vehicleElement.checked=false;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
     $(this.divApproved).hide();
@@ -920,6 +922,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
+
   addVehicle() {
     if (this.commonService.checkInternetConnection() == "no") {
       this.commonService.setAlertMessage("error", "Please check internet connection !!!");
@@ -1073,6 +1076,26 @@ export class VtsAnalysisComponent implements OnInit {
           }
         }
       );
+    }
+  }
+
+
+  selectAllVehicle() {
+    let element = <HTMLInputElement>document.getElementById("chkSelectAll");
+    if (element.checked == true) {
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
+        element.checked = true;
+      }
+    }
+    else{
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
+        element.checked = false;
+      }
+    }
+    for (let i = 0; i < this.vehicleList.length; i++) {
+      this.getVtsRoute(this.vehicleList[i]["vehicle"],i);
     }
   }
 

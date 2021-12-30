@@ -400,14 +400,19 @@
           <div class="dth">
             <div class="table-bg">
               <div class="tableFixHead">
-                <table class="table table-hover" style="margin-top: 6px!important;">
+                <table class="table table-hover" style="margin-top: 0px!important;">
+                  <thead>
+                    <tr>
+                      <th class="text-left" scope="col" style=" text-align: right!important;padding:2px 7px;background-color: #fff; color: #000;">Select All <input id="chkSelectAll" type="checkbox" (change)="selectAllVehicle();"> </th>
+                    </tr>
+                  </thead>
                   <tbody>
                     <!---->
                     <tr *ngFor="let dt of vehicleList, let i=index">
                       <td class="text-left"
                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                         {{dt.vehicle}} <i class="far fa-check-square" [hidden]="dt.isDone==0"
-                        style="color: #0ba118; font-size: 12px!important;"></i>
+                          style="color: #0ba118; font-size: 12px!important;"></i>
                         <span class="tbl-span" style="float:right;margin-top: -1px; font-size: 10px; "> <span
                             class="{{dt.cssClass}}"> {{dt.message}}</span>
                           <input id="chkVehicle{{i}}" [hidden]="dt.showCheckBox==0" type="checkbox"
@@ -427,7 +432,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-12" style="width:100%">
     <button type="button" class="btn btn-success btn-clk"
       style="padding-left: 10px!important;     margin-left: 2px; padding-right: 10px!important; width: 250px; text-transform: uppercase;"
@@ -448,7 +453,7 @@
   <div class="f-msg" style="margin-left:10px!important;width:210px!important;">
     <p style="margin-left:-5px!important;">
       <span>
-      <b style="font-size: 25px;">{{progressData.savedLines}}/{{progressData.selectedLines}}</b> Saved</span>
+        <b style="font-size: 25px;">{{progressData.savedLines}}/{{progressData.selectedLines}}</b> Saved</span>
     </p>
   </div>
   <div class="r-msg">
@@ -464,7 +469,7 @@
 </div>
 
 <div id="divEventHistory" class="event-history-box" style="display: none;">
-  <div  class="dth">
+  <div class="dth">
     <div class="table-bg">
       <div id="tblEventHistory" class="tableFixHead" style="overflow-y: scroll;overflow-x: hidden;">
         <table class="table table-hover" style="margin-top: 6px!important;">
@@ -472,7 +477,7 @@
             <tr *ngFor="let dt of eventHistoryList, let i=index">
               <td class="text-left"
                 style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                {{dt.name}} by {{dt.userName}}<br/>
+                {{dt.name}} by {{dt.userName}}<br />
                 at {{dt.time}} - {{dt.desc}}
               </td>
             </tr>
