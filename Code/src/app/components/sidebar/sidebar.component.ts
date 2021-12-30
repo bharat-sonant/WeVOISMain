@@ -669,7 +669,7 @@ export class SidebarComponent implements OnInit {
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     if (type == "Yes") {
-      $('#divMessage').html("Now internet is connected, enjoy your work !!!");
+      //$('#divMessage').html("Now internet is connected, enjoy your work !!!");
     }
     else {
       $('#divMessage').html("Sorry! no internet available. Please check internet !!!");

@@ -432,6 +432,7 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getWardData() {
+
     this.setWardBoundary();
     this.getWardLines();
   }
@@ -596,6 +597,7 @@ export class CreateRoutesComponent implements OnInit {
       return;
     }
     
+    this.resetAll();
     $(this.ddlWard).val(filterVal);
     this.selectedWard = filterVal;
     if (this.selectedWard == "0") {
