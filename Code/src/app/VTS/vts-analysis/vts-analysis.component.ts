@@ -7,7 +7,6 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ConnectionService } from 'ng-connection-service';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -17,7 +16,7 @@ import { ConnectionService } from 'ng-connection-service';
 export class VtsAnalysisComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(private connectionService: ConnectionService, public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
@@ -171,18 +170,6 @@ export class VtsAnalysisComponent implements OnInit {
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
     $(this.divApproved).hide();
-    if (this.selectedWard != "0") {
-      $(this.divLoader).show();
-      setTimeout(() => {
-        this.checkData();
-        this.setWardBoundary();
-        this.showHideBoundariesHtml();
-        this.getWardLineStatus();
-        this.getSummary();
-        $(this.divLoader).hide();
-        this.getEventHistory();
-      }, 2000);
-    }
   }
 
   setDefaultLocalStorage() {
@@ -467,7 +454,7 @@ export class VtsAnalysisComponent implements OnInit {
     let commonService = this.commonService;
     let toDayDate = this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-    let clickInstance = google.maps.event.addListener(line, 'click', function (h) {
+    google.maps.event.addListener(line, 'click', function (h) {
 
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
@@ -590,10 +577,22 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
+    this.resetAllData();
     $(this.ddlWard).val(filterVal);
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
-    this.resetAllData();
+    if (this.selectedWard != "0") {
+      $(this.divLoader).show();
+      setTimeout(() => {
+        this.checkData();
+        this.setWardBoundary();
+        this.showHideBoundariesHtml();
+        this.getWardLineStatus();
+        this.getSummary();
+        $(this.divLoader).hide();
+        this.getEventHistory();
+      }, 2000);
+    }
   }
 
   //#endregion
@@ -601,7 +600,6 @@ export class VtsAnalysisComponent implements OnInit {
   //#region 
 
   selectAll() {
-
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -631,7 +629,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllLines() {
-
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
@@ -684,7 +681,6 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setPreviousData() {
-
     this.resetAllData();
     this.setWardBoundary();
     let date = $(this.txtPreDate).val().toString();
@@ -870,9 +866,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
   }
 
-
   addVehicle() {
-
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -1023,7 +1017,6 @@ export class VtsAnalysisComponent implements OnInit {
       );
     }
   }
-
 
   selectAllVehicle() {
     let element = <HTMLInputElement>document.getElementById("chkSelectAll");
