@@ -64,7 +64,7 @@ export class SidebarComponent implements OnInit {
   noInternetConnection: boolean;
 
   ngOnInit() {
-    this.checkConnection();
+    //this.checkConnection();
     this.checkLoginDate();
     this.setDefault();
   }

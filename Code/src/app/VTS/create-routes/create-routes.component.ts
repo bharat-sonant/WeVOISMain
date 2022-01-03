@@ -73,12 +73,12 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   resetAll() {
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    element.checked=false;
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    element.checked = false;
     localStorage.removeItem("routeLines");
     $(this.lblSelectedRoute).html("");
     this.routeList = [];
-    this.lines=[];
+    this.lines = [];
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {
@@ -307,8 +307,8 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getRouteSelect(routeKey: any, key: any) {
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    element.checked=false;
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    element.checked = false;
     this.resetPolyLineOption();
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
@@ -592,11 +592,6 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   changeWardSelection(filterVal: any) {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
-    
     this.resetAll();
     $(this.ddlWard).val(filterVal);
     this.selectedWard = filterVal;
@@ -667,11 +662,7 @@ export class CreateRoutesComponent implements OnInit {
     }
   }
 
-  openModel(content: any, type: any, routeKey: any, key: any) {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+  openModel(content: any, type: any, routeKey: any, key: any) {   
     if ($(this.ddlWard).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;

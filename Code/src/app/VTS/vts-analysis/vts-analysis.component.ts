@@ -501,10 +501,7 @@ export class VtsAnalysisComponent implements OnInit {
     let toDayDate = this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     let clickInstance = google.maps.event.addListener(line, 'click', function (h) {
-      if (commonService.checkInternetConnection() == "no") {
-        commonService.setAlertMessage("error", "Please check internet connection !!!");
-        return;
-      }
+      
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;

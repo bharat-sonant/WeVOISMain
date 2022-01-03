@@ -74,10 +74,7 @@ export class DustbinReportComponent implements OnInit {
   //#region Plan
 
   openModel(content: any, type: any, plan: any, dustbin: any, day: any) {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
@@ -865,10 +862,6 @@ export class DustbinReportComponent implements OnInit {
 
   openMapModel(date: any, planId: any) {
 
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
     this.dustbinMarker = [];
     this.dustbinMapList = [];
     this.bounds = new google.maps.LatLngBounds();
@@ -1201,10 +1194,6 @@ export class DustbinReportComponent implements OnInit {
   }
 
   changeSelection() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
     this.dustbinList = [];
     let year = $('#ddlYear').val();
     let month = $('#ddlMonth').val();
