@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-cms1',
@@ -339,25 +340,25 @@ export class Cms1Component implements OnInit {
 
   setWardTotalLength() {
     //for (let i = 136; i <= 136; i++) {
-      let wardNo = 1000;
-      this.httpService.get("../../assets/jsons/WardLineLength/test/" + wardNo + ".json").subscribe(data => {
-        if (data != null) {
-          var keyArray = Object.keys(data);
-          //console.log(data);
-          if (keyArray.length > 0) {
-            let dist = 0;
-            for (let m = 0; m < keyArray.length; m++) {
-              let lineNo = keyArray[m];
-              dist = dist + Number(data[lineNo]);
-              // console.log("line No. "+lineNo);
-              // console.log(Number(data[lineNo]));
-            }
-            console.log("Ward No. " + wardNo);
-            console.log(dist);
-
+    let wardNo = 1000;
+    this.httpService.get("../../assets/jsons/WardLineLength/test/" + wardNo + ".json").subscribe(data => {
+      if (data != null) {
+        var keyArray = Object.keys(data);
+        //console.log(data);
+        if (keyArray.length > 0) {
+          let dist = 0;
+          for (let m = 0; m < keyArray.length; m++) {
+            let lineNo = keyArray[m];
+            dist = dist + Number(data[lineNo]);
+            // console.log("line No. "+lineNo);
+            // console.log(Number(data[lineNo]));
           }
+          console.log("Ward No. " + wardNo);
+          console.log(dist);
+
         }
-      })
+      }
+    })
     //}
   }
 
@@ -376,7 +377,7 @@ export class Cms1Component implements OnInit {
               let lineNo = keyArray[i];
               let points = data[lineNo]["points"];
               if (points.length > 0) {
-                let distance=0;
+                let distance = 0;
                 for (let j = 0; j < points.length - 1; j++) {
                   let lat1 = points[j][0];
                   let lng1 = points[j][1];
@@ -384,7 +385,7 @@ export class Cms1Component implements OnInit {
                   let lng2 = points[j + 1][1];
                   distance += this.commonService.getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2);
                 }
-                lengthStr += "p" + lineNo + "p:p" + distance.toFixed(0)+"p,";
+                lengthStr += "p" + lineNo + "p:p" + distance.toFixed(0) + "p,";
               }
             }
             lengthStr += "}";
@@ -395,4 +396,144 @@ export class Cms1Component implements OnInit {
       }
     );
   }
+
+  getNewWardLines() {
+    let wardLines = [];
+    let dbPath = "Defaults/WardLines/68";
+    let lineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        lineInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            let lineNoNew = 1;
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              if (data[lineNo]["points"] != undefined) {
+                for (let j = 0; j < data[lineNo]["points"].length - 1; j++) {
+                  let points = [];
+                  points.push({ 0: data[lineNo]["points"][j][0], 1: data[lineNo]["points"][j][1] });
+                  points.push({ 0: data[lineNo]["points"][j + 1][0], 1: data[lineNo]["points"][j + 1][1] });
+                  wardLines.push({ lineNo: lineNo, lineNoNew: lineNoNew, points: points });
+                  lineNoNew++;
+                }
+              }
+            }
+            console.log(JSON.stringify(wardLines));
+          }
+        }
+      }
+    );
+
+  }
+
+  getWastebinData() {
+    let userList = [];
+    let lengthStr = "";
+    let dbPath = "WastebinMonitor/Users";
+    let lineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        lineInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let userId = keyArray[i];
+              let name = data[userId]["name"];
+              let count = 0;
+              let startDate = "";
+              let endDate = "";
+              let dateList = [];
+              userList.push({ userId: userId, name: name, count: count, startDate: startDate, endDate: endDate, dateList: dateList });
+              let dbPath = "WastebinMonitor/UserImageRef/" + userId;
+              let imageInstance = this.db.list(dbPath).valueChanges().subscribe(
+                imageData => {
+                  imageInstance.unsubscribe();
+                  // console.log(userId+" "+imageData);
+                  if (imageData.length > 0) {
+                    let detail = userList.find(item => item.userId == userId);
+                    if (detail != undefined) {
+                      detail.count = imageData.length;
+                      for (let i = 0; i < imageData.length; i++) {
+                        let imageName = imageData[i];
+                        let date = "";
+                        if (imageName.split('~')[0] == "2021") {
+                          date = imageName.split('~')[2];
+                        }
+                        else {
+                          date = imageName.split('~')[1];
+                        }
+                        if (date != "") {
+                          let timeStamps = new Date(date).getTime();
+                          detail.dateList.push({ date: date, timeStamps: timeStamps });
+                        }
+                      }
+                      detail.dateList = detail.dateList.sort((a, b) =>
+                        b.timeStamps > a.timeStamps ? 1 : -1
+                      );
+                      detail.startDate = detail.dateList[detail.dateList.length - 1]["date"];
+                      detail.endDate = detail.dateList[0]["date"];
+                    }
+                  }
+                });
+            }
+            setTimeout(() => {
+              this.exportexcel(userList);
+            }, 6000);
+
+          }
+        }
+      });
+  }
+
+  exportexcel(userList: any): void {
+    let htmlString = "";
+    if (userList.length > 0) {
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Start Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "End Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Image Count";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < userList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += userList[i]["name"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += userList[i]["startDate"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += userList[i]["endDate"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += userList[i]["count"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+    }
+
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    let fileName = "Wastebin.xlsx";
+    XLSX.writeFile(wb, fileName);
+  }
+
 }
