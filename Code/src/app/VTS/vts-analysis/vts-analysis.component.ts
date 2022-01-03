@@ -148,7 +148,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllData() {
-    this.setMaps();
+    this.setMaps();    
     this.isBoundaryShow = true;
     if (this.wardBoundary != null) {
       this.wardBoundary.setMap(null);
@@ -638,10 +638,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region 
 
   selectAll() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -671,10 +668,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllLines() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
@@ -727,10 +721,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setPreviousData() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     this.resetAllData();
     this.setWardBoundary();
     let date = $(this.txtPreDate).val().toString();
@@ -918,10 +909,7 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   addVehicle() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -1348,10 +1336,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   openModel(content: any) {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    
     if (this.selectedWard == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       this.hideSetting();
