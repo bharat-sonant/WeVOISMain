@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ConnectionService } from 'ng-connection-service';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -16,7 +17,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class VtsAnalysisComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private connectionService: ConnectionService, public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
@@ -48,7 +49,7 @@ export class VtsAnalysisComponent implements OnInit {
   isShowMarker = false;
   eventInstance: any;
   isEventHistoryShow = false;
-  instancesList: any[];
+  isConnected = true;
   progressData: progressDetail = {
     totalWardLength: 0,
     wardLength: "0",
@@ -144,30 +145,12 @@ export class VtsAnalysisComponent implements OnInit {
     this.wardLineLatLng = [];
     this.routeVehicleList = [];
     this.eventHistoryList = [];
-    this.instancesList = [];
   }
 
   resetAllData() {
-    this.setMaps();    
+    this.setMaps();
     this.isBoundaryShow = true;
-    if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
-    }
     this.wardBoundary = null;
-    if (this.vtsPolylines.length > 0) {
-      for (let i = 0; i < this.vtsPolylines.length; i++) {
-        if (this.vtsPolylines[i] != null) {
-          this.vtsPolylines[i].setMap(null);
-        }
-      }
-    }
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i]["marker"] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
     this.vtsPolylines = [];
     this.vtsVehicleList = [];
     this.vehicleList = [];
@@ -175,23 +158,8 @@ export class VtsAnalysisComponent implements OnInit {
     this.routeVehicleList = [];
     this.wardLineStatus = [];
     this.eventHistoryList = [];
-
     this.lines = [];
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
     this.polylines = [];
-    if (this.markerList.length > 0) {
-      for (let i = 0; i < this.markerList.length; i++) {
-        if (this.markerList[i] != null) {
-          this.markerList[i]["marker"].setMap(null);
-        }
-      }
-    }
     this.markerList = [];
     this.wardLineLatLng = [];
     let element = <HTMLInputElement>document.getElementById("chkApprove");
@@ -199,11 +167,10 @@ export class VtsAnalysisComponent implements OnInit {
     element.checked = false;
     btnElement.disabled = true;
     let vehicleElement = <HTMLInputElement>document.getElementById("chkSelectAll");
-    vehicleElement.checked=false;
+    vehicleElement.checked = false;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
     $(this.divApproved).hide();
-    this.clearListeners();
     if (this.selectedWard != "0") {
       $(this.divLoader).show();
       setTimeout(() => {
@@ -501,7 +468,7 @@ export class VtsAnalysisComponent implements OnInit {
     let toDayDate = this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     let clickInstance = google.maps.event.addListener(line, 'click', function (h) {
-      
+
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
@@ -542,7 +509,6 @@ export class VtsAnalysisComponent implements OnInit {
         polylines[index]["strokeColor"] = strokeColor;
       }
     });
-    this.instancesList.push({ instances: clickInstance });
   }
 
   checkData() {
@@ -606,7 +572,7 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split("-")[0];    
+    this.currentYear = this.selectedDate.split("-")[0];
     this.resetAllData();
   }
 
@@ -619,7 +585,7 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
-    this.selectedWard="0";
+    this.selectedWard = "0";
     this.resetAllData();
   }
 
@@ -635,7 +601,7 @@ export class VtsAnalysisComponent implements OnInit {
   //#region 
 
   selectAll() {
-    
+
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -665,7 +631,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllLines() {
-    
+
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
@@ -718,7 +684,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   setPreviousData() {
-    
+
     this.resetAllData();
     this.setWardBoundary();
     let date = $(this.txtPreDate).val().toString();
@@ -906,7 +872,7 @@ export class VtsAnalysisComponent implements OnInit {
 
 
   addVehicle() {
-    
+
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -1067,14 +1033,14 @@ export class VtsAnalysisComponent implements OnInit {
         element.checked = true;
       }
     }
-    else{
+    else {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
         element.checked = false;
       }
     }
     for (let i = 0; i < this.vehicleList.length; i++) {
-      this.getVtsRoute(this.vehicleList[i]["vehicle"],i);
+      this.getVtsRoute(this.vehicleList[i]["vehicle"], i);
     }
   }
 
@@ -1333,7 +1299,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   openModel(content: any) {
-    
+
     if (this.selectedWard == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       this.hideSetting();
@@ -1354,15 +1320,6 @@ export class VtsAnalysisComponent implements OnInit {
   closeModel() {
     this.modalService.dismissAll();
     this.hideSetting();
-  }
-
-  clearListeners() {
-    if (this.instancesList.length > 0) {
-      for (let i = 0; i < this.instancesList.length; i++) {
-        google.maps.event.removeListener(this.instancesList[i]["instances"]);
-      }
-    }
-    this.instancesList = [];
   }
 
   ngOnDestroy() {
