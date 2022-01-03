@@ -207,6 +207,18 @@ export class VtsAnalysisComponent implements OnInit {
     this.progressData.savedLines = 0;
     $(this.divApproved).hide();
     this.clearListeners();
+    if (this.selectedWard != "0") {
+      $(this.divLoader).show();
+      setTimeout(() => {
+        this.checkData();
+        this.setWardBoundary();
+        this.showHideBoundariesHtml();
+        this.getWardLineStatus();
+        this.getSummary();
+        $(this.divLoader).hide();
+        this.getEventHistory();
+      }, 2000);
+    }
   }
 
   setDefaultLocalStorage() {
@@ -583,7 +595,6 @@ export class VtsAnalysisComponent implements OnInit {
   //#region   Top  Left Filter
 
   setDate(filterVal: any, type: string) {
-    this.resetAllData();
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -601,14 +612,11 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split("-")[0];
-    if (this.selectedWard != "0") {
-      this.changeWardSelection(this.selectedWard);
-    }
+    this.currentYear = this.selectedDate.split("-")[0];    
+    this.resetAllData();
   }
 
   changeZoneSelection(filterVal: any) {
-    this.resetAllData();
     this.wardList = [];
     let zoneDetail = this.zoneList.find(item => item.zoneName == filterVal);
     if (zoneDetail != undefined) {
@@ -617,6 +625,8 @@ export class VtsAnalysisComponent implements OnInit {
         this.wardList.push({ wardNo: wardList[i], wardName: "Ward " + wardList[i] });
       }
     }
+    this.selectedWard="0";
+    this.resetAllData();
   }
 
   changeWardSelection(filterVal: any) {
@@ -624,19 +634,6 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.ddlWardNav).val(filterVal);
     this.selectedWard = filterVal;
     this.resetAllData();
-    if (filterVal != "0") {
-      $(this.divLoader).show();
-      setTimeout(() => {
-        this.checkData();
-        this.setWardBoundary();
-        this.showHideBoundariesHtml();
-        this.getWardLineStatus();
-        this.getSummary();
-        $(this.divLoader).hide();
-        this.getEventHistory();
-      }, 2000);
-    }
-
   }
 
   //#endregion
