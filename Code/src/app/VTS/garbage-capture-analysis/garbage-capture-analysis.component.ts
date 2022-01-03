@@ -654,7 +654,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         element.checked = true;
         elementButton.disabled = false;
       }
-      if (imageName.split('~')[0] != "2021") {
+      if (imageName.split('~').length==4) {
         imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
       else {
@@ -707,7 +707,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         this.progressData.latLngResolved = BvgAction["latlng"];
         let imageURL = this.imageNoFoundURL;
 
-        if (imageName.split('~')[0] != "2021") {
+        if (imageName.split('~').length == 4) {
           imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
         }
         else {
