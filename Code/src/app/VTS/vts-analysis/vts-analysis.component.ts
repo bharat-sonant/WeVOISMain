@@ -148,10 +148,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllData() {
-    if (this.commonService.checkInternetConnection() == "no") {
-      this.commonService.setAlertMessage("error", "Please check internet connection !!!");
-      return;
-    }
+    this.setMaps();
     this.isBoundaryShow = true;
     if (this.wardBoundary != null) {
       this.wardBoundary.setMap(null);
