@@ -95,7 +95,7 @@ export class VtsAnalysisComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setEventHistoryHeight();
     this.setDefault();
-    this.checkInternetSpeed();
+    //this.checkInternetSpeed();
   }
 
   checkInternetSpeed(){
@@ -163,7 +163,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllData() {
-    this.checkInternetSpeed();
+    //this.checkInternetSpeed();
     this.setMaps();
     this.isBoundaryShow = true;
     this.wardBoundary = null;
@@ -473,22 +473,22 @@ export class VtsAnalysisComponent implements OnInit {
     let speedTestService = this.speedTestService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-      let netSpeed = speedTestService.getMbps().subscribe(
-        (speed) => {
-          netSpeed.unsubscribe();
-          if (speed > 1) {
-            localStorage.setItem("isConnected", "yes");
-          }
-          else {
-            localStorage.setItem("isConnected", "no");
-          }
-        }
-      );
+     // let netSpeed = speedTestService.getMbps().subscribe(
+     //   (speed) => {
+     //     netSpeed.unsubscribe();
+     //     if (speed > 1) {
+     //       localStorage.setItem("isConnected", "yes");
+     //     }
+     //     else {
+     //       localStorage.setItem("isConnected", "no");
+      //    }
+      //  }
+     // );
 
-      if (localStorage.getItem("isConnected") == "no") {
-        commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
-        return;
-      }
+     // if (localStorage.getItem("isConnected") == "no") {
+     //   commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
+    //    return;
+    //  }
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
