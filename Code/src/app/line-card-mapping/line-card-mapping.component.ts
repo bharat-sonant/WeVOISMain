@@ -146,12 +146,11 @@ export class LineCardMappingComponent {
       this.commonService.setAlertMessage("error", "Please select atleast one card to move");
       return;
     }
-    if (this.selectedCardDetails[0]["line"] == $("#txtNewLine").val()) {
+    if ($("#txtLineNo").val() == $("#txtNewLine").val()) {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
-    let lineNo = $('#txtLineNo').val();
-    let newLineNo = $("#txtNewLine").val();
+    
 
     for (let index = 0; index < this.selectedCardDetails.length; index++) {
       let cardNo = this.selectedCardDetails[index]["cardNo"];
