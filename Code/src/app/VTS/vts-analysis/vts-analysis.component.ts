@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { SpeedTestService } from 'ng-speed-test';
 
 @Component({
   selector: 'app-vts-analysis',
@@ -16,7 +17,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class VtsAnalysisComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private speedTestService: SpeedTestService, public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedWard: any;
   wardList: any[];
@@ -94,6 +95,21 @@ export class VtsAnalysisComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setEventHistoryHeight();
     this.setDefault();
+    this.checkInternetSpeed();
+  }
+
+  checkInternetSpeed(){
+    let netSpeed = this.speedTestService.getMbps().subscribe(
+      (speed) => {
+        netSpeed.unsubscribe();
+        if (speed > 1) {
+          localStorage.setItem("isConnected", "yes");
+        }
+        else {
+          localStorage.setItem("isConnected", "no");
+        }
+      }
+    );
   }
 
   setEventHistoryHeight() {
@@ -147,6 +163,7 @@ export class VtsAnalysisComponent implements OnInit {
   }
 
   resetAllData() {
+    this.checkInternetSpeed();
     this.setMaps();
     this.isBoundaryShow = true;
     this.wardBoundary = null;
@@ -453,9 +470,25 @@ export class VtsAnalysisComponent implements OnInit {
     let dbEvent = this.db;
     let commonService = this.commonService;
     let toDayDate = this.toDayDate;
+    let speedTestService = this.speedTestService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
+      let netSpeed = speedTestService.getMbps().subscribe(
+        (speed) => {
+          netSpeed.unsubscribe();
+          if (speed > 1) {
+            localStorage.setItem("isConnected", "yes");
+          }
+          else {
+            localStorage.setItem("isConnected", "no");
+          }
+        }
+      );
 
+      if (localStorage.getItem("isConnected") == "no") {
+        commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
+        return;
+      }
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
