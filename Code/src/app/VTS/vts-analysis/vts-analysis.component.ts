@@ -593,7 +593,7 @@ export class VtsAnalysisComponent implements OnInit {
     $(this.txtDateNav).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
-    this.resetAllData();
+    this.changeWardSelection(this.selectedWard);
   }
 
   changeZoneSelection(filterVal: any) {
