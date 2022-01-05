@@ -148,7 +148,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
   resetAllData() {
-   
+
     this.isBoundaryShow = true;
     if (this.wardBoundary != null) {
       this.wardBoundary.setMap(null);
@@ -420,16 +420,16 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
 
-  setWardLines() {
+  setWardLinesNew() {
     if (this.selectedWard != "0") {
-      this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/new/" + this.selectedWard + ".json").subscribe(data => {
+      this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
           var keyArray = Object.keys(data);
           console.log(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
               this.wardLines = keyArray.length;
-              let index=keyArray[i];
+              let index = keyArray[i];
               let lineNo = data[index]["lineNoNew"];
               if (data[index] != null) {
                 var latLng = [];
@@ -437,7 +437,7 @@ export class JmapsTestPurposeComponent implements OnInit {
                   if (data[index]["points"].length > 0) {
                     for (let j = 0; j < data[index]["points"].length; j++) {
                       latLng.push({ lat: data[index]["points"][j][0], lng: data[index]["points"][j][1] });
-                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[index]["points"][j][0], lng: data[index]["points"][j][1] });
+                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[index]["points"][j][0], lng: data[index]["points"][j][1], isCovered: "no" });
                     }
                     let strokeColor = this.strockColorNotDone;
                     let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
@@ -460,7 +460,7 @@ export class JmapsTestPurposeComponent implements OnInit {
     }
   }
 
-  setWardLinesOld() {
+  setWardLines() {
     if (this.selectedWard != "0") {
       this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
         if (data != null) {
@@ -475,7 +475,7 @@ export class JmapsTestPurposeComponent implements OnInit {
                   if (data[lineNo]["points"].length > 0) {
                     for (let j = 0; j < data[lineNo]["points"].length; j++) {
                       latLng.push({ lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
-                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1] });
+                      this.wardLineLatLng.push({ lineNo: lineNo, lat: data[lineNo]["points"][j][0], lng: data[lineNo]["points"][j][1], isCovered: "no" });
                     }
                     let strokeColor = this.strockColorNotDone;
                     let wardLinsStatusDetail = this.wardLineStatus.find(item => item.lineNo == lineNo);
@@ -485,7 +485,8 @@ export class JmapsTestPurposeComponent implements OnInit {
                     this.lines.push({
                       lineNo: lineNo,
                       latlng: latLng,
-                      strokeColor: strokeColor
+                      strokeColor: strokeColor,
+                      count: 0
                     });
                   }
                 }
@@ -512,6 +513,8 @@ export class JmapsTestPurposeComponent implements OnInit {
         this.polylines[i] = line;
         this.polylines[i].setMap(this.map);
         this.setClickInstance(line, lineNo, i);
+
+
       }
     }
   }
@@ -528,6 +531,7 @@ export class JmapsTestPurposeComponent implements OnInit {
     let toDayDate = this.toDayDate;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     let clickInstance = google.maps.event.addListener(line, 'click', function (h) {
+      console.log(lineNo);
       if (commonService.checkInternetConnection() == "no") {
         commonService.setAlertMessage("error", "Please check internet connection !!!");
         return;
@@ -680,7 +684,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   //#region 
 
   selectAll() {
-    
+
     if (this.lines.length > 0) {
       for (let j = 0; j < this.lines.length; j++) {
         let line = new google.maps.Polyline(this.polylines[j]);
@@ -710,7 +714,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
   resetAllLines() {
-    
+
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let element = <HTMLInputElement>document.getElementById("chkVehicle" + i);
@@ -763,7 +767,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
   setPreviousData() {
-    
+
     this.resetAllData();
     this.setWardBoundary();
     let date = $(this.txtPreDate).val().toString();
@@ -950,7 +954,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
   addVehicle() {
-    
+
     let vehicleNo = $(this.txtVehicle).val().toString().trim();
     if (this.selectedWard == "0" || this.selectedWard == null) {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
@@ -1186,28 +1190,33 @@ export class JmapsTestPurposeComponent implements OnInit {
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
         for (let i = 0; i < this.wardLineLatLng.length; i++) {
           let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
-          if (distance < 10) {
+          if (distance < 30) {
             let lineNo = this.wardLineLatLng[i]["lineNo"];
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
-              let time = this.commonService.getCurrentTimeWithSecond();
-              time = time + "-" + this.userId + "-" + this.toDayDate;
-              let strokeColor = lineDetail.strokeColor;
-              if (lineDetail.strokeColor != this.strockColorDone) {
-                this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
-              }
-              lineDetail.strokeColor = this.strockColorDone;
-              strokeColor = lineDetail.strokeColor;
-              var polyOptions = {
-                strokeColor: strokeColor,
-                strokeOpacity: 1.0,
-                strokeWeight: Number(localStorage.getItem("strokeWeight"))
-              }
-              for (let j = 0; j < this.lines.length; j++) {
-                if (this.lines[j]["lineNo"] == lineNo) {
-                  let line = new google.maps.Polyline(this.polylines[j]);
-                  line.setOptions(polyOptions);
-                  this.polylines[j]["strokeColor"] = strokeColor;
+              lineDetail.count = lineDetail.count + 1;
+              this.wardLineLatLng[i]["isCovered"] = "yes";
+              let detail = this.wardLineLatLng.filter(item => item.lineNo == lineNo && item.isCovered == "yes");
+              if (detail.length > 2) {
+                let time = this.commonService.getCurrentTimeWithSecond();
+                time = time + "-" + this.userId + "-" + this.toDayDate;
+                let strokeColor = lineDetail.strokeColor;
+                if (lineDetail.strokeColor != this.strockColorDone) {
+                  this.db.database.ref(dbPath + "/LineStatus/" + lineNo).set(time);
+                }
+                lineDetail.strokeColor = this.strockColorDone;
+                strokeColor = lineDetail.strokeColor;
+                var polyOptions = {
+                  strokeColor: strokeColor,
+                  strokeOpacity: 1.0,
+                  strokeWeight: Number(localStorage.getItem("strokeWeight"))
+                }
+                for (let j = 0; j < this.lines.length; j++) {
+                  if (this.lines[j]["lineNo"] == lineNo) {
+                    let line = new google.maps.Polyline(this.polylines[j]);
+                    line.setOptions(polyOptions);
+                    this.polylines[j]["strokeColor"] = strokeColor;
+                  }
                 }
               }
             }
@@ -1357,7 +1366,7 @@ export class JmapsTestPurposeComponent implements OnInit {
   }
 
   openModel(content: any) {
-    
+
     if (this.selectedWard == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       this.hideSetting();
