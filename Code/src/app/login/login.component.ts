@@ -24,13 +24,31 @@ export class LoginComponent implements OnInit {
   cityName: any;
   toDayDate: any;
 
+  messageDetail: messageDetail = {
+    type: "Good Morning"
+  };
+
   ngOnInit() {
-    this.cityName = localStorage.getItem("cityName");    
+    this.getMessage();
+    this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     this.commonService.setLocalStorageData(this.cityName);
+  }
+
+  getMessage() {
+    let time = new Date().getHours();
+    if (time < 12) {
+      this.messageDetail.type = "Good Morning";
+    }
+    else if (time >= 18) {
+      this.messageDetail.type = "Good Evening";
+    }
+    else {
+      this.messageDetail.type = "Good Afternoon";
+    }
   }
 
   doLogin() {
@@ -114,9 +132,14 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-    else{
+    else {
       localStorage.setItem("loginStatus", "Fail");
       this.commonService.setAlertMessage("error", "Invalid username or password !!!");
     }
   }
+}
+
+
+export class messageDetail {
+  type: string;
 }
