@@ -9,7 +9,8 @@ button, h1, h2, h3, h4, h5, h6, p, a{
     margin: 0 auto;
 }
 
-.container-login100 {background:url(../../assets/images/login.svg) no-repeat ; background-size:cover; min-height:650px;}
+// .container-login100 {background:url(../../assets/images/login.svg) no-repeat ; background-size:cover; min-height:650px;}
+
 .container-login100 {
     width: 100%;
     min-height: 100vh;
@@ -28,7 +29,7 @@ button, h1, h2, h3, h4, h5, h6, p, a{
     font-size: 24px;
     color:#333;
     margin: 0px;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-family: 'poppins', sans-serif;
     font-weight: normal;
     margin-bottom: 40px;
@@ -37,13 +38,18 @@ button, h1, h2, h3, h4, h5, h6, p, a{
 .login100-form .name-title{
     color:#0ba118;
     margin: 0px;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-family: 'poppins', sans-serif;
     font-weight: bold;
 }
-.wrap-login100 {
+.row-bg{
+    background: linear-gradient(
+        90deg, #fff 20%, #1acc8d 80%);
+    }
 
-   // background: #fff;
+
+.wrap-login100 {
+  background: #fff;
     border-radius: 10px;
     overflow: hidden;
     display: -webkit-box;
@@ -54,10 +60,10 @@ button, h1, h2, h3, h4, h5, h6, p, a{
     flex-wrap: wrap;
     justify-content: space-between;
     position: absolute;
-    top: 45%;
-    left: 15%;
-    transform: translateX(-15%) translateY(-50%);
-   // box-shadow: 0px 0px 7px 5px #acacac4d;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+ box-shadow: 0px 0px 7px 5px #acacac4d;
 }
 
 .login100-pic {
@@ -177,7 +183,10 @@ button{ font-size: 14px;  color: #fff; text-transform: uppercase; border:none!im
     button:focus{
         outline: none!important;
     }
-
+.container-fluid{
+    height: 100%;
+    overflow-y: hidden!important;
+}
 
 
 
