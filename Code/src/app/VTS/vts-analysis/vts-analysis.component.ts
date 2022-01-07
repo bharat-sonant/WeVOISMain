@@ -231,7 +231,7 @@ export class VtsAnalysisComponent implements OnInit {
   setDefaultDate() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
     this.currentYear = this.selectedDate.split("-")[0];
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
@@ -591,7 +591,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
     this.currentYear = this.selectedDate.split("-")[0];
     this.changeWardSelection(this.selectedWard);
   }

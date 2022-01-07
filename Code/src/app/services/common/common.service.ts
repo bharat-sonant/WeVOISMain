@@ -51,35 +51,65 @@ export class CommonService {
   }
 
   getNextDate(currentDate: any, addDay: any) {
-    let date = new Date(currentDate.toString());
-    date.setDate(date.getDate() + addDay);
-    let month = (date.getMonth() + 1).toFixed(0);
+    let year = currentDate.split('-')[0];
+    let month = Number(currentDate.split('-')[1]);
+    let day = Number(currentDate.split('-')[2]);
+    let newMonth = "";
+    let days = new Date(Number(year), Number(month), 0).getDate();
+    if (days == day) {
+      day = 0;
+      if (month == 12) {
+        month = 1;
+        year = Number(year) + 1;
+      }
+      else {
+        month++;
+      }
+    }
+    let nextday = day + addDay;
+    if (nextday.toString().length == 1) {
+      nextday = "0" + nextday;
+    }
     if (month.toString().length == 1) {
-      month = "0" + month;
+      newMonth = "0" + month.toString();
     }
-    let day = date.getDate();
-    let nextday = day.toString();
-    let year = date.getFullYear();
-    if (day.toString().length == 1) {
-      nextday = "0" + day;
+    else {
+      newMonth = month.toString();
     }
-    return year + "-" + month + "-" + nextday;
+    return year + "-" + newMonth + "-" + nextday;
   }
 
   getPreviousDate(currentDate: any, addDay: any) {
-    let date = new Date(currentDate.toString());
-    date.setDate(date.getDate() - addDay);
-    let month = (date.getMonth() + 1).toFixed(0);
-    if (month.toString().length == 1) {
-      month = "0" + month;
+    let year = currentDate.split('-')[0];
+    let month = Number(currentDate.split('-')[1]);
+    let day = Number(currentDate.split('-')[2]);
+    let newMonth = "";
+    let nextday = "";
+    if (day == 1) {
+      if (month == 1) {
+        month = 12;
+        year = year - 1;
+      }
+      else {
+        month--;
+      }
+      let days = new Date(Number(year), Number(month), 0).getDate();
+      day = days + 1;
     }
-    let day = date.getDate();
-    let nextday = day.toString();
-    let year = date.getFullYear();
+    day = day - addDay;
     if (day.toString().length == 1) {
       nextday = "0" + day;
     }
-    return year + "-" + month + "-" + nextday;
+    else {
+      nextday = day.toString();
+    }
+    if (month.toString().length == 1) {
+      newMonth = "0" + month.toString();
+    }
+    else {
+      newMonth = month.toString();
+    }
+    return year + "-" + newMonth + "-" + nextday;
   }
 
   getPreviousMonth(currentDate: any, addMonth: any) {
