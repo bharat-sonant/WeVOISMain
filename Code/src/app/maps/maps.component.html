@@ -214,7 +214,7 @@
           <div class="main-tag">
             <div class="f-left">
               <p>Line <span class="f-right"> :</span></p>
-              <h3> {{dt.lineNo}} </h3><br />
+              <h3> {{dt.lineNo}}  <i class="far fa-eye" style="float: right; cursor: pointer; font-size: 14px;" (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
               <p>Reason <span class="f-right"> :</span></p>
               <h3> {{dt.reason}} </h3><br />
               <span [hidden]="dt.status==''">

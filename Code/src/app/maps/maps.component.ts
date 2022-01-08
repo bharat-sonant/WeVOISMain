@@ -85,6 +85,7 @@ export class MapsComponent {
   mapRefrence: any;
   completedLines: any;
   instancesList: any[];
+  skipLineMarker: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -191,7 +192,7 @@ export class MapsComponent {
       this.vehicleLocationInstance.unsubscribe();
       this.vehicleLocationInstance = null;
     }
-    
+
     if (this.zoneKML != null) {
       this.zoneKML.setMap(null);
       this.zoneKML = null;
@@ -211,6 +212,11 @@ export class MapsComponent {
       this.parhadhouseMarker.setMap(null);
     }
     this.parhadhouseMarker = null;
+
+    if (this.skipLineMarker != null) {
+      this.skipLineMarker.setMap(null);
+    }
+    this.skipLineMarker = null;
 
     if (this.wardLineMarker.length > 0) {
       for (let i = 0; i < this.wardLineMarker.length; i++) {
@@ -310,6 +316,11 @@ export class MapsComponent {
       }
       this.wardLineNoMarker = [];
     }
+
+    if (this.skipLineMarker != null) {
+      this.skipLineMarker.setMap(null);
+    }
+    this.skipLineMarker = null;
 
     if (this.marker != null) {
       this.marker.setMap(null);
@@ -434,7 +445,7 @@ export class MapsComponent {
   }
 
   setKml() {
-   this.zoneKML= this.commonService.setKML(this.selectedZone, this.map);
+    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
   }
 
   showVehicleMovement() {
@@ -647,6 +658,8 @@ export class MapsComponent {
       }
     });
   }
+
+
 
   getWardTotalLength() {
     let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
@@ -1241,7 +1254,8 @@ export class MapsComponent {
               let imageUrl = data[index]["imageUrl"];
               let time = data[index]["time"];
               let reason = data[index]["reason"];
-              this.skipLineList.push({ lineNo: index, imageUrl: imageUrl, time: time, reason: reason })
+              let latLng = data[index]["latLng"];
+              this.skipLineList.push({ lineNo: index, imageUrl: imageUrl, time: time, reason: reason, latLng: latLng })
             }
           }
           this.modalService.open(content, { size: "lg" });
@@ -1262,6 +1276,28 @@ export class MapsComponent {
         }
       }
     );
+  }
+
+  showSkippedMarker(latLng: any) {
+    if (this.skipLineMarker != null) {
+      this.skipLineMarker.setMap(null);
+    }
+    this.skipLineMarker = null;
+    console.log(latLng);
+    let lat = latLng.split(',')[0];
+    let lng = latLng.split(',')[1];
+    this.skipLineMarker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: "../../../assets/img/red.svg",
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(45, 50),
+      },
+    });
+    this.skipLineMarker.setAnimation(google.maps.Animation.BOUNCE);
+    this.closeModel();
   }
 
   ngOnDestroy() {
