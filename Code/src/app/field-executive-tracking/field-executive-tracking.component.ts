@@ -30,7 +30,7 @@ export class FieldExecutiveTrackingComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.executiveList = []; 
+    this.executiveList = [];
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.executiveId = 0;
@@ -50,8 +50,8 @@ export class FieldExecutiveTrackingComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let executiveId = keyArray[i];
               let name = data[executiveId]["name"];
-              let cssClass="";
-              this.executiveList.push({ executiveId: executiveId, name: name, cssClass:cssClass });
+              let cssClass = "";
+              this.executiveList.push({ executiveId: executiveId, name: name, cssClass: cssClass });
             }
           }
         }
@@ -59,66 +59,66 @@ export class FieldExecutiveTrackingComponent implements OnInit {
     );
   }
 
-  getExecutiveRoute(executiveId: any,index:any){
-    for(let i=0;i<this.executiveList.length;i++){
-      if(this.executiveList[i]["executiveId"]==executiveId){
-        this.executiveList[i]["cssClass"]="active";
+  getExecutiveRoute(executiveId: any, index: any) {
+    for (let i = 0; i < this.executiveList.length; i++) {
+      if (this.executiveList[i]["executiveId"] == executiveId) {
+        this.executiveList[i]["cssClass"] = "active";
         this.executiveId = executiveId;
         this.getExecutiveRouteDetail();
       }
-      else{
-        this.executiveList[i]["cssClass"]="";
+      else {
+        this.executiveList[i]["cssClass"] = "";
       }
     }
-    
   }
 
   getExecutiveRouteDetail() {
     this.bounds = new google.maps.LatLngBounds();
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
-      }
-    }
+    this.setMaps();
     this.polylines = [];
     let year = this.selectedDate.split('-')[0];
     let month = this.selectedDate.split('-')[1];
     let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
-    let dbPath = "LocationHistory/" + this.executiveId + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        routeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            let latLng = [];
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (data[index]["lat-lng"] != null) {
-                let latlngList = data[index]["lat-lng"].split("~");
-                if (latlngList.length > 0) {
-                  for (let j = 0; j < latlngList.length; j++) {
-                    let latLngString = latlngList[j].replace("(", "").replace(")", "");
-                    let lat = latLngString.split(",")[0];
-                    let lng = latLngString.split(",")[1];
-                    latLng.push({ lat: Number(lat), lng: Number(lng) });
-                    this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+    if (this.executiveId != 0) {
+      let dbPath = "LocationHistory/" + this.executiveId + "/" + year + "/" + monthName + "/" + this.selectedDate;
+      let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          routeInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              let latLng = [];
+              for (let i = 0; i < keyArray.length; i++) {
+                let index = keyArray[i];
+                if (data[index]["lat-lng"] != null) {
+                  let latlngList = data[index]["lat-lng"].split("~");
+                  if (latlngList.length > 0) {
+                    for (let j = 0; j < latlngList.length; j++) {
+                      let latLngString = latlngList[j].replace("(", "").replace(")", "");
+                      let lat = latLngString.split(",")[0];
+                      let lng = latLngString.split(",")[1];
+                      latLng.push({ lat: Number(lat), lng: Number(lng) });
+                      this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+                    }
+                    let line = new google.maps.Polyline({
+                      path: latLng,
+                      strokeColor: "green",
+                      strokeWeight: 4,
+                    });
+                    this.polylines[i] = line;
+                    this.polylines[i].setMap(this.map);
+                    this.map.fitBounds(this.bounds);
                   }
-                  let line = new google.maps.Polyline({
-                    path: latLng,
-                    strokeColor: "green",
-                    strokeWeight: 4,
-                  });
-                  this.polylines[i] = line;
-                  this.polylines[i].setMap(this.map);
-                  this.map.fitBounds(this.bounds);
                 }
               }
             }
           }
+          else {
+            this.commonService.setAlertMessage("error", "Sorry! no route found !!!");
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   setDate(filterVal: any, type: string) {
