@@ -924,7 +924,11 @@ export class CommonService {
 
   setMarkingWards(newDb: any) {
     let markingWards = [];
-    let dbPath = "Defaults/MarkingWards";
+    let cityName = localStorage.getItem("cityName");
+    let dbPath = "Defaults/AvailableWard";
+    if (cityName == "sikar") {
+      dbPath = "Defaults/MarkingWards";
+    }
     let wardDetail = newDb.list(dbPath).valueChanges().subscribe((data) => {
       if (data.length > 0) {
         markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
