@@ -116,7 +116,6 @@ export class VehicleFuelReportComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let date = keyArray[i];
               let obj = data[date];
-              console.log(obj);
               let objKeys = Object.keys(obj);
               for (let j = 0; j < objKeys.length; j++) {
                 let index = objKeys[j];
