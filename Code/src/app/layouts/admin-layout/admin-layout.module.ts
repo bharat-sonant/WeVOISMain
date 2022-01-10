@@ -99,6 +99,7 @@ import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summa
 import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/field-executive-tracking.component';
 import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
+import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
 
 
 @NgModule({
@@ -203,7 +204,8 @@ import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive
     PenaltySummaryComponent,
     FieldExecutiveTrackingComponent,
     ShowRouteComponent,
-    FieldExecutiveAttendanceComponent
+    FieldExecutiveAttendanceComponent,
+    VehicleFuelReportComponent
   ]
 })
 
