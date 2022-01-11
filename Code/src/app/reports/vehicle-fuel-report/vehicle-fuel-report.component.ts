@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { HttpClient } from "@angular/common/http";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-vehicle-fuel-report',
@@ -9,7 +11,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class VehicleFuelReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -107,29 +109,53 @@ export class VehicleFuelReportComponent implements OnInit {
     this.setActiveClass(index);
     this.resetVehicleDetail();
     if (this.fuelList.length == 0) {
-      let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
-      let fuelInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          fuelInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            for (let i = 0; i < keyArray.length; i++) {
-              let date = keyArray[i];
-              let obj = data[date];
-              let objKeys = Object.keys(obj);
-              for (let j = 0; j < objKeys.length; j++) {
-                let index = objKeys[j];
-                let amount = Number(obj[index]["amount"]);
-                let meterReading = obj[index]["meterReading"];
-                let quantity = Number(obj[index]["quantity"]);
-                let vehicle = obj[index]["vehicle"];
-                this.fuelList.push({ vehicle: vehicle, date: date, amount: amount, quantity: quantity, meterReading: meterReading });
-              }
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDieselEntriesData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let date = keyArray[i];
+            let obj = data[date];
+            let objKeys = Object.keys(obj);
+            for (let j = 0; j < objKeys.length; j++) {
+              let index = objKeys[j];
+              let amount = Number(obj[index]["amount"]);
+              let meterReading = obj[index]["meterReading"];
+              let quantity = Number(obj[index]["quantity"]);
+              let vehicle = obj[index]["vehicle"];
+              this.fuelList.push({ vehicle: vehicle, date: date, amount: amount, quantity: quantity, meterReading: meterReading });
             }
-            this.getFuelDetail();
           }
+          this.getFuelDetail();
         }
-      );
+
+      }, error => {
+        let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
+        let fuelInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            fuelInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              for (let i = 0; i < keyArray.length; i++) {
+                let date = keyArray[i];
+                let obj = data[date];
+                let objKeys = Object.keys(obj);
+                for (let j = 0; j < objKeys.length; j++) {
+                  let index = objKeys[j];
+                  let amount = Number(obj[index]["amount"]);
+                  let meterReading = obj[index]["meterReading"];
+                  let quantity = Number(obj[index]["quantity"]);
+                  let vehicle = obj[index]["vehicle"];
+                  this.fuelList.push({ vehicle: vehicle, date: date, amount: amount, quantity: quantity, meterReading: meterReading });
+                }
+              }
+              this.getFuelDetail();
+            }
+          }
+        );
+      });
+
     }
     else {
       this.getFuelDetail();
