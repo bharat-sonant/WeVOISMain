@@ -543,7 +543,7 @@ color: #fff;
 /******************************Custom Scrollbar End*********************************/
 
 .field-box{
-  width: 330px!important;
+  width: 410px!important;
   position: fixed;
   top: 10px;
   right: 10px;
@@ -556,6 +556,11 @@ color: #fff;
 }
 .dutyoff{
   width: 110px;
+  float: left;
+  border-right: 1px solid #fff;
+}
+.totalImages{
+  width: 70px;
   float: left;
   border-right: 1px solid #fff;
 }

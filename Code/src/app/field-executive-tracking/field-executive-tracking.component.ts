@@ -1,4 +1,3 @@
-import { ObjectUnsubscribedError } from 'rxjs';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -30,7 +29,8 @@ export class FieldExecutiveTrackingComponent {
     {
       totalHalt: "0 hr 00 min",
       dutyOn: "00:00 AM",
-      dutyOff: "00:00 PM"
+      dutyOff: "00:00 PM",
+      totalImages: "0"
     }
 
   ngOnInit() {
@@ -72,10 +72,12 @@ export class FieldExecutiveTrackingComponent {
                   let cssClass = "normal";
                   let dutyOn = "00:00 AM";
                   let dutyOff = "00:00 PM";
+                  let latLng = "";
                   if (data != null) {
                     isShow = 1;
                     if (data["inDetails"] != null) {
                       dutyOn = this.commonService.tConvert(data["inDetails"]["time"]);
+                      latLng = data["inDetails"]["location"];
                     }
                     if (data["outDetails"] != null) {
                       dutyOff = this.commonService.tConvert(data["outDetails"]["time"]);
@@ -84,7 +86,7 @@ export class FieldExecutiveTrackingComponent {
                   else {
                     cssClass = "not-active";
                   }
-                  this.executiveList.push({ executiveId: executiveId, name: name.toUpperCase(), cssClass: cssClass, dutyOn: dutyOn, dutyOff: dutyOff, totalHalt: 0, isShow: isShow });
+                  this.executiveList.push({ executiveId: executiveId, name: name.toUpperCase(), cssClass: cssClass, dutyOn: dutyOn, dutyOff: dutyOff, totalHalt: 0, isShow: isShow, latLng: latLng });
                   this.executiveList = this.executiveList.sort((a, b) =>
                     b.name > a.name ? 1 : -1
                   );
@@ -113,10 +115,12 @@ export class FieldExecutiveTrackingComponent {
             let isShow = 0;
             let dutyOn = "00:00 AM";
             let dutyOff = "00:00 PM";
+            let latLng = "";
             if (data != null) {
               isShow = 1;
               if (data["inDetails"] != null) {
                 dutyOn = this.commonService.tConvert(data["inDetails"]["time"]);
+                latLng = data["inDetails"]["location"];
               }
               if (data["outDetails"] != null) {
                 dutyOff = this.commonService.tConvert(data["outDetails"]["time"]);
@@ -131,6 +135,7 @@ export class FieldExecutiveTrackingComponent {
               detail.dutyOff = dutyOff;
               detail.isShow = isShow;
               detail.cssClass = cssClass;
+              detail.latLng = latLng;
             }
             if (i = list.length - 1) {
               list = list.sort((a, b) =>
@@ -150,6 +155,7 @@ export class FieldExecutiveTrackingComponent {
     this.executiveDetail.dutyOff = "00:00 PM";
     this.executiveDetail.dutyOn = "00:00 AM";
     this.executiveDetail.totalHalt = "0 hr 00 min";
+    this.executiveDetail.totalImages = "0";
   }
 
   getExecutiveRoute(executiveId: any) {
@@ -160,6 +166,21 @@ export class FieldExecutiveTrackingComponent {
         this.executiveId = executiveId;
         this.executiveDetail.dutyOn = this.executiveList[i]["dutyOn"];
         this.executiveDetail.dutyOff = this.executiveList[i]["dutyOff"];
+        if (this.executiveList[i]["latLng"] != "") {
+          let lat = this.executiveList[i]["latLng"].split(',')[0];
+          let lng = this.executiveList[i]["latLng"].split(',')[1];
+          new google.maps.Marker({
+            position: { lat: Number(lat), lng: Number(lng) },
+            map: this.map,
+            icon: {
+              url: "../../assets/img/start-point.svg",
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scaledSize: new google.maps.Size(50, 45),
+              origin: new google.maps.Point(0, 0),
+            },
+          });
+        }
         this.getHalt();
         this.getExecutiveRouteDetail();
         this.getImageData();
@@ -264,14 +285,18 @@ export class FieldExecutiveTrackingComponent {
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
+            let totalImages = 0;
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
               let imageName = data[index];
+
               if (this.selectedDate == imageName.split('~')[2]) {
+                totalImages++;
                 let dbPath = "WastebinMonitor/ImagesData/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/" + imageName.split('~')[3] + "/" + imageName.split('~')[4];
-                console.log(dbPath);
+
                 let detailInstance = this.db.object(dbPath).valueChanges().subscribe(
                   data => {
+
                     detailInstance.unsubscribe();
                     let lat = data["latLng"].split(',')[0];
                     let lng = data["latLng"].split(',')[1];
@@ -290,6 +315,7 @@ export class FieldExecutiveTrackingComponent {
                 );
               }
             }
+            this.executiveDetail.totalImages = totalImages.toFixed(0);
           }
         }
       }
@@ -315,7 +341,8 @@ export class FieldExecutiveTrackingComponent {
               let lt = $.trim(latlng[0]).replace("(", "");
               let lg = $.trim(latlng[1]).replace(")", "");
               let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
-              this.setHaltMarker(lt, lg, imageUrl, duration);
+              let address = data[i]["locality"];
+              this.setHaltMarker(lt, lg, imageUrl, duration, address);
             }
           }
           this.executiveDetail.totalHalt = this.commonService.getMinuteToHHMM(totalHalt);
@@ -336,7 +363,7 @@ export class FieldExecutiveTrackingComponent {
     return markerColor;
   }
 
-  setHaltMarker(lat: any, lng: any, markerURL: any, markerLabel: any) {
+  setHaltMarker(lat: any, lng: any, markerURL: any, markerLabel: any, address: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
@@ -354,6 +381,15 @@ export class FieldExecutiveTrackingComponent {
         origin: new google.maps.Point(0, 0),
         labelOrigin: new google.maps.Point(25, 31),
       },
+    });
+
+    let contentString = address;
+
+    let infowindow = new google.maps.InfoWindow({
+      content: contentString,
+    });
+    marker.addListener("click", function () {
+      infowindow.open(this.mapHalt, marker);
     });
   }
 
@@ -395,4 +431,5 @@ export class executiveDetail {
   totalHalt: string;
   dutyOn: string;
   dutyOff: string;
+  totalImages: string;
 }
