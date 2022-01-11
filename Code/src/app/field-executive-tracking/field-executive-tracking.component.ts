@@ -162,6 +162,7 @@ export class FieldExecutiveTrackingComponent {
         this.executiveDetail.dutyOff = this.executiveList[i]["dutyOff"];
         this.getHalt();
         this.getExecutiveRouteDetail();
+        this.getImageData();
         if (this.selectedDate == this.toDayDate) {
           this.getCurrentLocation();
         }
@@ -266,13 +267,33 @@ export class FieldExecutiveTrackingComponent {
             for (let i = 0; i < keyArray.length; i++) {
               let index = keyArray[i];
               let imageName = data[index];
-
+              if (this.selectedDate == imageName.split('~')[2]) {
+                let dbPath = "WastebinMonitor/ImagesData/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/" + imageName.split('~')[3] + "/" + imageName.split('~')[4];
+                console.log(dbPath);
+                let detailInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  data => {
+                    detailInstance.unsubscribe();
+                    let lat = data["latLng"].split(',')[0];
+                    let lng = data["latLng"].split(',')[1];
+                    new google.maps.Marker({
+                      position: { lat: Number(lat), lng: Number(lng) },
+                      map: this.map,
+                      icon: {
+                        url: "../../assets/img/t-phone-off_1.png",
+                        fillOpacity: 1,
+                        strokeWeight: 0,
+                        scaledSize: new google.maps.Size(20, 15),
+                        origin: new google.maps.Point(0, 0),
+                      },
+                    });
+                  }
+                );
+              }
             }
           }
         }
       }
     );
-
   }
 
 
