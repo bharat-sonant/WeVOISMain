@@ -1,65 +1,67 @@
-
-  <section class="header">
- <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 pl-35" style="width: 100%; display: flex; margin-top: -4px;    padding-left: 20px!important;">
-      <button class="btn btn-primary " (click)="setDate('','previous');">
-        << 
-      </button>
-      <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-      <button class="btn btn-primary" (click)="setDate('','next');"> 
-        >>
-      </button>
-  </div>
-  <div class="col-md-6"  style="text-align: center!important;" >
-    <h3 class="header-txt"> <b> Field Executive Tracking </b> </h3>
-   </div>
-
-   <div class="col-md-3 txt-right">
-   </div>
-
-   <div class="field-box">
-      <div class="dutyin">
-        <h1>08:00 AM <br>
-        <p>Duty In</p></h1>
+<section class="header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 pl-35"
+        style="width: 100%; display: flex; margin-top: -4px;    padding-left: 20px!important;">
+        <button class="btn btn-primary " (click)="setDate('','previous');">
+          << </button>
+            <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+            <button class="btn btn-primary" (click)="setDate('','next');">
+              >>
+            </button>
       </div>
-      <div class="dutyoff">
-          <h1>06:00 PM <br>
-            <p>Duty Off</p></h1>
-       </div>
-       <div class="totalhalt">
-          <h1 style="color:#ff0000!important;">18 <br>
-            <p>Total Halt</p></h1>
-         </div>
-    </div>
+      <div class="col-md-6" style="text-align: center!important;">
+        <h3 class="header-txt"> <b> Field Executive Tracking </b> </h3>
+      </div>
 
-  </div>
+      <div class="col-md-3 txt-right">
+      </div>
+
+      <div class="field-box">
+        <div class="dutyin">
+          <h1>{{executiveDetail.dutyOn}} <br>
+            <p>Duty In</p>
+          </h1>
+        </div>
+        <div class="dutyoff">
+          <h1>{{executiveDetail.dutyOff}} <br>
+            <p>Duty Off</p>
+          </h1>
+        </div>
+        <div class="totalhalt">
+          <h1 style="color:#ff0000!important;">{{executiveDetail.totalHalt}} <br>
+            <p>Total Halt</p>
+          </h1>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
 <div #gmap style="width:100%;margin-top: -50px; position:absolute;" id="divMap"></div>
 
 <div id="myBox">
-  <div class="accordion" >
-    <div class="card" >
-      <div aria-labelledby="headingOne" >
-        <div  class="dth">
+  <div class="accordion">
+    <div class="card">
+      <div aria-labelledby="headingOne">
+        <div class="dth">
           <div class="table-bg">
             <div class="tableFixHead">
               <table class="table table-hover">
                 <tbody>
-                  <tr class="{{dt.cssClass}}" *ngFor="let dt of executiveList" (click)="getExecutiveRoute(dt.executiveId);" style="cursor:pointer;">
-                    <td class="text-left">{{dt.name}}</td>                       
+                  <tr class="{{dt.cssClass}}" *ngFor="let dt of executiveList"
+                    (click)="dt.cssClass!='not-active' && getExecutiveRoute(dt.executiveId);" style="cursor:pointer;">
+                    <td class="text-left">{{dt.name}}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        
+
       </div>
     </div>
   </div>
 
 </div>
-
