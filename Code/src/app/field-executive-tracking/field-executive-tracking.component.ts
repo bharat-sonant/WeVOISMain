@@ -30,8 +30,14 @@ export class FieldExecutiveTrackingComponent {
       totalHalt: "0 hr 00 min",
       dutyOn: "00:00 AM",
       dutyOff: "00:00 PM",
-      totalImages: "0"
+      totalImages: "0",
+      totalKM: "0"
     }
+  startPointUrl = "../../assets/img/start-point.svg";
+  endPointUrl = "../../assets/img/end-point.svg";
+  imageDataUrl = "../../assets/img/t-phone-off_1.png";
+  currentLocationUrl = "../../assets/img/violet.svg";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -73,6 +79,7 @@ export class FieldExecutiveTrackingComponent {
                   let dutyOn = "00:00 AM";
                   let dutyOff = "00:00 PM";
                   let latLng = "";
+                  let latLngEnd = "";
                   if (data != null) {
                     isShow = 1;
                     if (data["inDetails"] != null) {
@@ -81,12 +88,13 @@ export class FieldExecutiveTrackingComponent {
                     }
                     if (data["outDetails"] != null) {
                       dutyOff = this.commonService.tConvert(data["outDetails"]["time"]);
+                      latLngEnd = data["outDetails"]["location"];
                     }
                   }
                   else {
                     cssClass = "not-active";
                   }
-                  this.executiveList.push({ executiveId: executiveId, name: name.toUpperCase(), cssClass: cssClass, dutyOn: dutyOn, dutyOff: dutyOff, totalHalt: 0, isShow: isShow, latLng: latLng });
+                  this.executiveList.push({ executiveId: executiveId, name: name.toUpperCase(), cssClass: cssClass, dutyOn: dutyOn, dutyOff: dutyOff, totalHalt: 0, isShow: isShow, latLng: latLng, latLngEnd: latLngEnd, imageData: [], haltData: [], lineData: [] });
                   this.executiveList = this.executiveList.sort((a, b) =>
                     b.name > a.name ? 1 : -1
                   );
@@ -116,6 +124,7 @@ export class FieldExecutiveTrackingComponent {
             let dutyOn = "00:00 AM";
             let dutyOff = "00:00 PM";
             let latLng = "";
+            let latLngEnd = "";
             if (data != null) {
               isShow = 1;
               if (data["inDetails"] != null) {
@@ -124,6 +133,7 @@ export class FieldExecutiveTrackingComponent {
               }
               if (data["outDetails"] != null) {
                 dutyOff = this.commonService.tConvert(data["outDetails"]["time"]);
+                latLngEnd = data["outDetails"]["location"];
               }
             }
             else {
@@ -136,6 +146,10 @@ export class FieldExecutiveTrackingComponent {
               detail.isShow = isShow;
               detail.cssClass = cssClass;
               detail.latLng = latLng;
+              detail.latLngEnd = latLngEnd;
+              detail.imageData = [];
+              detail.haltData = [];
+              detail.lineData = [];
             }
             if (i = list.length - 1) {
               list = list.sort((a, b) =>
@@ -156,9 +170,11 @@ export class FieldExecutiveTrackingComponent {
     this.executiveDetail.dutyOn = "00:00 AM";
     this.executiveDetail.totalHalt = "0 hr 00 min";
     this.executiveDetail.totalImages = "0";
+    this.executiveDetail.totalKM = "0";
   }
 
   getExecutiveRoute(executiveId: any) {
+    $(this.divLoader).show();
     this.resetDetail();
     for (let i = 0; i < this.executiveList.length; i++) {
       if (this.executiveList[i]["executiveId"] == executiveId) {
@@ -169,21 +185,15 @@ export class FieldExecutiveTrackingComponent {
         if (this.executiveList[i]["latLng"] != "") {
           let lat = this.executiveList[i]["latLng"].split(',')[0];
           let lng = this.executiveList[i]["latLng"].split(',')[1];
-          new google.maps.Marker({
-            position: { lat: Number(lat), lng: Number(lng) },
-            map: this.map,
-            icon: {
-              url: "../../assets/img/start-point.svg",
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scaledSize: new google.maps.Size(50, 45),
-              origin: new google.maps.Point(0, 0),
-            },
-          });
+          this.setMarkers(lat, lng, this.startPointUrl, 50, 45);
+        }
+        if (this.executiveList[i]["latLngEnd"] != "") {
+          let lat = this.executiveList[i]["latLngEnd"].split(',')[0];
+          let lng = this.executiveList[i]["latLngEnd"].split(',')[1];
+          this.setMarkers(lat, lng, this.endPointUrl, 50, 45);
         }
         this.getHalt();
         this.getExecutiveRouteDetail();
-        this.getImageData();
         if (this.selectedDate == this.toDayDate) {
           this.getCurrentLocation();
         }
@@ -196,60 +206,113 @@ export class FieldExecutiveTrackingComponent {
     }
   }
 
+  setMarkers(lat: any, lng: any, markerUrl: any, point1: any, point2: any) {
+    new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: markerUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(point1, point2),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+  }
+
   getExecutiveRouteDetail() {
     this.bounds = new google.maps.LatLngBounds();
     this.polylines = [];
     if (this.executiveId != 0) {
-      let dbPath = "LocationHistory/" + this.executiveId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
-      let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          this.polylines = [];
-          routeInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              let preLat = 0;
-              let preLng = 0;
-              for (let i = 0; i < keyArray.length - 2; i++) {
-                let latLng = [];
-                let index = keyArray[i];
-                if (data[index]["lat-lng"] != null) {
-                  let latlngList = data[index]["lat-lng"].split("~");
-                  if (latlngList.length > 0) {
-                    for (let j = 0; j < latlngList.length; j++) {
-                      let latLngString = latlngList[j].replace("(", "").replace(")", "");
-                      let lat = latLngString.split(",")[0];
-                      let lng = latLngString.split(",")[1];
-                      if (preLat != 0) {
-                        latLng.push({ lat: Number(preLat), lng: Number(preLng) });
-                        preLat = 0;
-                        preLng = 0;
+      let executiveDetail = this.executiveList.find(item => item.executiveId == this.executiveId);
+      if (executiveDetail != undefined) {
+        let lineData = executiveDetail.lineData;
+        if (lineData.length > 0) {
+          let latLng = [];
+          this.executiveDetail.totalKM= (Number(lineData[lineData.length-1]["distance"]) / 1000).toFixed(1)
+          for (let i = 0; i < lineData.length; i++) {
+            let lat = lineData[i]["lat"];
+            let lng = lineData[i]["lng"];
+            latLng.push({ lat: Number(lat), lng: Number(lng) });
+            this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+          }
+          let line = new google.maps.Polyline({
+            path: latLng,
+            strokeColor: "green",
+            strokeWeight: 2,
+          });
+          this.polylines[0] = line;
+          this.polylines[0].setMap(this.map);
+          this.map.fitBounds(this.bounds);
+          this.getImageData();
+        }
+        else {
+          let dbPath = "LocationHistory/" + this.executiveId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
+          let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              this.polylines = [];
+              routeInstance.unsubscribe();
+              if (data != null) {
+                let keyArray = Object.keys(data);
+                if (keyArray.length > 0) {
+                  let preLat = 0;
+                  let preLng = 0;
+                  let totalKM = 0;
+                  for (let i = 0; i < keyArray.length - 2; i++) {
+                    let latLng = [];
+                    let index = keyArray[i];
+                    if (data[index]["lat-lng"] != null) {
+                      if (data[index]["distance-in-meter"] != null) {
+                        totalKM = totalKM + Number(data[index]["distance-in-meter"]);
                       }
-                      latLng.push({ lat: Number(lat), lng: Number(lng) });
-                      if (j == latlngList.length - 1) {
-                        preLat = Number(lat);
-                        preLng = Number(lng);
+                      let latlngList = data[index]["lat-lng"].split("~");
+                      if (latlngList.length > 0) {
+                        for (let j = 0; j < latlngList.length; j++) {
+                          let latLngString = latlngList[j].replace("(", "").replace(")", "");
+                          let lat = latLngString.split(",")[0];
+                          let lng = latLngString.split(",")[1];
+                          if (preLat != 0) {
+                            latLng.push({ lat: Number(preLat), lng: Number(preLng) });
+                            preLat = 0;
+                            preLng = 0;
+                          }
+                          latLng.push({ lat: Number(lat), lng: Number(lng) });
+                          let detail = this.executiveList.find(item => item.executiveId == this.executiveId);
+                          if (detail != undefined) {
+                            detail.lineData.push({ lat: lat, lng: lng, distance: totalKM });
+                          }
+                          if (j == latlngList.length - 1) {
+                            preLat = Number(lat);
+                            preLng = Number(lng);
+                          }
+                          this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+                        }
+                        let line = new google.maps.Polyline({
+                          path: latLng,
+                          strokeColor: "green",
+                          strokeWeight: 2,
+                        });
+                        this.polylines[i] = line;
+                        this.polylines[i].setMap(this.map);
                       }
-                      this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
                     }
-                    let line = new google.maps.Polyline({
-                      path: latLng,
-                      strokeColor: "green",
-                      strokeWeight: 2,
-                    });
-                    this.polylines[i] = line;
-                    this.polylines[i].setMap(this.map);
+                    if (i == keyArray.length - 3) {
+                      this.getImageData();
+                    }
                   }
+                  this.executiveDetail.totalKM = (totalKM / 1000).toFixed(1);
+                  this.map.fitBounds(this.bounds);
                 }
               }
-              this.map.fitBounds(this.bounds);
+              else {
+                this.getImageData();
+                this.commonService.setAlertMessage("error", "Sorry! no route found !!!");
+              }
             }
-          }
-          else {
-            this.commonService.setAlertMessage("error", "Sorry! no route found !!!");
-          }
+          );
+
         }
-      );
+      }
     }
   }
 
@@ -261,94 +324,122 @@ export class FieldExecutiveTrackingComponent {
         if (data != null) {
           let lat = data.split(',')[0];
           let lng = data.split(',')[1];
-          new google.maps.Marker({
-            position: { lat: Number(lat), lng: Number(lng) },
-            map: this.map,
-            icon: {
-              url: "../../assets/img/violet.svg",
-              fillOpacity: 1,
-              strokeWeight: 0,
-              scaledSize: new google.maps.Size(40, 35),
-              origin: new google.maps.Point(0, 0),
-            },
-          });
+          this.setMarkers(lat, lng, this.currentLocationUrl, 50, 45);
         }
       }
     );
   }
 
   getImageData() {
-    let dbPath = "WastebinMonitor/UserImageRef/" + this.executiveId;
-    let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        imageInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            let totalImages = 0;
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              let imageName = data[index];
-
-              if (this.selectedDate == imageName.split('~')[2]) {
-                totalImages++;
-                let dbPath = "WastebinMonitor/ImagesData/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/" + imageName.split('~')[3] + "/" + imageName.split('~')[4];
-
-                let detailInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  data => {
-
-                    detailInstance.unsubscribe();
-                    let lat = data["latLng"].split(',')[0];
-                    let lng = data["latLng"].split(',')[1];
-                    new google.maps.Marker({
-                      position: { lat: Number(lat), lng: Number(lng) },
-                      map: this.map,
-                      icon: {
-                        url: "../../assets/img/t-phone-off_1.png",
-                        fillOpacity: 1,
-                        strokeWeight: 0,
-                        scaledSize: new google.maps.Size(20, 15),
-                        origin: new google.maps.Point(0, 0),
-                      },
-                    });
+    let executiveDetail = this.executiveList.find(item => item.executiveId == this.executiveId);
+    if (executiveDetail != undefined) {
+      let imageData = executiveDetail.imageData;
+      if (imageData.length > 0) {
+        this.executiveDetail.totalImages = imageData.length;
+        for (let i = 0; i < imageData.length; i++) {
+          let lat = imageData[i]["lat"];
+          let lng = imageData[i]["lng"];
+          this.setMarkers(lat, lng, this.imageDataUrl, 20, 15);
+        }
+        setTimeout(() => {
+          $(this.divLoader).hide();
+        }, 1000);
+      }
+      else {
+        let dbPath = "WastebinMonitor/UserImageRef/" + this.executiveId;
+        let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            imageInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                let totalImages = 0;
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  let imageName = data[index];
+                  if (this.selectedDate == imageName.split('~')[2]) {
+                    totalImages++;
+                    let dbPath = "WastebinMonitor/ImagesData/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/" + imageName.split('~')[3] + "/" + imageName.split('~')[4];
+                    let detailInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      data => {
+                        detailInstance.unsubscribe();
+                        let lat = data["latLng"].split(',')[0];
+                        let lng = data["latLng"].split(',')[1];
+                        this.setMarkers(lat, lng, this.imageDataUrl, 20, 15);
+                        let detail = this.executiveList.find(item => item.executiveId == this.executiveId);
+                        if (detail != undefined) {
+                          detail.imageData.push({ lat: lat, lng: lng });
+                        }
+                      }
+                    );
                   }
-                );
+                }
+                this.executiveDetail.totalImages = totalImages.toFixed(0);
+                setTimeout(() => {
+                  $(this.divLoader).hide();
+                }, 1000);
               }
             }
-            this.executiveDetail.totalImages = totalImages.toFixed(0);
+            else {
+              setTimeout(() => {
+                $(this.divLoader).hide();
+              }, 1000);
+            }
           }
-        }
+        );
       }
-    );
+    }
   }
 
-
   getHalt() {
-    let dbPath = "HaltInfo/" + this.executiveId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
-    let haltInstance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        haltInstance.unsubscribe();
-        if (data.length > 0) {
-          let totalHalt = 0;
-          for (let i = 0; i < data.length; i++) {
-            let duration = 0;
-            if (data[i]["duration"] != null) {
-              duration = Number(data[i]["duration"]);
-              totalHalt = totalHalt + duration;
-            }
-            if (data[i]["location"] != null) {
-              let latlng = data[i]["location"].split(":")[1].split(",");
-              let lt = $.trim(latlng[0]).replace("(", "");
-              let lg = $.trim(latlng[1]).replace(")", "");
-              let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
-              let address = data[i]["locality"];
-              this.setHaltMarker(lt, lg, imageUrl, duration, address);
+    let executiveDetail = this.executiveList.find(item => item.executiveId == this.executiveId);
+    if (executiveDetail != undefined) {
+      let haltData = executiveDetail.haltData;
+      if (haltData.length > 0) {
+        let totalHalt = 0;
+        for (let i = 0; i < haltData.length; i++) {
+          let lat = haltData[i]["lat"];
+          let lng = haltData[i]["lng"];
+          let duration = haltData[i]["duration"];
+          totalHalt = totalHalt + duration;
+          let address = haltData[i]["address"];
+          let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
+          this.setHaltMarker(lat, lng, imageUrl, duration, address);
+        }
+        this.executiveDetail.totalHalt = this.commonService.getMinuteToHHMM(totalHalt);
+      }
+      else {
+        let dbPath = "HaltInfo/" + this.executiveId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
+        let haltInstance = this.db.list(dbPath).valueChanges().subscribe(
+          data => {
+            haltInstance.unsubscribe();
+            if (data.length > 0) {
+              let totalHalt = 0;
+              for (let i = 0; i < data.length; i++) {
+                let duration = 0;
+                if (data[i]["duration"] != null) {
+                  duration = Number(data[i]["duration"]);
+                  totalHalt = totalHalt + duration;
+                }
+                if (data[i]["location"] != null) {
+                  let latlng = data[i]["location"].split(":")[1].split(",");
+                  let lat = $.trim(latlng[0]).replace("(", "");
+                  let lng = $.trim(latlng[1]).replace(")", "");
+                  let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
+                  let address = data[i]["locality"];
+                  this.setHaltMarker(lat, lng, imageUrl, duration, address);
+                  let detail = this.executiveList.find(item => item.executiveId == this.executiveId);
+                  if (detail != undefined) {
+                    detail.haltData.push({ lat: lat, lng: lng, duration: duration, address: address });
+                  }
+                }
+              }
+              this.executiveDetail.totalHalt = this.commonService.getMinuteToHHMM(totalHalt);
             }
           }
-          this.executiveDetail.totalHalt = this.commonService.getMinuteToHHMM(totalHalt);
-        }
+        );
       }
-    );
+    }
   }
 
   getMarkerName(breakTime: number) {
@@ -384,7 +475,6 @@ export class FieldExecutiveTrackingComponent {
     });
 
     let contentString = address;
-
     let infowindow = new google.maps.InfoWindow({
       content: contentString,
     });
@@ -418,7 +508,7 @@ export class FieldExecutiveTrackingComponent {
 
   setHeight() {
     $(".navbar-toggler").show();
-    $("#divMap").css("height", $(window).height() - 80);
+    $("#divMap").css("height", $(window).height() - 50);
   }
 
   setMaps() {
@@ -432,4 +522,5 @@ export class executiveDetail {
   dutyOn: string;
   dutyOff: string;
   totalImages: string;
+  totalKM: string;
 }

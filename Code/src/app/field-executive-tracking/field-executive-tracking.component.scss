@@ -543,7 +543,7 @@ color: #fff;
 /******************************Custom Scrollbar End*********************************/
 
 .field-box{
-  width: 410px!important;
+  width: 470px!important;
   position: fixed;
   top: 10px;
   right: 10px;
@@ -564,6 +564,11 @@ color: #fff;
   float: left;
   border-right: 1px solid #fff;
 }
+.totalKM{
+  width: 70px;
+  float: left;
+  border-right: 1px solid #fff;
+}
 .field-box h1{
   margin: 0px!important;
   font-size: 16px;
@@ -576,6 +581,15 @@ color: #fff;
   color: #fff;
   font-weight: normal;
 }
+
+.loaderClass{
+  display: none; position: absolute; width: 100%; height: 100%;z-index: 9999;background-color: lightgray; opacity: 0.5; 
+  }
+  
+  
+  .imgLoader{
+  position: absolute; left: 50%;top: 50%;  transform: translate(-50%, -50%); 
+  }
 
 
 
