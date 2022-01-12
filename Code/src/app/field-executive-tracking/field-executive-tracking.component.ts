@@ -36,7 +36,7 @@ export class FieldExecutiveTrackingComponent {
   startPointUrl = "../../assets/img/start-point.svg";
   endPointUrl = "../../assets/img/end-point.svg";
   imageDataUrl = "../../assets/img/t-phone-off_1.png";
-  currentLocationUrl = "../../assets/img/violet.svg";
+  currentLocationUrl = "../../assets/img/sports-bike.svg";
   divLoader = "#divLoader";
 
   ngOnInit() {
