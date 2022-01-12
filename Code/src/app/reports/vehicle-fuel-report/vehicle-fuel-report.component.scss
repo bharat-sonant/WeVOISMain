@@ -282,7 +282,7 @@
   .on-map{
     background: #fff;
     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-    height: 60px;
+    height: 40px;
     text-align: center;
     padding: 10px;
     border: 1px solid lightgray;
@@ -317,10 +317,13 @@
   
   /***********Ward Scroll List Start************/
   .scroll-list{
-    height: 100vh;
+    height: calc(100vh - 50px);
     overflow-y: scroll;
     overflow-x: hidden;
     border: 1px solid lightgray;
+    top: 50px;
+    position: inherit;
+    right: 0px;
   }
   .ward-header{
     min-height: 30px;
@@ -576,3 +579,105 @@
   
   
   }
+
+  
+.field-box{
+  width: 200px!important;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    text-align: center;
+    z-index: 9999;
+}
+.totalImages{
+  width: 100px;
+  float: left;
+  border-right: 1px solid #fff;
+}
+.totalKM{
+  width: 100px;
+  float: left;
+  border-right: 1px solid #fff;
+}
+.field-box h1{
+  margin: 0px!important;
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+.field-box p{
+  margin: 0px!important;
+  font-size: 10px;
+  color: #fff;
+  font-weight: normal;
+}
+
+
+  /**************************Table Start***************************/
+  .table-bg{
+  
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    }
+    .table-header{
+    height: 40px;
+    margin-top: 15px;
+    text-align: center;
+    // border-bottom: 5px solid #dcdcdc;
+    background-color: #0ba118;;
+    padding: 15px;
+    padding-top:8px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    border-radius: 0.25rem 0.25rem 0rem 0rem ;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    border: 1px solid #e2e2e2;
+    }
+    .tableFixHead {
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+    }
+    
+    .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #0ba118;
+    color: #fff;
+    font-size: 13px;
+    z-index: 33333;
+    }
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+    thead th{
+    font-size:15px;
+    color: rgb(56, 56, 56);
+    font-weight: normal;
+    }
+    table td{
+    padding: 7px 7px !important;
+    font-size: 12px;
+    
+    }
+    .tableFixHead a{
+    color: #000;
+    }
+    .tableFixHead .fa-long-arrow-alt-down{
+    color: red;
+    }
+    .tableFixHead .fa-long-arrow-alt-up{
+    color: #0ba118;
+    }
+    .red-halt{
+    background-color: red;
+    color: #fff!important;
+    padding: 5px 10px;
+    border-radius: 20px;
+    }
+  
+    
+    /**************************Table End***************************/

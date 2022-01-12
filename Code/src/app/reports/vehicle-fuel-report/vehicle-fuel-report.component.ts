@@ -25,7 +25,9 @@ export class VehicleFuelReportComponent implements OnInit {
   vehicleFuelList: any[];
   fuelDetail: fuelDetail = {
     totalAmount: "0.00",
-    totalQuantity: "0.00"
+    totalQuantity: "0.00",
+    totalMonthAmount: "0.00",
+    totalMonthQuantity: "0.00"
   }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -46,7 +48,85 @@ export class VehicleFuelReportComponent implements OnInit {
     $('#ddlMonth').val(this.selectedMonth);
     $('#ddlYear').val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-    this.getVehicles()
+    this.getVehicles();
+  }
+
+  getFuelMonthData() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDieselEntriesData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        let totalAmount = 0;
+        let totalQuantity = 0;
+        for (let i = 0; i < keyArray.length; i++) {
+          let date = keyArray[i];
+          let obj = data[date];
+          let objKeys = Object.keys(obj);
+          for (let j = 0; j < objKeys.length; j++) {
+            let index = objKeys[j];
+            let amount = 0;
+            if (obj[index]["amount"] != null) {
+              amount = Number(obj[index]["amount"]);
+            }
+            let quantity = 0;
+            if (obj[index]["quantity"] != null) {
+              quantity = Number(obj[index]["quantity"]);
+            }
+            let meterReading = obj[index]["meterReading"];
+            let vehicle = obj[index]["vehicle"];
+            totalAmount += amount;
+            totalQuantity += quantity;
+            let orderBy = new Date(date).getTime();
+            this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+          }
+          this.fuelList = this.fuelList.sort((a, b) =>
+              a.orderBy > b.orderBy ? 1 : -1
+            );
+          this.fuelDetail.totalMonthAmount = totalAmount.toFixed(2);
+          this.fuelDetail.totalMonthQuantity = totalQuantity.toFixed(2);
+        }
+      }
+    }, error => {
+      let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
+      let fuelInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          fuelInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            let totalAmount = 0;
+            let totalQuantity = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let date = keyArray[i];
+              let obj = data[date];
+              let objKeys = Object.keys(obj);
+              for (let j = 0; j < objKeys.length; j++) {
+                let index = objKeys[j];
+                let amount = 0;
+                if (obj[index]["amount"] != null) {
+                  amount = Number(obj[index]["amount"]);
+                }
+                let quantity = 0;
+                if (obj[index]["quantity"] != null) {
+                  quantity = Number(obj[index]["quantity"]);
+                }
+                let meterReading = obj[index]["meterReading"];
+                let vehicle = obj[index]["vehicle"];
+                totalAmount = totalAmount + amount;
+                totalQuantity = totalQuantity + quantity;
+                let orderBy = new Date(date).getTime();
+                this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+              }
+            }
+            this.fuelList = this.fuelList.sort((a, b) =>
+              b.orderBy > a.orderBy ? -1 : 1
+            );
+            this.fuelDetail.totalMonthAmount = totalAmount.toFixed(2);
+            this.fuelDetail.totalMonthQuantity = totalQuantity.toFixed(2);
+          }
+        }
+      );
+    });
   }
 
   getYear() {
@@ -63,6 +143,7 @@ export class VehicleFuelReportComponent implements OnInit {
     for (let i = 3; i < vehicles.length; i++) {
       this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass });
     }
+    this.getFuelMonthData();
   }
 
   changeYearSelection(filterVal: any) {
@@ -79,6 +160,8 @@ export class VehicleFuelReportComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select month !!!");
       return;
     }
+    this.fuelDetail.totalMonthQuantity = "0.00";
+    this.fuelDetail.totalMonthAmount = "0.00";
     this.fuelList = [];
     this.vehicleFuelList = [];
     this.selectedVehicle = "0";
@@ -86,6 +169,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.resetVehicleDetail();
     this.selectedMonth = filterVal;
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    this.getFuelMonthData();
   }
 
   setActiveClass(index: any) {
@@ -100,6 +184,7 @@ export class VehicleFuelReportComponent implements OnInit {
   }
 
   resetVehicleDetail() {
+    this.vehicleFuelList = [];
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalQuantity = "0.00";
   }
@@ -108,58 +193,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.selectedVehicle = vehicle;
     this.setActiveClass(index);
     this.resetVehicleDetail();
-    if (this.fuelList.length == 0) {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDieselEntriesData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
-      let fuelInstance = this.httpService.get(path).subscribe(data => {
-        fuelInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let date = keyArray[i];
-            let obj = data[date];
-            let objKeys = Object.keys(obj);
-            for (let j = 0; j < objKeys.length; j++) {
-              let index = objKeys[j];
-              let amount = Number(obj[index]["amount"]);
-              let meterReading = obj[index]["meterReading"];
-              let quantity = Number(obj[index]["quantity"]);
-              let vehicle = obj[index]["vehicle"];
-              this.fuelList.push({ vehicle: vehicle, date: date, amount: amount, quantity: quantity, meterReading: meterReading });
-            }
-          }
-          this.getFuelDetail();
-        }
-
-      }, error => {
-        let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
-        let fuelInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            fuelInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              for (let i = 0; i < keyArray.length; i++) {
-                let date = keyArray[i];
-                let obj = data[date];
-                let objKeys = Object.keys(obj);
-                for (let j = 0; j < objKeys.length; j++) {
-                  let index = objKeys[j];
-                  let amount = Number(obj[index]["amount"]);
-                  let meterReading = obj[index]["meterReading"];
-                  let quantity = Number(obj[index]["quantity"]);
-                  let vehicle = obj[index]["vehicle"];
-                  this.fuelList.push({ vehicle: vehicle, date: date, amount: amount, quantity: quantity, meterReading: meterReading });
-                }
-              }
-              this.getFuelDetail();
-            }
-          }
-        );
-      });
-
-    }
-    else {
-      this.getFuelDetail();
-    }
+    this.getFuelDetail();
   }
 
   getFuelDetail() {
@@ -168,14 +202,13 @@ export class VehicleFuelReportComponent implements OnInit {
       if (fuelList.length > 0) {
         this.vehicleFuelList = fuelList;
         let sum: number = 0;
-        fuelList.forEach(a => sum += a.amount);
+        fuelList.forEach(a => sum += Number(a.amount));
         this.fuelDetail.totalAmount = sum.toFixed(2);
         sum = 0;
-        fuelList.forEach(a => sum += a.quantity);
+        fuelList.forEach(a => sum += Number(a.quantity));
         this.fuelDetail.totalQuantity = sum.toFixed(2);
       }
       else {
-        this.vehicleFuelList = [];
         this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
       }
     }
@@ -185,4 +218,6 @@ export class VehicleFuelReportComponent implements OnInit {
 export class fuelDetail {
   totalQuantity: string;
   totalAmount: string;
+  totalMonthQuantity: string;
+  totalMonthAmount: string;
 }

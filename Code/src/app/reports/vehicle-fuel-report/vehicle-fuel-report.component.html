@@ -35,11 +35,23 @@
 
 
           </div>
+          <div class="field-box">
+            <div class="totalKM">
+              <h1>{{fuelDetail.totalMonthQuantity}} <br>
+                <p>Quantity</p>
+              </h1>
+            </div>
+            <div class="totalhalt">
+              <h1>{{fuelDetail.totalMonthAmount}} <br>
+                <p>Amount</p>
+              </h1>
+            </div>
+          </div>
         </div>
         <!------------- Header End ---------->
         <div class="row" style="margin-top: 8px;">
           <!------------- Halt Scroll List Start ---------->
-          <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+          <div class="col-md-5 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
             <div class="halt-bg" style="border-bottom: 5px solid green;">
               <div class="halt-details" style="width: 100%; border-bottom: none;">
                 <h5 class="stopped-time">Total Quantity : <br><strong><i class="fas fa-gas-pump"></i>
@@ -49,19 +61,50 @@
               </div>
             </div>
             <div class="scrollable-halt">
-              <div class="halt-bg" *ngFor="let data of vehicleFuelList, let i=index">
-                <div>
-                  <div class="halt-details" style="width: 100%;">
-                    <h5 class="stopped-time">Date : <br><strong><i class="fas fa-calendar-day"></i>
-                        {{data.date}}</strong></h5>
-                    <h5 class="break-time">Quantity : <br><strong><i class="fas fa-gas-pump"></i>
-                        {{data.quantity}} Liter</strong></h5>
-                  </div>
-                  <div class="halt-details" style="width: 100%; border-bottom: none;">
-                    <h5 class="stopped-time">Meter Reading : <br><strong><i class="fas fa-tachometer-alt"></i>
-                        {{data.meterReading}}</strong></h5>
-                    <h5 class="break-time">Amount : <br><strong><i class="fas fa-rupee-sign"></i>
-                        {{data.amount}} </strong></h5>
+              <div class="halt-bg" style="height: calc(100vh - 130px);">
+                <div class="dth">
+                  <div class="table-bg">
+                    <div class="tableFixHead" style="overflow-x: hidden;">
+                      <table class="table table-hover" style="margin-top: 0px!important;">
+                        <thead>
+                          <tr>
+                            <th class="text-left" scope="col">
+                              Date
+                            </th>
+                            <th class="text-right" scope="col">
+                              Meter Reading
+                            </th>
+                            <th class="text-right" scope="col">
+                              Quantity
+                            </th>
+                            <th class="text-right" scope="col">
+                              Amount
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!---->
+                          <tr *ngFor="let data of vehicleFuelList, let i=index">
+                            <td class="text-left"
+                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                              {{data.date}} 
+                            </td>
+                            <td class="text-right"
+                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                              {{data.meterReading}} 
+                            </td>
+                            <td class="text-right"
+                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                              {{data.quantity}} 
+                            </td>
+                            <td class="text-right"
+                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                              {{data.amount}} 
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -69,7 +112,7 @@
           </div>
           <!------------- Halt Scroll List End ---------->
 
-          <div class="col-md-9 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
+          <div class="col-md-7 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
             <div class="row">
 
               <div class="col-md-12">
@@ -105,10 +148,10 @@
 
       </div>
       <!------------- Ward Scroll List Start ---------->
-      <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
+      <div class="col-md-2 halt-header pr-0 pl-0 mob-space mt-top">
         <div class="scroll-list">
-          <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index" (click)="getFuelList(list.vehicle,i);"
-            style="cursor: pointer;">
+          <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index"
+            (click)="getFuelList(list.vehicle,i);" style="cursor: pointer;">
             <div class="ward-details">
               <h6>{{list.vehicle}}</h6>
             </div>
