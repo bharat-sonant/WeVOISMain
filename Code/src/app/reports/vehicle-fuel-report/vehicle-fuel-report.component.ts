@@ -63,7 +63,7 @@ export class VehicleFuelReportComponent implements OnInit {
           let date = keyArray[i];
           let obj = data[date];
           let objKeys = Object.keys(obj);
-          for (let j = 0; j < objKeys.length; j++) {
+          for (let j = 0; j < objKeys.length - 1; j++) {
             let index = objKeys[j];
             let amount = 0;
             if (obj[index]["amount"] != null) {
@@ -81,8 +81,8 @@ export class VehicleFuelReportComponent implements OnInit {
             this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
           }
           this.fuelList = this.fuelList.sort((a, b) =>
-              a.orderBy > b.orderBy ? 1 : -1
-            );
+            a.orderBy > b.orderBy ? 1 : -1
+          );
           this.fuelDetail.totalMonthAmount = totalAmount.toFixed(2);
           this.fuelDetail.totalMonthQuantity = totalQuantity.toFixed(2);
         }
@@ -100,7 +100,7 @@ export class VehicleFuelReportComponent implements OnInit {
               let date = keyArray[i];
               let obj = data[date];
               let objKeys = Object.keys(obj);
-              for (let j = 0; j < objKeys.length; j++) {
+              for (let j = 0; j < objKeys.length - 1; j++) {
                 let index = objKeys[j];
                 let amount = 0;
                 if (obj[index]["amount"] != null) {
