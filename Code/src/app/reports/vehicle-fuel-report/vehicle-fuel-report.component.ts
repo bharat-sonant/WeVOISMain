@@ -79,6 +79,11 @@ export class VehicleFuelReportComponent implements OnInit {
             totalQuantity += quantity;
             let orderBy = new Date(date).getTime();
             this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+            let detail = this.vehicleList.find(item => item.vehicle == vehicle);
+            if (detail != undefined) {
+              detail.isEntry = 1;
+              detail.cssClass = "ward-header";
+            }
           }
           this.fuelList = this.fuelList.sort((a, b) =>
             a.orderBy > b.orderBy ? 1 : -1
@@ -86,6 +91,9 @@ export class VehicleFuelReportComponent implements OnInit {
           this.fuelDetail.totalMonthAmount = totalAmount.toFixed(2);
           this.fuelDetail.totalMonthQuantity = totalQuantity.toFixed(2);
         }
+        this.vehicleList = this.vehicleList.sort((a, b) =>
+          a.isEntry > b.isEntry ? -1 : 1
+        );
       }
     }, error => {
       let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -116,6 +124,11 @@ export class VehicleFuelReportComponent implements OnInit {
                 totalQuantity = totalQuantity + quantity;
                 let orderBy = new Date(date).getTime();
                 this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+                let detail = this.vehicleList.find(item => item.vehicle == vehicle);
+                if (detail != undefined) {
+                  detail.isEntry = 1;
+                  detail.cssClass = "ward-header";
+                }
               }
             }
             this.fuelList = this.fuelList.sort((a, b) =>
@@ -124,6 +137,9 @@ export class VehicleFuelReportComponent implements OnInit {
             this.fuelDetail.totalMonthAmount = totalAmount.toFixed(2);
             this.fuelDetail.totalMonthQuantity = totalQuantity.toFixed(2);
           }
+          this.vehicleList = this.vehicleList.sort((a, b) =>
+            a.isEntry > b.isEntry ? -1 : 1
+          );
         }
       );
     });
@@ -139,9 +155,9 @@ export class VehicleFuelReportComponent implements OnInit {
 
   getVehicles() {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
-    let cssClass = "ward-header";
+    let cssClass = "";
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0 });
     }
     this.getFuelMonthData();
   }
@@ -174,11 +190,17 @@ export class VehicleFuelReportComponent implements OnInit {
 
   setActiveClass(index: any) {
     for (let i = 0; i < this.vehicleList.length; i++) {
-      if (i == index) {
+      if (index == -1) {
+        this.vehicleList[i]["cssClass"] = "";
+        this.vehicleList[i]["isEntry"] = 0;
+      }
+      else if (i == index) {
         this.vehicleList[i]["cssClass"] = "ward-header-active";
       }
       else {
-        this.vehicleList[i]["cssClass"] = "ward-header";
+        if (this.vehicleList[i]["cssClass"] != "") {
+          this.vehicleList[i]["cssClass"] = "ward-header";
+        }
       }
     }
   }

@@ -151,7 +151,7 @@
       <div class="col-md-2 halt-header pr-0 pl-0 mob-space mt-top">
         <div class="scroll-list">
           <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index"
-            (click)="getFuelList(list.vehicle,i);" style="cursor: pointer;">
+            (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
             <div class="ward-details">
               <h6>{{list.vehicle}}</h6>
             </div>
