@@ -162,9 +162,12 @@ export class VehicleFuelReportComponent implements OnInit {
     for (let i = 3; i < vehicles.length; i++) {
       this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0 });
     }
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 6000);
     this.getFuelMonthData();
     this.getVehicleTracking();
-
   }
 
   getVehicleTracking() {
@@ -191,7 +194,7 @@ export class VehicleFuelReportComponent implements OnInit {
                         let name = employee["name"];
                         let distance = (Number(list[k]["distance"]) / 1000).toFixed(3) + " KM";
                         let orderBy = new Date(date).getTime();
-                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name,orderBy:orderBy });
+                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name,orderBy:orderBy, driver:list[k]["driver"] });
                       });
                     }
                   }
@@ -218,6 +221,10 @@ export class VehicleFuelReportComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select month !!!");
       return;
     }
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 6000);
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
     this.fuelList = [];
