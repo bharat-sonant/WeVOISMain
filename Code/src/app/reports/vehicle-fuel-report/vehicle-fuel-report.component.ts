@@ -29,7 +29,8 @@ export class VehicleFuelReportComponent implements OnInit {
     totalAmount: "0.00",
     totalQuantity: "0.00",
     totalMonthAmount: "0.00",
-    totalMonthQuantity: "0.00"
+    totalMonthQuantity: "0.00",
+    totalDistance: "0.000 KM"
   }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -176,7 +177,6 @@ export class VehicleFuelReportComponent implements OnInit {
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
-        console.log(data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -194,7 +194,7 @@ export class VehicleFuelReportComponent implements OnInit {
                         let name = employee["name"];
                         let distance = (Number(list[k]["distance"]) / 1000).toFixed(3) + " KM";
                         let orderBy = new Date(date).getTime();
-                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name,orderBy:orderBy, driver:list[k]["driver"] });
+                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name, orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
                       });
                     }
                   }
@@ -213,7 +213,10 @@ export class VehicleFuelReportComponent implements OnInit {
       return;
     }
     this.selectedYear = filterVal;
-    this.changeMonthSelection(this.selectedMonth);
+    this.resetAll();
+    this.selectedMonth="0";
+    $('#ddlMonth').val("0");
+    //this.changeMonthSelection(this.selectedMonth);
   }
 
   changeMonthSelection(filterVal: any) {
@@ -225,19 +228,24 @@ export class VehicleFuelReportComponent implements OnInit {
     setTimeout(() => {
       $('#divLoader').hide();
     }, 6000);
+    this.resetAll();
+    this.selectedMonth = filterVal;
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    this.getFuelMonthData();
+    this.getVehicleTracking();
+  }
+
+  resetAll(){
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
+    this.fuelDetail.totalDistance="0.000 KM";
     this.fuelList = [];
-    this.trackList=[];
+    this.trackList = [];
     this.vehicleFuelList = [];
     this.vehicleTrackList = [];
     this.selectedVehicle = "0";
     this.setActiveClass(-1);
     this.resetVehicleDetail();
-    this.selectedMonth = filterVal;
-    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-    this.getFuelMonthData();
-    this.getVehicleTracking();
   }
 
   setActiveClass(index: any) {
@@ -261,6 +269,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.vehicleFuelList = [];
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalQuantity = "0.00";
+    this.fuelDetail.totalDistance = "0.000 KM";
   }
 
   getFuelList(vehicle: any, index: any) {
@@ -276,10 +285,13 @@ export class VehicleFuelReportComponent implements OnInit {
     if (this.selectedVehicle != "0") {
       let trackList = this.trackList.filter(item => item.vehicle == this.selectedVehicle);
       if (trackList.length > 0) {
-        this.vehicleTrackList = trackList;        
+        this.vehicleTrackList = trackList;
+        let sum: number = 0;
+        this.vehicleTrackList.forEach(a => sum += Number(a.distanceInMeter));
+        this.fuelDetail.totalDistance = (sum / 1000).toFixed(3) + " KM";
         this.vehicleTrackList = this.vehicleTrackList.sort((a, b) =>
-        a.orderBy > b.orderBy ? 1 : -1
-      );
+          a.orderBy > b.orderBy ? 1 : -1
+        );
       }
       else {
         this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
@@ -311,4 +323,5 @@ export class fuelDetail {
   totalAmount: string;
   totalMonthQuantity: string;
   totalMonthAmount: string;
+  totalDistance: string;
 }
