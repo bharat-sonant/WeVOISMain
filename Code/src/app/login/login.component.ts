@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.getMessage();
+    this.getRendomBackground();
     this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
@@ -38,12 +39,32 @@ export class LoginComponent implements OnInit {
     this.commonService.setLocalStorageData(this.cityName);
   }
 
+  getRendomBackground() {
+    let imageList = [];
+    imageList.push({ img: "col-md-6 bg-img no-gutters" });
+    imageList.push({ img: "col-md-6 bg-img1 no-gutters" });
+    imageList.push({ img: "col-md-6 bg-img2 no-gutters" });
+    imageList.push({ img: "col-md-6 bg-img3 no-gutters" });
+    imageList.push({ img: "col-md-6 bg-img4 no-gutters" });
+    imageList.push({ img: "col-md-6 bg-img5 no-gutters" });
+    let index = this.getRandomNumberBetween(0, 5);
+    let element = <HTMLElement>document.getElementById("divBack");
+    let className = element.className;
+    $('#divBack').removeClass(className);
+    $('#divBack').addClass(imageList[index]["img"]);
+
+  }
+
+  getRandomNumberBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   getMessage() {
     let time = new Date().getHours();
     if (time < 12) {
       this.messageDetail.type = "Good Morning";
     }
-    else if (time >= 18) {
+    else if (time >= 17) {
       this.messageDetail.type = "Good Evening";
     }
     else {

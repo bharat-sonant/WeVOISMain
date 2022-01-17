@@ -3,6 +3,7 @@
 
  
 <!-- Form Example -->
+<section class="section-bg">
 <div class="container-fluid">
 <div class="row row-bg">
 <div class="col-md-5">
@@ -57,9 +58,9 @@
                     
 					</div>
 					
-				<div class="login-btn">
-					<button class="login hvr-bounce-to-right"
-						(click)="checkLogin();">login <span><i class="fas fa-arrow-right"></i></span></button>
+				<div class="login-btn ">
+					<button class="login hvr-shutter-in-horizontal"
+						(click)="checkLogin();" style="cursor:pointer!important;">login <span><i class="fas fa-arrow-right"></i></span></button>
 				</div>
 				<!-- <p style="padding-top: 15px;"> Don't have an account <a href="/signup/" class="create" style="color:green">Create Here</a></p> -->
 			</div>
@@ -69,10 +70,11 @@
 </div>
 </div>
 
-<div class="col-md-6 no-gutters">
-		<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" data-interval="6000">
+<div  id="divBack" class="col-md-6 bg-img no-gutters">
+
+		<!-- <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" data-interval="6000">
 				<div class="carousel-inner">
-				  <div class="carousel-item active">
+				  <div class="carousel-item active" >
 						<img src="../../assets/images/login-img-01.png" class="d-block w-100" alt="...">
 				  </div>
 				  <div class="carousel-item">
@@ -91,12 +93,13 @@
 						<img src="../../assets/images/login-img-06.png" class="d-block w-100" alt="...">
 				  </div>
 				</div>
-			  </div>
+			  </div> -->
 
 
 </div>
 </div>
 </div>
+</section>
 <!-- aos Animation start
 <script src="../../"></script>
 <script>
