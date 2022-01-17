@@ -100,7 +100,7 @@ import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/
 import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
-
+import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
 
 @NgModule({
   imports: [
@@ -205,7 +205,8 @@ import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/ve
     FieldExecutiveTrackingComponent,
     ShowRouteComponent,
     FieldExecutiveAttendanceComponent,
-    VehicleFuelReportComponent
+    VehicleFuelReportComponent,
+    VehicleTrackComponent
   ]
 })
 

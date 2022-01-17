@@ -93,6 +93,7 @@ import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/
 import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
+import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -203,6 +204,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/field-executive-tracking', component: FieldExecutiveTrackingComponent },
     { path: 'sikar/show-route', component: ShowRouteComponent },
     { path: 'sikar/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'sikar/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -303,6 +305,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/show-route', component: ShowRouteComponent },
     { path: 'sikar:id//field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'sikar/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'sikar/:id/vehicle-track', component: VehicleTrackComponent },
 
 
     //jaipur-greater
@@ -404,6 +407,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/show-route', component: ShowRouteComponent },
     { path: 'jaipur-greater/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'jaipur-greater/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'jaipur-greater/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -504,6 +508,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/show-route', component: ShowRouteComponent },
     { path: 'jaipur-greater/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'jaipur-greater/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'jaipur-greater/:id/vehicle-track', component: VehicleTrackComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -604,6 +609,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/show-route', component: ShowRouteComponent },
     { path: 'reengus/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'reengus/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'reengus/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -704,6 +710,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/show-route', component: ShowRouteComponent },
     { path: 'reengus/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'reengus/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'reengus/:id/vehicle-track', component: VehicleTrackComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -804,6 +811,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/show-route', component: ShowRouteComponent },
     { path: 'shahpura/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'shahpura/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'shahpura/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -904,6 +912,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/show-route', component: ShowRouteComponent },
     { path: 'shahpura/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'shahpura/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'shahpura/:id/vehicle-track', component: VehicleTrackComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1004,6 +1013,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/show-route', component: ShowRouteComponent },
     { path: 'test/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'test/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'test/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1104,6 +1114,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/show-route', component: ShowRouteComponent },
     { path: 'test/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'test/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'test/:id/vehicle-track', component: VehicleTrackComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1204,6 +1215,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/show-route', component: ShowRouteComponent },
     { path: 'demo/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'demo/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'demo/vehicle-track', component: VehicleTrackComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1303,6 +1315,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/show-route', component: ShowRouteComponent },
     { path: 'demo/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'demo/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'demo/:id/vehicle-track', component: VehicleTrackComponent },
 
     
 
@@ -1405,6 +1418,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/show-route', component: ShowRouteComponent },
     { path: 'kishangarh/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'kishangarh/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'kishangarh/vehicle-track', component: VehicleTrackComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1505,4 +1519,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/show-route', component: ShowRouteComponent },
     { path: 'kishangarh/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'kishangarh/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'kishangarh/:id/vehicle-track', component: VehicleTrackComponent },
 ]; 

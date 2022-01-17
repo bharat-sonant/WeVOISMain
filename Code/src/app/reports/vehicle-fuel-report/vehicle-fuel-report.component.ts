@@ -23,6 +23,8 @@ export class VehicleFuelReportComponent implements OnInit {
   selectedVehicle: any;
   fuelList: any[];
   vehicleFuelList: any[];
+  trackList: any[];
+  vehicleTrackList: any[];
   fuelDetail: fuelDetail = {
     totalAmount: "0.00",
     totalQuantity: "0.00",
@@ -41,6 +43,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.selectedVehicle = "0";
     this.yearList = [];
     this.vehicleList = [];
+    this.vehicleTrackList = [];
     this.fuelList = [];
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];
@@ -160,6 +163,45 @@ export class VehicleFuelReportComponent implements OnInit {
       this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0 });
     }
     this.getFuelMonthData();
+    this.getVehicleTracking();
+
+  }
+
+  getVehicleTracking() {
+    this.trackList = [];
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FVehicleTrack%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2Ftrack.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        console.log(data);
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let vehicle = keyArray[i];
+            if (vehicle != "updateDate") {
+              let obj = data[vehicle];
+              let dateArray = Object.keys(obj);
+              if (dateArray.length > 0) {
+                for (let j = 0; j < dateArray.length; j++) {
+                  let date = dateArray[j];
+                  let list = obj[date];
+                  if (list.length > 0) {
+                    for (let k = 0; k < list.length; k++) {
+                      this.commonService.getEmplyeeDetailByEmployeeId(list[k]["driver"]).then((employee) => {
+                        let name = employee["name"];
+                        let distance = (Number(list[k]["distance"]) / 1000).toFixed(3) + " KM";
+                        let orderBy = new Date(date).getTime();
+                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name,orderBy:orderBy });
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   changeYearSelection(filterVal: any) {
@@ -179,13 +221,16 @@ export class VehicleFuelReportComponent implements OnInit {
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
     this.fuelList = [];
+    this.trackList=[];
     this.vehicleFuelList = [];
+    this.vehicleTrackList = [];
     this.selectedVehicle = "0";
     this.setActiveClass(-1);
     this.resetVehicleDetail();
     this.selectedMonth = filterVal;
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getFuelMonthData();
+    this.getVehicleTracking();
   }
 
   setActiveClass(index: any) {
@@ -216,6 +261,23 @@ export class VehicleFuelReportComponent implements OnInit {
     this.setActiveClass(index);
     this.resetVehicleDetail();
     this.getFuelDetail();
+    this.getTrackDetail();
+  }
+
+  getTrackDetail() {
+    this.vehicleTrackList = [];
+    if (this.selectedVehicle != "0") {
+      let trackList = this.trackList.filter(item => item.vehicle == this.selectedVehicle);
+      if (trackList.length > 0) {
+        this.vehicleTrackList = trackList;        
+        this.vehicleTrackList = this.vehicleTrackList.sort((a, b) =>
+        a.orderBy > b.orderBy ? 1 : -1
+      );
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
+      }
+    }
   }
 
   getFuelDetail() {
