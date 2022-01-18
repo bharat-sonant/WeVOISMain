@@ -120,7 +120,10 @@ export class VehicleTrackComponent implements OnInit {
                               let preDetail = workDetailList.find(item => item.date == monthDate && item.ward == ward);
                               if (preDetail == undefined) {
                                 let orderBy = new Date(monthDate).getTime();
-                                workDetailList.push({ date: monthDate, vehicle: vehicle, ward: ward, distance: distance, empId: empId, orderBy: orderBy });
+                                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+                                  let name = employee["name"];
+                                  workDetailList.push({ date: monthDate, vehicle: vehicle, ward: ward, distance: distance, empId: empId, orderBy: orderBy, name: name });
+                                });
                               }
                             }
                           );
@@ -154,10 +157,7 @@ export class VehicleTrackComponent implements OnInit {
           data.push(item.vehicle);
         }
       }
-      if (data.length > 0) {
-        const obj = {
-          updateDate: monthDate,
-        };
+      if (data.length > 0) {        
         for (let i = 0; i < data.length; i++) {
           let vehicle = data[i];
           let list = workDetailList.filter(item => item.vehicle == vehicle);
@@ -170,25 +170,27 @@ export class VehicleTrackComponent implements OnInit {
               const bb = [];
               if (list2.length > 0) {
                 for (let k = 0; k < list2.length; k++) {
-                  bb.push({ ward: list2[k]["ward"], distance: list2[k]["distance"], driver: list2[k]["empId"] });
+                  let distance=Number(list2[k]["distance"])/1000;
+                  distance=Math.round(distance*10)/10;
+                  bb.push({ ward: list2[k]["ward"], distance: distance.toFixed(1), driver: list2[k]["empId"],name:list2[k]["name"] });
                 }
               }
               objDate[date] = bb;
               aa[j] = objDate[date];
             }
-            obj[vehicle] = objDate;
+            this.saveJsonFile(objDate, vehicle);
           }
 
         }
-        this.saveJsonFile(obj);
+
       }
     }
   }
 
-  saveJsonFile(listArray: any) {
+  saveJsonFile(listArray: any, fileName: any) {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + this.commonService.getFireStoreCity() + "/VehicleTrack/" + this.selectedYear + "/" + this.selectedMonthName + "/track.json";
+    const path = "" + this.commonService.getFireStoreCity() + "/VehicleWardKM/" + this.selectedYear + "/" + this.selectedMonthName + "/" + fileName + ".json";
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);

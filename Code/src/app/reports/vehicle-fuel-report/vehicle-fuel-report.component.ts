@@ -30,7 +30,7 @@ export class VehicleFuelReportComponent implements OnInit {
     totalQuantity: "0.00",
     totalMonthAmount: "0.00",
     totalMonthQuantity: "0.00",
-    totalDistance: "0.000 KM"
+    totalDistance: "0.0 KM"
   }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -166,45 +166,8 @@ export class VehicleFuelReportComponent implements OnInit {
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
-    }, 6000);
+    }, 2000);
     this.getFuelMonthData();
-    this.getVehicleTracking();
-  }
-
-  getVehicleTracking() {
-    this.trackList = [];
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FVehicleTrack%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2Ftrack.json?alt=media";
-    let fuelInstance = this.httpService.get(path).subscribe(data => {
-      fuelInstance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let vehicle = keyArray[i];
-            if (vehicle != "updateDate") {
-              let obj = data[vehicle];
-              let dateArray = Object.keys(obj);
-              if (dateArray.length > 0) {
-                for (let j = 0; j < dateArray.length; j++) {
-                  let date = dateArray[j];
-                  let list = obj[date];
-                  if (list.length > 0) {
-                    for (let k = 0; k < list.length; k++) {
-                      this.commonService.getEmplyeeDetailByEmployeeId(list[k]["driver"]).then((employee) => {
-                        let name = employee["name"];
-                        let distance = (Number(list[k]["distance"]) / 1000).toFixed(3) + " KM";
-                        let orderBy = new Date(date).getTime();
-                        this.trackList.push({ vehicle: vehicle, date: date, ward: list[k]["ward"], distance: distance, name: name, orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
-                      });
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    });
   }
 
   changeYearSelection(filterVal: any) {
@@ -214,7 +177,7 @@ export class VehicleFuelReportComponent implements OnInit {
     }
     this.selectedYear = filterVal;
     this.resetAll();
-    this.selectedMonth="0";
+    this.selectedMonth = "0";
     $('#ddlMonth').val("0");
     //this.changeMonthSelection(this.selectedMonth);
   }
@@ -227,18 +190,17 @@ export class VehicleFuelReportComponent implements OnInit {
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
-    }, 6000);
+    }, 2000);
     this.resetAll();
     this.selectedMonth = filterVal;
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getFuelMonthData();
-    this.getVehicleTracking();
   }
 
-  resetAll(){
+  resetAll() {
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
-    this.fuelDetail.totalDistance="0.000 KM";
+    this.fuelDetail.totalDistance = "0.0 KM";
     this.fuelList = [];
     this.trackList = [];
     this.vehicleFuelList = [];
@@ -269,7 +231,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.vehicleFuelList = [];
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalQuantity = "0.00";
-    this.fuelDetail.totalDistance = "0.000 KM";
+    this.fuelDetail.totalDistance = "0.0 KM";
   }
 
   getFuelList(vehicle: any, index: any) {
@@ -281,22 +243,38 @@ export class VehicleFuelReportComponent implements OnInit {
   }
 
   getTrackDetail() {
+    $('#divLoader').show();
     this.vehicleTrackList = [];
-    if (this.selectedVehicle != "0") {
-      let trackList = this.trackList.filter(item => item.vehicle == this.selectedVehicle);
-      if (trackList.length > 0) {
-        this.vehicleTrackList = trackList;
-        let sum: number = 0;
-        this.vehicleTrackList.forEach(a => sum += Number(a.distanceInMeter));
-        this.fuelDetail.totalDistance = (sum / 1000).toFixed(3) + " KM";
-        this.vehicleTrackList = this.vehicleTrackList.sort((a, b) =>
-          a.orderBy > b.orderBy ? 1 : -1
-        );
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FVehicleWardKM%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedVehicle + ".json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let date = keyArray[i];
+            let list = data[date];
+            if (list.length > 0) {
+              for (let k = 0; k < list.length; k++) {
+                  let distance = (Number(list[k]["distance"])).toFixed(1) + " KM";
+                  let orderBy = new Date(date).getTime();
+                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+              }
+            }
+          }
+          let sum: number = 0;
+          this.vehicleTrackList.forEach(a => sum += Number(a.distanceInMeter));
+          this.fuelDetail.totalDistance = (sum).toFixed(1) + " KM";
+          this.vehicleTrackList = this.vehicleTrackList.sort((a, b) =>
+            a.orderBy > b.orderBy ? 1 : -1
+          );
+        }
+        $('#divLoader').hide();
       }
-      else {
-        this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
-      }
-    }
+    }, error => {
+      this.commonService.setAlertMessage("error", "Sorry! no vehicle ward KM data found !!!");
+      $('#divLoader').hide();
+    });
   }
 
   getFuelDetail() {
