@@ -22,12 +22,14 @@ export class EmployeePenaltyComponent implements OnInit {
   employeeList: any[];
   penalityList: any[];
   allPenaltyList: any[];
+  specialUserList: any[];
   penalitylDetail: penalitylDetail = {
     totalPenality: "0.00",
     employeePenality: "0.00"
   }
   ddlUser = "#ddlUser";
   txtDate = "#txtDate";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -42,13 +44,30 @@ export class EmployeePenaltyComponent implements OnInit {
     this.employeeList = [];
     this.penalityList = [];
     this.allPenaltyList = [];
+    this.specialUserList = [];
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];
     this.selectedYear = this.toDayDate.split('-')[0];
     $('#ddlMonth').val(this.selectedMonth);
     $('#ddlYear').val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    this.getSpecialUsers();
     this.getPenality();
+  }
+
+
+  getSpecialUsers() {
+    let dbPath = "Settings/SpecialUsers";
+    let userInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        userInstance.unsubscribe();
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            this.specialUserList.push({ name: data[i]["username"] });
+          }
+        }
+      }
+    );
   }
 
   getYear() {
@@ -89,14 +108,13 @@ export class EmployeePenaltyComponent implements OnInit {
   }
 
   getPenality() {
+    $(this.divLoader).show();
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPenality%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
-        let penalityList = [];
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
-          let totalPenalty = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let date = keyArray[i];
             let empObj = data[date];
@@ -104,30 +122,33 @@ export class EmployeePenaltyComponent implements OnInit {
             if (empArray.length > 0) {
               for (let j = 0; j < empArray.length; j++) {
                 let empId = empArray[j];
-                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                  let name = employee["name"];
-                  let empDetail = this.employeeList.find(item => item.empId == empId);
-                  if (empDetail == undefined) {
-                    this.employeeList.push({ empId: empId, name: name });
-                  }
-                  let orderBy = new Date(date).getTime();
-                  totalPenalty += Number(empObj[empId]["amount"]);
-                  this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
-                  this.penalityList = this.penalityList.sort((a, b) =>
-                    a.orderBy > b.orderBy ? 1 : -1
-                  );
-                  let sum: number = 0;
-                  this.allPenaltyList.forEach(a => sum += Number(a.amount));
-                  this.penalitylDetail.totalPenality = sum.toFixed(2);
-                });
+                let name = empObj[empId]["name"];
+                let empDetail = this.employeeList.find(item => item.empId == empId);
+                if (empDetail == undefined) {
+                  this.employeeList.push({ empId: empId, name: name });
+                  this.employeeList=this.commonService.transformNumeric(this.employeeList,"name");
+                }
+                let orderBy = new Date(date).getTime();
+                this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
+                this.penalityList = this.penalityList.sort((a, b) =>
+                  a.orderBy > b.orderBy ? 1 : -1
+                );
               }
             }
+            if (i == keyArray.length - 1) {
+              let sum: number = 0;
+              this.penalityList.forEach(a => sum += Number(a.amount));
+              this.penalitylDetail.totalPenality = sum.toFixed(2);
+              this.allPenaltyList = this.penalityList;
+              $(this.divLoader).hide();
+            }
           }
-          this.allPenaltyList = this.penalityList;
+
         }
       }
       else {
         this.commonService.setAlertMessage("error", "Sorry! no record found");
+        $(this.divLoader).hide();
       }
     }, error => {
       let dbPath = "Penalties/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -135,10 +156,8 @@ export class EmployeePenaltyComponent implements OnInit {
         data => {
           penalityInstance.unsubscribe();
           if (data != null) {
-            let penalityList = [];
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
-              let totalPenalty = 0;
               for (let i = 0; i < keyArray.length; i++) {
                 let date = keyArray[i];
                 let empObj = data[date];
@@ -151,25 +170,50 @@ export class EmployeePenaltyComponent implements OnInit {
                       let empDetail = this.employeeList.find(item => item.empId == empId);
                       if (empDetail == undefined) {
                         this.employeeList.push({ empId: empId, name: name });
+                        this.employeeList=this.commonService.transformNumeric(this.employeeList,"name");
                       }
                       let orderBy = new Date(date).getTime();
-                      totalPenalty += Number(empObj[empId]["amount"]);
-                      this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
-                      this.penalityList = this.penalityList.sort((a, b) =>
-                        a.orderBy > b.orderBy ? 1 : -1
-                      );
+                      let createdBy = empObj[empId]["createdBy"]
+                      let detail = this.specialUserList.find(item => item.name == createdBy);
+                      if (detail != undefined) {
+                        this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                        this.penalityList = this.penalityList.sort((a, b) =>
+                          a.orderBy > b.orderBy ? 1 : -1
+                        );
+                      }
+                      else {
+                        dbPath = "Employees/" + createdBy + "/GeneralDetails/name";
+                        let empInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          empData => {
+                            empInstance.unsubscribe();
+                            if (empData != null) {
+                              createdBy = empData;
+                            }
+                            this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                            this.penalityList = this.penalityList.sort((a, b) =>
+                              a.orderBy > b.orderBy ? 1 : -1
+                            );
+                          });
+                      }
                       let sum: number = 0;
-                      this.allPenaltyList.forEach(a => sum += Number(a.amount));
+                      this.penalityList.forEach(a => sum += Number(a.amount));
                       this.penalitylDetail.totalPenality = sum.toFixed(2);
                     });
                   }
                 }
+
+                if (i == keyArray.length - 1) {
+                  setTimeout(() => {                    
+                  this.allPenaltyList = this.penalityList;
+                  $(this.divLoader).hide();
+                  }, 4000);
+                }
               }
-              this.allPenaltyList = this.penalityList;
             }
           }
           else {
             this.commonService.setAlertMessage("error", "Sorry! no record found");
+            $(this.divLoader).hide();
           }
         }
       );

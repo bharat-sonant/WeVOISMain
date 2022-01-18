@@ -80,10 +80,8 @@ export class VehicleTrackComponent implements OnInit {
         }
       }
     }, error => {
-
       this.saveData1(1, days);
     });
-
   }
 
   saveData1(stratDays: any, days: any) {
@@ -180,9 +178,7 @@ export class VehicleTrackComponent implements OnInit {
             }
             this.saveJsonFile(objDate, vehicle);
           }
-
         }
-
       }
     }
   }

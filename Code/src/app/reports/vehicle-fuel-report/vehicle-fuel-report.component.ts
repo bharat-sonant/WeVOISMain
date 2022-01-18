@@ -31,7 +31,7 @@ export class VehicleFuelReportComponent implements OnInit {
     totalMonthAmount: "0.00",
     totalMonthQuantity: "0.00",
     totalDistance: "0.0 KM",
-    vehicleName:"---"
+    vehicleName: "---"
   }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -202,7 +202,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
     this.fuelDetail.totalDistance = "0.0 KM";
-    this.fuelDetail.vehicleName="---";
+    this.fuelDetail.vehicleName = "---";
     this.fuelList = [];
     this.trackList = [];
     this.vehicleFuelList = [];
@@ -234,7 +234,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalQuantity = "0.00";
     this.fuelDetail.totalDistance = "0.0 KM";
-    this.fuelDetail.vehicleName="---";
+    this.fuelDetail.vehicleName = "---";
   }
 
   getFuelList(vehicle: any, index: any) {
@@ -243,7 +243,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.resetVehicleDetail();
     this.getFuelDetail();
     this.getTrackDetail();
-    this.fuelDetail.vehicleName=vehicle;
+    this.fuelDetail.vehicleName = vehicle;
   }
 
   getTrackDetail() {
@@ -260,9 +260,9 @@ export class VehicleFuelReportComponent implements OnInit {
             let list = data[date];
             if (list.length > 0) {
               for (let k = 0; k < list.length; k++) {
-                  let distance = (Number(list[k]["distance"])).toFixed(1) + " KM";
-                  let orderBy = new Date(date).getTime();
-                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                let distance = (Number(list[k]["distance"])).toFixed(1) + " KM";
+                let orderBy = new Date(date).getTime();
+                this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
               }
             }
           }
@@ -306,5 +306,5 @@ export class fuelDetail {
   totalMonthQuantity: string;
   totalMonthAmount: string;
   totalDistance: string;
-  vehicleName:string;
+  vehicleName: string;
 }
