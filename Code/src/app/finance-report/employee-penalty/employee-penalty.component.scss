@@ -28,7 +28,7 @@
     background-color: #2dbd23!important;
     }
     .date-input {
-      height: 30px;
+      height: 38px;
       padding-left: 10px;
       font-size: 12px;
       border: 1px solid lightgray;
@@ -83,7 +83,6 @@
     }
     .caret-select{
     margin-top: -5px!important;
-    margin-right:10px!important;
     border-radius: 5px;
     padding:10px;
     width: 97%;
@@ -472,7 +471,7 @@
     }
     
     .custom-header{
-    height: 100px;
+      background-color: #f1f1f1!important;
     }
     .custom-header h5{
     font-size: 14px;
@@ -649,7 +648,7 @@
     position: absolute;
     }
     .table-one{
-    height: 75vh;
+    height: 79vh;
     overflow: hidden;
     overflow-y: scroll;
     }
@@ -1111,6 +1110,8 @@
     border-radius: 2px;
     width:22%!important;
     border: 1px solid lightgray!important;
+    margin-left: 10px;
+    height: 38px;
     }
     .filter-input:hover{
     border: 1px solid #0ba118!important;

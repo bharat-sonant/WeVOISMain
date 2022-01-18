@@ -49,7 +49,7 @@
 <div class="main-content">
     <div class="row main-row">
         <div class="col-md-12 col-lg-12 col-xl-7 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
-            <div class="card" style="margin-top:-6px;  height: 85vh!important">
+            <div class="card" style="margin-top:-6px;  height: 90vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
@@ -63,8 +63,8 @@
                                             {{user.name}}
                                         </option>
                                     </select>
-                                    <input id="txtDate" class="date-input" type="date" (change)="filterData()">
-                                    <i class="fas fa-sync-alt" style="color:green; cursor: pointer; font-size: 20px;"
+                                    <input id="txtDate" class="date-input" type="date" (change)="filterData()" style="margin-right: 10px;">
+                                    <i class="fas fa-sync-alt" style="color:green; cursor: pointer; font-size: 16px;  position: absolute;top: 22px;"
                                         (click)="resetData();"></i>
 
                                 </div>
@@ -81,17 +81,17 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="br-1" style="width:10%">Date</th>
+                                            <th class="br-1" style="width:15%">Date</th>
                                             <th class="text-left br-1" style="width:15%">
-                                                Penality Type</th>
+                                                Penalty Type</th>
                                             <th class="text-right br-1" style="width:10%">
-                                                Penality</th>
+                                                Penalty</th>
                                             <th class="text-left br-1" style="width:25%">
                                                 Reason</th>
                                             <th class="text-left br-1" style="width:20%">
                                                 Name</th>
-                                            <th class="text-left br-1" style="width:10%">
-                                                Penality by</th>
+                                            <th class="text-left br-1" style="width:15%">
+                                                Penalty by</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of penalityList; let i=index">

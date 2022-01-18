@@ -7,7 +7,7 @@
       <div class="col-md-10 halt-header pl-0 pr-0">
         <!------------- Header Start ---------->
         <div class="row">
-          <div class="col-md-5 text-left" style="margin-top: 4px;">
+          <div class="col-md-5 text-left" style="margin-top: 5.5px;margin-left: 10px;">
             <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
               style="width: 150px;" [(ngModel)]="selectedYear">
               <option value="0">Year</option>
@@ -126,12 +126,12 @@
 
                       </div>
                     </div>
-                    <div class="col-md-5 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
+                    <div class="col-md-4 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
                       <div class="dh-back">
-                        {{fuelDetail.vehicleName}}
+                        <i class="fas fa-truck-pickup" style="color:#333!important; margin-right: 7px;"></i>  {{fuelDetail.vehicleName}}
                       </div>
                     </div>
-                    <div class="col-md-2 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
+                    <div class="col-md-3 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
                       <div class="on-map">
                         <i class="fas fa-route"></i>&nbsp; {{fuelDetail.totalDistance}}
                       </div>
