@@ -178,11 +178,12 @@
     }
     table td{
     font-size: 12px;
-    padding: 12px 12px;
+    padding: 8px 10px;
     }
     table th{
     font-size: 14px;
     color: #0ba118;
+    padding: 12px 10px;
     }
     .table-wrapper th{
     position: sticky;
@@ -195,7 +196,7 @@
     overflow-y: scroll;
     // height: 80vh;
     }
-    
+
     .fa-sync-alt{
     font-size: 12px;
     color: black;
@@ -471,7 +472,7 @@
     }
     
     .custom-header{
-      background-color: #f1f1f1!important;
+      background-color: #ffffff!important;
     }
     .custom-header h5{
     font-size: 14px;
@@ -1631,7 +1632,9 @@
     
     }
     
-    
+    .td-1{
+      white-space: nowrap!important;
+    }  
     
     
     

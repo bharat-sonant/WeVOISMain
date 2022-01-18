@@ -107,6 +107,7 @@
     padding: 6px;
     line-height: 1.5;
     letter-spacing: 0.3px;
+    margin-top: 5px;
   }
   .halt-details .break-time{
     width: 50%;
@@ -122,6 +123,7 @@
     padding: 6px;
     line-height: 1.5;
     letter-spacing: 0.3px;
+    margin-top: 5px;
   }
   .remark-btn{
     float: left;
@@ -185,8 +187,9 @@
     margin-bottom: 10px;
     overflow: hidden;
     border-radius: 5px;
+    padding-left: 10px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     font-size: 12px;
 }
@@ -293,7 +296,8 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-left: 10px;
     font-size: 12px;
   }
   .on-map:hover {
