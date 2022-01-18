@@ -30,7 +30,8 @@ export class VehicleFuelReportComponent implements OnInit {
     totalQuantity: "0.00",
     totalMonthAmount: "0.00",
     totalMonthQuantity: "0.00",
-    totalDistance: "0.0 KM"
+    totalDistance: "0.0 KM",
+    vehicleName:"---"
   }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -201,6 +202,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.fuelDetail.totalMonthQuantity = "0.00";
     this.fuelDetail.totalMonthAmount = "0.00";
     this.fuelDetail.totalDistance = "0.0 KM";
+    this.fuelDetail.vehicleName="---";
     this.fuelList = [];
     this.trackList = [];
     this.vehicleFuelList = [];
@@ -232,6 +234,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalQuantity = "0.00";
     this.fuelDetail.totalDistance = "0.0 KM";
+    this.fuelDetail.vehicleName="---";
   }
 
   getFuelList(vehicle: any, index: any) {
@@ -240,6 +243,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.resetVehicleDetail();
     this.getFuelDetail();
     this.getTrackDetail();
+    this.fuelDetail.vehicleName=vehicle;
   }
 
   getTrackDetail() {
@@ -302,4 +306,5 @@ export class fuelDetail {
   totalMonthQuantity: string;
   totalMonthAmount: string;
   totalDistance: string;
+  vehicleName:string;
 }
