@@ -94,6 +94,8 @@ import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
 import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
+import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
+import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -205,6 +207,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/show-route', component: ShowRouteComponent },
     { path: 'sikar/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'sikar/vehicle-track', component: VehicleTrackComponent },
+    { path: 'sikar/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'sikar/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -306,6 +310,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar:id//field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'sikar/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'sikar/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'sikar/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'sikar/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
 
     //jaipur-greater
@@ -408,6 +414,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'jaipur-greater/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'jaipur-greater/vehicle-track', component: VehicleTrackComponent },
+    { path: 'jaipur-greater/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'jaipur-greater/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -509,6 +517,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'jaipur-greater/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'jaipur-greater/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'jaipur-greater/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'jaipur-greater/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -610,6 +620,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'reengus/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'reengus/vehicle-track', component: VehicleTrackComponent },
+    { path: 'reengus/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'reengus/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -711,6 +723,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'reengus/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'reengus/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'reengus/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'reengus/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -812,6 +826,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'shahpura/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'shahpura/vehicle-track', component: VehicleTrackComponent },
+    { path: 'shahpura/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'shahpura/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -913,6 +929,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'shahpura/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'shahpura/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'shahpura/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'shahpura/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1014,6 +1032,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'test/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'test/vehicle-track', component: VehicleTrackComponent },
+    { path: 'test/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'test/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1115,6 +1135,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'test/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'test/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'test/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'test/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1216,6 +1238,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'demo/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'demo/vehicle-track', component: VehicleTrackComponent },
+    { path: 'demo/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'demo/penalty-portal-service', component: PenaltyPortalServiceComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1316,6 +1340,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'demo/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'demo/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'demo/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'demo/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
 
@@ -1419,6 +1445,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'kishangarh/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'kishangarh/vehicle-track', component: VehicleTrackComponent },
+    { path: 'kishangarh/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'kishangarh/penalty-portal-service', component: PenaltyPortalServiceComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1520,4 +1548,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'kishangarh/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
     { path: 'kishangarh/:id/vehicle-track', component: VehicleTrackComponent },
+    { path: 'kishangarh/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'kishangarh/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
 ]; 

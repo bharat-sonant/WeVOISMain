@@ -101,6 +101,8 @@ import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
 import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
+import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
+import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 
 @NgModule({
   imports: [
@@ -206,7 +208,9 @@ import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicl
     ShowRouteComponent,
     FieldExecutiveAttendanceComponent,
     VehicleFuelReportComponent,
-    VehicleTrackComponent
+    VehicleTrackComponent,
+    EmployeePenaltyComponent,
+    PenaltyPortalServiceComponent
   ]
 })
 
