@@ -103,6 +103,8 @@ import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/ve
 import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
 import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
+import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
+import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
 
 @NgModule({
   imports: [
@@ -210,7 +212,9 @@ import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-port
     VehicleFuelReportComponent,
     VehicleTrackComponent,
     EmployeePenaltyComponent,
-    PenaltyPortalServiceComponent
+    PenaltyPortalServiceComponent,
+    AccountDetailComponent,
+    EmployeeAccountServiceComponent
   ]
 })
 

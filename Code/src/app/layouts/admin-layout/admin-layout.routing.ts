@@ -96,6 +96,8 @@ import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/ve
 import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
 import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
+import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
+import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -110,6 +112,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //sikar
     { path: 'sikar/home', component: HomeComponent },
+    { path: 'sikar/account-detail', component: AccountDetailComponent },
     { path: 'sikar/change-password', component: ChangePasswordComponent },
     { path: 'sikar/maps', component: MapsComponent },
     { path: 'sikar/maps/:id', component: MapsComponent },
@@ -209,6 +212,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vehicle-track', component: VehicleTrackComponent },
     { path: 'sikar/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'sikar/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'sikar/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -312,6 +316,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'sikar/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'sikar/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'sikar/:id/account-detail', component: AccountDetailComponent },
+    { path: 'sikar/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
 
     //jaipur-greater
@@ -416,6 +422,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/vehicle-track', component: VehicleTrackComponent },
     { path: 'jaipur-greater/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'jaipur-greater/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'jaipur-greater/account-detail', component: AccountDetailComponent },
+    { path: 'jaipur-greater/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -519,6 +527,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'jaipur-greater/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'jaipur-greater/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'jaipur-greater/:id/account-detail', component: AccountDetailComponent },
+    { path: 'jaipur-greater/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -622,6 +632,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vehicle-track', component: VehicleTrackComponent },
     { path: 'reengus/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'reengus/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'reengus/account-detail', component: AccountDetailComponent },
+    { path: 'reengus/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -725,6 +737,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'reengus/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'reengus/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'reengus/:id/account-detail', component: AccountDetailComponent },
+    { path: 'reengus/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -828,6 +842,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/vehicle-track', component: VehicleTrackComponent },
     { path: 'shahpura/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'shahpura/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'shahpura/account-detail', component: AccountDetailComponent },
+    { path: 'shahpura/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -931,6 +947,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'shahpura/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'shahpura/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'shahpura/:id/account-detail', component: AccountDetailComponent },
+    { path: 'shahpura/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1034,6 +1052,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/vehicle-track', component: VehicleTrackComponent },
     { path: 'test/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'test/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'test/account-detail', component: AccountDetailComponent },
+    { path: 'test/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1137,6 +1157,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'test/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'test/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'test/:id/account-detail', component: AccountDetailComponent },
+    { path: 'test/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1240,6 +1262,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/vehicle-track', component: VehicleTrackComponent },
     { path: 'demo/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'demo/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'demo/account-detail', component: AccountDetailComponent },
+    { path: 'demo/employee-account-service', component: EmployeeAccountServiceComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1342,6 +1366,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'demo/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'demo/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'demo/:id/account-detail', component: AccountDetailComponent },
+    { path: 'demo/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
 
@@ -1447,6 +1473,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/vehicle-track', component: VehicleTrackComponent },
     { path: 'kishangarh/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'kishangarh/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'kishangarh/account-detail', component: AccountDetailComponent },
+    { path: 'kishangarh/employee-account-service', component: EmployeeAccountServiceComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1550,4 +1578,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/vehicle-track', component: VehicleTrackComponent },
     { path: 'kishangarh/:id/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'kishangarh/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'kishangarh/:id/account-detail', component: AccountDetailComponent },
+    { path: 'kishangarh/:id/employee-account-service', component: EmployeeAccountServiceComponent },
 ]; 

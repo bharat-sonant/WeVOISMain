@@ -1,0 +1,78 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers">
+            Account Detail
+        </div>
+        
+    </div>
+</section>
+<!----Desktop Navbar End----->
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 90vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlUser">
+                                        <option value="0">
+                                            All Employees
+                                        </option>
+                                        <option *ngFor="let user of employeeList" value={{user.empId}}>
+                                            {{user.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="width:12%;border:none!important;">Date</th>
+                                            <th class="text-left br-1"  style="width:15%;border:none!important;">
+                                                Type</th>
+                                            <th class="text-right br-1" style="width:10%;border:none!important;">
+                                                Penalty</th>
+                                            <th class="text-left br-1" style="width:25%;border:none!important;">
+                                                Reason</th>
+                                            <th class="text-left br-1" style="width:20%;border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="width:15%;border:none!important;">
+                                                Penalty by</th>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
