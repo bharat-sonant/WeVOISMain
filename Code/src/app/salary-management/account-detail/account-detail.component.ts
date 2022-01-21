@@ -14,9 +14,9 @@ export class AccountDetailComponent implements OnInit {
   constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
-  employeeList:any[];
-  accountList:any[];
-  ddlUser="#ddlUser";
+  employeeList: any[];
+  accountList: any[];
+  ddlUser = "#ddlUser";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -26,25 +26,25 @@ export class AccountDetailComponent implements OnInit {
   }
 
   setDefault() {
-    this.employeeList=[];
-    this.accountList=[];
+    this.employeeList = [];
+    this.accountList = [];
     this.getAccountDetail();
   }
 
-  getAccountDetail(){
+  getAccountDetail() {
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
-      if(data!=null){
-        console.log(data);
-        let jsonData=JSON.stringify(data);
-        let list=JSON.parse(jsonData);
-        this.accountList=this.commonService.transformNumeric(list,"name");
+      if (data != null) {
+        let jsonData = JSON.stringify(data);
+        let list = JSON.parse(jsonData);
+        this.accountList = this.commonService.transformNumeric(list, "name");
       }
-    },error=>{
+    }, error => {
+      this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
 
     });
-    
+
   }
 
 
