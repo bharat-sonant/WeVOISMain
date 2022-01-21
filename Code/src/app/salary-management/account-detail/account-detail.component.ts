@@ -16,6 +16,7 @@ export class AccountDetailComponent implements OnInit {
   cityName: any;
   employeeList:any[];
   accountList:any[];
+  ddlUser="#ddlUser";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -31,6 +32,18 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getAccountDetail(){
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if(data!=null){
+        console.log(data);
+        let jsonData=JSON.stringify(data);
+        let list=JSON.parse(jsonData);
+        this.accountList=this.commonService.transformNumeric(list,"name");
+      }
+    },error=>{
+
+    });
     
   }
 
