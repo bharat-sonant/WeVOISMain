@@ -138,6 +138,8 @@ export class VehicleTrackComponent implements OnInit {
     }
     setTimeout(() => {
       this.createJSON(workDetailList, days);
+      this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+      $('#divLoader').hide();
     }, 24000);
   }
 
@@ -155,7 +157,7 @@ export class VehicleTrackComponent implements OnInit {
           data.push(item.vehicle);
         }
       }
-      if (data.length > 0) {        
+      if (data.length > 0) {
         for (let i = 0; i < data.length; i++) {
           let vehicle = data[i];
           let list = workDetailList.filter(item => item.vehicle == vehicle);
@@ -168,9 +170,9 @@ export class VehicleTrackComponent implements OnInit {
               const bb = [];
               if (list2.length > 0) {
                 for (let k = 0; k < list2.length; k++) {
-                  let distance=Number(list2[k]["distance"])/1000;
-                  distance=Math.round(distance*10)/10;
-                  bb.push({ ward: list2[k]["ward"], distance: distance.toFixed(1), driver: list2[k]["empId"],name:list2[k]["name"] });
+                  let distance = Number(list2[k]["distance"]) / 1000;
+                  distance = Math.round(distance * 10) / 10;
+                  bb.push({ ward: list2[k]["ward"], distance: distance.toFixed(1), driver: list2[k]["empId"], name: list2[k]["name"] });
                 }
               }
               objDate[date] = bb;
@@ -206,7 +208,6 @@ export class VehicleTrackComponent implements OnInit {
 
     let blob = new Blob([ia], { type: mimeString });
     const task = ref.put(blob);
-    this.commonService.setAlertMessage("success", "Data updated successfully !!!");
-    $('#divLoader').hide();
+
   }
 }
