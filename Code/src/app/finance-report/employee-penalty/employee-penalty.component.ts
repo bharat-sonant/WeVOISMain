@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-employee-penalty',
@@ -126,7 +127,7 @@ export class EmployeePenaltyComponent implements OnInit {
                 let empDetail = this.employeeList.find(item => item.empId == empId);
                 if (empDetail == undefined) {
                   this.employeeList.push({ empId: empId, name: name });
-                  this.employeeList=this.commonService.transformNumeric(this.employeeList,"name");
+                  this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                 }
                 let orderBy = new Date(date).getTime();
                 this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
@@ -170,7 +171,7 @@ export class EmployeePenaltyComponent implements OnInit {
                       let empDetail = this.employeeList.find(item => item.empId == empId);
                       if (empDetail == undefined) {
                         this.employeeList.push({ empId: empId, name: name });
-                        this.employeeList=this.commonService.transformNumeric(this.employeeList,"name");
+                        this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                       }
                       let orderBy = new Date(date).getTime();
                       let createdBy = empObj[empId]["createdBy"]
@@ -203,9 +204,9 @@ export class EmployeePenaltyComponent implements OnInit {
                 }
 
                 if (i == keyArray.length - 1) {
-                  setTimeout(() => {                    
-                  this.allPenaltyList = this.penalityList;
-                  $(this.divLoader).hide();
+                  setTimeout(() => {
+                    this.allPenaltyList = this.penalityList;
+                    $(this.divLoader).hide();
                   }, 4000);
                 }
               }
@@ -240,6 +241,72 @@ export class EmployeePenaltyComponent implements OnInit {
     $(this.txtDate).val("");
     $(this.ddlUser).val("0");
     this.penalityList = this.allPenaltyList;
+  }
+
+  exportexcel() {
+
+    let htmlString = "";
+    if (this.penalityList.length > 0) {
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Penalty";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Reason";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Penalty by";
+      htmlString += "</td>";
+
+      htmlString += "</tr>";
+      for (let i = 0; i < this.penalityList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["penaltyType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["amount"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["reason"].replace('/','~').replace('/','~');
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["name"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["createdBy"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+    }
+
+    console.log(htmlString);
+
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    let fileName = "Penalty-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
+    XLSX.writeFile(wb, fileName);
   }
 
 

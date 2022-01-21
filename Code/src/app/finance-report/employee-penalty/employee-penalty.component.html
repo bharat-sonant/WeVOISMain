@@ -67,6 +67,8 @@
                                     <i class="fas fa-sync-alt" style="color:green; cursor: pointer; font-size: 16px;  position: absolute;top: 22px;"
                                         (click)="resetData();"></i>
 
+                                        <i class="fas fa-file-export" style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;" (click)="exportexcel();"></i>
+
                                 </div>
                             </div>
                         </div>
@@ -79,7 +81,7 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-line">
+                                    <table id="tblPenalty" class="table table-line">
                                         <thead>
                                             <th class="br-1 td-1" style="width:12%;border:none!important;">Date</th>
                                             <th class="text-left br-1"  style="width:15%;border:none!important;">
