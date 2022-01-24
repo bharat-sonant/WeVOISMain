@@ -44,6 +44,8 @@ export class EmployeeAccountServiceComponent implements OnInit {
                   let ifsc = "";
                   let aadharNo = "";
                   let panNo = "";
+                  let modifyBy="";
+                  let modifyDate="";
                   if (data[empId]["BankDetails"] != null) {
                     if (data[empId]["BankDetails"]["AccountDetails"] != null) {
                       if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
@@ -64,7 +66,16 @@ export class EmployeeAccountServiceComponent implements OnInit {
                       }
                     }
                   }
-                  this.accountList.push({ empId: empId,empCode:empCode, name: name, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo })
+                  if(data[empId]["UpdateDetails"]!=null){
+                    if(data[empId]["UpdateDetails"]["lastModifyBy"]!=null){
+                      modifyBy=data[empId]["UpdateDetails"]["lastModifyBy"];
+                    }
+                    if(data[empId]["UpdateDetails"]["lastModifyDate"]!=null){
+                      modifyDate=data[empId]["UpdateDetails"]["lastModifyDate"];
+                    }
+
+                  }
+                  this.accountList.push({ empId: empId,empCode:empCode, name: name, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo,modifyBy:modifyBy,modifyDate:modifyDate })
                 }
               }
             }

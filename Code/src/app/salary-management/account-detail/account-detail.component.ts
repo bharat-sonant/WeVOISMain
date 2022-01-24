@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
+import { AngularFireList } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
@@ -13,6 +14,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class AccountDetailComponent implements OnInit {
 
   constructor(private storage: AngularFireStorage, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  accountRef: AngularFireList<any>;
   db: any;
   cityName: any;
   employeeList: any[];
@@ -63,6 +65,8 @@ export class AccountDetailComponent implements OnInit {
     let userDetail = this.accountList.find((item) => item.empId == id);
     if (userDetail != undefined) {
       setTimeout(() => {
+        $("#preAccountNo").val(userDetail.accountNo);
+        $("#preIFSC").val(userDetail.ifsc);
         $("#txtAccountNo").val(userDetail.accountNo);
         $("#txtIFSC").val(userDetail.ifsc);
       }, 100);
@@ -77,6 +81,8 @@ export class AccountDetailComponent implements OnInit {
         let accountNo = $("#txtAccountNo").val();
         let ifsc = $("#txtIFSC").val();
         let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
+        let preAccountNo = $("#preAccountNo").val();
+        let preIFSC = $("#preIFSC").val();
         this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
         dbPath = "Employees/" + id + "/UpdateDetails";
         let time = this.commonService.getCurrentTimeWithSecond();
@@ -85,7 +91,15 @@ export class AccountDetailComponent implements OnInit {
         let portalUserDetail = portalUserList.find(item => item.userId == localStorage.getItem("userID"));
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
-          this.db.object(dbPath).update({ by: name, date: time });
+          this.accountRef = this.db.list(dbPath);
+          this.accountRef.push({
+            accountNumber: preAccountNo,
+            ifsc: preIFSC,
+            modifyBy: name,
+            modifyDate: time
+          })
+
+          this.db.object(dbPath).update({ lastModifyBy: name, lastModifyDate: time });
           userDetail.accountNo = accountNo;
           userDetail.ifsc = ifsc;
           userDetail.modifyBy = name;
