@@ -67,7 +67,7 @@ export class EmployeeAccountServiceComponent implements OnInit {
                     }
                   }
 
-                  let dbPath = "EmployeeHistory/" + empId;
+                  let dbPath = "EmployeeDetailModificationHistory/" + empId;
                   let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
                     hData => {
                       historyInstance.unsubscribe();
