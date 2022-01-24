@@ -78,9 +78,20 @@ export class AccountDetailComponent implements OnInit {
         let ifsc = $("#txtIFSC").val();
         let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
         this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
-        userDetail.accountNo = accountNo;
-        userDetail.ifsc = ifsc;
-        this.saveJsonFile(this.accountList);
+        dbPath = "Employees/" + id + "/UpdateDetails";
+        let time = this.commonService.getCurrentTimeWithSecond();
+        time = this.commonService.setTodayDate() + " " + time;
+        let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
+        let portalUserDetail = portalUserList.find(item => item.userId == localStorage.getItem("userID"));
+        if (portalUserDetail != undefined) {
+          let name = portalUserDetail.name;
+          this.db.object(dbPath).update({ by: name, date: time });
+          userDetail.accountNo = accountNo;
+          userDetail.ifsc = ifsc;
+          userDetail.modifyBy = name;
+          userDetail.modifyDate = time;
+          this.saveJsonFile(this.accountList);
+        }
         $("#key").val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
         this.closeModel();
@@ -92,7 +103,7 @@ export class AccountDetailComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  
+
   saveJsonFile(listArray: any) {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);

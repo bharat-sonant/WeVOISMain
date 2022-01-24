@@ -34,10 +34,10 @@
                                                 IFSC</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 PAN Number</th>
-                                                <th class="text-left br-1" style="border:none!important;">
-                                                    Aadhar Number</th>
-                                                    <th class="text-left br-1" style="border:none!important;">
-                                                        </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Modify Detail</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
@@ -56,13 +56,14 @@
                                                     {{data.panNo}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.aadharNo}}
+                                                    <span [hidden]="data.modifyBy=='' || data.modifyBy==null">
+                                                   By {{data.modifyBy}}<br/> on {{data.modifyDate}}</span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <i class="far fa-edit"
-                                                            (click)="openModel(contentEmployee,data.empId);"
-                                                            title="Edit Entry"
-                                                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
+                                                        (click)="openModel(contentEmployee,data.empId);"
+                                                        title="Edit Entry"
+                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
