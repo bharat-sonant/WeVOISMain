@@ -84,7 +84,7 @@ export class AccountDetailComponent implements OnInit {
         let preAccountNo = $("#preAccountNo").val();
         let preIFSC = $("#preIFSC").val();
         this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
-        dbPath = "Employees/" + id + "/UpdateDetails";
+        dbPath = "EmployeeHistory/" + id + "/";
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
         let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));

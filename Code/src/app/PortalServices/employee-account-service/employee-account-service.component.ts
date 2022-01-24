@@ -39,13 +39,13 @@ export class EmployeeAccountServiceComponent implements OnInit {
                 if (data[empId]["GeneralDetails"]["status"] == "1") {
                   let name = data[empId]["GeneralDetails"]["name"];
                   let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
-                  let empCode=data[empId]["GeneralDetails"]["empCode"];
+                  let empCode = data[empId]["GeneralDetails"]["empCode"];
                   let accountNo = "";
                   let ifsc = "";
                   let aadharNo = "";
                   let panNo = "";
-                  let modifyBy="";
-                  let modifyDate="";
+                  let modifyBy = "";
+                  let modifyDate = "";
                   if (data[empId]["BankDetails"] != null) {
                     if (data[empId]["BankDetails"]["AccountDetails"] != null) {
                       if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
@@ -66,27 +66,36 @@ export class EmployeeAccountServiceComponent implements OnInit {
                       }
                     }
                   }
-                  if(data[empId]["UpdateDetails"]!=null){
-                    if(data[empId]["UpdateDetails"]["lastModifyBy"]!=null){
-                      modifyBy=data[empId]["UpdateDetails"]["lastModifyBy"];
-                    }
-                    if(data[empId]["UpdateDetails"]["lastModifyDate"]!=null){
-                      modifyDate=data[empId]["UpdateDetails"]["lastModifyDate"];
-                    }
 
-                  }
-                  this.accountList.push({ empId: empId,empCode:empCode, name: name, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo,modifyBy:modifyBy,modifyDate:modifyDate })
+                  let dbPath = "EmployeeHistory/" + empId;
+                  let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
+                    hData => {
+                      historyInstance.unsubscribe();
+                      if (hData != null) {
+                        if (hData["lastModifyBy"] != null) {
+                          modifyBy = hData["lastModifyBy"];
+                        }
+                        if (hData["lastModifyDate"] != null) {
+                          modifyDate = hData["lastModifyDate"];
+                        }
+                      }
+                      this.accountList.push({ empId: empId, empCode: empCode, name: name, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate })
+                    }
+                  );
+
                 }
               }
             }
-            this.saveJsonFile(this.accountList);
+            setTimeout(() => {
+              this.saveJsonFile(this.accountList);
+            }, 24000);
           }
         }
       }
     );
   }
 
-  
+
   saveJsonFile(listArray: any) {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
