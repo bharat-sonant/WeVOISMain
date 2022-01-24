@@ -23,41 +23,37 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="br-1 td-1" style="border:none!important;">Emp Code</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Name</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                DOJ</th>
+                                                PAN</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Account No.</th>
+                                                Account Number</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 IFSC</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                PAN Number</th>
+                                                Last Modified Date</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Modify Detail</th>
+                                                Modified By</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                             </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
-                                                    {{data.empCode}}
+                                                <td class="text-left br-1">
+                                                    {{data.name}} <b>[{{data.empCode}}]</b></td>
+                                                <td class="text-left br-1">
+                                                    {{data.panNo}}
                                                 </td>
-                                                <td class="text-left br-1">
-                                                    {{data.name}}</td>
-                                                <td class="text-left br-1">
-                                                    {{data.doj}}</td>
                                                 <td class="text-left br-1">
                                                     {{data.accountNo}} </td>
                                                 <td class="text-left br-1">
                                                     {{data.ifsc}}</td>
                                                 <td class="text-left br-1">
-                                                    {{data.panNo}}
+                                                    {{data.modifyDate}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <span [hidden]="data.modifyBy=='' || data.modifyBy==null">
-                                                   By {{data.modifyBy}}<br/> on {{data.modifyDate}}</span>
+                                                    {{data.modifyBy}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <i class="far fa-edit"
