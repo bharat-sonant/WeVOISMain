@@ -185,12 +185,12 @@ export class FieldExecutiveTrackingComponent {
         if (this.executiveList[i]["latLng"] != "") {
           let lat = this.executiveList[i]["latLng"].split(',')[0];
           let lng = this.executiveList[i]["latLng"].split(',')[1];
-          this.setMarkers(lat, lng, this.startPointUrl, 50, 45);
+          this.setMarkers(lat, lng, this.startPointUrl, 50, 45, "");
         }
         if (this.executiveList[i]["latLngEnd"] != "") {
           let lat = this.executiveList[i]["latLngEnd"].split(',')[0];
           let lng = this.executiveList[i]["latLngEnd"].split(',')[1];
-          this.setMarkers(lat, lng, this.endPointUrl, 50, 45);
+          this.setMarkers(lat, lng, this.endPointUrl, 50, 45, "");
         }
         this.getHalt();
         this.getExecutiveRouteDetail();
@@ -206,8 +206,8 @@ export class FieldExecutiveTrackingComponent {
     }
   }
 
-  setMarkers(lat: any, lng: any, markerUrl: any, point1: any, point2: any) {
-    new google.maps.Marker({
+  setMarkers(lat: any, lng: any, markerUrl: any, point1: any, point2: any, time: any) {
+    let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
       icon: {
@@ -218,6 +218,15 @@ export class FieldExecutiveTrackingComponent {
         origin: new google.maps.Point(0, 0),
       },
     });
+    if (time != "") {
+      let contentString = "Capture Time : " + time + " ";
+      let infowindow = new google.maps.InfoWindow({
+        content: contentString,
+      });
+      marker.addListener("click", function () {
+        infowindow.open(this.map, marker);
+      });
+    }
   }
 
   getExecutiveRouteDetail() {
@@ -229,7 +238,7 @@ export class FieldExecutiveTrackingComponent {
         let lineData = executiveDetail.lineData;
         if (lineData.length > 0) {
           let latLng = [];
-          this.executiveDetail.totalKM= (Number(lineData[lineData.length-1]["distance"]) / 1000).toFixed(1)
+          this.executiveDetail.totalKM = (Number(lineData[lineData.length - 1]["distance"]) / 1000).toFixed(1)
           for (let i = 0; i < lineData.length; i++) {
             let lat = lineData[i]["lat"];
             let lng = lineData[i]["lng"];
@@ -324,7 +333,7 @@ export class FieldExecutiveTrackingComponent {
         if (data != null) {
           let lat = data.split(',')[0];
           let lng = data.split(',')[1];
-          this.setMarkers(lat, lng, this.currentLocationUrl, 50, 45);
+          this.setMarkers(lat, lng, this.currentLocationUrl, 50, 45, "");
         }
       }
     );
@@ -339,7 +348,8 @@ export class FieldExecutiveTrackingComponent {
         for (let i = 0; i < imageData.length; i++) {
           let lat = imageData[i]["lat"];
           let lng = imageData[i]["lng"];
-          this.setMarkers(lat, lng, this.imageDataUrl, 20, 15);
+          let time = imageData[i]["time"];
+          this.setMarkers(lat, lng, this.imageDataUrl, 20, 15, time);
         }
         setTimeout(() => {
           $(this.divLoader).hide();
@@ -365,10 +375,11 @@ export class FieldExecutiveTrackingComponent {
                         detailInstance.unsubscribe();
                         let lat = data["latLng"].split(',')[0];
                         let lng = data["latLng"].split(',')[1];
-                        this.setMarkers(lat, lng, this.imageDataUrl, 20, 15);
+                        let time = data["time"];
+                        this.setMarkers(lat, lng, this.imageDataUrl, 20, 15, time);
                         let detail = this.executiveList.find(item => item.executiveId == this.executiveId);
                         if (detail != undefined) {
-                          detail.imageData.push({ lat: lat, lng: lng });
+                          detail.imageData.push({ lat: lat, lng: lng, time });
                         }
                       }
                     );
@@ -403,8 +414,10 @@ export class FieldExecutiveTrackingComponent {
           let duration = haltData[i]["duration"];
           totalHalt = totalHalt + duration;
           let address = haltData[i]["address"];
+          let startTime = haltData[i]["startTime"];
+          let endTime = haltData[i]["endTime"];
           let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
-          this.setHaltMarker(lat, lng, imageUrl, duration, address);
+          this.setHaltMarker(lat, lng, imageUrl, duration, address, startTime, endTime);
         }
         this.executiveDetail.totalHalt = this.commonService.getMinuteToHHMM(totalHalt);
       }
@@ -425,12 +438,17 @@ export class FieldExecutiveTrackingComponent {
                   let latlng = data[i]["location"].split(":")[1].split(",");
                   let lat = $.trim(latlng[0]).replace("(", "");
                   let lng = $.trim(latlng[1]).replace(")", "");
+                  let startTime = data[i]["startTime"];
+                  let endTime = "";
+                  if (data[i]["endTime"] != null) {
+                    endTime = data[i]["endTime"];
+                  }
                   let imageUrl = "../assets/img/" + this.getMarkerName(duration) + ".svg";
                   let address = data[i]["locality"];
-                  this.setHaltMarker(lat, lng, imageUrl, duration, address);
+                  this.setHaltMarker(lat, lng, imageUrl, duration, address, startTime, endTime);
                   let detail = this.executiveList.find(item => item.executiveId == this.executiveId);
                   if (detail != undefined) {
-                    detail.haltData.push({ lat: lat, lng: lng, duration: duration, address: address });
+                    detail.haltData.push({ lat: lat, lng: lng, duration: duration, address: address, startTime: startTime, endTime: endTime });
                   }
                 }
               }
@@ -454,7 +472,7 @@ export class FieldExecutiveTrackingComponent {
     return markerColor;
   }
 
-  setHaltMarker(lat: any, lng: any, markerURL: any, markerLabel: any, address: any) {
+  setHaltMarker(lat: any, lng: any, markerURL: any, markerLabel: any, address: any, startTime: any, endTime: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
@@ -474,7 +492,11 @@ export class FieldExecutiveTrackingComponent {
       },
     });
 
-    let contentString = address;
+    let contentString = "Start Time : " + startTime + " - ";
+    if (endTime != "") {
+      contentString += "End Time : " + endTime + "<br/>";
+    }
+    contentString += address;
     let infowindow = new google.maps.InfoWindow({
       content: contentString,
     });
