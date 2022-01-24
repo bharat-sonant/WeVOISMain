@@ -34,8 +34,10 @@
                                                 IFSC</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Pan Number</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Aadhar Number</th>
+                                                <th class="text-left br-1" style="border:none!important;">
+                                                    Aadhar Number</th>
+                                                    <th class="text-left br-1" style="border:none!important;">
+                                                        </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
@@ -55,6 +57,12 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.aadharNo}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <i class="far fa-edit"
+                                                            (click)="openModel(contentEmployee,data.empId);"
+                                                            title="Edit Entry"
+                                                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -76,3 +84,38 @@
 
     </div>
 </div>
+
+
+<!--employee  Start-->
+<ng-template #contentEmployee>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Account Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtAccountNo" class="input-green" placeholder="Account No." />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtIFSC" class="input-green" placeholder="IFSC" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveAccountDetail();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->

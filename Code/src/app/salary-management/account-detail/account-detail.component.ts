@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-account-detail',
@@ -11,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class AccountDetailComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private storage: AngularFireStorage, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   employeeList: any[];
@@ -45,6 +46,76 @@ export class AccountDetailComponent implements OnInit {
 
     });
 
+  }
+
+
+  openModel(content: any, id: any) {
+
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 250;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#key").val(id);
+    let userDetail = this.accountList.find((item) => item.empId == id);
+    if (userDetail != undefined) {
+      setTimeout(() => {
+        $("#txtAccountNo").val(userDetail.accountNo);
+        $("#txtIFSC").val(userDetail.ifsc);
+      }, 100);
+    }
+  }
+
+  saveAccountDetail() {
+    let id = $("#key").val();
+    if (id != "0") {
+      let userDetail = this.accountList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        let accountNo = $("#txtAccountNo").val();
+        let ifsc = $("#txtIFSC").val();
+        let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
+        this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
+        userDetail.accountNo = accountNo;
+        userDetail.ifsc = ifsc;
+        this.saveJsonFile(this.accountList);
+        $("#key").val("0");
+        this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
+        this.closeModel();
+      }
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  
+  saveJsonFile(listArray: any) {
+    var jsonFile = JSON.stringify(listArray);
+    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/accountDetail.json";
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
   }
 
 
