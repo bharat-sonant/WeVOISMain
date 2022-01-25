@@ -60,6 +60,8 @@ export class VehicleTrackComponent implements OnInit {
     if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
       days = parseInt(this.commonService.setTodayDate().split("-")[2]) - 1;
     }
+    this.saveData1(1, days);
+    /*
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FVehicleTrack%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2Ftrack.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
@@ -82,6 +84,7 @@ export class VehicleTrackComponent implements OnInit {
     }, error => {
       this.saveData1(1, days);
     });
+    */
   }
 
   saveData1(stratDays: any, days: any) {
