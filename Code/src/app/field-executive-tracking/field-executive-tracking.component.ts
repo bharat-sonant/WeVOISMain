@@ -219,7 +219,7 @@ export class FieldExecutiveTrackingComponent {
       },
     });
     if (time != "") {
-      let contentString = "Capture Time : " + time + " ";
+      let contentString = "Capture Time : " + time + " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
       let infowindow = new google.maps.InfoWindow({
         content: contentString,
       });
@@ -494,7 +494,10 @@ export class FieldExecutiveTrackingComponent {
 
     let contentString = "Start Time : " + startTime + " - ";
     if (endTime != "") {
-      contentString += "End Time : " + endTime + "<br/>";
+      contentString += "End Time : " + endTime + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>";
+    }
+    else{
+      contentString += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>";
     }
     contentString += address;
     let infowindow = new google.maps.InfoWindow({
