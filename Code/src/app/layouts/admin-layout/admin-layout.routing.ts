@@ -98,6 +98,7 @@ import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
 import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
+import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -213,6 +214,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/employee-penalty', component: EmployeePenaltyComponent },
     { path: 'sikar/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'sikar/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'sikar/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -318,6 +320,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'sikar/:id/account-detail', component: AccountDetailComponent },
     { path: 'sikar/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'sikar/:id/employee-salary', component: EmployeeSalaryComponent },
 
 
     //jaipur-greater
@@ -424,6 +427,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'jaipur-greater/account-detail', component: AccountDetailComponent },
     { path: 'jaipur-greater/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'jaipur-greater/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -529,6 +533,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'jaipur-greater/:id/account-detail', component: AccountDetailComponent },
     { path: 'jaipur-greater/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'jaipur-greater/:id/employee-salary', component: EmployeeSalaryComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -634,6 +639,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'reengus/account-detail', component: AccountDetailComponent },
     { path: 'reengus/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'reengus/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -739,6 +745,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'reengus/:id/account-detail', component: AccountDetailComponent },
     { path: 'reengus/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'reengus/:id/employee-salary', component: EmployeeSalaryComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -844,6 +851,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'shahpura/account-detail', component: AccountDetailComponent },
     { path: 'shahpura/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'shahpura/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -949,6 +957,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'shahpura/:id/account-detail', component: AccountDetailComponent },
     { path: 'shahpura/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'shahpura/:id/employee-salary', component: EmployeeSalaryComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1054,6 +1063,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'test/account-detail', component: AccountDetailComponent },
     { path: 'test/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'test/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1159,6 +1169,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'test/:id/account-detail', component: AccountDetailComponent },
     { path: 'test/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'test/:id/employee-salary', component: EmployeeSalaryComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1264,6 +1275,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'demo/account-detail', component: AccountDetailComponent },
     { path: 'demo/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'demo/employee-salary', component: EmployeeSalaryComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1368,6 +1380,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'demo/:id/account-detail', component: AccountDetailComponent },
     { path: 'demo/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'demo/:id/employee-salary', component: EmployeeSalaryComponent },
 
     
 
@@ -1475,6 +1488,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'kishangarh/account-detail', component: AccountDetailComponent },
     { path: 'kishangarh/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'kishangarh/employee-salary', component: EmployeeSalaryComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1580,4 +1594,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
     { path: 'kishangarh/:id/account-detail', component: AccountDetailComponent },
     { path: 'kishangarh/:id/employee-account-service', component: EmployeeAccountServiceComponent },
+    { path: 'kishangarh/:id/employee-salary', component: EmployeeSalaryComponent },
 ]; 

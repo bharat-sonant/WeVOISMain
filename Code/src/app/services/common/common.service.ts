@@ -575,7 +575,8 @@ export class CommonService {
               mobile: data["mobile"],
               profilePhotoURL: data["profilePhotoURL"],
               designation: designationData,
-              city: localStorage.getItem("cityName")
+              city: localStorage.getItem("cityName"),
+              empCode:data["empCode"]
             });
             localStorage.setItem("employeeList", JSON.stringify(employeeList));
             let list = JSON.parse(localStorage.getItem("employeeList"));

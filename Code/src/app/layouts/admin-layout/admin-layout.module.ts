@@ -105,6 +105,7 @@ import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
 import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
+import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 
 @NgModule({
   imports: [
@@ -214,7 +215,8 @@ import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-a
     EmployeePenaltyComponent,
     PenaltyPortalServiceComponent,
     AccountDetailComponent,
-    EmployeeAccountServiceComponent
+    EmployeeAccountServiceComponent,
+    EmployeeSalaryComponent
   ]
 })
 

@@ -1,0 +1,142 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-6 col-lg-6 col-xl-5 pl-18 ipad-pl-40">
+            <div>
+                <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                    style="width: 150px;" [(ngModel)]="selectedYear">
+                    <option value="0">Year</option>
+                    <option value={{yer.year}} *ngFor="let yer of yearList"
+                        ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                </select>
+                <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                    style="width: 150px;">
+                    <option value="0">Month</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-4 main-headers">
+            Employee Salary
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+            <div class="fix-home">
+                <div id="topPenality" class="float-first ml-10 mt-0">
+                    <span class="house"><i class="fas fa-rupee-sign" style="color:green"></i> {{salaryDetail.totalSalary}}</span><br>
+                    <h6>Total Salary</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 90vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData();" style="display: none;">
+                                        <option value="0">
+                                            All Employee
+                                        </option>
+                                        <option *ngFor="let user of employeeList" value={{user.empId}}>
+                                            {{user.name}}
+                                        </option>
+                                    </select>
+
+                                    <i class="fas fa-file-export"
+                                        style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;"
+                                        (click)="exportexcel();"></i>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Total Amount</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Reward Amount</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Penalty Amount</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Final Amount</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Working Days</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Garage Duty</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
+                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                    {{data.name}} <b> ({{data.empCode}})</b>
+                                                </td>
+                                                <td class="text-right br-1">
+                                                    {{data.totalAmount}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.rewardAmount}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.penaltyAmount}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.finalAmount}} </td>
+                                                <td class="text-right br-1">
+                                                    {{data.workingDays}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.garageDuty}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-----NeW Work Start------->
+        <div class="col-md-12 col-lg-12 col-xl-5 pr-13 mob-pr-10 mob-res pad-pl-0">
+            <div class="fix-h">
+                <div class="row right-scroll">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
