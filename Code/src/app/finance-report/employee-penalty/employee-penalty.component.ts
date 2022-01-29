@@ -293,9 +293,7 @@ export class EmployeePenaltyComponent implements OnInit {
       }
       htmlString += "</table>";
     }
-
-    console.log(htmlString);
-
+    
     var parser = new DOMParser();
     var doc = parser.parseFromString(htmlString, 'text/html');
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
