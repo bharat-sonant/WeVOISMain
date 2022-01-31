@@ -21,6 +21,7 @@ export class EmployeeSalaryComponent implements OnInit {
   selectedMonthName: any;
   yearList: any[];
   sundayList: any[];
+  designationList: any[];
   employeeList: any[];
   monthSalaryList: any[];
   salaryList: any[];
@@ -58,6 +59,7 @@ export class EmployeeSalaryComponent implements OnInit {
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
     this.employeeList = [];
+    this.designationList = [];
     this.salaryList = [];
     this.allSalaryList = [];
     this.getYear();
@@ -67,6 +69,7 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#ddlYear').val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getSetting();
+
   }
 
   getSetting() {
@@ -125,15 +128,7 @@ export class EmployeeSalaryComponent implements OnInit {
               let name = data[i]["GeneralDetails"]["name"];
               let doj = data[i]["GeneralDetails"]["dateOfJoining"];
               let designation = "";
-              if (data[i]["GeneralDetails"]["designationId"] == "5") {
-                designation = "Driver";
-              }
-              else if (data[i]["GeneralDetails"]["designationId"] == "6") {
-                designation = "Helper";
-              }
-              else {
-                this.getDesignation(empId, data[i]["GeneralDetails"]["designationId"]);
-              }
+              this.getDesignation(empId, data[i]["GeneralDetails"]["designationId"]);
               let task = [];
               let totalWages = [];
               salaryList.push({ empId: empId, empCode: empCode, name: name, doj: doj, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0 });
@@ -152,9 +147,24 @@ export class EmployeeSalaryComponent implements OnInit {
       data => {
         designationInstance.unsubscribe();
         if (data != null) {
+          let designation = "";
           let detail = this.allSalaryList.find(item => item.empId == empId);
           if (detail != undefined) {
-            detail.designation = data;
+            if (data == "Transportation Executive") {
+              designation = "Driver";
+            }
+            else if (data == "Service Excecutive ") {
+              designation = "Helper";
+            }
+            else {
+              designation = data;
+            }
+            detail.designation = designation;
+            let designationDetail = this.designationList.find(item => item.designation == designation);
+            if (designationDetail == undefined) {
+              this.designationList.push({ designation: designation });
+              this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
+            }
           }
         }
       }
@@ -379,16 +389,17 @@ export class EmployeeSalaryComponent implements OnInit {
       totalSalary += finalAmount;
     }
     this.salaryDetail.totalSalary = totalSalary.toFixed(2);
-    this.showSalaryList("active");
+    this.showSalaryList("active", "all");
     $('#divLoader').hide();
   }
 
-  filterData(){
-    let filterVal=$('#ddlUser').val();
-    this.showSalaryList(filterVal);
+  filterData() {
+    let filterVal = $('#ddlUser').val();
+    let designationFilterVal = $('#ddlDesignation').val();
+    this.showSalaryList(filterVal, designationFilterVal);
   }
 
-  showSalaryList(status: any) {
+  showSalaryList(status: any, designation: any) {
     this.salaryList = [];
     for (let i = 0; i < this.allSalaryList.length; i++) {
       if (status == "all") {
@@ -423,6 +434,9 @@ export class EmployeeSalaryComponent implements OnInit {
           this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
         }
       }
+    }
+    if (designation != "all") {
+      this.salaryList = this.salaryList.filter(item => item.designation == designation);
     }
   }
 
@@ -459,6 +473,7 @@ export class EmployeeSalaryComponent implements OnInit {
     this.selectedMonth = "0";
     $('#ddlMonth').val("0");
     $('#ddlUser').val("active");
+    $('#ddlDesignation').val("all");
   }
 
   changeMonthSelection(filterVal: any) {
@@ -468,6 +483,7 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#ddlYear').val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     $('#ddlUser').val("active");
+    $('#ddlDesignation').val("all");
     this.getSalary();
   }
 
