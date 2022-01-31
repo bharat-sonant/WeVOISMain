@@ -100,17 +100,15 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Designation</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Total Amount</th>
+                                                Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Reward Amount</th>
+                                                Reward</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Penalty Amount</th>
+                                                Penalty</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Final Amount</th>
+                                                Final Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Working Days</th>
-                                            <th class="text-right br-1" style="border:none!important;">
-                                                Garage Duty</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
@@ -131,9 +129,6 @@
                                                     {{data.finalAmount}} </td>
                                                 <td class="text-right br-1">
                                                     {{data.workingDays}}</td>
-                                                <td class="text-right br-1">
-                                                    {{data.garageDuty}}
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

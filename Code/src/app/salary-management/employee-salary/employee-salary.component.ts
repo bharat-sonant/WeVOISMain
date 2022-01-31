@@ -511,22 +511,22 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "Name";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Total Amount";
+      htmlString += "Designation";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Reward Amount";
+      htmlString += "Salary";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Penalty Amount";
+      htmlString += "Reward";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Final Amount";
+      htmlString += "Penalty";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Final Salary";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Working Days";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Garage Duty";
       htmlString += "</td>";
 
       htmlString += "</tr>";
@@ -538,6 +538,9 @@ export class EmployeeSalaryComponent implements OnInit {
         htmlString += "<tr>";
         htmlString += "<td>";
         htmlString += this.salaryList[i]["name"] + "(" + this.salaryList[i]["empCode"] + ")";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.salaryList[i]["designation"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.salaryList[i]["totalAmount"];
@@ -553,9 +556,6 @@ export class EmployeeSalaryComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.salaryList[i]["workingDays"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.salaryList[i]["garageDuty"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
@@ -580,6 +580,8 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "<td style='text-align:right'><b>Total</b>";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += totalAmount;
       htmlString += "</td>";
       htmlString += "<td>";
@@ -590,8 +592,6 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += finalAmount;
-      htmlString += "</td>";
-      htmlString += "<td>";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "</td>";
