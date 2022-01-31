@@ -136,9 +136,9 @@ export class EmployeeSalaryComponent implements OnInit {
               }
               let task = [];
               let totalWages = [];
-              salaryList.push({ empId: empId, empCode: empCode, name: name, doj: doj, status:data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0 });
+              salaryList.push({ empId: empId, empCode: empCode, name: name, doj: doj, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0 });
             }
-            this.salaryList = this.commonService.transformNumeric(salaryList, "empCode");
+            this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
           }
           this.getSalary();
         }
@@ -152,7 +152,7 @@ export class EmployeeSalaryComponent implements OnInit {
       data => {
         designationInstance.unsubscribe();
         if (data != null) {
-          let detail = this.salaryList.find(item => item.empId == empId);
+          let detail = this.allSalaryList.find(item => item.empId == empId);
           if (detail != undefined) {
             detail.designation = data;
           }
@@ -160,7 +160,6 @@ export class EmployeeSalaryComponent implements OnInit {
       }
     );
   }
-
 
   getSalary() {
     $('#divLoader').show();
@@ -216,7 +215,7 @@ export class EmployeeSalaryComponent implements OnInit {
                         garageDays = 1;
                       }
 
-                      let detail = this.salaryList.find(item => item.empId == empId);
+                      let detail = this.allSalaryList.find(item => item.empId == empId);
                       if (detail != undefined) {
                         detail.totalAmount += salary;
                         detail.workingDays += 1;
@@ -247,40 +246,40 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getReward() {
-    if (this.salaryList.length > 0) {
+    if (this.allSalaryList.length > 0) {
       let workDays = this.workingDayInMonth;
-      for (let i = 0; i < this.salaryList.length; i++) {
-        let fullDays = this.salaryList[i]["fullDay"];
+      for (let i = 0; i < this.allSalaryList.length; i++) {
+        let fullDays = this.allSalaryList[i]["fullDay"];
         if (fullDays > workDays) {
           let rewardDays = fullDays - workDays;
           let rewardAmount = 0;
 
-          if (this.salaryList[i]["vehicle"].includes("TRACTOR")) {
+          if (this.allSalaryList[i]["vehicle"].includes("TRACTOR")) {
             if (this.sundayList.length > 4) {
               rewardDays = fullDays - (workDays + this.tractor_reward_days + 1);
             }
             else {
               rewardDays = fullDays - (workDays + this.tractor_reward_days);
             }
-            if (this.salaryList[i]["designation"] == "Driver") {
+            if (this.allSalaryList[i]["designation"] == "Driver") {
               rewardAmount = this.tractor_reward_amount;
             }
-            else if (this.salaryList[i]["designation"] == "Helper") {
+            else if (this.allSalaryList[i]["designation"] == "Helper") {
               rewardAmount = this.helper_reward_amount;
             }
           }
           if (rewardDays > 0) {
-            let designation = this.salaryList[i]["designation"];
+            let designation = this.allSalaryList[i]["designation"];
             if (rewardAmount == 0) {
               if (designation == "Driver") {
-                this.salaryList[i]["rewardAmount"] = rewardDays * this.driver_reward_amount;
+                this.allSalaryList[i]["rewardAmount"] = rewardDays * this.driver_reward_amount;
               }
               else if (designation == "Helper") {
-                this.salaryList[i]["rewardAmount"] = rewardDays * this.helper_reward_amount;
+                this.allSalaryList[i]["rewardAmount"] = rewardDays * this.helper_reward_amount;
               }
             }
             else {
-              this.salaryList[i]["rewardAmount"] = rewardAmount;
+              this.allSalaryList[i]["rewardAmount"] = rewardAmount;
             }
           }
         }
@@ -308,7 +307,7 @@ export class EmployeeSalaryComponent implements OnInit {
                   if (empObject[empId]["amount"] != null) {
                     penalty = Number(empObject[empId]["amount"]);
                   }
-                  let detail = this.salaryList.find(item => item.empId == empId);
+                  let detail = this.allSalaryList.find(item => item.empId == empId);
                   if (detail != undefined) {
                     let totalWages = detail.totalWages;
                     if (empObject[empId]["penaltyType"] == "Absent + Penalty" || empObject[empId]["penaltyType"] == "Absent") {
@@ -330,9 +329,9 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getTractorPenalty() {
-    for (let i = 0; i < this.salaryList.length; i++) {
-      let task = this.salaryList[i]["task"];
-      let designation = this.salaryList[i]["designation"];
+    for (let i = 0; i < this.allSalaryList.length; i++) {
+      let task = this.allSalaryList[i]["task"];
+      let designation = this.allSalaryList[i]["designation"];
       if (designation == "Driver") {
         if (task.length > 0) {
           let isTractor = true;
@@ -344,17 +343,17 @@ export class EmployeeSalaryComponent implements OnInit {
           }
           if (isTractor == false) {
             let workDays = this.workingDayInMonth;
-            if (this.sundayList.length > 4) {
+            if (this.allSalaryList.length > 4) {
               workDays += this.tractor_reward_days + 1;
             }
             else {
               workDays += this.tractor_reward_days;
             }
-            let workingDays = this.salaryList[i]["fullDay"];
+            let workingDays = this.allSalaryList[i]["fullDay"];
             if (workingDays < workDays) {
               let dayDiff = workDays - workingDays;
               let penalty = dayDiff * Number(this.tractor_reward_amount);
-              this.salaryList[i]["penaltyAmount"] = Number(this.salaryList[i]["penaltyAmount"]) + penalty;
+              this.allSalaryList[i]["penaltyAmount"] = Number(this.allSalaryList[i]["penaltyAmount"]) + penalty;
             }
           }
         }
@@ -365,42 +364,84 @@ export class EmployeeSalaryComponent implements OnInit {
 
   getFinalAmount() {
     let totalSalary = 0;
-    for (let i = 0; i < this.salaryList.length; i++) {
-      let totalAmount = this.salaryList[i]["totalAmount"];
-      let rewardAmount = this.salaryList[i]["rewardAmount"];
-      let penaltyAmount = this.salaryList[i]["penaltyAmount"];
+    for (let i = 0; i < this.allSalaryList.length; i++) {
+      let totalAmount = this.allSalaryList[i]["totalAmount"];
+      let rewardAmount = this.allSalaryList[i]["rewardAmount"];
+      let penaltyAmount = this.allSalaryList[i]["penaltyAmount"];
       let finalAmount = Number(totalAmount) + Number(rewardAmount) - Number(penaltyAmount);
-      this.salaryList[i]["finalAmount"] = finalAmount;
-      if (totalAmount < 0) {
-        this.salaryList[i]["orderBy"] = 1;
+      this.allSalaryList[i]["finalAmount"] = finalAmount;
+      if (finalAmount == 0) {
+        this.allSalaryList[i]["orderBy"] = 1;
       }
       else {
-        this.salaryList[i]["orderBy"] = totalAmount;
+        this.allSalaryList[i]["orderBy"] = 0;
       }
       totalSalary += finalAmount;
     }
     this.salaryDetail.totalSalary = totalSalary.toFixed(2);
-    this.salaryList = this.salaryList.sort((a, b) =>
-      b.orderBy > a.orderBy ? 1 : -1
-    );
+    this.showSalaryList("active");
     $('#divLoader').hide();
+  }
+
+  filterData(){
+    let filterVal=$('#ddlUser').val();
+    this.showSalaryList(filterVal);
+  }
+
+  showSalaryList(status: any) {
+    this.salaryList = [];
+    for (let i = 0; i < this.allSalaryList.length; i++) {
+      if (status == "all") {
+        if (this.allSalaryList[i]["totalAmount"] != 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+      else if (status == "active") {
+        if (this.allSalaryList[i]["status"] == "1" && this.allSalaryList[i]["totalAmount"] != 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+      else if (status == "inactive") {
+        if (this.allSalaryList[i]["status"] != "1" && this.allSalaryList[i]["totalAmount"] != 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+    }
+    for (let i = 0; i < this.allSalaryList.length; i++) {
+      if (status == "all") {
+        if (this.allSalaryList[i]["totalAmount"] == 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+      else if (status == "active") {
+        if (this.allSalaryList[i]["status"] == "1" && this.allSalaryList[i]["totalAmount"] == 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+      else if (status == "inactive") {
+        if (this.allSalaryList[i]["status"] != "1" && this.allSalaryList[i]["totalAmount"] == 0) {
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"] });
+        }
+      }
+    }
   }
 
   clearDetail() {
     this.salaryDetail.totalSalary = "0.00";
-    for (let i = 0; i < this.salaryList.length; i++) {
+    this.salaryList = [];
+    for (let i = 0; i < this.allSalaryList.length; i++) {
       let task = [];
       let totalWages = [];
-      this.salaryList[i]["totalWages"] = totalWages;
-      this.salaryList[i]["task"] = task;
-      this.salaryList[i]["vehicle"] = "";
-      this.salaryList[i]["fullDay"] = 0;
-      this.salaryList[i]["totalAmount"] = 0;
-      this.salaryList[i]["rewardAmount"] = 0;
-      this.salaryList[i]["penaltyAmount"] = 0;
-      this.salaryList[i]["finalAmount"] = 0;
-      this.salaryList[i]["workingDays"] = 0;
-      this.salaryList[i]["garageDuty"] = 0;
+      this.allSalaryList[i]["totalWages"] = totalWages;
+      this.allSalaryList[i]["task"] = task;
+      this.allSalaryList[i]["vehicle"] = "";
+      this.allSalaryList[i]["fullDay"] = 0;
+      this.allSalaryList[i]["totalAmount"] = 0;
+      this.allSalaryList[i]["rewardAmount"] = 0;
+      this.allSalaryList[i]["penaltyAmount"] = 0;
+      this.allSalaryList[i]["finalAmount"] = 0;
+      this.allSalaryList[i]["workingDays"] = 0;
+      this.allSalaryList[i]["garageDuty"] = 0;
     }
   }
 

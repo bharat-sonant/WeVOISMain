@@ -34,7 +34,7 @@
             Employee Salary
         </div>
         <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
-            <div class="fix-home">
+            <div class="fix-home" style="display: none;">
                 <div id="topPenality" class="float-first ml-10 mt-0">
                     <span class="house"><i class="fas fa-rupee-sign" style="color:green"></i>
                         {{salaryDetail.totalSalary}}</span><br>
@@ -56,12 +56,15 @@
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlUser" style="display: none;">
-                                        <option value="0">
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
+                                        <option value="all">
                                             All Employee
                                         </option>
-                                        <option *ngFor="let user of employeeList" value={{user.empId}}>
-                                            {{user.name}}
+                                        <option selected value="active">
+                                            Active
+                                        </option>
+                                        <option value="inactive">
+                                            In-active
                                         </option>
                                     </select>
 
@@ -102,7 +105,11 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
                                                 <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
-                                                    <i class="fas fa-circle" style="color:red" [hidden]="data.status==1"></i> {{data.name}} <b> ({{data.empCode}})</b> 
+                                                    <i class="fas fa-circle" style="color:red"
+                                                        [hidden]="data.status==1"></i><span [hidden]="data.status!=1">
+                                                        {{data.name}} <b> ({{data.empCode}})</b> </span>
+                                                    <span [hidden]="data.status==1" style="color: red;"> {{data.name}}
+                                                        <b> ({{data.empCode}})</b> </span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}</td>
