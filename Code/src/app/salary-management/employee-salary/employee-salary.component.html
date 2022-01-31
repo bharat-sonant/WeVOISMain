@@ -84,6 +84,8 @@
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
                                             <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Designation</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Total Amount</th>
                                             <th class="text-right br-1" style="border:none!important;">
@@ -100,8 +102,10 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
                                                 <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
-                                                    {{data.name}} <b> ({{data.empCode}})</b>
+                                                    <i class="fas fa-circle" style="color:red" [hidden]="data.status==1"></i> {{data.name}} <b> ({{data.empCode}})</b> 
                                                 </td>
+                                                <td class="text-left br-1">
+                                                    {{data.designation}}</td>
                                                 <td class="text-right br-1">
                                                     {{data.totalAmount}}</td>
                                                 <td class="text-right br-1">

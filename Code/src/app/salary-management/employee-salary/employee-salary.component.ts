@@ -46,7 +46,6 @@ export class EmployeeSalaryComponent implements OnInit {
   tractor_reward_days: any;
   workingDayInMonth: any;
 
-
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -87,7 +86,6 @@ export class EmployeeSalaryComponent implements OnInit {
     this.basic_minimum_minute = 0;
     this.compactor_basic_minute = 0;
     this.workingDayInMonth = 0;
-
 
     let dbPath = "Settings/Salary";
     let salaryData = this.db.object(dbPath).valueChanges().subscribe(
@@ -133,9 +131,12 @@ export class EmployeeSalaryComponent implements OnInit {
               else if (data[i]["GeneralDetails"]["designationId"] == "6") {
                 designation = "Helper";
               }
+              else {
+                this.getDesignation(empId, data[i]["GeneralDetails"]["designationId"]);
+              }
               let task = [];
               let totalWages = [];
-              salaryList.push({ empId: empId, empCode: empCode, name: name, doj: doj, totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0 });
+              salaryList.push({ empId: empId, empCode: empCode, name: name, doj: doj, status:data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0 });
             }
             this.salaryList = this.commonService.transformNumeric(salaryList, "empCode");
           }
@@ -144,6 +145,22 @@ export class EmployeeSalaryComponent implements OnInit {
       }
     );
   }
+
+  getDesignation(empId: any, designationId: any) {
+    let dbPath = "Defaults/Designations/" + designationId + "/name";
+    let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        designationInstance.unsubscribe();
+        if (data != null) {
+          let detail = this.salaryList.find(item => item.empId == empId);
+          if (detail != undefined) {
+            detail.designation = data;
+          }
+        }
+      }
+    );
+  }
+
 
   getSalary() {
     $('#divLoader').show();
@@ -227,8 +244,6 @@ export class EmployeeSalaryComponent implements OnInit {
         );
       }
     );
-
-
   }
 
   getReward() {
@@ -273,7 +288,6 @@ export class EmployeeSalaryComponent implements OnInit {
       this.getPenalty();
     }
   }
-
 
   getPenalty() {
     let dbPath = "Penalties/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -390,7 +404,6 @@ export class EmployeeSalaryComponent implements OnInit {
     }
   }
 
-
   getYear() {
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
@@ -425,7 +438,6 @@ export class EmployeeSalaryComponent implements OnInit {
       this.sundayList.push({ day: i });
     }
   }
-
 
   exportexcel() {
     let htmlString = "";
@@ -539,9 +551,7 @@ export class EmployeeSalaryComponent implements OnInit {
       let fileName = "Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
       XLSX.writeFile(wb, fileName);
     }
-
   }
-
 }
 
 export class salaryDetail {
