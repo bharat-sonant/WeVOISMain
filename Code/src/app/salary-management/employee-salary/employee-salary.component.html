@@ -78,10 +78,26 @@
                                         </option>
                                     </select>
 
-                                    <i class="fas fa-file-export"
-                                        style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;"
-                                        (click)="exportexcel();"></i>
+                                    
 
+
+                                    <span style="float: right; margin-top: 10px;">
+                                        <label for="fileUpload">
+                                           <b>Upload Excel</b>&nbsp; &nbsp;
+                                            <i class="fas fa-upload"
+                                                style="color: green; cursor: pointer;font-size: 25px;"></i><br/>
+                                                
+                                        </label>
+                                        <input id="fileUpload" type="file" name="file" class="file-upload-field" style="display: none;"
+                                            placeholder="" value="">
+                                            &nbsp; &nbsp; &nbsp; &nbsp;
+                                        <i class="far fa-save" style="color: green; cursor: pointer;font-size: 25px;"
+                                            (click)="uploadSalary();"></i>
+                                            &nbsp; &nbsp; &nbsp;
+                                        <i class="fas fa-file-export"
+                                            style="color: green; font-size: 25px; cursor: pointer; "
+                                            (click)="exportexcel();"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -108,6 +124,8 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Final Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
+                                                Uploaded Salary</th>
+                                            <th class="text-right br-1" style="border:none!important;">
                                                 Working Days</th>
                                         </thead>
                                         <tbody>
@@ -127,6 +145,8 @@
                                                     {{data.penaltyAmount}}</td>
                                                 <td class="text-right br-1">
                                                     {{data.finalAmount}} </td>
+                                                <td class="text-right br-1">
+                                                    {{data.uploadedSalary}} </td>
                                                 <td class="text-right br-1">
                                                     {{data.workingDays}}</td>
                                             </tr>
