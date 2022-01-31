@@ -17,9 +17,11 @@ export class AccountDetailComponent implements OnInit {
   accountRef: AngularFireList<any>;
   db: any;
   cityName: any;
-  employeeList: any[];
+  designationList:any[];
+  allAccountList: any[];
   accountList: any[];
   ddlUser = "#ddlUser";
+  ddlDesignation = "#ddlDesignation";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -29,8 +31,11 @@ export class AccountDetailComponent implements OnInit {
   }
 
   setDefault() {
-    this.employeeList = [];
+    this.designationList=[];
+    this.allAccountList = [];
     this.accountList = [];
+    $(this.ddlUser).val("active");
+    $(this.ddlDesignation).val("all");
     this.getAccountDetail();
   }
 
@@ -41,18 +46,46 @@ export class AccountDetailComponent implements OnInit {
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData);
-        this.accountList = this.commonService.transformNumeric(list, "name");
+        this.allAccountList = this.commonService.transformNumeric(list, "name");
+        for(let i=0;i<this.allAccountList.length;i++){
+          let designationDetail=this.designationList.find(item=>item.designation==this.allAccountList[i]["designation"]);
+          if(designationDetail==undefined){
+            this.designationList.push({designation:this.allAccountList[i]["designation"]});
+            this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
+          }
+        }
+        this.showAccountDetail("active","all");
       }
     }, error => {
       this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
 
     });
-
   }
 
+  filterData() {
+    let filterVal = $('#ddlUser').val();
+    let designationFilterVal = $('#ddlDesignation').val();
+    this.showAccountDetail(filterVal, designationFilterVal);
+  }
+
+  showAccountDetail(status: any, designation: any) {
+    console.log(status);
+    console.log(designation);
+    if (status == "all") {
+      this.accountList = this.allAccountList;
+    }
+    else if (status == "active") {
+      this.accountList = this.allAccountList.filter(item => item.status == "1");
+    }
+    else {
+      this.accountList = this.allAccountList.filter(item => item.status != "1");
+    }
+    if (designation != "all") {
+      this.accountList = this.accountList.filter(item => item.designation == designation);
+    }
+  }
 
   openModel(content: any, id: any) {
-
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 250;

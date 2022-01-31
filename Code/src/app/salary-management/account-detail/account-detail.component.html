@@ -15,7 +15,40 @@
 <div class="main-content">
     <div class="row main-row">
         <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
-            <div class="card" style="margin-top:-6px;  height: 90vh!important">
+            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlDesignation"
+                                        (change)="filterData()">
+                                        <option value="all">
+                                            All Designation
+                                        </option>
+                                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                                            {{dt.designation}}
+                                        </option>
+                                    </select>
+
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
+                                        <option value="all">
+                                            All Employee
+                                        </option>
+                                        <option selected value="active">
+                                            Active
+                                        </option>
+                                        <option value="inactive">
+                                            In-active
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form>
                         <div class="row">
@@ -25,6 +58,8 @@
                                         <thead>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Designation</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 PAN</th>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -41,7 +76,13 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
                                                 <td class="text-left br-1">
-                                                    {{data.name}} <b>[{{data.empCode}}]</b></td>
+                                                    <i class="fas fa-circle" style="color:red"
+                                                        [hidden]="data.status==1"></i>
+                                                    {{data.name}} <b>[{{data.empCode}}]</b>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.designation}}
+                                                </td>
                                                 <td class="text-left br-1">
                                                     {{data.panNo}}
                                                 </td>

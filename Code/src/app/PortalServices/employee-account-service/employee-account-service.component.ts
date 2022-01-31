@@ -36,54 +36,72 @@ export class EmployeeAccountServiceComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let empId = keyArray[i];
               if (data[empId]["GeneralDetails"] != null) {
-                if (data[empId]["GeneralDetails"]["status"] == "1") {
-                  let name = data[empId]["GeneralDetails"]["name"];
-                  let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
-                  let empCode = data[empId]["GeneralDetails"]["empCode"];
-                  let accountNo = "";
-                  let ifsc = "";
-                  let aadharNo = "";
-                  let panNo = "";
-                  let modifyBy = "";
-                  let modifyDate = "";
-                  if (data[empId]["BankDetails"] != null) {
-                    if (data[empId]["BankDetails"]["AccountDetails"] != null) {
-                      if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
-                        accountNo = data[empId]["BankDetails"]["AccountDetails"]["accountNumber"];
-                      }
-                      if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
-                        ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
-                      }
+
+                let status = data[empId]["GeneralDetails"]["status"];
+                let name = data[empId]["GeneralDetails"]["name"];
+                let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
+                let empCode = data[empId]["GeneralDetails"]["empCode"];
+                let designationId = data[empId]["GeneralDetails"]["designationId"];
+                let accountNo = "";
+                let ifsc = "";
+                let aadharNo = "";
+                let panNo = "";
+                let modifyBy = "";
+                let modifyDate = "";
+                if (data[empId]["BankDetails"] != null) {
+                  if (data[empId]["BankDetails"]["AccountDetails"] != null) {
+                    if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
+                      accountNo = data[empId]["BankDetails"]["AccountDetails"]["accountNumber"];
+                    }
+                    if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
+                      ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
                     }
                   }
-                  if (data[empId]["IdentificationDetails"] != null) {
-                    if (data[empId]["IdentificationDetails"]["AadharCardDetails"] != null) {
-                      if (data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"] != null) {
-                        aadharNo = data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"];
-                      }
-                      if (data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"] != null) {
-                        panNo = data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"];
-                      }
-                    }
-                  }
-
-                  let dbPath = "EmployeeDetailModificationHistory/" + empId;
-                  let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
-                    hData => {
-                      historyInstance.unsubscribe();
-                      if (hData != null) {
-                        if (hData["lastModifyBy"] != null) {
-                          modifyBy = hData["lastModifyBy"];
-                        }
-                        if (hData["lastModifyDate"] != null) {
-                          modifyDate = hData["lastModifyDate"];
-                        }
-                      }
-                      this.accountList.push({ empId: empId, empCode: empCode, name: name, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate })
-                    }
-                  );
-
                 }
+                if (data[empId]["IdentificationDetails"] != null) {
+                  if (data[empId]["IdentificationDetails"]["AadharCardDetails"] != null) {
+                    if (data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"] != null) {
+                      aadharNo = data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"];
+                    }
+                    if (data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"] != null) {
+                      panNo = data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"];
+                    }
+                  }
+                }
+
+                let dbPath = "EmployeeDetailModificationHistory/" + empId;
+                let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  hData => {
+                    historyInstance.unsubscribe();
+                    if (hData != null) {
+                      if (hData["lastModifyBy"] != null) {
+                        modifyBy = hData["lastModifyBy"];
+                      }
+                      if (hData["lastModifyDate"] != null) {
+                        modifyDate = hData["lastModifyDate"];
+                      }
+                    }
+                    let dbPath = "Defaults/Designations/" + designationId + "/name";
+                    let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      data => {
+                        designationInstance.unsubscribe();
+                        let designation = "";
+                        if (data != null) {
+                          if (data == "Transportation Executive") {
+                            designation = "Driver";
+                          }
+                          else if (data == "Service Excecutive ") {
+                            designation = "Helper";
+                          }
+                          else {
+                            designation = data;
+                          }
+                        }
+                        this.accountList.push({ empId: empId, empCode: empCode, name: name,designation:designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
+                      });
+
+                  }
+                );
               }
             }
             setTimeout(() => {

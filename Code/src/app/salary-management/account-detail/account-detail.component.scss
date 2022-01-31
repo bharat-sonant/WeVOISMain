@@ -649,7 +649,7 @@
     position: absolute;
     }
     .table-one{
-    height: 90vh;
+    height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
     }
