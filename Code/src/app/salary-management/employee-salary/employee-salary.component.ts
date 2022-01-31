@@ -458,6 +458,7 @@ export class EmployeeSalaryComponent implements OnInit {
     this.selectedYear = filterVal;
     this.selectedMonth = "0";
     $('#ddlMonth').val("0");
+    $('#ddlUser').val("active");
   }
 
   changeMonthSelection(filterVal: any) {
@@ -466,6 +467,7 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#ddlMonth').val(this.selectedMonth);
     $('#ddlYear').val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    $('#ddlUser').val("active");
     this.getSalary();
   }
 
