@@ -614,6 +614,24 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#fileUpload').val("");
   }
 
+  checkAll(){
+    let element=<HTMLInputElement>document.getElementById("chkAll");
+    if(element.checked==true){
+      for(let i=0;i<this.salaryList.length;i++){
+        if(this.salaryList[i]["uploadedSalary"]!=0){
+          let elementChk=<HTMLInputElement>document.getElementById("chk"+this.salaryList[i]["empId"]);
+          elementChk.checked=true;
+        }
+      }
+    }
+    else{
+      for(let i=0;i<this.salaryList.length;i++){
+          let elementChk=<HTMLInputElement>document.getElementById("chk"+this.salaryList[i]["empId"]);
+          elementChk.checked=false;
+      }
+    }
+  }
+
 
   exportSalary() {
     let htmlString = "";
