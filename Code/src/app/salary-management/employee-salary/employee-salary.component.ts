@@ -515,8 +515,8 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#ddlMonth').val("0");
     $('#ddlUser').val("active");
     $('#ddlDesignation').val("all");
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    element.checked=false;
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    element.checked = false;
   }
 
   changeMonthSelection(filterVal: any) {
@@ -527,8 +527,8 @@ export class EmployeeSalaryComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     $('#ddlUser').val("active");
     $('#ddlDesignation').val("all");
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    element.checked=false;
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    element.checked = false;
     this.getSalary();
   }
 
@@ -618,20 +618,22 @@ export class EmployeeSalaryComponent implements OnInit {
     $('#fileUpload').val("");
   }
 
-  checkAll(){
-    let element=<HTMLInputElement>document.getElementById("chkAll");
-    if(element.checked==true){
-      for(let i=0;i<this.salaryList.length;i++){
-        if(this.salaryList[i]["uploadedSalary"]!=0){
-          let elementChk=<HTMLInputElement>document.getElementById("chk"+this.salaryList[i]["empId"]);
-          elementChk.checked=true;
+  checkAll() {
+    let element = <HTMLInputElement>document.getElementById("chkAll");
+    if (element.checked == true) {
+      for (let i = 0; i < this.salaryList.length; i++) {
+        if (this.salaryList[i]["uploadedSalary"] != 0) {
+          if (this.salaryList[i]["accountNo"] != null) {
+            let elementChk = <HTMLInputElement>document.getElementById("chk" + this.salaryList[i]["empId"]);
+            elementChk.checked = true;
+          }
         }
       }
     }
-    else{
-      for(let i=0;i<this.salaryList.length;i++){
-          let elementChk=<HTMLInputElement>document.getElementById("chk"+this.salaryList[i]["empId"]);
-          elementChk.checked=false;
+    else {
+      for (let i = 0; i < this.salaryList.length; i++) {
+        let elementChk = <HTMLInputElement>document.getElementById("chk" + this.salaryList[i]["empId"]);
+        elementChk.checked = false;
       }
     }
   }
@@ -659,13 +661,13 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "</td>";
 
       htmlString += "</tr>";
-      let isChecked=false;
+      let isChecked = false;
       for (let i = 0; i < this.salaryList.length; i++) {
 
         let empId = this.salaryList[i]["empId"];
         let element = <HTMLInputElement>document.getElementById("chk" + empId);
         if (element.checked == true) {
-          isChecked=true;
+          isChecked = true;
           htmlString += "<tr>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["empId"];
@@ -686,8 +688,8 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       }
       htmlString += "</table>";
-      if(isChecked==false){
-        this.commonService.setAlertMessage("error","Please check at least 1 employee for salary !!!");
+      if (isChecked == false) {
+        this.commonService.setAlertMessage("error", "Please check at least 1 employee for salary !!!");
         return;
       }
 
