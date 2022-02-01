@@ -234,7 +234,7 @@ export class EmployeeSalaryComponent implements OnInit {
                       let timesInMinutes = 0;
                       let vehicle = "";
                       let task = [];
-                      for (let k = 1; k < 5; k++) {
+                      for (let k = 1; k <= 5; k++) {
                         if (empObject[empId]["task" + k] != null) {
                           vehicle = empObject[empId]["task" + k]["vehicle"];
                           if (empObject[empId]["task" + k]["final-approved-time-in-minute"] != null) {
@@ -531,7 +531,7 @@ export class EmployeeSalaryComponent implements OnInit {
   uploadSalary() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     if (element.files[0] == null) {
-      this.commonService.setAlertMessage("error", "Please upload excel !!!");
+      this.commonService.setAlertMessage("error", "Please select excel !!!");
       return;
     }
     if (this.selectedYear == "0") {
