@@ -59,7 +59,7 @@
                                     <select class="filter-select filter-input" id="ddlDesignation"
                                         (change)="filterData()">
                                         <option value="all">
-                                            All Designation
+                                            All Roles
                                         </option>
                                         <option *ngFor="let dt of designationList" value={{dt.designation}}>
                                             {{dt.designation}}
@@ -86,26 +86,19 @@
                                             <label for="fileUpload">
                                                 <i class="fas fa-upload"
                                                     style="color: green; cursor: pointer;font-size: 30px;"></i><br />
-                                                Upload Excel
+                                                Upload Salary Excel
                                             </label>
                                             <input id="fileUpload" type="file" name="file" class="file-upload-field"
-                                                style="display: none;" placeholder="" value="">
+                                                style="display: none;" placeholder="" value=""
+                                                (change)="uploadSalary()">
                                             &nbsp; &nbsp; &nbsp; &nbsp;
                                         </span>
                                         <span style="text-align: center;">
                                             <label>
-                                                <i class="far fa-save"
-                                                    style="color: green; cursor: pointer;font-size: 30px;"
-                                                    (click)="uploadSalary();"></i><br />
-                                                Save Excel
-                                                &nbsp; &nbsp; &nbsp;</label>
-                                        </span>
-                                        <span style="text-align: center;">
-                                            <label>
-                                                <i class="fas fa-file-export"
+                                                <i class="fas fa-file-download"
                                                     style="color: green; font-size: 30px; cursor: pointer; "
-                                                    (click)="exportexcel();"></i><br />
-                                                Export Excel</label></span>
+                                                    (click)="exportSalary();"></i><br />
+                                                Download Salary</label></span>
                                     </span>
                                 </div>
                             </div>
@@ -123,7 +116,9 @@
                                         <thead>
                                             <th class="br-1 td-1" style="border:none!important;">Name</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Designation</th>
+                                                Role</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Days</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
@@ -135,10 +130,11 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Uploaded Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Working Days</th>
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
+
                                                 <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
                                                     <i class="fas fa-circle" style="color:red"
                                                         [hidden]="data.status==1"></i>
@@ -146,6 +142,8 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.workingDays}}</td>
                                                 <td class="text-right br-1">
                                                     {{data.totalAmount}}</td>
                                                 <td class="text-right br-1">
@@ -157,7 +155,12 @@
                                                 <td class="text-right br-1">
                                                     {{data.uploadedSalary}} </td>
                                                 <td class="text-right br-1">
-                                                    {{data.workingDays}}</td>
+                                                    <input id="chk{{data.empId}}" type="checkbox"
+                                                        [disabled]="data.uploadedSalary==0"
+                                                        [hidden]="data.accountNo==null">
+                                                    <i class="fas fa-exclamation-circle" style="color: red;"
+                                                        [hidden]="data.accountNo!=null"></i>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

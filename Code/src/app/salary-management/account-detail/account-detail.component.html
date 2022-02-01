@@ -24,7 +24,7 @@
                                     <select class="filter-select filter-input" id="ddlDesignation"
                                         (change)="filterData()">
                                         <option value="all">
-                                            All Designation
+                                            All Roles
                                         </option>
                                         <option *ngFor="let dt of designationList" value={{dt.designation}}>
                                             {{dt.designation}}
@@ -59,7 +59,7 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Name</th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Designation</th>
+                                                Role</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 PAN</th>
                                             <th class="text-left br-1" style="border:none!important;">
