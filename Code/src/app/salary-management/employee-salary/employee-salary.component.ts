@@ -602,27 +602,100 @@ export class EmployeeSalaryComponent implements OnInit {
         let empId = fileList[i]["EmployeeId"];
         let salary = fileList[i]["Salary"];
         let name = fileList[i]["Name"];
+        let remark = "";
         if (empId != undefined && salary != undefined) {
+          let isCorrect = true;
+          let chkEmpId = Number(empId);
+          let chkSalary = Number(salary);
+          if (Number.isNaN(chkEmpId)) {
+            isCorrect = false;
+            remark = "EmployeeId is not in correct format.";
+          }
+          if (Number.isNaN(chkSalary)) {
+            isCorrect = false;
+            remark = "Salary is not in correct format.";
+          }
+          if (isCorrect == true) {
             let detail = this.allSalaryList.find(item => item.empId == empId);
             if (detail != undefined) {
-              let systemSalary = detail.finalAmount;
-              detail.uploadedSalary = salary;
-              let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId;
-              this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
+              if (detail.name == name) {
+                let systemSalary = detail.finalAmount;
+                detail.uploadedSalary = salary;
+                let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId;
+                this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
+                detail = this.salaryList.find(item => item.empId == empId);
+                if (detail != undefined) {
+                  detail.uploadedSalary = salary;
+                }
+              }
+              else {
+                remark = "Name is not correct for this EmployeeId";
+                errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
+              }
             }
-            detail = this.salaryList.find(item => item.empId == empId);
-            if (detail != undefined) {
-              detail.uploadedSalary = salary;
+            else {
+              remark = "EmployeeId not in list.";
+              errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
             }
           }
           else {
-            errorData.push({ empId: empId, salary: salary, name: name });
+            errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
           }
+        }
+      }
+
+      if (errorData.length > 0) {
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "EmployeeId";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Salary";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Remark";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < errorData.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += errorData[i]["empId"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += errorData[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += errorData[i]["salary"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += errorData[i]["remark"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+
+        htmlString += "</table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        /* generate workbook and add the worksheet */
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        /* save to file */
+        let fileName = "Error-Data-Salary.xlsx";
+        XLSX.writeFile(wb, fileName);
+      }
+      else {
+        this.commonService.setAlertMessage("success", "Salary uploaded successfully !!!");
+        $('#fileUpload').val("");
       }
     }
-   
-    this.commonService.setAlertMessage("success", "Salary uploaded successfully !!!");
-    $('#fileUpload').val("");
   }
 
   checkAll() {
