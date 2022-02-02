@@ -277,7 +277,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   changeOptionSelection(option: any) {
-    
+
     if (option == "0") {
       this.commonService.setAlertMessage("error", "Please select option !!!");
       this.selectedOption = "0";
@@ -351,7 +351,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getCapturedImages() {
-    
+
     this.progressList = [];
     this.allProgressList = [];
     this.getCategorySummary();
@@ -617,10 +617,14 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     elementInput.checked = false;
     let elementButton = <HTMLButtonElement>document.getElementById("btnAnalysis");
     elementButton.disabled = true;
+    let elementDistance = <HTMLElement>document.getElementById("resolvedDistance");
+    let className = elementDistance.className;
+    $('#resolvedDistance').removeClass(className);
+    $('#resolvedDistance').addClass("");
   }
 
   getCaptureData(index: any) {
-    
+
     this.startLoader();
     this.resetDetail();
     this.setActiveClass(index);
@@ -645,7 +649,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         element.checked = true;
         elementButton.disabled = false;
       }
-      if (imageName.split('~').length==4) {
+      if (imageName.split('~').length == 4) {
         imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
       else {
@@ -711,6 +715,14 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         let lat2 = Number(BvgAction["latlng"].split(',')[0]);
         let lng2 = Number(BvgAction["latlng"].split(',')[1]);
         let distance = this.commonService.getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2);
+        let cssClass = "";
+        if (distance > 50) {
+          cssClass = "resolved-distance";
+        }
+        let elementDistance = <HTMLElement>document.getElementById("resolvedDistance");
+        let className = elementDistance.className;
+        $('#resolvedDistance').removeClass(className);
+        $('#resolvedDistance').addClass(cssClass);
         if (distance > 1000) {
           this.progressData.distance = (distance / 1000).toFixed(3) + " KM";
         }
@@ -739,7 +751,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   openModel(content: any) {
-    
+
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 170;
@@ -842,7 +854,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   analysis() {
-    
+
     let index = $(this.dataId).val();
     let imageId = this.progressList[Number(index)]["imageId"];
     let prePenalty = this.progressList[Number(index)]["penalty"];
