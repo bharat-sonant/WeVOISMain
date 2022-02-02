@@ -725,7 +725,7 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString = "<table>";
       htmlString += "<tr>";
       htmlString += "<td>";
-      htmlString += "EmployeeId";
+      htmlString += "EmployeeCode";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Beneficiary Name";
@@ -768,7 +768,7 @@ export class EmployeeSalaryComponent implements OnInit {
           isChecked = true;
           htmlString += "<tr>";
           htmlString += "<td>";
-          htmlString += this.salaryList[i]["empId"];
+          htmlString += this.salaryList[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["name"];
@@ -808,6 +808,8 @@ export class EmployeeSalaryComponent implements OnInit {
       var parser = new DOMParser();
       var doc = parser.parseFromString(htmlString, 'text/html');
       const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+      
 
       /* generate workbook and add the worksheet */
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
