@@ -1,0 +1,146 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-6 col-lg-6 col-xl-5 pl-18 ipad-pl-40">
+            <div>
+                <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                    style="width: 150px;" [(ngModel)]="selectedYear">
+                    <option value="0">Year</option>
+                    <option value={{yer.year}} *ngFor="let yer of yearList"
+                        ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                </select>
+                <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                    style="width: 150px;">
+                    <option value="0">Month</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-4 main-headers">
+            Salary Holding Management
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="margin-left: 0px!important;">
+                                    <button type="button" class="user-button" style="cursor: cell;"
+                                        (click)="openModel(contentHolding,0,'add');">
+                                        <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
+                                            &nbsp; ADD NEW</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who holding</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who said to Hold</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Holding Reason</th>
+                                            <th class="text-left br-1" style="border:none!important;"></th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of salaryHoldingList; let i=index">
+                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                    {{data.name}} <b> ({{data.empCode}})</b>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.WhoHold}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.holdSaidBy}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.holdReason}}</td>
+                                                <td class="text-center br-1">
+                                                    <i class="fas fa-edit" style="cursor: pointer;" (click)="openModel(contentHolding,data.empId,'edit');"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--employee  Start-->
+<ng-template #contentHolding>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Hold Entry</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="holdingId" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <label>Employee</label>
+                    <select id="ddlHoldEmployee" class="input-green">
+                        <option value="0">Select Employee</option>
+                        <option value={{emp.empId}} *ngFor="let emp of employeeList">{{emp.name}}</option>
+                    </select>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <label>Who said to hold</label>
+                    <input type="text" id="txtHoldSaid" class="input-green" />
+                </div>
+                <div class="wrap-input-effects" required>
+                    <label>Holding Reason</label>
+                    <textarea id="txtHoldingReason" rows="10"></textarea>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveHolding();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
