@@ -1,15 +1,12 @@
 /// <reference types="@types/googlemaps" />
-
 import { Component, ViewChild } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
-import { interval } from "rxjs";
 //services
 import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 

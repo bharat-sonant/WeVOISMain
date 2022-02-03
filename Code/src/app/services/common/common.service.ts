@@ -1032,9 +1032,11 @@ export class CommonService {
             }
           }
         }
+        letestZone=this.transformNumeric(letestZone,"zoneName");
         localStorage.setItem("latest-zones", JSON.stringify(letestZone));
       }
       else {
+        letestZone=this.transformNumeric(letestZone,"zoneName");
         localStorage.setItem("latest-zones", JSON.stringify(letestZone));
       }
       wardDetail.unsubscribe();
