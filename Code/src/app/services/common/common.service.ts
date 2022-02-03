@@ -886,8 +886,8 @@ export class CommonService {
               let kmlUrl = data[wardNo];
               wardKMLList.push({ wardNo: wardNo, kmlUrl: kmlUrl });
             }
-            localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
           }
+          localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
         }
         else {
           localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
