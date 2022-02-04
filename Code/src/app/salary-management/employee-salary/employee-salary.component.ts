@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
+import { AngularFirestore } from "@angular/fire/firestore";
 
 @Component({
   selector: 'app-employee-salary',
@@ -12,7 +13,7 @@ import * as XLSX from 'xlsx';
 })
 export class EmployeeSalaryComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public dbFireStore: AngularFirestore,private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -48,6 +49,7 @@ export class EmployeeSalaryComponent implements OnInit {
   tractor_reward_amount: any;
   tractor_reward_days: any;
   workingDayInMonth: any;
+  fireStoreCity:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -57,6 +59,10 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   setDefault() {
+    this.fireStoreCity = this.commonService.getFireStoreCity();
+    if (this.fireStoreCity == "Test") {
+      this.fireStoreCity = "Testing";
+    }
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
@@ -145,7 +151,7 @@ export class EmployeeSalaryComponent implements OnInit {
                   }
                 }
               }
-              salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0 });
+              salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0,hold:0 });
             }
             this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
           }
@@ -178,7 +184,19 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       }
     );
+  }
 
+  getHoldSalary(){
+    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName).get().subscribe(
+      (ss) => {
+        ss.forEach((doc) => {
+          let empId = doc.id;
+          let empDetail = this.allSalaryList.find(item => item.empId == empId);
+          if (empDetail != undefined) {
+            empDetail.hold=1;
+          }          
+        });
+      });
   }
 
   getDesignation(empId: any, designationId: any) {
@@ -214,6 +232,7 @@ export class EmployeeSalaryComponent implements OnInit {
   getSalary() {
     $('#divLoader').show();
     this.getUploadedSalary();
+    this.getHoldSalary();
     this.getSundaysInMonth(this.selectedMonth, this.selectedYear);
     let dbPath = "Defaults/WorkingDayInMonth/" + this.selectedMonthName;
     let workingDayInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -445,34 +464,34 @@ export class EmployeeSalaryComponent implements OnInit {
     for (let i = 0; i < this.allSalaryList.length; i++) {
       if (status == "all") {
         if (this.allSalaryList[i]["totalAmount"] != 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
       else if (status == "active") {
         if (this.allSalaryList[i]["status"] == "1" && this.allSalaryList[i]["totalAmount"] != 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
       else if (status == "inactive") {
         if (this.allSalaryList[i]["status"] != "1" && this.allSalaryList[i]["totalAmount"] != 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
     }
     for (let i = 0; i < this.allSalaryList.length; i++) {
       if (status == "all") {
         if (this.allSalaryList[i]["totalAmount"] == 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
       else if (status == "active") {
         if (this.allSalaryList[i]["status"] == "1" && this.allSalaryList[i]["totalAmount"] == 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
       else if (status == "inactive") {
         if (this.allSalaryList[i]["status"] != "1" && this.allSalaryList[i]["totalAmount"] == 0) {
-          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"] });
+          this.salaryList.push({ empId: this.allSalaryList[i]["empId"], empCode: this.allSalaryList[i]["empCode"], name: this.allSalaryList[i]["name"], email: this.allSalaryList[i]["email"], accountNo: this.allSalaryList[i]["accountNo"], ifsc: this.allSalaryList[i]["ifsc"], doj: this.allSalaryList[i]["doj"], status: this.allSalaryList[i]["status"], totalWages: this.allSalaryList[i]["totalWages"], task: this.allSalaryList[i]["task"], vehicle: this.allSalaryList[i]["vehicle"], designation: this.allSalaryList[i]["designation"], fullDay: this.allSalaryList[i]["fullDay"], totalAmount: this.allSalaryList[i]["totalAmount"], rewardAmount: this.allSalaryList[i]["rewardAmount"], penaltyAmount: this.allSalaryList[i]["penaltyAmount"], finalAmount: this.allSalaryList[i]["finalAmount"], workingDays: this.allSalaryList[i]["workingDays"], garageDuty: this.allSalaryList[i]["garageDuty"], orderBy: this.allSalaryList[i]["orderBy"], uploadedSalary: this.allSalaryList[i]["uploadedSalary"],hold:this.allSalaryList[i]["hold"] });
         }
       }
     }
@@ -498,6 +517,7 @@ export class EmployeeSalaryComponent implements OnInit {
       this.allSalaryList[i]["workingDays"] = 0;
       this.allSalaryList[i]["garageDuty"] = 0;
       this.allSalaryList[i]["uploadedSalary"] = 0;
+      this.allSalaryList[i]["hold"]=0;
     }
   }
 
@@ -703,7 +723,7 @@ export class EmployeeSalaryComponent implements OnInit {
     if (element.checked == true) {
       for (let i = 0; i < this.salaryList.length; i++) {
         if (this.salaryList[i]["uploadedSalary"] != 0) {
-          if (this.salaryList[i]["accountNo"] != null) {
+          if (this.salaryList[i]["accountNo"] != null && this.salaryList[i]["hold"] != 1) {
             let elementChk = <HTMLInputElement>document.getElementById("chk" + this.salaryList[i]["empId"]);
             elementChk.checked = true;
           }

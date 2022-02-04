@@ -158,9 +158,11 @@
                                                 <td class="text-right br-1">
                                                     <input id="chk{{data.empId}}" type="checkbox"
                                                         [disabled]="data.uploadedSalary==0"
-                                                        [hidden]="data.accountNo==null">
+                                                        [hidden]="data.accountNo==null  || data.hold==1">
                                                     <i class="fas fa-exclamation-circle" style="color: red;"
                                                         [hidden]="data.accountNo!=null"></i>
+                                                        <i class="far fa-hand-paper" style="color:blue"
+                                                        [hidden]="data.hold==0"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
