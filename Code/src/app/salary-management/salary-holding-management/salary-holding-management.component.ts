@@ -213,7 +213,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
       if (empId != "0") {
         let detail = this.salaryHoldingList.find(item => item.empId == empId);
         if (detail != undefined) {
-          this.commonService.setAlertMessage("error", "Employee " + detail.name + " (" + detail.empCode + ") already exist !!!");
+          this.commonService.setAlertMessage("error", "Employee " + detail.name + " (" + detail.empCode + ") already exist in salary hold list !!!");
           $(this.ddlHoldEmployee).val("0");
         }
       }
