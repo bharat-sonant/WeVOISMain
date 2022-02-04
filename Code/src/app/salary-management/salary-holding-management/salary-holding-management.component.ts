@@ -34,6 +34,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   txtHoldingReason = "#txtHoldingReason";
   divHoldList = "#divHoldList";
   divUnholdList = "#divUnholdList";
+  divLoader="#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -88,11 +89,13 @@ export class SalaryHoldingManagementComponent implements OnInit {
           }
         }
         this.getSalaryHolding();
+        this.getUnholdSalary();
       }
     });
   }
 
   getSalaryHolding() {
+    $(this.divLoader).show();
     this.salaryHoldingList = [];
     this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName).get().subscribe(
       (ss) => {
@@ -116,6 +119,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
           }
         });
         this.salaryHoldingList = this.commonService.transformNumeric(salaryHoldingList, "name");
+        $(this.divLoader).hide();
       });
   }
 
@@ -147,6 +151,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
     $(this.divHoldList).show();
     $(this.divUnholdList).hide();
     this.getSalaryHolding();
+    this.getUnholdSalary();
   }
 
   openModel(content: any, id: any, type: any) {
