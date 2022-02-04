@@ -332,7 +332,6 @@ export class SalaryHoldingManagementComponent implements OnInit {
               for (let i = 1; i <= key; i++) {
                 this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).collection(i.toString()).get().subscribe((sc) => {
                   sc.forEach((doc1) => {
-                    console.log(doc1.data());
                     let empId = doc.id;
                     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
                     if (empDetail != undefined) {
