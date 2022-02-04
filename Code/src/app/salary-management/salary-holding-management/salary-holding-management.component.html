@@ -56,7 +56,7 @@
                                     Salary
                                     <button type="button" class="user-button"
                                         style="cursor: cell; float:right; margin-right:20px;"
-                                        (click)="openModel(contentHolding,0,'hold','add');">
+                                        (click)="openModel(contentHolding,0,'hold');">
                                         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
                                             &nbsp; ADD NEW</span></button>
                                 </div>
@@ -100,17 +100,18 @@
                                                     {{data.holdReason}}</td>
                                                 <td class="text-center br-1">
                                                     <i class="fas fa-edit" style="cursor: pointer;"
-                                                        (click)="openModel(contentHolding,data.empId,'hold','edit');"></i>
+                                                        [hidden]="data.holdBy!=data.userID"
+                                                        (click)="openModel(contentHolding,data.empId,'hold');"></i>
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <span style="cursor: pointer;"
-                                                        (click)="openModel(contentHolding,data.empId,'unhold','add');">Un-Hold</span>
+                                                        (click)="openModel(contentHolding,data.empId,'unhold');">Un-Hold</span>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessageHold" class="col-md-12 pr-1 text-center"
+                                        [hidden]="salaryHoldingList.length>0" style="padding-top: 20vh;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -161,8 +162,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessageUnhold" class="col-md-12 pr-1 text-center"
+                                        [hidden]="salaryUnholdingList.length>0" style="padding-top: 20vh; ">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -192,7 +193,7 @@
                 <input id="eventType" type="hidden" value="" />
                 <div class="wrap-input-effects" required>
                     <label>Employee</label>
-                    <select id="ddlHoldEmployee" class="input-green">
+                    <select id="ddlHoldEmployee" class="input-green" (change)="checkHoldList()">
                         <option value="0">Select Employee</option>
                         <option value={{emp.empId}} *ngFor="let emp of employeeList">{{emp.name}}</option>
                     </select>

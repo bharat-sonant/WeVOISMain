@@ -110,7 +110,8 @@ export class SalaryHoldingManagementComponent implements OnInit {
               let holdSaidBy = doc.data()["holdSaidBy"];
               let holdReason = doc.data()["holdReason"];
               let holdDate = doc.data()["holdDate"];
-              salaryHoldingList.push({ empId: empId, holdDate: holdDate, name: name, empCode: empCode, holdBy: holdBy, WhoHold: WhoHold, holdSaidBy: holdSaidBy, holdReason: holdReason });
+              let userID = localStorage.getItem("userID");
+              salaryHoldingList.push({ userID: userID, empId: empId, holdDate: holdDate, name: name, empCode: empCode, holdBy: holdBy, WhoHold: WhoHold, holdSaidBy: holdSaidBy, holdReason: holdReason });
             }
           }
         });
@@ -124,8 +125,6 @@ export class SalaryHoldingManagementComponent implements OnInit {
     this.selectedYear = filterVal;
     this.selectedMonth = "0";
     $(this.ddlMonth).val("0");
-    let element = <HTMLInputElement>document.getElementById("chkAll");
-    element.checked = false;
     let holdElement = <HTMLInputElement>document.getElementById("rdoHold");
     holdElement.checked = true;
     let unholdElement = <HTMLInputElement>document.getElementById("rdoUnhold");
@@ -150,7 +149,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
     this.getSalaryHolding();
   }
 
-  openModel(content: any, id: any, type: any, eventType: any) {
+  openModel(content: any, id: any, type: any) {
     if (this.selectedYear == "0") {
       this.commonService.setAlertMessage("error", "Please select year !!!");
       return;
@@ -171,22 +170,17 @@ export class SalaryHoldingManagementComponent implements OnInit {
     $(this.eventType).val(type);
     if (type == "hold") {
       $('#exampleModalLongTitle').html("Hold Entry");
-      if (eventType == "edit") {
-        if (id != "0") {
-          setTimeout(() => {
-            let detail = this.salaryHoldingList.find(item => item.empId == id);
-            if (detail != undefined) {
-              let element = <HTMLInputElement>document.getElementById("ddlHoldEmployee");
-              element.disabled = true;
-              $(this.ddlHoldEmployee).val(id);
-              $(this.txtHoldSaid).val(detail.holdSaidBy);
-              $(this.txtHoldingReason).val(detail.holdReason);
-            }
-          }, 300);
-        }
-      }
-      else {
-
+      if (id != "0") {
+        setTimeout(() => {
+          let detail = this.salaryHoldingList.find(item => item.empId == id);
+          if (detail != undefined) {
+            let element = <HTMLInputElement>document.getElementById("ddlHoldEmployee");
+            element.disabled = true;
+            $(this.ddlHoldEmployee).val(id);
+            $(this.txtHoldSaid).val(detail.holdSaidBy);
+            $(this.txtHoldingReason).val(detail.holdReason);
+          }
+        }, 300);
       }
     }
     else {
@@ -208,12 +202,26 @@ export class SalaryHoldingManagementComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
+  checkHoldList() {
+    if ($(this.eventType).val() == "hold") {
+      let empId = $(this.ddlHoldEmployee).val();
+      if (empId != "0") {
+        let detail = this.salaryHoldingList.find(item => item.empId == empId);
+        if (detail != undefined) {
+          this.commonService.setAlertMessage("error", "Employee " + detail.name + " (" + detail.empCode + ") already exist !!!");
+          $(this.ddlHoldEmployee).val("0");
+        }
+      }
+    }
+  }
+
   saveHolding() {
     let id = $(this.holdingId).val();
     let eventType = $(this.eventType).val();
     let empId = $(this.ddlHoldEmployee).val();
     let holdSaidBy = $(this.txtHoldSaid).val();
     let holdReason = $(this.txtHoldingReason).val();
+    let message = "";
 
     if (empId == "0") {
       this.commonService.setAlertMessage("error", "Please select employee !!!");
@@ -228,25 +236,27 @@ export class SalaryHoldingManagementComponent implements OnInit {
       return;
     }
     if (eventType == "hold") {
-      const data = {
-        holdSaidBy: holdSaidBy,
-        holdReason: holdReason,
-        holdBy: localStorage.getItem("userID"),
-        holdDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond()
-      }
-      this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").set(data);
-      let detail = this.salaryHoldingList.find(item => item.empId == empId);
-      if (detail != undefined) {
-        detail.holdSaidBy = holdSaidBy
-        detail.holdReason = holdReason;
-      }
       if (id == "0") {
-        this.commonService.setAlertMessage("success", "Data saved successfully !!!");
+        const data = {
+          holdSaidBy: holdSaidBy,
+          holdReason: holdReason,
+          holdBy: localStorage.getItem("userID"),
+          holdDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond()
+        }
+        this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").set(data);
+        message = "Data saved successfully !!!";
         this.getSalaryHolding();
       }
       else {
-        this.commonService.setAlertMessage("success", "Data updated successfully !!!")
+        this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").update({ holdSaidBy: holdSaidBy, holdReason: holdReason });
+        message = "Data updated successfully !!!";
+        let detail = this.salaryHoldingList.find(item => item.empId == empId);
+        if (detail != undefined) {
+          detail.holdSaidBy = holdSaidBy;
+          detail.holdReason = holdReason;
+        }
       }
+      this.commonService.setAlertMessage("success", message);
       this.closeModel();
     }
     else {
@@ -275,6 +285,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
             this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").delete();
             this.commonService.setAlertMessage("success", "Data saved successfully !!!");
             this.getSalaryHolding();
+            this.getUnholdSalary();
             this.closeModel();
           }
         });
@@ -305,15 +316,16 @@ export class SalaryHoldingManagementComponent implements OnInit {
   }
 
   getUnholdSalary() {
-    this.dbFireStore.collection("Testing/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").get().subscribe((ss) => {
+    this.salaryUnholdingList=[];
+    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").get().subscribe((ss) => {
       ss.forEach((doc) => {
-        this.dbFireStore.collection("Testing/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).get().subscribe((data) => {
+        this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).get().subscribe((data) => {
           let key = 0;
           if (data.data() != null) {
             if (data.data()["lastKey"] != undefined) {
               key = Number(data.data()["lastKey"]);
               for (let i = 1; i <= key; i++) {
-                this.dbFireStore.collection("Testing/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).collection(i.toString()).get().subscribe((sc) => {
+                this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).collection(i.toString()).get().subscribe((sc) => {
                   sc.forEach((doc1) => {
                     console.log(doc1.data());
                     let empId = doc.id;
@@ -336,6 +348,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
                         if (userDataUnHold != undefined) {
                           let WhoUnhold = userDataUnHold["name"];
                           this.salaryUnholdingList.push({ empId: empId, holdDate: holdDate, name: name, empCode: empCode, holdBy: holdBy, WhoHold: WhoHold, holdSaidBy: holdSaidBy, holdReason: holdReason, unHoldDate: unHoldDate, unHoldReason: unHoldReason, unHoldSaidBy: unHoldSaidBy, WhoUnhold: WhoUnhold });
+                          this.salaryUnholdingList=this.commonService.transformNumeric(this.salaryUnholdingList,"empCode");
                         }
                       }
                     }
