@@ -50,7 +50,12 @@
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="margin-left: 0px!important;">
-                                    <button type="button" class="user-button" style="cursor: cell; float:right; margin-right:20px;"
+                                    <input id="rdoHold" type="radio" checked (change)="getHoldUnHold('hold');"> Hold
+                                    Salary
+                                    <input id="rdoUnhold" type="radio" (change)="getHoldUnHold('unhold');"> Un-hold
+                                    Salary
+                                    <button type="button" class="user-button"
+                                        style="cursor: cell; float:right; margin-right:20px;"
                                         (click)="openModel(contentHolding,0,'hold','add');">
                                         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
                                             &nbsp; ADD NEW</span></button>
@@ -65,14 +70,14 @@
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
+                                <div id="divHoldList" class="table-wrapper table-one">
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
                                             <th class="br-1 td-1" style="border:none!important;">Name</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Date</th>
-                                                <th class="text-left br-1" style="border:none!important;">
-                                                    Who holding</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who holding</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Who said to Hold</th>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -101,6 +106,58 @@
                                                     <span style="cursor: pointer;"
                                                         (click)="openModel(contentHolding,data.empId,'unhold','add');">Un-Hold</span>
                                                 </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divUnholdList" class="table-wrapper table-one" style="display:none;">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Hold Date</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who holding</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who said to Hold</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Holding Reason</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Un-hold Date</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who Un-holding</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Who said to Un-hold</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Un-holding Reason</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of salaryUnholdingList; let i=index">
+                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                    {{data.name}} <b> ({{data.empCode}})</b>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.holdDate}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.WhoHold}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.holdSaidBy}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.holdReason}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.unHoldDate}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.WhoUnhold}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.unHoldSaidBy}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.unHoldReason}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -155,4 +212,3 @@
     </div>
 </ng-template>
 <!--employee End-->
-
