@@ -4,11 +4,9 @@
 <!----Desktop Navbar Start----->
 <section class="header">
     <div class="row no-gutters">
-
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers">
             Account Detail
         </div>
-
     </div>
 </section>
 <!----Desktop Navbar End----->
@@ -72,6 +70,8 @@
                                                 Modified By</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                             </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Remark</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
@@ -79,6 +79,11 @@
                                                     <i class="fas fa-circle" style="color:red"
                                                         [hidden]="data.status==1"></i>
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
+                                                    &nbsp;
+                                                    <i class="far fa-flag"
+                                                        style="color:red; font-size: 15px; float: right; cursor: pointer;"
+                                                        [hidden]="data.remark==null"
+                                                        (click)="openModel(contentShowRemarks,data.empId,'remarkDetail');"></i>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}
@@ -98,9 +103,14 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <i class="far fa-edit"
-                                                        (click)="openModel(contentEmployee,data.empId);"
+                                                        (click)="openModel(contentEmployee,data.empId,'account');"
                                                         title="Edit Entry"
                                                         style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <i class="fas fa-registered"
+                                                        style="cursor: pointer;font-size: 20px; color: green;"
+                                                        (click)="openModel(contentRemarks,data.empId,'remark');"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -113,7 +123,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </form>
                 </div>
@@ -154,6 +163,55 @@
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
                     (click)="saveAccountDetail();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
+
+<!--employee  Start-->
+<ng-template #contentRemarks>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <textarea id="txtRemarks" rows="5" class="input-remark" placeholder="Remarks"></textarea>
+                </div>
+                <div id="divSolved" class="wrap-input-effects" style="display:block">
+                    <input id="chkSolved" type="checkbox">&nbsp;Is Solved?
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveRemarks();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
+
+
+<!--employee  Start-->
+<ng-template #contentShowRemarks>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div  class="wrap-input-effects" style="font-size: 16px; min-height: 120px;">
+                    {{remarkDetail.remark}}<br/>                    
+                </div>
+                <span style="font-size: 12px; float: right;">
+                    By {{remarkDetail.by}} on {{remarkDetail.date}}</span>
             </div>
         </div>
     </div>
