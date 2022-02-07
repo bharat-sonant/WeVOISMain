@@ -149,19 +149,19 @@ export class EmployeeSalaryComponent implements OnInit {
                   if (data[i]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
                     accountNo = data[i]["BankDetails"]["AccountDetails"]["accountNumber"];
                   }
-                  else{
-                    isShow=1;
+                  else {
+                    isShow = 1;
                   }
                   if (data[i]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
                     ifsc = data[i]["BankDetails"]["AccountDetails"]["ifsc"];
                   }
                 }
-                else{
-                  isShow=1;
+                else {
+                  isShow = 1;
                 }
               }
-              else{
-                isShow=1;
+              else {
+                isShow = 1;
               }
               salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow });
             }
@@ -853,7 +853,12 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += "<td>";
           htmlString += this.salaryList[i]["ifsc"];
           htmlString += "</td>";
-          htmlString += "<td>NEFT";
+          if (this.salaryList[i]["ifsc"].includes("IDFB")) {
+            htmlString += "<td>IFT";
+          }
+          else {
+            htmlString += "<td>NEFT";
+          }
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += "</td>";
