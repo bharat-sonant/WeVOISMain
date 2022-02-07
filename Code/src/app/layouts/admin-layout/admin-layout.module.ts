@@ -107,6 +107,7 @@ import { AccountDetailComponent } from '../../salary-management/account-detail/a
 import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
 import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 import { SalaryHoldingManagementComponent } from '../../salary-management/salary-holding-management/salary-holding-management.component';
+import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
 
 @NgModule({
   imports: [
@@ -218,7 +219,8 @@ import { SalaryHoldingManagementComponent } from '../../salary-management/salary
     AccountDetailComponent,
     EmployeeAccountServiceComponent,
     EmployeeSalaryComponent,
-    SalaryHoldingManagementComponent
+    SalaryHoldingManagementComponent,
+    FeDailyWorkReportComponent
   ]
 })
 

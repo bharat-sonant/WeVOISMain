@@ -124,53 +124,44 @@ export class EmployeeSalaryComponent implements OnInit {
 
   getEmployee() {
     $('#divLoader').show();
-    let dbPath = "Employees";
-    let employeeInstance = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        employeeInstance.unsubscribe();
-        if (data.length > 0) {
-          let salaryList = [];
-          for (let i = 0; i < data.length; i++) {
-            if (data[i]["GeneralDetails"] != null) {
-              let empId = data[i]["GeneralDetails"]["userName"];
-              let empCode = data[i]["GeneralDetails"]["empCode"];
-              let name = data[i]["GeneralDetails"]["name"];
-              let doj = data[i]["GeneralDetails"]["dateOfJoining"];
-              let email = data[i]["GeneralDetails"]["email"];
-              let designation = "";
-              let accountNo = null;
-              let ifsc = "";
-              let isShow = 0;
-              this.getDesignation(empId, data[i]["GeneralDetails"]["designationId"]);
-              let task = [];
-              let totalWages = [];
-              if (data[i]["BankDetails"] != null) {
-                if (data[i]["BankDetails"]["AccountDetails"] != null) {
-                  if (data[i]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
-                    accountNo = data[i]["BankDetails"]["AccountDetails"]["accountNumber"];
-                  }
-                  else {
-                    isShow = 1;
-                  }
-                  if (data[i]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
-                    ifsc = data[i]["BankDetails"]["AccountDetails"]["ifsc"];
-                  }
-                }
-                else {
-                  isShow = 1;
-                }
-              }
-              else {
-                isShow = 1;
-              }
-              salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: data[i]["GeneralDetails"]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow });
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    let employeeInstance = this.httpService.get(path).subscribe(data => {
+      employeeInstance.unsubscribe();
+
+      if (data != null) {
+        let salaryList = [];
+        let jsonData = JSON.stringify(data);
+        let list = JSON.parse(jsonData);
+        if (list.length > 0) {
+          for (let i = 0; i < list.length; i++) {
+            let empId = list[i]["empId"];
+            let empCode = list[i]["empCode"];
+            let name = list[i]["name"];
+            let doj = list[i]["doj"];
+            let email = list[i]["email"];
+            let designation = list[i]["designation"];
+            let accountNo = null;
+            let ifsc = "";
+            let isShow = 0;
+            let task = [];
+            let totalWages = [];
+            if (list[i]["accountNo"] != "") {
+              accountNo = list[i]["accountNo"];
             }
-            this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
+            else {
+              isShow = 1;
+            }
+            if (list[i]["ifsc"] != "") {
+              ifsc = list[i]["ifsc"];
+            }
+            salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: list[i]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow });
           }
+          this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
           this.getSalary();
         }
       }
-    );
+
+    });
   }
 
   getUploadedSalary() {

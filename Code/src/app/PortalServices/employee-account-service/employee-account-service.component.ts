@@ -42,6 +42,7 @@ export class EmployeeAccountServiceComponent implements OnInit {
                 let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
                 let empCode = data[empId]["GeneralDetails"]["empCode"];
                 let designationId = data[empId]["GeneralDetails"]["designationId"];
+                let email=data[empId]["GeneralDetails"]["email"];
                 let accountNo = "";
                 let ifsc = "";
                 let aadharNo = "";
@@ -97,7 +98,7 @@ export class EmployeeAccountServiceComponent implements OnInit {
                             designation = data;
                           }
                         }
-                        this.accountList.push({ empId: empId, empCode: empCode, name: name,designation:designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
+                        this.accountList.push({ empId: empId, empCode: empCode, name: name,email:email,designation:designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
                       });
 
                   }
