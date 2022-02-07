@@ -118,7 +118,7 @@ export class AccountDetailComponent implements OnInit {
     if (type == "remark") {
       height = 275;
     }
-    
+
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -192,7 +192,14 @@ export class AccountDetailComponent implements OnInit {
           userDetail.ifsc = ifsc;
           userDetail.modifyBy = name;
           userDetail.modifyDate = time;
-          this.saveJsonFile(this.accountList);
+          let allUserDetail = this.allAccountList.find(item => item.empId == id);
+          if (allUserDetail != undefined) {
+            allUserDetail.accountNo = accountNo;
+            allUserDetail.ifsc = ifsc;
+            allUserDetail.modifyBy = name;
+            allUserDetail.modifyDate = time;
+          }
+          this.saveJsonFile(this.allAccountList);
         }
         $("#key").val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
@@ -295,7 +302,129 @@ export class AccountDetailComponent implements OnInit {
     const task = ref.put(blob);
   }
 
+  updateJson() {
+    if (this.allAccountList.length > 0) {
+      $("#divLoader").show();
+      let dbPath = "Employees/lastEmpId";
+      let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
+        lastData => {
+          employeeInstance.unsubscribe();
+          if (lastData != null) {
+            let to = Number(lastData);
+            for (let i = 1; i <= to; i++) {
+              let empId = i;
+              let dbPath = "Employees/" + empId + "/GeneralDetails";
+              let generalInstance = this.db.object(dbPath).valueChanges().subscribe(
+                gData => {
+                  generalInstance.unsubscribe();
+                  if (gData != null) {
+                    let detail = this.allAccountList.find(item => item.empId == empId);
+                    if (detail != undefined) {
+                      detail.status = gData["status"];
+                      detail.name = gData["name"];
+                      detail.email = gData["email"];
+                      this.getBankDetails(empId);
+                    }
+                    else {
+                      let status = gData["status"];
+                      let name = gData["name"];
+                      let doj = gData["dateOfJoining"];
+                      let empCode = gData["empCode"];
+                      let designationId = gData["designationId"];
+                      let email = gData["email"];
+                      let accountNo = "";
+                      let ifsc = "";
+                      let aadharNo = "";
+                      let panNo = "";
+                      let modifyBy = "";
+                      let modifyDate = "";
+                      let dbPath = "Defaults/Designations/" + designationId + "/name";
+                      let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
+                        data => {
+                          designationInstance.unsubscribe();
+                          let designation = "";
+                          if (data != null) {
+                            if (data == "Transportation Executive") {
+                              designation = "Driver";
+                            }
+                            else if (data == "Service Excecutive ") {
+                              designation = "Helper";
+                            }
+                            else {
+                              designation = data;
+                            }
+                          }
+                          this.allAccountList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
+                          this.getIdentificationDetails(empId);
+                          this.getBankDetails(empId);
+                        });
+                    }
+                  }
+                }
+              );
+            }
+            setTimeout(() => {
+              this.saveJsonFile(this.allAccountList);
+              setTimeout(() => {
+                this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+                $("#divLoader").hide();
+              }, 6000);
+            }, 30000);
+          }
+        }
+      );
+    }
+  }
 
+  getIdentificationDetails(empId: any) {
+    let dbPath = "Employees/" + empId + "/IdentificationDetails";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let aadharNo = "";
+          let panNo = "";
+          if (data["AadharCardDetails"] != null) {
+            if (data["AadharCardDetails"]["aadharNumber"] != null) {
+              aadharNo = ["AadharCardDetails"]["aadharNumber"];
+            }
+            if (data["PanCardDetails"]["panNumber"] != null) {
+              panNo = ["PanCardDetails"]["panNumber"];
+            }
+            let detail = this.allAccountList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              detail.aadharNo = aadharNo;
+              detail.panNo = panNo;
+            }
+          }
+        }
+      }
+    );
+  }
+
+  getBankDetails(empId: any) {
+    let dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let accountNo = "";
+          let ifsc = "";
+          if (data["accountNumber"] != null) {
+            accountNo = data["accountNumber"];
+          }
+          if (data["ifsc"] != null) {
+            ifsc = data["ifsc"];
+          }
+          let detail = this.allAccountList.find(item => item.empId == empId);
+          if (detail != undefined) {
+            detail.accountNo = accountNo;
+            detail.ifsc = ifsc;
+          }
+        }
+      }
+    );
+  }
 }
 
 
