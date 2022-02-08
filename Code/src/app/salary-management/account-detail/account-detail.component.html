@@ -44,10 +44,10 @@
                                     <span style="float: right; margin-bottom: -10px;">
                                         <span style="text-align: center;">
                                             <label>
-                                                <i class="fas fa-edit"
+                                                <i class="fas fa-sync"
                                                     style="color: green; font-size: 30px; cursor: pointer; "
                                                     (click)="updateJson();"></i><br />
-                                                Update detail</label></span>
+                                                Last update on {{remarkDetail.lastUpdate}}</label></span>
                                     </span>
                                 </div>
                             </div>
@@ -211,8 +211,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div  class="wrap-input-effects" style="font-size: 16px; min-height: 120px;">
-                    {{remarkDetail.remark}}<br/>                    
+                <div class="wrap-input-effects" style="font-size: 16px; min-height: 120px;">
+                    {{remarkDetail.remark}}<br />
                 </div>
                 <span style="font-size: 12px; float: right;">
                     By {{remarkDetail.by}} on {{remarkDetail.date}}</span>

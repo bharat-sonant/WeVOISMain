@@ -825,7 +825,10 @@ export class EmployeeSalaryComponent implements OnInit {
             }
           }
           if (i == this.salaryList.length - 1) {
-            this.saveJsonFile(this.allSalaryList);
+            this.saveJsonFile(this.allSalaryList, "accountDetail.json");
+            let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
+            const obj = { lastUpdate: time };
+            this.saveJsonFile(obj, "LastUpdate.json");
             this.downloadNEFTSalary();
           }
         }
@@ -833,10 +836,10 @@ export class EmployeeSalaryComponent implements OnInit {
     }
   }
 
-  saveJsonFile(listArray: any) {
+  saveJsonFile(listArray: any, fileName: any) {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/accountDetail.json";
+    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/" + fileName;
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
@@ -941,7 +944,7 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       }
       htmlString += "</table>";
-      
+
       $("#divLoader").hide();
       let fileName = "Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
       this.exportExcel(htmlString, fileName);

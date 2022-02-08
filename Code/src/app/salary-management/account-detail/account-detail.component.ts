@@ -28,7 +28,8 @@ export class AccountDetailComponent implements OnInit {
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
-    date: ""
+    date: "",
+    lastUpdate: ""
   }
 
   ngOnInit() {
@@ -36,7 +37,9 @@ export class AccountDetailComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
+
   }
+
 
   setDefault() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -49,7 +52,18 @@ export class AccountDetailComponent implements OnInit {
     this.accountList = [];
     $(this.ddlUser).val("active");
     $(this.ddlDesignation).val("all");
+    this.getLastUpdate();
     this.getAccountDetail();
+  }
+
+  getLastUpdate() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        this.remarkDetail.lastUpdate = data["lastUpdate"];
+      }
+    });
   }
 
   getAccountDetail() {
@@ -199,7 +213,7 @@ export class AccountDetailComponent implements OnInit {
             allUserDetail.modifyBy = name;
             allUserDetail.modifyDate = time;
           }
-          this.saveJsonFile(this.allAccountList);
+          this.saveJsonFile(this.allAccountList, "accountDetail.json");
         }
         $("#key").val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
@@ -277,10 +291,10 @@ export class AccountDetailComponent implements OnInit {
   }
 
 
-  saveJsonFile(listArray: any) {
+  saveJsonFile(listArray: any, fileName: any) {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/accountDetail.json";
+    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/" + fileName;
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
@@ -388,22 +402,26 @@ export class AccountDetailComponent implements OnInit {
                                   }
                                   accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
                                   let detail = this.allAccountList.find(item => item.empId == empId);
-                                  if(detail!=undefined){
-                                    detail.name=name;
-                                    detail.designation=designation;
-                                    detail.status=status;
-                                    detail.accountNo=accountNo;
-                                    detail.ifsc=ifsc;
-                                    detail.email=email;
-                                    detail.modifyBy=modifyBy;
-                                    detail.modifyDate=modifyDate;
-                                    detail.panNo=panNo;
-                                    detail.doj=doj;
-                                    detail.aadharNo=aadharNo;
+                                  if (detail != undefined) {
+                                    detail.name = name;
+                                    detail.designation = designation;
+                                    detail.status = status;
+                                    detail.accountNo = accountNo;
+                                    detail.ifsc = ifsc;
+                                    detail.email = email;
+                                    detail.modifyBy = modifyBy;
+                                    detail.modifyDate = modifyDate;
+                                    detail.panNo = panNo;
+                                    detail.doj = doj;
+                                    detail.aadharNo = aadharNo;
                                   }
                                   if (empId == to) {
-                                    this.saveJsonFile(accountJsonList);
+                                    this.saveJsonFile(accountJsonList, "accountDetail.json");
                                     setTimeout(() => {
+                                      let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
+                                      this.remarkDetail.lastUpdate = time;
+                                      const obj = { lastUpdate: time };
+                                      this.saveJsonFile(obj, "LastUpdate.json");
                                       this.commonService.setAlertMessage("success", "Account data updated successfully !!!");
                                       $("#divLoader").hide();
                                     }, 3000);
@@ -420,56 +438,6 @@ export class AccountDetailComponent implements OnInit {
           }
         }
       }
-    );   
-  }
-
-  getIdentificationDetails(empId: any) {
-    let dbPath = "Employees/" + empId + "/IdentificationDetails";
-    let instance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        instance.unsubscribe();
-        if (data != null) {
-          let aadharNo = "";
-          let panNo = "";
-          if (data["AadharCardDetails"] != null) {
-            if (data["AadharCardDetails"]["aadharNumber"] != null) {
-              aadharNo = ["AadharCardDetails"]["aadharNumber"];
-            }
-            if (data["PanCardDetails"]["panNumber"] != null) {
-              panNo = ["PanCardDetails"]["panNumber"];
-            }
-            let detail = this.allAccountList.find(item => item.empId == empId);
-            if (detail != undefined) {
-              detail.aadharNo = aadharNo;
-              detail.panNo = panNo;
-            }
-          }
-        }
-      }
-    );
-  }
-
-  getBankDetails(empId: any) {
-    let dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
-    let instance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        instance.unsubscribe();
-        if (data != null) {
-          let accountNo = "";
-          let ifsc = "";
-          if (data["accountNumber"] != null) {
-            accountNo = data["accountNumber"];
-          }
-          if (data["ifsc"] != null) {
-            ifsc = data["ifsc"];
-          }
-          let detail = this.allAccountList.find(item => item.empId == empId);
-          if (detail != undefined) {
-            detail.accountNo = accountNo;
-            detail.ifsc = ifsc;
-          }
-        }
-      }
     );
   }
 }
@@ -479,4 +447,5 @@ export class remarkDetail {
   date: string;
   by: string;
   remark: string;
+  lastUpdate: string;
 }
