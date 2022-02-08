@@ -783,6 +783,81 @@ export class EmployeeSalaryComponent implements OnInit {
     }
   }
 
+  updateAccountDetail() {
+    let isChecked = false;
+    for (let i = 0; i < this.salaryList.length; i++) {
+      let empId = this.salaryList[i]["empId"];
+      let element = <HTMLInputElement>document.getElementById("chk" + empId);
+      if (element.checked == true) {
+        isChecked = true;
+
+      }
+    }
+    if (isChecked == false) {
+      this.commonService.setAlertMessage("error", "Please check at least 1 employee for salary !!!");
+      return;
+    }
+    $("#divLoader").show();
+    for (let i = 0; i < this.salaryList.length; i++) {
+      let empId = this.salaryList[i]["empId"];
+      let dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
+      let instance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          instance.unsubscribe();
+          if (data != null) {
+            let accountNo = "";
+            let ifsc = "";
+            if (data["accountNumber"] != null) {
+              accountNo = data["accountNumber"];
+            }
+            if (data["ifsc"] != null) {
+              ifsc = data["ifsc"];
+            }
+            let detail = this.allSalaryList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              detail.accountNo = accountNo;
+              detail.ifsc = ifsc;
+            }
+            detail = this.salaryList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              detail.accountNo = accountNo;
+              detail.ifsc = ifsc;
+            }
+          }
+          if (i == this.salaryList.length - 1) {
+            this.saveJsonFile(this.allSalaryList);
+            this.downloadNEFTSalary();
+          }
+        }
+      );
+    }
+  }
+
+  saveJsonFile(listArray: any) {
+    var jsonFile = JSON.stringify(listArray);
+    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/accountDetail.json";
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
+  }
+
 
   downloadNEFTSalary() {
     let htmlString = "";
@@ -822,15 +897,11 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Remarks";
       htmlString += "</td>";
-
       htmlString += "</tr>";
-      let isChecked = false;
       for (let i = 0; i < this.salaryList.length; i++) {
-
         let empId = this.salaryList[i]["empId"];
         let element = <HTMLInputElement>document.getElementById("chk" + empId);
         if (element.checked == true) {
-          isChecked = true;
           htmlString += "<tr>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["empCode"];
@@ -870,10 +941,8 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       }
       htmlString += "</table>";
-      if (isChecked == false) {
-        this.commonService.setAlertMessage("error", "Please check at least 1 employee for salary !!!");
-        return;
-      }
+      
+      $("#divLoader").hide();
       let fileName = "Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
       this.exportExcel(htmlString, fileName);
     }
