@@ -32,8 +32,8 @@ export class MonthSalaryReportComponent implements OnInit {
   penaltyArray: any[] = [];
   yearList: any[] = [];
   OtherList: any[];
-  db:any
-  cityName:any;
+  db: any
+  cityName: any;
 
   costData: costDatail =
     {
@@ -173,9 +173,9 @@ export class MonthSalaryReportComponent implements OnInit {
     };
 
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
-    this.db=this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.chkUserPageAccess(window.location.href,this.cityName);
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];
@@ -218,25 +218,12 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getWards() {
-    let dbPath = "Defaults/AllWard";
-    let circleWiseWard = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          var keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            let circleDataList = data[index];
-            if (circleDataList.length > 0) {
-              for (let j = 1; j < circleDataList.length; j++) {
-                this.wardList.push({ circle: index, wardNo: circleDataList[j]["wardNo"], startDate: circleDataList[j]["startDate"], endDate: circleDataList[j]["endDate"], displayIndex: circleDataList[j]["displayIndex"] });
-              }
-            }
-          }
-        }
-        this.selectedCircle = 'Circle1';
-        this.onSubmit();
-        circleWiseWard.unsubscribe();
-      });
+    this.commonService.getDefaultAllWards().then((wardList: any) => {
+      this.wardList = JSON.parse(wardList);
+      console.log(this.wardList);
+      this.selectedCircle = 'Circle1';
+      this.onSubmit();
+    });
   }
 
   changeCircleSelection(filterVal: any) {
@@ -625,8 +612,8 @@ export class MonthSalaryReportComponent implements OnInit {
             let thirdHelperSalary = "thirdHelperSalary" + parseFloat(monthDate.split("-")[2]);
             let fourthHelperSalary = "fourthHelperSalary" + parseFloat(monthDate.split("-")[2]);
             let totalSalary = Number(zoneDetails.totalSalary);
-            let wardSalary=0;
-            let cost=Number(zoneDetails.cost);
+            let wardSalary = 0;
+            let cost = Number(zoneDetails.cost);
             let driverList = [];
             let helperList = [];
             let secondHelperList = [];
@@ -698,7 +685,7 @@ export class MonthSalaryReportComponent implements OnInit {
               }
             }
             totalSalary = Number(totalSalary) + Number(salary.toString().trim());
-            
+
             if (zoneDetails[driverSalary] != null) {
               driverList = zoneDetails[driverSalary].toString().split(',');
               for (let i = 0; i < driverList.length; i++) {
@@ -729,7 +716,7 @@ export class MonthSalaryReportComponent implements OnInit {
                 wardSalary = Number(wardSalary) + Number(fourthHelperList[i].toString().trim());
               }
             }
-            
+
             zoneDetails.totalSalary = totalSalary.toFixed(2);
             if (zoneDetails[d] != null) {
               let daydetail = zoneDetails[d];
@@ -748,8 +735,8 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getSalary(wardNo: any, monthName: any, monthDate: any) {
-   // this.getWardSalary(wardNo, monthName, monthDate);
-   // return;
+    // this.getWardSalary(wardNo, monthName, monthDate);
+    // return;
     if (monthDate == this.toDayDate) {
       this.getWardSalary(wardNo, monthName, monthDate);
     }

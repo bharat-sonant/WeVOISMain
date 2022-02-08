@@ -576,7 +576,7 @@ export class CommonService {
               profilePhotoURL: data["profilePhotoURL"],
               designation: designationData,
               city: localStorage.getItem("cityName"),
-              empCode:data["empCode"]
+              empCode: data["empCode"]
             });
             localStorage.setItem("employeeList", JSON.stringify(employeeList));
             let list = JSON.parse(localStorage.getItem("employeeList"));
@@ -1186,11 +1186,15 @@ export class CommonService {
       let wardKML = wardKMLList.find(item => item.wardNo == zoneNo);
       if (wardKML != undefined) {
         this.zoneKML = new google.maps.KmlLayer({
+          zIndex: 999,
           url: wardKML.kmlUrl.toString(),
           map: map,
         });
+        console.log(this.zoneKML);
+        console.log(Object.keys(this.zoneKML));
       }
     }
+
     return this.zoneKML;
   }
 
@@ -1519,6 +1523,34 @@ export class CommonService {
 
   checkInternetConnection() {
     return localStorage.getItem("isConnected");
+  }
+
+  getDefaultAllWards() {
+    return new Promise((resolve) => {
+      let allWardList = [];
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FAllWard.json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let circleDataList = data[index];
+              if (circleDataList.length > 0) {
+                for (let j = 1; j < circleDataList.length; j++) {
+                  if (circleDataList[j] != null) {
+                    allWardList.push({ circle: index, wardNo: circleDataList[j]["wardNo"], startDate: circleDataList[j]["startDate"], endDate: circleDataList[j]["endDate"], displayIndex: circleDataList[j]["displayIndex"] });
+                  }
+                }
+              }
+            }
+            resolve(JSON.stringify(allWardList));
+          }
+        }
+      });
+    });
+
   }
 
 }

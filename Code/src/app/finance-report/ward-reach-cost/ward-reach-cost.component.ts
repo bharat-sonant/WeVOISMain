@@ -97,25 +97,12 @@ export class WardReachCostComponent implements OnInit {
   }
 
   getWards() {
-    let dbPath = "Defaults/AllWard";
-    let circleWiseWard = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          var keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            let circleDataList = data[index];
-            if (circleDataList.length > 0) {
-              for (let j = 1; j < circleDataList.length; j++) {
-                this.wardList.push({ circle: index, wardNo: circleDataList[j]["wardNo"], startDate: circleDataList[j]["startDate"], endDate: circleDataList[j]["endDate"], displayIndex: circleDataList[j]["displayIndex"] });
-              }
-            }
-          }
-        }
-        this.selectedCircle = 'Circle1';
-        circleWiseWard.unsubscribe();
-        this.onSubmit();
-      });
+    this.commonService.getDefaultAllWards().then((wardList: any) => {
+      this.wardList = JSON.parse(wardList);
+      console.log(this.wardList);
+      this.selectedCircle = 'Circle1';
+      this.onSubmit();
+    });
   }
 
   changeCircleSelection(filterVal: any) {
