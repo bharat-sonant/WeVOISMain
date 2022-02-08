@@ -731,12 +731,12 @@ export class CommonService {
     this.setVehicle(newDb);
     this.setDustbin(newDb);
     this.setWardLines(newDb);
-    this.setMarkerZone(newDb);
+    this.setMarkerZone();
     this.setWardKML(newDb);
     this.setMarkingWards(newDb);
   }
 
-  setMarkerZone(newDb: any) {
+  setMarkerZone() {
     let zoneList = [];
     let wardCheckList = [];
     if (localStorage.getItem("cityName") == "sikar") {
@@ -747,31 +747,45 @@ export class CommonService {
       wardCheckList.push({ wardNo: "30" });
       wardCheckList.push({ wardNo: "31" });
     }
-    let dbPath = "Defaults/CircleWiseWards/Circle1";
-    let zoneInstance = newDb.list(dbPath).valueChanges().subscribe((data) => {
-      zoneInstance.unsubscribe();
-      if (data.length > 0) {
-        for (let i = 0; i < data.length; i++) {
-          let zoneNo = data[i];
-          let zoneName = data[i];
-          if (data[i].toString().includes("mkt1")) {
-            zoneName = "Market 1";
-          } else if (data[i].toString().includes("mkt2")) {
-            zoneName = "Market 2";
-          } else if (data[i].toString().includes("mkt3")) {
-            zoneName = "Market 3";
-          } else if (data[i].toString().includes("mkt4")) {
-            zoneName = "Market 4";
-          } else {
-            zoneName = "Ward " + data[i];
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (index == "Circle1") {
+              let circleDataList = data[index];
+              if (circleDataList.length > 0) {
+                for (let j = 1; j < circleDataList.length; j++) {
+                  if (circleDataList[j] != null) {
+                    let zoneNo = circleDataList[j];
+                    let zoneName = circleDataList[j];
+                    if (zoneNo.toString().includes("mkt1")) {
+                      zoneName = "Market 1";
+                    } else if (data[i].toString().includes("mkt2")) {
+                      zoneName = "Market 2";
+                    } else if (data[i].toString().includes("mkt3")) {
+                      zoneName = "Market 3";
+                    } else if (data[i].toString().includes("mkt4")) {
+                      zoneName = "Market 4";
+                    } else {
+                      zoneName = "Ward " + data[i];
+                    }
+                    let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
+                    if (wardDetail == undefined) {
+                      zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+                    }
+                  }
+                }
+              }
+            }
           }
-          let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
-          if (wardDetail == undefined) {
-            zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-          }
+          localStorage.setItem("markerZone", JSON.stringify(zoneList));
         }
         localStorage.setItem("markerZone", JSON.stringify(zoneList));
-      }
+      }      
       else {
         localStorage.setItem("markerZone", JSON.stringify(zoneList));
       }
@@ -1553,4 +1567,30 @@ export class CommonService {
 
   }
 
+  getCityWiseWard() {
+    return new Promise((resolve) => {
+      let allWardList = [];
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let circleDataList = data[index];
+              if (circleDataList.length > 0) {
+                for (let j = 1; j < circleDataList.length; j++) {
+                  if (circleDataList[j] != null) {
+                    allWardList.push({ circle: index, wardNo: circleDataList[j] });
+                  }
+                }
+              }
+            }
+            resolve(JSON.stringify(allWardList));
+          }
+        }
+      });
+    });
+  }
 }

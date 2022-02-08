@@ -35,37 +35,13 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
 
-
   getWards() {
-    let dbPath = "Defaults/CircleWiseWards";
-    let circleWiseWard = this.db.list(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          let circledata: any;
-          for (let i = 0; i < data.length; i++) {
-            circledata = data[i];
-            if (i == 0) {
-              for (let j = 1; j < circledata.length; j++) {
-                this.wardList.push({ circle: 'Circle1', wardNo: circledata[j] });
-              }
-            }
-            if (i == 1) {
-              for (let j = 1; j < circledata.length; j++) {
-                this.wardList.push({ circle: 'Circle2', wardNo: circledata[j] });
-              }
-            }
-            if (i == 2) {
-              for (let j = 1; j < circledata.length; j++) {
-                this.wardList.push({ circle: 'Circle3', wardNo: circledata[j] });
-              }
-            }
-          }
-        }
-        this.selectedCircle = 'Circle1';
-        this.onSubmit();
-
-        circleWiseWard.unsubscribe();
-      });
+    this.wardList = [];
+    this.commonService.getCityWiseWard().then((wardList: any) => {
+      this.wardList = JSON.parse(wardList);
+      this.selectedCircle = 'Circle1';
+      this.onSubmit();
+    });
   }
 
   changeCircleSelection(filterVal: any) {

@@ -36,7 +36,6 @@ export class EmployeeAccountServiceComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let empId = keyArray[i];
               if (data[empId]["GeneralDetails"] != null) {
-
                 let status = data[empId]["GeneralDetails"]["status"];
                 let name = data[empId]["GeneralDetails"]["name"];
                 let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
@@ -49,6 +48,7 @@ export class EmployeeAccountServiceComponent implements OnInit {
                 let panNo = "";
                 let modifyBy = "";
                 let modifyDate = "";
+                
                 if (data[empId]["BankDetails"] != null) {
                   if (data[empId]["BankDetails"]["AccountDetails"] != null) {
                     if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
