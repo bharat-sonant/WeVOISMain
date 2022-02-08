@@ -99,7 +99,6 @@ export class WardReachCostComponent implements OnInit {
   getWards() {
     this.commonService.getDefaultAllWards().then((wardList: any) => {
       this.wardList = JSON.parse(wardList);
-      console.log(this.wardList);
       this.selectedCircle = 'Circle1';
       this.onSubmit();
     });
