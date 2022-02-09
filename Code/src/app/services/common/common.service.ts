@@ -1222,7 +1222,7 @@ export class CommonService {
             let line = new google.maps.Polyline({
               path: latLng,
               strokeColor: "black",
-              strokeWeight: 4,
+              strokeWeight: 2,
             });
             this.polylines[0] = line;
             this.polylines[0].setMap(map);
