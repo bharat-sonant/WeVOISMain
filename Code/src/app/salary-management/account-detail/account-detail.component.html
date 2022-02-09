@@ -42,12 +42,14 @@
                                     </select>
 
                                     <span style="float: right; margin-bottom: -10px;">
-                                        <span style="text-align: center;">
-                                            <label>
-                                                <i class="fas fa-sync"
+                                        <span>
+                                            <label class="main-label">
+                                                
+                                               <span class="main-span">
+                                                <span> {{remarkDetail.lastUpdate}}</span> <br>Last update</span>
+                                            <i class="fas fa-sync"
                                                     style="color: green; font-size: 30px; cursor: pointer; "
-                                                    (click)="updateJson();"></i><br />
-                                                Last update on {{remarkDetail.lastUpdate}}</label></span>
+                                                    (click)="updateJson();"></i></label></span>
                                     </span>
                                 </div>
                             </div>

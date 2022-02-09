@@ -1647,8 +1647,24 @@
       white-space: nowrap!important;
     }  
     
-    
-    
-    
+    .main-label{
+      padding: 7px 10px;
+      align-items: center;
+      display: flex;
+
+    }
+   .main-span{
+    float: left;
+    margin-right: 15px;
+    text-align: right;
+    padding: 0 15px;
+    border-right: solid 1px;
+
+   } 
+   .main-span span{
+    font-weight: bolder;
+    font-size: 17px;
+
+   } 
     
     
