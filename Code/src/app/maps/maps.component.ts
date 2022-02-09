@@ -146,6 +146,10 @@ export class MapsComponent {
   }
 
   setDefaultWard() {
+    if (this.zoneKML != null) {
+      this.zoneKML.setMap(null);
+      this.zoneKML = null;
+    }
     this.progressData.cardNotScaned = 0;
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
@@ -190,10 +194,7 @@ export class MapsComponent {
       this.vehicleLocationInstance = null;
     }
 
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-      this.zoneKML = null;
-    }
+
 
     if (this.wardStartMarker != null) {
       this.wardStartMarker.setMap(null);
@@ -260,6 +261,7 @@ export class MapsComponent {
     element.checked = false;
     $("#houseCount").hide();
     $("#houseDetail").hide();
+
     this.setKml();
   }
 

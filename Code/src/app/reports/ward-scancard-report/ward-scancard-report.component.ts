@@ -37,65 +37,12 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    //this.checkCards();
-
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.selectedDate);
     this.getWards();
   }
-
-  checkCards() {
-    let dbPath = "WardLines";
-    let wardInstance = this.db.object(dbPath).valueChanges().subscribe((wardData) => {
-      wardInstance.unsubscribe();
-      if (wardData != null) {
-        let wardKeyArray = Object.keys(wardData);
-        if (wardKeyArray.length > 0) {
-          // for (let i = 0; i < wardKeyArray.length; i++) {
-          // let wardInex = wardKeyArray[i];
-          //  let wardLines = wardData[wardInex];
-          let datalist = [];
-          for (let j = 1; j <= 53; j++) {
-            let dbPath1 = "Defaults/WardLines/30/" + j + "/Houses";
-            let houseInstance = this.db.list(dbPath1).valueChanges().subscribe((houseData) => {
-              houseInstance.unsubscribe();
-              if (houseData.length > 0) {
-                for (let k = 0; k < houseData.length; k++) {
-                  if (houseData[k]["Basicinfo"] != null) {
-                    if (houseData[k]["Basicinfo"]["CardNumber"] != null) {
-                      let cardNo = houseData[k]["Basicinfo"]["CardNumber"];
-                      let dbPath2 = "CardWardMapping/" + cardNo;
-                      let mapInstance = this.db.object(dbPath2).valueChanges().subscribe((mapData) => {
-                        mapInstance.unsubscribe();
-                        if (mapData != null) {
-                          let ward = mapData["ward"];
-                          let line = mapData["line"];
-                          let dbPath3 = "Houses/" + ward + "/" + line + "/" + cardNo;
-                          let housesInstance = this.db.object(dbPath3).valueChanges().subscribe((data) => {
-                            housesInstance.unsubscribe();
-                            if (data == null) {
-                              const hdata = {
-                                cardNo: cardNo
-                              }
-                              this.db.list("HouseNotFoundHSC/" + ward + "/" + line + "/").push(hdata);
-                            }
-                          });
-                        }
-                      });
-                    }
-                  }
-                }
-              }
-            });
-          }
-          // }
-        }
-      }
-    });
-  }
-
 
   showLoder() {
     $("#divLoader").show();
