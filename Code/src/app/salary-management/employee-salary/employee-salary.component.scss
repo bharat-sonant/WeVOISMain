@@ -1637,13 +1637,12 @@
   }  
   
 
-label.hover-shadow{position: relative; transition: 0.7s} 
-label.hover-shadow{
-                  border-right: solid 1px #000}
-label.hover-shadow{height: 100%;
-                  position: relative;} 
-.main-box{box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
--webkit-box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
--moz-box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
-padding: 8px 0;}
-                  
+
+
+
+.main-box{
+        display: flex}
+   .outer{box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(128,123,123,0.75);
+   margin-right: 12px;}               
