@@ -308,9 +308,10 @@ export class VtsAnalysisComponent implements OnInit {
 
   setWardBoundary() {
     if (this.selectedWard != "0") {
-      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-        this.wardBoundary = wardKML;
-      });
+      this.commonService.setKML(this.selectedWard,this.map);
+     // this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+     //   this.wardBoundary = wardKML;
+     // });
     }
   }
 

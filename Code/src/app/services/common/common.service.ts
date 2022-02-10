@@ -1205,6 +1205,10 @@ export class CommonService {
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
+          let strokeWeight=2;
+          if(localStorage.getItem("cityName")=="jaipur-greater"){
+            strokeWeight=8;
+          }
           let points = data["points"];
           if (points.length > 0) {
             console.log(points);
@@ -1217,7 +1221,7 @@ export class CommonService {
             let line = new google.maps.Polyline({
               path: latLng,
               strokeColor: "black",
-              strokeWeight: 2,
+              strokeWeight: strokeWeight,
             });
             this.polylines[0] = line;
             this.polylines[0].setMap(map);
