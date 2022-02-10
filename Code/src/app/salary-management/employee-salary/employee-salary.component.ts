@@ -600,7 +600,7 @@ export class EmployeeSalaryComponent implements OnInit {
         if (this.salaryList[i]["finalAmount"] != 0) {
           htmlString += "<tr>";
           htmlString += "<td>";
-          htmlString += this.salaryList[i]["empId"];
+          htmlString += this.salaryList[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["name"];
@@ -672,47 +672,42 @@ export class EmployeeSalaryComponent implements OnInit {
         return;
       }
       for (let i = 0; i < fileList.length; i++) {
-        let empId = fileList[i]["EmployeeId"];
+        let empCode = fileList[i]["EmployeeId"];
         let salary = fileList[i]["Salary"];
         let name = fileList[i]["Name"];
         let remark = "";
-        if (empId != undefined && salary != undefined) {
+        if (empCode != undefined && salary != undefined) {
           let isCorrect = true;
-          let chkEmpId = Number(empId);
           let chkSalary = Number(salary);
-          if (Number.isNaN(chkEmpId)) {
-            isCorrect = false;
-            remark = "EmployeeId is not in correct format.";
-          }
           if (Number.isNaN(chkSalary)) {
             isCorrect = false;
             remark = "Salary is not in correct format.";
           }
           if (isCorrect == true) {
-            let detail = this.allSalaryList.find(item => item.empId == empId);
+            let detail = this.allSalaryList.find(item => item.empCode == empCode);
             if (detail != undefined) {
               if (detail.name.trim() == name.trim()) {
                 let systemSalary = detail.finalAmount;
                 detail.uploadedSalary = salary;
-                let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId;
+                let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId;
                 this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
-                detail = this.salaryList.find(item => item.empId == empId);
+                detail = this.salaryList.find(item => item.empCode == empCode);
                 if (detail != undefined) {
                   detail.uploadedSalary = salary;
                 }
               }
               else {
                 remark = "Name is not correct for this EmployeeId";
-                errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
+                errorData.push({ empCode: empCode, salary: salary, name: name, remark: remark });
               }
             }
             else {
               remark = "EmployeeId not in list.";
-              errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
+              errorData.push({ empCode: empCode, salary: salary, name: name, remark: remark });
             }
           }
           else {
-            errorData.push({ empId: empId, salary: salary, name: name, remark: remark });
+            errorData.push({ empCode: empCode, salary: salary, name: name, remark: remark });
           }
         }
       }
@@ -737,7 +732,7 @@ export class EmployeeSalaryComponent implements OnInit {
         for (let i = 0; i < errorData.length; i++) {
           htmlString += "<tr>";
           htmlString += "<td>";
-          htmlString += errorData[i]["empId"];
+          htmlString += errorData[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += errorData[i]["name"];
