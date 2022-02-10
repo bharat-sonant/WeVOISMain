@@ -211,7 +211,9 @@ export class RealtimeMonitoringComponent implements OnInit {
   clearAllOnMap() {
     if (this.zoneKML.length > 0) {
       for (let i = 0; i < this.zoneKML.length; i++) {
-        this.zoneKML[i]["marker"].setMap(null);
+        if (this.zoneKML[i]["marker"] != undefined) {
+          this.zoneKML[i]["marker"].setMap(null);
+        }
       }
     }
     this.zoneKML = [];
@@ -1733,7 +1735,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         var line = zoneLine[i];
         //if (line == undefined) {
         //  break;
-       // }
+        // }
         if (line != undefined) {
           var path = [];
           for (let j = 0; j < line.points.length; j++) {

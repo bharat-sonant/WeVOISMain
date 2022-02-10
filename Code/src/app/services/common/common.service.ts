@@ -1197,19 +1197,34 @@ export class CommonService {
   }
 
   setKML(zoneNo: any, map: any) {
-    let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
-    if (wardKMLList != null) {
-      let wardKML = wardKMLList.find(item => item.wardNo == zoneNo);
-      if (wardKML != undefined) {
-        this.zoneKML = new google.maps.KmlLayer({
-          zIndex: 999,
-          url: wardKML.kmlUrl.toString(),
-          map: map,
-        });
-      }
+    if (this.polylines.length > 0) {
+      this.polylines[0].setMap(null);
     }
-
-    return this.zoneKML;
+    this.polylines = [];
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let points = data["points"];
+          if (points.length > 0) {
+            console.log(points);
+            let bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: 2,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(map);
+            map.fitBounds(bounds);            
+          }
+        }
+      });
   }
 
   setMapHeight() {

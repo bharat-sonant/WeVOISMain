@@ -101,6 +101,7 @@ import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-a
 import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 import { SalaryHoldingManagementComponent } from '../../salary-management/salary-holding-management/salary-holding-management.component';
 import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
+import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -219,6 +220,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/employee-salary', component: EmployeeSalaryComponent },
     { path: 'sikar/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'sikar/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'sikar/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -327,6 +329,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'sikar/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'sikar/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'sikar/:id/kml-to-json', component: KmlToJsonComponent },
 
 
     //jaipur-greater
@@ -436,6 +439,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/employee-salary', component: EmployeeSalaryComponent },
     { path: 'jaipur-greater/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'jaipur-greater/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'jaipur-greater/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -544,6 +548,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'jaipur-greater/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'jaipur-greater/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'jaipur-greater/:id/kml-to-json', component: KmlToJsonComponent },
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -652,6 +657,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/employee-salary', component: EmployeeSalaryComponent },
     { path: 'reengus/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'reengus/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'reengus/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -760,6 +766,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'reengus/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'reengus/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'reengus/:id/kml-to-json', component: KmlToJsonComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -868,6 +875,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/employee-salary', component: EmployeeSalaryComponent },
     { path: 'shahpura/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'shahpura/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'shahpura/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -976,6 +984,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'shahpura/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'shahpura/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'shahpura/:id/kml-to-json', component: KmlToJsonComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1084,6 +1093,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/employee-salary', component: EmployeeSalaryComponent },
     { path: 'test/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'test/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'test/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1192,6 +1202,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'test/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'test/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'test/:id/kml-to-json', component: KmlToJsonComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1300,6 +1311,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/employee-salary', component: EmployeeSalaryComponent },
     { path: 'demo/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'demo/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'demo/kml-to-json', component: KmlToJsonComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1407,6 +1419,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'demo/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'demo/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'demo/:id/kml-to-json', component: KmlToJsonComponent },
 
     
 
@@ -1517,6 +1530,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/employee-salary', component: EmployeeSalaryComponent },
     { path: 'kishangarh/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'kishangarh/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'kishangarh/kml-to-json', component: KmlToJsonComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1625,4 +1639,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/employee-salary', component: EmployeeSalaryComponent },
     { path: 'kishangarh/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
     { path: 'kishangarh/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'kishangarh/:id/kml-to-json', component: KmlToJsonComponent },
 ]; 
