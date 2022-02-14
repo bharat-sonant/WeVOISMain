@@ -1,1 +1,176 @@
-<p>salary-transaction works!</p>
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-3 col-lg-3 col-xl-3 pl-18 ipad-pl-40">
+            <div>
+
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 main-headers">
+            Salary Transactions
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+            <div class="fix-home" style="display: none;">
+                <div id="topPenality" class="float-first ml-10 mt-0">
+                    <span class="house"><i class="fas fa-rupee-sign" style="color:green"></i>
+                        {{salaryDetail.totalSalary}}</span><br>
+                    <h6>Total Salary</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+
+                                    <select class="filter-select filter-input" id="ddlYear"
+                                        (change)="getSalaryTranscation()" style="width: 150px;"
+                                        [(ngModel)]="selectedYear">
+                                        <option value="0">Year</option>
+                                        <option value={{yer.year}} *ngFor="let yer of yearList"
+                                            ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                                    </select>
+                                    <select class="filter-select filter-input" id="ddlEmployee"
+                                        (change)="getSalaryTranscation()">
+                                        <option value="all">
+                                            Select Employee
+                                        </option>
+                                        <option *ngFor="let dt of employeeList" value={{dt.empId}}>
+                                            {{dt.name}} ({{dt.empCode}})
+                                        </option>
+                                    </select>
+
+                                    <select class="filter-select filter-input" id="ddlType" (change)="filterData()">
+                                        <option value="all">
+                                            All Employee
+                                        </option>
+                                        <option selected value="active">
+                                            Active
+                                        </option>
+                                        <option value="inactive">
+                                            In-active
+                                        </option>
+                                    </select>
+
+                                    <span style="float: right; margin-bottom: -10px;" class="main-box">
+                                        <div class="outer">
+                                            <span style="text-align: center;">
+                                                <label for="fileUpload" style="padding: 7px 0px;margin-left: 30px;
+                                           " class="hover-shadow">
+                                                    <i class="fas fa-upload"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "></i><br />
+                                                    Upload transfered salary
+                                                </label>
+                                                <input id="fileUpload" type="file" name="file" class="file-upload-field"
+                                                    style="display: none;" placeholder="" value=""
+                                                    (change)="uploadSalary($event)">
+                                                &nbsp; &nbsp; &nbsp; &nbsp;
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Account Number</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                IFSC</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Transaction Type</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Debit Account No </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Transaction Date </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Amount </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Uploaded By </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Uploaded Date </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
+                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                    {{data.name}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.accountNo}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.ifsc}} </td>
+                                                <td class="text-left br-1">
+                                                    {{data.transactionType}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.debitAccountNo}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.transationDate}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.amount}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.uploadBy}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.uploadDate}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--employee  Start-->
+<ng-template #contentShowRemarks>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrap-input-effects" style="font-size: 16px; min-height: 120px;">
+                    {{salaryDetail.remark}}<br />
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
