@@ -1207,7 +1207,7 @@ export class CommonService {
         if (data != null) {
           let strokeWeight=2;
           if(localStorage.getItem("cityName")=="jaipur-greater"){
-            strokeWeight=8;
+           // strokeWeight=8;
           }
           let points = data["points"];
           if (points.length > 0) {
@@ -1225,7 +1225,8 @@ export class CommonService {
             });
             this.polylines[0] = line;
             this.polylines[0].setMap(map);
-            map.fitBounds(bounds);            
+            map.fitBounds(bounds);       
+            return this.polylines[0];     
           }
         }
       });
@@ -1437,12 +1438,47 @@ export class CommonService {
     });
   }
 
-  setWardBoundary(wardNo: any, map: any) {
+  setWardBoundary(zoneNo: any, map: any) {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
         cityName = "jaipur"
       }
+
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let strokeWeight=2;
+          if(localStorage.getItem("cityName")=="jaipur-greater"){
+           // strokeWeight=8;
+          }
+          let points = data["points"];
+          if (points.length > 0) {
+            console.log(points);
+            let bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(map);
+            map.fitBounds(bounds);       
+            resolve(this.polylines);
+          }
+        }
+      });
+
+
+
+/*
+
       this.httpService.get("../../assets/jsons/WardBoundries/" + cityName + ".json").subscribe(data => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -1461,6 +1497,7 @@ export class CommonService {
           }
         }
       });
+      */
     });
   }
 
