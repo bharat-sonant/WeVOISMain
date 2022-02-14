@@ -88,7 +88,7 @@ export class CreateRoutesComponent implements OnInit {
     }
     this.polylines = [];
     if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
+      this.wardBoundary[0].setMap(null);
     }
     this.wardBoundary = null;
   }

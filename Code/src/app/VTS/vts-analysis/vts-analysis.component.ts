@@ -98,7 +98,7 @@ export class VtsAnalysisComponent implements OnInit {
     //this.checkInternetSpeed();
   }
 
-  checkInternetSpeed(){
+  checkInternetSpeed() {
     let netSpeed = this.speedTestService.getMbps().subscribe(
       (speed) => {
         netSpeed.unsubscribe();
@@ -231,7 +231,7 @@ export class VtsAnalysisComponent implements OnInit {
   setDefaultDate() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.currentYear = this.selectedDate.split("-")[0];
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
@@ -308,10 +308,9 @@ export class VtsAnalysisComponent implements OnInit {
 
   setWardBoundary() {
     if (this.selectedWard != "0") {
-      this.commonService.setKML(this.selectedWard,this.map);
-     // this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-     //   this.wardBoundary = wardKML;
-     // });
+      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+        this.wardBoundary = wardKML;
+      });
     }
   }
 
@@ -319,15 +318,12 @@ export class VtsAnalysisComponent implements OnInit {
     if (this.isBoundaryShow == true) {
       this.isBoundaryShow = false;
       if (this.wardBoundary != null) {
-        this.wardBoundary.setMap(null);
+        this.wardBoundary[0].setMap(null);
       }
-      this.wardBoundary = null;
     }
     else {
       this.isBoundaryShow = true;
-      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-        this.wardBoundary = wardKML;
-      });
+      this.wardBoundary[0].setMap(this.map);
     }
     this.showHideBoundariesHtml();
     this.hideSetting();
@@ -474,22 +470,22 @@ export class VtsAnalysisComponent implements OnInit {
     let speedTestService = this.speedTestService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-     // let netSpeed = speedTestService.getMbps().subscribe(
-     //   (speed) => {
-     //     netSpeed.unsubscribe();
-     //     if (speed > 1) {
-     //       localStorage.setItem("isConnected", "yes");
-     //     }
-     //     else {
-     //       localStorage.setItem("isConnected", "no");
+      // let netSpeed = speedTestService.getMbps().subscribe(
+      //   (speed) => {
+      //     netSpeed.unsubscribe();
+      //     if (speed > 1) {
+      //       localStorage.setItem("isConnected", "yes");
+      //     }
+      //     else {
+      //       localStorage.setItem("isConnected", "no");
       //    }
       //  }
-     // );
+      // );
 
-     // if (localStorage.getItem("isConnected") == "no") {
-     //   commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
-    //    return;
-    //  }
+      // if (localStorage.getItem("isConnected") == "no") {
+      //   commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
+      //    return;
+      //  }
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
@@ -592,7 +588,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.currentYear = this.selectedDate.split("-")[0];
     this.changeWardSelection(this.selectedWard);
   }
