@@ -1207,11 +1207,10 @@ export class CommonService {
         if (data != null) {
           let strokeWeight=2;
           if(localStorage.getItem("cityName")=="jaipur-greater"){
-           // strokeWeight=8;
+            strokeWeight=8;
           }
           let points = data["points"];
           if (points.length > 0) {
-            console.log(points);
             let bounds = new google.maps.LatLngBounds();
             var latLng = [];
             for (let j = 0; j < points.length; j++) {
@@ -1449,13 +1448,9 @@ export class CommonService {
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
-          let strokeWeight=2;
-          if(localStorage.getItem("cityName")=="jaipur-greater"){
-           // strokeWeight=8;
-          }
+          let strokeWeight=8;
           let points = data["points"];
           if (points.length > 0) {
-            console.log(points);
             let bounds = new google.maps.LatLngBounds();
             var latLng = [];
             for (let j = 0; j < points.length; j++) {
