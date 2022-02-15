@@ -171,7 +171,14 @@ export class EmployeeSalaryComponent implements OnInit {
         this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "/1").get().subscribe(
           (ss) => {
             if (ss.data() != undefined) {
-              this.allSalaryList[i]["uploadedSalary"] = ss.data()["uploadedSalary"];
+              let detail = this.allSalaryList.find(item => item.empId == empId);
+              if (detail != undefined) {
+                detail.uploadedSalary = ss.data()["uploadedSalary"];
+              }
+              detail = this.salaryList.find(item => item.empId == empId);
+              if (detail != undefined) {
+                detail.uploadedSalary = ss.data()["uploadedSalary"];
+              }
             }
           });
       }
@@ -191,32 +198,40 @@ export class EmployeeSalaryComponent implements OnInit {
       });
   }
 
-  getTransferedSalary(empId: any) {
-    let filterRef = this.dbFireStore
-      .doc(this.fireStoreCity + "/SalaryTransaction/")
-      .collection(empId.toString(), (ref) => {
-        let query:
-          | firebase.firestore.CollectionReference
-          | firebase.firestore.Query = ref;
-        query = query.where("year", "==", this.selectedYear);
-        query = query.where("month", "==", this.selectedMonthName);
-        return query;
-      });
+  getTransferedSalary() {
+    if (this.allSalaryList.length > 0) {
+      for (let i = 0; i < this.allSalaryList.length; i++) {
+        let empId = this.allSalaryList[i]["empId"];
+        let filterRef = this.dbFireStore
+          .doc(this.fireStoreCity + "/SalaryTransaction/")
+          .collection(empId.toString(), (ref) => {
+            let query:
+              | firebase.firestore.CollectionReference
+              | firebase.firestore.Query = ref;
+            query = query.where("year", "==", this.selectedYear);
+            query = query.where("month", "==", this.selectedMonthName);
+            return query;
+          });
 
-    filterRef.get().subscribe((ss) => {
-      let transferedAmount = 0;
-      ss.forEach(function (doc) {
-        transferedAmount += Number(doc.data()["amount"]);
-      });
-      let detail = this.allSalaryList.find(item => item.empId == empId);
-      if (detail != undefined) {
-        detail.transfered = transferedAmount;
+        filterRef.get().subscribe((ss) => {
+          let transferedAmount = 0;
+          ss.forEach(function (doc) {
+            transferedAmount += Number(doc.data()["amount"]);
+          });
+          let detail = this.allSalaryList.find(item => item.empId == empId);
+          if (detail != undefined) {
+            detail.transfered = transferedAmount;
+          }
+          detail = this.salaryList.find(item => item.empId == empId);
+          if (detail != undefined) {
+            detail.transfered = transferedAmount;
+          }
+        });
+
       }
-      detail = this.salaryList.find(item => item.empId == empId);
-      if (detail != undefined) {
-        detail.transfered = transferedAmount;
-      }
-    });
+
+    }
+
   }
 
   getAccountIssue() {
@@ -235,6 +250,7 @@ export class EmployeeSalaryComponent implements OnInit {
   getSalary() {
     $('#divLoader').show();
     this.getUploadedSalary();
+    this.getTransferedSalary();
     this.getHoldSalary();
     this.getAccountIssue();
     this.getSundaysInMonth(this.selectedMonth, this.selectedYear);
@@ -451,9 +467,6 @@ export class EmployeeSalaryComponent implements OnInit {
         this.allSalaryList[i]["orderBy"] = 0;
       }
       totalSalary += finalAmount;
-      //if (finalAmount > 0) {
-      this.getTransferedSalary(this.allSalaryList[i]["empId"]);
-      //}
     }
 
     this.salaryDetail.totalSalary = totalSalary.toFixed(2);
