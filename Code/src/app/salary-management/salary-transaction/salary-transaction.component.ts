@@ -66,28 +66,22 @@ export class SalaryTransactionComponent implements OnInit {
     if (empId != "0") {
       const list = [];
       const commonService = this.commonService;
-      let filterRef = this.dbFireStore
-        .doc(this.fireStoreCity + "/SalaryTransaction/")
-        .collection(empId.toString(), (ref) => {
-          let query:
-            | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = ref;
-          query = query.where("year", "==", year);
-          return query;
-        });
-
-      filterRef.get().subscribe((ss) => {
-        ss.forEach(function (doc) {
-          let userData = commonService.getPortalUserDetailById(doc.data()["uploadBy"]);
-          if (userData != undefined) {
-            list.push({ name: doc.data()["name"], accountNo: doc.data()["accountNo"], amount: doc.data()["amount"], debitAccountNo: doc.data()["debitAccountNo"], ifsc: doc.data()["ifsc"], transactionType: doc.data()["transactionType"], transationDate: doc.data()["transationDate"], uploadDate: doc.data()["uploadDate"], uploadBy: userData["name"],remarks:doc.data()["remarks"] });
-          }
-        });
-        this.transactionList = list;
-      });
-
+      for (let i = 1; i <= 12; i++) {
+        let monthName = this.commonService.getCurrentMonthName(i - 1);
+        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + monthName + "/" + empId).get().subscribe(
+          (ss) => {
+            ss.forEach(function (doc) {
+              let userData = commonService.getPortalUserDetailById(doc.data()["uploadBy"]);
+              if (userData != undefined) {
+                list.push({ name: doc.data()["name"], accountNo: doc.data()["accountNo"], amount: doc.data()["amount"], debitAccountNo: doc.data()["debitAccountNo"], ifsc: doc.data()["ifsc"], transactionType: doc.data()["transactionType"], transationDate: doc.data()["transationDate"], uploadDate: doc.data()["uploadDate"], uploadBy: userData["name"], remarks: doc.data()["remarks"] });
+              }
+            });
+            if (i == 12) {
+              this.transactionList = list;
+            }
+          });
+      }
     }
-
   }
 
   downloadTemplate() {
@@ -248,8 +242,8 @@ export class SalaryTransactionComponent implements OnInit {
         let amount = fileList[i]["Amount"];
         let currency = fileList[i]["Currency"];
         let remarks = "";
-        if(fileList[i]["Remarks"]!=undefined){
-          remarks=fileList[i]["Remarks"];
+        if (fileList[i]["Remarks"] != undefined) {
+          remarks = fileList[i]["Remarks"];
         }
         let remark = "";
 
@@ -280,6 +274,7 @@ export class SalaryTransactionComponent implements OnInit {
                       day = "0" + day;
                     }
                     let date = year + "-" + month + "-" + day;
+                    let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
                     const data = {
                       name: name,
                       accountNo: accountNo,
@@ -295,9 +290,9 @@ export class SalaryTransactionComponent implements OnInit {
                       uploadBy: localStorage.getItem("userID"),
                       uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
                       year: year,
-                      month: this.commonService.getCurrentMonthName(Number(month) - 1)
+                      month: monthName
                     }
-                    this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + detail.empId + "/" + date + "").set(data);
+                    this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + year + "/" + monthName + "/" + detail.empId + "/" + date).set(data);
                   }
                 }
                 else {

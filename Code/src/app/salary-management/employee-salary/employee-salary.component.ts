@@ -164,25 +164,22 @@ export class EmployeeSalaryComponent implements OnInit {
     });
   }
 
+
   getUploadedSalary() {
-    if (this.allSalaryList.length > 0) {
-      for (let i = 0; i < this.allSalaryList.length; i++) {
-        let empId = this.allSalaryList[i]["empId"];
-        this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "/1").get().subscribe(
-          (ss) => {
-            if (ss.data() != undefined) {
-              let detail = this.allSalaryList.find(item => item.empId == empId);
-              if (detail != undefined) {
-                detail.uploadedSalary = ss.data()["uploadedSalary"];
-              }
-              detail = this.salaryList.find(item => item.empId == empId);
-              if (detail != undefined) {
-                detail.uploadedSalary = ss.data()["uploadedSalary"];
-              }
-            }
-          });
-      }
-    }
+    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data").get().subscribe(
+      (ss) => {
+        ss.forEach((doc) => {
+          let empId = doc.id;
+          let empDetail = this.allSalaryList.find(item => item.empId == empId);
+          if (empDetail != undefined) {
+            empDetail.uploadedSalary = doc.data()["uploadedSalary"];
+          }
+          empDetail = this.salaryList.find(item => item.empId == empId);
+          if (empDetail != undefined) {
+            empDetail.uploadedSalary = doc.data()["uploadedSalary"];
+          }
+        });
+      });
   }
 
   getHoldSalary() {
@@ -202,36 +199,26 @@ export class EmployeeSalaryComponent implements OnInit {
     if (this.allSalaryList.length > 0) {
       for (let i = 0; i < this.allSalaryList.length; i++) {
         let empId = this.allSalaryList[i]["empId"];
-        let filterRef = this.dbFireStore
-          .doc(this.fireStoreCity + "/SalaryTransaction/")
-          .collection(empId.toString(), (ref) => {
-            let query:
-              | firebase.firestore.CollectionReference
-              | firebase.firestore.Query = ref;
-            query = query.where("year", "==", this.selectedYear);
-            query = query.where("month", "==", this.selectedMonthName);
-            return query;
+        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId).get().subscribe(
+          (ss) => {
+            let transferedAmount = 0;
+            ss.forEach(function (doc) {
+              transferedAmount += Number(doc.data()["amount"]);
+            });
+            let detail = this.allSalaryList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              detail.transfered = transferedAmount;
+            }
+            detail = this.salaryList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              detail.transfered = transferedAmount;
+            }
+            if (i == this.allSalaryList.length - 1) {
+              this.getFinalAmount();
+            }
           });
-
-        filterRef.get().subscribe((ss) => {
-          let transferedAmount = 0;
-          ss.forEach(function (doc) {
-            transferedAmount += Number(doc.data()["amount"]);
-          });
-          let detail = this.allSalaryList.find(item => item.empId == empId);
-          if (detail != undefined) {
-            detail.transfered = transferedAmount;
-          }
-          detail = this.salaryList.find(item => item.empId == empId);
-          if (detail != undefined) {
-            detail.transfered = transferedAmount;
-          }
-        });
-
       }
-
     }
-
   }
 
   getAccountIssue() {
@@ -250,7 +237,6 @@ export class EmployeeSalaryComponent implements OnInit {
   getSalary() {
     $('#divLoader').show();
     this.getUploadedSalary();
-    this.getTransferedSalary();
     this.getHoldSalary();
     this.getAccountIssue();
     this.getSundaysInMonth(this.selectedMonth, this.selectedYear);
@@ -449,7 +435,7 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       }
     }
-    this.getFinalAmount();
+    this.getTransferedSalary();
   }
 
   getFinalAmount() {
@@ -698,7 +684,7 @@ export class EmployeeSalaryComponent implements OnInit {
                   systemSalary: systemSalary,
                   uploadedSalary: salary
                 }
-                this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId + "/1").set(data);
+                this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data/" + detail.empId + "").set(data);
 
                 //let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId;
                 // this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
@@ -791,12 +777,13 @@ export class EmployeeSalaryComponent implements OnInit {
 
   updateAccountDetail() {
     let isChecked = false;
+    let checkArray = [];
     for (let i = 0; i < this.salaryList.length; i++) {
       let empId = this.salaryList[i]["empId"];
       let element = <HTMLInputElement>document.getElementById("chk" + empId);
       if (element.checked == true) {
         isChecked = true;
-
+        checkArray.push({ empId: empId });
       }
     }
     if (isChecked == false) {
@@ -804,8 +791,8 @@ export class EmployeeSalaryComponent implements OnInit {
       return;
     }
     $("#divLoader").show();
-    for (let i = 0; i < this.salaryList.length; i++) {
-      let empId = this.salaryList[i]["empId"];
+    for (let i = 0; i < checkArray.length; i++) {
+      let empId = checkArray[i]["empId"];
       let dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
       let instance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -830,7 +817,7 @@ export class EmployeeSalaryComponent implements OnInit {
               detail.ifsc = ifsc;
             }
           }
-          if (i == this.salaryList.length - 1) {
+          if (i == checkArray.length - 1) {
             this.saveJsonFile(this.allSalaryList, "accountDetail.json");
             let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
             const obj = { lastUpdate: time };
