@@ -96,6 +96,9 @@ export class SalaryTransactionComponent implements OnInit {
     htmlString = "<table>";
     htmlString += "<tr>";
     htmlString += "<td>";
+    htmlString += "Employee Code";
+    htmlString += "</td>";
+    htmlString += "<td>";
     htmlString += "Beneficiary Name";
     htmlString += "</td>";
     htmlString += "<td>";
@@ -260,10 +263,18 @@ export class SalaryTransactionComponent implements OnInit {
         return;
       }
       for (let i = 0; i < fileList.length; i++) {
-        let empCode = fileList[i]["EmployeeCode"];
+        let empCode = fileList[i]["Employee Code"];
         let name = fileList[i]["Beneficiary Name"];
         let accountNo = fileList[i]["Beneficiary Account Number"];
         let ifsc = fileList[i]["IFSC"];
+        let emailId = "";
+        if (fileList[i]["Beneficiary Email ID"] != undefined) {
+          emailId = fileList[i]["Beneficiary Email ID"];
+        }
+        let utrNo = "";
+        if (fileList[i]["UTR Number"] != undefined) {
+          utrNo = fileList[i]["UTR Number"];
+        }
         let transactionType = fileList[i]["Transaction Type"];
         let debitAccountNo = fileList[i]["Debit Account No"];
         if (debitAccountNo == undefined) {
@@ -272,7 +283,7 @@ export class SalaryTransactionComponent implements OnInit {
         let transationDate = fileList[i]["Transaction Date"];
         let amount = fileList[i]["Amount"];
         let currency = fileList[i]["Currency"];
-        let remark = "";
+        let remark = fileList[i]["Remarks"];
 
         if (empCode != undefined && amount != undefined) {
           let isCorrect = true;
@@ -305,6 +316,8 @@ export class SalaryTransactionComponent implements OnInit {
                     transationDate: transationDate,
                     amount: amount,
                     currency: currency,
+                    emailId: emailId,
+                    utrNo: utrNo,
                     uploadBy: localStorage.getItem("userID"),
                     uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
                     year: year,
