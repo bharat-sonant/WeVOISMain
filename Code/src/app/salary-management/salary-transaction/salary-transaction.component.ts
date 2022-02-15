@@ -80,7 +80,7 @@ export class SalaryTransactionComponent implements OnInit {
         ss.forEach(function (doc) {
           let userData = commonService.getPortalUserDetailById(doc.data()["uploadBy"]);
           if (userData != undefined) {
-            list.push({ name: doc.data()["name"], accountNo: doc.data()["accountNo"], amount: doc.data()["amount"], debitAccountNo: doc.data()["debitAccountNo"], ifsc: doc.data()["ifsc"], transactionType: doc.data()["transactionType"], transationDate: doc.data()["transationDate"], uploadDate: doc.data()["uploadDate"], uploadBy: userData["name"] });
+            list.push({ name: doc.data()["name"], accountNo: doc.data()["accountNo"], amount: doc.data()["amount"], debitAccountNo: doc.data()["debitAccountNo"], ifsc: doc.data()["ifsc"], transactionType: doc.data()["transactionType"], transationDate: doc.data()["transationDate"], uploadDate: doc.data()["uploadDate"], uploadBy: userData["name"],remarks:doc.data()["remarks"] });
           }
         });
         this.transactionList = list;
@@ -91,49 +91,11 @@ export class SalaryTransactionComponent implements OnInit {
   }
 
   downloadTemplate() {
-
-    let htmlString = "";
-    htmlString = "<table>";
-    htmlString += "<tr>";
-    htmlString += "<td>";
-    htmlString += "Employee Code";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Beneficiary Name";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Beneficiary Account Number";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "IFSC";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Transaction Type";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Debit Account No";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Transaction Date";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Amount";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Currency";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Beneficiary Email ID";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Remarks";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "UTR Number";
-    htmlString += "</td>";
-    htmlString += "</tr>";
-    htmlString += "</table>";
-    this.exportExcel(htmlString, "sample file.xlsx");
+    let link = document.createElement("a");
+    link.download = "sample";
+    link.href = "../../../assets/sample/sample.xlsx";
+    link.click();
+    link.remove();
   }
 
 
@@ -249,13 +211,18 @@ export class SalaryTransactionComponent implements OnInit {
   saveData(fileList: any) {
     let errorData = [];
     if (fileList.length > 0) {
-      if (fileList[0]["EmployeeCode"] == undefined) {
+      if (fileList[0]["Employee Code"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check EmployeeCode column in excel !!!");
         $('#fileUpload').val("");
         return;
       }
       if (fileList[0]["Amount"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check Amount column in excel !!!");
+        $('#fileUpload').val("");
+        return;
+      }
+      if (fileList[0]["Amount"] == undefined) {
+        this.commonService.setAlertMessage("error", "Please check UTR Number column in excel !!!");
         $('#fileUpload').val("");
         return;
       }
@@ -280,7 +247,11 @@ export class SalaryTransactionComponent implements OnInit {
         let transationDate = fileList[i]["Transaction Date"];
         let amount = fileList[i]["Amount"];
         let currency = fileList[i]["Currency"];
-        let remark = fileList[i]["Remarks"];
+        let remarks = "";
+        if(fileList[i]["Remarks"]!=undefined){
+          remarks=fileList[i]["Remarks"];
+        }
+        let remark = "";
 
         if (empCode != undefined && amount != undefined) {
           let isCorrect = true;
@@ -290,47 +261,54 @@ export class SalaryTransactionComponent implements OnInit {
             remark = "Amount is not in correct format.";
           }
           if (isCorrect == true) {
-            let detail = this.allEmployeeList.find(item => item.empCode == empCode);
-            if (detail != undefined) {
-              if (detail.name.trim() == name.trim()) {
-                if (transationDate != null) {
-                  let month = transationDate.split('/')[1];
-                  if (month.toString().length == 1) {
-                    month = "0" + month;
+            if (utrNo == "") {
+              remark = "UTR Number not found.";
+              errorData.push({ empCode: empCode, amount: amount, name: name, remark: remark });
+            }
+            else {
+              let detail = this.allEmployeeList.find(item => item.empCode == empCode);
+              if (detail != undefined) {
+                if (detail.name.trim() == name.trim()) {
+                  if (transationDate != null) {
+                    let month = transationDate.split('/')[1];
+                    if (month.toString().length == 1) {
+                      month = "0" + month;
+                    }
+                    let year = transationDate.split('/')[2];
+                    let day = transationDate.split('/')[0];
+                    if (day.toString().length == 1) {
+                      day = "0" + day;
+                    }
+                    let date = year + "-" + month + "-" + day;
+                    const data = {
+                      name: name,
+                      accountNo: accountNo,
+                      ifsc: ifsc,
+                      transactionType: transactionType,
+                      debitAccountNo: debitAccountNo,
+                      transationDate: transationDate,
+                      amount: amount,
+                      currency: currency,
+                      emailId: emailId,
+                      utrNo: utrNo,
+                      remarks: remarks,
+                      uploadBy: localStorage.getItem("userID"),
+                      uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
+                      year: year,
+                      month: this.commonService.getCurrentMonthName(Number(month) - 1)
+                    }
+                    this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + detail.empId + "/" + date + "").set(data);
                   }
-                  let year = transationDate.split('/')[2];
-                  let day = transationDate.split('/')[0];
-                  if (day.toString().length == 1) {
-                    day = "0" + day;
-                  }
-                  let date = year + "-" + month + "-" + day;
-                  const data = {
-                    name: name,
-                    accountNo: accountNo,
-                    ifsc: ifsc,
-                    transactionType: transactionType,
-                    debitAccountNo: debitAccountNo,
-                    transationDate: transationDate,
-                    amount: amount,
-                    currency: currency,
-                    emailId: emailId,
-                    utrNo: utrNo,
-                    uploadBy: localStorage.getItem("userID"),
-                    uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
-                    year: year,
-                    month: this.commonService.getCurrentMonthName(Number(month) - 1)
-                  }
-                  this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + detail.empId + "/" + date + "").set(data);
+                }
+                else {
+                  remark = "Name is not correct for this EmployeeId";
+                  errorData.push({ empCode: empCode, amount: amount, name: name, remark: remark });
                 }
               }
               else {
-                remark = "Name is not correct for this EmployeeId";
+                remark = "EmployeeCode not in list.";
                 errorData.push({ empCode: empCode, amount: amount, name: name, remark: remark });
               }
-            }
-            else {
-              remark = "EmployeeCode not in list.";
-              errorData.push({ empCode: empCode, amount: amount, name: name, remark: remark });
             }
           }
           else {
@@ -350,7 +328,7 @@ export class SalaryTransactionComponent implements OnInit {
         htmlString += "Name";
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += "Salary";
+        htmlString += "Amount";
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += "Remark";
@@ -365,7 +343,7 @@ export class SalaryTransactionComponent implements OnInit {
           htmlString += errorData[i]["name"];
           htmlString += "</td>";
           htmlString += "<td>";
-          htmlString += errorData[i]["salary"];
+          htmlString += errorData[i]["amount"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += errorData[i]["remark"];
