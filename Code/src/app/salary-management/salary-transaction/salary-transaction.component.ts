@@ -64,11 +64,6 @@ export class SalaryTransactionComponent implements OnInit {
       return;
     }
     if (empId != "0") {
-      let empCode = "";
-      let detail = this.employeeList.find(item => item.empId = empId);
-      if (detail != undefined) {
-        empCode = detail.empCpde;
-      }
       const list = [];
       const commonService = this.commonService;
       let filterRef = this.dbFireStore
@@ -77,7 +72,7 @@ export class SalaryTransactionComponent implements OnInit {
           let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = ref;
-         // query = query.where("year", "==", year);
+          query = query.where("year", "==", year);
           return query;
         });
 
@@ -188,7 +183,7 @@ export class SalaryTransactionComponent implements OnInit {
 
       this.storage.upload(path, excelFile);
     });
-    
+
     let fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
     fileReader.onload = (e) => {
@@ -231,8 +226,6 @@ export class SalaryTransactionComponent implements OnInit {
         let transationDate = fileList[i]["Transaction Date"];
         let amount = fileList[i]["Amount"];
         let currency = fileList[i]["Currency"];
-        let salaryMonth=fileList[i]["Salary Month"];
-        let salaryYear=fileList[i]["Salary Year"];
         let remark = "";
 
         if (empCode != undefined && amount != undefined) {
@@ -248,8 +241,14 @@ export class SalaryTransactionComponent implements OnInit {
               if (detail.name.trim() == name.trim()) {
                 if (transationDate != null) {
                   let month = transationDate.split('/')[1];
+                  if (month.toString().length == 1) {
+                    month = "0" + month;
+                  }
                   let year = transationDate.split('/')[2];
                   let day = transationDate.split('/')[0];
+                  if (day.toString().length == 1) {
+                    day = "0" + day;
+                  }
                   let date = year + "-" + month + "-" + day;
                   const data = {
                     name: name,
@@ -262,8 +261,8 @@ export class SalaryTransactionComponent implements OnInit {
                     currency: currency,
                     uploadBy: localStorage.getItem("userID"),
                     uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
-                    year: salaryYear,
-                    month: salaryMonth
+                    year: year,
+                    month: this.commonService.getCurrentMonthName(Number(month) - 1)
                   }
                   this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + detail.empId + "/" + date + "").set(data);
                 }

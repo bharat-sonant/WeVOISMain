@@ -135,9 +135,6 @@ export class EmployeeSalaryComponent implements OnInit {
         if (list.length > 0) {
           for (let i = 0; i < list.length; i++) {
             let empId = list[i]["empId"];
-            if (empId == 913) {
-              console.log(empId)
-            }
             let empCode = list[i]["empCode"];
             let name = list[i]["name"];
             let doj = list[i]["doj"];
@@ -206,6 +203,7 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getTransferedSalary(empId: any) {
+    console.log(this.selectedMonthName);
     let filterRef = this.dbFireStore
       .doc(this.fireStoreCity + "/SalaryTransaction/")
       .collection(empId.toString(), (ref) => {
@@ -495,10 +493,9 @@ export class EmployeeSalaryComponent implements OnInit {
         this.allSalaryList[i]["orderBy"] = 0;
       }
       totalSalary += finalAmount;
-      console.log(finalAmount);
-      if (finalAmount > 0) {
+      //if (finalAmount > 0) {
         this.getTransferedSalary(this.allSalaryList[i]["empId"]);
-      }
+      //}
     }
 
     this.salaryDetail.totalSalary = totalSalary.toFixed(2);
@@ -571,6 +568,7 @@ export class EmployeeSalaryComponent implements OnInit {
       this.allSalaryList[i]["garageDuty"] = 0;
       this.allSalaryList[i]["uploadedSalary"] = 0;
       this.allSalaryList[i]["hold"] = 0;
+      this.allSalaryList[i]["transfered"]=0;
     }
   }
 
