@@ -165,28 +165,17 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getUploadedSalary() {
-    let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName;
-    let salaryInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        salaryInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let empId = keyArray[i];
-              let uploadedSalary = 0;
-              if (data[empId]["uploadedSalary"] != null) {
-                uploadedSalary = data[empId]["uploadedSalary"];
-                let detail = this.allSalaryList.find(item => item.empId == empId);
-                if (detail != undefined) {
-                  detail.uploadedSalary = uploadedSalary;
-                }
-              }
+    if (this.allSalaryList.length > 0) {
+      for (let i = 0; i < this.allSalaryList.length; i++) {
+        let empId = this.allSalaryList[i]["empId"];
+        this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "/1").get().subscribe(
+          (ss) => {
+            if (ss.data() != undefined) {
+              this.allSalaryList[i]["uploadedSalary"] = ss.data()["uploadedSalary"];
             }
-          }
-        }
+          });
       }
-    );
+    }
   }
 
   getHoldSalary() {
@@ -203,7 +192,6 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getTransferedSalary(empId: any) {
-    console.log(this.selectedMonthName);
     let filterRef = this.dbFireStore
       .doc(this.fireStoreCity + "/SalaryTransaction/")
       .collection(empId.toString(), (ref) => {
@@ -242,36 +230,6 @@ export class EmployeeSalaryComponent implements OnInit {
         }
       });
     });
-  }
-
-  getDesignation(empId: any, designationId: any) {
-    let dbPath = "Defaults/Designations/" + designationId + "/name";
-    let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        designationInstance.unsubscribe();
-        if (data != null) {
-          let designation = "";
-          let detail = this.allSalaryList.find(item => item.empId == empId);
-          if (detail != undefined) {
-            if (data == "Transportation Executive") {
-              designation = "Driver";
-            }
-            else if (data == "Service Excecutive ") {
-              designation = "Helper";
-            }
-            else {
-              designation = data;
-            }
-            detail.designation = designation;
-            let designationDetail = this.designationList.find(item => item.designation == designation);
-            if (designationDetail == undefined) {
-              this.designationList.push({ designation: designation });
-              this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
-            }
-          }
-        }
-      }
-    );
   }
 
   getSalary() {
@@ -494,7 +452,7 @@ export class EmployeeSalaryComponent implements OnInit {
       }
       totalSalary += finalAmount;
       //if (finalAmount > 0) {
-        this.getTransferedSalary(this.allSalaryList[i]["empId"]);
+      this.getTransferedSalary(this.allSalaryList[i]["empId"]);
       //}
     }
 
@@ -568,7 +526,7 @@ export class EmployeeSalaryComponent implements OnInit {
       this.allSalaryList[i]["garageDuty"] = 0;
       this.allSalaryList[i]["uploadedSalary"] = 0;
       this.allSalaryList[i]["hold"] = 0;
-      this.allSalaryList[i]["transfered"]=0;
+      this.allSalaryList[i]["transfered"] = 0;
     }
   }
 
@@ -723,8 +681,14 @@ export class EmployeeSalaryComponent implements OnInit {
               if (detail.name.trim() == name.trim()) {
                 let systemSalary = detail.finalAmount;
                 detail.uploadedSalary = salary;
-                let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId;
-                this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
+                const data = {
+                  systemSalary: systemSalary,
+                  uploadedSalary: salary
+                }
+                this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId + "/1").set(data);
+
+                //let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId;
+                // this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
                 detail = this.salaryList.find(item => item.empCode == empCode);
                 if (detail != undefined) {
                   detail.uploadedSalary = salary;
