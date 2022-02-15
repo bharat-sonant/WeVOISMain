@@ -131,9 +131,6 @@ export class SalaryTransactionComponent implements OnInit {
     htmlString += "<td>";
     htmlString += "UTR Number";
     htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Status";
-    htmlString += "</td>";
     htmlString += "</tr>";
     htmlString += "</table>";
     this.exportExcel(htmlString, "sample file.xlsx");
