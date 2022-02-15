@@ -90,6 +90,52 @@ export class SalaryTransactionComponent implements OnInit {
 
   }
 
+  downloadTemplate() {
+
+    let htmlString = "";
+    htmlString = "<table>";
+    htmlString += "<tr>";
+    htmlString += "<td>";
+    htmlString += "Beneficiary Name";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Beneficiary Account Number";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "IFSC";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Transaction Type";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Debit Account No";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Transaction Date";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Amount";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Currency";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Beneficiary Email ID";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Remarks";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "UTR Number";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Status";
+    htmlString += "</td>";
+    htmlString += "</tr>";
+    htmlString += "</table>";
+    this.exportExcel(htmlString, "sample file.xlsx");
+  }
+
 
 
   getEmployee() {
@@ -320,7 +366,7 @@ export class SalaryTransactionComponent implements OnInit {
         htmlString += "</table>";
 
         let fileName = "Error-Data-Salary.xlsx";
-        //this.exportExcel(htmlString, fileName);
+        this.exportExcel(htmlString, fileName);
         $('#fileUpload').val("");
       }
       else {
@@ -328,6 +374,20 @@ export class SalaryTransactionComponent implements OnInit {
         $('#fileUpload').val("");
       }
     }
+  }
+
+
+  exportExcel(htmlString: any, fileName: any) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(wb, fileName);
   }
 
 }
