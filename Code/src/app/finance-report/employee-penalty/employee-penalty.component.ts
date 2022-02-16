@@ -225,7 +225,6 @@ export class EmployeePenaltyComponent implements OnInit {
     this.penalityList = [];
     if (this.allPenaltyList.length > 0) {
       let userId = $(this.ddlUser).val();
-      console.log(userId);
       let date = $(this.txtDate).val();
       this.penalityList = this.allPenaltyList;
       if (userId != "0") {

@@ -685,9 +685,6 @@ export class EmployeeSalaryComponent implements OnInit {
                   uploadedSalary: salary
                 }
                 this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data/" + detail.empId + "").set(data);
-
-                //let dbPath = "EmployeeSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/" + detail.empId;
-                // this.db.object(dbPath).update({ systemSalary: systemSalary, uploadedSalary: salary });
                 detail = this.salaryList.find(item => item.empCode == empCode);
                 if (detail != undefined) {
                   detail.uploadedSalary = salary;

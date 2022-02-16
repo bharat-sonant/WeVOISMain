@@ -32,7 +32,6 @@ export class SalaryTransactionComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    console.log(this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -264,6 +263,11 @@ export class SalaryTransactionComponent implements OnInit {
               if (detail != undefined) {
                 if (detail.name.trim() == name.trim()) {
                   if (transationDate != null) {
+                    let checkDate = transationDate.toString().split('/');
+                    if (checkDate.length == 1) {
+                      transationDate = this.getExcelDatetoDate(transationDate);
+                      transationDate = transationDate.split('-')[1] + "/" + transationDate.split('-')[2] + "/" + transationDate.split('-')[0];
+                    }
                     let month = transationDate.split('/')[1];
                     if (month.toString().length == 1) {
                       month = "0" + month;
@@ -348,12 +352,12 @@ export class SalaryTransactionComponent implements OnInit {
 
         htmlString += "</table>";
 
-        let fileName = "Error-Data-Salary.xlsx";
+        let fileName = "Error-Data-Salary-Transaction.xlsx";
         this.exportExcel(htmlString, fileName);
         $('#fileUpload').val("");
       }
       else {
-        this.commonService.setAlertMessage("success", "Salary uploaded successfully !!!");
+        this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
         $('#fileUpload').val("");
       }
     }
@@ -371,6 +375,14 @@ export class SalaryTransactionComponent implements OnInit {
 
     /* save to file */
     XLSX.writeFile(wb, fileName);
+  }
+
+
+  getExcelDatetoDate(serial: any) {
+    var utc_days = Math.floor(serial - 25569);
+    var utc_value = utc_days * 86400;
+    var date_info = new Date(utc_value * 1000);
+    return this.commonService.getDateWithDate(date_info);
   }
 
 }

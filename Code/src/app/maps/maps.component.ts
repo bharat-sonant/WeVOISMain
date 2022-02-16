@@ -1282,7 +1282,6 @@ export class MapsComponent {
       this.skipLineMarker.setMap(null);
     }
     this.skipLineMarker = null;
-    console.log(latLng);
     let lat = latLng.split(',')[0];
     let lng = latLng.split(',')[1];
     this.skipLineMarker = new google.maps.Marker({
