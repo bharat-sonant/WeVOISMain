@@ -327,114 +327,93 @@ export class AccountDetailComponent implements OnInit {
           let to = Number(lastData);
           for (let i = 1; i <= to; i++) {
             let empId = i;
-            dbPath = "Employees/" + empId + "/GeneralDetails";
-            let generalInstance = this.db.object(dbPath).valueChanges().subscribe(
-              gData => {
-                generalInstance.unsubscribe();
-                if (gData != null) {
-                  let status = gData["status"];
-                  let name = gData["name"];
-                  let doj = gData["dateOfJoining"];
-                  let empCode = gData["empCode"];
-                  let designationId = gData["designationId"];
-                  let email = gData["email"];
-                  let accountNo = "";
-                  let ifsc = "";
-                  let aadharNo = "";
-                  let panNo = "";
-                  let modifyBy = "";
-                  let modifyDate = "";
-                  dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
-                  let bankInstance = this.db.object(dbPath).valueChanges().subscribe(
-                    bData => {
-                      bankInstance.unsubscribe();
-                      if (bData != null) {
-                        if (bData["accountNumber"] != null) {
-                          accountNo = bData["accountNumber"];
+            dbPath = "Employees/" + empId;
+            let instance = this.db.object(dbPath).valueChanges().subscribe(
+              data => {
+                instance.unsubscribe();
+                if (data != null) {
+                  if (data["GeneralDetails"] != null) {
+                    let status = data["GeneralDetails"]["status"];
+                    let name = data["GeneralDetails"]["name"];
+                    let doj = data["GeneralDetails"]["dateOfJoining"];
+                    let empCode = data["GeneralDetails"]["empCode"];
+                    let designationId = data["GeneralDetails"]["designationId"];
+                    let email = data["GeneralDetails"]["email"];
+                    let accountNo = "";
+                    let ifsc = "";
+                    let aadharNo = "";
+                    let panNo = "";
+                    let modifyBy = "";
+                    let modifyDate = "";
+                    if (data["BankDetails"] != null) {
+                      if (data["BankDetails"]["AccountDetails"] != null) {
+                        if (data["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
+                          accountNo = data["BankDetails"]["AccountDetails"]["accountNumber"];
                         }
-                        if (bData["ifsc"] != null) {
-                          ifsc = bData["ifsc"];
+                        if (data["BankDetails"]["AccountDetails"]["ifsc"] != null) {
+                          ifsc = data["BankDetails"]["AccountDetails"]["ifsc"];
                         }
                       }
-                      dbPath = "Employees/" + empId + "/IdentificationDetails";
-                      let idInstance = this.db.object(dbPath).valueChanges().subscribe(
-                        idData => {
-                          idInstance.unsubscribe();
-                          if (idData != null) {
-                            if (idData["AadharCardDetails"] != null) {
-                              if (idData["AadharCardDetails"]["aadharNumber"] != null) {
-                                aadharNo = idData["AadharCardDetails"]["aadharNumber"];
-                              }
-                            }
-                            if (idData["PanCardDetails"] != null) {
-                              if (idData["PanCardDetails"]["panNumber"] != null) {
-                                aadharNo = idData["PanCardDetails"]["panNumber"];
-                              }
-                            }
-                          }
-                          dbPath = "EmployeeDetailModificationHistory/" + empId;
-                          let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
-                            hData => {
-                              historyInstance.unsubscribe();
-                              if (hData != null) {
-                                if (hData["lastModifyBy"] != null) {
-                                  modifyBy = hData["lastModifyBy"];
-                                }
-                                if (hData["lastModifyDate"] != null) {
-                                  modifyDate = hData["lastModifyDate"];
-                                }
-                              }
-                              dbPath = "Defaults/Designations/" + designationId + "/name";
-                              let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
-                                data => {
-                                  designationInstance.unsubscribe();
-                                  let designation = "";
-                                  if (data != null) {
-                                    if (data == "Transportation Executive") {
-                                      designation = "Driver";
-                                    }
-                                    else if (data == "Service Excecutive ") {
-                                      designation = "Helper";
-                                    }
-                                    else {
-                                      designation = data;
-                                    }
-                                  }
-                                  accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
-                                  let detail = this.allAccountList.find(item => item.empId == empId);
-                                  if (detail != undefined) {
-                                    detail.name = name;
-                                    detail.designation = designation;
-                                    detail.status = status;
-                                    detail.accountNo = accountNo;
-                                    detail.ifsc = ifsc;
-                                    detail.email = email;
-                                    detail.modifyBy = modifyBy;
-                                    detail.modifyDate = modifyDate;
-                                    detail.panNo = panNo;
-                                    detail.doj = doj;
-                                    detail.aadharNo = aadharNo;
-                                  }
-                                  if (empId == to) {
-                                    this.saveJsonFile(accountJsonList, "accountDetail.json");
-                                    setTimeout(() => {
-                                      let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
-                                      this.remarkDetail.lastUpdate = time;
-                                      const obj = { lastUpdate: time };
-                                      this.saveJsonFile(obj, "LastUpdate.json");
-                                      this.commonService.setAlertMessage("success", "Account data updated successfully !!!");
-                                      $("#divLoader").hide();
-                                    }, 3000);
-                                  }
-                                });
-
-                            });
-                        }
-                      );
                     }
-                  );
+                    if (data["IdentificationDetails"] != null) {
+                      if (data["IdentificationDetails"]["AadharCardDetails"] != null) {
+                        if (data["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"] != null) {
+                          aadharNo = data["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"];
+                        }
+                        if (data["IdentificationDetails"]["PanCardDetails"]["panNumber"] != null) {
+                          panNo = data["IdentificationDetails"]["PanCardDetails"]["panNumber"];
+                        }
+                      }
+                    }
+                    let dbPath = "EmployeeDetailModificationHistory/" + empId;
+                    let historyInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      hData => {
+                        historyInstance.unsubscribe();
+                        if (hData != null) {
+                          if (hData["lastModifyBy"] != null) {
+                            modifyBy = hData["lastModifyBy"];
+                          }
+                          if (hData["lastModifyDate"] != null) {
+                            modifyDate = hData["lastModifyDate"];
+                          }
+                        }
+                        let dbPath = "Defaults/Designations/" + designationId + "/name";
+                        let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          data => {
+                            designationInstance.unsubscribe();
+                            let designation = "";
+                            if (data != null) {
+                              if (data == "Transportation Executive") {
+                                designation = "Driver";
+                              }
+                              else if (data == "Service Excecutive ") {
+                                designation = "Helper";
+                              }
+                              else {
+                                designation = data;
+                              }
+                            }
+                            accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
+
+                            if (empId == to) {
+                                
+                                setTimeout(() => {
+                                  this.saveJsonFile(accountJsonList, "accountDetail.json");
+                                  let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
+                                  this.remarkDetail.lastUpdate = time;
+                                  const obj = { lastUpdate: time };
+                                  this.saveJsonFile(obj, "LastUpdate.json");
+                                  this.commonService.setAlertMessage("success", "Account data updated successfully !!!");
+                                  $("#divLoader").hide();
+                                }, 12000);
+                            }
+                          });
+                      }
+                    );
+                  }
                 }
-              });
+              }
+            );
           }
         }
       }
