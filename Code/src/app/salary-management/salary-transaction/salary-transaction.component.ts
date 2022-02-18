@@ -26,9 +26,14 @@ export class SalaryTransactionComponent implements OnInit {
   public transactionList: any[];
   arrayBuffer: any;
   first_sheet_name: any;
+  employeeType: any;
+  fireStoragePath: "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
   salaryDetail: salaryDetail = {
-    totalSalary: "0.00"
+    name: "---"
   }
+  ddlYear: "#ddlYear";
+  fileUpload: "#fileUpload";
+  txtSearch: "#txtSearch";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -36,7 +41,6 @@ export class SalaryTransactionComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
-
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
@@ -49,37 +53,57 @@ export class SalaryTransactionComponent implements OnInit {
     this.employeeList = [];
     this.transactionList = [];
     this.getYear();
+    this.getTransactionList();
     this.getEmployee();
     this.selectedYear = date.split('-')[0];
-    $('#ddlYear').val(this.selectedYear);
+    $(this.ddlYear).val(this.selectedYear);
   }
 
-  getSalaryTranscation() {
-    this.transactionList = [];
-    let year = $("#ddlYear").val();
-    let empId = $("#ddlEmployee").val();
+  getTransactionList() {
+    for (let i = 1; i <= 12; i++) {
+      let monthName = this.commonService.getCurrentMonthName(i - 1);
+      let list = [];
+      this.transactionList.push({ month: monthName, list: list });
+    }
+  }
+
+  getSalaryTranscation(empId: any, name: any, empCode: any) {
+    let year = $(this.ddlYear).val();
     if (year == "0") {
       this.commonService.setAlertMessage("error", "Please select year !!!");
       return;
     }
     if (empId != "0") {
-      const list = [];
+      this.salaryDetail.name = name + " (" + empCode + ")";
       const commonService = this.commonService;
-      for (let i = 1; i <= 12; i++) {
-        let monthName = this.commonService.getCurrentMonthName(i - 1);
+      for (let i = 0; i < this.transactionList.length; i++) {
+        const list = [];
+        let monthName = this.transactionList[i]["month"];
         this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + monthName + "/" + empId).get().subscribe(
           (ss) => {
             ss.forEach(function (doc) {
               let userData = commonService.getPortalUserDetailById(doc.data()["uploadBy"]);
               if (userData != undefined) {
-                list.push({ name: doc.data()["name"], accountNo: doc.data()["accountNo"], amount: doc.data()["amount"], debitAccountNo: doc.data()["debitAccountNo"], ifsc: doc.data()["ifsc"], transactionType: doc.data()["transactionType"], transationDate: doc.data()["transationDate"], uploadDate: doc.data()["uploadDate"], uploadBy: userData["name"], remarks: doc.data()["remarks"] });
+                list.push({ amount: doc.data()["amount"], transationDate: doc.data()["transationDate"], utrNo: doc.data()["utrNo"], remarks: doc.data()["remarks"] });
               }
             });
-            if (i == 12) {
-              this.transactionList = list;
+            let detail = this.transactionList.find(item => item.month == monthName);
+            if (detail != undefined) {
+              detail.list = list;
             }
           });
       }
+    }
+  }
+
+  changeYear() {
+    this.clearData();
+  }
+
+  clearData() {
+    this.salaryDetail.name = "---";
+    for (let i = 0; i < this.transactionList.length; i++) {
+      this.transactionList[i]["list"] = [];
     }
   }
 
@@ -90,8 +114,6 @@ export class SalaryTransactionComponent implements OnInit {
     link.click();
     link.remove();
   }
-
-
 
   getEmployee() {
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
@@ -104,8 +126,8 @@ export class SalaryTransactionComponent implements OnInit {
         let activeList = this.allEmployeeList.filter(item => item.status == "1");
         if (activeList.length > 0) {
           this.employeeList = activeList;
+          this.employeeType = "active";
         }
-
       }
     });
   }
@@ -118,21 +140,46 @@ export class SalaryTransactionComponent implements OnInit {
     }
   }
 
-  filterData() {
-    let type = $("#ddlType").val();
-    if (type == "all") {
-      this.employeeList = this.allEmployeeList;
-    }
-    else if (type == "active") {
+  filterData(type: any) {
+    if (type == "active") {
+      let element = <HTMLInputElement>document.getElementById("rdoUnactive");
+      element.checked = false;
       let list = this.allEmployeeList.filter(item => item.status == "1");
       if (list.length > 0) {
         this.employeeList = list;
+        this.employeeType = "active";
       }
     }
     else if (type == "inactive") {
+      let element = <HTMLInputElement>document.getElementById("rdoActive");
+      element.checked = false;
       let list = this.allEmployeeList.filter(item => item.status != "1");
       if (list.length > 0) {
         this.employeeList = list;
+        this.employeeType = "inactive";
+      }
+    }
+  }
+
+  getEmployees() {
+    let name = $(this.txtSearch).val();
+    name = name.toString().toUpperCase();
+    if (this.employeeType == "active") {
+      let list = this.allEmployeeList.filter(item => item.status == "1" && (item.name.includes(name) || item.empCode.includes(name)));
+      if (list.length > 0) {
+        this.employeeList = list;
+      }
+      else {
+        this.employeeList = [];
+      }
+    }
+    else {
+      let list = this.allEmployeeList.filter(item => item.status != "1" && (item.name.includes(name) || item.empCode.includes(name)));
+      if (list.length > 0) {
+        this.employeeList = list;
+      }
+      else {
+        this.employeeList = [];
       }
     }
   }
@@ -141,12 +188,12 @@ export class SalaryTransactionComponent implements OnInit {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     if (element.files[0] == null) {
       this.commonService.setAlertMessage("error", "Please select excel !!!");
-      $('#fileUpload').val("");
+      $(this.fileUpload).val("");
       return;
     }
     if (this.selectedYear == "0") {
       this.commonService.setAlertMessage("error", "Please select year !!!");
-      $('#fileUpload').val("");
+      $(this.fileUpload).val("");
       return;
     }
     let file = element.files[0];
@@ -154,7 +201,7 @@ export class SalaryTransactionComponent implements OnInit {
     let fileExt = fileName.split('.');
     if (fileExt[fileExt.length - 1] != "xlsx" && fileExt[fileExt.length - 1] != "xls") {
       this.commonService.setAlertMessage("error", "Please upload only excel file !!!");
-      $('#fileUpload').val("");
+      $(this.fileUpload).val("");
       return;
     }
 
@@ -206,17 +253,17 @@ export class SalaryTransactionComponent implements OnInit {
     if (fileList.length > 0) {
       if (fileList[0]["Employee Code"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check EmployeeCode column in excel !!!");
-        $('#fileUpload').val("");
+        $(this.fileUpload).val("");
         return;
       }
       if (fileList[0]["Amount"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check Amount column in excel !!!");
-        $('#fileUpload').val("");
+        $(this.fileUpload).val("");
         return;
       }
       if (fileList[0]["Amount"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check UTR Number column in excel !!!");
-        $('#fileUpload').val("");
+        $(this.fileUpload).val("");
         return;
       }
       for (let i = 0; i < fileList.length; i++) {
@@ -354,15 +401,14 @@ export class SalaryTransactionComponent implements OnInit {
 
         let fileName = "Error-Data-Salary-Transaction.xlsx";
         this.exportExcel(htmlString, fileName);
-        $('#fileUpload').val("");
+        $(this.fileUpload).val("");
       }
       else {
         this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-        $('#fileUpload').val("");
+        $(this.fileUpload).val("");
       }
     }
   }
-
 
   exportExcel(htmlString: any, fileName: any) {
     var parser = new DOMParser();
@@ -377,7 +423,6 @@ export class SalaryTransactionComponent implements OnInit {
     XLSX.writeFile(wb, fileName);
   }
 
-
   getExcelDatetoDate(serial: any) {
     var utc_days = Math.floor(serial - 25569);
     var utc_value = utc_days * 86400;
@@ -388,5 +433,5 @@ export class SalaryTransactionComponent implements OnInit {
 }
 
 export class salaryDetail {
-  totalSalary: string;
+  name: string;
 }
