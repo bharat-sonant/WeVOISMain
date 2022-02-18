@@ -39,9 +39,6 @@ export class SalaryHoldingManagementComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    if (this.fireStoreCity == "Test") {
-      this.fireStoreCity = "Testing";
-    }
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();

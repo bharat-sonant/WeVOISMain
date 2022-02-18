@@ -62,9 +62,6 @@ export class EmployeeSalaryComponent implements OnInit {
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    if (this.fireStoreCity == "Test") {
-      this.fireStoreCity = "Testing";
-    }
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];

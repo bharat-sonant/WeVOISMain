@@ -24,7 +24,14 @@ export class AccountDetailComponent implements OnInit {
   accountList: any[];
   ddlUser = "#ddlUser";
   ddlDesignation = "#ddlDesignation";
+  preAccountNo="#preAccountNo";
+  preIFSC="#preIFSC";
+  txtAccountNo="#txtAccountNo";
+  txtIFSC="#txtIFSC";
+  txtRemarks="#txtRemarks";
+  key="#key";
   fireStoreCity: any;
+  fireStorePath: any;
   toDayDate: any;
   accountJsonList: any[];
   remarkDetail: remarkDetail = {
@@ -45,9 +52,7 @@ export class AccountDetailComponent implements OnInit {
   setDefault() {
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    if (this.fireStoreCity == "Test") {
-      this.fireStoreCity = "Testing";
-    }
+    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.designationList = [];
     this.designationUpdateList = [];
     this.allAccountList = [];
@@ -60,24 +65,13 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getDesignation() {
-    let dbPath = "Defaults/Designations";
-    let designationInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        designationInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let designationId = keyArray[i];
-            let name = data[designationId]["name"];
-            this.designationUpdateList.push({ designationId: designationId, designation: name });
-          }
-        }
-      }
-    );
+    this.commonService.getDesignation().then((destinationList: any) => {
+      this.designationUpdateList = JSON.parse(destinationList);
+    });
   }
 
   getLastUpdate() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
+    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
@@ -91,9 +85,9 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getAccountDetail() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
-    let fuelInstance = this.httpService.get(path).subscribe(data => {
-      fuelInstance.unsubscribe();
+    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    let instance = this.httpService.get(path).subscribe(data => {
+      instance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData);
@@ -128,8 +122,8 @@ export class AccountDetailComponent implements OnInit {
   }
 
   filterData() {
-    let filterVal = $('#ddlUser').val();
-    let designationFilterVal = $('#ddlDesignation').val();
+    let filterVal = $(this.ddlUser).val();
+    let designationFilterVal = $(this.ddlDesignation).val();
     this.showAccountDetail(filterVal, designationFilterVal);
   }
 
@@ -161,15 +155,15 @@ export class AccountDetailComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $("#key").val(id);
+    $(this.key).val(id);
     if (type == "account") {
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         setTimeout(() => {
-          $("#preAccountNo").val(userDetail.accountNo);
-          $("#preIFSC").val(userDetail.ifsc);
-          $("#txtAccountNo").val(userDetail.accountNo);
-          $("#txtIFSC").val(userDetail.ifsc);
+          $(this.preAccountNo).val(userDetail.accountNo);
+          $(this.preIFSC).val(userDetail.ifsc);
+          $(this.txtAccountNo).val(userDetail.accountNo);
+          $(this.txtIFSC).val(userDetail.ifsc);
         }, 100);
       }
     }
@@ -181,7 +175,7 @@ export class AccountDetailComponent implements OnInit {
         }
         else {
           $("#divSolved").show();
-          $("#txtRemarks").val(userDetail.remark);
+          $(this.txtRemarks).val(userDetail.remark);
         }
       }
     }
@@ -200,15 +194,15 @@ export class AccountDetailComponent implements OnInit {
   }
 
   saveAccountDetail() {
-    let id = $("#key").val();
+    let id = $(this.key).val();
     if (id != "0") {
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
-        let accountNo = $("#txtAccountNo").val();
-        let ifsc = $("#txtIFSC").val();
+        let accountNo = $(this.txtAccountNo).val();
+        let ifsc = $(this.txtIFSC).val();
         let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
-        let preAccountNo = $("#preAccountNo").val();
-        let preIFSC = $("#preIFSC").val();
+        let preAccountNo = $(this.preAccountNo).val();
+        let preIFSC = $(this.preIFSC).val();
         this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
         dbPath = "EmployeeDetailModificationHistory/" + id + "/";
         let time = this.commonService.getCurrentTimeWithSecond();
@@ -244,7 +238,7 @@ export class AccountDetailComponent implements OnInit {
           }
           this.saveJsonFile(this.allAccountList, "accountDetail.json");
         }
-        $("#key").val("0");
+        $(this.key).val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
         this.closeModel();
       }
@@ -252,8 +246,8 @@ export class AccountDetailComponent implements OnInit {
   }
 
   saveRemarks() {
-    let id = $("#key").val();
-    let remark = $("#txtRemarks").val();
+    let id = $(this.key).val();
+    let remark = $(this.txtRemarks).val();
     let userDetail = this.accountList.find((item) => item.empId == id);
     if (userDetail != undefined) {
       if (userDetail.remark == null) {
@@ -268,8 +262,8 @@ export class AccountDetailComponent implements OnInit {
             remarkDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond()
           }
           this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").doc(id.toString()).set(data);
-          $("#key").val("0");
-          $("#txtRemarks").val("");
+          $(this.key).val("0");
+          $(this.txtRemarks).val("");
           userDetail.remark = remark;
           userDetail.remarkBy = localStorage.getItem("userID");
           userDetail.remarkDate = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
@@ -280,8 +274,8 @@ export class AccountDetailComponent implements OnInit {
         let element = <HTMLInputElement>document.getElementById("chkSolved");
         if (element.checked == false) {
           this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").doc(id.toString()).update({ remark: remark });
-          $("#key").val("0");
-          $("#txtRemarks").val("");
+          $(this.key).val("0");
+          $(this.txtRemarks).val("");
           userDetail.remark = remark;
           this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
         }
@@ -324,7 +318,7 @@ export class AccountDetailComponent implements OnInit {
     const path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/" + fileName;
 
     //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
+    const ref = this.storage.storage.app.storage(this.fireStorePath).ref(path);
     var byteString;
     // write the bytes of the string to a typed array
 
@@ -452,7 +446,6 @@ export class AccountDetailComponent implements OnInit {
     );
   }
 }
-
 
 export class remarkDetail {
   date: string;
