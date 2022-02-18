@@ -43,16 +43,6 @@
                                         <option value={{yer.year}} *ngFor="let yer of yearList"
                                             ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
                                     </select>
-                                    <select class="filter-select filter-input" id="ddlEmployee"
-                                        (change)="getSalaryTranscation()">
-                                        <option value="all">
-                                            Select Employee
-                                        </option>
-                                        <option *ngFor="let dt of employeeList" value={{dt.empId}}>
-                                            {{dt.name}} ({{dt.empCode}})
-                                        </option>
-                                    </select>
-
                                     <select class="filter-select filter-input" id="ddlType" (change)="filterData()">
                                         <option value="all">
                                             All Employee
@@ -64,7 +54,15 @@
                                             In-active
                                         </option>
                                     </select>
-
+                                    <select class="filter-select filter-input" id="ddlEmployee"
+                                        (change)="getSalaryTranscation()">
+                                        <option value="all">
+                                            Select Employee
+                                        </option>
+                                        <option *ngFor="let dt of employeeList" value={{dt.empId}}>
+                                            {{dt.name}} ({{dt.empCode}})
+                                        </option>
+                                    </select>
                                     <span style="float: right; margin-bottom: -10px;" class="main-box">
                                         <div class="outer">
                                             <span style="text-align: center;">

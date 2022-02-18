@@ -154,6 +154,11 @@ export class EmployeeSalaryComponent implements OnInit {
             if (list[i]["ifsc"] != "") {
               ifsc = list[i]["ifsc"];
             }
+            let designationDetail = this.designationList.find(item => item.designation == designation);
+          if (designationDetail == undefined) {
+            this.designationList.push({ designation: designation });
+            this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
+          }
             salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: list[i]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
           }
           this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");

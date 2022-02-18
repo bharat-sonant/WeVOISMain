@@ -34,7 +34,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   txtHoldingReason = "#txtHoldingReason";
   divHoldList = "#divHoldList";
   divUnholdList = "#divUnholdList";
-  divLoader="#divLoader";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -175,6 +175,8 @@ export class SalaryHoldingManagementComponent implements OnInit {
     $(this.eventType).val(type);
     if (type == "hold") {
       $('#exampleModalLongTitle').html("Hold Entry");
+      $('#lblwho').html("Who said to hold");
+      $('#lblreason').html("Holding Reason");
       if (id != "0") {
         setTimeout(() => {
           let detail = this.salaryHoldingList.find(item => item.empId == id);
@@ -190,6 +192,8 @@ export class SalaryHoldingManagementComponent implements OnInit {
     }
     else {
       $('#exampleModalLongTitle').html("Un-hold Entry");
+      $('#lblwho').html("Who said to un-hold");
+      $('#lblreason').html("Un-holding Reason");
       setTimeout(() => {
         let detail = this.salaryHoldingList.find(item => item.empId == id);
         if (detail != undefined) {
@@ -289,9 +293,11 @@ export class SalaryHoldingManagementComponent implements OnInit {
             this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").collection(key.toString()).doc("1").set(data);
             this.dbFireStore.doc(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId + "").delete();
             this.commonService.setAlertMessage("success", "Data saved successfully !!!");
-            this.getSalaryHolding();
-            this.getUnholdSalary();
-            this.closeModel();
+            setTimeout(() => {
+              this.getSalaryHolding();
+              this.getUnholdSalary();
+              this.closeModel();
+            }, 300);
           }
         });
       }
@@ -321,7 +327,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   }
 
   getUnholdSalary() {
-    this.salaryUnholdingList=[];
+    this.salaryUnholdingList = [];
     this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").get().subscribe((ss) => {
       ss.forEach((doc) => {
         this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/UnHold/" + this.selectedYear + "/" + this.selectedMonthName + "").doc(doc.id).get().subscribe((data) => {
@@ -352,7 +358,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
                         if (userDataUnHold != undefined) {
                           let WhoUnhold = userDataUnHold["name"];
                           this.salaryUnholdingList.push({ empId: empId, holdDate: holdDate, name: name, empCode: empCode, holdBy: holdBy, WhoHold: WhoHold, holdSaidBy: holdSaidBy, holdReason: holdReason, unHoldDate: unHoldDate, unHoldReason: unHoldReason, unHoldSaidBy: unHoldSaidBy, WhoUnhold: WhoUnhold });
-                          this.salaryUnholdingList=this.commonService.transformNumeric(this.salaryUnholdingList,"empCode");
+                          this.salaryUnholdingList = this.commonService.transformNumeric(this.salaryUnholdingList, "empCode");
                         }
                       }
                     }
