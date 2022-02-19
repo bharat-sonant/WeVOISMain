@@ -25,6 +25,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   employeeList: any[];
   salaryHoldingList: any[];
   salaryUnholdingList: any[];
+  fireStoragePath: any;
   ddlYear = '#ddlYear';
   ddlMonth = "#ddlMonth";
   holdingId = "#holdingId";
@@ -45,6 +46,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   }
 
   setDefault() {
+    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
@@ -61,7 +63,6 @@ export class SalaryHoldingManagementComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
   }
 
-
   getYear() {
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
@@ -71,9 +72,9 @@ export class SalaryHoldingManagementComponent implements OnInit {
   }
 
   getEmployee() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
-    let fuelInstance = this.httpService.get(path).subscribe(data => {
-      fuelInstance.unsubscribe();
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    let employeeInstance = this.httpService.get(path).subscribe(data => {
+      employeeInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
         this.allEmployeeList = JSON.parse(jsonData);

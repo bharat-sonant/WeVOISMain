@@ -4,15 +4,20 @@
 <!----Desktop Navbar Start----->
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-3 col-lg-3 col-xl-3 pl-18 ipad-pl-40">
+        <div class="col-md-2 col-lg-2 col-xl-2 pl-18 ipad-pl-40">
             <div>
-
+                <select class="caret-select" id="ddlYear" (change)="changeYear()"
+                style="width: 150px;" [(ngModel)]="selectedYear">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList"
+                    ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
             </div>
         </div>
-        <div class="col-md-6 col-lg-6 col-xl-6 main-headers">
+        <div class="col-md-5 col-lg-5 col-xl-5 main-headers">
             Salary Transactions
         </div>
-        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+        <div class="col-md-5 col-lg-5 col-xl-5 text-right total-house pl-18">
             
         </div>
     </div>
@@ -66,42 +71,33 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div id="divList" class="table-wrapper table-one">
-                                    <table id="tblPenalty" class="table table-line">
+                                    <table id="tblPenalty" class="table table-line" style="height:100%;">
                                         <thead>
-                                            <th class="br-1 td-1" style="border:none!important;">Month</th>
-                                            <th class="text-right br-1" style="border:none!important;">
+                                            <th class="br-1 td-1" style="border:none!important; width:20%;">Month</th>
+                                            <th class="text-right br-1" style="border:none!important; width:20%;">
                                                 Amount</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1" style="border:none!important; width:20%;">
                                                 Transaction Date</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1" style="border:none!important; width:20%;">
                                                 Remarks</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1" style="border:none!important; width:20%;">
                                                 URN Number </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                <td class="td-1" style="width:20%; border-right:1px solid #dee2e6; vertical-align: top; font-weight: bold;">
                                                     {{data.month}}
                                                 </td>
-                                                <td class="text-right br-1">
-                                                    <span *ngFor="let dt of data.list" style="padding-bottom: 10px;">
-                                                        {{dt.amount}}
-                                                    </span><br />
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <span *ngFor="let dt of data.list" style="padding-bottom: 10px;">
-                                                        {{dt.transationDate}}
-                                                    </span><br />
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <span *ngFor="let dt of data.list" style="padding-bottom: 10px;">
-                                                        {{dt.remarks}}
-                                                    </span><br />
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <span *ngFor="let dt of data.list" style="padding-bottom: 10px;">
-                                                        {{dt.utrNo}}
-                                                    </span><br />
+                                                <td class="text-left br-1" colspan="4"  style="width:80%;">
+                                                    <table class="table table-line" style="border:none; margin-top: -9px;margin-bottom: -8px!important;margin-left: -10px;
+                                                    width: 102%;">
+                                                        <tr *ngFor="let dt of data.list">
+                                                            <td class="text-right" style="width:25%; border-right: 1px solid lightgray;">{{dt.amount}}</td>
+                                                            <td class="text-left"  style="width:25%; border-right: 1px solid lightgray;">{{dt.transationDate}}</td>
+                                                            <td class="text-left" style="width:25%; border-right: 1px solid lightgray;">{{dt.remarks}}</td>
+                                                            <td class="text-left" style="width:25%;"> {{dt.utrNo}}</td>
+                                                        </tr>
+                                                    </table>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -120,20 +116,14 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-lg-3 col-xl-3 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
-            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+        <div class="col-md-3 col-lg-3 col-xl-3 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;  position: absolute;z-index: 999; right:-9px;">
+            <div class="card" style="margin-top:-72px;  height: 100vh!important;">
                 <div class="card-header custom-header">
                     <div class="row align">
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlYear"
-                                        (change)="changeYear()" style="width: 95%!important;"
-                                        [(ngModel)]="selectedYear">
-                                        <option value="0">Year</option>
-                                        <option value={{yer.year}} *ngFor="let yer of yearList"
-                                            ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
-                                    </select>
+                                    
                                     <input id="txtSearch" type="text" class="filter-input" style="width: 95%!important;"
                                         placeholder="Search Employee" (keyup)="getEmployees();"><br /><br />
                                     <span style="padding-left: 10px; margin-top: 10px;">
@@ -150,7 +140,7 @@
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div class="table-wrapper table-one">
+                                <div class="table-wrapper table-one" style="height:calc(100vh - 140px)!important">
                                     <table class="table table-line">
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of employeeList; let i=index">

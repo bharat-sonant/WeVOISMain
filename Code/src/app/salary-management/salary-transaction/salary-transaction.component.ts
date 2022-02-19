@@ -27,13 +27,13 @@ export class SalaryTransactionComponent implements OnInit {
   arrayBuffer: any;
   first_sheet_name: any;
   employeeType: any;
-  fireStoragePath: "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath: any;
   salaryDetail: salaryDetail = {
     name: "---"
   }
-  ddlYear: "#ddlYear";
-  fileUpload: "#fileUpload";
-  txtSearch: "#txtSearch";
+  ddlYear = "#ddlYear";
+  fileUpload = "#fileUpload";
+  txtSearch = "#txtSearch";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -44,6 +44,7 @@ export class SalaryTransactionComponent implements OnInit {
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
+    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
@@ -113,7 +114,7 @@ export class SalaryTransactionComponent implements OnInit {
   }
 
   getEmployee() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
       if (data != null) {
@@ -222,7 +223,6 @@ export class SalaryTransactionComponent implements OnInit {
 
       this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction").set({ lastKey: key });
       this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/UploadHistory/" + key.toString()).set(data);
-
 
       const path = "" + this.commonService.getFireStoreCity() + "/SalaryTransactionFiles/" + filename;
 
