@@ -60,7 +60,8 @@ export class VtsAnalysisComponent implements OnInit {
     penalty: 0,
     lastShowDate: this.commonService.getTodayDateTime(),
     selectedLines: 0,
-    savedLines: 0
+    savedLines: 0,
+    totalVehicle: 0
   };
 
   showBoundries = "#showBoundries";
@@ -93,7 +94,7 @@ export class VtsAnalysisComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.setEventHistoryHeight();
+    //this.setEventHistoryHeight();
     this.setDefault();
     //this.checkInternetSpeed();
   }
@@ -186,6 +187,7 @@ export class VtsAnalysisComponent implements OnInit {
     vehicleElement.checked = false;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
+    this.progressData.totalVehicle = 0;
     $(this.divApproved).hide();
   }
 
@@ -809,6 +811,7 @@ export class VtsAnalysisComponent implements OnInit {
               if (routeVehicleDetail != undefined) {
                 isDone = 1;
               }
+              this.progressData.totalVehicle = Number(this.progressData.totalVehicle) + 1;
               this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
             });
         }
@@ -824,6 +827,7 @@ export class VtsAnalysisComponent implements OnInit {
           if (routeVehicleDetail != undefined) {
             isDone = 1;
           }
+          this.progressData.totalVehicle = Number(this.progressData.totalVehicle) + 1;
           this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
         }
       }
@@ -853,6 +857,7 @@ export class VtsAnalysisComponent implements OnInit {
         vehicleName = this.vehicleList[i]["vehicle"];
       }
     }
+    this.progressData.totalVehicle = Number(vehicleList.length);
     this.vehicleList = vehicleList;
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
@@ -955,6 +960,7 @@ export class VtsAnalysisComponent implements OnInit {
           vehicles = vehicles + "," + this.vehicleList[i]["vehicle"];
         }
       }
+      this.progressData.totalVehicle = this.vehicleList.length;
     }
     if (vehicles != "") {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
@@ -1363,4 +1369,5 @@ export class progressDetail {
   lastShowDate: string;
   selectedLines: number;
   savedLines: number;
+  totalVehicle: number;
 }
