@@ -30,6 +30,7 @@ export class EmployeeSalaryComponent implements OnInit {
   allSalaryList: any[];
   arrayBuffer: any;
   first_sheet_name: any;
+  fireStoragePath: any;
   salaryDetail: salaryDetail = {
     totalSalary: "0.00",
     remark: ""
@@ -52,6 +53,12 @@ export class EmployeeSalaryComponent implements OnInit {
   tractor_reward_days: any;
   workingDayInMonth: any;
   fireStoreCity: any;
+  ddlMonth="#ddlMonth";
+  ddlYear="#ddlYear";
+  ddlUser="#ddlUser";
+  ddlDesignation="#ddlDesignation";
+  divLoader="#divLoader";
+  key="#key";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -62,6 +69,7 @@ export class EmployeeSalaryComponent implements OnInit {
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
+    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
@@ -72,8 +80,8 @@ export class EmployeeSalaryComponent implements OnInit {
     this.getYear();
     this.selectedMonth = date.split('-')[1];
     this.selectedYear = date.split('-')[0];
-    $('#ddlMonth').val(this.selectedMonth);
-    $('#ddlYear').val(this.selectedYear);
+    $(this.ddlMonth).val(this.selectedMonth);
+    $(this.ddlYear).val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getSetting();
   }
@@ -96,11 +104,10 @@ export class EmployeeSalaryComponent implements OnInit {
     this.compactor_basic_minute = 0;
     this.workingDayInMonth = 0;
 
-    let dbPath = "Settings/Salary";
-    let salaryData = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        salaryData.unsubscribe();
-        this.basic_minimum_hour = data["basic_minimum_hour"];
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSalary.json?alt=media";
+    let salaryInstance = this.httpService.get(path).subscribe(data => {
+      salaryInstance.unsubscribe();
+      this.basic_minimum_hour = data["basic_minimum_hour"];
         this.compactor_basic_hour = data["compactor_basic_hour"];
         this.compactor_driver_incentive_per_hour = data["compactor_driver_incentive_per_hour"];
         this.compactor_driver_salary_per_hour = data["compactor_driver_salary_per_hour"];
@@ -116,12 +123,12 @@ export class EmployeeSalaryComponent implements OnInit {
         this.basic_minimum_minute = Number(this.basic_minimum_hour) * 60;
         this.compactor_basic_minute = Number(this.compactor_basic_hour) * 60;
         this.getEmployee();
-      });
+    });
   }
 
   getEmployee() {
-    $('#divLoader').show();
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    $(this.divLoader).show();
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
 
@@ -237,7 +244,7 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getSalary() {
-    $('#divLoader').show();
+    $(this.divLoader).show();
     this.getUploadedSalary();
     this.getHoldSalary();
     this.getAccountIssue();
@@ -459,12 +466,12 @@ export class EmployeeSalaryComponent implements OnInit {
 
     this.salaryDetail.totalSalary = totalSalary.toFixed(2);
     this.showSalaryList("active", "all");
-    $('#divLoader').hide();
+    $(this.divLoader).hide();
   }
 
   filterData() {
-    let filterVal = $('#ddlUser').val();
-    let designationFilterVal = $('#ddlDesignation').val();
+    let filterVal = $(this.ddlUser).val();
+    let designationFilterVal = $(this.ddlDesignation).val();
     this.showSalaryList(filterVal, designationFilterVal);
   }
 
@@ -543,9 +550,9 @@ export class EmployeeSalaryComponent implements OnInit {
     this.clearDetail();
     this.selectedYear = filterVal;
     this.selectedMonth = "0";
-    $('#ddlMonth').val("0");
-    $('#ddlUser').val("active");
-    $('#ddlDesignation').val("all");
+    $(this.ddlMonth).val("0");
+    $(this.ddlUser).val("active");
+    $(this.ddlDesignation).val("all");
     let element = <HTMLInputElement>document.getElementById("chkAll");
     element.checked = false;
   }
@@ -553,11 +560,11 @@ export class EmployeeSalaryComponent implements OnInit {
   changeMonthSelection(filterVal: any) {
     this.clearDetail();
     this.selectedMonth = filterVal;
-    $('#ddlMonth').val(this.selectedMonth);
-    $('#ddlYear').val(this.selectedYear);
+    $(this.ddlMonth).val(this.selectedMonth);
+    $(this.ddlYear).val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-    $('#ddlUser').val("active");
-    $('#ddlDesignation').val("all");
+    $(this.ddlUser).val("active");
+    $(this.ddlDesignation).val("all");
     let element = <HTMLInputElement>document.getElementById("chkAll");
     element.checked = false;
     this.getSalary();
@@ -789,7 +796,7 @@ export class EmployeeSalaryComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please check at least 1 employee for salary !!!");
       return;
     }
-    $("#divLoader").show();
+    $(this.divLoader).show();
     for (let i = 0; i < checkArray.length; i++) {
       let empId = checkArray[i]["empId"];
       let dbPath = "Employees/" + empId + "/BankDetails/AccountDetails";
@@ -937,7 +944,7 @@ export class EmployeeSalaryComponent implements OnInit {
       }
       htmlString += "</table>";
 
-      $("#divLoader").hide();
+      $(this.divLoader).hide();
       let fileName = "Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
       this.exportExcel(htmlString, fileName);
     }
@@ -967,7 +974,7 @@ export class EmployeeSalaryComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $("#key").val(id);
+    $(this.key).val(id);
 
     let userDetail = this.allSalaryList.find((item) => item.empId == id);
     if (userDetail != undefined) {
