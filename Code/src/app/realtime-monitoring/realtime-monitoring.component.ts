@@ -83,7 +83,8 @@ export class RealtimeMonitoringComponent implements OnInit {
   vehicleLocationInstance: any;
   vehicleStatusInstance: any;
   completedLinesInstance: any;
-  zoneKML: any[] = [];
+  zoneKML: any;
+  zoneKMLHalt:any;
   allMarkers: any[] = [];
   cityName: any;
 
@@ -209,14 +210,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   clearAllOnMap() {
-    if (this.zoneKML.length > 0) {
-      for (let i = 0; i < this.zoneKML.length; i++) {
-        if (this.zoneKML[i]["marker"] != undefined) {
-          this.zoneKML[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.zoneKML = [];
+    
     if (this.allMarkers.length > 0) {
       for (let i = 0; i < this.allMarkers.length; i++) {
         this.allMarkers[i]["marker"].setMap(null);
@@ -943,7 +937,18 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setKmlHalt(wardNo: string) {
-    this.commonService.setKML(wardNo, this.mapHalt);
+    this.commonService.setKML(wardNo, this.zoneKMLHalt).then((data: any) => {
+      if (this.zoneKMLHalt != undefined) {
+        this.zoneKMLHalt[0]["line"].setMap(null);
+      }
+      this.zoneKMLHalt = data;
+      this.zoneKMLHalt[0]["line"].setMap(this.mapHalt);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKMLHalt[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKMLHalt[0]["latLng"][i]["lat"]), lng: Number(this.zoneKMLHalt[0]["latLng"][i]["lng"]) });
+      }
+      this.mapHalt.fitBounds(bounds);
+    });
   }
 
   getMarkerName(breakTime: number) {
@@ -1679,8 +1684,18 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setKml() {
-    let marker = this.commonService.setKML(this.selectedZone, this.map);
-    this.zoneKML.push({ marker });
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
   }
 
   showVehicleMovement() {

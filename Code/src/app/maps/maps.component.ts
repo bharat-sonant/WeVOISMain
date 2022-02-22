@@ -146,10 +146,6 @@ export class MapsComponent {
   }
 
   setDefaultWard() {
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-      this.zoneKML = null;
-    }
     this.progressData.cardNotScaned = 0;
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
@@ -194,8 +190,6 @@ export class MapsComponent {
       this.vehicleLocationInstance = null;
     }
 
-
-
     if (this.wardStartMarker != null) {
       this.wardStartMarker.setMap(null);
     }
@@ -218,27 +212,35 @@ export class MapsComponent {
 
     if (this.wardLineMarker.length > 0) {
       for (let i = 0; i < this.wardLineMarker.length; i++) {
+        if(this.wardLineMarker[i]["marker"]!=null){
         this.wardLineMarker[i]["marker"].setMap(null);
+        }
       }
     }
     this.wardLineMarker = [];
 
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if(this.wardLineNoMarker[i]["marker"]!=null){
         this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
       }
     }
     this.wardLineNoMarker = [];
 
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
+        if(this.allMatkers[i]["marker"]!=null){
         this.allMatkers[i]["marker"].setMap(null);
+        }
       }
       this.allMatkers = [];
     }
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
+        if(this.houseMarkerList[i]["marker"]!=null){
         this.houseMarkerList[i]["marker"].setMap(null);
+        }
       }
       this.houseMarkerList = [];
     }
@@ -248,7 +250,9 @@ export class MapsComponent {
     }
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
+        if(this.polylines[i]!=null){
         this.polylines[i].setMap(null);
+        }
       }
     }
     this.polylines = [];
@@ -261,7 +265,6 @@ export class MapsComponent {
     element.checked = false;
     $("#houseCount").hide();
     $("#houseDetail").hide();
-
     this.setKml();
   }
 
@@ -304,14 +307,18 @@ export class MapsComponent {
 
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
-        this.houseMarkerList[i]["marker"].setMap(null);
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(null);
+        }
       }
       this.houseMarkerList = [];
     }
 
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-        this.wardLineNoMarker[i]["marker"].setMap(null);
+        if (this.wardLineNoMarker[i]["marker"] != null) {
+          this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
       }
       this.wardLineNoMarker = [];
     }
@@ -326,7 +333,9 @@ export class MapsComponent {
     }
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
       }
     }
     this.selectedZone = this.activeZone;
@@ -444,7 +453,18 @@ export class MapsComponent {
   }
 
   setKml() {
-    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
   }
 
   showVehicleMovement() {
@@ -636,6 +656,10 @@ export class MapsComponent {
     let dbPath = "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
+      if (this.parhadhouseMarker != null) {
+        this.parhadhouseMarker.setMap(null);
+      }
+      this.parhadhouseMarker = null;
       if (data != null) {
         if (data["name"] != null) {
           this.progressData.parshadName = data["name"];
@@ -1282,6 +1306,7 @@ export class MapsComponent {
       this.skipLineMarker.setMap(null);
     }
     this.skipLineMarker = null;
+    console.log(latLng);
     let lat = latLng.split(',')[0];
     let lng = latLng.split(',')[1];
     this.skipLineMarker = new google.maps.Marker({

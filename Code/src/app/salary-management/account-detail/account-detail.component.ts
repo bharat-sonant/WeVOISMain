@@ -31,7 +31,7 @@ export class AccountDetailComponent implements OnInit {
   txtRemarks = "#txtRemarks";
   key = "#key";
   divSolved = "#divSolved";
-  divLoader="#divLoader";
+  divLoader = "#divLoader";
   fireStoreCity: any;
   fireStorePath: any;
   toDayDate: any;
@@ -74,8 +74,8 @@ export class AccountDetailComponent implements OnInit {
 
   getLastUpdate() {
     const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
-    let fuelInstance = this.httpService.get(path).subscribe(data => {
-      fuelInstance.unsubscribe();
+    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
+      lastUpdateInstance.unsubscribe();
       if (data != null) {
         this.remarkDetail.lastUpdate = data["lastUpdate"];
         let userData = this.commonService.getPortalUserDetailById(data["updateBy"]);
@@ -88,24 +88,26 @@ export class AccountDetailComponent implements OnInit {
 
   getAccountDetail() {
     const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
-    let instance = this.httpService.get(path).subscribe(data => {
-      instance.unsubscribe();
+    let accountInstance = this.httpService.get(path).subscribe(data => {
+      accountInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData);
         this.allAccountList = this.commonService.transformNumeric(list, "name");
-        for (let i = 0; i < this.allAccountList.length; i++) {
-          let designationDetail = this.designationList.find(item => item.designation == this.allAccountList[i]["designation"]);
-          if (designationDetail == undefined) {
-            this.designationList.push({ designation: this.allAccountList[i]["designation"] });
-            this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
-          }
-        }
+        this.getRoles();
         this.getAccountIssue();
       }
     }, error => {
       this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
     });
+  }
+
+  getRoles() {
+    let list = this.allAccountList.map(item => item.designation)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    for (let i = 0; i < list.length; i++) {
+      this.designationList.push({ designation: list[i] });
+    }
   }
 
   getAccountIssue() {
@@ -463,6 +465,8 @@ export class AccountDetailComponent implements OnInit {
                 }
               }
             }
+            this.allAccountList=this.accountJsonList;
+            this.showAccountDetail("active", "all");
             this.saveJSONData();
           }
         }

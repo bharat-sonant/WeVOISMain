@@ -71,7 +71,18 @@ export class HouseMarkingComponent {
     }
     this.clearAllData();
     this.clearAllOnMap();
-    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
     this.getWardDetail();
   }
 
@@ -209,8 +220,8 @@ export class HouseMarkingComponent {
                 let userId = data[index]["userId"];
                 let date = data[index]["date"].split(" ")[0];
                 let status = "";
-                let statusClass="";
-                let isRevisit="0";
+                let statusClass = "";
+                let isRevisit = "0";
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }
@@ -225,8 +236,8 @@ export class HouseMarkingComponent {
                 }
                 if (data[index]["revisitCardDeleted"] != null) {
                   status = "Revisit Deleted";
-                  isRevisit="1";
-                  statusClass="status-deleted";
+                  isRevisit = "1";
+                  statusClass = "status-deleted";
                 }
 
                 let city = this.commonService.getFireStoreCity();
@@ -244,7 +255,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass,isRevisit:isRevisit });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit });
                   }
                 });
                 let alreadyCard = "";
@@ -336,7 +347,7 @@ export class HouseMarkingComponent {
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"],isRevisit:this.markerList[i]["isRevisit"] });
+                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"] });
               }
             }
             this.markerList = newMarkerList;
@@ -608,7 +619,7 @@ export class HouseMarkingComponent {
         },
       });
       let wardNo = this.selectedZone;
-      
+
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
@@ -616,7 +627,7 @@ export class HouseMarkingComponent {
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" +wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -804,21 +815,24 @@ export class HouseMarkingComponent {
     this.lines = [];
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {
-        this.houseMarker[i]["marker"].setMap(null);
+        if (this.houseMarker[i]["marker"] != null) {
+          this.houseMarker[i]["marker"].setMap(null);
+        }
       }
     }
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
-        this.allMatkers[i]["marker"].setMap(null);
+        if (this.allMatkers[i]["marker"] != null) {
+          this.allMatkers[i]["marker"].setMap(null);
+        }
       }
       this.allMatkers = [];
     }
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
-    }
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
       }
     }
     this.polylines = [];
