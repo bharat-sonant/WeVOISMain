@@ -321,8 +321,9 @@ export class DustbinServiceComponent implements OnInit {
       dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + dustbinId + "/" + key;
       
       this.db.object(dbPath).update(data2);
-      this.commonService.setAlertMessage("Success","Data saved successfully!!!");
     }
+    
+    this.commonService.setAlertMessage("Success","Data saved successfully!!!");
   }
 
   randomString(length) {
