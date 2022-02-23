@@ -82,7 +82,6 @@ export class DustbinServiceComponent implements OnInit {
     const path = this.fireStorePath + this.fireStoreCity + "%2Fvehicle.json?alt=media";
     let Instance = this.httpService.get(path).subscribe(data => {
       Instance.unsubscribe();
-      console.log(data);
       let list = JSON.parse(JSON.stringify(data));
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
@@ -156,7 +155,19 @@ export class DustbinServiceComponent implements OnInit {
 
     let dat = new Date(this.selectedDate + " " + pickTime);
     let dat2 = this.addMinutes(dat, diff);
-    let analysisTime = dat2.getHours() + ":" + dat2.getMinutes();
+    let hour = dat2.getHours().toString();
+    let min = dat2.getMinutes().toString();
+    let sec = dat2.getSeconds().toString();
+    if (hour.length == 1) {
+      hour = "0" + hour;
+    }
+    if (min.length == 1) {
+      min = "0" + min;
+    }
+    if (sec.length == 1) {
+      sec = "0" + sec;
+    }
+    let analysisTime = hour + ":" + min + ":" + sec;
 
 
     let zone = "";
@@ -183,19 +194,19 @@ export class DustbinServiceComponent implements OnInit {
   saveData() {
     let date = $(this.txtDate).val();
     this.selectedZone = $(this.ddlZone).val();
-    let planName = $(this.txtPlan).val();
+    let planName = "";
     let driverId = $(this.ddlDriver).val();
     let vehicle = $(this.ddlVahicle).val();
+    let dustbinId = $(this.ddlDustbin).val();
+    let percentage = $(this.txtPercentage).val();
+    let pickTime = $(this.txtPickTime).val();
+    let diff = $(this.txtTimeDiff).val();
     if (date == "") {
       this.commonService.setAlertMessage("error", "Please select date");
       return;
     }
     if (this.selectedZone == "0") {
       this.commonService.setAlertMessage("error", "Please select zone");
-      return;
-    }
-    if (planName == "") {
-      this.commonService.setAlertMessage("error", "Please enter plan name");
       return;
     }
 
@@ -207,10 +218,41 @@ export class DustbinServiceComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select vehicle");
       return;
     }
-    if (this.entryList.length == 0) {
-      this.commonService.setAlertMessage("error", "Please add dustbin");
+    if (dustbinId == "0") {
+      this.commonService.setAlertMessage("error", "Please select dustbin");
       return;
     }
+    if (percentage == "") {
+      this.commonService.setAlertMessage("error", "Please enter percentage");
+      return;
+    }
+    if (pickTime == "") {
+      this.commonService.setAlertMessage("error", "Please select pick time");
+      return;
+    }
+    if (diff == "") {
+      this.commonService.setAlertMessage("error", "Please select Analysis time difference");
+      return;
+    }
+
+    let element = <HTMLInputElement>document.getElementById("chk");
+
+
+    let dat = new Date(this.selectedDate + " " + pickTime);
+    let dat2 = this.addMinutes(dat, diff);
+    let hour = dat2.getHours().toString();
+    let min = dat2.getMinutes().toString();
+    let sec = dat2.getSeconds().toString();
+    if (hour.length == 1) {
+      hour = "0" + hour;
+    }
+    if (min.length == 1) {
+      min = "0" + min;
+    }
+    if (sec.length == 1) {
+      sec = "0" + sec;
+    }
+    let analysisTime = hour + ":" + min + ":" + sec;
 
     let bins = "";
     for (let i = 0; i < this.entryList.length; i++) {
@@ -222,20 +264,65 @@ export class DustbinServiceComponent implements OnInit {
       }
     }
 
+    this.selectedYear = date.toString().split('-')[0];
+    this.selectedMonth = date.toString().split('-')[1];
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+
     let key = "-" + this.randomString(20);
-    console.log(key);
+    const data = {
+      bins: dustbinId,
+      pickedDustbin: dustbinId,
+      pickingSequence: dustbinId,
+      isAssigned: "true",
+      planName: planName,
+      totalDustbin: 1,
+      createdBy: "-1",
+    }
 
+    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + key;
+    this.db.object(dbPath).update(data);
 
+    const data1 = {
+      driver: driverId,
+      planId: key,
+      planName: planName,
+      vehicle: vehicle
+    }
 
+    dbPath = "DustbinData/DustbinAssignment/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + key;
+    this.db.object(dbPath).update(data1);
 
+    let zone = "";
+    let detail = this.zoneList.find(item => item.zoneNo == zone);
+    if (detail != undefined) {
+      zone = detail.zone;
+    }
+    let address = "";
+    detail = this.dustbinList.find(item => item.dustbin == dustbinId);
+    if (detail != undefined) {
+      address = detail.address;
+    }
+    if (element.checked == true) {
+      const analysisData = {
+        analysisAt: date + " " + analysisTime,
+        analysisBy: 21,
+        filledPercentage: percentage
+      }
 
+      const data2 = {
+        Analysis: analysisData,
+        address: address,
+        pickDateTime: date + " " + pickTime,
+        pickedBy: driverId,
+        zone: this.selectedZone,
+        endTime: date + " " + pickTime
+      }
 
-
-
-
-
-
-
+      dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + dustbinId + "/" + key;
+      
+      this.db.object(dbPath).update(data2);
+      this.commonService.setAlertMessage("Success","Data saved successfully!!!");
+    }
   }
 
   randomString(length) {
