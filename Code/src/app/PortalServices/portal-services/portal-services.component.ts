@@ -67,6 +67,9 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8O" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divKMLtoJSON").show();
         }
+        if (userAccessList[i]["pageId"] == "8P" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divDustbinService").show();
+        }
       }
     }
   }

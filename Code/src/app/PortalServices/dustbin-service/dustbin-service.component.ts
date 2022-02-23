@@ -1,0 +1,260 @@
+import { Component, OnInit } from '@angular/core';
+import { FirebaseService } from "../../firebase.service";
+import { CommonService } from '../../services/common/common.service';
+import { HttpClient } from "@angular/common/http";
+import { AngularFireStorage } from "angularfire2/storage";
+@Component({
+  selector: 'app-dustbin-service',
+  templateUrl: './dustbin-service.component.html',
+  styleUrls: ['./dustbin-service.component.scss']
+})
+export class DustbinServiceComponent implements OnInit {
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+
+  db: any;
+  cityName: any;
+  selectedDate: any;
+  selectedMonth: any;
+  selectedYear: any;
+  selectedMonthName: any;
+  yearList: any[];
+  zoneList: any[];
+  dustbinList: any[];
+  entryList: any[];
+  dustbinStorageList: any[];
+  selectedZone: any;
+  driverList: any[];
+  vehicleList: any[];
+  fireStoreCity: any;
+  fireStorePath: any;
+  txtDate = "#txtDate";
+  ddlZone = "#ddlZone";
+  txtPlan = "#txtPlan";
+  ddlDustbin = "#ddlDustbin";
+  txtPercentage = "#txtPercentage";
+  txtPickTime = "#txtPickTime";
+  txtTimeDiff = "#txtTimeDiff";
+  ddlDriver = "#ddlDriver";
+  ddlVahicle = "#ddlVahicle";
+
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setDefault();
+  }
+
+  setDefault() {
+    this.fireStoreCity = this.commonService.getFireStoreCity();
+    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.selectedDate = this.commonService.setTodayDate();
+    this.yearList = [];
+    this.dustbinList = [];
+    this.entryList = [];
+    this.zoneList = [];
+    this.dustbinStorageList = [];
+    this.selectedZone == "0";
+    this.driverList = [];
+    this.vehicleList = [];
+    this.getDriverList();
+    this.getVehicleList();
+    this.getZoneList();
+  }
+
+  getDriverList() {
+    this.driverList = [];
+    const path = this.fireStorePath + this.fireStoreCity + "%2Fdriver.json?alt=media";
+    let Instance = this.httpService.get(path).subscribe(data => {
+      Instance.unsubscribe();
+      let keyArray = Object.keys(data);
+      for (let i = 1; i < keyArray.length; i++) {
+        let index = keyArray[i];
+        let id = data[index]["id"];
+        let name = data[index]["name"];
+        this.driverList.push({ id: id, name: name });
+      }
+    });
+  }
+
+  getVehicleList() {
+    this.driverList = [];
+    const path = this.fireStorePath + this.fireStoreCity + "%2Fvehicle.json?alt=media";
+    let Instance = this.httpService.get(path).subscribe(data => {
+      Instance.unsubscribe();
+      console.log(data);
+      let list = JSON.parse(JSON.stringify(data));
+      if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+          this.vehicleList.push({ vehicle: list[i] });
+        }
+      }
+    });
+  }
+
+  getZoneList() {
+    this.zoneList = [];
+    this.dustbinStorageList = [];
+    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+    if (this.dustbinStorageList != null) {
+      this.dustbinStorageList = this.commonService.transform(this.dustbinStorageList, "zone");
+      for (let i = 0; i < this.dustbinStorageList.length; i++) {
+        let zoneDetails = this.zoneList.find(item => item.zoneNo == this.dustbinStorageList[i]["zone"]);
+        if (zoneDetails == undefined) {
+          this.zoneList.push({ zoneNo: this.dustbinStorageList[i]["zone"], zone: "Zone " + this.dustbinStorageList[i]["zone"], pickFrequency: this.dustbinStorageList[i]["pickFrequency"] })
+        }
+      }
+      this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
+    }
+  }
+
+
+  getDustbins() {
+    this.dustbinList = [];
+    this.selectedZone = $("#ddlZone").val();
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone");
+      return;
+    }
+    for (let i = 0; i < this.dustbinStorageList.length; i++) {
+      if (this.dustbinStorageList[i]["zone"] == this.selectedZone) {
+        this.dustbinList.push({ dustbin: this.dustbinStorageList[i]["dustbin"], address: this.dustbinStorageList[i]["address"] });
+      }
+    }
+  }
+
+  addData() {
+
+    let dustbinId = $(this.ddlDustbin).val();
+    let percentage = $(this.txtPercentage).val();
+    let pickTime = $(this.txtPickTime).val();
+    let diff = $(this.txtTimeDiff).val();
+
+
+    if (dustbinId == "0") {
+      this.commonService.setAlertMessage("error", "Please select dustbin");
+      return;
+    }
+    if (percentage == "") {
+      this.commonService.setAlertMessage("error", "Please enter percentage");
+      return;
+    }
+    if (pickTime == "") {
+      this.commonService.setAlertMessage("error", "Please select pick time");
+      return;
+    }
+    if (diff == "") {
+      this.commonService.setAlertMessage("error", "Please select Analysis time difference");
+      return;
+    }
+
+    let chkDeustbin = this.entryList.find(item => item.dustbinId == dustbinId);
+    if (chkDeustbin != undefined) {
+      this.commonService.setAlertMessage("error", "Already in list");
+      return;
+    }
+
+    let dat = new Date(this.selectedDate + " " + pickTime);
+    let dat2 = this.addMinutes(dat, diff);
+    let analysisTime = dat2.getHours() + ":" + dat2.getMinutes();
+
+
+    let zone = "";
+    let detail = this.zoneList.find(item => item.zoneNo == zone);
+    if (detail != undefined) {
+      zone = detail.zone;
+    }
+    let address = "";
+    detail = this.dustbinList.find(item => item.dustbin == dustbinId);
+    if (detail != undefined) {
+      address = detail.address;
+    }
+    this.entryList.push({ dustbinId: dustbinId, address: address, percentage: percentage, pickTime: pickTime, analysisTime: analysisTime });
+    this.clearAll();
+  }
+
+  clearAll() {
+    $(this.ddlDustbin).val("0");
+    $(this.txtPercentage).val("");
+    $(this.txtPickTime).val("");
+    $(this.txtTimeDiff).val("");
+  }
+
+  saveData() {
+    let date = $(this.txtDate).val();
+    this.selectedZone = $(this.ddlZone).val();
+    let planName = $(this.txtPlan).val();
+    let driverId = $(this.ddlDriver).val();
+    let vehicle = $(this.ddlVahicle).val();
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please select date");
+      return;
+    }
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone");
+      return;
+    }
+    if (planName == "") {
+      this.commonService.setAlertMessage("error", "Please enter plan name");
+      return;
+    }
+
+    if (driverId == "0") {
+      this.commonService.setAlertMessage("error", "Please select driver");
+      return;
+    }
+    if (vehicle == "0") {
+      this.commonService.setAlertMessage("error", "Please select vehicle");
+      return;
+    }
+    if (this.entryList.length == 0) {
+      this.commonService.setAlertMessage("error", "Please add dustbin");
+      return;
+    }
+
+    let bins = "";
+    for (let i = 0; i < this.entryList.length; i++) {
+      if (i == 0) {
+        bins = this.entryList[i]["dustbinId"];
+      }
+      else {
+        bins = bins + ", " + this.entryList[i]["dustbinId"];
+      }
+    }
+
+    let key = "-" + this.randomString(20);
+    console.log(key);
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+  randomString(length) {
+    return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
+  }
+
+  deleteEntry(dustbinId) {
+    let list = [];
+    for (let i = 0; i < this.entryList.length; i++) {
+      if (this.entryList[i]["dustbinId"] != dustbinId) {
+        list.push({ dustbinId: this.entryList[i]["dustbinId"], address: this.entryList[i]["address"], percentage: this.entryList[i]["percentage"], pickTime: this.entryList[i]["pickTime"], analysisTime: this.entryList[i]["analysisTime"] })
+      }
+    }
+    this.entryList = list;
+  }
+
+  addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+  }
+
+
+}

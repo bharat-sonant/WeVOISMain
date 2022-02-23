@@ -103,6 +103,7 @@ import { SalaryHoldingManagementComponent } from '../../salary-management/salary
 import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
 import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
+import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -223,6 +224,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'sikar/kml-to-json', component: KmlToJsonComponent },
     { path: 'sikar/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'sikar/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -333,6 +335,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'sikar/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'sikar/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'sikar/:id/dustbin-service', component: DustbinServiceComponent },
 
 
     //jaipur-greater
@@ -444,6 +447,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'jaipur-greater/kml-to-json', component: KmlToJsonComponent },
     { path: 'jaipur-greater/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'jaipur-greater/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -554,6 +558,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'jaipur-greater/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'jaipur-greater/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'jaipur-greater/:id/dustbin-service', component: DustbinServiceComponent },
+    
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
@@ -664,6 +670,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'reengus/kml-to-json', component: KmlToJsonComponent },
     { path: 'reengus/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'reengus/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -774,6 +781,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'reengus/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'reengus/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'reengus/:id/dustbin-service', component: DustbinServiceComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -884,6 +892,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'shahpura/kml-to-json', component: KmlToJsonComponent },
     { path: 'shahpura/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'shahpura/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -994,6 +1003,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'shahpura/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'shahpura/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'shahpura/:id/dustbin-service', component: DustbinServiceComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1104,6 +1114,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'test/kml-to-json', component: KmlToJsonComponent },
     { path: 'test/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'test/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1214,6 +1225,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'test/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'test/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'test/:id/dustbin-service', component: DustbinServiceComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1324,6 +1336,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'demo/kml-to-json', component: KmlToJsonComponent },
     { path: 'demo/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'demo/dustbin-service', component: DustbinServiceComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1433,6 +1446,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'demo/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'demo/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'demo/:id/dustbin-service', component: DustbinServiceComponent },
 
     
 
@@ -1545,6 +1559,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'kishangarh/kml-to-json', component: KmlToJsonComponent },
     { path: 'kishangarh/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'kishangarh/dustbin-service', component: DustbinServiceComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1655,4 +1670,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'kishangarh/:id/kml-to-json', component: KmlToJsonComponent },
     { path: 'kishangarh/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'kishangarh/:id/dustbin-service', component: DustbinServiceComponent },
 ]; 

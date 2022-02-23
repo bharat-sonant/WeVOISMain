@@ -1478,7 +1478,7 @@ export class CommonService {
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       let dat1 = new Date(date);
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesJson%2F" + zoneNo + "%2FmapUpdateHistoryjson.json?alt=media";
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryjson.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         let list = JSON.parse(JSON.stringify(dataDate));
@@ -1495,7 +1495,7 @@ export class CommonService {
             }
           }
         }
-        const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+        const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
         let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
           wardLineInstance.unsubscribe();
           if (data != null) {
