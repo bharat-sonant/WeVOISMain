@@ -168,6 +168,17 @@ export class RealtimeMonitoringComponent implements OnInit {
   dutyStatusList: any[];
   instancesList: any[];
 
+  divRemark = "#divRemark";
+  dutyDetail = "#dutyDetail";
+  vehicleStatusH3 = "#vehicleStatusH3";
+  drpRemark = "#drpRemark";
+  key = "#key";
+  txtRemark = "#txtRemark";
+  totalHaltH3 = "#totalHaltH3";
+  currentHaltH3 = "#currentHaltH3";
+  appStatusH3="#appStatusH3";
+  txtVehicle="#txtVehicle";
+
   ngOnInit() {
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
@@ -194,7 +205,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.firstData = false;
     this.userId = localStorage.getItem("userID");
     if (localStorage.getItem("userType") == "External User") {
-      $("#divRemark").hide();
+      $(this.divRemark).hide();
     }
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
@@ -503,9 +514,9 @@ export class RealtimeMonitoringComponent implements OnInit {
               this.workerDetails.skippedLines = summaryData["skippedLines"];
             }
             if (summaryData["vehicleCurrentLocation"] == "Ward In") {
-              $("#vehicleStatusH3").css("color", "green");
+              $(this.vehicleStatusH3).css("color", "green");
             } else {
-              $("#vehicleStatusH3").css("color", "red");
+              $(this.vehicleStatusH3).css("color", "red");
             }
             this.workerDetails.totalLines = zoneDetails.totalLines;
             setTimeout(() => {
@@ -543,9 +554,9 @@ export class RealtimeMonitoringComponent implements OnInit {
       let startTime = zoneDetails.dutyOnTime;
       let startList = startTime.split(",");
       if (startList.length > 1) {
-        $("#dutyDetail").show();
+        $(this.dutyDetail).show();
       } else {
-        $("#dutyDetail").hide();
+        $(this.dutyDetail).hide();
       }
 
       let sTime = this.commonService.tConvert(startList[startList.length - 1]);
@@ -700,17 +711,17 @@ export class RealtimeMonitoringComponent implements OnInit {
                 this.workerDetails.vehicleCurrentLocation = locationPath.toString() + " " + data[keyArray[keyArray.length - 1]].replace(vehicleLocation + "-", "");
               }
               if (this.workerDetails.vehicleCurrentLocation == "ward in") {
-                $("#vehicleStatusH3").css("color", "green");
+                $(this.vehicleStatusH3).css("color", "green");
               } else {
-                $("#vehicleStatusH3").css("color", "red");
+                $(this.vehicleStatusH3).css("color", "red");
               }
             });
           } else {
             this.workerDetails.vehicleCurrentLocation = data[keyArray[keyArray.length - 1]].replace("-", " ");
             if (this.workerDetails.vehicleCurrentLocation == "ward in") {
-              $("#vehicleStatusH3").css("color", "green");
+              $(this.vehicleStatusH3).css("color", "green");
             } else {
-              $("#vehicleStatusH3").css("color", "red");
+              $(this.vehicleStatusH3).css("color", "red");
             }
           }
 
@@ -777,20 +788,21 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   // Remarks
 
+
   saveRemarks() {
-    if ($("#drpRemark").val() == "0") {
+    if ($(this.drpRemark).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select remark topic !!!");
       return;
     }
 
-    if ($("#txtRemark").val() == "") {
+    if ($(this.txtRemark).val() == "") {
       this.commonService.setAlertMessage("error", "Please enter remark !!!");
       return;
     }
 
-    this.$Key = $("#key").val();
-    this.category = $("#drpRemark").val();
-    this.remark = $("#txtRemark").val();
+    this.$Key = $(this.key).val();
+    this.category = $(this.drpRemark).val();
+    this.remark = $(this.txtRemark).val();
     let time = new Date().toLocaleTimeString();
     let image = "";
     if (this.category == "1") {
@@ -824,13 +836,13 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.usrService.UpdateRemarks(remark, dbPath);
       this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
     }
-    $("#drpRemark").val("0");
-    $("#txtRemark").val("");
-    $("#key").val("0");
+    $(this.drpRemark).val("0");
+    $(this.txtRemark).val("");
+    $(this.key).val("0");
   }
 
   getRemarks(wardNo: any) {
-    $("#key").val("0");
+    $(this.key).val("0");
     this.remarkList = [];
     let dbPath = "Remarks/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
     let remarkData = this.db.object(dbPath).valueChanges().subscribe((Data) => {
@@ -869,6 +881,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   // Halt Time
 
+
   showHaltTime() {
     this.todayHaltList = [];
     this.workerDetails.currentHaltTime = "0:00";
@@ -900,7 +913,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                   this.workerDetails.haltTime = this.commonService.getHrs(totalBreak);
 
                   let breakBGColor = this.getMarkerName(duration);
-                  $("#totalHaltH3").css("color", this.commonService.getHrs(totalBreak));
+                  $(this.totalHaltH3).css("color", this.commonService.getHrs(totalBreak));
                   let activeClass = "halt-data-theme";
                   if (this.todayHaltList.length == 0) {
                     activeClass = "halt-data-theme active";
@@ -910,10 +923,10 @@ export class RealtimeMonitoringComponent implements OnInit {
                     if (zoneDetails.status == "stopped") {
                       let lastDuration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
                       this.workerDetails.currentHaltTime = this.commonService.getHrs(lastDuration);
-                      $("#currentHaltH3").css("color", this.getMarkerName(duration));
+                      $(this.currentHaltH3).css("color", this.getMarkerName(duration));
                     } else {
                       this.workerDetails.currentHaltTime = "0:00";
-                      $("#currentHaltH3").css("color", this.getMarkerName(0));
+                      $(this.currentHaltH3).css("color", this.getMarkerName(0));
                     }
                   }
                 }
@@ -929,10 +942,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   setMapHalt() {
     let mapProp = this.commonService.mapForHaltReport();
-    this.mapHalt = new google.maps.Map(
-      document.getElementById("haltMap"),
-      mapProp
-    );
+    this.mapHalt = new google.maps.Map(document.getElementById("haltMap"), mapProp);
   }
 
   setKmlHalt(wardNo: string) {
@@ -959,7 +969,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     } else {
       markerColor = "red";
     }
-
     return markerColor;
   }
 
@@ -1072,13 +1081,14 @@ export class RealtimeMonitoringComponent implements OnInit {
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     if (this.remarkList.length > 0) {
-      $("#drpRemark").val(this.remarkList[id]["topic"]);
-      $("#txtRemark").val(this.remarkList[id]["remark"]);
-      $("#key").val(this.remarkList[id]["key"]);
+      $(this.drpRemark).val(this.remarkList[id]["topic"]);
+      $(this.txtRemark).val(this.remarkList[id]["remark"]);
+      $(this.key).val(this.remarkList[id]["key"]);
     }
   }
 
   // Application Detail
+
 
   getApplicationStatus(driverID) {
     this.applicationDataList = [];
@@ -1102,9 +1112,9 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.workerDetails.applicationStatus =
           this.applicationDataList[0]["status"];
         if (this.applicationDataList[0]["status"] == "Opened") {
-          $("#appStatusH3").css("color", "#000");
+          $(this.appStatusH3).css("color", "#000");
         } else {
-          $("#appStatusH3").css("color", "red");
+          $(this.appStatusH3).css("color", "red");
         }
       }
     });
@@ -1293,12 +1303,13 @@ export class RealtimeMonitoringComponent implements OnInit {
     $("#divVehicle").css("height", divHeight);
   }
 
+
   saveVehicleReason() {
     if (this.unAssignedVehicle != null) {
       for (let i = 0; i < this.unAssignedVehicle.length; i++) {
         let vehicle = this.unAssignedVehicle[i]["name"];
         let userId = this.unAssignedVehicle[i]["entryId"];
-        let reason = $("#txtVehicle" + i).val();
+        let reason = $(this.txtVehicle + i).val();
         let chkId = "chk" + i;
         let element = <HTMLInputElement>document.getElementById(chkId);
         let updatedBy = this.userId;

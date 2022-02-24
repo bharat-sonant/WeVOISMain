@@ -54,6 +54,10 @@ export class MapsComponent {
   wardStartMarker: any;
   wardEndMarker: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
+  vehicleRunning = "../assets/img/tipper-green.png";
+  vehicleCompleted = "../assets/img/tipper-gray.png";
+  vehicleStoped = "../assets/img/tipper-red.png";
+  skippedMarkerUrl = "../../../assets/img/red.svg";
   wardDefaultMarkers: any[] = [];
   lines: any[] = [];
   lastLineInstance: any;
@@ -83,6 +87,7 @@ export class MapsComponent {
   completedLines: any;
   instancesList: any[];
   skipLineMarker: any;
+  firebaseStoragePath: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -105,14 +110,27 @@ export class MapsComponent {
     workPercentage: "0%",
   };
 
+  txtDate = "#txtDate";
+  divInternal = "#divInternal";
+  divNotSacnned = "#divNotSacnned";
+  divExternal = "#divExternal";
+  houseCount = "#houseCount";
+  houseDetail = "#houseDetail";
+  isHouse = "#isHouse";
+
   ngOnInit() {
-    this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
-    localStorage.setItem("houseList", null);
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.setDefault();
+  }
+
+  setDefault() {
+    this.instancesList = [];
+    localStorage.setItem("houseList", null);
+    this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
-    $("#txtDate").val(this.toDayDate);
+    $(this.txtDate).val(this.toDayDate);
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
     this.setHeight();
@@ -136,10 +154,10 @@ export class MapsComponent {
   getUserAccess() {
     this.userType = localStorage.getItem("userType");
     if (this.userType == "External User") {
-      $("#divInternal").hide();
+      $(this.divInternal).hide();
       this.showAllScanedCard = true;
-      $("#DivNotSacnned").hide();
-      $("#DivExternal").css("cursor", "none");
+      $(this.divNotSacnned).hide();
+      $(this.divExternal).css("cursor", "none");
     } else {
       this.showAllScanedCard = false;
     }
@@ -166,7 +184,6 @@ export class MapsComponent {
     this.progressData.wardLength = "0";
     this.totalWardHouse = 0;
     this.totalScannedHouse = 0;
-
     this.isWardLines = true;
 
     if (this.wardLineInstanceList.length > 0) {
@@ -227,8 +244,8 @@ export class MapsComponent {
     this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
-    $("#houseCount").hide();
-    $("#houseDetail").hide();
+    $(this.houseCount).hide();
+    $(this.houseDetail).hide();
     this.setKml();
   }
 
@@ -297,7 +314,7 @@ export class MapsComponent {
           this.houseList[i]["cardNo"],
           this.houseList[i]["markerType"]
         );
-        $("#isHouse").prop("disabled", false);
+        $(this.isHouse).prop("disabled", false);
         this.getCardNotScaned();
       }
       if (this.selectedDate == this.toDayDate) {
@@ -331,13 +348,10 @@ export class MapsComponent {
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
+      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
       this.selectedDate = nextDate;
     } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate(
-        $("#txtDate").val(),
-        1
-      );
+      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
       this.selectedDate = previousDate;
     }
     if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
@@ -345,7 +359,7 @@ export class MapsComponent {
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       return;
     }
-    $("#txtDate").val(this.selectedDate);
+    $(this.txtDate).val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -366,11 +380,10 @@ export class MapsComponent {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
     this.currentYear = this.selectedDate.split("-")[0];
-    $("#txtDate").val(this.selectedDate);
+    let month = this.selectedDate.split("-")[0];
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(month) - 1);
+    $(this.txtDate).val(this.selectedDate);
     this.activeZone = filterVal;
     this.getWardData();
   }
@@ -426,11 +439,11 @@ export class MapsComponent {
         let statusInstance = this.db.object(dbPath).valueChanges().subscribe((statusData) => {
           statusInstance.unsubscribe();
           let statusId = statusData.toString();
-          let vehicleIcon = "../assets/img/tipper-green.png";
+          let vehicleIcon = this.vehicleRunning;
           if (statusId == "completed") {
-            vehicleIcon = "../assets/img/tipper-gray.png";
+            vehicleIcon = this.vehicleCompleted;
           } else if (statusId == "stopped") {
-            vehicleIcon = "../assets/img/tipper-red.png";
+            vehicleIcon = this.vehicleStoped;
           }
           if (data != null) {
             let location = data.toString().split(",");
@@ -448,7 +461,7 @@ export class MapsComponent {
     });
   }
 
-  clearWarLineMap() {
+  clearWardLineMap() {
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != null) {
@@ -479,11 +492,11 @@ export class MapsComponent {
   }
 
   getWardLines() {
-    this.clearWarLineMap();
+    this.clearWardLineMap();
     if (this.cityName == "sikar" || this.cityName == "reengus") {
       this.completedLines = 0;
       this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
-        this.clearWarLineMap();
+        this.clearWardLineMap();
         let wardLines = JSON.parse(data);
         let keyArray = Object.keys(wardLines);
         this.wardLines = wardLines["totalLines"];
@@ -720,8 +733,6 @@ export class MapsComponent {
     });
   }
 
-
-
   getWardTotalLength() {
     let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
     let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
@@ -749,34 +760,27 @@ export class MapsComponent {
         }
       });
     }
-    let totalLineData = this.db.object("WardLines/" + this.selectedZone).valueChanges().subscribe((totalLines) => {
-      totalLineData.unsubscribe();
-      let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
-      this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
-        this.instancesList.push({ instances: this.workerDetails });
-        if (workerData != null) {
-          // if (workerData["completedLines"] != null) {
-          //   this.progressData.completedLines = workerData["completedLines"];
-          // } else {
-          //   this.progressData.completedLines = 0;
-          // }
-          if (workerData["skippedLines"] != null) {
-            this.progressData.skippedLines = workerData["skippedLines"];
-          } else {
-            this.progressData.skippedLines = 0;
-          }
-          if (workerData["workPercentage"] != null) {
-            this.progressData.workPercentage = workerData["workPercentage"] + "%";
-          } else {
-            this.progressData.workPercentage = "0%";
-          }
-          if (workerData["wardCoveredDistance"] != null) {
-            this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
-          } else {
-            this.progressData.coveredLength = "0.00";
-          }
+
+    let workerDetailsdbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
+    this.workerDetails = this.db.object(workerDetailsdbPath).valueChanges().subscribe((workerData) => {
+      this.instancesList.push({ instances: this.workerDetails });
+      if (workerData != null) {
+        if (workerData["skippedLines"] != null) {
+          this.progressData.skippedLines = workerData["skippedLines"];
+        } else {
+          this.progressData.skippedLines = 0;
         }
-      });
+        if (workerData["workPercentage"] != null) {
+          this.progressData.workPercentage = workerData["workPercentage"] + "%";
+        } else {
+          this.progressData.workPercentage = "0%";
+        }
+        if (workerData["wardCoveredDistance"] != null) {
+          this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
+        } else {
+          this.progressData.coveredLength = "0.00";
+        }
+      }
     });
   }
 
@@ -830,13 +834,8 @@ export class MapsComponent {
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       let divHeight = height - 50 + "px";
-      $("div .modal-content")
-        .parent()
-        .css("max-width", "" + width + "px")
-        .css("margin-top", marginTop);
-      $("div .modal-content")
-        .css("height", height + "px")
-        .css("width", "" + width + "px");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
     }
@@ -878,16 +877,16 @@ export class MapsComponent {
     this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
-      $("#isHouse").prop("disabled", true);
-      $("#houseCount").show();
-      $("#houseDetail").hide();
-      $("#isHouse").prop("disabled", false);
+      $(this.isHouse).prop("disabled", true);
+      $(this.houseCount).show();
+      $(this.houseDetail).hide();
+      $(this.isHouse).prop("disabled", false);
       if (this.houseList.length == 0) {
         let element = <HTMLInputElement>document.getElementById("isHouse");
         if (element.checked == true) {
-          $("#isHouse").prop("disabled", true);
+          $(this.isHouse).prop("disabled", true);
           this.getHouses().then(() => {
-            $("#isHouse").prop("disabled", false);
+            $(this.isHouse).prop("disabled", false);
             this.getCardNotScaned();
           });
         }
@@ -899,14 +898,14 @@ export class MapsComponent {
             this.houseList[i]["cardNo"],
             this.houseList[i]["markerType"]
           );
-          $("#isHouse").prop("disabled", false);
+          $(this.isHouse).prop("disabled", false);
           this.getCardNotScaned();
         }
       }
     } else {
-      $("#isHouse").prop("disabled", false);
-      $("#houseCount").hide();
-      $("#houseDetail").hide();
+      $(this.isHouse).prop("disabled", false);
+      $(this.houseCount).hide();
+      $(this.houseDetail).hide();
       if (this.houseMarkerList.length > 0) {
         for (let i = 0; i < this.houseMarkerList.length; i++) {
           this.houseMarkerList[i]["marker"].setMap(null);
@@ -942,9 +941,7 @@ export class MapsComponent {
             let lng = houseList[i]["lng"];
             let cardNo = houseList[i]["cardNo"];
             let isApproved = "no";
-
             let markerType = "red";
-
             this.houseList.push({
               wardNo: this.selectedZone,
               markerType: markerType,
@@ -962,7 +959,6 @@ export class MapsComponent {
           }
         }
       }
-
       resolve(true);
     });
   }
@@ -1064,7 +1060,7 @@ export class MapsComponent {
               for (let j = 0; j < keyArrayLine.length; j++) {
                 let index = keyArrayLine[j];
                 if (obj[index]["cardImage"] != null) {
-                  let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + lineNo + "%2F" + obj[index]["cardImage"] + "?alt=media";
+                  let imageUrl = this.firebaseStoragePath + city + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + lineNo + "%2F" + obj[index]["cardImage"] + "?alt=media";
                   let time = obj[index]["scanTime"].split(":")[0] + ":" + obj[index]["scanTime"].split(":")[1];
                   this.cardNotScanedList.push({
                     imageUrl: imageUrl,
@@ -1103,7 +1099,7 @@ export class MapsComponent {
           let city = this.commonService.getFireStoreCity();
           for (let i = 0; i < data.length; i++) {
             if (data[i]["cardImage"] != null) {
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + data[i]["cardImage"] + "?alt=media";
+              let imageUrl = this.firebaseStoragePath + city + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + data[i]["cardImage"] + "?alt=media";
               let time = data[i]["scanTime"].split(":")[0] + ":" + data[i]["scanTime"].split(":")[1];
               this.cardNotScanedList.push({ imageUrl: imageUrl, time: time });
               count++;
@@ -1350,7 +1346,7 @@ export class MapsComponent {
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
       icon: {
-        url: "../../../assets/img/red.svg",
+        url: this.skippedMarkerUrl,
         fillOpacity: 1,
         strokeWeight: 0,
         scaledSize: new google.maps.Size(45, 50),
