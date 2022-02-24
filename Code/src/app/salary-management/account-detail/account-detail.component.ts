@@ -87,6 +87,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getAccountDetail() {
+    $(this.divLoader).show();
     const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
@@ -143,7 +144,8 @@ export class AccountDetailComponent implements OnInit {
     }
     if (designation != "all") {
       this.accountList = this.accountList.filter(item => item.designation == designation);
-    }
+    }    
+    $(this.divLoader).hide();
   }
 
   openModel(content: any, id: any, type: any) {
@@ -392,14 +394,11 @@ export class AccountDetailComponent implements OnInit {
               if (data[empId]["GeneralDetails"] != null) {
                 let status = data[empId]["GeneralDetails"]["status"];
                 let name = data[empId]["GeneralDetails"]["name"];
-                let doj = data[empId]["GeneralDetails"]["dateOfJoining"];
                 let empCode = data[empId]["GeneralDetails"]["empCode"];
                 let designationId = data[empId]["GeneralDetails"]["designationId"];
                 let email = data[empId]["GeneralDetails"]["email"];
                 let accountNo = "";
                 let ifsc = "";
-                let aadharNo = "";
-                let panNo = "";
                 let modifyBy = "";
                 let modifyDate = "";
 
@@ -410,16 +409,6 @@ export class AccountDetailComponent implements OnInit {
                     }
                     if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
                       ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
-                    }
-                  }
-                }
-                if (data[empId]["IdentificationDetails"] != null) {
-                  if (data[empId]["IdentificationDetails"]["AadharCardDetails"] != null) {
-                    if (data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"] != null) {
-                      aadharNo = data[empId]["IdentificationDetails"]["AadharCardDetails"]["aadharNumber"];
-                    }
-                    if (data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"] != null) {
-                      panNo = data[empId]["IdentificationDetails"]["PanCardDetails"]["panNumber"];
                     }
                   }
                 }
@@ -448,7 +437,7 @@ export class AccountDetailComponent implements OnInit {
                     }
                   }
                 }
-                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, doj: doj, accountNo: accountNo, ifsc: ifsc, aadharNo: aadharNo, panNo: panNo, modifyBy: modifyBy, modifyDate: modifyDate });
+                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate });
                 let detail = this.allAccountList.find(item => item.empId == empId);
                 if (detail != undefined) {
                   detail.designation = designation;
