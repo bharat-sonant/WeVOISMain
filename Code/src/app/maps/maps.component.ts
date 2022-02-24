@@ -190,16 +190,6 @@ export class MapsComponent {
       this.vehicleLocationInstance = null;
     }
 
-    if (this.wardStartMarker != null) {
-      this.wardStartMarker.setMap(null);
-    }
-    this.wardStartMarker = null;
-
-    if (this.wardEndMarker != null) {
-      this.wardEndMarker.setMap(null);
-    }
-    this.wardEndMarker = null;
-
     if (this.parhadhouseMarker != null) {
       this.parhadhouseMarker.setMap(null);
     }
@@ -210,36 +200,18 @@ export class MapsComponent {
     }
     this.skipLineMarker = null;
 
-    if (this.wardLineMarker.length > 0) {
-      for (let i = 0; i < this.wardLineMarker.length; i++) {
-        if(this.wardLineMarker[i]["marker"]!=null){
-        this.wardLineMarker[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.wardLineMarker = [];
-
-    if (this.wardLineNoMarker.length > 0) {
-      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-        if(this.wardLineNoMarker[i]["marker"]!=null){
-        this.wardLineNoMarker[i]["marker"].setMap(null);
-        }
-      }
-    }
-    this.wardLineNoMarker = [];
-
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
-        if(this.allMatkers[i]["marker"]!=null){
-        this.allMatkers[i]["marker"].setMap(null);
+        if (this.allMatkers[i]["marker"] != null) {
+          this.allMatkers[i]["marker"].setMap(null);
         }
       }
       this.allMatkers = [];
     }
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
-        if(this.houseMarkerList[i]["marker"]!=null){
-        this.houseMarkerList[i]["marker"].setMap(null);
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(null);
         }
       }
       this.houseMarkerList = [];
@@ -248,18 +220,10 @@ export class MapsComponent {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if(this.polylines[i]!=null){
-        this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
+
     this.houseList = [];
     this.selectedZone = this.activeZone;
     this.lines = [];
-    this.polylines = [];
     this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
     element.checked = false;
@@ -314,15 +278,6 @@ export class MapsComponent {
       this.houseMarkerList = [];
     }
 
-    if (this.wardLineNoMarker.length > 0) {
-      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-        if (this.wardLineNoMarker[i]["marker"] != null) {
-          this.wardLineNoMarker[i]["marker"].setMap(null);
-        }
-      }
-      this.wardLineNoMarker = [];
-    }
-
     if (this.skipLineMarker != null) {
       this.skipLineMarker.setMap(null);
     }
@@ -331,16 +286,8 @@ export class MapsComponent {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != null) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
     this.selectedZone = this.activeZone;
     this.lines = [];
-    this.polylines = [];
     this.cardNotScanedList = [];
     let element = <HTMLInputElement>document.getElementById("isHouse");
     if (element.checked == true) {
@@ -501,36 +448,127 @@ export class MapsComponent {
     });
   }
 
-  getWardLines() {
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          lineMapRefrenceInstance.unsubscribe();
-          this.mapRefrence = data.toString();
-          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.progressData.totalLines = Number(lineCount);
-              this.getAllLinesFromJson();
-            }
-          });
-        }
-        else {
-          this.mapRefrence = "";
-          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.progressData.totalLines = Number(lineCount);
-              this.getAllLinesFromJson();
-            }
-          });
+  clearWarLineMap() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
         }
       }
-    );
+    }
+    this.polylines = [];
+
+    if (this.wardStartMarker != null) {
+      this.wardStartMarker.setMap(null);
+    }
+    this.wardStartMarker = null;
+
+    if (this.wardEndMarker != null) {
+      this.wardEndMarker.setMap(null);
+    }
+    this.wardEndMarker = null;
+
+    if (this.wardLineNoMarker.length > 0) {
+      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if (this.wardLineNoMarker[i]["marker"] != null) {
+          this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
+      }
+    }
+    this.wardLineNoMarker = [];
+  }
+
+  getWardLines() {
+    this.clearWarLineMap();
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.completedLines = 0;
+      this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+        this.clearWarLineMap();
+        let wardLines = JSON.parse(data);
+        let keyArray = Object.keys(wardLines);
+        this.wardLines = wardLines["totalLines"];
+        this.progressData.totalLines = Number(this.wardLines);
+        for (let i = 0; i < keyArray.length - 1; i++) {
+          let lineNo = Number(keyArray[i]);
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({
+            lineNo: lineNo,
+            latlng: latLng,
+            color: "#87CEFA",
+          });
+          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+          if (this.wardStartMarker == null) {
+            if (lineNo == Number(this.wardLines)) {
+              let latLngArray = [];
+              latLngArray = this.lines[0]["latlng"];
+              let lat = latLngArray[0]["lat"];
+              let lng = latLngArray[0]["lng"];
+              this.wardStartMarker = new google.maps.Marker({
+                position: { lat: Number(lat), lng: Number(lng) },
+                map: this.map,
+                icon: {
+                  url: this.wardStartUrl,
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scaledSize: new google.maps.Size(32, 40),
+                  origin: new google.maps.Point(0, 0),
+                },
+              });
+
+              latLngArray = this.lines[this.lines.length - 1]["latlng"];
+              lat = latLngArray[latLngArray.length - 1]["lat"];
+              lng = latLngArray[latLngArray.length - 1]["lng"];
+              this.wardEndMarker = new google.maps.Marker({
+                position: { lat: Number(lat), lng: Number(lng) },
+                map: this.map,
+                icon: {
+                  url: this.wardEndUrl,
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scaledSize: new google.maps.Size(32, 40),
+                  origin: new google.maps.Point(0, 0),
+                },
+              });
+            }
+          }
+        }
+      });
+    }
+    else {
+      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
+      let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          if (data != null) {
+            lineMapRefrenceInstance.unsubscribe();
+            this.mapRefrence = data.toString();
+            dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
+            let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
+              wardLineCount.unsubscribe();
+              if (lineCount != null) {
+                this.wardLines = Number(lineCount);
+                this.progressData.totalLines = Number(lineCount);
+                this.getAllLinesFromJson();
+              }
+            });
+          }
+          else {
+            this.mapRefrence = "";
+            let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
+              wardLineCount.unsubscribe();
+              if (lineCount != null) {
+                this.wardLines = Number(lineCount);
+                this.progressData.totalLines = Number(lineCount);
+                this.getAllLinesFromJson();
+              }
+            });
+          }
+        }
+      );
+    }
   }
 
   getAllLinesFromJson() {
@@ -1306,7 +1344,6 @@ export class MapsComponent {
       this.skipLineMarker.setMap(null);
     }
     this.skipLineMarker = null;
-    console.log(latLng);
     let lat = latLng.split(',')[0];
     let lng = latLng.split(',')[1];
     this.skipLineMarker = new google.maps.Marker({

@@ -763,21 +763,24 @@ export class CommonService {
                   if (circleDataList[j] != null) {
                     let zoneNo = circleDataList[j];
                     let zoneName = circleDataList[j];
-                    if (zoneNo.toString().includes("mkt1")) {
-                      zoneName = "Market 1";
-                    } else if (data[i].toString().includes("mkt2")) {
-                      zoneName = "Market 2";
-                    } else if (data[i].toString().includes("mkt3")) {
-                      zoneName = "Market 3";
-                    } else if (data[i].toString().includes("mkt4")) {
-                      zoneName = "Market 4";
-                    } else {
-                      zoneName = "Ward " + data[i];
+                    if (zoneNo != undefined) {
+                      if (zoneNo.toString().includes("mkt1")) {
+                        zoneName = "Market 1";
+                      } else if (data[i].toString().includes("mkt2")) {
+                        zoneName = "Market 2";
+                      } else if (data[i].toString().includes("mkt3")) {
+                        zoneName = "Market 3";
+                      } else if (data[i].toString().includes("mkt4")) {
+                        zoneName = "Market 4";
+                      } else {
+                        zoneName = "Ward " + data[i];
+                      }
+                      let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
+                      if (wardDetail == undefined) {
+                        zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+                      }
                     }
-                    let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
-                    if (wardDetail == undefined) {
-                      zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-                    }
+
                   }
                 }
               }
@@ -1196,7 +1199,7 @@ export class CommonService {
     }
   }
 
-  
+
   setKML(zoneNo: any, zoneKML: any) {
     return new Promise((resolve) => {
       let polylines = [];
