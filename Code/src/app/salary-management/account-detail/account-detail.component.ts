@@ -144,7 +144,7 @@ export class AccountDetailComponent implements OnInit {
     }
     if (designation != "all") {
       this.accountList = this.accountList.filter(item => item.designation == designation);
-    }    
+    }
     $(this.divLoader).hide();
   }
 
@@ -226,31 +226,37 @@ export class AccountDetailComponent implements OnInit {
           })
 
           this.saveEmployeeModificationHistory(id, preAccountNo, preIFSC, name, time);
-
-          dbPath = "Employees/" + id + "/updateSummary";
-          const data = {
-            by: name,
-            date: time
-          }
-          this.db.object(dbPath).update(data);
-          userDetail.accountNo = accountNo;
-          userDetail.ifsc = ifsc;
-          userDetail.modifyBy = name;
-          userDetail.modifyDate = time;
-          let allUserDetail = this.allAccountList.find(item => item.empId == id);
-          if (allUserDetail != undefined) {
-            allUserDetail.accountNo = accountNo;
-            allUserDetail.ifsc = ifsc;
-            allUserDetail.modifyBy = name;
-            allUserDetail.modifyDate = time;
-          }
-          let path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/";
-          this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
+          this.updateData(id, name, time, accountNo, ifsc);
         }
         $(this.key).val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
         this.closeModel();
       }
+    }
+  }
+
+  updateData(id: any, name: any, time: any, accountNo: any, ifsc: any) {
+    let dbPath = "Employees/" + id + "/updateSummary";
+    const data = {
+      by: name,
+      date: time
+    }
+    this.db.object(dbPath).update(data);
+    let userDetail = this.accountList.find((item) => item.empId == id);
+    if (userDetail != undefined) {
+      userDetail.accountNo = accountNo;
+      userDetail.ifsc = ifsc;
+      userDetail.modifyBy = name;
+      userDetail.modifyDate = time;
+      let allUserDetail = this.allAccountList.find(item => item.empId == id);
+      if (allUserDetail != undefined) {
+        allUserDetail.accountNo = accountNo;
+        allUserDetail.ifsc = ifsc;
+        allUserDetail.modifyBy = name;
+        allUserDetail.modifyDate = time;
+      }
+      let path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/";
+      this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
     }
   }
 
@@ -454,7 +460,7 @@ export class AccountDetailComponent implements OnInit {
                 }
               }
             }
-            this.allAccountList=this.accountJsonList;
+            this.allAccountList = this.accountJsonList;
             this.showAccountDetail("active", "all");
             this.saveJSONData();
           }
