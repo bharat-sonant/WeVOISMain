@@ -1,7 +1,7 @@
 <div id="divReportHeader" class="panel-header panel-header-sm report-header-bg">
     <div class="container search-bar" id="divSearch">
         <div class="row">
-            <div class="col-md-12" style=" padding-left: 20px; padding-top: 4px;">
+            <div class="col-md-12" style=" padding-left: 20px; padding-top: 4px; color:#fff;">
                 <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
                         << </span></button>
                 <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date"
@@ -34,6 +34,9 @@
                         {{route.routeName}}
                     </option>
                 </select>
+                &nbsp;&nbsp;
+                    <input type="checkbox" id="chkNGGJ" (change)="setNGGJ();">
+                    NGGJ Routes
             </div>
         </div>
     </div>
