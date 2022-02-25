@@ -176,8 +176,8 @@ export class RealtimeMonitoringComponent implements OnInit {
   txtRemark = "#txtRemark";
   totalHaltH3 = "#totalHaltH3";
   currentHaltH3 = "#currentHaltH3";
-  appStatusH3="#appStatusH3";
-  txtVehicle="#txtVehicle";
+  appStatusH3 = "#appStatusH3";
+  txtVehicle = "#txtVehicle";
 
   ngOnInit() {
     this.instancesList = [];
@@ -1752,48 +1752,23 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.wardLines.unsubscribe();
     }
     this.clearAllOnMap();
-    if (this.cityName == "sikar" || this.cityName == "reengus") {
-      this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
-        this.clearAllOnMap();
-        let wardLines = JSON.parse(data);
-        let keyArray = Object.keys(wardLines);
-        var linePath = [];
-        for (let i = 0; i < keyArray.length - 1; i++) {
-          let lineNo = Number(keyArray[i]);
-          let points = wardLines[lineNo]["points"];
-          var latLng = [];
-          for (let j = 0; j < points.length; j++) {
-            latLng.push({ lat: points[j][0], lng: points[j][1] });
-          }
-          linePath.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      this.clearAllOnMap();
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      var linePath = [];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        this.allLines = linePath;
-        this.plotLinesOnMap();
-      });
-    }
-    else {
-      this.wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
-        this.instancesList.push({ instances: this.wardLines });
-        var linePath = [];
-        for (let i = 1; i < 2000; i++) {
-          var line = zoneLine[i];
-          //if (line == undefined) {
-          //  break;
-          // }
-          if (line != undefined) {
-            var path = [];
-            for (let j = 0; j < line.points.length; j++) {
-              path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-            }
-
-            linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
-          }
-        }
-        this.allLines = linePath;
-        this.wardLines.unsubscribe();
-        this.plotLinesOnMap();
-      });
-    }
+        linePath.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
+      }
+      this.allLines = linePath;
+      this.plotLinesOnMap();
+    });
   }
 
   plotLinesOnMap() {

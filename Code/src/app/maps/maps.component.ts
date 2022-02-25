@@ -493,95 +493,62 @@ export class MapsComponent {
 
   getWardLines() {
     this.clearWardLineMap();
-    if (this.cityName == "sikar" || this.cityName == "reengus") {
-      this.completedLines = 0;
-      this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
-        this.clearWardLineMap();
-        let wardLines = JSON.parse(data);
-        let keyArray = Object.keys(wardLines);
-        this.wardLines = wardLines["totalLines"];
-        this.progressData.totalLines = Number(this.wardLines);
-        for (let i = 0; i < keyArray.length - 1; i++) {
-          let lineNo = Number(keyArray[i]);
-          let points = wardLines[lineNo]["points"];
-          var latLng = [];
-          for (let j = 0; j < points.length; j++) {
-            latLng.push({ lat: points[j][0], lng: points[j][1] });
-          }
-          this.lines.push({
-            lineNo: lineNo,
-            latlng: latLng,
-            color: "#87CEFA",
-          });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
-          if (this.wardStartMarker == null) {
-            if (lineNo == Number(this.wardLines)) {
-              let latLngArray = [];
-              latLngArray = this.lines[0]["latlng"];
-              let lat = latLngArray[0]["lat"];
-              let lng = latLngArray[0]["lng"];
-              this.wardStartMarker = new google.maps.Marker({
-                position: { lat: Number(lat), lng: Number(lng) },
-                map: this.map,
-                icon: {
-                  url: this.wardStartUrl,
-                  fillOpacity: 1,
-                  strokeWeight: 0,
-                  scaledSize: new google.maps.Size(32, 40),
-                  origin: new google.maps.Point(0, 0),
-                },
-              });
+    this.completedLines = 0;
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+      this.clearWardLineMap();
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      this.progressData.totalLines = Number(this.wardLines);
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+        if (this.wardStartMarker == null) {
+          if (lineNo == Number(this.wardLines)) {
+            let latLngArray = [];
+            latLngArray = this.lines[0]["latlng"];
+            let lat = latLngArray[0]["lat"];
+            let lng = latLngArray[0]["lng"];
+            this.wardStartMarker = new google.maps.Marker({
+              position: { lat: Number(lat), lng: Number(lng) },
+              map: this.map,
+              icon: {
+                url: this.wardStartUrl,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scaledSize: new google.maps.Size(32, 40),
+                origin: new google.maps.Point(0, 0),
+              },
+            });
 
-              latLngArray = this.lines[this.lines.length - 1]["latlng"];
-              lat = latLngArray[latLngArray.length - 1]["lat"];
-              lng = latLngArray[latLngArray.length - 1]["lng"];
-              this.wardEndMarker = new google.maps.Marker({
-                position: { lat: Number(lat), lng: Number(lng) },
-                map: this.map,
-                icon: {
-                  url: this.wardEndUrl,
-                  fillOpacity: 1,
-                  strokeWeight: 0,
-                  scaledSize: new google.maps.Size(32, 40),
-                  origin: new google.maps.Point(0, 0),
-                },
-              });
-            }
-          }
-        }
-      });
-    }
-    else {
-      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-      let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          if (data != null) {
-            lineMapRefrenceInstance.unsubscribe();
-            this.mapRefrence = data.toString();
-            dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-            let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
-              wardLineCount.unsubscribe();
-              if (lineCount != null) {
-                this.wardLines = Number(lineCount);
-                this.progressData.totalLines = Number(lineCount);
-                this.getAllLinesFromJson();
-              }
-            });
-          }
-          else {
-            this.mapRefrence = "";
-            let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-              wardLineCount.unsubscribe();
-              if (lineCount != null) {
-                this.wardLines = Number(lineCount);
-                this.progressData.totalLines = Number(lineCount);
-                this.getAllLinesFromJson();
-              }
+            latLngArray = this.lines[this.lines.length - 1]["latlng"];
+            lat = latLngArray[latLngArray.length - 1]["lat"];
+            lng = latLngArray[latLngArray.length - 1]["lng"];
+            this.wardEndMarker = new google.maps.Marker({
+              position: { lat: Number(lat), lng: Number(lng) },
+              map: this.map,
+              icon: {
+                url: this.wardEndUrl,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scaledSize: new google.maps.Size(32, 40),
+                origin: new google.maps.Point(0, 0),
+              },
             });
           }
         }
-      );
-    }
+      }
+    });
   }
 
   getAllLinesFromJson() {
