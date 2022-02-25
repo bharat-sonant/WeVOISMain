@@ -1477,6 +1477,37 @@ export class CommonService {
     });
   }
 
+  
+  setJaipurGreaterWardBoundary(map: any,boundaryPath:any) {
+    return new Promise((resolve) => {
+      const path =boundaryPath; 
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let strokeWeight = 8;
+          let points = data["points"];
+          if (points.length > 0) {
+            let bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(map);
+            map.fitBounds(bounds);
+            resolve(this.polylines);
+          }
+        }
+      });
+    });
+  }
+
 
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
