@@ -551,66 +551,6 @@ export class MapsComponent {
     });
   }
 
-  getAllLinesFromJson() {
-    this.completedLines = 0;
-    for (let i = 1; i <= Number(this.wardLines); i++) {
-      let dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + i + "/points";
-      if (this.mapRefrence != "") {
-        dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/" + i + "/points";
-      }
-      let wardLines = this.db.list(dbPath).valueChanges().subscribe((zoneData) => {
-        wardLines.unsubscribe();
-        if (zoneData.length > 0) {
-          let lineData = zoneData;
-          var latLng = [];
-          for (let j = 0; j < lineData.length; j++) {
-            latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-          }
-          this.lines.push({
-            lineNo: i,
-            latlng: latLng,
-            color: "#87CEFA",
-          });
-          this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-          if (this.wardStartMarker == null) {
-            if (i == Number(this.wardLines)) {
-              let latLngArray = [];
-              latLngArray = this.lines[0]["latlng"];
-              let lat = latLngArray[0]["lat"];
-              let lng = latLngArray[0]["lng"];
-              this.wardStartMarker = new google.maps.Marker({
-                position: { lat: Number(lat), lng: Number(lng) },
-                map: this.map,
-                icon: {
-                  url: this.wardStartUrl,
-                  fillOpacity: 1,
-                  strokeWeight: 0,
-                  scaledSize: new google.maps.Size(32, 40),
-                  origin: new google.maps.Point(0, 0),
-                },
-              });
-
-              latLngArray = this.lines[this.lines.length - 1]["latlng"];
-              lat = latLngArray[latLngArray.length - 1]["lat"];
-              lng = latLngArray[latLngArray.length - 1]["lng"];
-              this.wardEndMarker = new google.maps.Marker({
-                position: { lat: Number(lat), lng: Number(lng) },
-                map: this.map,
-                icon: {
-                  url: this.wardEndUrl,
-                  fillOpacity: 1,
-                  strokeWeight: 0,
-                  scaledSize: new google.maps.Size(32, 40),
-                  origin: new google.maps.Point(0, 0),
-                },
-              });
-            }
-          }
-        }
-      });
-    }
-  }
-
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
