@@ -1,7 +1,5 @@
-import { userDetail } from './../../Users/user-access/user-access.component';
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
-import { AngularFireList } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
@@ -16,7 +14,6 @@ import { AngularFirestore } from "@angular/fire/firestore";
 export class AccountDetailComponent implements OnInit {
 
   constructor(public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
-  accountRef: AngularFireList<any>;
   db: any;
   cityName: any;
   designationList: any[];
@@ -78,7 +75,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getLastUpdate() {
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
+    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
     let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
       lastUpdateInstance.unsubscribe();
       if (data != null) {
@@ -93,10 +90,10 @@ export class AccountDetailComponent implements OnInit {
 
   getAccountDetail() {
     $(this.divLoader).show();
-    this.allAccountList=[];
-    this.designationList=[];
-    this.accountList=[];
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    this.allAccountList = [];
+    this.designationList = [];
+    this.accountList = [];
+    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
       if (data != null) {
@@ -120,7 +117,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getAccountIssue() {
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
+    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
     let accountIssueInstance = this.httpService.get(path).subscribe(data => {
       accountIssueInstance.unsubscribe();
       if (data != null) {
@@ -235,16 +232,9 @@ export class AccountDetailComponent implements OnInit {
         let portalUserDetail = portalUserList.find(item => item.userId == this.userId);
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
-          this.accountRef = this.db.list(dbPath);
-          this.accountRef.push({
-            accountNumber: preAccountNo,
-            ifsc: preIFSC,
-            modifyBy: name,
-            modifyDate: time
-          })
-
           this.saveEmployeeModificationHistory(id, preAccountNo, preIFSC, name, time);
-          this.updateData(id, name, time, accountNo, ifsc);
+          this.updateEmployeeSummary(id, name, time);
+          this.updateAccountListData(id, name, time, accountNo, ifsc);
         }
         $(this.key).val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
@@ -253,13 +243,16 @@ export class AccountDetailComponent implements OnInit {
     }
   }
 
-  updateData(id: any, name: any, time: any, accountNo: any, ifsc: any) {
+  updateEmployeeSummary(id: any, name: any, time: any) {
     let dbPath = "Employees/" + id + "/updateSummary";
     const data = {
       by: name,
       date: time
     }
     this.db.object(dbPath).update(data);
+  }
+
+  updateAccountListData(id: any, name: any, time: any, accountNo: any, ifsc: any) {
     let userDetail = this.accountList.find((item) => item.empId == id);
     if (userDetail != undefined) {
       userDetail.accountNo = accountNo;
@@ -273,15 +266,15 @@ export class AccountDetailComponent implements OnInit {
         allUserDetail.modifyBy = name;
         allUserDetail.modifyDate = time;
       }
-      let path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/";
+      let path = "" + this.fireStoreCity + "/EmployeeAccount/";
       this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
     }
   }
 
   saveEmployeeModificationHistory(empId: any, accountNumber: any, ifsc: any, modifyBy: any, modifyDate: any) {
     let historyList = [];
-    let filePath = "" + this.commonService.getFireStoreCity() + "/EmployeeDetailModificationHistory/";
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeDetailModificationHistory%2F" + empId + ".json?alt=media";
+    let filePath = "" + this.fireStoreCity + "/EmployeeDetailModificationHistory/";
+    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeDetailModificationHistory%2F" + empId + ".json?alt=media";
     let instance = this.httpService.get(path).subscribe(data => {
       instance.unsubscribe();
       if (data != null) {
@@ -296,6 +289,41 @@ export class AccountDetailComponent implements OnInit {
     });
   }
 
+  saveRemarkData(id: any, remarkBy: any, remark: any, remarkDate: any) {
+    const data = {
+      remarkBy: remarkBy,
+      remark: remark,
+      remarkDate: remarkDate
+    }
+    if (this.remarkJsonObject == null) {
+      const obj = {};
+      obj[id.toString()] = data;
+      this.remarkJsonObject = obj;
+      this.updateIssueJson(obj);
+    }
+    else {
+      const obj = this.remarkJsonObject;
+      obj[id.toString()] = data;
+      this.updateIssueJson(obj);
+    }
+    this.commonService.setAlertMessage("success", "Remark added successfully !!!");
+  }
+
+  updateRemarkData(id: any, remark: any) {
+    const obj = this.remarkJsonObject;
+    obj[id.toString()]["remark"] = remark;
+    this.updateIssueJson(obj);
+    this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
+  }
+
+  updateRemarkHistoryData(id: any, obj: any) {
+    this.saveRemarkHistory(id, obj);
+    const obj2 = this.remarkJsonObject;
+    delete obj2[id.toString()];
+    this.updateIssueJson(obj2);
+    this.commonService.setAlertMessage("success", "Issue solved updated successfully !!!");
+  }
+
   saveRemarks() {
     let id = $(this.key).val();
     let remark = $(this.txtRemarks).val();
@@ -308,34 +336,14 @@ export class AccountDetailComponent implements OnInit {
           this.commonService.setAlertMessage("error", "Please enter remark !!!");
           return;
         }
-
-        const data = {
-          remarkBy: remarkBy,
-          remark: remark,
-          remarkDate: remarkDate
-        }
-        if (this.remarkJsonObject == null) {
-          const obj = {};
-          obj[id.toString()] = data;
-          this.remarkJsonObject=obj;
-          this.updateIssueJson(obj);
-        }
-        else {
-          const obj = this.remarkJsonObject;
-          obj[id.toString()] = data;
-          this.updateIssueJson(obj);
-        }
+        this.saveRemarkData(id, remarkBy, remark, remarkDate);
         this.setRemarkDetail(userDetail, remark, remarkBy, remarkDate);
-        this.commonService.setAlertMessage("success", "Remark added successfully !!!");
       }
       else {
         let element = <HTMLInputElement>document.getElementById("chkSolved");
         if (element.checked == false) {
-          const obj = this.remarkJsonObject;
-          obj[id.toString()]["remark"] = remark;
-          this.updateIssueJson(obj);
+          this.updateRemarkData(id, remark);
           this.setRemarkDetail(userDetail, remark, userDetail.remarkBy, userDetail.remarkDate);
-          this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
         }
         else {
           const data = {
@@ -346,7 +354,7 @@ export class AccountDetailComponent implements OnInit {
             solvedBy: remarkBy
           }
 
-          const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FHistory%2F" + id + ".json?alt=media";
+          const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccountIssue%2FHistory%2F" + id + ".json?alt=media";
           let accountIssueInstance = this.httpService.get(path).subscribe(remarkData => {
             accountIssueInstance.unsubscribe();
             if (remarkData != null) {
@@ -354,22 +362,14 @@ export class AccountDetailComponent implements OnInit {
               let keyArray = Object.keys(list);
               const obj = remarkData;
               obj[keyArray.length] = data;
-              this.saveRemarkHistory(id, obj);
-              const obj2 = this.remarkJsonObject;
-              delete obj2[id.toString()];
-              this.updateIssueJson(obj2);
+              this.updateRemarkHistoryData(id, obj);
               this.setRemarkDetail(userDetail, null, null, null);
-              this.commonService.setAlertMessage("success", "Issue solved updated successfully !!!");
             }
           }, error => {
             const obj = {};
             obj[0] = data;
-            this.saveRemarkHistory(id, obj);
-            const obj2 = this.remarkJsonObject;
-            delete obj2[id.toString()];
-            this.updateIssueJson(obj2);
+            this.updateRemarkHistoryData(id, obj);
             this.setRemarkDetail(userDetail, null, null, null);
-            this.commonService.setAlertMessage("success", "Issue solved updated successfully !!!");
           });
         }
       }
@@ -386,13 +386,13 @@ export class AccountDetailComponent implements OnInit {
   }
 
   saveRemarkHistory(id: any, obj: any) {
-    let filePath = "" + this.commonService.getFireStoreCity() + "/EmployeeAccountIssue/History/";
+    let filePath = "" + this.fireStoreCity + "/EmployeeAccountIssue/History/";
     let fileName = id + ".json";
     this.saveJsonFile(obj, fileName, filePath);
   }
 
   updateIssueJson(obj: any) {
-    let filePath = "" + this.commonService.getFireStoreCity() + "/EmployeeAccountIssue/";
+    let filePath = "" + this.fireStoreCity + "/EmployeeAccountIssue/";
     let fileName = "Issue.json";
     this.saveJsonFile(obj, fileName, filePath);
   }
@@ -427,7 +427,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   saveJSONData() {
-    let path = "" + this.commonService.getFireStoreCity() + "/EmployeeAccount/";
+    let path = "" + this.fireStoreCity + "/EmployeeAccount/";
     this.saveJsonFile(this.accountJsonList, "accountDetail.json", path);
     let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
     this.remarkDetail.lastUpdate = time;
