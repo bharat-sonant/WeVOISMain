@@ -169,10 +169,8 @@ export class EmployeeSalaryComponent implements OnInit {
           this.getSalary();
         }
       }
-
     });
   }
-
 
   getUploadedSalary() {
     this.dbFireStore.collection(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data").get().subscribe(
@@ -229,17 +227,24 @@ export class EmployeeSalaryComponent implements OnInit {
       }
     }
   }
-
+  
   getAccountIssue() {
-    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").get().subscribe((ss) => {
-      ss.forEach((doc) => {
-        let empId = doc.id;
-        let userDetail = this.allSalaryList.find(item => item.empId == empId);
-        if (userDetail != undefined) {
-          userDetail.remark = doc.data()["remark"];
-          userDetail.isShow = 1;
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
+    let accountIssueInstance = this.httpService.get(path).subscribe(data => {
+      accountIssueInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let empId = keyArray[i];
+            let userDetail = this.allSalaryList.find(item => item.empId == empId);
+            if (userDetail != undefined) {
+              userDetail.remark = data[empId]["remark"];
+              userDetail.isShow = 1;
+            }
+          }
         }
-      });
+      }
     });
   }
 

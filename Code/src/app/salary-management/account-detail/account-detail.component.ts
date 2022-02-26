@@ -1,3 +1,4 @@
+import { userDetail } from './../../Users/user-access/user-access.component';
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireList } from 'angularfire2/database';
@@ -35,7 +36,9 @@ export class AccountDetailComponent implements OnInit {
   fireStoreCity: any;
   fireStorePath: any;
   toDayDate: any;
+  remarkJsonObject: any;
   accountJsonList: any[];
+  userId: any;
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
@@ -52,6 +55,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   setDefault() {
+    this.userId = localStorage.getItem("userID");
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
@@ -59,6 +63,7 @@ export class AccountDetailComponent implements OnInit {
     this.designationUpdateList = [];
     this.allAccountList = [];
     this.accountList = [];
+    this.remarkJsonObject = null;
     $(this.ddlUser).val("active");
     $(this.ddlDesignation).val("all");
     this.getLastUpdate();
@@ -112,16 +117,26 @@ export class AccountDetailComponent implements OnInit {
   }
 
   getAccountIssue() {
-    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").get().subscribe((ss) => {
-      ss.forEach((doc) => {
-        let empId = doc.id;
-        let userDetail = this.allAccountList.find(item => item.empId == empId);
-        if (userDetail != undefined) {
-          userDetail.remarkDate = doc.data()["remarkDate"];
-          userDetail.remarkBy = doc.data()["remarkBy"];
-          userDetail.remark = doc.data()["remark"];
+    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
+    let accountIssueInstance = this.httpService.get(path).subscribe(data => {
+      accountIssueInstance.unsubscribe();
+      if (data != null) {
+        this.remarkJsonObject = data;
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let empId = keyArray[i];
+            let userDetail = this.allAccountList.find(item => item.empId == empId);
+            if (userDetail != undefined) {
+              userDetail.remarkDate = data[empId]["remarkDate"];
+              userDetail.remarkBy = data[empId]["remarkBy"];
+              userDetail.remark = data[empId]["remark"];
+            }
+          }
         }
-      });
+      }
+      this.showAccountDetail("active", "all");
+    }, error => {
       this.showAccountDetail("active", "all");
     });
   }
@@ -214,7 +229,7 @@ export class AccountDetailComponent implements OnInit {
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
         let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
-        let portalUserDetail = portalUserList.find(item => item.userId == localStorage.getItem("userID"));
+        let portalUserDetail = portalUserList.find(item => item.userId == this.userId);
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
           this.accountRef = this.db.list(dbPath);
@@ -281,6 +296,8 @@ export class AccountDetailComponent implements OnInit {
   saveRemarks() {
     let id = $(this.key).val();
     let remark = $(this.txtRemarks).val();
+    let remarkDate = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
+    let remarkBy = this.userId;
     let userDetail = this.accountList.find((item) => item.empId == id);
     if (userDetail != undefined) {
       if (userDetail.remark == null) {
@@ -288,57 +305,93 @@ export class AccountDetailComponent implements OnInit {
           this.commonService.setAlertMessage("error", "Please enter remark !!!");
           return;
         }
-        else {
-          const data = {
-            remarkBy: localStorage.getItem("userID"),
-            remark: remark,
-            remarkDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond()
-          }
-          this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").doc(id.toString()).set(data);
-          $(this.key).val("0");
-          $(this.txtRemarks).val("");
-          userDetail.remark = remark;
-          userDetail.remarkBy = localStorage.getItem("userID");
-          userDetail.remarkDate = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
-          this.commonService.setAlertMessage("success", "Remark added successfully !!!");
+
+        const data = {
+          remarkBy: remarkBy,
+          remark: remark,
+          remarkDate: remarkDate
         }
+        if (this.remarkJsonObject == null) {
+          const obj = {};
+          obj[id.toString()] = data;
+          this.remarkJsonObject=obj;
+          this.updateIssueJson(obj);
+        }
+        else {
+          const obj = this.remarkJsonObject;
+          obj[id.toString()] = data;
+          this.updateIssueJson(obj);
+        }
+        this.setRemarkDetail(userDetail, remark, remarkBy, remarkDate);
+        this.commonService.setAlertMessage("success", "Remark added successfully !!!");
       }
       else {
         let element = <HTMLInputElement>document.getElementById("chkSolved");
         if (element.checked == false) {
-          this.dbFireStore.collection(this.fireStoreCity + "/EmployeeAccountIssue/Issue").doc(id.toString()).update({ remark: remark });
-          $(this.key).val("0");
-          $(this.txtRemarks).val("");
-          userDetail.remark = remark;
+          const obj = this.remarkJsonObject;
+          obj[id.toString()]["remark"] = remark;
+          this.updateIssueJson(obj);
+          this.setRemarkDetail(userDetail, remark, userDetail.remarkBy, userDetail.remarkDate);
           this.commonService.setAlertMessage("success", "Remark updated successfully !!!");
         }
         else {
-          this.dbFireStore.doc(this.fireStoreCity + "/EmployeeAccountIssue/History/" + id + "").get().subscribe((ss) => {
-            let key = 1;
-            if (ss.data() != null) {
-              if (ss.data()["lastKey"] != undefined) {
-                key += Number(ss.data()["lastKey"]);
-              }
+          const data = {
+            remark: userDetail.remark,
+            remarkBy: userDetail.remarkBy,
+            remarkDate: userDetail.remarkDate,
+            solvedDate: remarkDate,
+            solvedBy: remarkBy
+          }
+
+          const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FHistory%2F" + id + ".json?alt=media";
+          let accountIssueInstance = this.httpService.get(path).subscribe(remarkData => {
+            accountIssueInstance.unsubscribe();
+            if (remarkData != null) {
+              let list = JSON.parse(JSON.stringify(remarkData));
+              let keyArray = Object.keys(list);
+              const obj = remarkData;
+              obj[keyArray.length] = data;
+              this.saveRemarkHistory(id, obj);
+              const obj2 = this.remarkJsonObject;
+              delete obj2[id.toString()];
+              this.updateIssueJson(obj2);
+              this.setRemarkDetail(userDetail, null, null, null);
+              this.commonService.setAlertMessage("success", "Issue solved updated successfully !!!");
             }
-            const data = {
-              remark: userDetail.remark,
-              remarkBy: userDetail.remarkBy,
-              remarkDate: userDetail.remarkDate,
-              solvedDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
-              solvedBy: localStorage.getItem("userID")
-            }
-            this.dbFireStore.doc(this.fireStoreCity + "/EmployeeAccountIssue/History/" + id + "").set({ lastKey: key });
-            this.dbFireStore.doc(this.fireStoreCity + "/EmployeeAccountIssue/History/" + id + "").collection(key.toString()).doc("1").set(data);
-            this.dbFireStore.doc(this.fireStoreCity + "/EmployeeAccountIssue/Issue/" + id + "").delete();
-            this.commonService.setAlertMessage("success", "Data saved successfully !!!");
-            userDetail.remark = null;
-            userDetail.remarkBy = null;
-            userDetail.remarkDate = null;
+          }, error => {
+            const obj = {};
+            obj[0] = data;
+            this.saveRemarkHistory(id, obj);
+            const obj2 = this.remarkJsonObject;
+            delete obj2[id.toString()];
+            this.updateIssueJson(obj2);
+            this.setRemarkDetail(userDetail, null, null, null);
+            this.commonService.setAlertMessage("success", "Issue solved updated successfully !!!");
           });
         }
       }
     }
     this.closeModel();
+  }
+
+  setRemarkDetail(userDetail: any, remark: any, remarkBy: any, remarkDate: any) {
+    $(this.key).val("0");
+    $(this.txtRemarks).val("");
+    userDetail.remark = remark;
+    userDetail.remarkBy = remarkBy;
+    userDetail.remarkDate = remarkDate;
+  }
+
+  saveRemarkHistory(id: any, obj: any) {
+    let filePath = "" + this.commonService.getFireStoreCity() + "/EmployeeAccountIssue/History/";
+    let fileName = id + ".json";
+    this.saveJsonFile(obj, fileName, filePath);
+  }
+
+  updateIssueJson(obj: any) {
+    let filePath = "" + this.commonService.getFireStoreCity() + "/EmployeeAccountIssue/";
+    let fileName = "Issue.json";
+    this.saveJsonFile(obj, fileName, filePath);
   }
 
   closeModel() {
@@ -375,11 +428,11 @@ export class AccountDetailComponent implements OnInit {
     this.saveJsonFile(this.accountJsonList, "accountDetail.json", path);
     let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
     this.remarkDetail.lastUpdate = time;
-    let userData = this.commonService.getPortalUserDetailById(localStorage.getItem("userID"));
+    let userData = this.commonService.getPortalUserDetailById(this.userId);
     if (userData != undefined) {
       this.remarkDetail.lastUpdateBy = userData["name"];
     }
-    const obj = { lastUpdate: time, updateBy: localStorage.getItem("userID") };
+    const obj = { lastUpdate: time, updateBy: this.userId };
     this.saveJsonFile(obj, "LastUpdate.json", path);
     this.commonService.setAlertMessage("success", "Account data updated successfully !!!");
     $(this.divLoader).hide();
@@ -461,8 +514,8 @@ export class AccountDetailComponent implements OnInit {
               }
             }
             this.allAccountList = this.accountJsonList;
-            this.showAccountDetail("active", "all");
             this.saveJSONData();
+            this.showAccountDetail("active", "all");
           }
         }
       }
