@@ -93,6 +93,9 @@ export class AccountDetailComponent implements OnInit {
 
   getAccountDetail() {
     $(this.divLoader).show();
+    this.allAccountList=[];
+    this.designationList=[];
+    this.accountList=[];
     const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
@@ -513,9 +516,8 @@ export class AccountDetailComponent implements OnInit {
                 }
               }
             }
-            this.allAccountList = this.accountJsonList;
             this.saveJSONData();
-            this.showAccountDetail("active", "all");
+            this.getAccountDetail();
           }
         }
       }
