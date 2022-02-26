@@ -381,10 +381,11 @@ export class MapsComponent {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
     }
     this.currentYear = this.selectedDate.split("-")[0];
-    let month = this.selectedDate.split("-")[0];
+    let month = this.selectedDate.split("-")[1];
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(month) - 1);
     $(this.txtDate).val(this.selectedDate);
     this.activeZone = filterVal;
+    this.selectedZone = this.activeZone;
     this.getWardData();
   }
 
