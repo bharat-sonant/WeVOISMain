@@ -221,18 +221,14 @@ export class AccountDetailComponent implements OnInit {
       if (userDetail != undefined) {
         let accountNo = $(this.txtAccountNo).val();
         let ifsc = $(this.txtIFSC).val();
-        let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
-        let preAccountNo = $(this.preAccountNo).val();
-        let preIFSC = $(this.preIFSC).val();
-        this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
-
+        this.updateBankDetail(id, accountNo, ifsc);
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
         let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
         let portalUserDetail = portalUserList.find(item => item.userId == this.userId);
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
-          this.saveEmployeeModificationHistory(id, preAccountNo, preIFSC, name, time);
+          this.saveEmployeeModificationHistory(id, name, time);
           this.updateEmployeeSummary(id, name, time);
           this.updateAccountListData(id, name, time, accountNo, ifsc);
         }
@@ -241,6 +237,11 @@ export class AccountDetailComponent implements OnInit {
         this.closeModel();
       }
     }
+  }
+
+  updateBankDetail(id: any, accountNo: any, ifsc: any) {
+    let dbPath = "Employees/" + id + "/BankDetails/AccountDetails";
+    this.db.object(dbPath).update({ accountNumber: accountNo, ifsc: ifsc });
   }
 
   updateEmployeeSummary(id: any, name: any, time: any) {
@@ -271,8 +272,10 @@ export class AccountDetailComponent implements OnInit {
     }
   }
 
-  saveEmployeeModificationHistory(empId: any, accountNumber: any, ifsc: any, modifyBy: any, modifyDate: any) {
+  saveEmployeeModificationHistory(empId: any, modifyBy: any, modifyDate: any) {
     let historyList = [];
+    let accountNumber = $(this.preAccountNo).val();
+    let ifsc = $(this.preIFSC).val();
     let filePath = "" + this.fireStoreCity + "/EmployeeDetailModificationHistory/";
     const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeDetailModificationHistory%2F" + empId + ".json?alt=media";
     let instance = this.httpService.get(path).subscribe(data => {
