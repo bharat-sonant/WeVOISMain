@@ -124,12 +124,12 @@ export class MultipleMapsComponent {
     );
 
     // init Mp Boundries
-    this.setMapBoundary("1", this.mapWard1);
-    this.setMapBoundary("2", this.mapWard2);
-    this.setMapBoundary("3", this.mapWard3);
-    this.setMapBoundary("4", this.mapWard4);
-    this.setMapBoundary("MarketRoute1", this.mapMarketRoute1);
-    this.setMapBoundary("MarketRoute2", this.mapMarketRoute2);
+    this.setWardBoundary("1", this.mapWard1);
+    this.setWardBoundary("2", this.mapWard2);
+    this.setWardBoundary("3", this.mapWard3);
+    this.setWardBoundary("4", this.mapWard4);
+    this.setWardBoundary("MarketRoute1", this.mapMarketRoute1);
+    this.setWardBoundary("MarketRoute2", this.mapMarketRoute2);
 
     // show Vehicle on Map
     this.showVehicleMovement("1", this.vehicleStatusInstance, this.vehicleLocationInstance);
@@ -140,12 +140,12 @@ export class MultipleMapsComponent {
     this.showVehicleMovement("MarketRoute2", this.vehicleStatusInstance5, this.vehicleLocationInstance5);
 
     // Show Lines on Map
-    this.getLinesFromJson("1");
-    this.getLinesFromJson("2");
-    this.getLinesFromJson("3");
-    this.getLinesFromJson("4");
-    this.getLinesFromJson("MarketRoute1");
-    this.getLinesFromJson("MarketRoute2");
+    this.getAllLinesFromJson("1");
+    this.getAllLinesFromJson("2");
+    this.getAllLinesFromJson("3");
+    this.getAllLinesFromJson("4");
+    this.getAllLinesFromJson("MarketRoute1");
+    this.getAllLinesFromJson("MarketRoute2");
 
     let screenRefresh = this.db.object("Settings/portal-multiple-map-screen-refresh-time").valueChanges().subscribe((timeId) => {
       screenRefresh.unsubscribe();
@@ -191,12 +191,12 @@ export class MultipleMapsComponent {
 
 
 
-        this.setMapBoundary("1", this.mapWard1);
-        this.setMapBoundary("2", this.mapWard2);
-        this.setMapBoundary("3", this.mapWard3);
-        this.setMapBoundary("4", this.mapWard4);
-        this.setMapBoundary("MarketRoute1", this.mapMarketRoute1);
-        this.setMapBoundary("MarketRoute2", this.mapMarketRoute2);
+        this.setWardBoundary("1", this.mapWard1);
+        this.setWardBoundary("2", this.mapWard2);
+        this.setWardBoundary("3", this.mapWard3);
+        this.setWardBoundary("4", this.mapWard4);
+        this.setWardBoundary("MarketRoute1", this.mapMarketRoute1);
+        this.setWardBoundary("MarketRoute2", this.mapMarketRoute2);
         // show Vehicle on Map
 
         this.showVehicleMovement("1", this.vehicleStatusInstance, this.vehicleLocationInstance);
@@ -207,19 +207,19 @@ export class MultipleMapsComponent {
         this.showVehicleMovement("MarketRoute2", this.vehicleStatusInstance5, this.vehicleLocationInstance5);
         // Show Lines on Map
 
-        this.getLinesFromJson("1");
-        this.getLinesFromJson("2");
-        this.getLinesFromJson("3");
-        this.getLinesFromJson("4");
-        this.getLinesFromJson("MarketRoute1");
-        this.getLinesFromJson("MarketRoute2");
+        this.getAllLinesFromJson("1");
+        this.getAllLinesFromJson("2");
+        this.getAllLinesFromJson("3");
+        this.getAllLinesFromJson("4");
+        this.getAllLinesFromJson("MarketRoute1");
+        this.getAllLinesFromJson("MarketRoute2");
       }, this.screenRefreshTime);
 
       localStorage.setItem("multipleMap", this.prevNowPlaying);
     });
   }
 
-  setMapBoundary(selectedZone: any, map: any) {
+  setWardBoundary(selectedZone: any, map: any) {
     this.commonService.setKML(selectedZone, null).then((data: any) => {
       let zoneKML = data;
       zoneKML[0]["line"].setMap(map);
@@ -326,22 +326,20 @@ export class MultipleMapsComponent {
     });
   }
 
-  getLinesFromJson(selectedZone: any) {
-    let wardLines = this.db.object("Defaults/WardLines/" + selectedZone).valueChanges().subscribe((zoneLine) => {
-      this.instancesList.push({ instances: wardLines }); 
-      var linePath = [];
-      for (let i = 1; i < 2000; i++) {
-        var line = zoneLine[i];
-        if (line == undefined) {
-          break;
+  getAllLinesFromJson(selectedZone: any) {
+    this.commonService.getWardLine(selectedZone, this.toDayDate).then((data: any) => {      
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      let linePath = [];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        var path = [];
-        for (let j = 0; j < line.points.length; j++) {
-          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-        }
-        linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
       }
-
       if (selectedZone == "1") {
         this.allLinesWard1 = linePath;
         this.plotLinesOnMap(selectedZone);

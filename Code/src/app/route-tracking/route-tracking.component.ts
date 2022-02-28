@@ -254,7 +254,7 @@ export class RouteTrackingComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
+  setWardBoundary() {
     this.commonService.setKML(this.selectedZoneNo, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -285,7 +285,7 @@ export class RouteTrackingComponent {
     this.selectedZoneNo = this.selectedZone;
     this.polylines = [];
     this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
     }
@@ -822,7 +822,7 @@ export class RouteTrackingComponent {
     this.polylines = [];
     this.timeInterval = 0;
     this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     this.setMapOnAll();
     this.getFixedGeoLocation();
     this.getVehicleRouteTime();

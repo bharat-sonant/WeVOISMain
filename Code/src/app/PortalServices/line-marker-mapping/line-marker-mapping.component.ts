@@ -43,6 +43,7 @@ export class LineMarkerMappingComponent {
   markerList: any[];
   allMarkers: any[];
   selectedCardDetails: any[];
+  toDayDate:any;
 
   cardDetails: CardDetails = {
     selectedMarkerCount: 0,
@@ -54,6 +55,7 @@ export class LineMarkerMappingComponent {
   plansRef: AngularFireList<any>;
 
   ngOnInit() {
+    this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -125,33 +127,34 @@ export class LineMarkerMappingComponent {
 
   getAllLinesFromJson() {
     this.lines = [];
-    this.polylines = [];
-    let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-      wardLineCount.unsubscribe();
-      if (lineCount != null) {
-        this.wardLines = Number(lineCount);
-        for (let i = 1; i <= Number(lineCount); i++) {
-          let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
-            wardLines.unsubscribe();
-            if (zoneData.length > 0) {
-              let lineData = zoneData;
-              var latLng = [];
-              for (let j = 0; j < lineData.length; j++) {
-                latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-              }
-              this.lines.push({
-                lineNo: i,
-                latlng: latLng,
-                color: "#87CEFA",
-              });
-              this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-              if (this.lineNo == i.toString()) {
-                this.getMarkedHouses(i);
-              }
-            }
-          });
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
         }
       }
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      let lineNo=0;
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+      }
+      this.getMarkedHouses(this.lineNo);
     });
   }
 

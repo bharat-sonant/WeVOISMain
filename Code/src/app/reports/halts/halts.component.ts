@@ -171,7 +171,7 @@ export class HaltsComponent {
     this.getEmployee(zoneNo);
     this.setMapHalt();
     setTimeout(() => {
-      this.setKmlHalt(zoneNo);
+      this.setWardBoundary(zoneNo);
     }, 200);
     this.getFixedGeoLocation();
     this.haltDataList = [];
@@ -418,7 +418,7 @@ export class HaltsComponent {
     );
   }
 
-  setKmlHalt(wardNo: string) {
+  setWardBoundary(wardNo: string) {
     this.commonService.setKML(wardNo, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);

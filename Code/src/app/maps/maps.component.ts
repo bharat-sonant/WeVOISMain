@@ -246,7 +246,7 @@ export class MapsComponent {
     element.checked = false;
     $(this.houseCount).hide();
     $(this.houseDetail).hide();
-    this.setKml();
+    this.setWardBoundary();
   }
 
   setDateFilterDefault() {
@@ -330,7 +330,7 @@ export class MapsComponent {
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
     }
-    this.getWardLines();
+    this.getAllLinesFromJson();
     this.getProgressDetail();
     this.getEmployeeData();
     this.getWardTotalLength();
@@ -371,7 +371,7 @@ export class MapsComponent {
     } else {
       this.marker.setMap(null);
     }
-    this.getWardLines();
+    this.getAllLinesFromJson();
     this.getProgressDetail();
     this.getEmployeeData();
   }
@@ -413,7 +413,7 @@ export class MapsComponent {
     this.map.setMapTypeId("styled_map");
   }
 
-  setKml() {
+  setWardBoundary() {
     this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -492,7 +492,7 @@ export class MapsComponent {
     this.wardLineNoMarker = [];
   }
 
-  getWardLines() {
+  getAllLinesFromJson() {
     this.clearWardLineMap();
     this.completedLines = 0;
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {

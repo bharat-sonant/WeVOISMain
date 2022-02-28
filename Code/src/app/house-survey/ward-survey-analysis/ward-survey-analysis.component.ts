@@ -29,7 +29,7 @@ export class WardSurveyAnalysisComponent {
   lines: any[] = [];
   wardLineCount: any;
   zoneKML: any;
-  zoneKMLRevisit:any;
+  zoneKMLRevisit: any;
   allMarkers: any[] = [];
   lineNo: any;
   cityName: any;
@@ -45,6 +45,7 @@ export class WardSurveyAnalysisComponent {
   revisitMarker: any[];
   preRevisitIndex: any;
   nameList: any[];
+  toDayDate: any;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -70,6 +71,7 @@ export class WardSurveyAnalysisComponent {
   };
 
   ngOnInit() {
+    this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -107,8 +109,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getWardDetail() {
-    this.wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
-    this.getWardLines(this.wardLineCount);
+    this.getAllLinesFromJson();
     this.getTotalMarkers();
   }
 
@@ -172,31 +173,41 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  getWardLines(lineCount: any) {
-    for (let i = 1; i <= Number(lineCount); i++) {
-      let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
-        wardLines.unsubscribe();
-        if (zoneData.length > 0) {
-          let lineData = zoneData;
-          var latLng = [];
-          for (let j = 0; j < lineData.length; j++) {
-            latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-          }
-          this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA", });
-          this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-          if (this.lineNo == i.toString()) {
-            this.getMarkedHouses(i);
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.allMarkers.length > 0) {
+        for (let i = 0; i < this.allMarkers.length; i++) {
+          this.allMarkers[i]["marker"].setMap(null);
+        }
+      }
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
           }
         }
-      });
-    }
+      }
+      this.allMarkers = [];
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLineCount=wardLines["totalLines"];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+      }
+      this.getMarkedHouses(this.lineNo);
+    });
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     if (wardNo == this.selectedZone) {
-      if (this.polylines[index] != undefined) {
-        this.polylines[index].setMap(null);
-      }
       let strokeWeight = 2;
       let status = "";
       if (lineNo == this.lineNo) {
@@ -914,22 +925,11 @@ export class WardSurveyAnalysisComponent {
   }
 
   clearAllOnMap() {
-    if (this.allMarkers.length > 0) {
-      for (let i = 0; i < this.allMarkers.length; i++) {
-        this.allMarkers[i]["marker"].setMap(null);
-      }
-      this.allMarkers = [];
-    }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
-      }
-    }
+   
     this.lines = [];
     this.lineNo = 1;
     this.previousLine = 1;
     $("#txtLineNo").val(this.lineNo);
-    this.polylines = [];
     this.progressData.totalMarkers = 0;
     this.progressData.totalSurveyed = 0;
     this.progressData.totalRevisit = 0;

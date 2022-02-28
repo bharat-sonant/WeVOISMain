@@ -40,6 +40,7 @@ export class DownloadCollectionReportComponent {
   currentMonthName: any;
   currentYear: any;
   zoneKML:any;
+  toDayDate:any;
 
   public selectedZone: any;
   marker = new google.maps.Marker();
@@ -125,7 +126,7 @@ export class DownloadCollectionReportComponent {
     this.polylines = [];
     this.allLines = [];
     this.setMap();
-    this.drawZoneAllLines();
+    this.getAllLinesFromJson();
     this.showReportCreationProgress();
   }
 
@@ -146,22 +147,27 @@ export class DownloadCollectionReportComponent {
     });
   }
 
-  drawZoneAllLines() {
-    let wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
-      for (let i = 1; i < 10000; i++) {
-        var line = zoneLine[i];
-        if (line == undefined) {
-          break;
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
         }
-
-        var path = [];
-        for (let j = 0; j < line.points.length; j++) {
-          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-        }
-
-        this.allLines.push({ lineNo: i, latlng: path, color: "#87CEFA" });
       }
-
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+      }      
       this.drawRealTimePloylines();
     });
   }
