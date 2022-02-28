@@ -52,6 +52,9 @@ export class CommonService {
   }
 
   getNextDate(currentDate: any, addDay: any) {
+    if (addDay == 0) {
+      return currentDate;
+    }
     let year = currentDate.split('-')[0];
     let month = Number(currentDate.split('-')[1]);
     let day = Number(currentDate.split('-')[2]);
@@ -1477,10 +1480,10 @@ export class CommonService {
     });
   }
 
-  
-  setJaipurGreaterWardBoundary(map: any,boundaryPath:any) {
+
+  setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
     return new Promise((resolve) => {
-      const path =boundaryPath; 
+      const path = boundaryPath;
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
