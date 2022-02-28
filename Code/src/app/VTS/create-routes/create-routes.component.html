@@ -33,6 +33,13 @@
         <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
             <div class="fix-home">
                 <div class="float-second" style="margin-top: 10px; cursor: pointer;"
+                    >
+                    <span class="house"> 
+                    <input type="checkbox" id="chkNGGJ" (change)="setNGGJ();">    
+                    </span><br>
+                    <h6 style="font-size: 9px!important;">NNGJ Routes</h6>
+                </div>
+                <div class="float-second" style="margin-top: 10px; cursor: pointer;"
                     (click)="openModel(contentCreateRoute,'createRoute',0,0)">
                     <span class="house"> <i class="fas fa-plus" style="color:#0ba118; font-size: 20px;"></i></span><br>
                     <h6 style="font-size: 9px!important;">Create Route</h6>

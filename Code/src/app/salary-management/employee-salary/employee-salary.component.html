@@ -82,37 +82,37 @@
 
                                     <span style="float: right; margin-bottom: -10px;" class="main-box">
                                         <div class="outer">
-                                        <span style="text-align: center;">
-                                            <label style="padding: 7px 0px;
+                                            <span style="text-align: center;">
+                                                <label style="padding: 7px 0px;
                                            margin-left: 30px;" class="hover-shadow">
-                                                <i class="fas fa-download"
-                                                    style="color: green; font-size: 26px; cursor: pointer; "
-                                                    (click)="downloadSalary();"></i><br />
-                                                Download Salary</label>
-                                            &nbsp; &nbsp; &nbsp; &nbsp;</span>
+                                                    <i class="fas fa-download"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "
+                                                        (click)="downloadSalary();"></i><br />
+                                                    Download Salary</label>
+                                                &nbsp; &nbsp; &nbsp; &nbsp;</span>
                                         </div>
                                         <div class="outer">
-                                        <span style="text-align: center;">
-                                            <label for="fileUpload" style="padding: 7px 0px;margin-left: 30px;
+                                            <span style="text-align: center;">
+                                                <label for="fileUpload" style="padding: 7px 0px;margin-left: 30px;
                                            " class="hover-shadow">
-                                                <i class="fas fa-upload"
-                                                    style="color: green; font-size: 26px; cursor: pointer; "></i><br />
-                                                Upload updated salary
-                                            </label>
-                                            <input id="fileUpload" type="file" name="file" class="file-upload-field"
-                                                style="display: none;" placeholder="" value=""
-                                                (change)="uploadSalary()">
-                                            &nbsp; &nbsp; &nbsp; &nbsp;
-                                        </span>
-                                    </div>
-                                    <div class="outer">
-                                        <span style="text-align: center;">
-                                            <label style="padding: 7px 0px;margin-left: 30px;padding-right: 23px;">
-                                                <i class="fas fa-download"
-                                                    style="color: green; font-size: 26px; cursor: pointer; "
-                                                    (click)="updateAccountDetail();"></i><br />
-                                                Download for NEFT</label></span>
-                                            </div>
+                                                    <i class="fas fa-upload"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "></i><br />
+                                                    Upload updated salary
+                                                </label>
+                                                <input id="fileUpload" type="file" name="file" class="file-upload-field"
+                                                    style="display: none;" placeholder="" value=""
+                                                    (change)="uploadSalary()">
+                                                &nbsp; &nbsp; &nbsp; &nbsp;
+                                            </span>
+                                        </div>
+                                        <div class="outer">
+                                            <span style="text-align: center;">
+                                                <label style="padding: 7px 0px;margin-left: 30px;padding-right: 23px;">
+                                                    <i class="fas fa-download"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "
+                                                        (click)="updateAccountDetail();"></i><br />
+                                                    Download for NEFT</label></span>
+                                        </div>
                                     </span>
                                 </div>
                             </div>
@@ -132,8 +132,6 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Role</th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Working Days</th>
-                                            <th class="text-right br-1" style="border:none!important;">
                                                 Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Reward</th>
@@ -143,6 +141,8 @@
                                                 Final Salary</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Uploaded Salary</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Transfered</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 <input type="checkbox" id="chkAll" (change)="checkAll()">
                                             </th>
@@ -157,8 +157,6 @@
                                                 <td class="text-left br-1">
                                                     {{data.designation}}</td>
                                                 <td class="text-right br-1">
-                                                    {{data.workingDays}} </td>
-                                                <td class="text-right br-1">
                                                     {{data.totalAmount}}</td>
                                                 <td class="text-right br-1">
                                                     {{data.rewardAmount}}</td>
@@ -168,6 +166,8 @@
                                                     {{data.finalAmount}} </td>
                                                 <td class="text-right br-1">
                                                     {{data.uploadedSalary}} </td>
+                                                <td class="text-right br-1">
+                                                    {{data.transfered}} </td>
                                                 <td class="text-right br-1">
                                                     <input id="chk{{data.empId}}" type="checkbox"
                                                         [disabled]="data.uploadedSalary==0"

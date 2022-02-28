@@ -27,6 +27,7 @@ export class RouteTrackingComponent {
   db: any;
   public selectedZone: any;
   zoneList: any[];
+  zoneKML:any;
   marker = new google.maps.Marker();
   previousLat: any;
   previousLng: any;
@@ -254,8 +255,18 @@ export class RouteTrackingComponent {
   }
 
   setKml() {
-    let kml = this.commonService.setKML(this.selectedZoneNo, this.map);
-    this.allKml.push({ kml });
+    this.commonService.setKML(this.selectedZoneNo, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
   }
 
   onSubmit() {

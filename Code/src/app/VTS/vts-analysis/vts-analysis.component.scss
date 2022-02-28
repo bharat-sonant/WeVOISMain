@@ -268,12 +268,12 @@
   /*************New Work CSS*****************/
   .driver-helper-box{
   width: 290px;
-  min-height: 290px;
+  height: 70vh;
   background-color: #f3f3f3;
   box-shadow: 0 1px 5px 1px #80bd7b;
   position: absolute;
   right: 15px;
-  top: 70px;
+  top: 140px;
    border-radius: 5px; 
   border:1px solid #80bd7b;
   }
@@ -636,7 +636,7 @@
   }
   .tableFixHead {
   overflow-y: auto;
-  height: 180px;
+  height: calc(70vh - 118px);
   }
   
   .tableFixHead thead th {
@@ -1327,11 +1327,12 @@
   }
   
   .popup-box{
-  width: 100%;
+  width: 280px;
   float: left;
+  margin-left: -10px;
   }
   .txt-inpt{
-  width: 170px;
+  width: 129px;
   border: 1px solid lightgray;
   border-radius: 5px;
   margin-top: 20px;
@@ -1340,11 +1341,27 @@
   margin-right: 15px;
   float: left;
   }
+  .add-icon-vehicle{
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    width:68px;
+    float: right;
+    }
+    .add-icon-vehicle p{
+      letter-spacing: 1px;
+      font-size: 8px;
+      color: #707070;
+      font-weight: normal;
+      text-transform: uppercase;
+      margin: 0px!important;
+      }
   .add-icon{
   text-align: center;
   margin-top: 22px;
   margin-bottom: 10px;
-  transition: 0.5s;
+  width:68px;
+  float: right;
   }
   .add-icon:hover i{
   color: #11c921;
@@ -1395,7 +1412,7 @@
     padding: 10px;
     position: absolute;
     right: 15px;
-    top: 370px;
+    top: 70px;
     box-shadow: 0 1px 5px 1px #80bd7b;
     border-radius: 5px;
     }
@@ -1480,7 +1497,7 @@ color: red;
       background: #11c921!important;
     }
 #myBox{
-  height:235px;
+  height:calc(70vh - 59px);
 }
 
 /******************************Custom Scrollbar Start*********************************/
@@ -1502,12 +1519,12 @@ color: red;
 }
 .event-history-box{
   background: #fff;
-  min-height: 58px;
+  height: 77vh;
   width: 290px;
   padding: 10px;
   position: absolute;
-  right: 15px;
-  top: 438px;
+  right: 315px;
+  top: 70px;
   box-shadow: 0 1px 5px 1px #80bd7b;
   border-radius: 5px;
   } 

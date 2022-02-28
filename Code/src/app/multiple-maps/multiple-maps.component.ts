@@ -187,6 +187,10 @@ export class MultipleMapsComponent {
         );
 
         // init Mp Boundries
+
+
+
+
         this.setMapBoundary("1", this.mapWard1);
         this.setMapBoundary("2", this.mapWard2);
         this.setMapBoundary("3", this.mapWard3);
@@ -216,7 +220,15 @@ export class MultipleMapsComponent {
   }
 
   setMapBoundary(selectedZone: any, map: any) {
-    this.commonService.setKML(selectedZone, map);   
+    this.commonService.setKML(selectedZone, null).then((data: any) => {
+      let zoneKML = data;
+      zoneKML[0]["line"].setMap(map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      map.fitBounds(bounds);
+    });  
   }
 
   showVehicleMovement(selectedZone: any, vehicleStatusInstance: any, vehicleLocationInstance: any) {

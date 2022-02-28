@@ -387,6 +387,10 @@
   <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
     <div class="popup-box">
       <input class="txt-inpt" id="txtVehicleNav" type="text" autocomplete="off" />
+      <div class="add-icon-vehicle">
+       <span style="font-size: 21px; font-weight: bold;">{{progressData.totalVehicle}}</span>  <br>
+        <p>Vehicles</p>
+      </div>
       <div class="add-icon">
         <i class="fas fa-plus-circle" (click)="addVehicle();"></i> <br>
         <p>Add Vehicle</p>
@@ -472,7 +476,7 @@
 <div id="divEventHistory" class="event-history-box" style="display: none;">
   <div class="dth">
     <div class="table-bg">
-      <div id="tblEventHistory" class="tableFixHead" style="overflow-y: scroll;overflow-x: hidden;">
+      <div id="tblEventHistory" class="tableFixHead" style="overflow-y: scroll;overflow-x: hidden; height: 75vh!important;">
         <table class="table table-hover" style="margin-top: 6px!important;">
           <tbody>
             <tr *ngFor="let dt of eventHistoryList, let i=index">

@@ -763,21 +763,24 @@ export class CommonService {
                   if (circleDataList[j] != null) {
                     let zoneNo = circleDataList[j];
                     let zoneName = circleDataList[j];
-                    if (zoneNo.toString().includes("mkt1")) {
-                      zoneName = "Market 1";
-                    } else if (data[i].toString().includes("mkt2")) {
-                      zoneName = "Market 2";
-                    } else if (data[i].toString().includes("mkt3")) {
-                      zoneName = "Market 3";
-                    } else if (data[i].toString().includes("mkt4")) {
-                      zoneName = "Market 4";
-                    } else {
-                      zoneName = "Ward " + data[i];
+                    if (zoneNo != undefined) {
+                      if (zoneNo.toString().includes("mkt1")) {
+                        zoneName = "Market 1";
+                      } else if (data[i].toString().includes("mkt2")) {
+                        zoneName = "Market 2";
+                      } else if (data[i].toString().includes("mkt3")) {
+                        zoneName = "Market 3";
+                      } else if (data[i].toString().includes("mkt4")) {
+                        zoneName = "Market 4";
+                      } else {
+                        zoneName = "Ward " + data[i];
+                      }
+                      let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
+                      if (wardDetail == undefined) {
+                        zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
+                      }
                     }
-                    let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
-                    if (wardDetail == undefined) {
-                      zoneList.push({ zoneNo: zoneNo, zoneName: zoneName });
-                    }
+
                   }
                 }
               }
@@ -1196,20 +1199,41 @@ export class CommonService {
     }
   }
 
-  setKML(zoneNo: any, map: any) {
-    let wardKMLList = JSON.parse(localStorage.getItem("wardKMList"));
-    if (wardKMLList != null) {
-      let wardKML = wardKMLList.find(item => item.wardNo == zoneNo);
-      if (wardKML != undefined) {
-        this.zoneKML = new google.maps.KmlLayer({
-          zIndex: 999,
-          url: wardKML.kmlUrl.toString(),
-          map: map,
-        });
-      }
-    }
 
-    return this.zoneKML;
+  setKML(zoneNo: any, zoneKML: any) {
+    return new Promise((resolve) => {
+      let polylines = [];
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
+      let kmlInstance = this.httpService.get(path).subscribe(data => {
+        kmlInstance.unsubscribe();
+        if (zoneKML != undefined) {
+          zoneKML[0]["line"].setMap(null);
+        }
+        if (data != null) {
+          let strokeWeight = 2;
+          if (localStorage.getItem("cityName") == "jaipur-greater") {
+            strokeWeight = 8;
+          }
+          let points = data["points"];
+          if (points.length > 0) {
+            const bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            polylines.push({ line: line, latLng: latLng });
+            resolve(polylines);
+          }
+        }
+      });
+
+    });
   }
 
   setMapHeight() {
@@ -1418,29 +1442,100 @@ export class CommonService {
     });
   }
 
-  setWardBoundary(wardNo: any, map: any) {
+  setWardBoundary(zoneNo: any, map: any) {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "demo") {
         cityName = "jaipur"
       }
-      this.httpService.get("../../assets/jsons/WardBoundries/" + cityName + ".json").subscribe(data => {
+
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
         if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let wardNos = keyArray[i];
-              if (wardNos == wardNo) {
-                this.wardBoundary = new google.maps.KmlLayer({
-                  url: data[wardNos].toString(),
-                  map: map,
-                  clickable: false
-                });
-              }
+          let strokeWeight = 8;
+          let points = data["points"];
+          if (points.length > 0) {
+            let bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
             }
-            resolve(this.wardBoundary);
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(map);
+            map.fitBounds(bounds);
+            resolve(this.polylines);
           }
         }
+      });
+    });
+  }
+
+  
+  setJaipurGreaterWardBoundary(map: any,boundaryPath:any) {
+    return new Promise((resolve) => {
+      const path =boundaryPath; 
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        if (data != null) {
+          let strokeWeight = 8;
+          let points = data["points"];
+          if (points.length > 0) {
+            let bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            this.polylines[0] = line;
+            this.polylines[0].setMap(map);
+            map.fitBounds(bounds);
+            resolve(this.polylines);
+          }
+        }
+      });
+    });
+  }
+
+
+  getWardLine(zoneNo: any, date: any) {
+    return new Promise((resolve) => {
+      let dat1 = new Date(date);
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryjson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(dataDate));
+        let jsonDate = "";
+        if (list.length == 1) {
+          jsonDate = list[0].toString().trim();
+        }
+        else {
+          for (let i = list.length - 1; i >= 0; i--) {
+            let dat2 = new Date(list[i]);
+            if (dat1 >= dat2) {
+              jsonDate = list[i].toString().trim();
+              i = -1;
+            }
+          }
+        }
+        const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+        let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+          wardLineInstance.unsubscribe();
+          if (data != null) {
+            resolve(JSON.stringify(data));
+          }
+        });
       });
     });
   }
@@ -1455,6 +1550,24 @@ export class CommonService {
       }
     }
     return wardLines;
+  }
+
+
+  getDesignation() {
+    return new Promise((resolve) => {
+      let designationList = [];
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FDesignations.json?alt=media";
+      let Instance = this.httpService.get(path).subscribe(dataDate => {
+        Instance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(dataDate));
+        for (let i = 1; i < list.length; i++) {
+          let designationId = i;
+          let designation = list[i]["name"];
+          designationList.push({ designationId: designationId, designation: designation });
+        }
+        resolve(JSON.stringify(designationList));
+      });
+    });
   }
 
 

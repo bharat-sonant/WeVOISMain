@@ -37,6 +37,18 @@ export class ShowRouteComponent implements OnInit {
   userId: any;
   strokeWeight = 4;
 
+  bvgWardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  nggjWardLinesPath = "../../assets/jsons/WardLines/nggj/";
+  wardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  
+  bvgBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+  nggjBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FNGGJWardBoundryJson%2F";
+  boundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+
+  bvgRoutePath="Route/";
+  nggjRoutePath="NGGJRoute/";
+  routePath="Route/";
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -64,6 +76,22 @@ export class ShowRouteComponent implements OnInit {
     }
   }
 
+  setNGGJ() {
+    let element = <HTMLInputElement>document.getElementById("chkNGGJ");
+    if (element.checked == true) {
+      this.wardLinesPath = this.nggjWardLinesPath;
+      this.boundaryPath = this.nggjBoundaryPath;
+      this.routePath=this.nggjRoutePath;
+    }
+    else {
+      this.wardLinesPath = this.bvgWardLinesPath;
+      this.boundaryPath = this.bvgBoundaryPath;
+      this.routePath=this.bvgRoutePath;
+    }    
+    this.resetAll();
+    this.getWardData();
+  }
+
   resetAll() {
     let element=<HTMLInputElement>document.getElementById("chkAll");
     element.checked=false;
@@ -80,7 +108,7 @@ export class ShowRouteComponent implements OnInit {
     }
     this.polylines = [];
     if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
+      this.wardBoundary[0].setMap(null);
     }
     this.wardBoundary = null;
   }
@@ -102,7 +130,7 @@ export class ShowRouteComponent implements OnInit {
   }
 
   getRoutes() {
-    let dbPath = "Route/" + this.selectedWard;
+    let dbPath = this.routePath + this.selectedWard;
     let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeInstance.unsubscribe();
@@ -309,7 +337,7 @@ export class ShowRouteComponent implements OnInit {
   }
 
   getWardLines() {
-    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
+    this.httpService.get(this.wardLinesPath + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -382,7 +410,7 @@ export class ShowRouteComponent implements OnInit {
   }
 
   setWardBoundary() {
-    this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+    this.commonService.setJaipurGreaterWardBoundary(this.map, this.boundaryPath + + this.selectedWard + ".json?alt=media").then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
   }

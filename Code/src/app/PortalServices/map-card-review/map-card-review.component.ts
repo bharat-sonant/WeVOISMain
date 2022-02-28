@@ -61,7 +61,7 @@ export class MapCardReviewComponent {
   zoneKML: any;
   parhadhouseMarker: any;
   allMatkers: any[] = [];
-  instancesList:any[];
+  instancesList: any[];
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -83,7 +83,7 @@ export class MapCardReviewComponent {
   };
 
   ngOnInit() {
-    this.instancesList=[];
+    this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
@@ -127,7 +127,18 @@ export class MapCardReviewComponent {
   }
 
   setKml() {
-   this.zoneKML= this.commonService.setKML(this.selectedZone, this.map);   
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
   }
 
   changeZoneSelection(filterVal: any) {
@@ -157,18 +168,19 @@ export class MapCardReviewComponent {
   clearAllOnMap() {
     if (this.allMatkers.length > 0) {
       for (let i = 0; i < this.allMatkers.length; i++) {
-        this.allMatkers[i]["marker"].setMap(null);
+        if (this.allMatkers[i]["marker"] != null) {
+          this.allMatkers[i]["marker"].setMap(null);
+        }
       }
       this.allMatkers = [];
     }
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
-        this.houseMarkerList[i]["marker"].setMap(null);
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(null);
+        }
       }
       this.houseMarkerList = [];
-    }
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
     }
     if (this.parhadhouseMarker != null) {
       this.parhadhouseMarker.setMap(null);
@@ -178,7 +190,9 @@ export class MapCardReviewComponent {
     }
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
-        this.polylines[i].setMap(null);
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
       }
     }
     this.polylines = [];
@@ -230,7 +244,7 @@ export class MapCardReviewComponent {
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
-      this.instancesList.push({ instances: lineStatus });  
+      this.instancesList.push({ instances: lineStatus });
       if (wardNo == this.selectedZone) {
         if (this.polylines[index] != undefined) {
           this.polylines[index].setMap(null);
@@ -368,7 +382,7 @@ export class MapCardReviewComponent {
     });
     this.houseMarkerList.push({ marker });
   }
-  
+
   ngOnDestroy() {
     if (this.instancesList.length > 0) {
       for (let i = 0; i < this.instancesList.length; i++) {

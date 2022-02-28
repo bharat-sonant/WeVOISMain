@@ -333,15 +333,12 @@ export class JmapsTestPurposeComponent implements OnInit {
     if (this.isBoundaryShow == true) {
       this.isBoundaryShow = false;
       if (this.wardBoundary != null) {
-        this.wardBoundary.setMap(null);
+        this.wardBoundary[0].setMap(null);
       }
-      this.wardBoundary = null;
     }
     else {
       this.isBoundaryShow = true;
-      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-        this.wardBoundary = wardKML;
-      });
+      this.wardBoundary[0].setMap(this.map);
     }
     this.showHideBoundariesHtml();
     this.hideSetting();
@@ -513,11 +510,40 @@ export class JmapsTestPurposeComponent implements OnInit {
         this.polylines[i] = line;
         this.polylines[i].setMap(this.map);
         this.setClickInstance(line, lineNo, i);
+  //      this.getoverviewPathGeo(lineNo);
 
 
       }
     }
   }
+/*
+  getoverviewPathGeo(lineNo: any) {
+    let detail = this.lines.find(item => item.lineNo == lineNo);
+    if (detail != undefined) {
+      let latLng = detail.latLng;
+      let overviewPathGeo = [];
+      for (let i = 0; i < latLng.length; i++) {
+        overviewPathGeo.push([latLng[i]["lat"], latLng[i]["lng"]]);
+      }
+      let distance = 30;
+      let geoInput = {
+        type: "LineString",
+        coordinates: overviewPathGeo
+      }
+      console.log(distance);
+        const geoReader = new jsts.io.GeoJSONReader();
+        const geoWriter = new jsts.io.GeoJSONWriter();
+      // let geometry = geoReader.read(geoInput).buffer(distance, null, null);
+      //  var polygon = geoWriter.write(geometry);
+      //  console.log(polygon)
+
+
+
+    }
+
+  }
+
+*/
 
   setClickInstance(line: any, lineNo: any, index: any) {
     let progressData = this.progressData;
@@ -640,7 +666,7 @@ export class JmapsTestPurposeComponent implements OnInit {
     }
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth() + 1);
     this.currentYear = this.selectedDate.split("-")[0];
     if (this.selectedWard != "0") {
       this.changeWardSelection(this.selectedWard);
@@ -1190,7 +1216,7 @@ export class JmapsTestPurposeComponent implements OnInit {
         let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
         for (let i = 0; i < this.wardLineLatLng.length; i++) {
           let distance = this.commonService.getDistanceFromLatLonInKm(lat, lng, this.wardLineLatLng[i]["lat"], this.wardLineLatLng[i]["lng"]);
-          if (distance < 30) {
+          if (distance < 15) {
             let lineNo = this.wardLineLatLng[i]["lineNo"];
             let lineDetail = this.lines.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {

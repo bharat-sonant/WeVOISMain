@@ -46,7 +46,7 @@
                                             <label class="main-label">
                                                 
                                                <span class="main-span">
-                                                <span> {{remarkDetail.lastUpdate}}</span> <br>Last update</span>
+                                                <span> {{remarkDetail.lastUpdate}}</span> <br>Last update by {{remarkDetail.lastUpdateBy}}</span>
                                             <i class="fas fa-sync"
                                                     style="color: green; font-size: 30px; cursor: pointer; "
                                                     (click)="updateJson();"></i></label></span>
@@ -168,7 +168,7 @@
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveAccountDetail();" style="height: 45px;" />
+                    (click)="saveAccountDetail();" style="height: 45px;margin-left: 0px;" />
             </div>
         </div>
     </div>
@@ -194,7 +194,7 @@
                     <input id="chkSolved" type="checkbox">&nbsp;Is Solved?
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveRemarks();" style="height: 45px;" />
+                    (click)="saveRemarks();" style="height: 45px;margin-left: 0px;" />
             </div>
         </div>
     </div>

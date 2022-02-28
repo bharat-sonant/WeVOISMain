@@ -44,7 +44,16 @@ export class CreateRoutesComponent implements OnInit {
   updateRouteKey = "#updateRouteKey";
   userId: any;
   strokeWeight = 4;
+  bvgWardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  nggjWardLinesPath = "../../assets/jsons/WardLines/nggj/";
+  wardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  bvgBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+  nggjBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FNGGJWardBoundryJson%2F";
+  boundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
 
+  bvgRoutePath="Route/";
+  nggjRoutePath="NGGJRoute/";
+  routePath="Route/";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -88,9 +97,25 @@ export class CreateRoutesComponent implements OnInit {
     }
     this.polylines = [];
     if (this.wardBoundary != null) {
-      this.wardBoundary.setMap(null);
+      this.wardBoundary[0].setMap(null);
     }
     this.wardBoundary = null;
+  }
+
+  setNGGJ() {
+    let element = <HTMLInputElement>document.getElementById("chkNGGJ");
+    if (element.checked == true) {
+      this.wardLinesPath = this.nggjWardLinesPath;
+      this.boundaryPath = this.nggjBoundaryPath;
+      this.routePath=this.nggjRoutePath;
+    }
+    else {
+      this.wardLinesPath = this.bvgWardLinesPath;
+      this.boundaryPath = this.bvgBoundaryPath;
+      this.routePath=this.bvgRoutePath;
+    }    
+    this.resetAll();
+    this.getWardData();
   }
 
   createRoute() {
@@ -124,7 +149,7 @@ export class CreateRoutesComponent implements OnInit {
       creationDate: this.commonService.getTodayDateTime(),
       Routes: Routes
     }
-    let dbPath = "Route/" + this.selectedWard + "/" + routeKey;
+    let dbPath = this.routePath + this.selectedWard + "/" + routeKey;
     this.db.object(dbPath).update(data);
     let routeList = JSON.parse(localStorage.getItem("routeLines"));
     if (routeList != null) {
@@ -178,13 +203,13 @@ export class CreateRoutesComponent implements OnInit {
         }
         let endDate = this.commonService.getPreviousDate(applicableDate, 1);
         routeDetail.route[0]["endDate"] = endDate;
-        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/endDate";
+        let dbPath = this.routePath + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/endDate";
         this.db.database.ref(dbPath).set(endDate);
         let lastRouteKey = Number(routeDetail.lastRouteKey) + 1;
         routeDetail.lastRouteKey = lastRouteKey;
-        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/lastRouteKey";
+        dbPath = this.routePath + this.selectedWard + "/" + routeKey + "/Routes/lastRouteKey";
         this.db.database.ref(dbPath).set(lastRouteKey);
-        dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + lastRouteKey + "/startDate";
+        dbPath = this.routePath + this.selectedWard + "/" + routeKey + "/Routes/" + lastRouteKey + "/startDate";
         this.db.database.ref(dbPath).set(applicableDate);
         let routeLines = [];
         routeDetail.route.push({ key: lastRouteKey, startDate: applicableDate, endDate: "---", routeLines: routeLines, cssClass: "" });
@@ -215,11 +240,11 @@ export class CreateRoutesComponent implements OnInit {
           }
           let endDate = this.commonService.getPreviousDate(applicableDate, 1);
           routeDetail.route[1]["endDate"] = endDate;
-          let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + preKey + "/endDate";
+          let dbPath = this.routePath + this.selectedWard + "/" + routeKey + "/Routes/" + preKey + "/endDate";
           this.db.database.ref(dbPath).set(endDate);
         }
         routeDetail.route[0]["startDate"] = applicableDate;
-        let dbPath = "Route/" + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/startDate";
+        let dbPath = this.routePath + this.selectedWard + "/" + routeKey + "/Routes/" + key + "/startDate";
         this.db.database.ref(dbPath).set(applicableDate);
         localStorage.setItem("routeLines", JSON.stringify(routeList));
         this.routeList = routeList;
@@ -230,7 +255,7 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getRoutes() {
-    let dbPath = "Route/" + this.selectedWard;
+    let dbPath = this.routePath + this.selectedWard;
     let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         routeInstance.unsubscribe();
@@ -432,13 +457,12 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   getWardData() {
-
     this.setWardBoundary();
     this.getWardLines();
   }
 
   getWardLines() {
-    this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWard + ".json").subscribe(data => {
+    this.httpService.get(this.wardLinesPath + this.selectedWard + ".json").subscribe(data => {
       if (data != null) {
         var keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -488,6 +512,7 @@ export class CreateRoutesComponent implements OnInit {
     let strockColorDone = this.strockColorDone;
     let commonServices = this.commonService;
     let lblSelectedRoute = this.lblSelectedRoute;
+    let routePath=this.routePath;
 
     google.maps.event.addListener(line, 'click', function (h) {
       if (commonServices.checkInternetConnection() == "no") {
@@ -563,7 +588,7 @@ export class CreateRoutesComponent implements OnInit {
               routeLinesData = routeLinesData + "," + list[i]["lineNo"];
             }
           }
-          dbEvent.database.ref("Route/" + selectedWard + "/" + routeKey + "/Routes/" + key + "/routeLines").set(routeLinesData);
+          dbEvent.database.ref(routePath + selectedWard + "/" + routeKey + "/Routes/" + key + "/routeLines").set(routeLinesData);
         }
       }
       localStorage.setItem("routeLines", JSON.stringify(routeLines));
@@ -609,7 +634,7 @@ export class CreateRoutesComponent implements OnInit {
   }
 
   setWardBoundary() {
-    this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
+    this.commonService.setJaipurGreaterWardBoundary(this.map, this.boundaryPath + + this.selectedWard + ".json?alt=media").then((wardKML: any) => {
       this.wardBoundary = wardKML;
     });
   }
@@ -662,7 +687,7 @@ export class CreateRoutesComponent implements OnInit {
     }
   }
 
-  openModel(content: any, type: any, routeKey: any, key: any) {   
+  openModel(content: any, type: any, routeKey: any, key: any) {
     if ($(this.ddlWard).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;

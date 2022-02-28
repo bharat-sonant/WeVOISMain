@@ -33,6 +33,7 @@ export class HouseCardMappingComponent {
   previousLng: any;
   allLines: any[];
   activeZone: any;
+  zoneKML:any;
   vehicleLocationFirstTime: any;
   polylines = [];
   toDayDate: any;
@@ -68,7 +69,19 @@ export class HouseCardMappingComponent {
   }
 
   setKml() {
-    this.commonService.setKML(this.selectedZone, this.map);
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
+    
   }
 
   getZones() {

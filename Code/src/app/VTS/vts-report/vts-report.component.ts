@@ -42,6 +42,18 @@ export class VtsReportComponent {
   txtPenalty = "#txtPenalty";
   chart: any;
 
+  bvgWardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  nggjWardLinesPath = "../../assets/jsons/WardLines/nggj/";
+  wardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
+  
+  bvgBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+  nggjBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FNGGJWardBoundryJson%2F";
+  boundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+
+  bvgRoutePath="Route/";
+  nggjRoutePath="NGGJRoute/";
+  routePath="Route/";
+
   constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient) { }
 
   ngOnInit() {
@@ -67,6 +79,25 @@ export class VtsReportComponent {
     this.wardList = [];
     this.wardLineLengthList = [];
     this.lines = [];
+  }
+
+  setNGGJ() {
+    let element = <HTMLInputElement>document.getElementById("chkNGGJ");
+    if (element.checked == true) {
+      this.wardLinesPath = this.nggjWardLinesPath;
+      this.routePath=this.nggjRoutePath;
+      this.boundaryPath=this.nggjBoundaryPath;
+    }
+    else {
+      this.wardLinesPath = this.bvgWardLinesPath;
+      this.routePath=this.bvgRoutePath;
+      this.boundaryPath=this.bvgBoundaryPath;
+    }    
+    this.setMap();
+    this.setKml();
+    this.getWardLineLength();
+    this.getRoute();
+    this.changeRouteSelection("0");
   }
 
   setDefaultDate(){
@@ -121,7 +152,8 @@ export class VtsReportComponent {
   }
 
   setKml() {
-    this.commonService.setWardBoundary(this.selectedWardNo, this.map).then((wardKML: any) => {
+    this.commonService.setJaipurGreaterWardBoundary(this.map, this.boundaryPath + + this.selectedWardNo + ".json?alt=media").then((wardKML: any) => {
+     
     });
   }
 
@@ -159,7 +191,7 @@ export class VtsReportComponent {
     this.routeMainList = [];
     this.routeList = [];
     if (this.selectedWardNo != "0") {
-      let dbPath = "Route/" + this.selectedWardNo;
+      let dbPath = this.routePath + this.selectedWardNo;
       let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           routeInstance.unsubscribe();
@@ -257,7 +289,7 @@ export class VtsReportComponent {
 
   getAllLinesFromJson() {
     if (this.selectedWardNo != "0") {
-      this.httpService.get("../../assets/jsons/WardLines/" + this.cityName + "/" + this.selectedWardNo + ".json").subscribe(data => {
+      this.httpService.get(this.wardLinesPath + + this.selectedWardNo + ".json").subscribe(data => {
         if (data != null) {
           let routeLines = [];
           var keyArray = Object.keys(data);

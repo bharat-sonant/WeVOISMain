@@ -1,0 +1,54 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  </div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text"> Convert Penalty JSON </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Ward </label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZone" 
+                                   style="width:300px" >
+                                    <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                                      {{zone.zoneName}}
+                                    </option>
+                                  </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Enter Text</label>
+                                <div class="wrap-input-effects" required>
+                                    <textarea id="txtLatLng" rows="8" style="width: 300px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <button id="btnSave" class="btn btn-success btn-xs"
+                                        (click)="saveData();">Convert to JSON</button>
+                                    
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
+                                        style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

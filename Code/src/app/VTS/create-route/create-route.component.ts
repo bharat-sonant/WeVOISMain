@@ -93,7 +93,7 @@ export class CreateRouteComponent implements OnInit {
     if (this.wardKMLList.length > 0) {
       for (let i = 0; i < this.wardKMLList.length; i++) {
         if (this.wardKMLList[i] != undefined) {
-          this.wardKMLList[i]["wardKML"].setMap(null);
+          this.wardKMLList[i]["wardKML"][0].setMap(null);
         }
       }
     }
@@ -251,7 +251,7 @@ export class CreateRouteComponent implements OnInit {
     if (this.wardKMLList.length > 0) {
       for (let i = 0; i < this.wardKMLList.length; i++) {
         if (this.wardKMLList[i] != undefined) {
-          this.wardKMLList[i]["wardKML"].setMap(null);
+          this.wardKMLList[i]["wardKML"][0].setMap(null);
         }
       }
     }

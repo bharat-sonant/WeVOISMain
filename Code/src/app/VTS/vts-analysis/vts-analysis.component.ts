@@ -60,7 +60,8 @@ export class VtsAnalysisComponent implements OnInit {
     penalty: 0,
     lastShowDate: this.commonService.getTodayDateTime(),
     selectedLines: 0,
-    savedLines: 0
+    savedLines: 0,
+    totalVehicle: 0
   };
 
   showBoundries = "#showBoundries";
@@ -93,12 +94,12 @@ export class VtsAnalysisComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.setEventHistoryHeight();
+    //this.setEventHistoryHeight();
     this.setDefault();
     //this.checkInternetSpeed();
   }
 
-  checkInternetSpeed(){
+  checkInternetSpeed() {
     let netSpeed = this.speedTestService.getMbps().subscribe(
       (speed) => {
         netSpeed.unsubscribe();
@@ -186,6 +187,7 @@ export class VtsAnalysisComponent implements OnInit {
     vehicleElement.checked = false;
     this.progressData.selectedLines = 0;
     this.progressData.savedLines = 0;
+    this.progressData.totalVehicle = 0;
     $(this.divApproved).hide();
   }
 
@@ -231,7 +233,7 @@ export class VtsAnalysisComponent implements OnInit {
   setDefaultDate() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.commonService.getPreviousDate(this.toDayDate, 1);
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.currentYear = this.selectedDate.split("-")[0];
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
@@ -318,15 +320,12 @@ export class VtsAnalysisComponent implements OnInit {
     if (this.isBoundaryShow == true) {
       this.isBoundaryShow = false;
       if (this.wardBoundary != null) {
-        this.wardBoundary.setMap(null);
+        this.wardBoundary[0].setMap(null);
       }
-      this.wardBoundary = null;
     }
     else {
       this.isBoundaryShow = true;
-      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-        this.wardBoundary = wardKML;
-      });
+      this.wardBoundary[0].setMap(this.map);
     }
     this.showHideBoundariesHtml();
     this.hideSetting();
@@ -473,22 +472,22 @@ export class VtsAnalysisComponent implements OnInit {
     let speedTestService = this.speedTestService;
     let dbEventPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
     google.maps.event.addListener(line, 'click', function (h) {
-     // let netSpeed = speedTestService.getMbps().subscribe(
-     //   (speed) => {
-     //     netSpeed.unsubscribe();
-     //     if (speed > 1) {
-     //       localStorage.setItem("isConnected", "yes");
-     //     }
-     //     else {
-     //       localStorage.setItem("isConnected", "no");
+      // let netSpeed = speedTestService.getMbps().subscribe(
+      //   (speed) => {
+      //     netSpeed.unsubscribe();
+      //     if (speed > 1) {
+      //       localStorage.setItem("isConnected", "yes");
+      //     }
+      //     else {
+      //       localStorage.setItem("isConnected", "no");
       //    }
       //  }
-     // );
+      // );
 
-     // if (localStorage.getItem("isConnected") == "no") {
-     //   commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
-    //    return;
-    //  }
+      // if (localStorage.getItem("isConnected") == "no") {
+      //   commonService.setAlertMessage("error", "No internet, Please review and confirm your previous work when internet connected.!!!")
+      //    return;
+      //  }
       let time = commonService.getCurrentTimeWithSecond();
       time = time + "-" + userId + "-" + toDayDate;
       let strokeColor = strockColorNotDone;
@@ -591,7 +590,7 @@ export class VtsAnalysisComponent implements OnInit {
     }
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateNav).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1])-1);
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.currentYear = this.selectedDate.split("-")[0];
     this.changeWardSelection(this.selectedWard);
   }
@@ -812,6 +811,7 @@ export class VtsAnalysisComponent implements OnInit {
               if (routeVehicleDetail != undefined) {
                 isDone = 1;
               }
+              this.progressData.totalVehicle = Number(this.progressData.totalVehicle) + 1;
               this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
             });
         }
@@ -827,6 +827,7 @@ export class VtsAnalysisComponent implements OnInit {
           if (routeVehicleDetail != undefined) {
             isDone = 1;
           }
+          this.progressData.totalVehicle = Number(this.progressData.totalVehicle) + 1;
           this.vehicleList.push({ vehicle: vehicleNo, latLng: latLng, showCheckBox: showCheckBox, message: message, cssClass: cssClass, isDone: isDone });
         }
       }
@@ -856,6 +857,7 @@ export class VtsAnalysisComponent implements OnInit {
         vehicleName = this.vehicleList[i]["vehicle"];
       }
     }
+    this.progressData.totalVehicle = Number(vehicleList.length);
     this.vehicleList = vehicleList;
     if (this.vtsPolylines.length > 0) {
       for (let i = 0; i < this.vtsPolylines.length; i++) {
@@ -958,6 +960,7 @@ export class VtsAnalysisComponent implements OnInit {
           vehicles = vehicles + "," + this.vehicleList[i]["vehicle"];
         }
       }
+      this.progressData.totalVehicle = this.vehicleList.length;
     }
     if (vehicles != "") {
       let dbPath = "WasteCollectionInfo/" + this.selectedWard + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary";
@@ -1366,4 +1369,5 @@ export class progressDetail {
   lastShowDate: string;
   selectedLines: number;
   savedLines: number;
+  totalVehicle: number;
 }

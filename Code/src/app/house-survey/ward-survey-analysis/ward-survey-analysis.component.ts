@@ -29,6 +29,7 @@ export class WardSurveyAnalysisComponent {
   lines: any[] = [];
   wardLineCount: any;
   zoneKML: any;
+  zoneKMLRevisit:any;
   allMarkers: any[] = [];
   lineNo: any;
   cityName: any;
@@ -90,7 +91,18 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    this.zoneKML = this.commonService.setKML(this.selectedZone, this.map);
+    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+      if (this.zoneKML != undefined) {
+        this.zoneKML[0]["line"].setMap(null);
+      }
+      this.zoneKML = data;
+      this.zoneKML[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i++) {
+        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
+    });
     this.getWardDetail();
   }
 
@@ -578,7 +590,18 @@ export class WardSurveyAnalysisComponent {
       $("#divSequence").css("height", divHeight);
       this.mapRevisit = this.commonService.setMapById("revisitMap");
       setTimeout(() => {
-        this.commonService.setKML(this.selectedZone, this.mapRevisit);
+        this.commonService.setKML(this.selectedZone, this.zoneKMLRevisit).then((data: any) => {
+          if (this.zoneKMLRevisit != undefined) {
+            this.zoneKMLRevisit[0]["line"].setMap(null);
+          }
+          this.zoneKMLRevisit = data;
+          this.zoneKMLRevisit[0]["line"].setMap(this.mapRevisit);
+          const bounds = new google.maps.LatLngBounds();
+          for (let i = 0; i < this.zoneKMLRevisit[0]["latLng"].length; i++) {
+            bounds.extend({ lat: Number(this.zoneKMLRevisit[0]["latLng"][i]["lat"]), lng: Number(this.zoneKMLRevisit[0]["latLng"][i]["lng"]) });
+          }
+          this.mapRevisit.fitBounds(bounds);
+        });
         let revisitPolyLine = [];
         for (let i = 0; i < this.lines.length; i++) {
           let strokeWeight = 2;
@@ -896,9 +919,6 @@ export class WardSurveyAnalysisComponent {
         this.allMarkers[i]["marker"].setMap(null);
       }
       this.allMarkers = [];
-    }
-    if (this.zoneKML != null) {
-      this.zoneKML.setMap(null);
     }
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {

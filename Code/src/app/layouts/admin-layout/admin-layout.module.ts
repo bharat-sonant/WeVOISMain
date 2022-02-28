@@ -108,6 +108,9 @@ import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-a
 import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 import { SalaryHoldingManagementComponent } from '../../salary-management/salary-holding-management/salary-holding-management.component';
 import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
+import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
+import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
+import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 
 @NgModule({
   imports: [
@@ -220,7 +223,10 @@ import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/f
     EmployeeAccountServiceComponent,
     EmployeeSalaryComponent,
     SalaryHoldingManagementComponent,
-    FeDailyWorkReportComponent
+    FeDailyWorkReportComponent,
+    KmlToJsonComponent,
+    SalaryTransactionComponent,
+    DustbinServiceComponent
   ]
 })
 
