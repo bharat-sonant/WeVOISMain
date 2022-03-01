@@ -69,11 +69,36 @@ export class DustbinMonitoringComponent {
   defaultDustbinUrl: any;
   cityName: any;
   db: any;
-  instancesList:any[];
+  instancesList: any[];
+  // route tracking
+
+  routePathStore: any[];
+  timeInterval: any;
+  endTime: any;
+  isPreviousTime: any;
+  public startTime: any;
+  isLast = false;
+  isStart = false;
+  totalTiminingKM: any;
+  lineDataList: any[];
+  lineIndex: any = 0;
+  isReset = false;
+  routeMarkIcon: any;
+  trackData: trackDetail =
+    {
+      totalKM: 0,
+      totalTime: "0 hr 0 min",
+      time: "0:00",
+      percentage: "0"
+    };
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setDefault();
+  }
+
+  setDefault() {
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;
     this.minHalt = 5;
@@ -84,10 +109,10 @@ export class DustbinMonitoringComponent {
     (<HTMLInputElement>document.getElementById("route")).checked = false;
     $('#txtDate').val(this.selectedDate);
     this.currentYear = new Date().getFullYear();
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.activeZone = 0;
     this.assignedBinList = [];
-    this.instancesList=[];
+    this.instancesList = [];
     this.getDefaultImageUrl();
     this.getDustbins();
     setTimeout(() => {
@@ -151,7 +176,7 @@ export class DustbinMonitoringComponent {
       this.vehicleMarkers1 = [];
     }
     this.currentYear = this.selectedDate.split('-')[0];
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     this.findDustbins();
   }
 
@@ -180,7 +205,6 @@ export class DustbinMonitoringComponent {
   }
 
   getData() {
-
     this.planDetail = [];
     this.pickkingPlanList = [];
     this.pickkingPlanList.push({ planId: 0, planName: "Select Dustbin Pick Plan" });
@@ -195,7 +219,7 @@ export class DustbinMonitoringComponent {
     let dbPath = "";
     this.bounds = new google.maps.LatLngBounds();
     if (this.allDustbin != null) {
-      let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+      let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
       let year = this.selectedDate.split("-")[0];
       dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + this.selectedDate + "";
       let assignedPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -208,8 +232,8 @@ export class DustbinMonitoringComponent {
                 let index = keyArray[i];
                 let planName = data[index]["planName"];
                 let driver = data[index]["driver"];
-                let vehicle = data[index]["vehicle"]
-                this.pickkingPlanList.push({ planId: index, planName: planName + " [" + vehicle + "]" });
+                let vehicle = data[index]["vehicle"];
+                this.pickkingPlanList.push({ planId: index, vehicle: vehicle, planName: planName + " [" + vehicle + "]" });
                 let classes = "collapse";
                 if (i == 0) {
                   classes = "collapse show";
@@ -311,18 +335,23 @@ export class DustbinMonitoringComponent {
     }
   }
 
+
   getRoute(vehicle: any) {
-    let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
     let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    let vehicleTracking = this.db.list(dbPath).valueChanges().subscribe(
+    let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
       routePath => {
         vehicleTracking.unsubscribe();
+        this.routePathStore = [];
         if (routePath != null) {
-          for (let i = 0; i < routePath.length - 2; i++) {
+          let keyArray = Object.keys(routePath);
+          for (let i = 0; i < keyArray.length - 2; i++) {
+            let time = keyArray[i];
             let lineData = [];
             let routeDateList = [];
-            let latLong: string = routePath[i]["lat-lng"];
+            let latLong: string = routePath[time]["lat-lng"];
+            this.routePathStore.push({ vehicle: vehicle, distanceinmeter: routePath[time]["distance-in-meter"], latlng: routePath[time]["lat-lng"], time: time });
             if (latLong != undefined) {
               routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
               for (let j = 0; j < routeDateList.length; j++) {
@@ -344,23 +373,23 @@ export class DustbinMonitoringComponent {
                   let lat = lineData[0]["lat"];
                   let lng = lineData[0]["lng"];
                   let markerURL = this.startUrl;
-                  var markerLabel = null
-                  let contentString = 'Vechile : ' + vehicle + '<br/>Start time: ' + routePath[i]["time"];
+                  var markerLabel = null;
+                  let contentString = 'Vechile : ' + vehicle + '<br/>Start time: ' + time;
                   this.setMarker(lat, lng, markerLabel, markerURL, 50, 50, contentString, "route", 0, 15, 31);
                 }
                 if (this.selectedDate != this.todayDate) {
-                  if (i == routePath.length - 3) {
+                  if (i == keyArray.length - 3) {
                     let lat = lineData[lineData.length - 1]["lat"];
                     let lng = lineData[lineData.length - 1]["lng"];
                     let markerURL = this.endUrl;
-                    var markerLabel = null
-                    let contentString = 'Vechile : ' + vehicle + '<br/>End time: ' + routePath[i]["time"];
+                    var markerLabel = null;
+                    let contentString = 'Vechile : ' + vehicle + '<br/>End time: ' + time;
                     this.setMarker(lat, lng, markerLabel, markerURL, 50, 50, contentString, "route", 0, 15, 31);
                   }
                 }
                 else {
                   if (this.selectedDate == this.todayDate) {
-                    if (i == routePath.length - 3) {
+                    if (i == keyArray.length - 3) {
                       dbPath = "RealTimeDetails/WardDetails/BinLifting/" + vehicle;
                       let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
                         dutyData => {
@@ -371,7 +400,7 @@ export class DustbinMonitoringComponent {
                               let lng = lineData[lineData.length - 1]["lng"];
                               let markerURL = this.endUrl;
                               var markerLabel = null
-                              let contentString = 'Vechile : ' + vehicle + '<br/>End time: ' + routePath[i]["time"];
+                              let contentString = 'Vechile : ' + vehicle + '<br/>End time: ' + time;
                               this.setMarker(lat, lng, markerLabel, markerURL, 50, 50, contentString, "route", 0, 15, 31);
                             }
                           }
@@ -385,11 +414,13 @@ export class DustbinMonitoringComponent {
               }
             }
           }
-          if (this.isRoute == true)
-            this.getFixedGeoLocation();
+          if (this.isRoute == true) {
+            //this.getFixedGeoLocation();
+          }
         }
       });
   }
+
 
   getFixedGeoLocation() {
     this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));;
@@ -406,7 +437,7 @@ export class DustbinMonitoringComponent {
   }
 
   getHalt(vehicle: any) {
-    let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
     let dbPath = "HaltInfo/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
     let halt = this.db.list(dbPath).valueChanges().subscribe(
@@ -513,10 +544,14 @@ export class DustbinMonitoringComponent {
 
   showRoute() {
     let element = <HTMLInputElement>document.getElementById("route");
-    if (element.checked == true)
+    if (element.checked == true) {
       this.isRoute = true;
-    else
+      $("#divTrack").show();
+    }
+    else {
       this.isRoute = false;
+      $("#divTrack").hide();
+    }
     if (this.routeMarker.length > 0) {
       for (let i = 0; i < this.routeMarker.length; i++) {
         this.routeMarker[i]["marker"].setMap(null);
@@ -819,4 +854,161 @@ export class DustbinMonitoringComponent {
       }
     }
   }
+
+  getRouteData(timeInt: any) {
+    if (this.polylines != null) {
+      for (let j = 0; j < this.polylines.length; j++) {
+        this.polylines[j].setMap(null);
+      }
+    }
+    this.polylines = [];
+    this.trackData.totalKM = 0;
+    this.trackData.totalTime = "0 hr 0 min";
+    this.timeInterval = parseInt(timeInt);
+    let planId = $("#ddlPickPlans").val();
+    if (planId == "0") {
+      this.commonService.setAlertMessage("error", "Please select dustbin pick plan !!!");
+      $("#ddlTime").val("0");
+      return;
+    }
+    if (this.routePathStore.length > 0) {
+      if (this.timeInterval == 0) {
+        this.endTime = null;
+        this.isPreviousTime = false;
+      }
+      else {
+        if (this.endTime != null) {
+          if (this.isPreviousTime == false) {
+            this.endTime = parseInt(timeInt) - 1;
+            this.isPreviousTime = true;
+          }
+          else {
+            this.endTime = parseInt(this.endTime) + parseInt(timeInt) - 1;
+          }
+        }
+        else {
+          this.endTime = parseInt(timeInt) - 1;
+          this.isPreviousTime = false;
+        }
+      }
+    }
+    this.getVehicleRouteTime();
+  }
+
+  getVehicleRouteTime() {
+    if (this.routePathStore != null) {
+      if (this.timeInterval == 0) {
+        this.startTime = 0;
+        this.endTime = this.routePathStore.length - 1;
+      }
+      if (this.endTime >= (this.routePathStore.length - 1)) {
+        this.endTime = this.routePathStore.length - 1;
+        this.isLast = true;
+      }
+      else {
+        this.isLast = false;
+      }
+      let totalKM = 0;
+      let lineData = [];
+      for (let i = 0; i <= this.endTime; i++) {
+        totalKM += parseFloat(this.routePathStore[i]["distanceinmeter"]);
+      }
+      let lat = "";
+      let lng = "";
+      for (let i = 0; i <= this.endTime; i++) {
+        if (lineData.length > 0) {
+          lat = lineData[lineData.length - 1]["lat"];
+          lng = lineData[lineData.length - 1]["lng"];
+          lineData = [];
+          lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+        let routeDateList = [];
+        let latLong: string = this.routePathStore[i]["latlng"];
+        let time = this.routePathStore[i]["time"];
+        routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+        for (let j = 0; j < routeDateList.length; j++) {
+          let routePart = routeDateList[j].split(',');
+          if (routePart.length == 2) {
+            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+
+          }
+        }
+        if (lineData != undefined) {
+
+          let status = "LineCompleted";
+          let line = new google.maps.Polyline({
+            path: lineData,
+            strokeColor: this.commonService.getLineColor(status),
+            strokeWeight: 4
+          });
+
+          this.polylines[i] = line;
+          this.polylines[i].setMap(this.map);
+          this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
+          this.trackData.totalTime = this.commonService.getHrsFull((this.endTime + 1));
+          this.totalTiminingKM = totalKM;
+          if (i == this.endTime) {
+            if (this.routeMarkIcon != null) {
+              this.routeMarkIcon.setMap(null);
+            }
+            this.setRouteMarker(parseFloat(lat), parseFloat(lng), time);
+          }
+        }
+      }
+    }
+  }
+
+  getRouteDataPreNext(type: any) {
+    if (this.timeInterval != 0) {
+      if (this.polylines != null) {
+        for (let j = 0; j < this.polylines.length; j++) {
+          this.polylines[j].setMap(null);
+        }
+      }
+      this.polylines = [];
+      this.trackData.totalKM = 0;
+      this.trackData.totalTime = "0 hr 0 min";
+      if (type == "pre") {
+        this.endTime = this.endTime - this.timeInterval;
+        if (this.endTime < 0) {
+          this.endTime = 0;
+        }
+        this.getVehicleRouteTime();
+      }
+      else {
+        this.endTime = this.endTime + this.timeInterval;
+        this.getVehicleRouteTime();
+      }
+    }
+  }
+
+  setRouteMarker(lat: any, lng: any, time: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: '../assets/img/greenmarker.png',
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(32, 40),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+
+    let infowindow = new google.maps.InfoWindow({
+      content: "<br/>time : " + time
+    });
+
+    marker.addListener('click', function () {
+      infowindow.open(this.map, marker);
+    });
+    this.routeMarkIcon = marker;
+  }
+}
+
+export class trackDetail {
+  totalKM: number;
+  totalTime: string;
+  time: string;
+  percentage: string;
 }
