@@ -1075,8 +1075,12 @@ export class CommonService {
           utitle = "External User";
         }
         let haltDisableAccess = 0;
+        let isActual=0;
         if (doc.data()["haltDisableAccess"] != undefined) {
           haltDisableAccess = doc.data()["haltDisableAccess"];
+        }
+        if (doc.data()["isActual"] != undefined) {
+          isActual = doc.data()["isActual"];
         }
         if (doc.data()["isDelete"] == "0") {
           userList.push({
@@ -1096,6 +1100,7 @@ export class CommonService {
             officeAppUserId: doc.data()["officeAppUserId"],
             isTaskManager: doc.data()["isTaskManager"],
             haltDisableAccess: haltDisableAccess,
+            isActual:isActual
           });
         }
       });
