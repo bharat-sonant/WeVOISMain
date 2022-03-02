@@ -26,7 +26,6 @@ export class UserAddComponent implements OnInit {
   cityName: any;
 
   ngOnInit() {
-    //this.getUsers();
 
     this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
@@ -73,6 +72,11 @@ export class UserAddComponent implements OnInit {
             (<HTMLInputElement>(document.getElementById("haltDisableAccess"))).checked = true;
           }
         }
+        if(doc.data()["isActual"]!=undefined){
+          if (doc.data()["isActual"] == 1) {
+            (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
+          }
+        }
       });
     } else {
       this.userRecord = [];
@@ -92,34 +96,6 @@ export class UserAddComponent implements OnInit {
         }
       });
     }
-  }
-
-  getUsers() {
-    let MUser = this.db.list("Users/").valueChanges().subscribe((mdata) => {
-      MUser.unsubscribe();
-      for (let i = 0; i < mdata.length; i++) {
-        const dish = {
-          userId: mdata[i]["userId"],
-          name: mdata[i]["name"],
-          userType: mdata[i]["userType"],
-          mobile: mdata[i]["mobile"],
-          email: mdata[i]["email"],
-          password: mdata[i]["password"],
-          creattionDate: mdata[i]["creattionDate"],
-          isDelete: mdata[i]["isDelete"],
-          notificationHalt: 0,
-          notificationMobileDataOff: 0,
-          notificationSkippedLines: 0,
-          notificationPickDustbins: 0,
-          expiryDate: 0,
-          notificationGeoSurfing: 0,
-          officeAppUserId: "0",
-          isTaskManager: 0,
-          haltDisableAccess: 0
-        };
-        this.usrService.AddUser(dish);
-      }
-    });
   }
 
   submitData() {
@@ -196,6 +172,7 @@ export class UserAddComponent implements OnInit {
     let expiryDate: any = $("#expiryDate").val();
     let officeAppUserId: any = $("#officeAppUserId").val();
     let isTaskManager: any = 0;
+    let isActual:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -216,6 +193,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isTaskManager = 1;
     element = <HTMLInputElement>document.getElementById("haltDisableAccess");
     if (element.checked == true) haltDisableAccess = 1;
+    element = <HTMLInputElement>document.getElementById("isActual");
+    if (element.checked == true) isActual = 1;
 
     const dish = {
       userId: userId,
@@ -234,7 +213,8 @@ export class UserAddComponent implements OnInit {
       notificationGeoSurfing: notificationGeoSurfing,
       officeAppUserId: officeAppUserId,
       isTaskManager: isTaskManager,
-      haltDisableAccess: haltDisableAccess
+      haltDisableAccess: haltDisableAccess,
+      isActual:isActual
     };
 
     if (id != null) {
