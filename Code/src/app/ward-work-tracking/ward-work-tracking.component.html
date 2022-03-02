@@ -1,1 +1,231 @@
-<p>ward-work-tracking works!</p>
+<section class="header">
+  <div class="row no-gutters">
+    <div class="col-md-8">
+      <button class="btn btn-primary " >
+        << </button>
+          <input id="txtDate" class="date-input" type="date" >
+          <button class="btn btn-primary"  style="margin-left: 0px!important;">
+            >>
+          </button>
+          <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+            [(ngModel)]="selectedZone">
+            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+              ngSelected="zone.zoneNo == selectedZone?'selected':''">
+              {{zone.zoneName}}
+            </option>
+          </select>&nbsp;&nbsp;
+          <input id="isHouse" type="checkbox"  /><span id="showHouseLabel"> Show
+            Houses</span>
+    </div>
+
+    <div id="houseCount" class="col-md-4 text-right total-house" style=" display: none;">
+
+      <div class="fix-home">
+        <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
+          <i class="fas fa-vr-cardboard" style="cursor: pointer;" ></i>
+          <span class="house"><span style="color: #1fda2f;">
+              </span></span><br>
+          <h6>Card Images</h6>
+        </div>
+        <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+          <i class="fas fa-home"></i> <span class="house"> </span><br>
+          <h6>Total House</h6>
+        </div>
+        <div class="float-third">
+          <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;" ></i>
+          <span class="house"> </span><br>
+          <h6>Scanned House</h6>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+
+
+<!--
+<div id="divDriverDetail" class="driver-helper-box">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="main-box">
+        <div class="designation" style="padding:5px 10px 5px 10px;">
+          <h5> D </h5>
+        </div>
+        <div class="all-details" style="padding:5px 10px 5px 10px;">
+          <h6>{{progressData.driverName}} <br>
+            <p>{{progressData.driverMobile}}</p>
+          </h6>
+        </div>
+      </div>
+      <div class="main-box">
+        <div class="designation">
+          <h5> H </h5>
+        </div>
+        <div class="all-details">
+          <h6>{{progressData.helperName}} <br>
+            <p>{{progressData.helperMobile}}</p>
+          </h6>
+        </div>
+      </div>
+      <div class="main-box" style="border-bottom:none!important;">
+        <div class="designation">
+          <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
+        </div>
+        <div class="all-details">
+          <h6>{{progressData.parshadName}} (पार्षद)<br>
+            <p>{{progressData.parshadMobile}}</p>
+          </h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="divInternal" class="line-details-box">
+  <div>
+    <div class="lines">
+      <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+        <p>Total Ward Length</p>
+      </h3>
+    </div>
+    <div class="lines2">
+      <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+        <p>Covered Ward Length</p>
+      </h3>
+    </div>
+    <div class="lines" style="border-top: 1px dotted lightgray;">
+      <h3>{{progressData.totalLines}}
+        <p>Total Lines</p>
+      </h3>
+    </div>
+    <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;"
+      (click)="showSkipLineDetail(contentSkipLines)">
+      <h3>{{progressData.skippedLines}}
+        <p>Skipped Lines</p>
+      </h3>
+    </div>
+    <div class="lines" style="border-top: 1px dotted lightgray;">
+      <h3>{{progressData.completedLines}}
+        <p>Completed Lines</p>
+      </h3>
+    </div>
+    <div class="lines2" style="border-top: 1px dotted lightgray; ">
+      <h3>{{progressData.currentLine}}
+        <p>Current Lines</p>
+      </h3>
+    </div>
+  </div>
+</div>
+
+
+<div id="houseDetail" class="line-details-box-house">
+  <div class="lines" style="border-bottom: 1px dotted lightgray;">
+    <img src="../assets/img/blue-home.png">
+    <h3>
+      <p>Phase 1</p>
+    </h3>
+  </div>
+  <div class="lines2" style="border-bottom: 1px dotted lightgray; ">
+    <img src="../assets/img/purple-home.png" width="17">
+    <h3>
+      <p>Phase 1 (Approved)</p>
+    </h3>
+  </div>
+  <div class="lines" style="border-bottom: 1px dotted lightgray;">
+    <img src="../assets/img/red-home.png">
+    <h3>
+      <p>Phase 2 </p>
+    </h3>
+  </div>
+  <div class="lines2" style="border-bottom: 1px dotted lightgray;">
+    <img src="../assets/img/yellow-home.png" width="17">
+    <h3>
+      <p>Phase 2 (Approved)</p>
+    </h3>
+  </div>
+  <div class="lines">
+    <img src="../assets/img/green-home.png">
+    <h3>
+      <p>Scanned</p>
+    </h3>
+  </div>
+  <div class="lines2">
+    <img src="../assets/img/sweet-home.png" width="30">
+    <h3>
+      <p>Parshad House</p>
+    </h3>
+  </div>
+</div>
+-->
+<!--Card Not Scan Start-->
+<ng-template #contentCardNotScaned>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+  </div>
+  <div class="modal-body" style="margin-top:-20px; ">
+    <div id="divStatus" class="content-scroll">
+      <div class="row">
+        <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
+          <div style="width:100%">
+            <a href="{{dt.imageUrl}}" target="_blank">
+              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+            </a>
+          </div>
+          <div class="main-tag">
+            <div class="f-left">
+              <span [hidden]="dt.lineNo==null">
+                <p>Line No. <span class="f-right"> :</span></p>
+                <h3> {{dt.lineNo}} </h3><br />
+              </span>
+              <p>Scan Time <span class="f-right"> :</span></p>
+              <h3> {{dt.time}} </h3>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+<!--Card Not Scan End-->
+
+
+<!--Skip lines Start-->
+<ng-template #contentSkipLines>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+  </div>
+  <div class="modal-body" style="margin-top:-20px; ">
+    <div id="divStatus" class="content-scroll">
+      <div class="row">
+        <div class="col-md-2" *ngFor="let dt of skipLineList">
+          <div style="width:100%">
+            <a href="{{dt.imageUrl}}" target="_blank">
+              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+            </a>
+          </div>
+          <div class="main-tag">
+            <div class="f-left">
+              <p>Line <span class="f-right"> :</span></p>
+              <h3> {{dt.lineNo}}  <i class="far fa-eye" style="float: right; cursor: pointer; font-size: 14px;" (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
+              <p>Reason <span class="f-right"> :</span></p>
+              <h3> {{dt.reason}} </h3><br />
+              <span [hidden]="dt.status==''">
+                <p>Time <span class="f-right"> :</span></p>
+                <h3> {{dt.time}} </h3>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Skip lines End-->
