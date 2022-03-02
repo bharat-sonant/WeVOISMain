@@ -34,7 +34,6 @@ export class EmployeeSalaryComponent implements OnInit {
     remark: ""
   }
   // setting data
-  basic_minimum_hour: any;
   basic_minimum_minute: any;
   driver_reward_amount: any;
   helper_reward_amount: any;
@@ -76,7 +75,6 @@ export class EmployeeSalaryComponent implements OnInit {
     this.designationList = [];
     this.salaryList = [];
     this.allSalaryList = [];
-    this.basic_minimum_hour = 0;
     this.driver_reward_amount = 0;
     this.helper_reward_amount = 0;
     this.tractor_reward_amount = 0;
@@ -89,12 +87,11 @@ export class EmployeeSalaryComponent implements OnInit {
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSalary.json?alt=media";
     let salarySettingInstance = this.httpService.get(path).subscribe(data => {
       salarySettingInstance.unsubscribe();
-      this.basic_minimum_hour = data["basic_minimum_hour"];
       this.driver_reward_amount = data["driver_reward_amount"];
       this.helper_reward_amount = data["helper_reward_amount"];
       this.tractor_reward_amount = data["tractor_reward_amount"];
       this.tractor_reward_days = data["tractor_reward_days"];
-      this.basic_minimum_minute = Number(this.basic_minimum_hour) * 60;
+      this.basic_minimum_minute = Number(data["basic_minimum_hour"]) * 60;
       this.getEmployee();
     });
   }

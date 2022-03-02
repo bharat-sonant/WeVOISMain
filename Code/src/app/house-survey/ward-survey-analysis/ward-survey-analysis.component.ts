@@ -93,7 +93,7 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -601,7 +601,7 @@ export class WardSurveyAnalysisComponent {
       $("#divSequence").css("height", divHeight);
       this.mapRevisit = this.commonService.setMapById("revisitMap");
       setTimeout(() => {
-        this.commonService.setKML(this.selectedZone, this.zoneKMLRevisit).then((data: any) => {
+        this.commonService.getWardBoundary(this.selectedZone, this.zoneKMLRevisit).then((data: any) => {
           if (this.zoneKMLRevisit != undefined) {
             this.zoneKMLRevisit[0]["line"].setMap(null);
           }

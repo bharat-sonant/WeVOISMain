@@ -58,7 +58,7 @@ export class WardWorkTrackingComponent {
   }
 
   setWardBoundary() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }

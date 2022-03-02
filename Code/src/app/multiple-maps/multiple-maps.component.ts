@@ -220,7 +220,7 @@ export class MultipleMapsComponent {
   }
 
   setWardBoundary(selectedZone: any, map: any) {
-    this.commonService.setKML(selectedZone, null).then((data: any) => {
+    this.commonService.getWardBoundary(selectedZone, null).then((data: any) => {
       let zoneKML = data;
       zoneKML[0]["line"].setMap(map);
       const bounds = new google.maps.LatLngBounds();

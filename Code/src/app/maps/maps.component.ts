@@ -13,7 +13,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 @Component({
   selector: "app-maps",
   templateUrl: "./maps.component.html",
-  styleUrls: ["./maps.component.css"],
+  styleUrls: ["./maps.component.css"], 
 })
 export class MapsComponent {
   @ViewChild("gmap", null) gmap: any;
@@ -414,7 +414,7 @@ export class MapsComponent {
   }
 
   setWardBoundary() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
