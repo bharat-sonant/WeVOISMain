@@ -24,8 +24,6 @@ export class EmployeeSalaryComponent implements OnInit {
   yearList: any[];
   sundayList: any[];
   designationList: any[];
-  employeeList: any[];
-  monthSalaryList: any[];
   salaryList: any[];
   allSalaryList: any[];
   arrayBuffer: any;
@@ -36,29 +34,19 @@ export class EmployeeSalaryComponent implements OnInit {
     remark: ""
   }
   // setting data
-  basic_minimum_hour: any;
   basic_minimum_minute: any;
-  compactor_basic_hour: any;
-  compactor_basic_minute: any;
-  compactor_driver_incentive_per_hour: any;
-  compactor_driver_salary_per_hour: any;
-  driver_incentive_per_hour: any;
   driver_reward_amount: any;
-  driver_salary_per_hour: any;
-  helper_incentive_per_hour: any;
   helper_reward_amount: any;
-  helper_salary_per_hour: any;
-  tractor_driver_salary: any;
   tractor_reward_amount: any;
   tractor_reward_days: any;
   workingDayInMonth: any;
   fireStoreCity: any;
-  ddlMonth="#ddlMonth";
-  ddlYear="#ddlYear";
-  ddlUser="#ddlUser";
-  ddlDesignation="#ddlDesignation";
-  divLoader="#divLoader";
-  key="#key";
+  ddlMonth = "#ddlMonth";
+  ddlYear = "#ddlYear";
+  ddlUser = "#ddlUser";
+  ddlDesignation = "#ddlDesignation";
+  divLoader = "#divLoader";
+  key = "#key";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -72,11 +60,7 @@ export class EmployeeSalaryComponent implements OnInit {
     this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
-    this.yearList = [];
-    this.employeeList = [];
-    this.designationList = [];
-    this.salaryList = [];
-    this.allSalaryList = [];
+    this.setDefaultValues();
     this.getYear();
     this.selectedMonth = date.split('-')[1];
     this.selectedYear = date.split('-')[0];
@@ -86,43 +70,29 @@ export class EmployeeSalaryComponent implements OnInit {
     this.getSetting();
   }
 
-  getSetting() {
-    this.basic_minimum_hour = 0;
-    this.compactor_basic_hour = 0;
-    this.compactor_driver_incentive_per_hour = 0;
-    this.compactor_driver_salary_per_hour = 0;
-    this.driver_incentive_per_hour = 0;
+  setDefaultValues(){
+    this.yearList = [];
+    this.designationList = [];
+    this.salaryList = [];
+    this.allSalaryList = [];
     this.driver_reward_amount = 0;
-    this.driver_salary_per_hour = 0;
-    this.helper_incentive_per_hour = 0;
     this.helper_reward_amount = 0;
-    this.helper_salary_per_hour = 0;
-    this.tractor_driver_salary = 0;
     this.tractor_reward_amount = 0;
     this.tractor_reward_days = 0;
     this.basic_minimum_minute = 0;
-    this.compactor_basic_minute = 0;
     this.workingDayInMonth = 0;
+  }
 
+  getSetting() { 
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSalary.json?alt=media";
-    let salaryInstance = this.httpService.get(path).subscribe(data => {
-      salaryInstance.unsubscribe();
-      this.basic_minimum_hour = data["basic_minimum_hour"];
-        this.compactor_basic_hour = data["compactor_basic_hour"];
-        this.compactor_driver_incentive_per_hour = data["compactor_driver_incentive_per_hour"];
-        this.compactor_driver_salary_per_hour = data["compactor_driver_salary_per_hour"];
-        this.driver_incentive_per_hour = data["driver_incentive_per_hour"];
-        this.driver_reward_amount = data["driver_reward_amount"];
-        this.driver_salary_per_hour = data["driver_salary_per_hour"];
-        this.helper_incentive_per_hour = data["helper_incentive_per_hour"];
-        this.helper_reward_amount = data["helper_reward_amount"];
-        this.helper_salary_per_hour = data["helper_salary_per_hour"];
-        this.tractor_driver_salary = data["tractor_driver_salary"];
-        this.tractor_reward_amount = data["tractor_reward_amount"];
-        this.tractor_reward_days = data["tractor_reward_days"];
-        this.basic_minimum_minute = Number(this.basic_minimum_hour) * 60;
-        this.compactor_basic_minute = Number(this.compactor_basic_hour) * 60;
-        this.getEmployee();
+    let salarySettingInstance = this.httpService.get(path).subscribe(data => {
+      salarySettingInstance.unsubscribe();
+      this.driver_reward_amount = data["driver_reward_amount"];
+      this.helper_reward_amount = data["helper_reward_amount"];
+      this.tractor_reward_amount = data["tractor_reward_amount"];
+      this.tractor_reward_days = data["tractor_reward_days"];
+      this.basic_minimum_minute = Number(data["basic_minimum_hour"]) * 60;
+      this.getEmployee();
     });
   }
 
@@ -131,7 +101,6 @@ export class EmployeeSalaryComponent implements OnInit {
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
-
       if (data != null) {
         let salaryList = [];
         let jsonData = JSON.stringify(data);
@@ -158,94 +127,23 @@ export class EmployeeSalaryComponent implements OnInit {
             if (list[i]["ifsc"] != "") {
               ifsc = list[i]["ifsc"];
             }
-            let designationDetail = this.designationList.find(item => item.designation == designation);
-          if (designationDetail == undefined) {
-            this.designationList.push({ designation: designation });
-            this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
-          }
             salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: list[i]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
           }
+          this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
           this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
+          this.getRoles();
           this.getSalary();
         }
       }
     });
   }
 
-  getUploadedSalary() {
-    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data").get().subscribe(
-      (ss) => {
-        ss.forEach((doc) => {
-          let empId = doc.id;
-          let empDetail = this.allSalaryList.find(item => item.empId == empId);
-          if (empDetail != undefined) {
-            empDetail.uploadedSalary = doc.data()["uploadedSalary"];
-          }
-          empDetail = this.salaryList.find(item => item.empId == empId);
-          if (empDetail != undefined) {
-            empDetail.uploadedSalary = doc.data()["uploadedSalary"];
-          }
-        });
-      });
-  }
-
-  getHoldSalary() {
-    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName).get().subscribe(
-      (ss) => {
-        ss.forEach((doc) => {
-          let empId = doc.id;
-          let empDetail = this.allSalaryList.find(item => item.empId == empId);
-          if (empDetail != undefined) {
-            empDetail.hold = 1;
-          }
-        });
-      });
-  }
-
-  getTransferedSalary() {
-    if (this.allSalaryList.length > 0) {
-      for (let i = 0; i < this.allSalaryList.length; i++) {
-        let empId = this.allSalaryList[i]["empId"];
-        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId).get().subscribe(
-          (ss) => {
-            let transferedAmount = 0;
-            ss.forEach(function (doc) {
-              transferedAmount += Number(doc.data()["amount"]);
-            });
-            let detail = this.allSalaryList.find(item => item.empId == empId);
-            if (detail != undefined) {
-              detail.transfered = transferedAmount;
-            }
-            detail = this.salaryList.find(item => item.empId == empId);
-            if (detail != undefined) {
-              detail.transfered = transferedAmount;
-            }
-            if (i == this.allSalaryList.length - 1) {
-              this.getFinalAmount();
-            }
-          });
-      }
+  getRoles() {
+    let list = this.allSalaryList.map(item => item.designation)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    for (let i = 0; i < list.length; i++) {
+      this.designationList.push({ designation: list[i] });
     }
-  }
-  
-  getAccountIssue() {
-    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
-    let accountIssueInstance = this.httpService.get(path).subscribe(data => {
-      accountIssueInstance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let empId = keyArray[i];
-            let userDetail = this.allSalaryList.find(item => item.empId == empId);
-            if (userDetail != undefined) {
-              userDetail.remark = data[empId]["remark"];
-              userDetail.isShow = 1;
-            }
-          }
-        }
-      }
-    });
   }
 
   getSalary() {
@@ -293,7 +191,7 @@ export class EmployeeSalaryComponent implements OnInit {
                             task.push({ vehicle: vehicle, finalApproveTime: empObject[empId]["task" + k]["final-approved-time-in-minute"] });
                           }
                           taskCount++;
-                          if (empObject[empId]["task" + k]["task"] == "GarageWork"/* && empObject[empId]["task" + k]["final-approved-time-in-minute"]=="360"*/) {
+                          if (empObject[empId]["task" + k]["task"] == "GarageWork") {
                             garageDays++;
                           }
                         }
@@ -333,6 +231,95 @@ export class EmployeeSalaryComponent implements OnInit {
         );
       }
     );
+  }
+
+  getUploadedSalary() {
+    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/data").get().subscribe(
+      (ss) => {
+        ss.forEach((doc) => {
+          let empId = doc.id;
+          let uploadedSalary = doc.data()["uploadedSalary"];
+          this.updateSalaryList(empId,uploadedSalary,"uploadedSalary");          
+        });
+      });
+  }
+
+  getHoldSalary() {
+    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName).get().subscribe(
+      (ss) => {
+        ss.forEach((doc) => {
+          let empId = doc.id;
+          let empDetail = this.allSalaryList.find(item => item.empId == empId);
+          if (empDetail != undefined) {
+            empDetail.hold = 1;
+          }
+        });
+      });
+  }
+
+  getTransferedSalary() {
+    if (this.allSalaryList.length > 0) {
+      for (let i = 0; i < this.allSalaryList.length; i++) {
+        let empId = this.allSalaryList[i]["empId"];
+        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId).get().subscribe(
+          (ss) => {
+            let transferedAmount = 0;
+            ss.forEach(function (doc) {
+              transferedAmount += Number(doc.data()["amount"]);
+            });
+            this.updateSalaryList(empId, transferedAmount, "transfered");
+            if (i == this.allSalaryList.length - 1) {
+              this.getFinalAmount();
+            }
+          });
+      }
+    }
+  }
+
+  updateSalaryList(empId: any, updateValue: any, type: any) {
+    let detail = this.allSalaryList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      if (type == "transfered") {
+        detail.transfered = updateValue;
+      }
+      else if(type=="uploadedSalary"){
+        detail.uploadedSalary = updateValue;
+      }
+      else if(type=="accountIssue"){
+        detail.remark = updateValue;
+        detail.isShow = 1;
+      }
+    }
+    detail = this.salaryList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      if (type == "transfered") {
+        detail.transfered = updateValue;
+      }
+      else if(type=="uploadedSalary"){
+        detail.uploadedSalary = updateValue;
+      }
+      else if(type=="accountIssue"){
+        detail.remark = updateValue;
+        detail.isShow = 1;
+      }
+    }
+  }
+
+  getAccountIssue() {
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccountIssue%2FIssue.json?alt=media";
+    let accountIssueInstance = this.httpService.get(path).subscribe(data => {
+      accountIssueInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let empId = keyArray[i];
+            let remark=data[empId]["remark"];
+            this.updateSalaryList(empId,remark,"accountIssue");
+          }
+        }
+      }
+    });
   }
 
   getReward() {
@@ -968,7 +955,6 @@ export class EmployeeSalaryComponent implements OnInit {
     XLSX.writeFile(wb, fileName);
   }
 
-
   openModel(content: any, id: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -989,7 +975,6 @@ export class EmployeeSalaryComponent implements OnInit {
       if (userDetail.remark != null) {
         this.salaryDetail.remark = userDetail.remark;
       }
-
     }
   }
 

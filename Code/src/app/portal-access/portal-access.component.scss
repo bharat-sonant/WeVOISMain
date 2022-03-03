@@ -4911,7 +4911,6 @@ box-shadow: 5px 8px 10px #96d49b3d;
 
 
 
-
 /*************** Custom CSS Start **************/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
 
@@ -4923,11 +4922,65 @@ p{
 }
 
 
+@media only screen and (max-width: 360px){
+  .container{
+    width: 90% !important;
+ }
+ .col{
+   margin-top: 0 !important;
+   width: 50%;
+   margin-top: -110px !important;
+ }
+ .login-container{
+  width: 580px;
+  height: 550px !important;
+}
+.login-header{
+  border: none !important;
+}
+
+}
 
 
+@media only screen and (max-width: 394px){
+  .container{
+    width: 90% !important;
+}
+.col{
+  margin-top: 0 !important;
+  width: 50%;
+  margin-top: -110px !important;
+}
+.login-container{
+ width: 580px;
+ height: 550px !important;
+}
+.login-header{
+  border: none !important;
+}
+}
 
 
+@media only screen and (max-width: 420px){
+  .container{
+    width: 90% !important;
+}
+.col{
+  margin-top: 0 !important;
+  width: 50%;
+  margin-top: -110px !important;
+}
+.login-container{
+ width: 580px;
+ height: 550px !important;
+}
+.login-header{
+  border: none !important;
+}
+}
 
-
-
-
+@media only screen and (max-width: 850px){
+  .login-header{
+    border: none !important;
+  }
+}

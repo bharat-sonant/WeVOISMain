@@ -444,7 +444,7 @@ export class AccountDetailComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  updateJson() {
+  updateAccountJson() {
     $(this.divLoader).show();
     this.accountJsonList = [];
     let dbPath = "Employees";
@@ -503,20 +503,6 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
                 this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate });
-                let detail = this.allAccountList.find(item => item.empId == empId);
-                if (detail != undefined) {
-                  detail.designation = designation;
-                  detail.accountNo = accountNo;
-                  detail.ifsc = ifsc;
-                  detail.name = name;
-                }
-                detail = this.accountList.find(item => item.empId == empId);
-                if (detail != undefined) {
-                  detail.designation = designation;
-                  detail.accountNo = accountNo;
-                  detail.ifsc = ifsc;
-                  detail.name = name;
-                }
               }
             }
             this.saveJSONData();

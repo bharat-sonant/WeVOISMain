@@ -34,6 +34,7 @@ export class HouseMarkingComponent {
   centerPoint: any;
   houseMarker: any[] = [];
   markerList: any[];
+  toDayDate:any;
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -52,6 +53,7 @@ export class HouseMarkingComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.toDayDate = this.commonService.setTodayDate();
     this.commonService.setMapHeight();
     this.getZones();
   }
@@ -71,7 +73,7 @@ export class HouseMarkingComponent {
     }
     this.clearAllData();
     this.clearAllOnMap();
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -88,9 +90,7 @@ export class HouseMarkingComponent {
 
   getWardDetail() {
     this.getTotalMarkers();
-    this.wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
-    this.markerData.totalLines = this.wardLineCount;
-    this.getWardLines(this.wardLineCount);
+    this.getAllLinesFromJson();
     this.getLastScanTime();
     this.getLineApprove();
   }
@@ -181,25 +181,42 @@ export class HouseMarkingComponent {
     });
   }
 
-  getWardLines(lineCount: any) {
-
-    for (let i = 1; i <= Number(lineCount); i++) {
-      let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
-        wardLines.unsubscribe();
-        if (zoneData.length > 0) {
-          let lineData = zoneData;
-          var latLng = [];
-          for (let j = 0; j < lineData.length; j++) {
-            latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-          }
-          this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA", });
-          this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-          if (this.lineNo == i.toString()) {
-            this.getMarkedHouses(i);
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
           }
         }
-      });
+      }
+      this.polylines = [];
+      
+    if (this.allMatkers.length > 0) {
+      for (let i = 0; i < this.allMatkers.length; i++) {
+        if (this.allMatkers[i]["marker"] != null) {
+          this.allMatkers[i]["marker"].setMap(null);
+        }
+      }
+      this.allMatkers = [];
     }
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLineCount = wardLines["totalLines"];
+      this.markerData.totalLines = this.wardLineCount;
+      let lineNo = 0;
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA", });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+      }
+      this.getMarkedHouses(this.lineNo);
+    });
   }
 
   getMarkedHouses(lineNo: any) {
@@ -820,22 +837,6 @@ export class HouseMarkingComponent {
         }
       }
     }
-    if (this.allMatkers.length > 0) {
-      for (let i = 0; i < this.allMatkers.length; i++) {
-        if (this.allMatkers[i]["marker"] != null) {
-          this.allMatkers[i]["marker"].setMap(null);
-        }
-      }
-      this.allMatkers = [];
-    }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != null) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
   }
 
   clearAllData() {

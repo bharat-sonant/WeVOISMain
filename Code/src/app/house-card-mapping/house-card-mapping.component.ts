@@ -68,8 +68,8 @@ export class HouseCardMappingComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+  setWardBoundary() {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -108,7 +108,7 @@ export class HouseCardMappingComponent {
     this.selectedZone = this.activeZone;
     this.polylines = [];
     this.setMap();
-    this.setKml();
+    this.setWardBoundary();
     this.showVehicleMovement();
     this.getLinesFromJson();
     let vehicleInterval = interval(10000).subscribe((val) => {

@@ -111,6 +111,7 @@ import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/f
 import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
+import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 
 @NgModule({
   imports: [
@@ -226,7 +227,8 @@ import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/du
     FeDailyWorkReportComponent,
     KmlToJsonComponent,
     SalaryTransactionComponent,
-    DustbinServiceComponent
+    DustbinServiceComponent,
+    WardWorkTrackingComponent
   ]
 })
 

@@ -1,7 +1,6 @@
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
 import { HttpClient } from '@angular/common/http';
 
 //services
@@ -10,7 +9,6 @@ import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from "@angular/router";
-import { Conditional } from '@angular/compiler';
 import { FirebaseService } from "../firebase.service";
 
 @Component({
@@ -27,7 +25,7 @@ export class RouteTrackingComponent {
   db: any;
   public selectedZone: any;
   zoneList: any[];
-  zoneKML:any;
+  zoneKML: any;
   marker = new google.maps.Marker();
   previousLat: any;
   previousLng: any;
@@ -76,6 +74,7 @@ export class RouteTrackingComponent {
   savedDataList: any[] = [];
   routePath: any[] = [];
   instancesList: any[];
+  isActualData: any;
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -88,6 +87,7 @@ export class RouteTrackingComponent {
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
+    this.isActualData = localStorage.getItem("isActual");
     this.setSpeed(Number($('#ddlSpeed').val()));
     $('#btnPre').show();
     $('#btnReset').hide();
@@ -254,8 +254,8 @@ export class RouteTrackingComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
-    this.commonService.setKML(this.selectedZoneNo, this.zoneKML).then((data: any) => {
+  setWardBoundary() {
+    this.commonService.getWardBoundary(this.selectedZoneNo, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -285,7 +285,7 @@ export class RouteTrackingComponent {
     this.selectedZoneNo = this.selectedZone;
     this.polylines = [];
     this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     if (this.selectedDate == this.toDayDate) {
       this.showVehicleMovement();
     }
@@ -646,12 +646,26 @@ export class RouteTrackingComponent {
           this.routePathStore = [];
           let lineData = [];
           let totalKM: number = 0;
-          var keyArray = Object.keys(routePath);
+          let routeKeyArray = Object.keys(routePath);
+          let keyArray = [];
+          if (routeKeyArray.length > 0) {
+            if (this.isActualData == 0) {
+              keyArray = routeKeyArray;
+            }
+            else {
+              for (let i = 0; i < routeKeyArray.length; i++) {
+                if (!routeKeyArray[i].toString().includes('-')) {
+                  keyArray.push(routeKeyArray[i]);
+                }
+              }
+            }
+          }
+
           for (let i = 0; i < keyArray.length - 2; i++) {
             let index = keyArray[i];
-
+            let time=index.toString().split('-')[0];
             let totalDistance = 0;
-            this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: index });
+            this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
 
             let myTotalKM: number = 0;
             totalKM += parseFloat(parseFloat(routePath[index]["distance-in-meter"]).toFixed(8));
@@ -693,7 +707,7 @@ export class RouteTrackingComponent {
                 let lng = lineData[0]["lng"];
                 let markerURL = this.getIcon("start");
                 var markerLabel = "";
-                let contentString = 'Start time: ' + index;
+                let contentString = '<br/>Start time: ' + index;
                 this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
               }
 
@@ -703,7 +717,7 @@ export class RouteTrackingComponent {
                   let lng = lineData[lineData.length - 1]["lng"];
                   let markerURL = this.getIcon("stop");
                   var markerLabel = "";
-                  let contentString = 'End time: ' + index;
+                  let contentString = '<br/>End time: ' + index;
                   this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
                 }
               }
@@ -719,7 +733,7 @@ export class RouteTrackingComponent {
                           let lng = lineData[lineData.length - 1]["lng"];
                           let markerURL = this.getIcon("stop");
                           var markerLabel = "";
-                          let contentString = 'End time: ' + index;
+                          let contentString = '<br/>End time: ' + index;
                           this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
                         }
                       }
@@ -822,7 +836,7 @@ export class RouteTrackingComponent {
     this.polylines = [];
     this.timeInterval = 0;
     this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     this.setMapOnAll();
     this.getFixedGeoLocation();
     this.getVehicleRouteTime();
@@ -891,7 +905,22 @@ export class RouteTrackingComponent {
           let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
           let day = monthDate.split("-")[2] + " " + monthShortName;
           let totalKM: number = 0;
-          var keyArray = Object.keys(routePath);
+
+          let routeKeyArray = Object.keys(routePath);
+          let keyArray = [];
+          if (routeKeyArray.length > 0) {
+            if (this.isActualData == 0) {
+              keyArray = routeKeyArray;
+            }
+            else {
+              for (let i = 0; i < routeKeyArray.length; i++) {
+                if (!routeKeyArray[i].toString().includes('-')) {
+                  keyArray.push(routeKeyArray[i]);
+                }
+              }
+            }
+          }
+
           for (let i = 0; i < keyArray.length - 3; i++) {
             let index = keyArray[i];
             totalKM += parseFloat(routePath[index]["distance-in-meter"]);
@@ -1077,7 +1106,7 @@ export class RouteTrackingComponent {
               var markerLabel = "";
               let lat = routePartStart[0];
               let lng = routePartStart[1];
-              let contentString = 'Start Time : ' + this.routePathStore[i]["time"];
+              let contentString = '<br/>Start Time : ' + this.routePathStore[i]["time"];
               this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
             }
           }
@@ -1089,7 +1118,7 @@ export class RouteTrackingComponent {
             var flowMarkerLabel = "";
             let lat = lineData[lineData.length - 1]["lat"];
             let lng = lineData[lineData.length - 1]["lng"];
-            let contentString = 'Time : ' + this.routePathStore[i]["time"];
+            let contentString = '<br/>Time : ' + this.routePathStore[i]["time"];
             this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
           }
           this.polylines[i] = line;
@@ -1167,7 +1196,7 @@ export class RouteTrackingComponent {
         var endMarkerLabel = "";
         let lat = parseFloat(routePart[0]);
         let lng = parseFloat(routePart[1]);
-        let contentString = 'End Time : ' + endtimes;
+        let contentString = '<br/>End Time : ' + endtimes;
         this.setMarker(lat, lng, endMarkerLabel, endMarkerURL, contentString, "all");
       }
     }

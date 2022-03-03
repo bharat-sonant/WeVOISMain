@@ -107,7 +107,7 @@ export class LineCardMappingComponent {
     this.polylines = [];
     this.selectedCardDetails = [];
     this.setMap();
-    this.getLinesFromJson();
+    this.getAllLinesFromJson();
     this.cardDetails.selectedHouseCount = 0;
     this.cardDetails.totalCardOnLine = 0;
   }
@@ -150,7 +150,7 @@ export class LineCardMappingComponent {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
-    
+
 
     for (let index = 0; index < this.selectedCardDetails.length; index++) {
       let cardNo = this.selectedCardDetails[index]["cardNo"];
@@ -178,29 +178,35 @@ export class LineCardMappingComponent {
     }, 3000);
   }
 
-  getLinesFromJson() {
-    let wardLineCount = this.commonService.getWardLineCount(this.selectedZone);
-    let wardLines = this.db.object("Defaults/WardLines/" + this.selectedZone).valueChanges().subscribe((zoneLine) => {
-      wardLines.unsubscribe();
-      var linePath = [];
-      for (let i = 1; i <= wardLineCount; i++) {
-        var line = zoneLine[i];
-        if (line == undefined) {
-          break;
-        }
-        var path = [];
-        for (let j = 0; j < line.points.length; j++) {
-          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-        }
+  getAllLinesFromJson() {
 
-        linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
+        }
+      }
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      let linePath = [];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
       }
       this.allLines = linePath;
-      this.drawAllLines();
+      this.plotLineOnMap();
     });
   }
 
-  drawAllLines() {
+  plotLineOnMap() {
     this.cardDetails.selectedHouseCount = 0;
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {

@@ -1287,3 +1287,26 @@ textarea:focus-visible{
 .table > tbody > tr {
   position: inherit!important; 
 }
+
+
+
+
+@media only screen and (max-width: 377px){
+  .scrollable-content{
+    height: 100% !important;
+}
+
+}
+@media only screen and (max-width: 420px){
+  .scrollable-content{
+    height: 100% !important;
+}
+
+}
+
+@media only screen and (max-width: 545px){
+  .scrollable-content{
+    height: 100% !important;
+}
+
+}

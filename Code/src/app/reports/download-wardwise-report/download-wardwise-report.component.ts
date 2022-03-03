@@ -161,7 +161,7 @@ export class DownloadWardwiseReportComponent {
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -176,22 +176,27 @@ export class DownloadWardwiseReportComponent {
   }
 
   drawZoneAllLines() {
-    let dbPath = "Defaults/WardLines/" + this.selectedZone;
-    if (this.mapRefrence != "") {
-      dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence;
-    }
-    let wardLines = this.db.object(dbPath).valueChanges().subscribe((zoneLine) => {
-      wardLines.unsubscribe();
-      for (let i = 1; i < this.wardLines; i++) {
-        var line = zoneLine[i];
-        if (line == undefined) {
-          break;
+
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
         }
-        var path = [];
-        for (let j = 0; j < line.points.length; j++) {
-          path.push({ lat: line.points[j][0], lng: line.points[j][1] });
+      }
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        this.allLines.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
       }
       this.drawRealTimePloylines();
     });

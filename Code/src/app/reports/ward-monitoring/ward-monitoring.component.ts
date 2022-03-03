@@ -42,7 +42,7 @@ export class WardMonitoringComponent {
   selectedZoneNo: any;
   selectedZoneName: any;
   selectedDate: any;
-  zoneKML:any;
+  zoneKML: any;
   public selectedZone: any;
   marker = new google.maps.Marker();
   previousLat: any;
@@ -123,8 +123,8 @@ export class WardMonitoringComponent {
       this.selectedZone = this.selectedZoneNo;
       this.polylines = [];
       this.setMap();
-      this.setKml();
-      this.getWardLines();
+      this.setWardBoundary();
+      this.getAllLinesFromJson();
     } else {
       let errorMsg = '<span class="now-ui-icons ui-1_bell-53"></span> ' + msg;
       this.toastr.error(errorMsg, '', { timeOut: 5000, enableHtml: true, closeButton: true, toastClass: "alert alert-danger alert-with-icon", positionClass: 'toast-bottom-left' });
@@ -142,8 +142,8 @@ export class WardMonitoringComponent {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+  setWardBoundary() {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -158,83 +158,42 @@ export class WardMonitoringComponent {
   }
 
 
-  getWardLines() {
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split('-')[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-
-    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        lineMapRefrenceInstance.unsubscribe();
-        if (data != null) {
-
-          this.mapRefrence = data.toString();
-          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-
-          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.drawZoneAllLines();
-            }
-          });
-        }
-        else {
-          this.mapRefrence = "";
-          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.drawZoneAllLines();
-            }
-          });
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
         }
       }
-    );
-  }
-
-  drawZoneAllLines() {
-    //this.httpService.get('../assets/jsons/' + this.selectedZone + '.json').forEach(
-    let dbPath = "Defaults/WardLines/" + this.selectedZone;
-    if (this.mapRefrence != "") {
-      dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence;
-    }
-    let wardLines = this.db.object(dbPath).valueChanges().subscribe(
-      zoneLine => {
-        wardLines.unsubscribe();
-        var linePath = [];
-        for (let i = 1; i < this.wardLines; i++) {
-
-          var line = zoneLine[i];
-          if (line == undefined) { break; }
-          var path = [];
-          for (let j = 0; j < line.points.length; j++) {
-            path.push({ lat: line.points[j][0], lng: line.points[j][1] });
-            this.bounds.extend({ lat: line.points[j][0], lng: line.points[j][1] });
-          }
-
-          linePath.push({ lineNo: i, latlng: path, color: "#87CEFA" });
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      let linePath = [];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-
-        this.allLines = linePath;
-        this.drawRealTimePloylines();
-      });
+        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+      }
+      this.allLines = linePath;
+      this.plotLineOnMap();
+    });
   }
 
-  drawRealTimePloylines() {
-
+  plotLineOnMap() {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
-
     let dbPathLineCompleted = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectedDate + '/LineStatus';
-
     let lineCompletedRecords = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
       data => {
-
-
-        for (let index = 1; index <= this.allLines.length; index++) {
-
-          let lineData = this.allLines.find(item => item.lineNo == index);
+        for (let index = 0; index < this.allLines.length; index++) {
+          let lineData = this.allLines.find(item => item.lineNo == this.allLines[index]["lineNo"]);
           let lineColor = "#87CEFA";
           if (data != null) {
             document.getElementById('btnDownload')["disabled"] = false;
@@ -250,8 +209,6 @@ export class WardMonitoringComponent {
                 } else {
                   lineColor = "#87CEFA";
                 }
-
-
                 if (data[index]["Status"] == "LineCompleted") {
                   this.completeCount++
                 } else if (data[index]["Status"] == "PartialLineCompleted") {
@@ -259,23 +216,13 @@ export class WardMonitoringComponent {
                 } else {
                   this.skipCount++
                 }
-
-
               }
             }
           }
-
           lineData.color = lineColor;
         }
 
-        for (let index = 0; index < this.polylines.length; index++) {
-          this.polylines[index].setMap(null);
-        }
-
-        this.polylines = [];
-
         for (let index = 0; index < this.allLines.length; index++) {
-
           let lineData = this.allLines.find(item => item.lineNo == (index + 1));
           let line = new google.maps.Polyline({
             path: lineData.latlng,
@@ -290,11 +237,8 @@ export class WardMonitoringComponent {
         for (let index = 0; index < this.polylines.length; index++) {
           this.polylines[index].setMap(this.map);
         }
-        this.map.fitBounds(this.bounds);
         lineCompletedRecords.unsubscribe();
-
         this.getZoneVehicles();
-
       });
   }
 

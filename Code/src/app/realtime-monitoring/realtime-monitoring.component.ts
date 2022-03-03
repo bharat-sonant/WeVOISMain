@@ -945,8 +945,8 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.mapHalt = new google.maps.Map(document.getElementById("haltMap"), mapProp);
   }
 
-  setKmlHalt(wardNo: string) {
-    this.commonService.setKML(wardNo, this.zoneKMLHalt).then((data: any) => {
+  setWardBoundaryHalt(wardNo: string) {
+    this.commonService.getWardBoundary(wardNo, this.zoneKMLHalt).then((data: any) => {
       if (this.zoneKMLHalt != undefined) {
         this.zoneKMLHalt[0]["line"].setMap(null);
       }
@@ -1018,7 +1018,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     this.setMapHalt();
     setTimeout(() => {
-      this.setKmlHalt(this.selectedZone);
+      this.setWardBoundaryHalt(this.selectedZone);
     }, 200);
     this.getFixedGeoLocation();
     this.showBreaksOnMap();
@@ -1388,7 +1388,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (wardDetails != undefined) {
         this.wardLineStatus = wardDetails.data;
         this.workerDetails.lastUpdateTime = wardDetails.time;
-        this.getLinesFromJson();
+        this.getAllLinesFromJson();
         this.getGrpahDataTodayAndLastFiveDays(15);
       } else {
         this.getWardLineStatus();
@@ -1425,7 +1425,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       localStorage.setItem("wardLineStorage", JSON.stringify(wardLocalStorage));
       this.initTimeDistance();
       this.drawWorkProgress();
-      this.getLinesFromJson();
+      this.getAllLinesFromJson();
       this.getGrpahDataTodayAndLastFiveDays(15);
       wardLineData.unsubscribe();
     });
@@ -1691,8 +1691,8 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
 
-  setKml() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+  setWardBoundary() {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -1746,8 +1746,8 @@ export class RealtimeMonitoringComponent implements OnInit {
     });
   }
 
-  getLinesFromJson() {
-    this.setKml();
+  getAllLinesFromJson() {
+    this.setWardBoundary();
     if (this.wardLines != undefined) {
       this.wardLines.unsubscribe();
     }

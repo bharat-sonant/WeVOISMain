@@ -93,7 +93,7 @@ export class MapCardReviewComponent {
     this.selectedZone = this.zoneList[1]["zoneNo"];
     this.activeZone = this.zoneList[1]["zoneNo"];
     this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     this.onSubmit();
   }
 
@@ -126,8 +126,8 @@ export class MapCardReviewComponent {
     this.map.setMapTypeId("styled_map");
   }
 
-  setKml() {
-    this.commonService.setKML(this.selectedZone, this.zoneKML).then((data: any) => {
+  setWardBoundary() {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -148,7 +148,7 @@ export class MapCardReviewComponent {
     this.clearAllOnMap();
     this.activeZone = filterVal;
     // this.setMaps();
-    this.setKml();
+    this.setWardBoundary();
     this.progressData.houses = 0;
     this.progressData.scanedHouses = 0;
     this.onSubmit();
@@ -156,7 +156,6 @@ export class MapCardReviewComponent {
 
   onSubmit() {
     this.selectedZone = this.activeZone;
-    this.polylines = [];
     this.houseMarkerList = [];
     this.houseList = [];
     this.getAllLinesFromJson();
@@ -188,43 +187,40 @@ export class MapCardReviewComponent {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != null) {
-          this.polylines[i].setMap(null);
-        }
-      }
-    }
-    this.polylines = [];
+    
   }
 
   getAllLinesFromJson() {
     this.lines = [];
-    this.polylines = [];
-    let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-      wardLineCount.unsubscribe();
-      if (lineCount != null) {
-        this.wardLines = Number(lineCount);
-        for (let i = 1; i < Number(lineCount); i++) {
-          let wardLines = this.db.list("Defaults/WardLines/" + this.selectedZone + "/" + i + "/points").valueChanges().subscribe((zoneData) => {
-            wardLines.unsubscribe();
-            if (zoneData.length > 0) {
-              let lineData = zoneData;
-              var latLng = [];
-              for (let j = 0; j < lineData.length; j++) {
-                latLng.push({ lat: lineData[j][0], lng: lineData[j][1] });
-              }
-              this.lines.push({
-                lineNo: i,
-                latlng: latLng,
-                color: "#87CEFA",
-              });
-              this.plotLineOnMap(i, latLng, i - 1, this.selectedZone);
-            }
-          });
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
         }
       }
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      this.progressData.totalLines = Number(this.wardLines);
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+      }
     });
+
     setTimeout(() => {
       if (this.lines.length > 0) {
         let latLngArray = [];
