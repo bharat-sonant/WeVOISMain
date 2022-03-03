@@ -7,8 +7,8 @@
                 <img src="../assets/images/logo-white.svg" class="logo-2 img-fluid" alt="">
             </a>
 
-            <button class="navbar-toggler toggler-spring"><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse justify-content-end">
+            <button class="navbar-toggler toggler-spring" (click)="setNavBar();"><span class="navbar-toggler-icon"></span></button>
+            <div id="navbarCollapse" class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav navbar-mobile mr-0">
                     <li class="nav-item active nav-link" style="cursor: pointer;" (click)="getDetail('home');">Home</li>
                     <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('about');">About Us</li>

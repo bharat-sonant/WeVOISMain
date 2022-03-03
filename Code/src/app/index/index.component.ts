@@ -12,12 +12,26 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit() {
-    $('.navbar-toggler').hide();
+    //$('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     // When the user scrolls down 20px from the top of the document, show the button
     //window.onscroll = function () { this.scrollFunction() };
   }
+
+  setNavBar(){
+    let element=<HTMLDivElement>document.getElementById("navbarCollapse");
+    let className=element.className;
+    $("#navbarCollapse").removeClass(className);
+    if(className.includes("show")){
+      $("#navbarCollapse").addClass("collapse navbar-collapse justify-content-end");
+    }
+    else{
+      $("#navbarCollapse").addClass("collapse show navbar-collapse justify-content-end");
+    }
+  }
+
+
 
   scrollFunction() {
     var mybutton = document.getElementById("myBtn");
@@ -30,6 +44,7 @@ export class IndexComponent implements OnInit {
 
   getDetail(id: any) {
     document.getElementById(id).scrollIntoView();
+    this.setNavBar();
   }
 
   myFunction() {
