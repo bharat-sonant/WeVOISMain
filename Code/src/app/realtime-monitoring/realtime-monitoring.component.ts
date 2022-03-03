@@ -1067,7 +1067,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     if(detail!=undefined){
       this.selectedZoneName=detail.zoneName;
     }
-    this.selectedZoneName
     this.workerDetails.wardNo = wardNo;
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");

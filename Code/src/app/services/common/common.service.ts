@@ -986,7 +986,7 @@ export class CommonService {
                 markingWards.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
-                  markingWards.push({ zoneNo: data[index], zoneName: "58_60" });
+                  markingWards.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
                 }
                 else {
                   markingWards.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
@@ -1038,7 +1038,7 @@ export class CommonService {
                 letestZone.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
-                  letestZone.push({ zoneNo: data[index], zoneName: "58_60" });
+                  letestZone.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
                 }
                 else {
                   letestZone.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
@@ -1344,7 +1344,7 @@ export class CommonService {
                     zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking2", });
                   } else {
                     if (cityName == 'kishangarh' || data[index].toString() == "60") {
-                      zoneList.push({ zoneNo: data[index], zoneName: "58_60" });
+                      zoneList.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
                     }
                     else {
                       zoneList.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
