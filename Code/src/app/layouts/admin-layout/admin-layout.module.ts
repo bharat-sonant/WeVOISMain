@@ -112,6 +112,7 @@ import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
+import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 
 @NgModule({
   imports: [
@@ -228,7 +229,8 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
     KmlToJsonComponent,
     SalaryTransactionComponent,
     DustbinServiceComponent,
-    WardWorkTrackingComponent
+    WardWorkTrackingComponent,
+    StaffAccountDetailComponent
   ]
 })
 

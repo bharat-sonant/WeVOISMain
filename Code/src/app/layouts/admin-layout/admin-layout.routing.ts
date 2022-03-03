@@ -105,6 +105,7 @@ import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
+import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -227,6 +228,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -339,6 +341,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
 
     //jaipur-greater
@@ -452,6 +455,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-greater/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-greater/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-greater/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -564,6 +568,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-greater/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-greater/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-greater/:id/staff-account-detail', component: StaffAccountDetailComponent },
     
 
     //reengus
@@ -677,6 +682,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -789,6 +795,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -901,6 +908,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/salary-transaction', component: SalaryTransactionComponent },
     { path: 'shahpura/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'shahpura/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -1013,6 +1021,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'shahpura/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'shahpura/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1125,6 +1134,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1237,6 +1247,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1349,6 +1360,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/salary-transaction', component: SalaryTransactionComponent },
     { path: 'demo/dustbin-service', component: DustbinServiceComponent },
     { path: 'demo/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'demo/staff-account-detail', component: StaffAccountDetailComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1460,6 +1472,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'demo/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'demo/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'demo/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     
 
@@ -1574,6 +1587,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1686,4 +1700,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/:id/staff-account-detail', component: StaffAccountDetailComponent },
 ]; 

@@ -20,10 +20,15 @@ export class WardWorkTrackingComponent {
   zoneKML: any;
   selectedDate: any;
   cityName: any;
+  wardLines: any;
+  lines: any[] = [];
+  polylines = [];
+  wardLineNoMarker: any[] = [];
   progressData: progressDetail = {
 
   };
 
+  invisibleImageUrl = "../assets/img/invisible-location.svg";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
 
@@ -46,6 +51,7 @@ export class WardWorkTrackingComponent {
   getWardData() {
     $(this.divLoader).show();
     this.setWardBoundary();
+    this.getAllLinesFromJson();
   }
 
   changeZoneSelection(filterVal: any) {
@@ -69,8 +75,84 @@ export class WardWorkTrackingComponent {
         bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
       }
       this.map.fitBounds(bounds);
+    });
+  }
+
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+      if (this.wardLineNoMarker.length > 0) {
+        for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+          if (this.wardLineNoMarker[i]["marker"] != null) {
+            this.wardLineNoMarker[i]["marker"].setMap(null);
+          }
+        }
+        this.wardLineNoMarker = [];
+      }
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
+        }
+        this.polylines = [];
+      }
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      for (let i = 0; i < keyArray.length - 1; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+      }
       $(this.divLoader).hide();
     });
+  }
+
+  plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
+    if (this.polylines[index] != undefined) {
+      this.polylines[index].setMap(null);
+    }
+    let line = new google.maps.Polyline({
+      path: latlng,
+      strokeColor: this.commonService.getLineColor(null),
+      strokeWeight: 2,
+    });
+    this.polylines[index] = line;
+    this.polylines[index].setMap(this.map);
+    let lat = latlng[0]["lat"];
+    let lng = latlng[0]["lng"];
+    this.setLineNoMarker(lineNo, lat, lng);
+
+  }
+
+  setLineNoMarker(lineNo: any, lat: any, lng: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: this.invisibleImageUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(32, 40),
+        origin: new google.maps.Point(0, 0),
+      },
+      label: {
+        text: lineNo.toString(),
+        color: "#000",
+        fontSize: "10px",
+        fontWeight: "bold",
+      },
+    });
+    this.wardLineNoMarker.push({ marker });
   }
 
   setDefaultMap() {
