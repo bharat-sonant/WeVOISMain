@@ -985,7 +985,12 @@ export class CommonService {
               } else if (list[index].toString() == "CompactorTracking2") {
                 markingWards.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
-                markingWards.push({ zoneNo: list[index], zoneName: "Ward " + list[index], });
+                if (cityName == 'kishangarh' && data[index].toString() == "60") {
+                  markingWards.push({ zoneNo: data[index], zoneName: "58_60" });
+                }
+                else {
+                  markingWards.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                }
               }
             }
           }
@@ -999,6 +1004,7 @@ export class CommonService {
 
   setZones() {
     let letestZone = [];
+    let cityName = localStorage.getItem("cityName");
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
     const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
@@ -1009,11 +1015,7 @@ export class CommonService {
           if (list[index] != null) {
             if (!list[index].toString().includes("Test") && list[index] != "OfficeWork" && list[index] != "FixedWages" && list[index] != "BinLifting" && list[index] != "GarageWork" && list[index] != "Compactor" && list[index] != "SegregationWork" && list[index] != "GeelaKachra" && list[index] != "SecondHelper" && list[index] != "ThirdHelper") {
               if (list[index].toString().includes("mkt")) {
-                letestZone.push({
-                  zoneNo: list[index],
-                  zoneName:
-                    "Market " + list[index].toString().replace("mkt", ""),
-                });
+                letestZone.push({ zoneNo: list[index], zoneName: "Market " + list[index].toString().replace("mkt", ""), });
               } else if (list[index].toString().includes("MarketRoute1")) {
                 letestZone.push({ zoneNo: list[index], zoneName: "Market 1" });
               } else if (list[index].toString().includes("MarketRoute2")) {
@@ -1035,7 +1037,12 @@ export class CommonService {
               } else if (list[index].toString() == "CompactorTracking2") {
                 letestZone.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
-                letestZone.push({ zoneNo: list[index], zoneName: "Ward " + list[index], });
+                if (cityName == 'kishangarh' && data[index].toString() == "60") {
+                  letestZone.push({ zoneNo: data[index], zoneName: "58_60" });
+                }
+                else {
+                  letestZone.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                }
               }
             }
           }
@@ -1314,11 +1321,7 @@ export class CommonService {
               if (data[index] != null) {
                 if (!data[index].toString().includes("Test") && data[index] != "OfficeWork" && data[index] != "FixedWages" && data[index] != "BinLifting" && data[index] != "GarageWork" && data[index] != "Compactor" && data[index] != "SegregationWork" && data[index] != "GeelaKachra" && data[index] != "SecondHelper" && data[index] != "ThirdHelper") {
                   if (data[index].toString().includes("mkt")) {
-                    zoneList.push({
-                      zoneNo: data[index],
-                      zoneName:
-                        "Market " + data[index].toString().replace("mkt", ""),
-                    });
+                    zoneList.push({ zoneNo: data[index], zoneName: "Market " + data[index].toString().replace("mkt", ""), });
                   } else if (data[index].toString().includes("MarketRoute1")) {
                     zoneList.push({ zoneNo: data[index], zoneName: "Market 1" });
                   } else if (data[index].toString().includes("MarketRoute2")) {
@@ -1336,20 +1339,16 @@ export class CommonService {
                   } else if (data[index].toString() == "WetWaste6") {
                     zoneList.push({ zoneNo: data[index], zoneName: "Wet 6" });
                   } else if (data[index].toString() == "CompactorTracking1") {
-                    zoneList.push({
-                      zoneNo: data[index],
-                      zoneName: "CompactorTracking1",
-                    });
+                    zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking1", });
                   } else if (data[index].toString() == "CompactorTracking2") {
-                    zoneList.push({
-                      zoneNo: data[index],
-                      zoneName: "CompactorTracking2",
-                    });
+                    zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking2", });
                   } else {
-                    zoneList.push({
-                      zoneNo: data[index],
-                      zoneName: "Ward " + data[index],
-                    });
+                    if (cityName == 'kishangarh' || data[index].toString() == "60") {
+                      zoneList.push({ zoneNo: data[index], zoneName: "58_60" });
+                    }
+                    else {
+                      zoneList.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                    }
                   }
                 }
               }

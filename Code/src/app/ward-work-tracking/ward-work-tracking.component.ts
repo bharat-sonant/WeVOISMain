@@ -65,7 +65,7 @@ export class WardWorkTrackingComponent {
       this.zoneKML = data;
       this.zoneKML[0]["line"].setMap(this.map);
       const bounds = new google.maps.LatLngBounds();
-      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i = (i + 5)) {
+      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i = (i + 8)) {
         bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
       }
       this.map.fitBounds(bounds);
