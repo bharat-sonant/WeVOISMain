@@ -20,10 +20,10 @@ export class WardWorkTrackingComponent {
   zoneKML: any;
   selectedDate: any;
   cityName: any;
-  wardLines: any;
   lines: any[] = [];
   polylines = [];
   wardLineNoMarker: any[] = [];
+  strokeWeight:any=3;
   progressData: progressDetail = {
 
   };
@@ -64,7 +64,7 @@ export class WardWorkTrackingComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, this.strokeWeight).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -98,7 +98,6 @@ export class WardWorkTrackingComponent {
       }
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
-      this.wardLines = wardLines["totalLines"];
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
         let points = wardLines[lineNo]["points"];
@@ -131,7 +130,6 @@ export class WardWorkTrackingComponent {
     let lat = latlng[0]["lat"];
     let lng = latlng[0]["lng"];
     this.setLineNoMarker(lineNo, lat, lng);
-
   }
 
   setLineNoMarker(lineNo: any, lat: any, lng: any) {

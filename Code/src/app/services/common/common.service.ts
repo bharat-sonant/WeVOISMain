@@ -1237,7 +1237,7 @@ export class CommonService {
     }
    
     */
-  getWardBoundary(zoneNo: any, zoneKML: any) {
+  getWardBoundary(zoneNo: any, zoneKML: any,strokeWeight:any) {
     return new Promise((resolve) => {
       let polylines = [];
       const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
@@ -1247,10 +1247,6 @@ export class CommonService {
           zoneKML[0]["line"].setMap(null);
         }
         if (data != null) {
-          let strokeWeight = 2;
-          if (localStorage.getItem("cityName") == "jaipur-greater") {
-            strokeWeight = 8;
-          }
           let points = data["points"];
           if (points.length > 0) {
             const bounds = new google.maps.LatLngBounds();

@@ -255,7 +255,7 @@ export class RouteTrackingComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZoneNo, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZoneNo, this.zoneKML,2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }

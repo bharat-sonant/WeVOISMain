@@ -948,7 +948,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWardBoundaryHalt(wardNo: string) {
-    this.commonService.getWardBoundary(wardNo, this.zoneKMLHalt).then((data: any) => {
+    this.commonService.getWardBoundary(wardNo, this.zoneKMLHalt,2).then((data: any) => {
       if (this.zoneKMLHalt != undefined) {
         this.zoneKMLHalt[0]["line"].setMap(null);
       }
@@ -1698,7 +1698,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML,2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
