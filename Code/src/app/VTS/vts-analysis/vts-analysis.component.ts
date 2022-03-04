@@ -90,6 +90,7 @@ export class VtsAnalysisComponent implements OnInit {
   approvalName = "#approvalName";
   divApproved = "#divApproved";
   divEventHistory = "#divEventHistory";
+  boundaryPath = "../../assets/jsons/WardBoundries/jaipur-greater/";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -167,7 +168,6 @@ export class VtsAnalysisComponent implements OnInit {
     //this.checkInternetSpeed();
     this.setMaps();
     this.isBoundaryShow = true;
-    this.wardBoundary = null;
     this.vtsPolylines = [];
     this.vtsVehicleList = [];
     this.vehicleList = [];
@@ -310,8 +310,17 @@ export class VtsAnalysisComponent implements OnInit {
 
   setWardBoundary() {
     if (this.selectedWard != "0") {
-      this.commonService.setWardBoundary(this.selectedWard, this.map).then((wardKML: any) => {
-        this.wardBoundary = wardKML;
+      this.commonService.getJaipurGreaterWardBoundary(this.boundaryPath  + this.selectedWard + ".json?alt=media",this.wardBoundary,8).then((data: any) => {
+        if (this.wardBoundary != undefined) {
+          this.wardBoundary[0]["line"].setMap(null);
+        }
+        this.wardBoundary = data;
+        this.wardBoundary[0]["line"].setMap(this.map);
+        const bounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+          bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
+        }
+        this.map.fitBounds(bounds);
       });
     }
   }
@@ -320,12 +329,12 @@ export class VtsAnalysisComponent implements OnInit {
     if (this.isBoundaryShow == true) {
       this.isBoundaryShow = false;
       if (this.wardBoundary != null) {
-        this.wardBoundary[0].setMap(null);
+        this.wardBoundary[0]["line"].setMap(null);
       }
     }
     else {
       this.isBoundaryShow = true;
-      this.wardBoundary[0].setMap(this.map);
+      this.wardBoundary[0]["line"].setMap(this.map);
     }
     this.showHideBoundariesHtml();
     this.hideSetting();

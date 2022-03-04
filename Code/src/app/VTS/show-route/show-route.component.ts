@@ -41,9 +41,9 @@ export class ShowRouteComponent implements OnInit {
   nggjWardLinesPath = "../../assets/jsons/WardLines/nggj/";
   wardLinesPath = "../../assets/jsons/WardLines/jaipur-greater/";
   
-  bvgBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
-  nggjBoundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FNGGJWardBoundryJson%2F";
-  boundaryPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWardBoundryJson%2F";
+  bvgBoundaryPath = "../../assets/jsons/WardBoundries/jaipur-greater/";
+  nggjBoundaryPath = "../../assets/jsons/WardBoundries/nggj/";
+  boundaryPath = "../../assets/jsons/WardBoundries/jaipur-greater/";
 
   bvgRoutePath="Route/";
   nggjRoutePath="NGGJRoute/";
@@ -107,10 +107,6 @@ export class ShowRouteComponent implements OnInit {
       }
     }
     this.polylines = [];
-    if (this.wardBoundary != null) {
-      this.wardBoundary[0].setMap(null);
-    }
-    this.wardBoundary = null;
   }
 
   getCurrentStrokeWeight(event: any) {
@@ -410,8 +406,17 @@ export class ShowRouteComponent implements OnInit {
   }
 
   setWardBoundary() {
-    this.commonService.setJaipurGreaterWardBoundary(this.map, this.boundaryPath + + this.selectedWard + ".json?alt=media").then((wardKML: any) => {
-      this.wardBoundary = wardKML;
+    this.commonService.getJaipurGreaterWardBoundary(this.boundaryPath  + this.selectedWard + ".json?alt=media",this.wardBoundary,8).then((data: any) => {
+      if (this.wardBoundary != undefined) {
+        this.wardBoundary[0]["line"].setMap(null);
+      }
+      this.wardBoundary = data;
+      this.wardBoundary[0]["line"].setMap(this.map);
+      const bounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+        bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
+      }
+      this.map.fitBounds(bounds);
     });
   }
 

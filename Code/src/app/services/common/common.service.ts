@@ -1199,44 +1199,6 @@ export class CommonService {
     }
   }
 
-  /*
-    setKML(zoneNo: any, zoneKML: any) {
-      return new Promise((resolve) => {
-        let polylines = [];
-        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
-        let kmlInstance = this.httpService.get(path).subscribe(data => {
-          kmlInstance.unsubscribe();
-          if (zoneKML != undefined) {
-            zoneKML[0]["line"].setMap(null);
-          }
-          if (data != null) {
-            let strokeWeight = 2;
-            if (localStorage.getItem("cityName") == "jaipur-greater") {
-              strokeWeight = 8;
-            }
-            let points = data["points"];
-            if (points.length > 0) {
-              const bounds = new google.maps.LatLngBounds();
-              var latLng = [];
-              for (let j = 0; j < points.length; j++) {
-                latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-                bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-              }
-              let line = new google.maps.Polyline({
-                path: latLng,
-                strokeColor: "black",
-                strokeWeight: strokeWeight,
-              });
-              polylines.push({ line: line, latLng: latLng });
-              resolve(polylines);
-            }
-          }
-        });
-   
-      });
-    }
-   
-    */
   getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
     return new Promise((resolve) => {
       let polylines = [];
@@ -1269,33 +1231,6 @@ export class CommonService {
 
 
       });
-/*
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
-      let kmlInstance = this.httpService.get(path).subscribe(data => {
-        kmlInstance.unsubscribe();
-        if (zoneKML != undefined) {
-          zoneKML[0]["line"].setMap(null);
-        }
-        if (data != null) {
-          let points = data["points"];
-          if (points.length > 0) {
-            const bounds = new google.maps.LatLngBounds();
-            var latLng = [];
-            for (let j = 0; j < points.length; j++) {
-              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-            }
-            let line = new google.maps.Polyline({
-              path: latLng,
-              strokeColor: "black",
-              strokeWeight: strokeWeight,
-            });
-            polylines.push({ line: line, latLng: latLng });
-            resolve(polylines);
-          }
-        }
-      });
-*/
 
     });
   }
@@ -1504,9 +1439,6 @@ export class CommonService {
       if (cityName == "demo") {
         cityName = "jaipur"
       }
-
-
-
       const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
@@ -1535,12 +1467,41 @@ export class CommonService {
     });
   }
 
+  getJaipurGreaterWardBoundary(boundaryPath: any, boundary: any, strokeWeight: any) {
+    return new Promise((resolve) => {
+      let polylines = [];
+      this.httpService.get(boundaryPath + ".json").subscribe(data => {
+        if (boundary != undefined) {
+          boundary[0]["line"].setMap(null);
+        }
+        if (data != null) {
+          let points = data["points"];
+          if (points.length > 0) {
+            const bounds = new google.maps.LatLngBounds();
+            var latLng = [];
+            for (let j = 0; j < points.length; j++) {
+              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+            }
+            let line = new google.maps.Polyline({
+              path: latLng,
+              strokeColor: "black",
+              strokeWeight: strokeWeight,
+            });
+            polylines.push({ line: line, latLng: latLng });
+            resolve(polylines);
+          }
+        }
+      });
+    });
+  }
+
 
   setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
     return new Promise((resolve) => {
       const path = boundaryPath;
-      let fuelInstance = this.httpService.get(path).subscribe(data => {
-        fuelInstance.unsubscribe();
+      let boundaryInstance = this.httpService.get(path).subscribe(data => {
+        boundaryInstance.unsubscribe();
         if (data != null) {
           let strokeWeight = 8;
           let points = data["points"];
