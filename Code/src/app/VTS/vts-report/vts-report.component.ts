@@ -6,7 +6,6 @@ import { CommonService } from '../../services/common/common.service';
 import * as CanvasJS from '../../../assets/canvasjs.min';
 import * as $ from "jquery";
 import { FirebaseService } from "../../firebase.service";
-import { AnyRecord } from 'dns';
 
 @Component({
   selector: 'app-vts-report',
