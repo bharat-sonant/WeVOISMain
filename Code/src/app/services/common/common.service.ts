@@ -1548,12 +1548,59 @@ export class CommonService {
             }
           }
         }
-        const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-        let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-          wardLineInstance.unsubscribe();
-          if (data != null) {
-            resolve(JSON.stringify(data));
+        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
+          resolve(JSON.stringify(data));
+        }, error => {
+          const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+            wardLineInstance.unsubscribe();
+            if (data != null) {
+              resolve(JSON.stringify(data));
+            }
+          });
+        });
+      });
+    });
+  }
+
+
+  getWardLineJson(zoneNo: any, date: any, wardLines: any) {
+    return new Promise((resolve) => {
+      let dat1 = new Date(date);
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryjson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        if (wardLines.length != undefined) {
+          for (let i = 0; i < wardLines.length; i++) {
+            if (wardLines[i] != undefined) {
+              wardLines[i].setMap(null);
+            }
           }
+        }
+        jsonInstance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(dataDate));
+        let jsonDate = "";
+        if (list.length == 1) {
+          jsonDate = list[0].toString().trim();
+        }
+        else {
+          for (let i = list.length - 1; i >= 0; i--) {
+            let dat2 = new Date(list[i]);
+            if (dat1 >= dat2) {
+              jsonDate = list[i].toString().trim();
+              i = -1;
+            }
+          }
+        }
+        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
+          resolve(JSON.stringify(data));
+        }, error => {
+          const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+            wardLineInstance.unsubscribe();
+            if (data != null) {
+              resolve(JSON.stringify(data));
+            }
+          });
         });
       });
     });

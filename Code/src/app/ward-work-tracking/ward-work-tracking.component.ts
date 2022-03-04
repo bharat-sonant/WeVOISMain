@@ -79,7 +79,7 @@ export class WardWorkTrackingComponent {
   }
 
   getAllLinesFromJson() {
-    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((data: any) => {
+    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate,this.polylines).then((data: any) => {
       if (this.wardLineNoMarker.length > 0) {
         for (let i = 0; i < this.wardLineNoMarker.length; i++) {
           if (this.wardLineNoMarker[i]["marker"] != null) {
@@ -117,9 +117,6 @@ export class WardWorkTrackingComponent {
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
-    if (this.polylines[index] != undefined) {
-      this.polylines[index].setMap(null);
-    }
     let line = new google.maps.Polyline({
       path: latlng,
       strokeColor: this.commonService.getLineColor(null),
