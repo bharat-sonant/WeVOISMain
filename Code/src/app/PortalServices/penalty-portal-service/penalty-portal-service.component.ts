@@ -94,6 +94,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
                   let empId = empList[j];
                   this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
                     let name = employee["name"];
+                    let empCode=employee["empCode"];
                     let createdBy = empObj[empId]["createdBy"];
                     let createdOn = empObj[empId]["createdOn"];
                     let penaltyType = empObj[empId]["penaltyType"];
@@ -106,7 +107,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
                         if (empData != null) {
                           createdBy = empData;
                         }
-                        this.penaltyList.push({ name: name, empId: empId, date: date, amount: amount, createdOn: createdOn, penaltyType: penaltyType, reason: reason, createdBy: createdBy });
+                        this.penaltyList.push({ name: name, empId: empId,empCode:empCode, date: date, amount: amount, createdOn: createdOn, penaltyType: penaltyType, reason: reason, createdBy: createdBy });
                       }
                     );
                   });
@@ -151,7 +152,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
               const bb = [];
               if (list2.length > 0) {
                 for (let k = 0; k < list2.length; k++) {
-                  bb.push({ name: list2[k]["name"], empId: list2[k]["empId"], amount: list2[k]["amount"], createdOn: list2[k]["createdOn"], penaltyType: list2[k]["penaltyType"], reason: list2[k]["reason"], createdBy: list2[k]["createdBy"] });
+                  bb.push({ name: list2[k]["name"], empId: list2[k]["empId"], empCode:list2[k]["empCode"], amount: list2[k]["amount"], createdOn: list2[k]["createdOn"], penaltyType: list2[k]["penaltyType"], reason: list2[k]["reason"], createdBy: list2[k]["createdBy"] });
                 }
               }
               objDate[date] = bb;
