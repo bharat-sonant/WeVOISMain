@@ -39,8 +39,8 @@ export class DownloadCollectionReportComponent {
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
-  zoneKML:any;
-  toDayDate:any;
+  zoneKML: any;
+  toDayDate: any;
 
   public selectedZone: any;
   marker = new google.maps.Marker();
@@ -133,7 +133,7 @@ export class DownloadCollectionReportComponent {
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML,2).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -161,13 +161,16 @@ export class DownloadCollectionReportComponent {
       let keyArray = Object.keys(wardLines);
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
         }
-        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
-      }      
+        catch { }
+      }
       this.drawRealTimePloylines();
     });
   }

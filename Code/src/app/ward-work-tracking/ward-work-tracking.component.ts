@@ -23,7 +23,7 @@ export class WardWorkTrackingComponent {
   lines: any[] = [];
   polylines = [];
   wardLineNoMarker: any[] = [];
-  strokeWeight:any=3;
+  strokeWeight: any = 3;
   progressData: progressDetail = {
 
   };
@@ -78,39 +78,46 @@ export class WardWorkTrackingComponent {
     });
   }
 
+  clearMapAll() {
+    if (this.wardLineNoMarker.length > 0) {
+      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if (this.wardLineNoMarker[i]["marker"] != null) {
+          this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
+      }
+      this.wardLineNoMarker = [];
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
+      }
+      this.polylines = [];
+    }
+  }
+
   getAllLinesFromJson() {
-    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate,this.polylines).then((data: any) => {
-      if (this.wardLineNoMarker.length > 0) {
-        for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-          if (this.wardLineNoMarker[i]["marker"] != null) {
-            this.wardLineNoMarker[i]["marker"].setMap(null);
-          }
-        }
-        this.wardLineNoMarker = [];
-      }
-      if (this.polylines.length > 0) {
-        for (let i = 0; i < this.polylines.length; i++) {
-          if (this.polylines[i] != null) {
-            this.polylines[i].setMap(null);
-          }
-        }
-        this.polylines = [];
-      }
+    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate, this.polylines).then((data: any) => {
+      this.clearMapAll();
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({
+            lineNo: lineNo,
+            latlng: latLng,
+            color: "#87CEFA",
+          });
+          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1);
         }
-        this.lines.push({
-          lineNo: lineNo,
-          latlng: latLng,
-          color: "#87CEFA",
-        });
-        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1);
+        catch { }
       }
       $(this.divLoader).hide();
     });

@@ -13,7 +13,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 @Component({
   selector: "app-maps",
   templateUrl: "./maps.component.html",
-  styleUrls: ["./maps.component.css"], 
+  styleUrls: ["./maps.component.css"],
 })
 export class MapsComponent {
   @ViewChild("gmap", null) gmap: any;
@@ -414,7 +414,7 @@ export class MapsComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML,2).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -503,51 +503,54 @@ export class MapsComponent {
       this.progressData.totalLines = Number(this.wardLines);
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
-        }
-        this.lines.push({
-          lineNo: lineNo,
-          latlng: latLng,
-          color: "#87CEFA",
-        });
-        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
-        if (this.wardStartMarker == null) {
-          if (lineNo == Number(this.wardLines)) {
-            let latLngArray = [];
-            latLngArray = this.lines[0]["latlng"];
-            let lat = latLngArray[0]["lat"];
-            let lng = latLngArray[0]["lng"];
-            this.wardStartMarker = new google.maps.Marker({
-              position: { lat: Number(lat), lng: Number(lng) },
-              map: this.map,
-              icon: {
-                url: this.wardStartUrl,
-                fillOpacity: 1,
-                strokeWeight: 0,
-                scaledSize: new google.maps.Size(32, 40),
-                origin: new google.maps.Point(0, 0),
-              },
-            });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({
+            lineNo: lineNo,
+            latlng: latLng,
+            color: "#87CEFA",
+          });
+          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+          if (this.wardStartMarker == null) {
+            if (lineNo == Number(this.wardLines)) {
+              let latLngArray = [];
+              latLngArray = this.lines[0]["latlng"];
+              let lat = latLngArray[0]["lat"];
+              let lng = latLngArray[0]["lng"];
+              this.wardStartMarker = new google.maps.Marker({
+                position: { lat: Number(lat), lng: Number(lng) },
+                map: this.map,
+                icon: {
+                  url: this.wardStartUrl,
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scaledSize: new google.maps.Size(32, 40),
+                  origin: new google.maps.Point(0, 0),
+                },
+              });
 
-            latLngArray = this.lines[this.lines.length - 1]["latlng"];
-            lat = latLngArray[latLngArray.length - 1]["lat"];
-            lng = latLngArray[latLngArray.length - 1]["lng"];
-            this.wardEndMarker = new google.maps.Marker({
-              position: { lat: Number(lat), lng: Number(lng) },
-              map: this.map,
-              icon: {
-                url: this.wardEndUrl,
-                fillOpacity: 1,
-                strokeWeight: 0,
-                scaledSize: new google.maps.Size(32, 40),
-                origin: new google.maps.Point(0, 0),
-              },
-            });
+              latLngArray = this.lines[this.lines.length - 1]["latlng"];
+              lat = latLngArray[latLngArray.length - 1]["lat"];
+              lng = latLngArray[latLngArray.length - 1]["lng"];
+              this.wardEndMarker = new google.maps.Marker({
+                position: { lat: Number(lat), lng: Number(lng) },
+                map: this.map,
+                icon: {
+                  url: this.wardEndUrl,
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                  scaledSize: new google.maps.Size(32, 40),
+                  origin: new google.maps.Point(0, 0),
+                },
+              });
+            }
           }
         }
+        catch { }
       }
     });
   }
