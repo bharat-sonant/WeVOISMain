@@ -45,6 +45,7 @@ export class LogoutComponent implements OnInit {
     localStorage.removeItem("jmapWardSummaryList");
     localStorage.removeItem("loginDate");
     localStorage.removeItem("vtsUserList");
+    localStorage.removeItem("wardLineUpdateList");
     if (this.commonService.notificationInterval != null) {
       this.commonService.notificationInterval.unsubscribe();
     }

@@ -192,7 +192,7 @@ export class SidebarComponent implements OnInit {
   }
 
   changeCity(cityName: any) {
-
+    localStorage.removeItem("wardLineUpdateList");
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
