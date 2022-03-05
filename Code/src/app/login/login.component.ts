@@ -108,6 +108,11 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("isActual", "0");
       }
+      if (userDetails.isLock != 0) {
+        localStorage.setItem("isLock", userDetails.isLock);
+      } else {
+        localStorage.setItem("isLock", "0");
+      }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);
