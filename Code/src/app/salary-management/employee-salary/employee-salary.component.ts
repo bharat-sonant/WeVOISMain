@@ -258,24 +258,32 @@ export class EmployeeSalaryComponent implements OnInit {
           }
         }
       }
-    });    
+    });
   }
 
   getTransferedSalary() {
     if (this.allSalaryList.length > 0) {
       for (let i = 0; i < this.allSalaryList.length; i++) {
         let empId = this.allSalaryList[i]["empId"];
-        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId).get().subscribe(
-          (ss) => {
-            let transferedAmount = 0;
-            ss.forEach(function (doc) {
-              transferedAmount += Number(doc.data()["amount"]);
-            });
-            this.updateSalaryList(empId, transferedAmount, "transfered");
-            if (i == this.allSalaryList.length - 1) {
-              this.getFinalAmount();
+        const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + this.selectedYear + "%2F" + empId + ".json?alt=media";
+        let transferredInstance = this.httpService.get(path).subscribe(data => {
+          transferredInstance.unsubscribe();
+          if (data != null) {
+            let empTransactionObj = JSON.parse(JSON.stringify(data));
+            let keyArray = Object.keys(empTransactionObj);
+            let transferredAmount = 0;
+            for (let j = 0; j < keyArray.length; j++) {
+              let date = keyArray[j];
+              if (empTransactionObj[date]["month"] == this.selectedMonthName) {
+                transferredAmount += Number(empTransactionObj[date]["amount"]);
+              }
             }
-          });
+            this.updateSalaryList(empId, transferredAmount, "transfered");
+          }
+        });
+        if (i == this.allSalaryList.length - 1) {
+          this.getFinalAmount();
+        }
       }
     }
   }
