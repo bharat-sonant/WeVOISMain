@@ -98,8 +98,8 @@ export class WardWorkTrackingComponent {
   }
 
   getAllLinesFromJson() {
+    this.clearMapAll();
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((data: any) => {
-      this.clearMapAll();
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       for (let i = 0; i < keyArray.length - 1; i++) {

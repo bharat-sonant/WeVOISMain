@@ -1600,22 +1600,14 @@ export class CommonService {
         }
       }
       if (jsonDate == "") {
-        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/mapUpdateHistoryJson.json").subscribe(data => {
-          let list = JSON.parse(JSON.stringify(data));
+        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
+        let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+          jsonInstance.unsubscribe();
+          let list = JSON.parse(JSON.stringify(dataDate));
           this.setMapUpdateHistoryLocalStorage(zoneNo, list);
           jsonDate = this.getJSONDate(list, date);
           resolve(jsonDate);
-        }, error => {
-          const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
-          let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
-            jsonInstance.unsubscribe();
-            let list = JSON.parse(JSON.stringify(dataDate));
-            this.setMapUpdateHistoryLocalStorage(zoneNo, list);
-            jsonDate = this.getJSONDate(list, date);
-            resolve(jsonDate);
-          });
         });
-
       }
     });
   }
