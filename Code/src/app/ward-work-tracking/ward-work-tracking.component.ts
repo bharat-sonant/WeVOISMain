@@ -47,6 +47,21 @@ export class WardWorkTrackingComponent {
       this.selectedZone = "0";
     });
   }
+  
+  setDate(filterVal: any, type: string) {
+    if (type == "current") {
+      this.selectedDate = filterVal;
+    } else if (type == "next") {
+      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
+      this.selectedDate = nextDate;
+    } else if (type == "previous") {
+      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
+      this.selectedDate = previousDate;
+    }
+    $(this.txtDate).val(this.selectedDate);
+    this.currentYear = this.selectedDate.split("-")[0];
+    this.getWardData();
+  }
 
   getWardData() {
     $(this.divLoader).show();

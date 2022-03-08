@@ -1535,7 +1535,7 @@ export class CommonService {
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       let dat1 = new Date(date);
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryjson.json?alt=media";
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         let list = JSON.parse(JSON.stringify(dataDate));
