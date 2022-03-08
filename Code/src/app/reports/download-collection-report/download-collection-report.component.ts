@@ -169,7 +169,9 @@ export class DownloadCollectionReportComponent {
           }
           this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
         }
-        catch { }
+        catch {
+
+        }
       }
       this.drawRealTimePloylines();
     });
@@ -225,31 +227,7 @@ export class DownloadCollectionReportComponent {
   getWardAssignmentInformation() {
     this.currentYear = this.selectedDate.split("-")[0];
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-
-    if (new Date(this.selectedDate) < new Date("2019-08-01")) {
-      let driverDataDbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/DriverData";
-      let driverInfo = this.db.object(driverDataDbPath).valueChanges().subscribe((driverData) => {
-        // Set Driver details
-        this.reportData.driverName = driverData != null ? driverData["dName"] : "Not Assigned";
-        this.reportData.vehicleNo = driverData != null ? driverData["vNo"] : "Not Assigned";
-
-        driverInfo.unsubscribe();
-
-        let ReaderDataPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedDate + "/ReaderData";
-        let readerInfo = this.db.object(ReaderDataPath).valueChanges().subscribe((readerData) => {
-          // Set Driver helper Details
-          this.reportData.helperName =
-            readerData != null ? readerData["dName"] : "Not Assigned";
-          this.reportData.zoneName = this.selectedZoneName;
-          this.reportData.reportDate = this.selectedDate;
-
-          this.drawChart();
-          readerInfo.unsubscribe();
-        });
-      });
-    } else {
       let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/WorkerDetails";
-
       let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
         workDetails.unsubscribe();
         if (workerData != null) {
@@ -274,7 +252,7 @@ export class DownloadCollectionReportComponent {
           this.drawChart();
         }
       });
-    }
+    
   }
 
   drawChart() {
