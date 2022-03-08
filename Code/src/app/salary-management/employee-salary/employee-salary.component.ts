@@ -104,7 +104,7 @@ export class EmployeeSalaryComponent implements OnInit {
       if (data != null) {
         let salaryList = [];
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType==2);
         if (list.length > 0) {
           for (let i = 0; i < list.length; i++) {
             let empId = list[i]["empId"];

@@ -1,1 +1,249 @@
-<p>staff-account-detail works!</p>
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers">
+            Account Detail
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlDesignation"
+                                        (change)="filterData()">
+                                        <option value="all">
+                                            All Roles
+                                        </option>
+                                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                                            {{dt.designation}}
+                                        </option>
+                                    </select>
+
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
+                                        <option value="all">
+                                            All Employee
+                                        </option>
+                                        <option selected value="active">
+                                            Active
+                                        </option>
+                                        <option value="inactive">
+                                            In-active
+                                        </option>
+                                    </select>
+
+                                    <span style="float: right; margin-bottom: -10px;">
+                                        <span>
+                                            <label class="main-label">
+
+                                                <span class="main-span">
+                                                    <span> {{remarkDetail.lastUpdate}}</span> <br>Last update by
+                                                    {{remarkDetail.lastUpdateBy}}</span>
+                                                <i class="fas fa-sync"
+                                                    style="color: green; font-size: 30px; cursor: pointer; "
+                                                    (click)="updateAccountJson();"></i></label></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Role</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Account Number</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                IFSC</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Salary</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Last Modified Date</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Modified By</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Action
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
+                                                <td class="text-left br-1">
+                                                    <i class="fas fa-circle" style="color:red"
+                                                        [hidden]="data.status==1"></i>
+                                                    {{data.name}} <b>[{{data.empCode}}]</b>
+                                                    &nbsp;
+                                                    <i class="far fa-flag"
+                                                        style="color:red; font-size: 15px; float: right; cursor: pointer;"
+                                                        [hidden]="data.remark==null"
+                                                        (click)="openModel(contentShowRemarks,data.empId,'remarkDetail');"></i>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.designation}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.accountNo}} </td>
+                                                <td class="text-left br-1">
+                                                    {{data.ifsc}}</td>
+                                                <td class="text-left br-1">
+                                                    <div [innerHTML]="getDecrypted(data.salary)" class="rowWidth"></div>
+                                                    </td>
+                                                <td class="text-left br-1">
+                                                    {{data.modifyDate}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.modifyBy}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <i class="far fa-edit" [hidden]="data.isLock==1"
+                                                        (click)="openModel(contentEmployee,data.empId,'account');"
+                                                        title="Edit Entry"
+                                                        style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
+                                                    &nbsp;
+                                                    <i class="fas fa-registered"
+                                                        style="cursor: pointer;font-size: 20px; color: green;"
+                                                        (click)="openModel(contentRemarks,data.empId,'remark');"></i>
+                                                    &nbsp;
+                                                    <span [hidden]="isLockUnlock==0">
+                                                        <i class="fas fa-lock"
+                                                            (click)="setLockUnlock(data.empId,'unlock');"
+                                                            style="color:red; font-size:14px; cursor: pointer;"
+                                                            [hidden]="data.isLock==0"></i>
+                                                        &nbsp;
+                                                        <i class="fas fa-unlock"
+                                                            (click)="setLockUnlock(data.empId,'lock');"
+                                                            style="color:green; font-size:14px; cursor: pointer;"
+                                                            [hidden]="data.isLock==1"></i>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!--employee  Start-->
+<ng-template #contentEmployee>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Account Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <input id="preAccountNo" type="hidden" value="" />
+                <input id="preIFSC" type="hidden" value="" />
+                <input id="preSalary" type="hidden" value="" />
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtAccountNo" class="input-green" placeholder="Account No." />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtIFSC" class="input-green" placeholder="IFSC" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="number" id="txtSalary" class="input-green" placeholder="Monthly Salary" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-rupee-sign" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveAccountDetail();" style="height: 45px;margin-left: 0px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
+
+<!--employee  Start-->
+<ng-template #contentRemarks>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <textarea id="txtRemarks" rows="5" class="input-remark" placeholder="Remarks"></textarea>
+                </div>
+                <div id="divSolved" class="wrap-input-effects" style="display:block">
+                    <input id="chkSolved" type="checkbox">&nbsp;Is Solved?
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveRemarks();" style="height: 45px;margin-left: 0px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
+
+
+<!--employee  Start-->
+<ng-template #contentShowRemarks>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrap-input-effects" style="font-size: 16px; min-height: 120px;">
+                    {{remarkDetail.remark}}<br />
+                </div>
+                <span style="font-size: 12px; float: right;">
+                    By {{remarkDetail.by}} on {{remarkDetail.date}}</span>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->

@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
@@ -75,7 +76,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
       employeeInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        this.allEmployeeList = JSON.parse(jsonData);
+        this.allEmployeeList = JSON.parse(jsonData).filter(item=>item.empType=2);
         for (let i = 0; i < this.allEmployeeList.length; i++) {
           if (this.allEmployeeList[i]["status"] == "1") {
             let empId = this.allEmployeeList[i]["empId"];

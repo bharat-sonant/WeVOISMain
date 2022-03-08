@@ -100,7 +100,8 @@ export class AccountDetailComponent implements OnInit {
       accountInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType==2);
+         
         this.allAccountList = this.commonService.transformNumeric(list, "name");
         this.getRoles();
         this.getAccountIssue();
@@ -516,21 +517,24 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
                 let designation = "";
+                let empType=1;
                 if (this.designationUpdateList.length > 0) {
                   let detail = this.designationUpdateList.find(item => item.designationId == designationId);
                   if (detail != undefined) {
                     if (detail.designation == "Transportation Executive") {
                       designation = "Driver";
+                      empType=2;
                     }
                     else if (detail.designation == "Service Excecutive ") {
                       designation = "Helper";
+                      empType=2;
                     }
                     else {
                       designation = detail.designation;
                     }
                   }
                 }
-                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock });
+                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock,empType:empType });
               }
             }
             this.saveJSONData();

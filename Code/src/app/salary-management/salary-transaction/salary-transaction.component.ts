@@ -130,7 +130,7 @@ export class SalaryTransactionComponent implements OnInit {
       employeeInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType=2);
         this.allEmployeeList = this.commonService.transformNumeric(list, "name");
         let activeList = this.allEmployeeList.filter(item => item.status == "1");
         if (activeList.length > 0) {
