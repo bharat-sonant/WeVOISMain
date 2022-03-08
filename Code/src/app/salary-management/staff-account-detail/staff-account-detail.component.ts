@@ -48,27 +48,6 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    var encrypted = this.commonService.setEncrypt('123456$#@$^@1ERF', '70000');
-    var decrypted = this.commonService.getEncrypt('123456$#@$^@1ERF', encrypted);
-
-    console.log('Encrypted :' + encrypted);
-    console.log('Encrypted :' + decrypted);
-
-
-    var encrypted = this.commonService.setEncrypt('123456$#@$^@1ERF', '50000');
-    var decrypted = this.commonService.getEncrypt('123456$#@$^@1ERF', encrypted);
-
-    console.log('Encrypted :' + encrypted);
-    console.log('Encrypted :' + decrypted);
-
-    var encrypted = this.commonService.setEncrypt('123456$#@$^@1ERF', '30000');
-    var decrypted = this.commonService.getEncrypt('123456$#@$^@1ERF', encrypted);
-
-    console.log('Encrypted :' + encrypted);
-    console.log('Encrypted :' + decrypted);
-
-
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
