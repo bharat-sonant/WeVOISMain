@@ -28,7 +28,6 @@ export class WardWorkTrackingComponent {
   strokeWeight: any = 3;
   showLineNoText = "#showLineNoText";
   isLineNoShow = false;
-  userType: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -50,13 +49,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    if (localStorage.getItem("userType") == "External User") {
-      $(this.divLinesShowHide).hide();
-    }
-    if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
-      this.isLineNoShow = true;
-      this.showHideLineNoHtml();
-    }
+    this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
@@ -66,6 +59,16 @@ export class WardWorkTrackingComponent {
     this.getZones().then(() => {
       this.selectedZone = "0";
     });
+  }
+
+  getLocalStorage(){
+    if (localStorage.getItem("userType") == "External User") {
+      $(this.divLinesShowHide).hide();
+    }
+    if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
+      this.isLineNoShow = true;
+      this.showHideLineNoHtml();
+    }
   }
 
   setDate(filterVal: any, type: string) {
