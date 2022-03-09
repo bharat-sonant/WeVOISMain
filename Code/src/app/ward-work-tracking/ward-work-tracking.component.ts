@@ -16,8 +16,10 @@ export class WardWorkTrackingComponent {
   db: any;
   public selectedZone: any;
   zoneList: any[];
-  currentYear: any;
+  selectedYear: any;
+  selectedMonthName: any;
   zoneKML: any;
+  toDayDate: any;
   selectedDate: any;
   cityName: any;
   lines: any[] = [];
@@ -26,14 +28,20 @@ export class WardWorkTrackingComponent {
   strokeWeight: any = 3;
   showLineNoText = "#showLineNoText";
   isLineNoShow = false;
-  txtStrokeWeight = "#txtStrokeWeight";
+  userType: any;
   progressData: progressDetail = {
-
+    totalLines: 0,
+    completedLines: 0,
+    skippedLines: 0,
+    currentLine: 0,
+    wardLength: "0",
+    coveredLength: "0"
   };
 
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
+  divLinesShowHide = "#divLinesShowHide";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -42,8 +50,17 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    this.selectedDate = this.commonService.setTodayDate();
+    if (localStorage.getItem("userType") == "External User") {
+      $(this.divLinesShowHide).hide();
+    }
+    if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
+      this.isLineNoShow = true;
+      this.showHideLineNoHtml();
+    }
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
+    this.getSelectedYearMonth();
     this.setHeight();
     this.setDefaultMap();
     this.getZones().then(() => {
@@ -62,13 +79,21 @@ export class WardWorkTrackingComponent {
       this.selectedDate = previousDate;
     }
     $(this.txtDate).val(this.selectedDate);
-    this.currentYear = this.selectedDate.split("-")[0];
+    this.getSelectedYearMonth();
     this.getWardData();
+  }
+
+  getSelectedYearMonth() {
+    this.selectedYear = this.selectedDate.split("-")[0];
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
   }
 
   getWardData() {
     this.resetData();
     $(this.divLoader).show();
+    this.getCurrentLine();
+    this.getSummaryData();
+    this.getWardTotalLength();
     this.setWardBoundary();
     this.getAllLinesFromJson();
   }
@@ -83,8 +108,12 @@ export class WardWorkTrackingComponent {
   }
 
   resetData() {
-    this.isLineNoShow = false;
-    $(this.showLineNoText).html("Show Line No.");
+    this.progressData.completedLines = 0;
+    this.progressData.coveredLength = "0";
+    this.progressData.currentLine = 0;
+    this.progressData.skippedLines = 0;
+    this.progressData.totalLines = 0;
+    this.progressData.wardLength = "0";
   }
 
   setWardBoundary() {
@@ -126,35 +155,47 @@ export class WardWorkTrackingComponent {
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((data: any) => {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
+      this.progressData.totalLines = wardLines["totalLines"];
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-          let points = wardLines[lineNo]["points"];
-          var latLng = [];
-          for (let j = 0; j < points.length; j++) {
-            latLng.push({ lat: points[j][0], lng: points[j][1] });
-          }
-          this.lines.push({
-            lineNo: lineNo,
-            latlng: latLng,
-            color: "#87CEFA",
-          });
-          this.plotLineOnMap(lineNo, latLng, i);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, i);
       }
       $(this.divLoader).hide();
     });
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
-    let line = new google.maps.Polyline({
-      path: latlng,
-      strokeColor: this.commonService.getLineColor(null),
-      strokeWeight: 2,
+    let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
+    let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineStatus) => {
+      lineStatusInstance.unsubscribe();
+      let strokeColor = this.commonService.getLineColor(null);
+      if (lineStatus != null) {
+        strokeColor = this.commonService.getLineColor(lineStatus);
+        if (lineStatus == "LineCompleted") {
+          this.progressData.completedLines = this.progressData.completedLines + 1;
+        }
+      }
+      let line = new google.maps.Polyline({
+        path: latlng,
+        strokeColor: strokeColor,
+        strokeWeight: 2,
+      });
+      this.polylines[index] = line;
+      this.polylines[index].setMap(this.map);
+      let lat = latlng[0]["lat"];
+      let lng = latlng[0]["lng"];
+      this.setLineNoMarker(lineNo, lat, lng);
     });
-    this.polylines[index] = line;
-    this.polylines[index].setMap(this.map);
-    let lat = latlng[0]["lat"];
-    let lng = latlng[0]["lng"];
-    this.setLineNoMarker(lineNo, lat, lng);
   }
 
   setLineNoMarker(lineNo: any, lat: any, lng: any) {
@@ -175,10 +216,52 @@ export class WardWorkTrackingComponent {
         fontWeight: "bold",
       },
     });
-
-    marker.setMap(null);
-
+    if (this.isLineNoShow == false) {
+      marker.setMap(null);
+    }
     this.wardLineNoMarker.push({ marker });
+  }
+
+  getSummaryData() {
+    let workSummarydbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+    let workSummaryInstance = this.db.object(workSummarydbPath).valueChanges().subscribe((workSummary) => {
+      workSummaryInstance.unsubscribe();
+      if (workSummary != null) {
+        if (workSummary["skippedLines"] != null) {
+          this.progressData.skippedLines = workSummary["skippedLines"];
+        } else {
+          this.progressData.skippedLines = 0;
+        }
+        if (workSummary["wardCoveredDistance"] != null) {
+          this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
+        } else {
+          this.progressData.coveredLength = "0.00";
+        }
+      }
+    });
+  }
+
+  getCurrentLine() {
+    if (this.selectedDate == this.toDayDate) {
+      let lastLineInstance = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
+        lastLineInstance.unsubscribe();
+        if (lastLine != null) {
+          this.progressData.currentLine = Number(lastLine) + 1;
+        }
+      });
+    }
+  }
+
+  getWardTotalLength() {
+    let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
+    let wardLengthInstance = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
+      wardLengthInstance.unsubscribe();
+      if (wardLengthData != null) {
+        this.progressData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
+      } else {
+        this.progressData.wardLength = "0.00";
+      }
+    });
   }
 
   setDefaultMap() {
@@ -207,9 +290,11 @@ export class WardWorkTrackingComponent {
     }
     if (this.isLineNoShow == true) {
       this.isLineNoShow = false;
+      localStorage.setItem("wardWorkTrackingLineShow", "0");
     }
     else {
       this.isLineNoShow = true;
+      localStorage.setItem("wardWorkTrackingLineShow", "1");
     }
     this.showHideLineNo();
     this.showHideLineNoHtml();
@@ -247,56 +332,13 @@ export class WardWorkTrackingComponent {
     $("#collapsetwo").addClass("panel-collapse collapse in");
   }
 
-  getCurrentStrokeWeight(event: any) {
-    if (event.key == "Enter") {
-      let strokeWeight = $(this.txtStrokeWeight).val().toString();
-      if (strokeWeight == "") {
-        this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
-        return;
-      }
-      this.strokeWeight = Number(strokeWeight);
-      $(this.txtStrokeWeight).val(this.strokeWeight);
-      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
-      this.setStrokeWeight();
-    }
-  }
-
-  getNextPrevious(type: any) {
-    let strokeWeight = $(this.txtStrokeWeight).val();
-    if (strokeWeight == "") {
-      this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
-      return;
-    }
-    if (type == "pre") {
-      if (strokeWeight != "1") {
-        this.strokeWeight = Number(strokeWeight) - 1;
-        $(this.txtStrokeWeight).val(this.strokeWeight);
-        this.setStrokeWeight();
-      }
-    } else if (type == "next") {
-      this.strokeWeight = Number(strokeWeight) + 1;
-      $(this.txtStrokeWeight).val(this.strokeWeight);
-      this.setStrokeWeight();
-    }
-  }
-
-  setStrokeWeight() {
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != undefined) {
-          let line = this.polylines[i];
-          var polyOptions = {
-            strokeColor: this.polylines[i]["strokeColor"],
-            strokeOpacity: 1.0,
-            strokeWeight: this.strokeWeight
-          }
-          line.setOptions(polyOptions);
-        }
-      }
-    }
-  }
 }
 
 export class progressDetail {
-
+  totalLines: number;
+  completedLines: number;
+  skippedLines: number;
+  currentLine: number;
+  wardLength: string;
+  coveredLength: string;
 }

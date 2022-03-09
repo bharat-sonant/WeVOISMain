@@ -42,7 +42,7 @@
         </div>
         <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
-            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
+            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
             <h6 style="font-size: 9px!important;">Settings</h6>
           </button>
 
@@ -58,23 +58,10 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div class="setting-box">
+                  <div id="divLinesShowHide" class="setting-box" style="border-bottom: none!important;">
                     <p id="showLineNoText"> Show Line No</p>
                     <button type="button" class="btn btn-main btn-success" (click)="showLineNo();"><i
                         class="fas fa-grip-lines-vertical"></i></button>
-                  </div>
-                  <div class="setting-box" style="border-bottom: none!important;">
-                    <p class="previous-data"><b>Set Stroke Weight</b></p> <br>
-                    <button class="btn-primary" (click)="getNextPrevious('pre');"
-                      style="background-color: #0ba118!important; width:50px; margin-left: 0px!important; height: 35px;">
-                      << </button>
-                        <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
-                          autocomplete="off" class="date-input"
-                          style="text-align: center; width: 149px; font-weight: bold;" value="3" />
-                        <button class="btn-primary" (click)="getNextPrevious('next');"
-                          style="background-color: #0ba118!important; width:50px; margin-left: 0px!important;height: 35px;">
-                          >>
-                        </button>
                   </div>
                 </div>
               </div>
@@ -127,7 +114,7 @@
     </div>
   </div>
 </div>
-
+-->
 <div id="divInternal" class="line-details-box">
   <div>
     <div class="lines">
@@ -146,7 +133,7 @@
       </h3>
     </div>
     <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;"
-      (click)="showSkipLineDetail(contentSkipLines)">
+      >
       <h3>{{progressData.skippedLines}}
         <p>Skipped Lines</p>
       </h3>
@@ -163,7 +150,7 @@
     </div>
   </div>
 </div>
-
+<!--
 
 <div id="houseDetail" class="line-details-box-house">
   <div class="lines" style="border-bottom: 1px dotted lightgray;">
