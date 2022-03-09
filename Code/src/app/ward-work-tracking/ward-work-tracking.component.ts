@@ -24,6 +24,9 @@ export class WardWorkTrackingComponent {
   polylines = [];
   wardLineNoMarker: any[] = [];
   strokeWeight: any = 3;
+  showLineNoText = "#showLineNoText";
+  isLineNoShow = false;
+  txtStrokeWeight = "#txtStrokeWeight";
   progressData: progressDetail = {
 
   };
@@ -47,7 +50,7 @@ export class WardWorkTrackingComponent {
       this.selectedZone = "0";
     });
   }
-  
+
   setDate(filterVal: any, type: string) {
     if (type == "current") {
       this.selectedDate = filterVal;
@@ -64,6 +67,7 @@ export class WardWorkTrackingComponent {
   }
 
   getWardData() {
+    this.resetData();
     $(this.divLoader).show();
     this.setWardBoundary();
     this.getAllLinesFromJson();
@@ -76,6 +80,11 @@ export class WardWorkTrackingComponent {
     }
     this.selectedZone = filterVal;
     this.getWardData();
+  }
+
+  resetData() {
+    this.isLineNoShow = false;
+    $(this.showLineNoText).html("Show Line No.");
   }
 
   setWardBoundary() {
@@ -169,6 +178,9 @@ export class WardWorkTrackingComponent {
         fontWeight: "bold",
       },
     });
+
+    marker.setMap(null);
+
     this.wardLineNoMarker.push({ marker });
   }
 
@@ -190,8 +202,103 @@ export class WardWorkTrackingComponent {
     $(".navbar-toggler").show();
     $("#divMap").css("height", $(window).height() - 80);
   }
-}
 
+  showLineNo() {
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
+    if (this.isLineNoShow == true) {
+      this.isLineNoShow = false;
+    }
+    else {
+      this.isLineNoShow = true;
+    }
+    this.showHideLineNo();
+    this.showHideLineNoHtml();
+    this.hideSetting();
+  }
+
+  showHideLineNo() {
+    if (this.wardLineNoMarker.length > 0) {
+      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if (this.wardLineNoMarker != null) {
+          if (this.isLineNoShow == false) {
+            this.wardLineNoMarker[i]["marker"].setMap(null);
+          }
+          else {
+            this.wardLineNoMarker[i]["marker"].setMap(this.map);
+          }
+        }
+      }
+    }
+  }
+
+  showHideLineNoHtml() {
+    if (this.isLineNoShow == true) {
+      $(this.showLineNoText).html("Hide Line No.");
+    }
+    else {
+      $(this.showLineNoText).html("Show Line No.");
+    }
+  }
+
+  hideSetting() {
+    let element = <HTMLElement>document.getElementById("collapsetwo");
+    let className = element.className;
+    $("#collapsetwo").removeClass(className);
+    $("#collapsetwo").addClass("panel-collapse collapse in");
+  }
+
+  getCurrentStrokeWeight(event: any) {
+    if (event.key == "Enter") {
+      let strokeWeight = $(this.txtStrokeWeight).val().toString();
+      if (strokeWeight == "") {
+        this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
+        return;
+      }
+      this.strokeWeight = Number(strokeWeight);
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      localStorage.setItem("strokeWeight", this.strokeWeight.toFixed(0));
+      this.setStrokeWeight();
+    }
+  }
+
+  getNextPrevious(type: any) {
+    let strokeWeight = $(this.txtStrokeWeight).val();
+    if (strokeWeight == "") {
+      this.commonService.setAlertMessage("error", "Please enter stroke weight !!!");
+      return;
+    }
+    if (type == "pre") {
+      if (strokeWeight != "1") {
+        this.strokeWeight = Number(strokeWeight) - 1;
+        $(this.txtStrokeWeight).val(this.strokeWeight);
+        this.setStrokeWeight();
+      }
+    } else if (type == "next") {
+      this.strokeWeight = Number(strokeWeight) + 1;
+      $(this.txtStrokeWeight).val(this.strokeWeight);
+      this.setStrokeWeight();
+    }
+  }
+
+  setStrokeWeight() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          let line = this.polylines[i];
+          var polyOptions = {
+            strokeColor: this.polylines[i]["strokeColor"],
+            strokeOpacity: 1.0,
+            strokeWeight: this.strokeWeight
+          }
+          line.setOptions(polyOptions);
+        }
+      }
+    }
+  }
+}
 
 export class progressDetail {
 

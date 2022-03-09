@@ -606,6 +606,85 @@
     .imgLoader{
     position: absolute; left: 50%;top: 50%;  transform: translate(-50%, -50%); 
     }
+
+    
+  .btn-accordion{
+    width: 73% !important;
+    background-color: #0ba11800;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 0px !important;
+    margin-top: 0px !important;
+    height: 58px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    transition: 0.5s;
+    text-align: right;
+    }
+    .btn-accordion:hover{
+    color: #0ba118;
+    }
+    #accordion .panel-body {
+    border-bottom: 4px solid #0ba118;
+    border-left: 4px solid #0ba118;
+    font-size: 15px;
+    color: #333;
+    /*
+    box-shadow: 0 0 18px rgb(33 33 33 / 39%);
+    */
+    min-height: 160px;
+    width: 285px;
+    }
+    .panel-collapse{
+    position: fixed;
+    top: 64px;
+    right: 0px;
+    background: white;
+    z-index: 11111111;
+    }
+    .setting-box{
+    padding: 10px;
+    width: 285px;
+    float: left;
+    padding: 0px 10px;
+    border-bottom: 1px solid lightgray;
+    }
+    .setting-box i{
+    color: #0ba118;
+    }
+    .image-circle{
+    background: #0c9b1826;
+    padding: 15px;
+    border-radius: 50px;
+    display: inline-block;
+    margin-right: 15px;
+    width: 55px;
+    height: 55px;
+    }
+    .setting-box p{
+    display: inline-block;
+    font-size: 12px;
+    color: #707070;
+    width: 205px;
+    }
+    .setting-box .btn-main{
+    width: 30px;
+    font-size: 12px;
+    padding: 5px 10px;
+    height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    background: #0ba11723;
+    }
+    .setting-box button{
+    width: 85px;
+    font-size: 12px;
+    padding: 5px 10px;
+    height: 30px;
+    text-align: center;
+    background: #0ba118;
+    }
     
     
     

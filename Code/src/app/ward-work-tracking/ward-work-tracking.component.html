@@ -7,7 +7,7 @@
       <button class="btn btn-primary " (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-          <button class="btn btn-primary"  style="margin-left: 0px!important;" (click)="setDate('','next');">
+          <button class="btn btn-primary" style="margin-left: 0px!important;" (click)="setDate('','next');">
             >>
           </button>
           <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
@@ -17,27 +17,69 @@
               {{zone.zoneName}}
             </option>
           </select>&nbsp;&nbsp;
-          <input id="isHouse" type="checkbox"  /><span id="showHouseLabel"> Show
+          <input id="isHouse" type="checkbox" /><span id="showHouseLabel"> Show
             Houses</span>
     </div>
-
-    <div id="houseCount" class="col-md-4 text-right total-house" style=" display: none;">
+    <div class="col-md-4 text-right total-house">
 
       <div class="fix-home">
-        <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
-          <i class="fas fa-vr-cardboard" style="cursor: pointer;" ></i>
-          <span class="house"><span style="color: #1fda2f;">
+        <div id="houseCount"  style=" display: none;">
+          <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
+            <i class="fas fa-vr-cardboard" style="cursor: pointer;"></i>
+            <span class="house"><span style="color: #1fda2f;">
               </span></span><br>
-          <h6>Card Images</h6>
+            <h6>Card Images</h6>
+          </div>
+          <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
+            <i class="fas fa-home"></i> <span class="house"> </span><br>
+            <h6>Total House</h6>
+          </div>
+          <div class="float-third">
+            <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;"></i>
+            <span class="house"> </span><br>
+            <h6>Scanned House</h6>
+          </div>
         </div>
-        <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
-          <i class="fas fa-home"></i> <span class="house"> </span><br>
-          <h6>Total House</h6>
+        <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+          <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog fa-spin"></i>
+            <h6 style="font-size: 9px!important;">Settings</h6>
+          </button>
+
         </div>
-        <div class="float-third">
-          <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;" ></i>
-          <span class="house"> </span><br>
-          <h6>Scanned House</h6>
+      </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingtwo">
+            <h4 class="panel-title">
+            </h4>
+          </div>
+          <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12 text-left">
+                  <div class="setting-box">
+                    <p id="showLineNoText"> Show Line No</p>
+                    <button type="button" class="btn btn-main btn-success" (click)="showLineNo();"><i
+                        class="fas fa-grip-lines-vertical"></i></button>
+                  </div>
+                  <div class="setting-box" style="border-bottom: none!important;">
+                    <p class="previous-data"><b>Set Strock Weight</b></p> <br>
+                    <button class="btn-primary" (click)="getNextPrevious('pre');"
+                      style="background-color: #0ba118!important; width:50px; margin-left: 0px!important; height: 35px;">
+                      << </button>
+                        <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event);"
+                          autocomplete="off" class="date-input"
+                          style="text-align: center; width: 149px; font-weight: bold;" value="3" />
+                        <button class="btn-primary" (click)="getNextPrevious('next');"
+                          style="background-color: #0ba118!important; width:50px; margin-left: 0px!important;height: 35px;">
+                          >>
+                        </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -217,7 +259,8 @@
           <div class="main-tag">
             <div class="f-left">
               <p>Line <span class="f-right"> :</span></p>
-              <h3> {{dt.lineNo}}  <i class="far fa-eye" style="float: right; cursor: pointer; font-size: 14px;" (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
+              <h3> {{dt.lineNo}} <i class="far fa-eye" style="float: right; cursor: pointer; font-size: 14px;"
+                  (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
               <p>Reason <span class="f-right"> :</span></p>
               <h3> {{dt.reason}} </h3><br />
               <span [hidden]="dt.status==''">

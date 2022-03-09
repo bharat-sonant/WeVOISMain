@@ -103,8 +103,7 @@
                                                     {{data.accountNo}} </td>
                                                 <td class="text-left br-1">
                                                     {{data.ifsc}}</td>
-                                                <td class="text-left br-1">
-                                                    <div [innerHTML]="getDecrypted(data.salary)" class="rowWidth"></div>
+                                                <td class="text-right br-1" [innerHTML]="getDecrypted(data.salary)">
                                                     </td>
                                                 <td class="text-left br-1">
                                                     {{data.modifyDate}}
