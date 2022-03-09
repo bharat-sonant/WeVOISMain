@@ -140,9 +140,9 @@ export class LineMarkerMappingComponent {
       let keyArray = Object.keys(wardLines);
       this.wardLines = wardLines["totalLines"];
       let lineNo = 0;
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
-        try {
+       
           let points = wardLines[lineNo]["points"];
           var latLng = [];
           for (let j = 0; j < points.length; j++) {
@@ -153,9 +153,7 @@ export class LineMarkerMappingComponent {
             latlng: latLng,
             color: "#87CEFA",
           });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
-        }
-        catch { }
+          this.plotLineOnMap(lineNo, latLng,i, this.selectedZone);
       }
       this.getMarkedHouses(this.lineNo);
     });

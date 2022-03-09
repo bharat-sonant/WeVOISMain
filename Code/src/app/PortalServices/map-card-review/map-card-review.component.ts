@@ -205,9 +205,9 @@ export class MapCardReviewComponent {
       let keyArray = Object.keys(wardLines);
       this.wardLines = wardLines["totalLines"];
       this.progressData.totalLines = Number(this.wardLines);
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-        try {
+        
           let points = wardLines[lineNo]["points"];
           var latLng = [];
           for (let j = 0; j < points.length; j++) {
@@ -218,9 +218,7 @@ export class MapCardReviewComponent {
             latlng: latLng,
             color: "#87CEFA",
           });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
-        }
-        catch { }
+          this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
       }
     });
 

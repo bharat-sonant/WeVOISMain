@@ -192,7 +192,7 @@ export class WardSurveyAnalysisComponent {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       this.wardLineCount = wardLines["totalLines"];
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         try {
           let points = wardLines[lineNo]["points"];
@@ -201,7 +201,7 @@ export class WardSurveyAnalysisComponent {
             latLng.push({ lat: points[j][0], lng: points[j][1] });
           }
           this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+          this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
         }
         catch { }
       }

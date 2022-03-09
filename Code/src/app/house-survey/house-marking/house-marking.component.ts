@@ -205,18 +205,15 @@ export class HouseMarkingComponent {
       this.wardLineCount = wardLines["totalLines"];
       this.markerData.totalLines = this.wardLineCount;
       let lineNo = 0;
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
-        try {
           let points = wardLines[lineNo]["points"];
           var latLng = [];
           for (let j = 0; j < points.length; j++) {
             latLng.push({ lat: points[j][0], lng: points[j][1] });
           }
-          this.lines.push({ lineNo: i, latlng: latLng, color: "#87CEFA", });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
-        }
-        catch { }
+          this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
+          this.plotLineOnMap(lineNo, latLng,i, this.selectedZone);
       }
       this.getMarkedHouses(this.lineNo);
     });
@@ -695,7 +692,7 @@ export class HouseMarkingComponent {
     let firstLine = this.lines.find(
       (item) => item.lineNo == Number(this.previousLine)
     );
-    this.polylines[Number(this.previousLine) - 1].setMap(null);
+    this.polylines[Number(this.previousLine)-1].setMap(null);
     let line = new google.maps.Polyline({
       path: firstLine.latlng,
       strokeColor: this.commonService.getLineColor(""),

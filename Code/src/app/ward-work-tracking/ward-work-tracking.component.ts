@@ -126,9 +126,8 @@ export class WardWorkTrackingComponent {
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((data: any) => {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-        try {
           let points = wardLines[lineNo]["points"];
           var latLng = [];
           for (let j = 0; j < points.length; j++) {
@@ -139,9 +138,7 @@ export class WardWorkTrackingComponent {
             latlng: latLng,
             color: "#87CEFA",
           });
-          this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1);
-        }
-        catch { }
+          this.plotLineOnMap(lineNo, latLng, i);
       }
       $(this.divLoader).hide();
     });
