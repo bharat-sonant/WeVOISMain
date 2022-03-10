@@ -23,7 +23,7 @@
     <div class="col-md-4 text-right total-house">
 
       <div class="fix-home">
-        <div id="houseCount"  style=" display: none;">
+        <div id="houseCount" style=" display: none;">
           <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
             <i class="fas fa-vr-cardboard" style="cursor: pointer;"></i>
             <span class="house"><span style="color: #1fda2f;">
@@ -58,10 +58,14 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div id="divLinesShowHide" class="setting-box" style="border-bottom: none!important;">
+                  <div id="divLinesShowHide" class="setting-box">
                     <p id="showLineNoText"> Show Line No</p>
                     <button type="button" class="btn btn-main btn-success" (click)="showLineNo();"><i
                         class="fas fa-grip-lines-vertical"></i></button>
+                  </div>
+                  <div id="divLinesShowHideCheckBox" class="setting-box" style="border-bottom: none!important;">
+                    <p style="margin-top: 10px;"> Show Line No</p>
+                    <input id="chkIsShow" type="checkbox" (change)="showLineNo()" style="float:right; margin-top: 10px; margin-right: 20px;">
                   </div>
                 </div>
               </div>
@@ -132,8 +136,7 @@
         <p>Total Lines</p>
       </h3>
     </div>
-    <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;"
-      >
+    <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;">
       <h3>{{progressData.skippedLines}}
         <p>Skipped Lines</p>
       </h3>

@@ -41,6 +41,7 @@ export class WardWorkTrackingComponent {
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divLinesShowHide = "#divLinesShowHide";
+  divLinesShowHideCheckBox="#divLinesShowHideCheckBox";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -64,10 +65,13 @@ export class WardWorkTrackingComponent {
   getLocalStorage(){
     if (localStorage.getItem("userType") == "External User") {
       $(this.divLinesShowHide).hide();
+      $(this.divLinesShowHideCheckBox).hide();
     }
     if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
       this.isLineNoShow = true;
       this.showHideLineNoHtml();
+      let element=<HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked=true;
     }
   }
 
@@ -287,10 +291,6 @@ export class WardWorkTrackingComponent {
   }
 
   showLineNo() {
-    if (this.selectedZone == "0") {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
-      return;
-    }
     if (this.isLineNoShow == true) {
       this.isLineNoShow = false;
       localStorage.setItem("wardWorkTrackingLineShow", "0");
@@ -322,9 +322,13 @@ export class WardWorkTrackingComponent {
   showHideLineNoHtml() {
     if (this.isLineNoShow == true) {
       $(this.showLineNoText).html("Hide Line No.");
+      let element=<HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked=true;
     }
     else {
       $(this.showLineNoText).html("Show Line No.");
+      let element=<HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked=false;
     }
   }
 
