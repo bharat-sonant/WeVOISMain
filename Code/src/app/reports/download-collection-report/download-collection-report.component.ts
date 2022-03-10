@@ -39,8 +39,8 @@ export class DownloadCollectionReportComponent {
   selectedDate: any;
   currentMonthName: any;
   currentYear: any;
-  zoneKML:any;
-  toDayDate:any;
+  zoneKML: any;
+  toDayDate: any;
 
   public selectedZone: any;
   marker = new google.maps.Marker();
@@ -133,7 +133,7 @@ export class DownloadCollectionReportComponent {
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -161,13 +161,18 @@ export class DownloadCollectionReportComponent {
       let keyArray = Object.keys(wardLines);
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
         }
-        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
-      }      
+        catch {
+
+        }
+      }
       this.drawRealTimePloylines();
     });
   }
@@ -222,31 +227,7 @@ export class DownloadCollectionReportComponent {
   getWardAssignmentInformation() {
     this.currentYear = this.selectedDate.split("-")[0];
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-
-    if (new Date(this.selectedDate) < new Date("2019-08-01")) {
-      let driverDataDbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/DriverData";
-      let driverInfo = this.db.object(driverDataDbPath).valueChanges().subscribe((driverData) => {
-        // Set Driver details
-        this.reportData.driverName = driverData != null ? driverData["dName"] : "Not Assigned";
-        this.reportData.vehicleNo = driverData != null ? driverData["vNo"] : "Not Assigned";
-
-        driverInfo.unsubscribe();
-
-        let ReaderDataPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedDate + "/ReaderData";
-        let readerInfo = this.db.object(ReaderDataPath).valueChanges().subscribe((readerData) => {
-          // Set Driver helper Details
-          this.reportData.helperName =
-            readerData != null ? readerData["dName"] : "Not Assigned";
-          this.reportData.zoneName = this.selectedZoneName;
-          this.reportData.reportDate = this.selectedDate;
-
-          this.drawChart();
-          readerInfo.unsubscribe();
-        });
-      });
-    } else {
       let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/WorkerDetails";
-
       let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
         workDetails.unsubscribe();
         if (workerData != null) {
@@ -271,7 +252,7 @@ export class DownloadCollectionReportComponent {
           this.drawChart();
         }
       });
-    }
+    
   }
 
   drawChart() {

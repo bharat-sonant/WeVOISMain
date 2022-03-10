@@ -28,7 +28,8 @@
             ],
             "scripts": [
               "node_modules/chart.js/dist/Chart.min.js",
-              "node_modules/jquery/dist/jquery.min.js"
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/crypto-js/crypto-js.js"
             ]
           },
           "configurations": {
@@ -54,7 +55,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "now-ui-dashboard-angular:build"
+            "browserTarget": "now-ui-dashboard-angular:build",
+            "proxyConfig": "./proxy.conf.json"
           },
           "configurations": {
             "production": {

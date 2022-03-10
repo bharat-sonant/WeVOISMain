@@ -87,10 +87,6 @@ import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
-import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
-import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
-import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
-import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-test-purpose.component';
 import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
 import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
@@ -112,6 +108,7 @@ import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
+import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 
 @NgModule({
   imports: [
@@ -204,10 +201,6 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
     VtsMonthlyReportComponent,
     ChangePasswordComponent,
     VtsRouteComponent,
-    CreateRouteComponent,
-    CreateWardLinePathComponent,
-    TestRouteComponent,
-    JmapsTestPurposeComponent,
     CreateRoutesComponent,
     UploadRouteExcelComponent,
     BvgRoutesComponent,
@@ -228,7 +221,8 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
     KmlToJsonComponent,
     SalaryTransactionComponent,
     DustbinServiceComponent,
-    WardWorkTrackingComponent
+    WardWorkTrackingComponent,
+    StaffAccountDetailComponent
   ]
 })
 

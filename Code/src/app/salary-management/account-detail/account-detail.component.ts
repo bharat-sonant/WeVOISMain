@@ -36,6 +36,7 @@ export class AccountDetailComponent implements OnInit {
   remarkJsonObject: any;
   accountJsonList: any[];
   userId: any;
+  public isLockUnlock: any;
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
@@ -46,13 +47,14 @@ export class AccountDetailComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
 
   setDefault() {
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
+    this.isLockUnlock = localStorage.getItem("isLock")
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
@@ -98,7 +100,8 @@ export class AccountDetailComponent implements OnInit {
       accountInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType==2);
+         
         this.allAccountList = this.commonService.transformNumeric(list, "name");
         this.getRoles();
         this.getAccountIssue();
@@ -161,6 +164,29 @@ export class AccountDetailComponent implements OnInit {
       this.accountList = this.accountList.filter(item => item.designation == designation);
     }
     $(this.divLoader).hide();
+  }
+
+  setLockUnlock(empId: any, type: any) {
+    let dbPath = "Employees/" + empId + "/BankDetails";
+    let isLock = 0;
+    if (type == "lock") {
+      isLock = 1;
+      this.db.object(dbPath).update({ isLock: 1 });
+    }
+    else {
+      isLock = 0;
+      this.db.object(dbPath).update({ isLock: null });
+    }
+    let detail = this.allAccountList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      detail.isLock = isLock;
+    }
+    detail = this.accountList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      detail.isLock = isLock;
+    }
+    let path = "" + this.fireStoreCity + "/EmployeeAccount/";
+    this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
   }
 
   openModel(content: any, id: any, type: any) {
@@ -466,6 +492,7 @@ export class AccountDetailComponent implements OnInit {
                 let ifsc = "";
                 let modifyBy = "";
                 let modifyDate = "";
+                let isLock = 0;
 
                 if (data[empId]["BankDetails"] != null) {
                   if (data[empId]["BankDetails"]["AccountDetails"] != null) {
@@ -475,6 +502,9 @@ export class AccountDetailComponent implements OnInit {
                     if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
                       ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
                     }
+                  }
+                  if (data[empId]["BankDetails"]["isLock"] != null) {
+                    isLock = data[empId]["BankDetails"]["isLock"];
                   }
                 }
 
@@ -487,26 +517,31 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
                 let designation = "";
+                let empType=1;
                 if (this.designationUpdateList.length > 0) {
                   let detail = this.designationUpdateList.find(item => item.designationId == designationId);
                   if (detail != undefined) {
-
                     if (detail.designation == "Transportation Executive") {
                       designation = "Driver";
+                      empType=2;
                     }
                     else if (detail.designation == "Service Excecutive ") {
                       designation = "Helper";
+                      empType=2;
                     }
                     else {
                       designation = detail.designation;
                     }
                   }
                 }
-                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate });
+                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock,empType:empType });
               }
             }
             this.saveJSONData();
-            this.getAccountDetail();
+            setTimeout(() => {
+              this.getAccountDetail();
+            }, 3000);
+
           }
         }
       }

@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
@@ -25,27 +26,32 @@ export class SalaryTransactionComponent implements OnInit {
   allEmployeeList: any[];
   public transactionList: any[];
   arrayBuffer: any;
-  first_sheet_name: any;
   employeeType: any;
   fireStoragePath: any;
+  userId: any;
+  uploadYear: any;
+  uploadJsonObj: any;
   salaryDetail: salaryDetail = {
     name: "---"
   }
   ddlYear = "#ddlYear";
   fileUpload = "#fileUpload";
   txtSearch = "#txtSearch";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
 
   setDefault() {
+    this.userId = localStorage.getItem("userID");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.toDayDate = this.commonService.setTodayDate();
+    this.uploadYear = this.toDayDate.split('-')[0];
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.yearList = [];
     this.employeeList = [];
@@ -59,13 +65,15 @@ export class SalaryTransactionComponent implements OnInit {
 
   getTransactionList() {
     for (let i = 1; i <= 12; i++) {
-      let monthName = this.commonService.getCurrentMonthName(i - 1);
       let list = [];
-      this.transactionList.push({ month: monthName, list: list });
+      this.transactionList.push({ month: this.commonService.getCurrentMonthName(i - 1), list: list });
     }
   }
 
   getSalaryTranscation(empId: any, name: any, empCode: any) {
+
+    $(this.divLoader).show();
+    this.clearData();
     let year = $(this.ddlYear).val();
     if (year == "0") {
       this.commonService.setAlertMessage("error", "Please select year !!!");
@@ -73,24 +81,27 @@ export class SalaryTransactionComponent implements OnInit {
     }
     if (empId != "0") {
       this.salaryDetail.name = name + " (" + empCode + ")";
-      const commonService = this.commonService;
-      for (let i = 0; i < this.transactionList.length; i++) {
-        const list = [];
-        let monthName = this.transactionList[i]["month"];
-        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + monthName + "/" + empId).get().subscribe(
-          (ss) => {
-            ss.forEach(function (doc) {
-              let userData = commonService.getPortalUserDetailById(doc.data()["uploadBy"]);
-              if (userData != undefined) {
-                list.push({ amount: doc.data()["amount"], transationDate: doc.data()["transationDate"], utrNo: doc.data()["utrNo"], remarks: doc.data()["remarks"] });
+      const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + this.selectedYear + "%2F" + empId + ".json?alt=media";
+      let transferredInstance = this.httpService.get(path).subscribe(data => {
+        transferredInstance.unsubscribe();
+        if (data != null) {
+          let empTransactionObj = JSON.parse(JSON.stringify(data));
+          let keyArray = Object.keys(empTransactionObj);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              let monthName = empTransactionObj[index]["month"];
+              let detail = this.transactionList.find(item => item.month == monthName);
+              if (detail != undefined) {
+                detail.list.push({ amount: empTransactionObj[index]["amount"], transationDate: empTransactionObj[index]["transationDate"], utrNo: empTransactionObj[index]["utrNo"], remarks: empTransactionObj[index]["remarks"] });
               }
-            });
-            let detail = this.transactionList.find(item => item.month == monthName);
-            if (detail != undefined) {
-              detail.list = list;
             }
-          });
-      }
+          }
+        }
+        $(this.divLoader).hide();
+      }, error => {
+        $(this.divLoader).hide();
+      });
     }
   }
 
@@ -119,7 +130,7 @@ export class SalaryTransactionComponent implements OnInit {
       employeeInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType=2);
         this.allEmployeeList = this.commonService.transformNumeric(list, "name");
         let activeList = this.allEmployeeList.filter(item => item.status == "1");
         if (activeList.length > 0) {
@@ -182,7 +193,7 @@ export class SalaryTransactionComponent implements OnInit {
     }
   }
 
-  uploadSalary(event) {
+  uploadTransferredSalary() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     if (element.files[0] == null) {
       this.commonService.setAlertMessage("error", "Please select excel !!!");
@@ -206,27 +217,19 @@ export class SalaryTransactionComponent implements OnInit {
     // upload on storage
 
     const excelFile = element.files[0];
+    let key = 1;
 
-    this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction").get().subscribe((ss) => {
-      let key = 1;
-      if (ss.data() != null) {
-        if (ss.data()["lastKey"] != undefined) {
-          key += Number(ss.data()["lastKey"]);
-        }
+    const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + this.uploadYear + "%2FuploadHistory.json?alt=media";
+    let uploadHistoryInstance = this.httpService.get(path).subscribe(data => {
+      uploadHistoryInstance.unsubscribe();
+      if (data != null) {
+        this.uploadJsonObj = JSON.parse(JSON.stringify(data));
+        let lastKey = this.uploadJsonObj["lastKey"];
+        key = Number(lastKey) + 1;
+        this.addUploadHistory(key, excelFile);
       }
-      let filename = key + ".xlsx";
-      const data = {
-        uploadBy: localStorage.getItem("userID"),
-        uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
-        filename: filename
-      }
-
-      this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction").set({ lastKey: key });
-      this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/UploadHistory/" + key.toString()).set(data);
-
-      const path = "" + this.commonService.getFireStoreCity() + "/SalaryTransactionFiles/" + filename;
-
-      this.storage.upload(path, excelFile);
+    }, error => {
+      this.addUploadHistory(key, excelFile);
     });
 
     let fileReader = new FileReader();
@@ -238,29 +241,54 @@ export class SalaryTransactionComponent implements OnInit {
       for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
       var bstr = arr.join("");
       var workbook = XLSX.read(bstr, { type: "binary" });
-      this.first_sheet_name = workbook.SheetNames[0];
-      var worksheet = workbook.Sheets[this.first_sheet_name];
+      var worksheet = workbook.Sheets[workbook.SheetNames[0]];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       this.saveData(fileList);
     }
   }
 
+  addUploadHistory(key: any, excelFile: any) {
+    let fileName = key + ".xlsx";
+    const data = {
+      uploadBy: this.userId,
+      uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
+      fileName: fileName
+    }
+
+    let obj = {};
+    if (this.uploadJsonObj != null) {
+      obj = this.uploadJsonObj;
+    }
+    obj[key] = data;
+    obj["lastKey"] = key;
+    let filePath = "" + this.fireStoreCity + "/EmployeeSalaryTransaction/" + this.uploadYear + "/";
+    this.saveJsonFile(obj, "uploadHistory.json", filePath);
+
+    const path = "" + this.commonService.getFireStoreCity() + "/EmployeeSalaryTransaction/" + this.uploadYear + "/Files/" + fileName;
+    this.storage.upload(path, excelFile);
+  }
+
   saveData(fileList: any) {
+    $(this.divLoader).show();
     let errorData = [];
+    let transationList = [];
     if (fileList.length > 0) {
       if (fileList[0]["Employee Code"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check EmployeeCode column in excel !!!");
         $(this.fileUpload).val("");
+        $(this.divLoader).hide();
         return;
       }
       if (fileList[0]["Amount"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check Amount column in excel !!!");
         $(this.fileUpload).val("");
+        $(this.divLoader).hide();
         return;
       }
       if (fileList[0]["Amount"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check UTR Number column in excel !!!");
         $(this.fileUpload).val("");
+        $(this.divLoader).hide();
         return;
       }
       for (let i = 0; i < fileList.length; i++) {
@@ -312,35 +340,8 @@ export class SalaryTransactionComponent implements OnInit {
                       transationDate = this.getExcelDatetoDate(transationDate);
                       transationDate = transationDate.split('-')[1] + "/" + transationDate.split('-')[2] + "/" + transationDate.split('-')[0];
                     }
-                    let month = transationDate.split('/')[1];
-                    if (month.toString().length == 1) {
-                      month = "0" + month;
-                    }
                     let year = transationDate.split('/')[2];
-                    let day = transationDate.split('/')[0];
-                    if (day.toString().length == 1) {
-                      day = "0" + day;
-                    }
-                    let date = year + "-" + month + "-" + day;
-                    let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
-                    const data = {
-                      name: name,
-                      accountNo: accountNo,
-                      ifsc: ifsc,
-                      transactionType: transactionType,
-                      debitAccountNo: debitAccountNo,
-                      transationDate: transationDate,
-                      amount: amount,
-                      currency: currency,
-                      emailId: emailId,
-                      utrNo: utrNo,
-                      remarks: remarks,
-                      uploadBy: localStorage.getItem("userID"),
-                      uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
-                      year: year,
-                      month: monthName
-                    }
-                    this.dbFireStore.doc(this.fireStoreCity + "/SalaryTransaction/" + year + "/" + monthName + "/" + detail.empId + "/" + date).set(data);
+                    transationList.push({ empId: detail.empId, transationDate: transationDate, name: name, accountNo: accountNo, ifsc: ifsc, transactionType: transactionType, debitAccountNo: debitAccountNo, amount: amount, currency: currency, emailId: emailId, utrNo: utrNo, remarks: remarks, year: year });
                   }
                 }
                 else {
@@ -359,6 +360,7 @@ export class SalaryTransactionComponent implements OnInit {
           }
         }
       }
+      this.getEmployeeTransactionList(transationList);
 
       if (errorData.length > 0) {
         let htmlString = "";
@@ -399,12 +401,113 @@ export class SalaryTransactionComponent implements OnInit {
         let fileName = "Error-Data-Salary-Transaction.xlsx";
         this.exportExcel(htmlString, fileName);
         $(this.fileUpload).val("");
-      }
-      else {
-        this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
-        $(this.fileUpload).val("");
+        $(this.divLoader).hide();
       }
     }
+  }
+
+  getEmployeeTransactionList(transactionList) {
+    let employeeDistinctList = transactionList.map(item => item.empId)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    for (let i = 0; i < employeeDistinctList.length; i++) {
+      let empId = employeeDistinctList[i];
+      let list = transactionList.filter(item => item.empId == empId);
+      if (list.length > 0) {
+        let yearDistinctList = list.map(item => item.year)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        if (yearDistinctList.length > 0) {
+          for (let j = 0; j < yearDistinctList.length; j++) {
+            let year = yearDistinctList[j];
+            let list1 = list.filter(item => item.year == year);
+            if (list1.length > 0) {
+              this.saveTransactionData(empId, year, list1);
+            }
+          }
+        }
+      }
+      if (i == employeeDistinctList.length - 1) {
+        this.commonService.setAlertMessage("success", "File uploaded successfully !!!");
+        $(this.fileUpload).val("");
+        $(this.divLoader).hide();
+      }
+    }
+  }
+
+  saveTransactionData(empId: any, year: any, list: any) {
+    const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + year + "%2F" + empId + ".json?alt=media";
+    let transactionInstance = this.httpService.get(path).subscribe(empData => {
+      transactionInstance.unsubscribe();
+      let obj = {};
+      if (empData != null) {
+        obj = JSON.parse(JSON.stringify(empData));
+      }
+      this.saveTransferredSalaryJson(obj, list, empId, year);
+    }, error => {
+      let obj = {};
+      this.saveTransferredSalaryJson(obj, list, empId, year);
+    });
+  }
+
+  saveTransferredSalaryJson(obj: any, list: any, empId: any, year: any) {
+    for (let i = 0; i < list.length; i++) {
+      let transationDate = list[i]["transationDate"];
+      let month = transationDate.split('/')[1];
+      if (month.toString().length == 1) {
+        month = "0" + month;
+      }
+      let year = transationDate.split('/')[2];
+      let day = transationDate.split('/')[0];
+      if (day.toString().length == 1) {
+        day = "0" + day;
+      }
+      let date = year + "-" + month + "-" + day;
+      let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
+      const data = {
+        name: list[i]["name"],
+        accountNo: list[i]["accountNo"],
+        ifsc: list[i]["ifsc"],
+        transactionType: list[i]["transactionType"],
+        debitAccountNo: list[i]["debitAccountNo"],
+        transationDate: list[i]["transationDate"],
+        amount: list[i]["amount"],
+        currency: list[i]["currency"],
+        emailId: list[i]["emailId"],
+        utrNo: list[i]["utrNo"],
+        remarks: list[i]["remarks"],
+        uploadBy: localStorage.getItem("userID"),
+        uploadDate: this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond(),
+        year: year,
+        month: monthName
+      }
+      obj[date] = data;
+    }
+    let filePath = "" + this.fireStoreCity + "/EmployeeSalaryTransaction/" + year + "/";
+    this.saveJsonFile(obj, empId + ".json", filePath);
+  }
+
+  saveJsonFile(listArray: any, fileName: any, filePath: any) {
+    var jsonFile = JSON.stringify(listArray);
+    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+    const path = "" + filePath + fileName;
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
   }
 
   exportExcel(htmlString: any, fileName: any) {

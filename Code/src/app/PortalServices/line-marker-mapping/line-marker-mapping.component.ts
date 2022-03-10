@@ -43,7 +43,7 @@ export class LineMarkerMappingComponent {
   markerList: any[];
   allMarkers: any[];
   selectedCardDetails: any[];
-  toDayDate:any;
+  toDayDate: any;
 
   cardDetails: CardDetails = {
     selectedMarkerCount: 0,
@@ -139,20 +139,21 @@ export class LineMarkerMappingComponent {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       this.wardLines = wardLines["totalLines"];
-      let lineNo=0;
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      let lineNo = 0;
+      for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
-        }
-        this.lines.push({
-          lineNo: lineNo,
-          latlng: latLng,
-          color: "#87CEFA",
-        });
-        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+       
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({
+            lineNo: lineNo,
+            latlng: latLng,
+            color: "#87CEFA",
+          });
+          this.plotLineOnMap(lineNo, latLng,i, this.selectedZone);
       }
       this.getMarkedHouses(this.lineNo);
     });

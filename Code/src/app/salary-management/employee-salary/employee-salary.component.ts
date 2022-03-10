@@ -70,7 +70,7 @@ export class EmployeeSalaryComponent implements OnInit {
     this.getSetting();
   }
 
-  setDefaultValues(){
+  setDefaultValues() {
     this.yearList = [];
     this.designationList = [];
     this.salaryList = [];
@@ -83,7 +83,7 @@ export class EmployeeSalaryComponent implements OnInit {
     this.workingDayInMonth = 0;
   }
 
-  getSetting() { 
+  getSetting() {
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSalary.json?alt=media";
     let salarySettingInstance = this.httpService.get(path).subscribe(data => {
       salarySettingInstance.unsubscribe();
@@ -104,7 +104,7 @@ export class EmployeeSalaryComponent implements OnInit {
       if (data != null) {
         let salaryList = [];
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData);
+        let list = JSON.parse(jsonData).filter(item=>item.empType==2);
         if (list.length > 0) {
           for (let i = 0; i < list.length; i++) {
             let empId = list[i]["empId"];
@@ -239,39 +239,51 @@ export class EmployeeSalaryComponent implements OnInit {
         ss.forEach((doc) => {
           let empId = doc.id;
           let uploadedSalary = doc.data()["uploadedSalary"];
-          this.updateSalaryList(empId,uploadedSalary,"uploadedSalary");          
+          this.updateSalaryList(empId, uploadedSalary, "uploadedSalary");
         });
       });
   }
 
   getHoldSalary() {
-    this.dbFireStore.collection(this.fireStoreCity + "/EmployeeHoldSalary/Hold/" + this.selectedYear + "/" + this.selectedMonthName).get().subscribe(
-      (ss) => {
-        ss.forEach((doc) => {
-          let empId = doc.id;
+    const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeHoldSalary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2FholdSalary.json?alt=media";
+    let holdInstance = this.httpService.get(path).subscribe(data => {
+      holdInstance.unsubscribe();
+      let keyArray = Object.keys(data);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let empId = keyArray[i];
           let empDetail = this.allSalaryList.find(item => item.empId == empId);
           if (empDetail != undefined) {
             empDetail.hold = 1;
           }
-        });
-      });
+        }
+      }
+    });
   }
 
   getTransferedSalary() {
     if (this.allSalaryList.length > 0) {
       for (let i = 0; i < this.allSalaryList.length; i++) {
         let empId = this.allSalaryList[i]["empId"];
-        this.dbFireStore.collection(this.fireStoreCity + "/SalaryTransaction/" + this.selectedYear + "/" + this.selectedMonthName + "/" + empId).get().subscribe(
-          (ss) => {
-            let transferedAmount = 0;
-            ss.forEach(function (doc) {
-              transferedAmount += Number(doc.data()["amount"]);
-            });
-            this.updateSalaryList(empId, transferedAmount, "transfered");
-            if (i == this.allSalaryList.length - 1) {
-              this.getFinalAmount();
+        const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + this.selectedYear + "%2F" + empId + ".json?alt=media";
+        let transferredInstance = this.httpService.get(path).subscribe(data => {
+          transferredInstance.unsubscribe();
+          if (data != null) {
+            let empTransactionObj = JSON.parse(JSON.stringify(data));
+            let keyArray = Object.keys(empTransactionObj);
+            let transferredAmount = 0;
+            for (let j = 0; j < keyArray.length; j++) {
+              let date = keyArray[j];
+              if (empTransactionObj[date]["month"] == this.selectedMonthName) {
+                transferredAmount += Number(empTransactionObj[date]["amount"]);
+              }
             }
-          });
+            this.updateSalaryList(empId, transferredAmount, "transfered");
+          }
+        });
+        if (i == this.allSalaryList.length - 1) {
+          this.getFinalAmount();
+        }
       }
     }
   }
@@ -282,10 +294,10 @@ export class EmployeeSalaryComponent implements OnInit {
       if (type == "transfered") {
         detail.transfered = updateValue;
       }
-      else if(type=="uploadedSalary"){
+      else if (type == "uploadedSalary") {
         detail.uploadedSalary = updateValue;
       }
-      else if(type=="accountIssue"){
+      else if (type == "accountIssue") {
         detail.remark = updateValue;
         detail.isShow = 1;
       }
@@ -295,10 +307,10 @@ export class EmployeeSalaryComponent implements OnInit {
       if (type == "transfered") {
         detail.transfered = updateValue;
       }
-      else if(type=="uploadedSalary"){
+      else if (type == "uploadedSalary") {
         detail.uploadedSalary = updateValue;
       }
-      else if(type=="accountIssue"){
+      else if (type == "accountIssue") {
         detail.remark = updateValue;
         detail.isShow = 1;
       }
@@ -314,8 +326,8 @@ export class EmployeeSalaryComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let empId = keyArray[i];
-            let remark=data[empId]["remark"];
-            this.updateSalaryList(empId,remark,"accountIssue");
+            let remark = data[empId]["remark"];
+            this.updateSalaryList(empId, remark, "accountIssue");
           }
         }
       }

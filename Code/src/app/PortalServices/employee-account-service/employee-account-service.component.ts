@@ -107,7 +107,7 @@ export class EmployeeAccountServiceComponent implements OnInit {
             }
             setTimeout(() => {
               this.saveJsonFile(this.accountList);
-            }, 24000);
+            }, 36000);
           }
         }
       }

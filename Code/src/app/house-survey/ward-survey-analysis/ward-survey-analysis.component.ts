@@ -93,7 +93,7 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -191,16 +191,19 @@ export class WardSurveyAnalysisComponent {
       this.polylines = [];
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
-      this.wardLineCount=wardLines["totalLines"];
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      this.wardLineCount = wardLines["totalLines"];
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
+          this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
         }
-        this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
-        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+        catch { }
       }
       this.getMarkedHouses(this.lineNo);
     });
@@ -601,7 +604,7 @@ export class WardSurveyAnalysisComponent {
       $("#divSequence").css("height", divHeight);
       this.mapRevisit = this.commonService.setMapById("revisitMap");
       setTimeout(() => {
-        this.commonService.getWardBoundary(this.selectedZone, this.zoneKMLRevisit).then((data: any) => {
+        this.commonService.getWardBoundary(this.selectedZone, this.zoneKMLRevisit, 2).then((data: any) => {
           if (this.zoneKMLRevisit != undefined) {
             this.zoneKMLRevisit[0]["line"].setMap(null);
           }
@@ -925,7 +928,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   clearAllOnMap() {
-   
+
     this.lines = [];
     this.lineNo = 1;
     this.previousLine = 1;

@@ -30,7 +30,7 @@ export class DownloadWardwiseReportComponent {
     helperName: "--",
     vehicleNo: "--",
   };
-  zoneKML:any;
+  zoneKML: any;
   selectedZoneNo: any;
   selectedZoneName: any;
   selectedDate: any;
@@ -53,8 +53,8 @@ export class DownloadWardwiseReportComponent {
   reportCount: number;
   db: any;
   cityName: any;
-  mapRefrence:any;
-  wardLines:any;
+  mapRefrence: any;
+  wardLines: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -112,8 +112,8 @@ export class DownloadWardwiseReportComponent {
     this.completeCount = 0;
     this.totalLineCount = 0;
     this.partailDoneCount = 0;
-    this.mapRefrence="";
-    this.wardLines=0;
+    this.mapRefrence = "";
+    this.wardLines = 0;
     this.selectedZone = this.selectedZoneNo;
     this.selectedZoneName = "Ward " + this.selectedZone;
     this.polylines = [];
@@ -123,7 +123,7 @@ export class DownloadWardwiseReportComponent {
     this.showReportCreationProgress();
   }
 
-  
+
   getWardLines() {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split('-')[0];
@@ -161,7 +161,7 @@ export class DownloadWardwiseReportComponent {
   setMap() {
     let mapProp = this.commonService.mapForReport();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -172,7 +172,7 @@ export class DownloadWardwiseReportComponent {
         bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
       }
       this.map.fitBounds(bounds);
-    });    
+    });
   }
 
   drawZoneAllLines() {
@@ -191,12 +191,15 @@ export class DownloadWardwiseReportComponent {
       this.wardLines = wardLines["totalLines"];
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
         }
-        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+        catch { }
       }
       this.drawRealTimePloylines();
     });

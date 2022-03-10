@@ -44,10 +44,11 @@
                                     <span style="float: right; margin-bottom: -10px;">
                                         <span>
                                             <label class="main-label">
-                                                
-                                               <span class="main-span">
-                                                <span> {{remarkDetail.lastUpdate}}</span> <br>Last update by {{remarkDetail.lastUpdateBy}}</span>
-                                            <i class="fas fa-sync"
+
+                                                <span class="main-span">
+                                                    <span> {{remarkDetail.lastUpdate}}</span> <br>Last update by
+                                                    {{remarkDetail.lastUpdateBy}}</span>
+                                                <i class="fas fa-sync"
                                                     style="color: green; font-size: 30px; cursor: pointer; "
                                                     (click)="updateAccountJson();"></i></label></span>
                                     </span>
@@ -78,9 +79,8 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Modified By</th>
                                             <th class="text-left br-1" style="border:none!important;">
+                                                Action
                                             </th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Remark</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of accountList; let i=index">
@@ -108,15 +108,22 @@
                                                     {{data.modifyBy}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <i class="far fa-edit"
+                                                    <i class="far fa-edit" [hidden]="data.isLock==1"
                                                         (click)="openModel(contentEmployee,data.empId,'account');"
                                                         title="Edit Entry"
                                                         style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
-                                                </td>
-                                                <td class="text-left br-1">
+                                                    &nbsp;
                                                     <i class="fas fa-registered"
                                                         style="cursor: pointer;font-size: 20px; color: green;"
                                                         (click)="openModel(contentRemarks,data.empId,'remark');"></i>
+                                                    &nbsp;
+                                                    <span [hidden]="isLockUnlock==0">
+                                                        <i class="fas fa-lock" (click)="setLockUnlock(data.empId,'unlock');"
+                                                            style="color:red; font-size:14px; cursor: pointer;" [hidden]="data.isLock==0"></i>
+                                                        &nbsp;
+                                                        <i class="fas fa-unlock" (click)="setLockUnlock(data.empId,'lock');"
+                                                            style="color:green; font-size:14px; cursor: pointer;"  [hidden]="data.isLock==1"></i>
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>

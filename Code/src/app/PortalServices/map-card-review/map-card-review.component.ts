@@ -127,7 +127,7 @@ export class MapCardReviewComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -187,7 +187,7 @@ export class MapCardReviewComponent {
     if (this.marker != null) {
       this.marker.setMap(null);
     }
-    
+
   }
 
   getAllLinesFromJson() {
@@ -205,19 +205,20 @@ export class MapCardReviewComponent {
       let keyArray = Object.keys(wardLines);
       this.wardLines = wardLines["totalLines"];
       this.progressData.totalLines = Number(this.wardLines);
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
-        }
-        this.lines.push({
-          lineNo: lineNo,
-          latlng: latLng,
-          color: "#87CEFA",
-        });
-        this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
+        
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          this.lines.push({
+            lineNo: lineNo,
+            latlng: latLng,
+            color: "#87CEFA",
+          });
+          this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
       }
     });
 

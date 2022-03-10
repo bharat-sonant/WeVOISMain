@@ -123,14 +123,15 @@ export class EmployeePenaltyComponent implements OnInit {
             if (empArray.length > 0) {
               for (let j = 0; j < empArray.length; j++) {
                 let empId = empArray[j];
+                let empCode = empObj[empId]["empCode"];
                 let name = empObj[empId]["name"];
                 let empDetail = this.employeeList.find(item => item.empId == empId);
                 if (empDetail == undefined) {
-                  this.employeeList.push({ empId: empId, name: name });
+                  this.employeeList.push({ empId: empId, name: name, empCode: empCode });
                   this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                 }
                 let orderBy = new Date(date).getTime();
-                this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
+                this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
                 this.penalityList = this.penalityList.sort((a, b) =>
                   a.orderBy > b.orderBy ? 1 : -1
                 );
@@ -168,16 +169,17 @@ export class EmployeePenaltyComponent implements OnInit {
                     let empId = empArray[j];
                     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
                       let name = employee["name"];
+                      let empCode = employee["empCode"];
                       let empDetail = this.employeeList.find(item => item.empId == empId);
                       if (empDetail == undefined) {
-                        this.employeeList.push({ empId: empId, name: name });
+                        this.employeeList.push({ empId: empId, name: name, empCode: empCode });
                         this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                       }
                       let orderBy = new Date(date).getTime();
                       let createdBy = empObj[empId]["createdBy"]
                       let detail = this.specialUserList.find(item => item.name == createdBy);
                       if (detail != undefined) {
-                        this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                        this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
                         this.penalityList = this.penalityList.sort((a, b) =>
                           a.orderBy > b.orderBy ? 1 : -1
                         );
@@ -190,7 +192,7 @@ export class EmployeePenaltyComponent implements OnInit {
                             if (empData != null) {
                               createdBy = empData;
                             }
-                            this.penalityList.push({ empId: empId, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                            this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
                             this.penalityList = this.penalityList.sort((a, b) =>
                               a.orderBy > b.orderBy ? 1 : -1
                             );
@@ -280,10 +282,10 @@ export class EmployeePenaltyComponent implements OnInit {
         htmlString += this.penalityList[i]["amount"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.penalityList[i]["reason"].replace('/','~').replace('/','~');
+        htmlString += this.penalityList[i]["reason"].replace('/', '~').replace('/', '~');
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.penalityList[i]["name"];
+        htmlString += this.penalityList[i]["name"] + " (" + this.penalityList[i]["empCode"] + ")";
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.penalityList[i]["createdBy"];
@@ -292,7 +294,7 @@ export class EmployeePenaltyComponent implements OnInit {
       }
       htmlString += "</table>";
     }
-    
+
     var parser = new DOMParser();
     var doc = parser.parseFromString(htmlString, 'text/html');
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);

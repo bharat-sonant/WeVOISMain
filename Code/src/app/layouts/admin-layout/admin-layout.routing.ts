@@ -80,10 +80,6 @@ import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
 import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
-import { CreateRouteComponent } from '../../VTS/create-route/create-route.component';
-import { CreateWardLinePathComponent } from '../../VTS/create-ward-line-path/create-ward-line-path.component';
-import { TestRouteComponent } from '../../VTS/test-route/test-route.component';
-import { JmapsTestPurposeComponent } from '../../VTS/jmaps-test-purpose/jmaps-test-purpose.component';
 import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
 import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
 import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
@@ -105,6 +101,7 @@ import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
+import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -204,10 +201,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vts-report', component: VtsReportComponent },
     { path: 'sikar/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'sikar/vts-route', component: VtsRouteComponent },
-    { path: 'sikar/create-route', component: CreateRouteComponent },
-    { path: 'sikar/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'sikar/test-route', component: TestRouteComponent },
-    { path: 'sikar/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'sikar/create-routes', component: CreateRoutesComponent },
     { path: 'sikar/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'sikar/bvg-routes', component: BvgRoutesComponent },
@@ -227,6 +220,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -314,10 +308,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'sikar/:id/change-password', component: ChangePasswordComponent },
     { path: 'sikar/:id/vts-route', component: VtsRouteComponent },
-    { path: 'sikar/:id/create-route', component: CreateRouteComponent },
-    { path: 'sikar/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'sikar/:id/test-route', component: TestRouteComponent },
-    { path: 'sikar/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'sikar/:id/create-routes', component: CreateRoutesComponent },
     { path: 'sikar/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'sikar/:id/bvg-routes', component: BvgRoutesComponent },
@@ -339,6 +329,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
 
     //jaipur-greater
@@ -427,10 +418,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'jaipur-greater/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-greater/vts-route', component: VtsRouteComponent },
-    { path: 'jaipur-greater/create-route', component: CreateRouteComponent },
-    { path: 'jaipur-greater/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'jaipur-greater/test-route', component: TestRouteComponent },
-    { path: 'jaipur-greater/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'jaipur-greater/create-routes', component: CreateRoutesComponent },
     { path: 'jaipur-greater/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'jaipur-greater/bvg-routes', component: BvgRoutesComponent },
@@ -452,6 +439,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-greater/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-greater/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-greater/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -539,10 +527,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'jaipur-greater/:id/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-greater/:id/vts-route', component: VtsRouteComponent },
-    { path: 'jaipur-greater/:id/create-route', component: CreateRouteComponent },
-    { path: 'jaipur-greater/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'jaipur-greater/:id/test-route', component: TestRouteComponent },
-    { path: 'jaipur-greater/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'jaipur-greater/:id/create-routes', component: CreateRoutesComponent },
     { path: 'jaipur-greater/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'jaipur-greater/:id/bvg-routes', component: BvgRoutesComponent },
@@ -564,6 +548,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-greater/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-greater/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-greater/:id/staff-account-detail', component: StaffAccountDetailComponent },
     
 
     //reengus
@@ -652,10 +637,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'reengus/change-password', component: ChangePasswordComponent },
     { path: 'reengus/vts-route', component: VtsRouteComponent },
-    { path: 'reengus/create-route', component: CreateRouteComponent },
-    { path: 'reengus/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'reengus/test-route', component: TestRouteComponent },
-    { path: 'reengus/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'reengus/create-routes', component: CreateRoutesComponent },
     { path: 'reengus/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'reengus/bvg-routes', component: BvgRoutesComponent },
@@ -677,6 +658,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -764,10 +746,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'reengus/:id/change-password', component: ChangePasswordComponent },
     { path: 'reengus/:id/vts-route', component: VtsRouteComponent },
-    { path: 'reengus/:id/create-route', component: CreateRouteComponent },
-    { path: 'reengus/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'reengus/:id/test-route', component: TestRouteComponent },
-    { path: 'reengus/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'reengus/:id/create-routes', component: CreateRoutesComponent },
     { path: 'reengus/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'reengus/:id/bvg-routes', component: BvgRoutesComponent },
@@ -789,6 +767,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -876,10 +855,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'shahpura/change-password', component: ChangePasswordComponent },
     { path: 'shahpura/vts-route', component: VtsRouteComponent },
-    { path: 'shahpura/create-route', component: CreateRouteComponent },
-    { path: 'shahpura/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'shahpura/test-route', component: TestRouteComponent },
-    { path: 'shahpura/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'shahpura/create-routes', component: CreateRoutesComponent },
     { path: 'shahpura/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'shahpura/bvg-routes', component: BvgRoutesComponent },
@@ -901,6 +876,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/salary-transaction', component: SalaryTransactionComponent },
     { path: 'shahpura/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'shahpura/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -988,10 +964,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'shahpura/:id/change-password', component: ChangePasswordComponent },
     { path: 'shahpura/:id/vts-route', component: VtsRouteComponent },
-    { path: 'shahpura/:id/create-route', component: CreateRouteComponent },
-    { path: 'shahpura/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'shahpura/:id/test-route', component: TestRouteComponent },
-    { path: 'shahpura/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'shahpura/:id/create-routes', component: CreateRoutesComponent },
     { path: 'shahpura/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'shahpura/:id/bvg-routes', component: BvgRoutesComponent },
@@ -1013,6 +985,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'shahpura/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'shahpura/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1100,10 +1073,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'test/change-password', component: ChangePasswordComponent },
     { path: 'test/vts-route', component: VtsRouteComponent },
-    { path: 'test/create-route', component: CreateRouteComponent },
-    { path: 'test/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'test/test-route', component: TestRouteComponent },
-    { path: 'test/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'test/create-routes', component: CreateRoutesComponent },
     { path: 'test/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'test/bvg-routes', component: BvgRoutesComponent },
@@ -1125,6 +1094,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1212,10 +1182,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'test/:id/change-password', component: ChangePasswordComponent },
     { path: 'test/:id/vts-route', component: VtsRouteComponent },
-    { path: 'test/:id/create-route', component: CreateRouteComponent },
-    { path: 'test/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'test/:id/test-route', component: TestRouteComponent },
-    { path: 'test/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'test/:id/create-routes', component: CreateRoutesComponent },
     { path: 'test/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'test/:id/bvg-routes', component: BvgRoutesComponent },
@@ -1237,6 +1203,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     //demo
     { path: 'demo/home', component: HomeComponent },
@@ -1324,10 +1291,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'demo/change-password', component: ChangePasswordComponent },
     { path: 'demo/vts-route', component: VtsRouteComponent },
-    { path: 'demo/create-route', component: CreateRouteComponent },
-    { path: 'demo/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'demo/test-route', component: TestRouteComponent },
-    { path: 'demo/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'demo/create-routes', component: CreateRoutesComponent },
     { path: 'demo/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'demo/bvg-routes', component: BvgRoutesComponent },
@@ -1349,6 +1312,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/salary-transaction', component: SalaryTransactionComponent },
     { path: 'demo/dustbin-service', component: DustbinServiceComponent },
     { path: 'demo/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'demo/staff-account-detail', component: StaffAccountDetailComponent },
     
     { path: 'demo/:id/home', component: HomeComponent },
     { path: 'demo/:id1/maps', component: MapsComponent },
@@ -1435,10 +1399,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'demo/:id/change-password', component: ChangePasswordComponent },
     { path: 'demo/:id/vts-route', component: VtsRouteComponent },
-    { path: 'demo/:id/create-route', component: CreateRouteComponent },
-    { path: 'demo/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'demo/:id/test-route', component: TestRouteComponent },
-    { path: 'demo/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'demo/:id/create-routes', component: CreateRoutesComponent },
     { path: 'demo/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'demo/:id/bvg-routes', component: BvgRoutesComponent },
@@ -1460,6 +1420,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'demo/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'demo/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'demo/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'demo/:id/staff-account-detail', component: StaffAccountDetailComponent },
 
     
 
@@ -1549,10 +1510,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'kishangarh/change-password', component: ChangePasswordComponent },
     { path: 'kishangarh/vts-route', component: VtsRouteComponent },
-    { path: 'kishangarh/create-route', component: CreateRouteComponent },
-    { path: 'kishangarh/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'kishangarh/test-route', component: TestRouteComponent },
-    { path: 'kishangarh/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'kishangarh/create-routes', component: CreateRoutesComponent },
     { path: 'kishangarh/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'kishangarh/bvg-routes', component: BvgRoutesComponent },
@@ -1574,6 +1531,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/staff-account-detail', component: StaffAccountDetailComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1661,10 +1619,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
     { path: 'kishangarh/:id/change-password', component: ChangePasswordComponent },
     { path: 'kishangarh/:id/vts-route', component: VtsRouteComponent },
-    { path: 'kishangarh/:id/create-route', component: CreateRouteComponent },
-    { path: 'kishangarh/:id/create-ward-line-path', component: CreateWardLinePathComponent },
-    { path: 'kishangarh/:id/test-route', component: TestRouteComponent },
-    { path: 'kishangarh/:id/jmaps-test-purpose', component: JmapsTestPurposeComponent },
     { path: 'kishangarh/:id/create-routes', component: CreateRoutesComponent },
     { path: 'kishangarh/:id/upload-route-excel', component: UploadRouteExcelComponent },
     { path: 'kishangarh/:id/bvg-routes', component: BvgRoutesComponent },
@@ -1686,4 +1640,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/:id/staff-account-detail', component: StaffAccountDetailComponent },
 ]; 

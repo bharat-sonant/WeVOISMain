@@ -143,7 +143,7 @@ export class WardMonitoringComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -174,12 +174,15 @@ export class WardMonitoringComponent {
       let linePath = [];
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
         }
-        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+        catch { }
       }
       this.allLines = linePath;
       this.plotLineOnMap();

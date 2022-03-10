@@ -77,6 +77,11 @@ export class UserAddComponent implements OnInit {
             (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
           }
         }
+        if(doc.data()["isLock"]!=undefined){
+          if (doc.data()["isLock"] == 1) {
+            (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
+          }
+        }
       });
     } else {
       this.userRecord = [];
@@ -173,6 +178,7 @@ export class UserAddComponent implements OnInit {
     let officeAppUserId: any = $("#officeAppUserId").val();
     let isTaskManager: any = 0;
     let isActual:any=0;
+    let isLock:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -195,6 +201,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) haltDisableAccess = 1;
     element = <HTMLInputElement>document.getElementById("isActual");
     if (element.checked == true) isActual = 1;
+    element = <HTMLInputElement>document.getElementById("isLock");
+    if (element.checked == true) isLock = 1;
 
     const dish = {
       userId: userId,
@@ -214,7 +222,8 @@ export class UserAddComponent implements OnInit {
       officeAppUserId: officeAppUserId,
       isTaskManager: isTaskManager,
       haltDisableAccess: haltDisableAccess,
-      isActual:isActual
+      isActual:isActual,
+      isLock:isLock
     };
 
     if (id != null) {

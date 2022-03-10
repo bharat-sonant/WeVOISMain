@@ -87,6 +87,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   zoneKMLHalt: any;
   allMarkers: any[] = [];
   cityName: any;
+  selectedZoneName: any;
 
   workerDetails: WorkderDetails = {
     speed: "0",
@@ -390,11 +391,12 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.zoneList = this.commonService.transform(this.zoneList, "displayOrder");
       if (this.firstData == false) {
         this.selectedZone = this.zoneList[0]["zoneNo"];
+        this.selectedZoneName = this.zoneList[0]["zoneName"];
         this.workerDetails.wardNo = this.zoneList[0]["zoneNo"];
         if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
           this.workerDetails.wardName = "Market " + this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
         } else {
-          this.workerDetails.wardName = "ZONE " + this.selectedZone;
+          this.workerDetails.wardName = "ZONE " + this.selectedZoneName;
         }
         this.initGrpahProperties();
         this.initTimeDistance();
@@ -946,7 +948,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWardBoundaryHalt(wardNo: string) {
-    this.commonService.getWardBoundary(wardNo, this.zoneKMLHalt).then((data: any) => {
+    this.commonService.getWardBoundary(wardNo, this.zoneKMLHalt, 2).then((data: any) => {
       if (this.zoneKMLHalt != undefined) {
         this.zoneKMLHalt[0]["line"].setMap(null);
       }
@@ -1061,11 +1063,15 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getAllData(wardNo: string) {
     this.selectedZone = wardNo;
+    let detail = this.zoneList.find(item => item.zoneNo == wardNo);
+    if (detail != undefined) {
+      this.selectedZoneName = detail.zoneName;
+    }
     this.workerDetails.wardNo = wardNo;
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");
     } else {
-      this.workerDetails.wardName = "ZONE " + this.selectedZone;
+      this.workerDetails.wardName = "ZONE " + this.selectedZoneName;
     }
     this.fillWardDetail();
   }
@@ -1692,7 +1698,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -1759,12 +1765,15 @@ export class RealtimeMonitoringComponent implements OnInit {
       var linePath = [];
       for (let i = 0; i < keyArray.length - 1; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
-        var latLng = [];
-        for (let j = 0; j < points.length; j++) {
-          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        try {
+          let points = wardLines[lineNo]["points"];
+          var latLng = [];
+          for (let j = 0; j < points.length; j++) {
+            latLng.push({ lat: points[j][0], lng: points[j][1] });
+          }
+          linePath.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
         }
-        linePath.push({ lineNo: i, latlng: latLng, color: "#87CEFA" });
+        catch { }
       }
       this.allLines = linePath;
       this.plotLinesOnMap();
