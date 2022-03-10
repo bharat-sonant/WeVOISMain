@@ -100,7 +100,6 @@ export class WardWorkTrackingComponent {
     $(this.divLoader).show();
     this.getCurrentLine();
     this.getSummaryData();
-    this.getWardTotalLength();
     this.setWardBoundary();
     this.getAllLinesFromJson();
   }
@@ -163,6 +162,7 @@ export class WardWorkTrackingComponent {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       this.progressData.totalLines = wardLines["totalLines"];
+      this.progressData.wardLength=(parseFloat(wardLines["totalWardLength"]) / 1000).toFixed(2);;
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let points = wardLines[lineNo]["points"];
@@ -257,18 +257,6 @@ export class WardWorkTrackingComponent {
         }
       });
     }
-  }
-
-  getWardTotalLength() {
-    let wardLenghtPath = "WardRouteLength/" + this.selectedZone;
-    let wardLengthInstance = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
-      wardLengthInstance.unsubscribe();
-      if (wardLengthData != null) {
-        this.progressData.wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
-      } else {
-        this.progressData.wardLength = "0.00";
-      }
-    });
   }
 
   setDefaultMap() {
