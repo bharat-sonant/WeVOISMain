@@ -5286,3 +5286,109 @@ p{
 /******************************Custom Scrollbar End*********************************/
 
 
+
+
+@media screen and (max-width:822px) and (min-width: 820px){
+  .nav-link{
+    padding: 0 !important
+  }
+  .navbar .navbar-nav .nav-item:first-child {
+    margin-top: 0px !important;
+}
+li.nav-item.nav-link {
+  padding: 15px 7px !important;
+}
+ul.navbar-nav.navbar-mobile.mr-0 {
+  margin-top: 10px !important;
+}
+
+.slider p{
+  color: #232536;
+  font-family: Montserrat;
+  font-size: 11px !important;
+  margin-top: -6px !important;
+}
+.slider .button a{
+  margin-top: 30px !important;
+}
+.carousel-indicators{
+  top: 79% !important;
+  left: -3% !important;
+}
+
+}
+
+@media screen and (max-width:770px) and (min-width: 768px){
+  .nav-link{
+    padding: 0 !important
+    
+  }
+  .navbar .navbar-nav .nav-item:first-child {
+    margin-top: 0px !important;
+}
+li.nav-item.nav-link {
+  padding: 10px 5px !important;
+  font-size: 10px !important
+}
+
+.navbar a{
+  padding: 10px 0px !important;
+}
+.slider p{
+  color: #232536;
+  font-family: Montserrat;
+  font-size: 11px !important;
+  margin-top: -13px !important;
+}
+.slider .button a{
+  margin-top: 20px !important;
+}
+.carousel-indicators{
+  top: 80% !important;
+  left: -2% !important;
+}
+ul.navbar-nav.navbar-mobile.mr-0 {
+  margin-top: 10px !important;
+}
+
+
+}
+
+
+@media screen and (max-width:915px) and (min-width: 912px){
+  .nav-link{
+    padding: 0 !important
+  }
+  .navbar .navbar-nav .nav-item:first-child {
+    margin-top: 0px !important;
+}
+li.nav-item.nav-link {
+  padding: 15px 9px !important;
+}
+ul.navbar-nav.navbar-mobile.mr-0 {
+  margin-top: 10px !important;
+}
+
+.slider p{
+  color: #232536;
+  font-family: Montserrat;
+  font-size: 12px !important;
+  margin-top: -4px !important;
+}
+.slider .button a{
+  margin-top: 8px !important;
+}
+.carousel-indicators{
+  top: 91% !important;
+  left: -5% !important;
+}
+
+}
+
+@media screen and (max-width:1025px) and (min-width:1024px){
+  .carousel-indicators{
+    top: 87% !important;
+    left: -6% !important;
+  }
+} 
+
