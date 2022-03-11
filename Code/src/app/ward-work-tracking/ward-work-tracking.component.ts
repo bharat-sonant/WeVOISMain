@@ -18,30 +18,38 @@ export class WardWorkTrackingComponent {
   zoneList: any[];
   selectedYear: any;
   selectedMonthName: any;
-  zoneKML: any;
+  wardBoundary: any;
   toDayDate: any;
   selectedDate: any;
   cityName: any;
   lines: any[] = [];
   polylines = [];
   wardLineNoMarker: any[] = [];
+  instancesList: any[] = [];;
   strokeWeight: any = 3;
+  parhadhouseMarker: any;
   showLineNoText = "#showLineNoText";
   isLineNoShow = false;
+  invisibleImageUrl = "../assets/img/invisible-location.svg";
+  parshadMarkerImageUrl = "../assets/img/sweet-home.png";
+  txtDate = "#txtDate";
+  divLoader = "#divLoader";
+  divSetting = "#divSetting";
+  divParshad = "#divParshad";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
     skippedLines: 0,
     currentLine: 0,
     wardLength: "0",
-    coveredLength: "0"
+    coveredLength: "0",
+    driverName: "---",
+    driverMobile: "",
+    helperName: "---",
+    helperMobile: "",
+    parshadName: "",
+    parshadMobile: ""
   };
-
-  invisibleImageUrl = "../assets/img/invisible-location.svg";
-  txtDate = "#txtDate";
-  divLoader = "#divLoader";
-  divLinesShowHide = "#divLinesShowHide";
-  divLinesShowHideCheckBox="#divLinesShowHideCheckBox";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -50,6 +58,9 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
+    if (this.cityName == "reengus") {
+      $("#divParshad").hide();
+    }
     this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -62,16 +73,15 @@ export class WardWorkTrackingComponent {
     });
   }
 
-  getLocalStorage(){
+  getLocalStorage() {
     if (localStorage.getItem("userType") == "External User") {
-      $(this.divLinesShowHide).hide();
-      $(this.divLinesShowHideCheckBox).hide();
+      $(this.divSetting).hide();
     }
     if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
       this.isLineNoShow = true;
       this.showHideLineNoHtml();
-      let element=<HTMLInputElement>document.getElementById("chkIsShow");
-      element.checked=true;
+      let element = <HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked = true;
     }
   }
 
@@ -79,11 +89,9 @@ export class WardWorkTrackingComponent {
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-      this.selectedDate = nextDate;
+      this.selectedDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
     } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
-      this.selectedDate = previousDate;
+      this.selectedDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
     }
     $(this.txtDate).val(this.selectedDate);
     this.getSelectedYearMonth();
@@ -98,10 +106,14 @@ export class WardWorkTrackingComponent {
   getWardData() {
     this.resetData();
     $(this.divLoader).show();
+    this.getEmployeeData();
     this.getCurrentLine();
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
+    if (this.cityName != "reengus") {
+      this.getParshadDetail();
+    }
   }
 
   changeZoneSelection(filterVal: any) {
@@ -114,24 +126,35 @@ export class WardWorkTrackingComponent {
   }
 
   resetData() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
     this.progressData.currentLine = 0;
     this.progressData.skippedLines = 0;
     this.progressData.totalLines = 0;
     this.progressData.wardLength = "0";
+    this.progressData.driverMobile = "";
+    this.progressData.driverName = "---";
+    this.progressData.helperMobile = "";
+    this.progressData.helperName = "---";
+    this.progressData.parshadMobile = "";
+    this.progressData.parshadName = "";
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, this.strokeWeight).then((data: any) => {
-      if (this.zoneKML != undefined) {
-        this.zoneKML[0]["line"].setMap(null);
+    this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, this.strokeWeight).then((boundaryData: any) => {
+      if (this.wardBoundary != undefined) {
+        this.wardBoundary[0]["line"].setMap(null);
       }
-      this.zoneKML = data;
-      this.zoneKML[0]["line"].setMap(this.map);
+      this.wardBoundary = boundaryData;
+      this.wardBoundary[0]["line"].setMap(this.map);
       const bounds = new google.maps.LatLngBounds();
-      for (let i = 0; i < this.zoneKML[0]["latLng"].length; i = (i + 5)) {
-        bounds.extend({ lat: Number(this.zoneKML[0]["latLng"][i]["lat"]), lng: Number(this.zoneKML[0]["latLng"][i]["lng"]) });
+      for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+        bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
       }
       this.map.fitBounds(bounds);
     });
@@ -158,11 +181,11 @@ export class WardWorkTrackingComponent {
 
   getAllLinesFromJson() {
     this.clearMapAll();
-    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((data: any) => {
-      let wardLines = JSON.parse(data);
+    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
+      let wardLines = JSON.parse(linesData);
       let keyArray = Object.keys(wardLines);
       this.progressData.totalLines = wardLines["totalLines"];
-      this.progressData.wardLength=(parseFloat(wardLines["totalWardLength"]) / 1000).toFixed(2);;
+      this.progressData.wardLength = (parseFloat(wardLines["totalWardLength"]) / 1000).toFixed(2);;
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let points = wardLines[lineNo]["points"];
@@ -184,7 +207,7 @@ export class WardWorkTrackingComponent {
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineStatus) => {
-      lineStatusInstance.unsubscribe();
+      this.instancesList.push({ instances: lineStatusInstance });
       let strokeColor = this.commonService.getLineColor(null);
       if (lineStatus != null) {
         strokeColor = this.commonService.getLineColor(lineStatus);
@@ -219,7 +242,7 @@ export class WardWorkTrackingComponent {
       label: {
         text: lineNo.toString(),
         color: "#000",
-        fontSize: "10px",
+        fontSize: "13px",
         fontWeight: "bold",
       },
     });
@@ -232,7 +255,7 @@ export class WardWorkTrackingComponent {
   getSummaryData() {
     let workSummarydbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
     let workSummaryInstance = this.db.object(workSummarydbPath).valueChanges().subscribe((workSummary) => {
-      workSummaryInstance.unsubscribe();
+      this.instancesList.push({ instances: workSummaryInstance });
       if (workSummary != null) {
         if (workSummary["skippedLines"] != null) {
           this.progressData.skippedLines = workSummary["skippedLines"];
@@ -251,12 +274,74 @@ export class WardWorkTrackingComponent {
   getCurrentLine() {
     if (this.selectedDate == this.toDayDate) {
       let lastLineInstance = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
-        lastLineInstance.unsubscribe();
+        this.instancesList.push({ instances: lastLineInstance });
         if (lastLine != null) {
           this.progressData.currentLine = Number(lastLine) + 1;
         }
       });
     }
+  }
+
+  getEmployeeData() {
+    let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
+    let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
+      workDetails.unsubscribe();
+      if (workerData != undefined) {
+        let driverList = workerData["driver"].toString().split(",");
+        let helperList = workerData["helper"].toString().split(",");
+        let driverId = driverList[driverList.length - 1].trim();
+        let helperId = helperList[helperList.length - 1].trim();
+        this.getEmployee(driverId, "driver");
+        this.getEmployee(helperId, "helper");
+      } else {
+        this.commonService.setAlertMessage("success", "No work assign selected zone on selected date!!!");
+      }
+    });
+  }
+
+  getEmployee(empId: any, empType: any) {
+    this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+      if (empType == "driver") {
+        this.progressData.driverName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+        this.progressData.driverMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+      } else {
+        this.progressData.helperName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
+        this.progressData.helperMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+      }
+    });
+  }
+
+  getParshadDetail() {
+    let dbPath = "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
+    let parshadDetailInstance = this.db.object(dbPath).valueChanges().subscribe((parshadData) => {
+      parshadDetailInstance.unsubscribe();
+      if (this.parhadhouseMarker != null) {
+        this.parhadhouseMarker.setMap(null);
+      }
+      this.parhadhouseMarker = null;
+      if (parshadData != null) {
+        if (parshadData["name"] != null) {
+          this.progressData.parshadName = parshadData["name"];
+        }
+        if (parshadData["mobile"] != null) {
+          this.progressData.parshadMobile = parshadData["mobile"];
+        }
+        this.setParshadHouseMarker(parshadData["lat"],parshadData["lng"])
+      }
+    });
+  }
+
+  setParshadHouseMarker(lat:any,lng:any){
+    this.parhadhouseMarker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: this.parshadMarkerImageUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(45, 30),
+      },
+    });
   }
 
   setDefaultMap() {
@@ -310,13 +395,13 @@ export class WardWorkTrackingComponent {
   showHideLineNoHtml() {
     if (this.isLineNoShow == true) {
       $(this.showLineNoText).html("Hide Line No.");
-      let element=<HTMLInputElement>document.getElementById("chkIsShow");
-      element.checked=true;
+      let element = <HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked = true;
     }
     else {
       $(this.showLineNoText).html("Show Line No.");
-      let element=<HTMLInputElement>document.getElementById("chkIsShow");
-      element.checked=false;
+      let element = <HTMLInputElement>document.getElementById("chkIsShow");
+      element.checked = false;
     }
   }
 
@@ -325,6 +410,14 @@ export class WardWorkTrackingComponent {
     let className = element.className;
     $("#collapsetwo").removeClass(className);
     $("#collapsetwo").addClass("panel-collapse collapse in");
+  }
+
+  ngOnDestroy() {
+    if (this.instancesList.length > 0) {
+      for (let i = 0; i < this.instancesList.length; i++) {
+        this.instancesList[i]["instances"].unsubscribe();
+      }
+    }
   }
 
 }
@@ -336,4 +429,10 @@ export class progressDetail {
   currentLine: number;
   wardLength: string;
   coveredLength: string;
+  driverName: string;
+  driverMobile: string;
+  helperName: string;
+  helperMobile: string;
+  parshadName: string;
+  parshadMobile: string;
 }

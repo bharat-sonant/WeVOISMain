@@ -40,7 +40,7 @@
             <h6>Scanned House</h6>
           </div>
         </div>
-        <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+        <div id="divSetting" class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
             aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
             <h6 style="font-size: 9px!important;">Settings</h6>
@@ -58,12 +58,12 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div id="divLinesShowHide" class="setting-box">
+                  <div class="setting-box">
                     <p id="showLineNoText"> Show Line No</p>
                     <button type="button" class="btn btn-main btn-success" (click)="showLineNo();"><i
                         class="fas fa-grip-lines-vertical"></i></button>
                   </div>
-                  <div id="divLinesShowHideCheckBox" class="setting-box" style="border-bottom: none!important;">
+                  <div class="setting-box" style="border-bottom: none!important;">
                     <p style="margin-top: 10px;"> Show Line No</p>
                     <input id="chkIsShow" type="checkbox" (change)="showLineNo()" style="float:right; margin-top: 10px; margin-right: 20px;">
                   </div>
@@ -81,7 +81,7 @@
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
 
 
-<!--
+
 <div id="divDriverDetail" class="driver-helper-box">
   <div class="row">
     <div class="col-md-12">
@@ -105,7 +105,7 @@
           </h6>
         </div>
       </div>
-      <div class="main-box" style="border-bottom:none!important;">
+      <div id="divParshad" class="main-box" style="border-bottom:none!important;">
         <div class="designation">
           <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
         </div>
@@ -118,7 +118,7 @@
     </div>
   </div>
 </div>
--->
+
 <div id="divInternal" class="line-details-box">
   <div>
     <div class="lines">
