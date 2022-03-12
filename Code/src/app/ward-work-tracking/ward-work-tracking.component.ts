@@ -34,8 +34,8 @@ export class WardWorkTrackingComponent {
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
-  divParshad = "#divParshad";
-  divInternal = "#divInternal";
+  divParshadDetail = "#divParshadDetail";
+  divInternalUserShowDetail = "#divInternalUserShowDetail";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -59,8 +59,8 @@ export class WardWorkTrackingComponent {
 
   setDefault() {
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
-      $("#divParshad").hide();
-      $("#divInternal").css("top", "200px");
+      $(this.divParshadDetail).hide();
+      $(this.divInternalUserShowDetail).css("top", "200px");
     }
     this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
@@ -80,17 +80,12 @@ export class WardWorkTrackingComponent {
     }
     if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
       this.isLineNoShow = true;
-      this.showHideLineNoHtml();
-      let element = <HTMLInputElement>document.getElementById("chkIsShow");
+      let element = <HTMLInputElement>document.getElementById("chkIsShowLineNo");
       element.checked = true;
     }
   }
 
   setDate(filterVal: any, type: string) {
-    if (this.selectedZone == "0") {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
-      return;
-    }
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -100,7 +95,9 @@ export class WardWorkTrackingComponent {
     }
     $(this.txtDate).val(this.selectedDate);
     this.getSelectedYearMonth();
-    this.getWardData();
+    if (this.selectedZone != "0") {
+      this.getWardData();
+    }
   }
 
   getSelectedYearMonth() {
@@ -188,7 +185,7 @@ export class WardWorkTrackingComponent {
   getAllLinesFromJson() {
     this.clearMapAll();
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
-      this.lines=[];
+      this.lines = [];
       let wardLines = JSON.parse(linesData);
       let keyArray = Object.keys(wardLines);
       this.progressData.totalLines = wardLines["totalLines"];
@@ -240,7 +237,9 @@ export class WardWorkTrackingComponent {
       this.polylines[index].setMap(this.map);
       let lat = latlng[0]["lat"];
       let lng = latlng[0]["lng"];
-      this.setLineNoMarker(lineNo, lat, lng);
+      if (this.isLineNoShow == true) {
+        this.setLineNoMarker(lineNo, lat, lng);
+      }
     });
   }
 
@@ -262,9 +261,6 @@ export class WardWorkTrackingComponent {
         fontWeight: "bold",
       },
     });
-    if (this.isLineNoShow == false) {
-      marker.setMap(null);
-    }
     this.wardLineNoMarker.push({ marker });
   }
 
@@ -389,7 +385,6 @@ export class WardWorkTrackingComponent {
       localStorage.setItem("wardWorkTrackingLineShow", "1");
     }
     this.showHideLineNo();
-    this.showHideLineNoHtml();
     this.hideSetting();
   }
 
@@ -406,18 +401,19 @@ export class WardWorkTrackingComponent {
         }
       }
     }
+    else {
+      if (this.isLineNoShow == true) {
+        for (let i = 0; i < this.lines.length; i++) {
+          let lineNo = this.lines[i]["lineNo"];
+          let latlng = this.lines[i]["latlng"];
+          let lat = latlng[0]["lat"];
+          let lng = latlng[0]["lng"];
+          this.setLineNoMarker(lineNo, lat, lng);
+        }
+      }
+    }
   }
 
-  showHideLineNoHtml() {
-    if (this.isLineNoShow == true) {
-      let element = <HTMLInputElement>document.getElementById("chkIsShow");
-      element.checked = true;
-    }
-    else {
-      let element = <HTMLInputElement>document.getElementById("chkIsShow");
-      element.checked = false;
-    }
-  }
 
   hideSetting() {
     let element = <HTMLElement>document.getElementById("collapsetwo");
