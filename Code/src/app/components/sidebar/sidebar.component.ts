@@ -232,7 +232,7 @@ export class SidebarComponent implements OnInit {
                     this.sendGeoNotification(zoneNo, index, remark, message);
                   }
                 }
-                this.getTrip(zoneNo, tripList);
+                //this.getTrip(zoneNo, tripList);
               }
             }
           }

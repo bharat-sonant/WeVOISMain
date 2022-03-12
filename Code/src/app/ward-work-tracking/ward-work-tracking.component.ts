@@ -28,7 +28,6 @@ export class WardWorkTrackingComponent {
   instancesList: any[] = [];;
   strokeWeight: any = 3;
   parhadhouseMarker: any;
-  showLineNoText = "#showLineNoText";
   isLineNoShow = false;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
@@ -36,6 +35,7 @@ export class WardWorkTrackingComponent {
   divLoader = "#divLoader";
   divSetting = "#divSetting";
   divParshad = "#divParshad";
+  divInternal = "#divInternal";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -58,8 +58,9 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    if (this.cityName == "reengus") {
+    if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $("#divParshad").hide();
+      $("#divInternal").css("top", "200px");
     }
     this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
@@ -86,6 +87,10 @@ export class WardWorkTrackingComponent {
   }
 
   setDate(filterVal: any, type: string) {
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
     if (type == "current") {
       this.selectedDate = filterVal;
     } else if (type == "next") {
@@ -111,7 +116,7 @@ export class WardWorkTrackingComponent {
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
-    if (this.cityName != "reengus") {
+    if (this.cityName != "reengus" || this.cityName == "shahpura") {
       this.getParshadDetail();
     }
   }
@@ -130,6 +135,7 @@ export class WardWorkTrackingComponent {
       for (let i = 0; i < this.instancesList.length; i++) {
         this.instancesList[i]["instances"].unsubscribe();
       }
+      this.instancesList = [];
     }
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
@@ -182,6 +188,7 @@ export class WardWorkTrackingComponent {
   getAllLinesFromJson() {
     this.clearMapAll();
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
+      this.lines=[];
       let wardLines = JSON.parse(linesData);
       let keyArray = Object.keys(wardLines);
       this.progressData.totalLines = wardLines["totalLines"];
@@ -196,7 +203,7 @@ export class WardWorkTrackingComponent {
         this.lines.push({
           lineNo: lineNo,
           latlng: latLng,
-          color: "#87CEFA",
+          color: "#60c2ff",
         });
         this.plotLineOnMap(lineNo, latLng, i);
       }
@@ -211,8 +218,17 @@ export class WardWorkTrackingComponent {
       let strokeColor = this.commonService.getLineColor(null);
       if (lineStatus != null) {
         strokeColor = this.commonService.getLineColor(lineStatus);
-        if (lineStatus == "LineCompleted") {
-          this.progressData.completedLines = this.progressData.completedLines + 1;
+        if (this.polylines[index] != undefined) {
+          this.polylines[index].setMap(null);
+        }
+        let lineDetail = this.lines.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          if (lineStatus == "LineCompleted") {
+            if (lineDetail.color == "#60c2ff") {
+              this.progressData.completedLines = this.progressData.completedLines + 1;
+            }
+          }
+          lineDetail.color = strokeColor;
         }
       }
       let line = new google.maps.Polyline({
@@ -326,12 +342,12 @@ export class WardWorkTrackingComponent {
         if (parshadData["mobile"] != null) {
           this.progressData.parshadMobile = parshadData["mobile"];
         }
-        this.setParshadHouseMarker(parshadData["lat"],parshadData["lng"])
+        this.setParshadHouseMarker(parshadData["lat"], parshadData["lng"])
       }
     });
   }
 
-  setParshadHouseMarker(lat:any,lng:any){
+  setParshadHouseMarker(lat: any, lng: any) {
     this.parhadhouseMarker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
@@ -394,12 +410,10 @@ export class WardWorkTrackingComponent {
 
   showHideLineNoHtml() {
     if (this.isLineNoShow == true) {
-      $(this.showLineNoText).html("Hide Line No.");
       let element = <HTMLInputElement>document.getElementById("chkIsShow");
       element.checked = true;
     }
     else {
-      $(this.showLineNoText).html("Show Line No.");
       let element = <HTMLInputElement>document.getElementById("chkIsShow");
       element.checked = false;
     }

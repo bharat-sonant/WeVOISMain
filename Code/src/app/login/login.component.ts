@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.commonService.setLocalStorageData(this.cityName);
+    //this.commonService.setLocalStorageData(this.cityName);
   }
 
   getRendomBackground() {
@@ -52,7 +52,6 @@ export class LoginComponent implements OnInit {
     let className = element.className;
     $('#divBack').removeClass(className);
     $('#divBack').addClass(imageList[index]["img"]);
-
   }
 
   getRandomNumberBetween(min, max) {
