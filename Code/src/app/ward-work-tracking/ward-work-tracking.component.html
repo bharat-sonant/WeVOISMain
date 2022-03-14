@@ -63,10 +63,15 @@
                     <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()"
                       style="float:right; margin-top: 10px; margin-right: 20px;">
                   </div>
+                  <div class="setting-box">
+                    <p style="margin-top: 10px;"> Show All Dustbin</p>
+                    <input id="chkIsShowAllDustbin" type="checkbox" (change)="showHideAllDustbin()"
+                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                  </div>
                   <div class="setting-box" style="border-bottom: none!important;">
                     <p style="margin-top: 10px;"> Show Line Details</p>
                     <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
-                      style="float:right; margin-top: 10px; margin-right: 20px;"> </i>
+                      style="float:right; margin-top: 10px; margin-right: 20px; cursor: pointer;"> </i>
                   </div>
                 </div>
               </div>

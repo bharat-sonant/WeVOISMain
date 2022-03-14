@@ -41,6 +41,7 @@ export class WardWorkTrackingComponent {
   divParshadDetail = "#divParshadDetail";
   divInternalUserShowDetail = "#divInternalUserShowDetail";
   chkIsShowLineNo = "chkIsShowLineNo";
+  chkIsShowAllDustbin = "chkIsShowAllDustbin";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -114,9 +115,11 @@ export class WardWorkTrackingComponent {
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
-    //this.getDustbins();
     if (this.cityName != "reengus" || this.cityName == "shahpura") {
       this.getParshadDetail();
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {
+      this.getDustbins();
     }
   }
 
@@ -143,12 +146,47 @@ export class WardWorkTrackingComponent {
 
   getZoneLineDetail() {
     for (let i = 0; i < this.lines.length; i++) {
-      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"] });
+      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0 });
+      this.getTimerTime(this.lines[i]["lineNo"]);
     }
+  }
+
+  getTimerTime(lineNo: any) {
+    let dbPath = "Settings/LinewiseTimingDetailsInWard/" + this.selectedZone + "/" + lineNo + "/minimumTimeToCollectWaste";
+    let timerTimeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      timeTimeData => {
+        timerTimeInstance.unsubscribe();
+        if (timeTimeData != null) {
+          let detail = this.zoneLineList.find(item => item.lineNo == lineNo);
+          if (detail != undefined) {
+            detail.timerTime = timeTimeData;
+          }
+        }
+      }
+    );
   }
 
   closeModel() {
     this.modalService.dismissAll();
+  }
+
+  showHideAllDustbin() {
+    if (this.dustbinMarkerList.length > 0) {
+      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
+        if (this.dustbinMarkerList != null) {
+          if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
+            this.dustbinMarkerList[i]["marker"].setMap(null);
+          }
+          else {
+            this.dustbinMarkerList[i]["marker"].setMap(this.map);
+          }
+        }
+      }
+    }
+    else {
+      this.getDustbins();
+    }
+    this.hideSetting();
   }
 
   getDustbins() {
@@ -390,7 +428,7 @@ export class WardWorkTrackingComponent {
         this.getEmployee(driverId, "driver");
         this.getEmployee(helperId, "helper");
       } else {
-        this.commonService.setAlertMessage("success", "No work assign selected zone on selected date!!!");
+        this.commonService.setAlertMessage("success", "Work is not assigned for the selected date!!!");
       }
     });
   }
