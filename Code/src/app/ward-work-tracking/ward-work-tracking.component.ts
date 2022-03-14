@@ -290,6 +290,9 @@ export class WardWorkTrackingComponent {
         });
         this.plotLineOnMap(lineNo, latLng, i);
       }
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
+        this.showHideLineNo();
+      }
       $(this.divLoader).hide();
     });
   }
@@ -321,11 +324,6 @@ export class WardWorkTrackingComponent {
       });
       this.polylines[index] = line;
       this.polylines[index].setMap(this.map);
-      let lat = latlng[0]["lat"];
-      let lng = latlng[0]["lng"];
-      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
-        this.setLineNoMarker(lineNo, lat, lng);
-      }
     });
   }
 
