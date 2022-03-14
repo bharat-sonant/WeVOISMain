@@ -58,9 +58,15 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div class="setting-box" style="border-bottom: none!important;">
+                  <div class="setting-box">
                     <p style="margin-top: 10px;"> Show Line No</p>
-                    <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()" style="float:right; margin-top: 10px; margin-right: 20px;">
+                    <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()"
+                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                  </div>
+                  <div class="setting-box" style="border-bottom: none!important;">
+                    <p style="margin-top: 10px;"> Show Line Details</p>
+                    <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
+                      style="float:right; margin-top: 10px; margin-right: 20px;"> </i>
                   </div>
                 </div>
               </div>
@@ -189,6 +195,52 @@
   </div>
 </div>
 -->
+
+
+<!--Card Not Scan Start-->
+<ng-template #contentLineDetail>
+  <div style="width: 100%;text-align: right;float: left;">
+
+    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+  </div>
+  <div class="modal-body" style="margin-top:-20px; ">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="dth">
+          <div class="table-bg">
+            <div id="divStatus" class="tableFixHead">
+              <table class="table table-hover" style="margin-bottom: 0px;">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-left">Line No  </th>
+                    <th scope="col" class="text-left">Length</th>
+                    <th scope="col" class="text-left">Timer time</th>
+                    <th scope="col" class="text-left">Actual covered time</th>
+                    <th scope="col" class="text-left">No of houses</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dt of zoneLineList">
+                    <td class="text-left border-left">{{dt.lineNo}} </td>
+                    <td class="text-left border-left">{{dt.length}} </td>
+                    <td class="text-left border-left">{{dt.timerTime}} </td>
+                    <td class="text-left border-left">{{dt.actualCoveredTime}} </td>
+                    <td class="text-left border-left">{{dt.houseCount}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ng-template>
+<!--Card Not Scan End-->
+
 <!--Card Not Scan Start-->
 <ng-template #contentCardNotScaned>
   <div style="width: 100%;text-align: right;float: left;">

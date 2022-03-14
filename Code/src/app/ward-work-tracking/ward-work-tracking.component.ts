@@ -3,6 +3,7 @@ import { Component, ViewChild } from "@angular/core";
 //services
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-ward-work-tracking',
@@ -12,7 +13,7 @@ import { FirebaseService } from "../firebase.service";
 export class WardWorkTrackingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -25,17 +26,21 @@ export class WardWorkTrackingComponent {
   lines: any[] = [];
   polylines = [];
   wardLineNoMarker: any[] = [];
-  instancesList: any[] = [];;
+  dustbinMarkerList: any[] = [];
+  instancesList: any[] = [];
+  dustbinList: any[] = [];
+  zoneLineList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
-  isLineNoShow = false;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
+  defaultDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
   divParshadDetail = "#divParshadDetail";
   divInternalUserShowDetail = "#divInternalUserShowDetail";
+  chkIsShowLineNo = "chkIsShowLineNo";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -78,11 +83,7 @@ export class WardWorkTrackingComponent {
     if (localStorage.getItem("userType") == "External User") {
       $(this.divSetting).hide();
     }
-    if (localStorage.getItem("wardWorkTrackingLineShow") == "1") {
-      this.isLineNoShow = true;
-      let element = <HTMLInputElement>document.getElementById("chkIsShowLineNo");
-      element.checked = true;
-    }
+    (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
   }
 
   setDate(filterVal: any, type: string) {
@@ -113,9 +114,86 @@ export class WardWorkTrackingComponent {
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
+    //this.getDustbins();
     if (this.cityName != "reengus" || this.cityName == "shahpura") {
       this.getParshadDetail();
     }
+  }
+
+  openModel(content: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 870;
+    let width = 300;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    if (type == "lineDetail") {
+      width = windowWidth - 300;
+      height = (windowHeight * 90) / 100;
+    }
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+
+    if (type == "lineDetail") {
+      this.getZoneLineDetail();
+    }
+    this.hideSetting();
+  }
+
+  getZoneLineDetail() {
+    for (let i = 0; i < this.lines.length; i++) {
+      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"] });
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  getDustbins() {
+    if (this.dustbinList.length == 0) {
+      this.dustbinList = JSON.parse(localStorage.getItem("dustbin"));
+    }
+    let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
+    if (zoneDustbins.length > 0) {
+      for (let i = 0; i < zoneDustbins.length; i++) {
+        let lat = zoneDustbins[i]["lat"];
+        let lng = zoneDustbins[i]["lng"];
+        let contentString = 'Dustbin: ' + zoneDustbins[i]["dustbin"] + '<br/> Address : ' + zoneDustbins[i]["address"];
+        this.setDustbinMarker(lat, lng, contentString);
+      }
+    }
+  }
+
+  setDustbinMarker(lat: any, lng: any, contentString: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: this.defaultDustbinUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(25, 31),
+        labelOrigin: new google.maps.Point(15, 25)
+      },
+      label: {
+        text: null,
+        color: '#fff',
+        fontSize: '12px',
+        fontWeight: "bold"
+      }
+    });
+
+    let infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+
+    marker.addListener('click', function () {
+      infowindow.open(this.map, marker);
+    });
+
+    this.dustbinMarkerList.push({ marker });
   }
 
   changeZoneSelection(filterVal: any) {
@@ -180,6 +258,14 @@ export class WardWorkTrackingComponent {
       }
       this.polylines = [];
     }
+    if (this.dustbinMarkerList.length > 0) {
+      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
+        if (this.dustbinMarkerList[i]["marker"] != null) {
+          this.dustbinMarkerList[i]["marker"].setMap(null);
+        }
+      }
+      this.dustbinMarkerList = [];
+    }
   }
 
   getAllLinesFromJson() {
@@ -237,7 +323,7 @@ export class WardWorkTrackingComponent {
       this.polylines[index].setMap(this.map);
       let lat = latlng[0]["lat"];
       let lng = latlng[0]["lng"];
-      if (this.isLineNoShow == true) {
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
         this.setLineNoMarker(lineNo, lat, lng);
       }
     });
@@ -376,14 +462,7 @@ export class WardWorkTrackingComponent {
   }
 
   showLineNo() {
-    if (this.isLineNoShow == true) {
-      this.isLineNoShow = false;
-      localStorage.setItem("wardWorkTrackingLineShow", "0");
-    }
-    else {
-      this.isLineNoShow = true;
-      localStorage.setItem("wardWorkTrackingLineShow", "1");
-    }
+    localStorage.setItem("wardWorkTrackingLineShow", (<HTMLInputElement>document.getElementById("chkIsShowLineNo")).checked.toString());
     this.showHideLineNo();
     this.hideSetting();
   }
@@ -392,7 +471,7 @@ export class WardWorkTrackingComponent {
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
         if (this.wardLineNoMarker != null) {
-          if (this.isLineNoShow == false) {
+          if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == false) {
             this.wardLineNoMarker[i]["marker"].setMap(null);
           }
           else {
@@ -402,7 +481,7 @@ export class WardWorkTrackingComponent {
       }
     }
     else {
-      if (this.isLineNoShow == true) {
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
         for (let i = 0; i < this.lines.length; i++) {
           let lineNo = this.lines[i]["lineNo"];
           let latlng = this.lines[i]["latlng"];
