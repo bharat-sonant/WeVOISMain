@@ -43,12 +43,6 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8G" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divVTSRoute").show();
         }
-        if (userAccessList[i]["pageId"] == "8H" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divCreateRouteOld").show();
-        }
-        if (userAccessList[i]["pageId"] == "8I" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divCreateLinePath").show();
-        }
         if (userAccessList[i]["pageId"] == "8J" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divCreateRoute").show();
         }

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { VtsService } from './../../services/vts/vts.service';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from "../../services/common/common.service";
 
@@ -9,7 +8,7 @@ import { CommonService } from "../../services/common/common.service";
   styleUrls: ['./vts-route.component.scss']
 })
 export class VtsRouteComponent implements OnInit {
-  constructor(private vtsService: VtsService, private fs: FirebaseService, private commonService: CommonService) { }
+  constructor(private fs: FirebaseService, private commonService: CommonService) { }
   vehicleList: any[];
   db: any;
   cityName: any;

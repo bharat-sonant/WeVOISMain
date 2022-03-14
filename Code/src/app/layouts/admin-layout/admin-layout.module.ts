@@ -6,16 +6,11 @@ import { AdminLayoutRoutes } from './admin-layout.routing';
 import { IndexComponent } from '../../index/index.component';
 import { PortalAccessComponent } from '../../portal-access/portal-access.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { UserProfileComponent } from '../../user-profile/user-profile.component';
-import { TableListComponent } from '../../table-list/table-list.component';
-import { TypographyComponent } from '../../typography/typography.component';
-import { IconsComponent } from '../../icons/icons.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { ChartsModule } from 'ng2-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
-import { UpgradeComponent } from '../../upgrade/upgrade.component';
 import { WardMonitoringComponent } from '../../reports/ward-monitoring/ward-monitoring.component';
 import { SkipLineComponent } from '../../reports/skip-line/skip-line.component';
 import { HaltsComponent } from '../../reports/halts/halts.component';
@@ -26,7 +21,6 @@ import { DownloadCollectionReportComponent } from '../../reports/download-collec
 import { HouseSearchComponent } from '../../housesearch/housesearch.component';
 import { HouseCardMappingComponent } from '../../house-card-mapping/house-card-mapping.component';
 import { SignupComponent } from '../../signup/signup.component';
-import { ServingareaComponent } from '../../servingarea/servingarea.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
 import { LineCardMappingComponent } from '../../line-card-mapping/line-card-mapping.component';
@@ -123,11 +117,6 @@ import { StaffAccountDetailComponent } from '../../salary-management/staff-accou
     IndexComponent,
     PortalAccessComponent,
     DashboardComponent,
-    UserProfileComponent,
-    TableListComponent,
-    UpgradeComponent,
-    TypographyComponent,
-    IconsComponent,
     MapsComponent,
     NotificationsComponent,
     WardMonitoringComponent,
@@ -140,7 +129,6 @@ import { StaffAccountDetailComponent } from '../../salary-management/staff-accou
     HouseSearchComponent,
     HouseCardMappingComponent,
     SignupComponent,
-    ServingareaComponent,
     FleetMonitorComponent,
     LineStatisticsComponent,
     LineCardMappingComponent,
