@@ -49,7 +49,7 @@ export class DustbinReportComponent implements OnInit {
   dustbinMapList: any;
   selectedDustbin: any;
   dustbinMarker: any;
-  planAddDays = 3;
+  planAddDays = 6;
   pickedDustbin: any;
   preSelectedMarker: any;
   highPriority: any;

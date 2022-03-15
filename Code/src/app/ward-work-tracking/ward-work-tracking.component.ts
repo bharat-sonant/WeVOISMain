@@ -34,7 +34,8 @@ export class WardWorkTrackingComponent {
   parhadhouseMarker: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
-  defaultDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
+  defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
+  defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
@@ -198,18 +199,22 @@ export class WardWorkTrackingComponent {
       for (let i = 0; i < zoneDustbins.length; i++) {
         let lat = zoneDustbins[i]["lat"];
         let lng = zoneDustbins[i]["lng"];
+        let markerUrl = this.defaultCircularDustbinUrl;
+        if (zoneDustbins[i]["type"] == "Rectangular") {
+          markerUrl = this.defaultRectangularDustbinUrl;
+        }
         let contentString = 'Dustbin: ' + zoneDustbins[i]["dustbin"] + '<br/> Address : ' + zoneDustbins[i]["address"];
-        this.setDustbinMarker(lat, lng, contentString);
+        this.setDustbinMarker(lat, lng, markerUrl, contentString);
       }
     }
   }
 
-  setDustbinMarker(lat: any, lng: any, contentString: any) {
+  setDustbinMarker(lat: any, lng: any, markerUrl: any, contentString: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
       icon: {
-        url: this.defaultDustbinUrl,
+        url: markerUrl,
         fillOpacity: 1,
         strokeWeight: 0,
         scaledSize: new google.maps.Size(25, 31),
@@ -504,26 +509,22 @@ export class WardWorkTrackingComponent {
   }
 
   showHideLineNo() {
-    if (this.wardLineNoMarker.length > 0) {
-      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
-        if (this.wardLineNoMarker != null) {
-          if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == false) {
-            this.wardLineNoMarker[i]["marker"].setMap(null);
-          }
-          else {
-            this.wardLineNoMarker[i]["marker"].setMap(this.map);
-          }
-        }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true || this.wardLineNoMarker.length == 0) {
+      for (let i = 0; i < this.lines.length; i++) {
+        let lineNo = this.lines[i]["lineNo"];
+        let latlng = this.lines[i]["latlng"];
+        let lat = latlng[0]["lat"];
+        let lng = latlng[0]["lng"];
+        this.setLineNoMarker(lineNo, lat, lng);
       }
     }
     else {
-      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
-        for (let i = 0; i < this.lines.length; i++) {
-          let lineNo = this.lines[i]["lineNo"];
-          let latlng = this.lines[i]["latlng"];
-          let lat = latlng[0]["lat"];
-          let lng = latlng[0]["lng"];
-          this.setLineNoMarker(lineNo, lat, lng);
+      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if (this.wardLineNoMarker[i]["marker"] != null || (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == false) {
+          this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
+        else if (this.wardLineNoMarker[i]["marker"] != null || (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
+          this.wardLineNoMarker[i]["marker"].setMap(this.map);
         }
       }
     }
