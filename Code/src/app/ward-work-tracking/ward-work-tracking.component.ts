@@ -4,6 +4,7 @@ import { Component, ViewChild } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-ward-work-tracking',
@@ -13,7 +14,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class WardWorkTrackingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -30,6 +31,7 @@ export class WardWorkTrackingComponent {
   instancesList: any[] = [];
   dustbinList: any[] = [];
   zoneLineList: any[] = [];
+  parshadList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
@@ -43,6 +45,7 @@ export class WardWorkTrackingComponent {
   divInternalUserShowDetail = "#divInternalUserShowDetail";
   chkIsShowLineNo = "chkIsShowLineNo";
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
+  divDustbinDetail = "#divDustbinDetail";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -55,7 +58,8 @@ export class WardWorkTrackingComponent {
     helperName: "---",
     helperMobile: "",
     parshadName: "",
-    parshadMobile: ""
+    parshadMobile: "",
+    totalDustbin: 0
   };
 
   ngOnInit() {
@@ -68,6 +72,10 @@ export class WardWorkTrackingComponent {
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $(this.divParshadDetail).hide();
       $(this.divInternalUserShowDetail).css("top", "200px");
+      $(this.divDustbinDetail).css("top", "365px");
+    }
+    else {
+      this.getParshadList();
     }
     this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
@@ -78,6 +86,22 @@ export class WardWorkTrackingComponent {
     this.setDefaultMap();
     this.getZones().then(() => {
       this.selectedZone = "0";
+    });
+  }
+
+  getParshadList() {
+    const parshadJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FParshadDetail.json?alt=media";
+    let parshadListInstance = this.httpService.get(parshadJsonPath).subscribe(parshadData => {
+      parshadListInstance.unsubscribe();
+      if (parshadData != null) {
+        let keyArray = Object.keys(parshadData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let zone = keyArray[i];
+            this.parshadList.push({ zoneNo: zone, lat: parshadData[zone]["lat"], lng: parshadData[zone]["lng"], mobile: parshadData[zone]["mobile"], name: parshadData[zone]["name"] });
+          }
+        }
+      }
     });
   }
 
@@ -146,25 +170,32 @@ export class WardWorkTrackingComponent {
   }
 
   getZoneLineDetail() {
+    this.zoneLineList=[];
     for (let i = 0; i < this.lines.length; i++) {
       this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0 });
-      this.getTimerTime(this.lines[i]["lineNo"]);
+      if (i == this.lines.length - 1) {
+        this.getTimerTime();
+      }
     }
   }
 
-  getTimerTime(lineNo: any) {
-    let dbPath = "Settings/LinewiseTimingDetailsInWard/" + this.selectedZone + "/" + lineNo + "/minimumTimeToCollectWaste";
-    let timerTimeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      timeTimeData => {
-        timerTimeInstance.unsubscribe();
-        if (timeTimeData != null) {
-          let detail = this.zoneLineList.find(item => item.lineNo == lineNo);
-          if (detail != undefined) {
-            detail.timerTime = timeTimeData;
+  getTimerTime() {
+    const timerTimeJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FLinewiseTimingDetailsInWard%2F" + this.selectedZone + ".json?alt=media";
+    let timerTimeInstance = this.httpService.get(timerTimeJsonPath).subscribe(timerTimeData => {
+      timerTimeInstance.unsubscribe();
+      if (timerTimeData != null) {
+        let keyArray = Object.keys(timerTimeData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineDetail=this.zoneLineList.find(item=>item.lineNo==lineNo);
+            if(lineDetail!=undefined){
+              lineDetail.timerTime=timerTimeData[lineNo]["minimumTimeToCollectWaste"];
+            }
           }
         }
       }
-    );
+    });
   }
 
   closeModel() {
@@ -177,15 +208,18 @@ export class WardWorkTrackingComponent {
         if (this.dustbinMarkerList != null) {
           if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
             this.dustbinMarkerList[i]["marker"].setMap(null);
+            $(this.divDustbinDetail).hide();
           }
           else {
             this.dustbinMarkerList[i]["marker"].setMap(this.map);
+            $(this.divDustbinDetail).show();
           }
         }
       }
     }
     else {
       this.getDustbins();
+      $(this.divDustbinDetail).show();
     }
     this.hideSetting();
   }
@@ -196,6 +230,7 @@ export class WardWorkTrackingComponent {
     }
     let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
     if (zoneDustbins.length > 0) {
+      this.progressData.totalDustbin = zoneDustbins.length;
       for (let i = 0; i < zoneDustbins.length; i++) {
         let lat = zoneDustbins[i]["lat"];
         let lng = zoneDustbins[i]["lng"];
@@ -219,12 +254,6 @@ export class WardWorkTrackingComponent {
         strokeWeight: 0,
         scaledSize: new google.maps.Size(25, 31),
         labelOrigin: new google.maps.Point(15, 25)
-      },
-      label: {
-        text: null,
-        color: '#fff',
-        fontSize: '12px',
-        fontWeight: "bold"
       }
     });
 
@@ -267,6 +296,7 @@ export class WardWorkTrackingComponent {
     this.progressData.helperName = "---";
     this.progressData.parshadMobile = "";
     this.progressData.parshadName = "";
+    this.progressData.totalDustbin = 0;
   }
 
   setWardBoundary() {
@@ -451,23 +481,18 @@ export class WardWorkTrackingComponent {
   }
 
   getParshadDetail() {
-    let dbPath = "Settings/WardSettings/" + this.selectedZone + "/ParshadDetail";
-    let parshadDetailInstance = this.db.object(dbPath).valueChanges().subscribe((parshadData) => {
-      parshadDetailInstance.unsubscribe();
-      if (this.parhadhouseMarker != null) {
-        this.parhadhouseMarker.setMap(null);
-      }
+    if (this.parhadhouseMarker != null) {
+      this.parhadhouseMarker.setMap(null);
       this.parhadhouseMarker = null;
-      if (parshadData != null) {
-        if (parshadData["name"] != null) {
-          this.progressData.parshadName = parshadData["name"];
-        }
-        if (parshadData["mobile"] != null) {
-          this.progressData.parshadMobile = parshadData["mobile"];
-        }
-        this.setParshadHouseMarker(parshadData["lat"], parshadData["lng"])
+    }
+    if (this.parshadList.length > 0) {
+      let parshadDetail = this.parshadList.find(item => item.zoneNo == this.selectedZone);
+      if (parshadDetail != undefined) {
+        this.progressData.parshadName = parshadDetail.name;
+        this.progressData.parshadMobile = parshadDetail.mobile;
+        this.setParshadHouseMarker(parshadDetail.lat, parshadDetail.lng);
       }
-    });
+    }
   }
 
   setParshadHouseMarker(lat: any, lng: any) {
@@ -561,4 +586,5 @@ export class progressDetail {
   helperMobile: string;
   parshadName: string;
   parshadMobile: string;
+  totalDustbin: number;
 }
