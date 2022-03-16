@@ -59,7 +59,9 @@ export class WardWorkTrackingComponent {
     helperMobile: "",
     parshadName: "",
     parshadMobile: "",
-    totalDustbin: 0
+    totalDustbin: 0,
+    circularDustbin: 0,
+    rectangularDustbin: 0,
   };
 
   ngOnInit() {
@@ -90,9 +92,11 @@ export class WardWorkTrackingComponent {
   }
 
   getParshadList() {
-    const parshadJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FParshadDetail.json?alt=media";
-    let parshadListInstance = this.httpService.get(parshadJsonPath).subscribe(parshadData => {
-      parshadListInstance.unsubscribe();
+    if (localStorage.getItem("wardParshadDetail") != null) {
+      this.parshadList = JSON.parse(localStorage.getItem("wardParshadDetail"));
+      return;
+    }
+    this.httpService.get("../../assets/jsons/ParshadDetail/" + this.cityName + ".json").subscribe(parshadData => {
       if (parshadData != null) {
         let keyArray = Object.keys(parshadData);
         if (keyArray.length > 0) {
@@ -100,6 +104,7 @@ export class WardWorkTrackingComponent {
             let zone = keyArray[i];
             this.parshadList.push({ zoneNo: zone, lat: parshadData[zone]["lat"], lng: parshadData[zone]["lng"], mobile: parshadData[zone]["mobile"], name: parshadData[zone]["name"] });
           }
+          localStorage.setItem("wardParshadDetail", JSON.stringify(this.parshadList));
         }
       }
     });
@@ -170,7 +175,7 @@ export class WardWorkTrackingComponent {
   }
 
   getZoneLineDetail() {
-    this.zoneLineList=[];
+    this.zoneLineList = [];
     for (let i = 0; i < this.lines.length; i++) {
       this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0 });
       if (i == this.lines.length - 1) {
@@ -188,9 +193,9 @@ export class WardWorkTrackingComponent {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
-            let lineDetail=this.zoneLineList.find(item=>item.lineNo==lineNo);
-            if(lineDetail!=undefined){
-              lineDetail.timerTime=timerTimeData[lineNo]["minimumTimeToCollectWaste"];
+            let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.timerTime = timerTimeData[lineNo]["minimumTimeToCollectWaste"];
             }
           }
         }
@@ -229,6 +234,7 @@ export class WardWorkTrackingComponent {
       this.dustbinList = JSON.parse(localStorage.getItem("dustbin"));
     }
     let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
+
     if (zoneDustbins.length > 0) {
       this.progressData.totalDustbin = zoneDustbins.length;
       for (let i = 0; i < zoneDustbins.length; i++) {
@@ -237,8 +243,12 @@ export class WardWorkTrackingComponent {
         let markerUrl = this.defaultCircularDustbinUrl;
         if (zoneDustbins[i]["type"] == "Rectangular") {
           markerUrl = this.defaultRectangularDustbinUrl;
+          this.progressData.rectangularDustbin += 1;
         }
-        let contentString = 'Dustbin: ' + zoneDustbins[i]["dustbin"] + '<br/> Address : ' + zoneDustbins[i]["address"];
+        else {
+          this.progressData.circularDustbin += 1;
+        }
+        let contentString = '<br/> Address : ' + zoneDustbins[i]["address"];
         this.setDustbinMarker(lat, lng, markerUrl, contentString);
       }
     }
@@ -297,6 +307,8 @@ export class WardWorkTrackingComponent {
     this.progressData.parshadMobile = "";
     this.progressData.parshadName = "";
     this.progressData.totalDustbin = 0;
+    this.progressData.circularDustbin = 0;
+    this.progressData.rectangularDustbin = 0;
   }
 
   setWardBoundary() {
@@ -587,4 +599,6 @@ export class progressDetail {
   parshadName: string;
   parshadMobile: string;
   totalDustbin: number;
+  rectangularDustbin: number;
+  circularDustbin: number;
 }
