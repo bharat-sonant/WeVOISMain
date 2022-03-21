@@ -239,6 +239,7 @@ export class WardWorkTrackingComponent {
   }
 
   showHideAllDustbin() {
+    this.hideSetting();
     if (this.selectedZone == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -259,9 +260,7 @@ export class WardWorkTrackingComponent {
     }
     else {
       this.getDustbins();
-      $(this.divDustbinDetail).show();
     }
-    this.hideSetting();
   }
 
   getDustbins() {
@@ -286,6 +285,7 @@ export class WardWorkTrackingComponent {
         let contentString = '<br/> Address : ' + zoneDustbins[i]["address"];
         this.setDustbinMarker(lat, lng, markerUrl, contentString);
       }
+      $(this.divDustbinDetail).show();
     }
   }
 
