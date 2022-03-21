@@ -33,67 +33,6 @@ export class UserAccessComponent implements OnInit {
     this.getUserAccess(id);
   }
 
-  setPortalPages() {
-    let portalAccessList = [];
-    let dbPath = "Defaults/PortalSectionAccess";
-    let pagesInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      pagesInstance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            portalAccessList.push({
-              parentId: 0,
-              pageID: index,
-              name: data[index]["name"],
-              img: data[index]["img"],
-              position: data[index]["position"],
-              url: data[index]["url"],
-            });
-            if (data[index]["SubPages"] != null) {
-              let data2 = data[index]["SubPages"];
-              let keyArray2 = Object.keys(data2);
-              if (keyArray2.length > 0) {
-                for (let j = 0; j < keyArray2.length; j++) {
-                  let index2 = keyArray2[j];
-                  portalAccessList.push({
-                    parentId: index,
-                    pageID: index2,
-                    name: data2[index2]["name"],
-                    img: data2[index2]["img"],
-                    position: data2[index2]["position"],
-                    url: data2[index2]["url"],
-                  });
-                  if (data2[index2]["SubPages"] != null) {
-                    let data3 = data2[index2]["SubPages"];
-                    let keyArray3 = Object.keys(data3);
-                    for (let k = 0; k < keyArray3.length; k++) {
-                      let index3 = keyArray3[k];
-                      portalAccessList.push({
-                        parentId: index2,
-                        pageID: index3,
-                        name: data3[index3]["name"],
-                        img: data3[index3]["img"],
-                        position: data3[index3]["position"],
-                        url: data3[index3]["url"],
-                      });
-                    }
-                  }
-                }
-              }
-            }
-          }
-          let pagesData = JSON.stringify(portalAccessList);
-          const aa = {
-            pages: pagesData,
-          };
-          this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").add(aa);
-        }
-      }
-    });
-  }
-
   getUserAccess(userKey) {
     this.selectedCity = $("#ddlCity").val();
     this.userAccessPages = [];

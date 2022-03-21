@@ -31,12 +31,13 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.getMessage();
     this.getRendomBackground();
+    this.commonService.setPortalPages();
+    this.commonService.setWebPortalUsers();
     this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    //this.commonService.setLocalStorageData(this.cityName);
   }
 
   getRendomBackground() {

@@ -730,15 +730,15 @@ export class CommonService {
 
   setLocalStorageData(newDb: any) {
     this.fsDb = newDb;
-    this.setPortalPages();
-    this.setWebPortalUsers();
+    //this.setPortalPages();
+    //this.setWebPortalUsers();
     this.setZones();
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
     this.setDustbin(newDb);
     this.setWardLines(newDb);
     this.setMarkerZone();
-    this.setWardKML(newDb);
+    //this.setWardKML(newDb);
     this.setMarkingWards();
   }
 
