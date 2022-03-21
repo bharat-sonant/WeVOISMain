@@ -315,7 +315,6 @@ export class WardWorkTrackingComponent {
 
   changeZoneSelection(filterVal: any) {
     if (filterVal == "0") {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
       if (this.wardBoundary != undefined) {
         this.wardBoundary[0]["line"].setMap(null);
       }
