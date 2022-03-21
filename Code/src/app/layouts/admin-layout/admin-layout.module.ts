@@ -103,6 +103,7 @@ import { SalaryTransactionComponent } from '../../salary-management/salary-trans
 import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
+import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 
 @NgModule({
   imports: [
@@ -210,7 +211,8 @@ import { StaffAccountDetailComponent } from '../../salary-management/staff-accou
     SalaryTransactionComponent,
     DustbinServiceComponent,
     WardWorkTrackingComponent,
-    StaffAccountDetailComponent
+    StaffAccountDetailComponent,
+    CashManagementComponent
   ]
 })
 
