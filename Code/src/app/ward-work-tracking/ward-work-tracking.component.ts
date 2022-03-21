@@ -158,7 +158,7 @@ export class WardWorkTrackingComponent {
     let windowWidth = $(window).width();
     let height = 870;
     let width = 300;
-    let divHeight="0px";
+    let divHeight = "0px";
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     if (type == "lineDetail") {
       width = windowWidth - 400;
@@ -316,6 +316,11 @@ export class WardWorkTrackingComponent {
   changeZoneSelection(filterVal: any) {
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
+      if (this.wardBoundary != undefined) {
+        this.wardBoundary[0]["line"].setMap(null);
+      }
+      this.clearMapAll();
+      this.resetData();
       return;
     }
     this.selectedZone = filterVal;
