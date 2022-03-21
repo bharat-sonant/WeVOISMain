@@ -193,7 +193,6 @@ export class SidebarComponent implements OnInit {
 
   changeCity(cityName: any) {
     localStorage.removeItem("mapUpdateHistory");
-    localStorage.removeItem("wardParshadDetail");
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();

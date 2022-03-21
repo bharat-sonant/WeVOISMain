@@ -92,10 +92,6 @@ export class WardWorkTrackingComponent {
   }
 
   getParshadList() {
-    if (localStorage.getItem("wardParshadDetail") != null) {
-      this.parshadList = JSON.parse(localStorage.getItem("wardParshadDetail"));
-      return;
-    }
     this.httpService.get("../../assets/jsons/ParshadDetail/" + this.cityName + ".json").subscribe(parshadData => {
       if (parshadData != null) {
         let keyArray = Object.keys(parshadData);
@@ -104,7 +100,6 @@ export class WardWorkTrackingComponent {
             let zone = keyArray[i];
             this.parshadList.push({ zoneNo: zone, lat: parshadData[zone]["lat"], lng: parshadData[zone]["lng"], mobile: parshadData[zone]["mobile"], name: parshadData[zone]["name"] });
           }
-          localStorage.setItem("wardParshadDetail", JSON.stringify(this.parshadList));
         }
       }
     });
@@ -145,7 +140,7 @@ export class WardWorkTrackingComponent {
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
-    if (this.cityName != "reengus" || this.cityName == "shahpura") {
+    if (this.cityName != "reengus" || this.cityName != "shahpura") {
       this.getParshadDetail();
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {
@@ -154,21 +149,27 @@ export class WardWorkTrackingComponent {
   }
 
   openModel(content: any, type: any) {
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
     let height = 870;
     let width = 300;
+    let divHeight="0px";
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     if (type == "lineDetail") {
-      width = windowWidth - 300;
+      width = windowWidth - 400;
       height = (windowHeight * 90) / 100;
+      divHeight = height - 50 + "px";
     }
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
-
     if (type == "lineDetail") {
+      $("#divLinePopup").css("height", divHeight);
       this.getZoneLineDetail();
     }
     this.hideSetting();
@@ -178,8 +179,38 @@ export class WardWorkTrackingComponent {
     this.zoneLineList = [];
     for (let i = 0; i < this.lines.length; i++) {
       this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0 });
+      this.getLineActualCoveredTime(this.lines[i]["lineNo"]);
       if (i == this.lines.length - 1) {
         this.getTimerTime();
+        this.getWardLineLengthAndHouses();
+      }
+    }
+  }
+
+  getLineActualCoveredTime(lineNo: any) {
+    let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
+    let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineData) => {
+      this.instancesList.push({ instances: lineStatusInstance });
+      if (lineData != null) {
+        if (lineData["end-time"] != null) {
+          let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            lineDetail.actualCoveredTime = this.commonService.timeDifferenceMin(new Date(this.toDayDate + " " + lineData["end-time"]), new Date(this.toDayDate + " " + lineData["start-time"]));
+          }
+        }
+      }
+    });
+  }
+
+  getWardLineLengthAndHouses() {
+    if (this.lines.length > 0) {
+      for (let i = 0; i < this.lines.length; i++) {
+        let lineNo = this.lines[i]["lineNo"];
+        let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          lineDetail.length = this.lines[i]["lineLength"];
+          lineDetail.houseCount = this.lines[i]["houseCount"];
+        }
       }
     }
   }
@@ -208,6 +239,10 @@ export class WardWorkTrackingComponent {
   }
 
   showHideAllDustbin() {
+    if (this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
     if (this.dustbinMarkerList.length > 0) {
       for (let i = 0; i < this.dustbinMarkerList.length; i++) {
         if (this.dustbinMarkerList != null) {
@@ -364,6 +399,14 @@ export class WardWorkTrackingComponent {
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let points = wardLines[lineNo]["points"];
+        let lineLength = 0;
+        let houses = [];
+        if (wardLines[lineNo]["Houses"] != null) {
+          houses = wardLines[lineNo]["Houses"];
+        }
+        if (wardLines[lineNo]["lineLength"] != null) {
+          lineLength = wardLines[lineNo]["lineLength"];
+        }
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
@@ -372,6 +415,8 @@ export class WardWorkTrackingComponent {
           lineNo: lineNo,
           latlng: latLng,
           color: "#60c2ff",
+          lineLength: lineLength,
+          houseCount: houses.length
         });
         this.plotLineOnMap(lineNo, latLng, i);
       }

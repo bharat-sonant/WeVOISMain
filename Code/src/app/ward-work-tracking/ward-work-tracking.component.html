@@ -164,8 +164,8 @@
 <div id="divDustbinDetail" class="dustbin-details-box" style="display: none;">
   <div>
     <div class="lines">
-      <h3>{{progressData.totalDustbin}}
-        <p>Total Dustbin</p>
+      <h3>{{progressData.rectangularDustbin}}
+        <p>Rectangular Dustbin</p>
       </h3>
     </div>
     <div class="lines2">
@@ -174,9 +174,10 @@
       </h3>
     </div>
     <div class="lines">
-      <h3>{{progressData.rectangularDustbin}}
-        <p>Rectangular Dustbin</p>
+      <h3>{{progressData.totalDustbin}}
+        <p>Total Dustbin</p>
       </h3>
+
     </div>
     <div class="lines2">
       <h3>---
@@ -241,24 +242,24 @@
       <div class="col-md-12">
         <div class="dth">
           <div class="table-bg">
-            <div id="divStatus" class="tableFixHead">
+            <div id="divLinePopup" class="tableFixHead">
               <table class="table table-hover" style="margin-bottom: 0px;">
                 <thead>
                   <tr>
-                    <th scope="col" class="text-left">Line No  </th>
-                    <th scope="col" class="text-left">Length</th>
-                    <th scope="col" class="text-left">Timer time</th>
-                    <th scope="col" class="text-left">Actual covered time</th>
-                    <th scope="col" class="text-left">No of houses</th>
+                    <th scope="col" class="text-left">Line No </th>
+                    <th scope="col" class="text-right">Length (meter)</th>
+                    <th scope="col" class="text-right">Timer time (min)</th>
+                    <th scope="col" class="text-right">Actual covered time (min)</th>
+                    <th scope="col" class="text-right">No of houses</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let dt of zoneLineList">
                     <td class="text-left border-left">{{dt.lineNo}} </td>
-                    <td class="text-left border-left">{{dt.length}} </td>
-                    <td class="text-left border-left">{{dt.timerTime}} </td>
-                    <td class="text-left border-left">{{dt.actualCoveredTime}} </td>
-                    <td class="text-left border-left">{{dt.houseCount}} </td>
+                    <td class="text-right border-left">{{dt.length}} </td>
+                    <td class="text-right border-left">{{dt.timerTime}} </td>
+                    <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
+                    <td class="text-right border-left">{{dt.houseCount}} </td>
                   </tr>
                 </tbody>
               </table>
