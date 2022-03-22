@@ -28,6 +28,7 @@ export class WardWorkTrackingComponent {
   polylines = [];
   wardLineNoMarker: any[] = [];
   dustbinMarkerList: any[] = [];
+  houseMarkerList: any[] = [];
   instancesList: any[] = [];
   dustbinList: any[] = [];
   zoneLineList: any[] = [];
@@ -45,7 +46,10 @@ export class WardWorkTrackingComponent {
   divInternalUserShowDetail = "#divInternalUserShowDetail";
   chkIsShowLineNo = "chkIsShowLineNo";
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
+  chkIsShowHouse = "chkIsShowHouse";
   divDustbinDetail = "#divDustbinDetail";
+  divTotalHouse = "#divTotalHouse";
+  wardLinesDataObj: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -62,6 +66,7 @@ export class WardWorkTrackingComponent {
     totalDustbin: 0,
     circularDustbin: 0,
     rectangularDustbin: 0,
+    totalHouses: 0
   };
 
   ngOnInit() {
@@ -89,6 +94,71 @@ export class WardWorkTrackingComponent {
     this.getZones().then(() => {
       this.selectedZone = "0";
     });
+  }
+
+  showHouse() {
+    if (this.wardLinesDataObj == null) {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      (<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked = false;
+      return;
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked == true) {
+      $(this.divTotalHouse).show();
+      this.getHouses();
+    }
+    else {
+      this.clearHouseFromMap();
+    }
+  }
+
+  getHouses() {
+    if (this.wardLinesDataObj != null) {
+      let keyArray = Object.keys(this.wardLinesDataObj);
+      if (this.wardLinesDataObj["totalHouseCount"] != null) {
+        this.progressData.totalHouses = this.wardLinesDataObj["totalHouseCount"];
+      }
+
+      for (let i = 0; i < keyArray.length - 3; i++) {
+        let lineNo = Number(keyArray[i]);
+        let houses = [];
+        if (this.wardLinesDataObj[lineNo]["Houses"] != null) {
+          houses = this.wardLinesDataObj[lineNo]["Houses"];
+          for (let j = 0; j < houses.length; j++) {
+            let lat = houses[j]["latlong"]["latitude"];
+            let lng = houses[j]["latlong"]["longitude"];
+            let markerType = "red";
+            this.setHouseMarker(lat,lng,markerType);
+          }
+        }
+      }
+    }
+  }
+
+  setHouseMarker(lat: any, lng: any, markerType: any) {
+    let imgUrl = "../assets/img/" + markerType + "-home.png";
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: imgUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(16, 15),
+      },
+    });
+    this.houseMarkerList.push({ marker: marker });
+  }
+
+  clearHouseFromMap(){
+    $(this.divTotalHouse).hide();
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(null);
+        }
+      }
+      this.houseMarkerList = [];
+    }
   }
 
   getParshadList() {
@@ -267,8 +337,8 @@ export class WardWorkTrackingComponent {
     if (this.dustbinList.length == 0) {
       this.dustbinList = JSON.parse(localStorage.getItem("dustbin"));
     }
-    let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
 
+    let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
     if (zoneDustbins.length > 0) {
       this.progressData.totalDustbin = zoneDustbins.length;
       for (let i = 0; i < zoneDustbins.length; i++) {
@@ -282,7 +352,7 @@ export class WardWorkTrackingComponent {
         else {
           this.progressData.circularDustbin += 1;
         }
-        let contentString = '<br/> Address : ' + zoneDustbins[i]["address"];
+        let contentString = '<br/>' + zoneDustbins[i]["address"];
         this.setDustbinMarker(lat, lng, markerUrl, contentString);
       }
       $(this.divDustbinDetail).show();
@@ -333,6 +403,7 @@ export class WardWorkTrackingComponent {
       }
       this.instancesList = [];
     }
+    this.wardLinesDataObj = null;
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
     this.progressData.currentLine = 0;
@@ -348,6 +419,8 @@ export class WardWorkTrackingComponent {
     this.progressData.totalDustbin = 0;
     this.progressData.circularDustbin = 0;
     this.progressData.rectangularDustbin = 0;
+    this.progressData.totalHouses = 0;
+    (<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked = false;
   }
 
   setWardBoundary() {
@@ -366,6 +439,7 @@ export class WardWorkTrackingComponent {
   }
 
   clearMapAll() {
+    this.clearHouseFromMap();
     if (this.wardLineNoMarker.length > 0) {
       for (let i = 0; i < this.wardLineNoMarker.length; i++) {
         if (this.wardLineNoMarker[i]["marker"] != null) {
@@ -390,26 +464,27 @@ export class WardWorkTrackingComponent {
       }
       this.dustbinMarkerList = [];
     }
+    
   }
 
   getAllLinesFromJson() {
     this.clearMapAll();
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
       this.lines = [];
-      let wardLines = JSON.parse(linesData);
-      let keyArray = Object.keys(wardLines);
-      this.progressData.totalLines = wardLines["totalLines"];
-      this.progressData.wardLength = (parseFloat(wardLines["totalWardLength"]) / 1000).toFixed(2);;
+      this.wardLinesDataObj = JSON.parse(linesData);
+      let keyArray = Object.keys(this.wardLinesDataObj);
+      this.progressData.totalLines = this.wardLinesDataObj["totalLines"];
+      this.progressData.wardLength = (parseFloat(this.wardLinesDataObj["totalWardLength"]) / 1000).toFixed(2);;
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
-        let points = wardLines[lineNo]["points"];
+        let points = this.wardLinesDataObj[lineNo]["points"];
         let lineLength = 0;
         let houses = [];
-        if (wardLines[lineNo]["Houses"] != null) {
-          houses = wardLines[lineNo]["Houses"];
+        if (this.wardLinesDataObj[lineNo]["Houses"] != null) {
+          houses = this.wardLinesDataObj[lineNo]["Houses"];
         }
-        if (wardLines[lineNo]["lineLength"] != null) {
-          lineLength = wardLines[lineNo]["lineLength"];
+        if (this.wardLinesDataObj[lineNo]["lineLength"] != null) {
+          lineLength = this.wardLinesDataObj[lineNo]["lineLength"];
         }
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
@@ -650,4 +725,5 @@ export class progressDetail {
   totalDustbin: number;
   rectangularDustbin: number;
   circularDustbin: number;
+  totalHouses: number;
 }

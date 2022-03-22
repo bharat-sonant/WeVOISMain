@@ -17,28 +17,26 @@
               {{zone.zoneName}}
             </option>
           </select>&nbsp;&nbsp;
-          <input id="isHouse" type="checkbox" /><span id="showHouseLabel"> Show
+          <input id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span id="showHouseLabel"> Show
             Houses</span>
     </div>
     <div class="col-md-4 text-right total-house">
 
       <div class="fix-home">
-        <div id="houseCount" style=" display: none;">
-          <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px;">
-            <i class="fas fa-vr-cardboard" style="cursor: pointer;"></i>
-            <span class="house"><span style="color: #1fda2f;">
-              </span></span><br>
-            <h6>Card Images</h6>
-          </div>
-          <div class="float-second" style="margin-left: 10px; margin-top: 0px;">
-            <i class="fas fa-home"></i> <span class="house"> </span><br>
-            <h6>Total House</h6>
-          </div>
-          <div class="float-third">
-            <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;"></i>
-            <span class="house"> </span><br>
-            <h6>Scanned House</h6>
-          </div>
+        <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px; display: none;">
+          <i class="fas fa-vr-cardboard" style="cursor: pointer;"></i>
+          <span class="house"><span style="color: #1fda2f;">
+            </span></span><br>
+          <h6>Card Images</h6>
+        </div>
+        <div id="divTotalHouse" class="float-second" style="margin-left: 10px; margin-top: 0px; display: none;">
+          <i class="fas fa-home"></i> <span class="house">{{progressData.totalHouses}} </span><br>
+          <h6>Total House</h6>
+        </div>
+        <div class="float-third" style=" display: none;">
+          <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;"></i>
+          <span class="house"> </span><br>
+          <h6>Scanned House</h6>
         </div>
         <div id="divSetting" class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
@@ -47,6 +45,7 @@
           </button>
 
         </div>
+
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
         <div class="panel panel-default">
