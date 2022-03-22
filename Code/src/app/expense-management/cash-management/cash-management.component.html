@@ -23,12 +23,12 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlFieldExecutive" style="width: 150px;"
-                (change)="changeSelection($event.target.value)">
+            <select class="caret-select" id="ddlUser" style="width: 150px;"
+                (change)="changeUserSelection($event.target.value)">
                 <option value="0">
-                    --Select--
+                    --All Users--
                 </option>
-                <option *ngFor="let dt of fieldExecutiveList" value={{dt.id}}>
+                <option *ngFor="let dt of userList" value={{dt.id}}>
                     {{dt.name}}
                 </option>
             </select>

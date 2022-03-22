@@ -14,8 +14,10 @@ export class CashManagementComponent implements OnInit {
   selectedMonth: any;
   selectedYear: any;
   yearList: any[] = [];
+  userList:any[]=[];
   expenceList: any[] = [];
   selectedMonthName: any;
+  selectedUser:any;
   db: any;
   cityName: any;
   ngOnInit() {
@@ -32,7 +34,7 @@ export class CashManagementComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getYear();
     $('#ddlMonth').val(this.selectedMonth);
-    $('#ddlYear').val(this.selectedYear);
+    $('#ddlYear').val(this.selectedYear);    
   }
 
   getYear() {
@@ -41,6 +43,19 @@ export class CashManagementComponent implements OnInit {
     for (let i = year - 2; i <= year; i++) {
       this.yearList.push({ year: i });
     }
+  }
+
+  changeYearSelection(filterVal: any) {
+    this.selectedYear = filterVal;
+
+  }
+
+  changeMonthSelection(filterVal: any) {
+    this.selectedMonth = filterVal;
+  }
+
+  changeUserSelection(filterVal: any) {
+    this.selectedUser = filterVal;
   }
 
 }
