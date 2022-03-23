@@ -35,10 +35,14 @@ export class WardWorkTrackingComponent {
   parshadList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
+  vehicleMarker: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
   defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
+  vehicleRunningUrl = "../assets/img/tipper-green.png";
+  vehicleCompletedUrl = "../assets/img/tipper-gray.png";
+  vehicleStopedUrl = "../assets/img/tipper-red.png";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
@@ -96,6 +100,38 @@ export class WardWorkTrackingComponent {
     });
   }
 
+  getVehicleLocation() {
+    let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
+    let vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      if (data != undefined) {
+        this.instancesList.push({ instances: vehicleLocationInstance });
+        dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
+        let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleStatusData) => {
+          vehicleStatusInstance.unsubscribe();
+          let vehicleIcon = this.vehicleRunningUrl;
+          if (vehicleStatusData.toString() == "completed") {
+            vehicleIcon = this.vehicleCompletedUrl;
+          } else if (vehicleStatusData.toString() == "stopped") {
+            vehicleIcon = this.vehicleStopedUrl;
+          }
+          if (data != null) {
+            let location = data.toString().split(",");
+            let lat = Number(location[0]);
+            let lng = Number(location[1]);
+            if (this.vehicleMarker != null) {
+              this.vehicleMarker.setMap(null);
+            }
+            this.vehicleMarker = new google.maps.Marker({
+              position: { lat: Number(lat), lng: Number(lng) },
+              map: this.map,
+              icon: vehicleIcon,
+            });
+          }
+        });
+      }
+    });
+  }
+
   showHouse() {
     if (this.wardLinesDataObj == null) {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
@@ -127,7 +163,7 @@ export class WardWorkTrackingComponent {
             let lat = houses[j]["latlong"]["latitude"];
             let lng = houses[j]["latlong"]["longitude"];
             let markerType = "red";
-            this.setHouseMarker(lat,lng,markerType);
+            this.setHouseMarker(lat, lng, markerType);
           }
         }
       }
@@ -149,7 +185,7 @@ export class WardWorkTrackingComponent {
     this.houseMarkerList.push({ marker: marker });
   }
 
-  clearHouseFromMap(){
+  clearHouseFromMap() {
     $(this.divTotalHouse).hide();
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
@@ -215,6 +251,9 @@ export class WardWorkTrackingComponent {
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {
       this.getDustbins();
+    }
+    if (this.selectedDate == this.toDayDate) {
+      this.getVehicleLocation();
     }
   }
 
@@ -402,6 +441,9 @@ export class WardWorkTrackingComponent {
         this.instancesList[i]["instances"].unsubscribe();
       }
       this.instancesList = [];
+    }    
+    if (this.vehicleMarker != null) {
+      this.vehicleMarker.setMap(null);
     }
     this.wardLinesDataObj = null;
     this.progressData.completedLines = 0;
@@ -464,7 +506,6 @@ export class WardWorkTrackingComponent {
       }
       this.dustbinMarkerList = [];
     }
-    
   }
 
   getAllLinesFromJson() {
