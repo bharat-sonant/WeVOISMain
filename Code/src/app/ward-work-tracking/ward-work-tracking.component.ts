@@ -115,12 +115,14 @@ export class WardWorkTrackingComponent {
             vehicleIcon = this.vehicleStopedUrl;
           }
           if (data != null) {
-            let location = data.toString().split(",");
-            let lat = Number(location[0]);
-            let lng = Number(location[1]);
+
             if (this.vehicleMarker != null) {
               this.vehicleMarker.setMap(null);
             }
+            let location = data.toString().split(",");
+            let lat = Number(location[0]);
+            let lng = Number(location[1]);
+
             this.vehicleMarker = new google.maps.Marker({
               position: { lat: Number(lat), lng: Number(lng) },
               map: this.map,
@@ -251,9 +253,6 @@ export class WardWorkTrackingComponent {
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {
       this.getDustbins();
-    }
-    if (this.selectedDate == this.toDayDate) {
-      this.getVehicleLocation();
     }
   }
 
@@ -441,7 +440,7 @@ export class WardWorkTrackingComponent {
         this.instancesList[i]["instances"].unsubscribe();
       }
       this.instancesList = [];
-    }    
+    }
     if (this.vehicleMarker != null) {
       this.vehicleMarker.setMap(null);
     }
@@ -508,6 +507,30 @@ export class WardWorkTrackingComponent {
     }
   }
 
+  getCoverdWardLength() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus";
+    let wardCoveredLengthInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lineStatusData => {
+        wardCoveredLengthInstance.unsubscribe();
+        if (lineStatusData != null) {
+          let keyArray = Object.keys(lineStatusData);
+          if (keyArray.length > 0) {
+            let coveredLength = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineDateil = this.lines.find(item => item.lineNo == lineNo);
+              if (lineDateil != undefined) {
+                coveredLength += Number(lineDateil.lineLength);
+              }
+            }
+            this.progressData.coveredLength = (parseFloat(coveredLength.toString()) / 1000).toFixed(2);
+          }
+        }
+      }
+    );
+
+  }
+
   getAllLinesFromJson() {
     this.clearMapAll();
     this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
@@ -540,6 +563,7 @@ export class WardWorkTrackingComponent {
         });
         this.plotLineOnMap(lineNo, latLng, i);
       }
+      this.getCoverdWardLength();
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
         this.showHideLineNo();
       }
@@ -612,6 +636,9 @@ export class WardWorkTrackingComponent {
           this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
         } else {
           this.progressData.coveredLength = "0.00";
+        }
+        if (this.selectedDate == this.toDayDate) {
+          this.getVehicleLocation();
         }
       }
     });
