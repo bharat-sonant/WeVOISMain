@@ -6,6 +6,7 @@ import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { CommonService } from "../services/common/common.service";
 import { AngularFirestore } from "@angular/fire/firestore";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-login",
@@ -13,7 +14,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
   styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
-  constructor(private router: Router, private commonService: CommonService, private toastr: ToastrService, public db: AngularFireDatabase, public dbFireStore: AngularFirestore) { }
+  constructor(private router: Router, private commonService: CommonService, private toastr: ToastrService, public db: AngularFireDatabase, public dbFireStore: AngularFirestore, public httpService: HttpClient) { }
   userId: any;
   userName: any = "admin";
   expiryDate: any;

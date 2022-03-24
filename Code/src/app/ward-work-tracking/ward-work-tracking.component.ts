@@ -115,7 +115,6 @@ export class WardWorkTrackingComponent {
             vehicleIcon = this.vehicleStopedUrl;
           }
           if (data != null) {
-
             if (this.vehicleMarker != null) {
               this.vehicleMarker.setMap(null);
             }
@@ -632,11 +631,11 @@ export class WardWorkTrackingComponent {
         } else {
           this.progressData.skippedLines = 0;
         }
-        if (workSummary["wardCoveredDistance"] != null) {
-          this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
-        } else {
-          this.progressData.coveredLength = "0.00";
-        }
+       // if (workSummary["wardCoveredDistance"] != null) {
+       //   this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
+       // } else {
+      //    this.progressData.coveredLength = "0.00";
+      //  }
         if (this.selectedDate == this.toDayDate) {
           this.getVehicleLocation();
         }

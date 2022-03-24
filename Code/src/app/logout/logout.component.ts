@@ -47,6 +47,7 @@ export class LogoutComponent implements OnInit {
     localStorage.removeItem("vtsUserList");
     localStorage.removeItem("mapUpdateHistory");
     localStorage.removeItem("wardWorkTrackingLineShow");
+    localStorage.removeItem("designation");
     if (this.commonService.notificationInterval != null) {
       this.commonService.notificationInterval.unsubscribe();
     }

@@ -581,23 +581,26 @@ export class CommonService {
         let employeeDbPath = "Employees/" + employeeId + "/GeneralDetails";
         let employee = this.fsDb.object(employeeDbPath).valueChanges().subscribe((data) => {
           employee.unsubscribe();
-          let designationDbPath = "Defaults/Designations/" + data["designationId"] + "/name";
-          let designation = this.db.object(designationDbPath).valueChanges().subscribe((designationData) => {
-            designation.unsubscribe();
-            employeeList.push({
-              userName: data["userName"],
-              name: data["name"],
-              mobile: data["mobile"],
-              profilePhotoURL: data["profilePhotoURL"],
-              designation: designationData,
-              city: localStorage.getItem("cityName"),
-              empCode: data["empCode"]
-            });
-            localStorage.setItem("employeeList", JSON.stringify(employeeList));
-            let list = JSON.parse(localStorage.getItem("employeeList"));
-            let employeeData = list.find((item) => item.userName == employeeId);
-            resolve(employeeData);
-          });
+
+          if (localStorage.getItem("designation") != null) {
+            let designationList = JSON.parse(localStorage.getItem("designation"));
+            let detail = designationList.find(item => item.designationId == data["designationId"]);
+            if (detail != undefined) {
+              employeeList.push({
+                userName: data["userName"],
+                name: data["name"],
+                mobile: data["mobile"],
+                profilePhotoURL: data["profilePhotoURL"],
+                designation: detail.designation,
+                city: localStorage.getItem("cityName"),
+                empCode: data["empCode"]
+              });
+              localStorage.setItem("employeeList", JSON.stringify(employeeList));
+              let list = JSON.parse(localStorage.getItem("employeeList"));
+              let employeeData = list.find((item) => item.userName == employeeId);
+              resolve(employeeData);
+            }
+          }
         });
       } else {
         resolve(employeeData);
@@ -739,6 +742,7 @@ export class CommonService {
 
   setLocalStorageData(newDb: any) {
     this.fsDb = newDb;
+    this.setDesignation();
     //this.setPortalPages();
     //this.setWebPortalUsers();
     this.setZones();
@@ -749,6 +753,21 @@ export class CommonService {
     this.setMarkerZone();
     //this.setWardKML(newDb);
     this.setMarkingWards();
+  }
+
+  setDesignation(){
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FDesignations.json?alt=media";
+      let Instance = this.httpService.get(path).subscribe(dataDate => {
+        Instance.unsubscribe();
+        let designationList=[];
+        let list = JSON.parse(JSON.stringify(dataDate));
+        for (let i = 1; i < list.length; i++) {
+          let designationId = i;
+          let designation = list[i]["name"];
+          designationList.push({ designationId: designationId, designation: designation });
+        }
+        localStorage.setItem("designation",JSON.stringify(designationList));
+      });
   }
 
   setMarkerZone() {
@@ -1819,30 +1838,30 @@ export class CommonService {
     });
   }
 
-   //The set method is use for encrypt the value.
-   setEncrypt(keys, value){
+  //The set method is use for encrypt the value.
+  setEncrypt(keys, value) {
     var key = CryptoJS.enc.Utf8.parse(keys);
     var iv = CryptoJS.enc.Utf8.parse(keys);
     var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(value.toString()), key,
-    {
+      {
         keySize: 128 / 8,
         iv: iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7
-    });
+      });
 
     return encrypted.toString();
   }
 
   //The get method is use for decrypt the value.
-  getEncrypt(keys, value){
+  getEncrypt(keys, value) {
     var key = CryptoJS.enc.Utf8.parse(keys);
     var iv = CryptoJS.enc.Utf8.parse(keys);
     var decrypted = CryptoJS.AES.decrypt(value, key, {
-        keySize: 128 / 8,
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
+      keySize: 128 / 8,
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
     });
 
     return decrypted.toString(CryptoJS.enc.Utf8);

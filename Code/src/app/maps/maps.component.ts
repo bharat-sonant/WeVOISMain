@@ -509,10 +509,15 @@ export class MapsComponent {
           for (let j = 0; j < points.length; j++) {
             latLng.push({ lat: points[j][0], lng: points[j][1] });
           }
+          let lineLength = 0;
+          if (wardLines[lineNo]["lineLength"] != null) {
+            lineLength = wardLines[lineNo]["lineLength"];
+          }
           this.lines.push({
             lineNo: lineNo,
             latlng: latLng,
             color: "#87CEFA",
+            lineLength: lineLength
           });
           this.plotLineOnMap(lineNo, latLng, Number(lineNo) - 1, this.selectedZone);
           if (this.wardStartMarker == null) {
@@ -552,7 +557,33 @@ export class MapsComponent {
         }
         catch { }
       }
+      this.getCoverdWardLength();
     });
+  }
+
+  getCoverdWardLength() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
+    console.log(dbPath);
+    let wardCoveredLengthInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lineStatusData => {
+        wardCoveredLengthInstance.unsubscribe();
+        if (lineStatusData != null) {
+          let keyArray = Object.keys(lineStatusData);
+          if (keyArray.length > 0) {
+            let coveredLength = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineDateil = this.lines.find(item => item.lineNo == lineNo);
+              if (lineDateil != undefined) {
+                coveredLength += Number(lineDateil.lineLength);
+              }
+            }
+            this.progressData.coveredLength = (parseFloat(coveredLength.toString()) / 1000).toFixed(2);
+          }
+        }
+      }
+    );
+
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
@@ -686,11 +717,11 @@ export class MapsComponent {
         } else {
           this.progressData.workPercentage = "0%";
         }
-        if (workerData["wardCoveredDistance"] != null) {
-          this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
-        } else {
-          this.progressData.coveredLength = "0.00";
-        }
+       // if (workerData["wardCoveredDistance"] != null) {
+      //    this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
+      //  } else {
+      //    this.progressData.coveredLength = "0.00";
+      //  }
       }
     });
   }

@@ -31,5 +31,5 @@ export class PortalAccessComponent implements OnInit {
       localStorage.setItem("isCityChange", "yes");
       let path = city + "/login";
       window.location.href = path;
-  }
+  }  
 }
