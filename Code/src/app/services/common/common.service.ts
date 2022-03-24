@@ -158,6 +158,15 @@ export class CommonService {
     else if (cityName == "kishangarh") {
       latLng.push({ lat: 26.5948983, lng: 74.8162661 });
     }
+    else if (cityName == "niwai") {
+      latLng.push({ lat: 26.361448, lng: 75.92712041 });
+    }
+    else if (cityName == "jaisalmer") {
+      latLng.push({ lat: 26.9183907, lng: 70.9052773 });
+    }
+    else if (cityName == "churu") {
+      latLng.push({ lat: 28.2928367, lng: 74.9664406 });
+    }
     return latLng;
   }
 

@@ -20,6 +20,9 @@ export class PortalAccessComponent implements OnInit {
     this.cityList.push({ city: "demo",name:"Demo" });
     this.cityList.push({ city: "jaipur-greater",name:"Jaipur Greater" });
     this.cityList.push({ city: "kishangarh",name:"Kishangarh" });
+    this.cityList.push({ city: "niwai",name:"Niwai" });
+    this.cityList.push({ city: "jaisalmer",name:"Jaisalmer" });
+    this.cityList.push({ city: "churu",name:"Churu" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 

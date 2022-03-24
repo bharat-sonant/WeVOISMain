@@ -1866,7 +1866,9 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getpeopleAtWork() {
     let peopleAtWork = this.db.object("RealTimeDetails/peopleOnWork").valueChanges().subscribe((data) => {
-      this.workerDetails.peopleAtWork = data.toString();
+      if (data != null) {
+        this.workerDetails.peopleAtWork = data.toString();
+      }
       this.instancesList.push({ instances: peopleAtWork });
     });
   }
