@@ -608,7 +608,7 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += this.salaryList[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
-          htmlString += this.salaryList[i]["name"];
+          htmlString +=this.salaryList[i]["empCode"]+" "+ this.salaryList[i]["name"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["finalAmount"];
@@ -920,10 +920,13 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += this.salaryList[i]["accountNo"];
           htmlString += "</td>";
           htmlString += "<td>";
-          htmlString += this.salaryList[i]["ifsc"];
-          htmlString += "</td>";
           if (this.salaryList[i]["ifsc"].includes("IDFB")) {
-            htmlString += "<td>";
+          }
+          else {
+            htmlString += this.salaryList[i]["ifsc"];
+          }
+          if (this.salaryList[i]["ifsc"].includes("IDFB")) {
+            htmlString += "<td>IFT";
           }
           else if (this.salaryList[i]["ifsc"] == "") {
             htmlString += "<td>IFT";
