@@ -80,6 +80,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
+
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $(this.divParshadDetail).hide();
       $(this.divInternalUserShowDetail).css("top", "200px");
@@ -268,9 +269,10 @@ export class WardWorkTrackingComponent {
     let divHeight = "0px";
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     if (type == "lineDetail") {
-      width = windowWidth - 400;
+      width = 850;
       height = (windowHeight * 90) / 100;
       divHeight = height - 50 + "px";
+      marginTop=Math.max(0, (windowHeight - height) / 2) + "px";
     }
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -280,6 +282,20 @@ export class WardWorkTrackingComponent {
       this.getZoneLineDetail();
     }
     this.hideSetting();
+  }
+
+  updateLineTimerTime() {
+    if (this.zoneLineList != null) {
+      const obj = {};
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        let lineNo = this.zoneLineList[i]["lineNo"];
+        let minimumTimeToCollectWaste = $('#txtTimer' + lineNo).val();
+        this.zoneLineList[i]["timerTime"] = minimumTimeToCollectWaste;
+        obj[lineNo] = { minimumTimeToCollectWaste: minimumTimeToCollectWaste };
+      }
+      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseTimingDetailsInWard/");
+      this.commonService.setAlertMessage("success","Data saved successfully !!!");
+    }
   }
 
   getZoneLineDetail() {
@@ -631,11 +647,11 @@ export class WardWorkTrackingComponent {
         } else {
           this.progressData.skippedLines = 0;
         }
-       // if (workSummary["wardCoveredDistance"] != null) {
-       //   this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
-       // } else {
-      //    this.progressData.coveredLength = "0.00";
-      //  }
+        // if (workSummary["wardCoveredDistance"] != null) {
+        //   this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
+        // } else {
+        //    this.progressData.coveredLength = "0.00";
+        //  }
         if (this.selectedDate == this.toDayDate) {
           this.getVehicleLocation();
         }

@@ -6,12 +6,13 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import * as CryptoJS from 'crypto-js';
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Injectable({
   providedIn: "root",
 })
 export class CommonService {
-  constructor(private router: Router, public dbFireStore: AngularFirestore, public fs: FirebaseService, public db: AngularFireDatabase, private toastr: ToastrService, public httpService: HttpClient) { }
+  constructor(private router: Router, private storage: AngularFireStorage, public dbFireStore: AngularFirestore, public fs: FirebaseService, public db: AngularFireDatabase, private toastr: ToastrService, public httpService: HttpClient) { }
 
   notificationInterval: any;
   fsDb: any;
@@ -755,19 +756,19 @@ export class CommonService {
     this.setMarkingWards();
   }
 
-  setDesignation(){
+  setDesignation() {
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FDesignations.json?alt=media";
-      let Instance = this.httpService.get(path).subscribe(dataDate => {
-        Instance.unsubscribe();
-        let designationList=[];
-        let list = JSON.parse(JSON.stringify(dataDate));
-        for (let i = 1; i < list.length; i++) {
-          let designationId = i;
-          let designation = list[i]["name"];
-          designationList.push({ designationId: designationId, designation: designation });
-        }
-        localStorage.setItem("designation",JSON.stringify(designationList));
-      });
+    let Instance = this.httpService.get(path).subscribe(dataDate => {
+      Instance.unsubscribe();
+      let designationList = [];
+      let list = JSON.parse(JSON.stringify(dataDate));
+      for (let i = 1; i < list.length; i++) {
+        let designationId = i;
+        let designation = list[i]["name"];
+        designationList.push({ designationId: designationId, designation: designation });
+      }
+      localStorage.setItem("designation", JSON.stringify(designationList));
+    });
   }
 
   setMarkerZone() {
@@ -1865,6 +1866,33 @@ export class CommonService {
     });
 
     return decrypted.toString(CryptoJS.enc.Utf8);
+  }
+
+  saveJsonFile(listArray: any, fileName: any, filePath: any) {
+    let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    var jsonFile = JSON.stringify(listArray);
+    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+    const path =this.getFireStoreCity()+ filePath + fileName;
+    console.log(path);
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
   }
 
 

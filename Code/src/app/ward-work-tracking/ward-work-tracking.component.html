@@ -231,9 +231,7 @@
 <!--Card Not Scan Start-->
 <ng-template #contentLineDetail>
   <div style="width: 100%;text-align: right;float: left;">
-
     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
   </div>
   <div class="modal-body" style="margin-top:-20px; ">
 
@@ -247,7 +245,7 @@
                   <tr>
                     <th scope="col" class="text-left">Line No </th>
                     <th scope="col" class="text-right">Length (meter)</th>
-                    <th scope="col" class="text-right">Timer time (min)</th>
+                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save" style="color:green; font-size: 20px; cursor: pointer;" (click)="updateLineTimerTime()"></i></th>
                     <th scope="col" class="text-right">Actual covered time (min)</th>
                     <th scope="col" class="text-right">No of houses</th>
                   </tr>
@@ -256,7 +254,7 @@
                   <tr *ngFor="let dt of zoneLineList">
                     <td class="text-left border-left">{{dt.lineNo}} </td>
                     <td class="text-right border-left">{{dt.length}} </td>
-                    <td class="text-right border-left">{{dt.timerTime}} </td>
+                    <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number" value="{{dt.timerTime}}" style="width:50px; text-align: center;"/> </td>
                     <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
                     <td class="text-right border-left">{{dt.houseCount}} </td>
                   </tr>
