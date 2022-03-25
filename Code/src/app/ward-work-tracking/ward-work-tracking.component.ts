@@ -80,7 +80,6 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $(this.divParshadDetail).hide();
       $(this.divInternalUserShowDetail).css("top", "200px");
@@ -218,6 +217,7 @@ export class WardWorkTrackingComponent {
       $(this.divSetting).hide();
     }
     (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingAllDustbinShow"));
   }
 
   setDate(filterVal: any, type: string) {
@@ -263,7 +263,6 @@ export class WardWorkTrackingComponent {
     }
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
     let height = 870;
     let width = 300;
     let divHeight = "0px";
@@ -380,22 +379,39 @@ export class WardWorkTrackingComponent {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
+    localStorage.setItem("wardWorkTrackingAllDustbinShow", (<HTMLInputElement>document.getElementById("chkIsShowAllDustbin")).checked.toString());
     if (this.dustbinMarkerList.length > 0) {
-      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
-        if (this.dustbinMarkerList != null) {
-          if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
-            this.dustbinMarkerList[i]["marker"].setMap(null);
-            $(this.divDustbinDetail).hide();
-          }
-          else {
-            this.dustbinMarkerList[i]["marker"].setMap(this.map);
-            $(this.divDustbinDetail).show();
-          }
-        }
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
+        this.clearDustbinFromMap();
+      }
+      else {
+        this.showDustbinOnMap();
       }
     }
     else {
       this.getDustbins();
+    }
+  }
+
+  clearDustbinFromMap() {
+    if (this.dustbinMarkerList.length > 0) {
+      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
+        if (this.dustbinMarkerList[i]["marker"] != null) {
+          this.dustbinMarkerList[i]["marker"].setMap(null);
+          $(this.divDustbinDetail).hide();
+        }
+      }
+    }
+  }
+
+  showDustbinOnMap() {
+    if (this.dustbinMarkerList.length > 0) {
+      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
+        if (this.dustbinMarkerList[i]["marker"] != null) {
+          this.dustbinMarkerList[i]["marker"].setMap(null);
+          $(this.divDustbinDetail).show();
+        }
+      }
     }
   }
 
