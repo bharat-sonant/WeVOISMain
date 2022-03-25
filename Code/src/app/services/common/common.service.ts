@@ -1873,7 +1873,6 @@ export class CommonService {
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
     const path =this.getFireStoreCity()+ filePath + fileName;
-    console.log(path);
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage(fireStorePath).ref(path);

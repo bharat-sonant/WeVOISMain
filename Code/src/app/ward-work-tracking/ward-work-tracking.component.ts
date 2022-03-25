@@ -272,7 +272,7 @@ export class WardWorkTrackingComponent {
       width = 850;
       height = (windowHeight * 90) / 100;
       divHeight = height - 50 + "px";
-      marginTop=Math.max(0, (windowHeight - height) / 2) + "px";
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -289,12 +289,25 @@ export class WardWorkTrackingComponent {
       const obj = {};
       for (let i = 0; i < this.zoneLineList.length; i++) {
         let lineNo = this.zoneLineList[i]["lineNo"];
-        let minimumTimeToCollectWaste = $('#txtTimer' + lineNo).val();
-        this.zoneLineList[i]["timerTime"] = minimumTimeToCollectWaste;
-        obj[lineNo] = { minimumTimeToCollectWaste: minimumTimeToCollectWaste };
+        let timerTime = $('#txtTimer' + lineNo).val();
+        this.updateLineTimerInRealtimeDatabase(lineNo, this.zoneLineList[i]["timerTime"], timerTime);
+        this.zoneLineList[i]["timerTime"] = timerTime;
+        obj[lineNo] = { minimumTimeToCollectWaste: timerTime };
       }
       this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseTimingDetailsInWard/");
-      this.commonService.setAlertMessage("success","Data saved successfully !!!");
+      this.commonService.setAlertMessage("success", "Data saved successfully !!!");
+    }
+  }
+
+  updateLineTimerInRealtimeDatabase(lineNo: any, preTimerTime: any, timerTime: any) {
+    let dbPath = "Settings/LinewiseTimingDetailsInWard/" + this.selectedZone + "/" + lineNo;
+    if (preTimerTime != timerTime) {
+      if (timerTime == 0) {
+        this.db.object(dbPath).update({ minimumTimeToCollectWaste: null });
+      }
+      else {
+        this.db.object(dbPath).update({ minimumTimeToCollectWaste: timerTime });
+      }
     }
   }
 
