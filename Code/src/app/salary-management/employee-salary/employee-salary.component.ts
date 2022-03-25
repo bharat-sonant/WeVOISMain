@@ -92,6 +92,7 @@ export class EmployeeSalaryComponent implements OnInit {
       this.tractor_reward_amount = data["tractor_reward_amount"];
       this.tractor_reward_days = data["tractor_reward_days"];
       this.basic_minimum_minute = Number(data["basic_minimum_hour"]) * 60;
+      console.log("aaa");
       this.getEmployee();
     });
   }
@@ -104,7 +105,7 @@ export class EmployeeSalaryComponent implements OnInit {
       if (data != null) {
         let salaryList = [];
         let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData).filter(item=>item.empType==2);
+        let list = JSON.parse(jsonData).filter(item => item.empType == 2);
         if (list.length > 0) {
           for (let i = 0; i < list.length; i++) {
             let empId = list[i]["empId"];
@@ -127,7 +128,7 @@ export class EmployeeSalaryComponent implements OnInit {
             if (list[i]["ifsc"] != "") {
               ifsc = list[i]["ifsc"];
             }
-            salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, doj: doj, accountNo: accountNo, ifsc: ifsc, status: list[i]["status"], totalWages: totalWages, task: task, vehicle: "", designation: designation, fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
+            salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: list[i]["status"], accountNo: accountNo, ifsc: ifsc, modifyBy: list[i]["modifyBy"], modifyDate: list[i]["modifyDate"], isLock: list[i]["isLock"], empType: list[i]["empType"], totalWages: totalWages, task: task, vehicle: "", fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
           }
           this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
           this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
@@ -913,7 +914,7 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += this.salaryList[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
-          htmlString += this.salaryList[i]["name"];
+          htmlString += this.salaryList[i]["empCode"] + " " + this.salaryList[i]["name"];
           htmlString += "</td>";
           htmlString += "<td t='s'>";
           htmlString += this.salaryList[i]["accountNo"];
@@ -922,6 +923,9 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += this.salaryList[i]["ifsc"];
           htmlString += "</td>";
           if (this.salaryList[i]["ifsc"].includes("IDFB")) {
+            htmlString += "<td>";
+          }
+          else if (this.salaryList[i]["ifsc"] == "") {
             htmlString += "<td>IFT";
           }
           else {
