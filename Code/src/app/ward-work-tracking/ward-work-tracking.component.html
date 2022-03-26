@@ -24,18 +24,18 @@
 
       <div class="fix-home">
         <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px; display: none;">
-          <i class="fas fa-vr-cardboard" style="cursor: pointer;"></i>
-          <span class="house"><span style="color: #1fda2f;">
+          <i class="fas fa-vr-cardboard" style="cursor: pointer;" (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
+          <span class="house"> <span style="color: #1fda2f;"> {{progressData.cardNotScanedImages}}
             </span></span><br>
           <h6>Card Images</h6>
         </div>
         <div id="divTotalHouse" class="float-second" style="margin-left: 10px; margin-top: 0px; display: none;">
-          <i class="fas fa-home"></i> <span class="house">{{progressData.totalHouses}} </span><br>
+          <i class="fas fa-home"></i> <span class="house"> {{progressData.totalHouses}} </span><br>
           <h6>Total House</h6>
         </div>
-        <div class="float-third" style=" display: none;">
-          <i id="divExternal" class="fas fa-house-damage" style="cursor: pointer;"></i>
-          <span class="house"> </span><br>
+        <div id="divScannedHouses" class="float-third" style=" display: none;">
+          <i  class="fas fa-house-damage" style="cursor: pointer;"></i>
+          <span class="house">{{progressData.scanedHouses}} </span><br>
           <h6>Scanned House</h6>
         </div>
         <div id="divSetting" class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
@@ -238,7 +238,7 @@
 -->
 
 
-<!--Card Not Scan Start-->
+<!--Line Detail Start-->
 <ng-template #contentLineDetail>
   <div style="width: 100%;text-align: right;float: left;">
     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
@@ -278,7 +278,7 @@
 
   </div>
 </ng-template>
-<!--Card Not Scan End-->
+<!--Line Detail Scan End-->
 
 <!--Card Not Scan Start-->
 <ng-template #contentCardNotScaned>
@@ -288,7 +288,7 @@
 
   </div>
   <div class="modal-body" style="margin-top:-20px; ">
-    <div id="divStatus" class="content-scroll">
+    <div id="divNotScanedImages" class="content-scroll">
       <div class="row">
         <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
           <div style="width:100%">

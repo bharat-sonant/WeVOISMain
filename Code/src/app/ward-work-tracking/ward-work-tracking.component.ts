@@ -33,9 +33,11 @@ export class WardWorkTrackingComponent {
   dustbinList: any[] = [];
   zoneLineList: any[] = [];
   parshadList: any[] = [];
+  cardNotScanedList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   vehicleMarker: any;
+  firebaseStoragePath: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
@@ -57,6 +59,8 @@ export class WardWorkTrackingComponent {
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
+  divNotSacnned = "#divNotSacnned";
+  divScannedHouses = "#divScannedHouses";
   wardLinesDataObj: any;
   progressData: progressDetail = {
     totalLines: 0,
@@ -74,7 +78,9 @@ export class WardWorkTrackingComponent {
     totalDustbin: 0,
     circularDustbin: 0,
     rectangularDustbin: 0,
-    totalHouses: 0
+    totalHouses: 0,
+    cardNotScanedImages: 0,
+    scanedHouses: 0
   };
 
   ngOnInit() {
@@ -84,6 +90,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
+    this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $(this.divParshadDetail).hide();
       this.isParshadShow = false;
@@ -159,8 +166,8 @@ export class WardWorkTrackingComponent {
   getVehicleLocation() {
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     let vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      this.instancesList.push({ instances: vehicleLocationInstance });
       if (data != undefined) {
-        this.instancesList.push({ instances: vehicleLocationInstance });
         dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
         let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleStatusData) => {
           vehicleStatusInstance.unsubscribe();
@@ -197,10 +204,31 @@ export class WardWorkTrackingComponent {
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked == true) {
       $(this.divTotalHouse).show();
-      this.getHouses();
+      $(this.divNotSacnned).show();
+      $(this.divScannedHouses).show();
+      if (this.houseMarkerList.length > 0) {
+        this.showHouseOnMap();
+      }
+      else {
+        this.getHouses();
+      }
+      this.getCardNotScanedImages();
     }
     else {
+      $(this.divTotalHouse).hide();
+      $(this.divNotSacnned).hide();
+      $(this.divScannedHouses).hide();
       this.clearHouseFromMap();
+    }
+  }
+
+  showHouseOnMap() {
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(this.map);
+        }
+      }
     }
   }
 
@@ -210,7 +238,7 @@ export class WardWorkTrackingComponent {
       if (this.wardLinesDataObj["totalHouseCount"] != null) {
         this.progressData.totalHouses = this.wardLinesDataObj["totalHouseCount"];
       }
-
+      let scanedHouseCount = 0;
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let houses = [];
@@ -220,14 +248,71 @@ export class WardWorkTrackingComponent {
             let lat = houses[j]["latlong"]["latitude"];
             let lng = houses[j]["latlong"]["longitude"];
             let markerType = "red";
-            this.setHouseMarker(lat, lng, markerType);
+            let cardNo = "";
+            if (houses[j]["Basicinfo"] != null) {
+              if (houses[j]["Basicinfo"]["CardNumber"] != null) {
+                cardNo = houses[j]["Basicinfo"]["CardNumber"];
+              }
+            }
+            let scanCardPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + cardNo + "/scanBy";
+            let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
+              this.instancesList.push({ instances: scanInfoInstance });
+              if (scanBy != undefined) {
+                scanedHouseCount++;
+                markerType = "green";
+              }
+              if (i == keyArray.length - 4) {
+                this.progressData.scanedHouses = scanedHouseCount;
+              }
+              this.setHouseMarker(cardNo, lat, lng, markerType);
+            });
           }
         }
       }
     }
   }
 
-  setHouseMarker(lat: any, lng: any, markerType: any) {
+
+  getCardNotScanedImages() {
+    if (this.cardNotScanedList.length > 0) {
+      return;
+    }
+    this.progressData.cardNotScanedImages = 0;
+    let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData";
+    let notScanCardInstance = this.db.object(dbPath).valueChanges().subscribe((notScanedImageData) => {
+      this.instancesList.push({ instances: notScanCardInstance });
+      if (notScanedImageData != null) {
+        let count = 0;
+        let city = this.commonService.getFireStoreCity();
+        let keyArray = Object.keys(notScanedImageData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          if (lineNo != "totalCount") {
+            let obj = notScanedImageData[lineNo];
+            let keyArrayLine = Object.keys(obj);
+            if (keyArrayLine.length > 0) {
+              for (let j = 0; j < keyArrayLine.length; j++) {
+                let index = keyArrayLine[j];
+                if (obj[index]["cardImage"] != null) {
+                  let imageUrl = this.firebaseStoragePath + city + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + lineNo + "%2F" + obj[index]["cardImage"] + "?alt=media";
+                  let time = obj[index]["scanTime"].split(":")[0] + ":" + obj[index]["scanTime"].split(":")[1];
+                  this.cardNotScanedList.push({
+                    imageUrl: imageUrl,
+                    time: time,
+                    lineNo: lineNo,
+                  });
+                  count++;
+                }
+              }
+            }
+          }
+        }
+        this.progressData.cardNotScanedImages = count;
+      }
+    });
+  }
+
+  setHouseMarker(cardNo: any, lat: any, lng: any, markerType: any) {
     let imgUrl = "../assets/img/" + markerType + "-home.png";
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -250,7 +335,6 @@ export class WardWorkTrackingComponent {
           this.houseMarkerList[i]["marker"].setMap(null);
         }
       }
-      this.houseMarkerList = [];
     }
   }
 
@@ -324,6 +408,7 @@ export class WardWorkTrackingComponent {
     }
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
     let height = 870;
     let width = 300;
     let divHeight = "0px";
@@ -334,12 +419,21 @@ export class WardWorkTrackingComponent {
       divHeight = height - 50 + "px";
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
+    else if (type == "notScanedImages") {
+      width = windowWidth - 300;
+      height = (windowHeight * 90) / 100;
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      divHeight = height - 50 + "px";
+    }
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
     if (type == "lineDetail") {
       $("#divLinePopup").css("height", divHeight);
       this.getZoneLineDetail();
+    }
+    else if (type == "notScanedImages") {
+      $("#divNotScanedImages").css("height", divHeight);
     }
     this.hideSetting();
   }
@@ -563,7 +657,15 @@ export class WardWorkTrackingComponent {
     this.progressData.circularDustbin = 0;
     this.progressData.rectangularDustbin = 0;
     this.progressData.totalHouses = 0;
+    this.progressData.cardNotScanedImages = 0;
+    this.progressData.scanedHouses = 0;
     (<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked = false;
+    this.clearHouseFromMap();
+    this.houseMarkerList = [];
+    this.cardNotScanedList = [];
+    $(this.divNotSacnned).hide();
+    $(this.divScannedHouses).hide();
+    $(this.divTotalHouse).hide();
   }
 
   setWardBoundary() {
@@ -630,7 +732,6 @@ export class WardWorkTrackingComponent {
         }
       }
     );
-
   }
 
   getAllLinesFromJson() {
@@ -734,11 +835,6 @@ export class WardWorkTrackingComponent {
         } else {
           this.progressData.skippedLines = 0;
         }
-        // if (workSummary["wardCoveredDistance"] != null) {
-        //   this.progressData.coveredLength = (parseFloat(workSummary["wardCoveredDistance"]) / 1000).toFixed(2);
-        // } else {
-        //    this.progressData.coveredLength = "0.00";
-        //  }
         if (this.selectedDate == this.toDayDate) {
           this.getVehicleLocation();
         }
@@ -896,4 +992,6 @@ export class progressDetail {
   rectangularDustbin: number;
   circularDustbin: number;
   totalHouses: number;
+  cardNotScanedImages: number;
+  scanedHouses: number;
 }
