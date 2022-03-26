@@ -67,6 +67,16 @@
                     <input id="chkIsShowAllDustbin" type="checkbox" (change)="showHideAllDustbin()"
                       style="float:right; margin-top: 10px; margin-right: 20px;">
                   </div>
+                  <div class="setting-box">
+                    <p style="margin-top: 10px;"> Show Worker Detail</p>
+                    <input id="chkIsWorkerDetail" type="checkbox" (change)="showHideWorkerDetail()"
+                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                  </div>
+                  <div class="setting-box">
+                    <p style="margin-top: 10px;"> Show Work Detail</p>
+                    <input id="chkIsWorkDetail" type="checkbox" (change)="showHideWorkDetail()"
+                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                  </div>
                   <div class="setting-box" style="border-bottom: none!important;">
                     <p style="margin-top: 10px;"> Show Line Details</p>
                     <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
@@ -87,7 +97,7 @@
 
 
 
-<div id="divDriverDetail" class="driver-helper-box">
+<div id="divWorkerDetail" class="driver-helper-box" style="display: none;">
   <div class="row">
     <div class="col-md-12">
       <div class="main-box">
@@ -124,7 +134,7 @@
   </div>
 </div>
 
-<div id="divInternalUserShowDetail" class="line-details-box">
+<div id="divWorkDetail" class="line-details-box" style="display: none;">
   <div>
     <div class="lines">
       <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>

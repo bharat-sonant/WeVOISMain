@@ -47,10 +47,14 @@ export class WardWorkTrackingComponent {
   divLoader = "#divLoader";
   divSetting = "#divSetting";
   divParshadDetail = "#divParshadDetail";
-  divInternalUserShowDetail = "#divInternalUserShowDetail";
+  divWorkDetail = "#divWorkDetail";
+  divWorkerDetail = "#divWorkerDetail";
+  chkIsWorkerDetail = "chkIsWorkerDetail";
+  chkIsWorkDetail = "chkIsWorkDetail";
   chkIsShowLineNo = "chkIsShowLineNo";
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
+  isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
   wardLinesDataObj: any;
@@ -82,11 +86,11 @@ export class WardWorkTrackingComponent {
   setDefault() {
     if (this.cityName == "reengus" || this.cityName == "shahpura") {
       $(this.divParshadDetail).hide();
-      $(this.divInternalUserShowDetail).css("top", "200px");
-      $(this.divDustbinDetail).css("top", "365px");
+      this.isParshadShow = false;
     }
     else {
       this.getParshadList();
+      this.isParshadShow = true;
     }
     this.getLocalStorage();
     this.toDayDate = this.commonService.setTodayDate();
@@ -98,6 +102,58 @@ export class WardWorkTrackingComponent {
     this.getZones().then(() => {
       this.selectedZone = "0";
     });
+  }
+
+  setDetailShowHideSetting() {
+    if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+      $(this.divDustbinDetail).css("top", "75px");
+    }
+    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+      if (this.isParshadShow == false) {
+        $(this.divDustbinDetail).css("top", "200px");
+      }
+      else {
+        $(this.divDustbinDetail).css("top", "250px");
+      }
+    }
+    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
+      $(this.divDustbinDetail).css("top", "240px");
+      $(this.divWorkDetail).css("top", "75px");
+    }
+    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
+      if (this.isParshadShow == false) {
+        $(this.divDustbinDetail).css("top", "365px");
+        $(this.divWorkDetail).css("top", "200px");
+      }
+      else {
+        $(this.divDustbinDetail).css("top", "420px");
+        $(this.divWorkDetail).css("top", "250px");
+      }
+    }
+  }
+
+  showHideWorkerDetail() {
+    localStorage.setItem("wardWorkTrackingWorkerDetailShow", (<HTMLInputElement>document.getElementById("chkIsWorkerDetail")).checked.toString());
+    if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false) {
+      $(this.divWorkerDetail).hide();
+    }
+    else {
+      $(this.divWorkerDetail).show();
+    }
+    this.setDetailShowHideSetting();
+    this.hideSetting();
+  }
+
+  showHideWorkDetail() {
+    localStorage.setItem("wardWorkTrackingWorkShow", (<HTMLInputElement>document.getElementById("chkIsWorkDetail")).checked.toString());
+    if ((<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+      $(this.divWorkDetail).hide();
+    }
+    else {
+      $(this.divWorkDetail).show();
+    }
+    this.setDetailShowHideSetting();
+    this.hideSetting();
   }
 
   getVehicleLocation() {
@@ -218,6 +274,11 @@ export class WardWorkTrackingComponent {
     }
     (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingAllDustbinShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkerDetailShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkShow"));
+    this.showHideWorkDetail();
+    this.showHideWorkerDetail();
+    this.showHideAllDustbin();
   }
 
   setDate(filterVal: any, type: string) {
@@ -375,69 +436,66 @@ export class WardWorkTrackingComponent {
 
   showHideAllDustbin() {
     this.hideSetting();
-    if (this.selectedZone == "0") {
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
-      return;
-    }
     localStorage.setItem("wardWorkTrackingAllDustbinShow", (<HTMLInputElement>document.getElementById("chkIsShowAllDustbin")).checked.toString());
-    if (this.dustbinMarkerList.length > 0) {
-      if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
-        this.clearDustbinFromMap();
-      }
-      else {
-        this.showDustbinOnMap();
-      }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == false) {
+      this.clearDustbinFromMap();
     }
     else {
-      this.getDustbins();
+      if (this.dustbinMarkerList.length > 0) {
+        this.showDustbinOnMap();
+      }
+      else {
+        this.getDustbins();
+      }
     }
   }
 
   clearDustbinFromMap() {
+    $(this.divDustbinDetail).hide();
     if (this.dustbinMarkerList.length > 0) {
       for (let i = 0; i < this.dustbinMarkerList.length; i++) {
         if (this.dustbinMarkerList[i]["marker"] != null) {
           this.dustbinMarkerList[i]["marker"].setMap(null);
-          $(this.divDustbinDetail).hide();
         }
       }
     }
   }
 
   showDustbinOnMap() {
+    $(this.divDustbinDetail).show();
     if (this.dustbinMarkerList.length > 0) {
       for (let i = 0; i < this.dustbinMarkerList.length; i++) {
         if (this.dustbinMarkerList[i]["marker"] != null) {
-          this.dustbinMarkerList[i]["marker"].setMap(null);
-          $(this.divDustbinDetail).show();
+          this.dustbinMarkerList[i]["marker"].setMap(this.map);
         }
       }
     }
   }
 
   getDustbins() {
+    $(this.divDustbinDetail).show();
     if (this.dustbinList.length == 0) {
       this.dustbinList = JSON.parse(localStorage.getItem("dustbin"));
     }
-
-    let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
-    if (zoneDustbins.length > 0) {
-      this.progressData.totalDustbin = zoneDustbins.length;
-      for (let i = 0; i < zoneDustbins.length; i++) {
-        let lat = zoneDustbins[i]["lat"];
-        let lng = zoneDustbins[i]["lng"];
-        let markerUrl = this.defaultCircularDustbinUrl;
-        if (zoneDustbins[i]["type"] == "Rectangular") {
-          markerUrl = this.defaultRectangularDustbinUrl;
-          this.progressData.rectangularDustbin += 1;
+    if (this.selectedZone != "0") {
+      let zoneDustbins = this.dustbinList.filter(item => item.ward == this.selectedZone);
+      if (zoneDustbins.length > 0) {
+        this.progressData.totalDustbin = zoneDustbins.length;
+        for (let i = 0; i < zoneDustbins.length; i++) {
+          let lat = zoneDustbins[i]["lat"];
+          let lng = zoneDustbins[i]["lng"];
+          let markerUrl = this.defaultCircularDustbinUrl;
+          if (zoneDustbins[i]["type"] == "Rectangular") {
+            markerUrl = this.defaultRectangularDustbinUrl;
+            this.progressData.rectangularDustbin += 1;
+          }
+          else {
+            this.progressData.circularDustbin += 1;
+          }
+          let contentString = '<br/>' + zoneDustbins[i]["address"];
+          this.setDustbinMarker(lat, lng, markerUrl, contentString);
         }
-        else {
-          this.progressData.circularDustbin += 1;
-        }
-        let contentString = '<br/>' + zoneDustbins[i]["address"];
-        this.setDustbinMarker(lat, lng, markerUrl, contentString);
       }
-      $(this.divDustbinDetail).show();
     }
   }
 
