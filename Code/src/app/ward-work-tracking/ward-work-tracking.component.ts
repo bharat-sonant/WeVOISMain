@@ -1046,14 +1046,12 @@ export class WardWorkTrackingComponent {
     }
   }
 
-
   hideSetting() {
     let element = <HTMLElement>document.getElementById("collapsetwo");
     let className = element.className;
     $("#collapsetwo").removeClass(className);
     $("#collapsetwo").addClass("panel-collapse collapse in");
   }
-
 
   showSkipLineDetail(content: any) {
     this.skipLineList = [];
@@ -1110,7 +1108,6 @@ export class WardWorkTrackingComponent {
     this.closeModel();
   }
 
-
   ngOnDestroy() {
     if (this.instancesList.length > 0) {
       for (let i = 0; i < this.instancesList.length; i++) {
@@ -1118,7 +1115,6 @@ export class WardWorkTrackingComponent {
       }
     }
   }
-
 }
 
 export class progressDetail {
