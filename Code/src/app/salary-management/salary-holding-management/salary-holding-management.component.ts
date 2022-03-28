@@ -82,7 +82,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
             let empId = this.allEmployeeList[i]["empId"];
             let name = this.allEmployeeList[i]["name"] + " (" + this.allEmployeeList[i]["empCode"] + ")";
             this.employeeList.push({ empId: empId, name: name });
-            this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
+            this.employeeList = this.commonService.transformNumeric(this.employeeList, "empCode");
           }
         }
         this.getHoldSalary();
@@ -122,7 +122,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
           }
         }
       }
-      this.salaryHoldingList = this.commonService.transformNumeric(salaryHoldingList, "name");
+      this.salaryHoldingList = this.commonService.transformNumeric(salaryHoldingList, "empCode");
       $(this.divLoader).hide();
     }, error => {
       $(this.divLoader).hide();

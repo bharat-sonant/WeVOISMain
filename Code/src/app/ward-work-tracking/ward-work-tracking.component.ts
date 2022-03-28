@@ -238,7 +238,6 @@ export class WardWorkTrackingComponent {
       if (this.wardLinesDataObj["totalHouseCount"] != null) {
         this.progressData.totalHouses = this.wardLinesDataObj["totalHouseCount"];
       }
-      let scanedHouseCount = 0;
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let houses = [];
@@ -254,19 +253,68 @@ export class WardWorkTrackingComponent {
                 cardNo = houses[j]["Basicinfo"]["CardNumber"];
               }
             }
-            let scanCardPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + cardNo + "/scanBy";
-            let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
-              this.instancesList.push({ instances: scanInfoInstance });
-              if (scanBy != undefined) {
-                scanedHouseCount++;
-                markerType = "green";
-              }
-              if (i == keyArray.length - 4) {
-                this.progressData.scanedHouses = scanedHouseCount;
-              }
-              this.setHouseMarker(cardNo, lat, lng, markerType);
-            });
+            this.setHouseMarker(cardNo, lat, lng, markerType);
           }
+        }
+        if (i == keyArray.length - 4) {
+          this.getScanedHouses();
+        }
+      }
+    }
+  }
+
+  getScanedHouses() {
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        let cardNo = this.houseMarkerList[i]["cardNo"];
+        let scanCardPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + cardNo + "/scanBy";
+        let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
+          this.instancesList.push({ instances: scanInfoInstance });
+          if (scanBy != undefined) {
+            this.progressData.scanedHouses = this.progressData.scanedHouses + 1;
+            let houseDetail=this.houseMarkerList.find(item=>item.cardNo==cardNo);
+            if(houseDetail!=undefined){
+              let imgUrl = "../assets/img/green-home.png";
+              const icon={
+                url: imgUrl,
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scaledSize: new google.maps.Size(16, 15),
+              }
+              houseDetail.marker.setIcon(icon);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  setHouseMarker(cardNo: any, lat: any, lng: any, markerType: any) {
+    let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
+    if (houseDetail != undefined) {
+      houseDetail.marker.setMap(null);
+      houseDetail.cardNo = null;
+    }
+    let imgUrl = "../assets/img/" + markerType + "-home.png";
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: imgUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(16, 15),
+      },
+    });
+    this.houseMarkerList.push({ cardNo: cardNo, marker: marker });
+  }
+
+  clearHouseFromMap() {
+    $(this.divTotalHouse).hide();
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        if (this.houseMarkerList[i]["marker"] != null) {
+          this.houseMarkerList[i]["marker"].setMap(null);
         }
       }
     }
@@ -310,32 +358,6 @@ export class WardWorkTrackingComponent {
         this.progressData.cardNotScanedImages = count;
       }
     });
-  }
-
-  setHouseMarker(cardNo: any, lat: any, lng: any, markerType: any) {
-    let imgUrl = "../assets/img/" + markerType + "-home.png";
-    let marker = new google.maps.Marker({
-      position: { lat: Number(lat), lng: Number(lng) },
-      map: this.map,
-      icon: {
-        url: imgUrl,
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scaledSize: new google.maps.Size(16, 15),
-      },
-    });
-    this.houseMarkerList.push({ marker: marker });
-  }
-
-  clearHouseFromMap() {
-    $(this.divTotalHouse).hide();
-    if (this.houseMarkerList.length > 0) {
-      for (let i = 0; i < this.houseMarkerList.length; i++) {
-        if (this.houseMarkerList[i]["marker"] != null) {
-          this.houseMarkerList[i]["marker"].setMap(null);
-        }
-      }
-    }
   }
 
   getParshadList() {

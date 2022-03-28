@@ -92,7 +92,6 @@ export class EmployeeSalaryComponent implements OnInit {
       this.tractor_reward_amount = data["tractor_reward_amount"];
       this.tractor_reward_days = data["tractor_reward_days"];
       this.basic_minimum_minute = Number(data["basic_minimum_hour"]) * 60;
-      console.log("aaa");
       this.getEmployee();
     });
   }
@@ -131,7 +130,8 @@ export class EmployeeSalaryComponent implements OnInit {
             salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: list[i]["status"], accountNo: accountNo, ifsc: ifsc, modifyBy: list[i]["modifyBy"], modifyDate: list[i]["modifyDate"], isLock: list[i]["isLock"], empType: list[i]["empType"], totalWages: totalWages, task: task, vehicle: "", fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
           }
           this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
-          this.allSalaryList = this.commonService.transformNumeric(salaryList, "name");
+          this.allSalaryList = this.commonService.transformNumeric(salaryList, "empCode");
+          console.log(this.allSalaryList);
           this.getRoles();
           this.getSalary();
         }
@@ -608,7 +608,7 @@ export class EmployeeSalaryComponent implements OnInit {
           htmlString += this.salaryList[i]["empCode"];
           htmlString += "</td>";
           htmlString += "<td>";
-          htmlString +=this.salaryList[i]["empCode"]+" "+ this.salaryList[i]["name"];
+          htmlString += this.salaryList[i]["empCode"] + " " + this.salaryList[i]["name"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.salaryList[i]["finalAmount"];
@@ -691,7 +691,8 @@ export class EmployeeSalaryComponent implements OnInit {
           if (isCorrect == true) {
             let detail = this.allSalaryList.find(item => item.empCode == empCode);
             if (detail != undefined) {
-              if (detail.name.trim() == name.trim()) {
+              let checkName = empCode + " " + detail.name.trim();
+              if (checkName == name.trim()) {
                 let systemSalary = detail.finalAmount;
                 detail.uploadedSalary = salary;
                 const data = {

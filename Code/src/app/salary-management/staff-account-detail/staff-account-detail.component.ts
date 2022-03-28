@@ -103,7 +103,7 @@ export class StaffAccountDetailComponent implements OnInit {
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData).filter(item => item.empType == 1);
-        this.allAccountList = this.commonService.transformNumeric(list, "name");
+        this.allAccountList = this.commonService.transformNumeric(list, "empCode");
         this.getRoles();
         this.getAccountIssue();
       }
