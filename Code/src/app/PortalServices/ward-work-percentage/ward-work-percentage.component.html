@@ -1,0 +1,56 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text">Ward Work Percentage  </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Date</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDate" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Zone</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZone" (change)="getDustbins();">
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Filled Percentage</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtPercentage" class="caret-select" type="number"
+                                        />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <button id="btnSave" class="btn btn-success btn-xs"
+                                        (click)="saveData();">SAVE</button>
+
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
+                                        style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

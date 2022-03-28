@@ -188,11 +188,11 @@ export class SidebarComponent implements OnInit {
     } else if (cityName == "kishangarh") {
       icon = "./assets/img/kishangarh.svg";
     } else if (cityName == "niwai") {
-      icon = "./assets/img/test.svg";
+      icon = "./assets/img/niwai.svg";
     } else if (cityName == "jaisalmer") {
-      icon = "./assets/img/test.svg";
+      icon = "./assets/img/jaisalmer.svg";
     } else if (cityName == "churu") {
-      icon = "./assets/img/test.svg";
+      icon = "./assets/img/churu.svg";
     }
     return icon;
   }

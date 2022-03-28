@@ -64,6 +64,9 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8P" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divDustbinService").show();
         }
+        if (userAccessList[i]["pageId"] == "8Q" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divWorkPercentage").show();
+        }
       }
     }
   }
@@ -80,6 +83,7 @@ export class PortalServicesComponent implements OnInit {
   }
 
   goToPage(url: any) {
+    console.log(url);
     url = localStorage.getItem("cityName") + url;
     this.router.navigate([url]);
   }

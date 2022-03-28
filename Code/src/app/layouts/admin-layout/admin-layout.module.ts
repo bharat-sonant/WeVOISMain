@@ -104,6 +104,7 @@ import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/du
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
+import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 
 @NgModule({
   imports: [
@@ -212,7 +213,8 @@ import { CashManagementComponent } from '../../expense-management/cash-managemen
     DustbinServiceComponent,
     WardWorkTrackingComponent,
     StaffAccountDetailComponent,
-    CashManagementComponent
+    CashManagementComponent,
+    WardWorkPercentageComponent
   ]
 })
 
