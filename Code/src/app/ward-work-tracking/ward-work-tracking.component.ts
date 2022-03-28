@@ -34,10 +34,12 @@ export class WardWorkTrackingComponent {
   zoneLineList: any[] = [];
   parshadList: any[] = [];
   cardNotScanedList: any[] = [];
+  skipLineList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   vehicleMarker: any;
   firebaseStoragePath: any;
+  skipLineMarker: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
@@ -45,6 +47,8 @@ export class WardWorkTrackingComponent {
   vehicleRunningUrl = "../assets/img/tipper-green.png";
   vehicleCompletedUrl = "../assets/img/tipper-gray.png";
   vehicleStopedUrl = "../assets/img/tipper-red.png";
+  skippedMarkerUrl = "../../../assets/img/red.svg";
+  scanHouseUrl = "../assets/img/green-home.png";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
@@ -258,6 +262,9 @@ export class WardWorkTrackingComponent {
         }
         if (i == keyArray.length - 4) {
           this.getScanedHouses();
+          if (this.selectedDate == this.toDayDate) {
+            this.getRecentScanedCard();
+          }
         }
       }
     }
@@ -272,21 +279,78 @@ export class WardWorkTrackingComponent {
           this.instancesList.push({ instances: scanInfoInstance });
           if (scanBy != undefined) {
             this.progressData.scanedHouses = this.progressData.scanedHouses + 1;
-            let houseDetail=this.houseMarkerList.find(item=>item.cardNo==cardNo);
-            if(houseDetail!=undefined){
-              let imgUrl = "../assets/img/green-home.png";
-              const icon={
-                url: imgUrl,
-                fillOpacity: 1,
-                strokeWeight: 0,
-                scaledSize: new google.maps.Size(16, 15),
-              }
-              houseDetail.marker.setIcon(icon);
+            let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
+            if (houseDetail != undefined) {
+              this.setScanedIcon(houseDetail);
             }
           }
         });
       }
     }
+  }
+
+  getRecentScanedCard() {
+    if (this.houseMarkerList.length > 0) {
+      let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/recentScanned";
+      let recentScanCardInstance = this.db.object(dbPath).valueChanges().subscribe(
+        recentScanData => {
+          this.instancesList.push({ instances: recentScanCardInstance });
+          if (recentScanData != null) {
+            let cardNo = recentScanData["cardNo"];
+            for (let i = 0; i < this.houseMarkerList.length; i++) {
+              this.houseMarkerList[i]["marker"].setAnimation(null);
+            }
+            let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
+            if (houseDetail != undefined) {
+              houseDetail.marker.setAnimation(google.maps.Animation.BOUNCE);
+              this.setScanedIcon(houseDetail);
+            }
+            let scanTime = recentScanData["scanTime"];
+            let notificationTime = new Date(this.toDayDate + " " + scanTime);
+            let currentTime = new Date();
+            let timeDiff = this.commonService.timeDifferenceMin(
+              currentTime,
+              notificationTime
+            );
+            if (timeDiff < 3) {
+              this.showScanedHouseMessage(cardNo, scanTime);
+            }
+          }
+        }
+      );
+    }
+  }
+
+  showScanedHouseMessage(cardNo: any, scanTime: any) {
+    let dbPath = "CardWardMapping/" + cardNo;
+    let mapInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      mapInstance.unsubscribe();
+      if (data != null) {
+        let lineNo = data["line"];
+        let ward = data["ward"];
+        dbPath = "Houses/" + ward + "/" + lineNo + "/" + cardNo;
+        let houseInstance = this.db.object(dbPath).valueChanges().subscribe((dataHouse) => {
+          houseInstance.unsubscribe();
+          if (dataHouse != null) {
+            let name = dataHouse["name"];
+            let time = scanTime.split(":")[0] + ":" + scanTime.split(":")[1];
+            let message = name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
+            this.commonService.setAlertMessageWithLeftPosition("success", message, "alert alert-houses ");
+          }
+        });
+      }
+    });
+  }
+
+  setScanedIcon(houseDetail: any) {
+    let imgUrl = this.scanHouseUrl;
+    const icon = {
+      url: imgUrl,
+      fillOpacity: 1,
+      strokeWeight: 0,
+      scaledSize: new google.maps.Size(16, 15),
+    }
+    houseDetail.marker.setIcon(icon);
   }
 
   setHouseMarker(cardNo: any, lat: any, lng: any, markerType: any) {
@@ -319,7 +383,6 @@ export class WardWorkTrackingComponent {
       }
     }
   }
-
 
   getCardNotScanedImages() {
     if (this.cardNotScanedList.length > 0) {
@@ -731,6 +794,10 @@ export class WardWorkTrackingComponent {
       }
       this.dustbinMarkerList = [];
     }
+    if (this.skipLineMarker != null) {
+      this.skipLineMarker.setMap(null);
+    }
+    this.skipLineMarker = null;
   }
 
   getCoverdWardLength() {
@@ -986,6 +1053,63 @@ export class WardWorkTrackingComponent {
     $("#collapsetwo").removeClass(className);
     $("#collapsetwo").addClass("panel-collapse collapse in");
   }
+
+
+  showSkipLineDetail(content: any) {
+    this.skipLineList = [];
+    let dbPath = "SkipCaptureImage/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let skipLineInstance = this.db.object(dbPath).valueChanges().subscribe(
+      skipLineData => {
+        skipLineInstance.unsubscribe();
+        if (skipLineData != null) {
+          let keyArray = Object.keys(skipLineData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              this.skipLineList.push({ lineNo: index, imageUrl: skipLineData[index]["imageUrl"], time: skipLineData[index]["time"], reason: skipLineData[index]["reason"], latLng: skipLineData[index]["latLng"] });
+            }
+          }
+          this.modalService.open(content, { size: "lg" });
+          let windowHeight = $(window).height();
+          let windowWidth = $(window).width();
+          let height = 870;
+          let width = windowWidth - 300;
+          height = (windowHeight * 90) / 100;
+          let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+          let divHeight = height - 50 + "px";
+          $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+          $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+          $("div .modal-dialog-centered").css("margin-top", marginTop);
+          $("#divStatus").css("height", divHeight);
+        }
+        else {
+          this.commonService.setAlertMessage("error", "No Skipped Lines!!!");
+        }
+      }
+    );
+  }
+
+  showSkippedMarker(latLng: any) {
+    if (this.skipLineMarker != null) {
+      this.skipLineMarker.setMap(null);
+    }
+    this.skipLineMarker = null;
+    let lat = latLng.split(',')[0];
+    let lng = latLng.split(',')[1];
+    this.skipLineMarker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: this.skippedMarkerUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(45, 50),
+      },
+    });
+    this.skipLineMarker.setAnimation(google.maps.Animation.BOUNCE);
+    this.closeModel();
+  }
+
 
   ngOnDestroy() {
     if (this.instancesList.length > 0) {
