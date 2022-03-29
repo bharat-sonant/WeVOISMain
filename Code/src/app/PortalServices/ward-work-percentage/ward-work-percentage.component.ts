@@ -107,16 +107,16 @@ export class WardWorkPercentageComponent implements OnInit {
                           obj[i] = { Status: "LineCompleted" };
                           dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
                           this.db.object(dbPath).update({ Status: "LineCompleted" });
-                          dutyInTime = this.getTimeFormat(dutyInTime, 1);
+                          dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1) + "-" + i;
                         }
                         else {
                           expectedLine++;
                           if (lineStatusData["start-time"] != null) {
                             dutyInTime = lineStatusData["start-time"];
-                            dutyInTime = this.getTimeFormat(dutyInTime, 0);
+                            dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 0);
                           }
                           else {
-                            dutyInTime = this.getTimeFormat(dutyInTime, 1);
+                            dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1);
                           }
                         }
                         let lineDetail = wardLines.find(item => item.lineNo == i);
