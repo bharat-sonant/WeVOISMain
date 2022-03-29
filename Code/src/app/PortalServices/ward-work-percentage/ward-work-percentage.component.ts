@@ -19,7 +19,6 @@ export class WardWorkPercentageComponent implements OnInit {
   selectedZone: any;
   zoneList: any[] = [];
   expectedPercentage: any;
-  divLoader: "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
