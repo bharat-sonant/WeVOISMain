@@ -24,7 +24,7 @@
                             <div class="col-md-2">
                                 <label>Zone</label>
                                 <div class="wrap-input-effects" required>
-                                    <select class="caret-select" id="ddlZone" (change)="getDustbins();">
+                                    <select class="caret-select" id="ddlZone">
                                         <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
                                     </select>
                                 </div>
