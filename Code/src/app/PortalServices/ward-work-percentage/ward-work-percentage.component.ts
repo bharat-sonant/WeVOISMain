@@ -103,8 +103,6 @@ export class WardWorkPercentageComponent implements OnInit {
                       lineStatusInstance.unsubscribe();
                       if (count <= expectedLine) {
                         if (lineStatusData == null) {
-                          const obj = {};
-                          obj[i] = { Status: "LineCompleted" };
                           dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
                           this.db.object(dbPath).update({ Status: "LineCompleted" });
                           dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1) + "-" + i;
@@ -113,7 +111,6 @@ export class WardWorkPercentageComponent implements OnInit {
                           expectedLine++;
                           if (lineStatusData["start-time"] != null) {
                             dutyInTime = lineStatusData["start-time"];
-                            dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 0);
                           }
                           else {
                             dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1);
@@ -128,7 +125,7 @@ export class WardWorkPercentageComponent implements OnInit {
                             "lat-lng": latLng
                           }
                           dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + dutyInTime;
-                          this.db.object(dbPath).update(data);
+                         // this.db.object(dbPath).update(data);
                         }
                         if (count == expectedLine) {
                           dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";

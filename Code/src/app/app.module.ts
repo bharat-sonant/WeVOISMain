@@ -77,7 +77,7 @@ if (city != null) {
     databaseName = "dtdnavigatortesting";
     databaseURL = "https://dtdnavigatortesting.firebaseio.com";
   }
-  else if (city == 'demo') {
+  else if (city == 'jaipur-office') {
     firebase = {
       apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
       authDomain: "dtdnavigator.firebaseapp.com",

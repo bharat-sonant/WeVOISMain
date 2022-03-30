@@ -144,7 +144,7 @@ export class CommonService {
     else if (cityName == "test") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
-    else if (cityName == "demo") {
+    else if (cityName == "jaipur-office") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
     else if (cityName == "sikar") {
@@ -709,7 +709,7 @@ export class CommonService {
 
   getFireStoreCity() {
     let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
-    if (city == "Demo") {
+    if (city == "jaipur-office") {
       city = "Jaipur";
     }
     else if (city == "Jaipur-greater") {
@@ -1237,7 +1237,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let polylines = [];
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardBoundries/" + cityName + "/" + zoneNo + ".json").subscribe(data => {
@@ -1305,7 +1305,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let zoneList = [];
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/AvailableWard/" + cityName + ".json").subscribe(data => {
@@ -1360,7 +1360,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let totalLength = 0;
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
@@ -1386,7 +1386,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let lineLengthList = [];
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardLineLength/" + cityName + "/" + wardNo + ".json").subscribe(data => {
@@ -1427,7 +1427,7 @@ export class CommonService {
   getCircleWiseWard() {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       let circleList = [];
@@ -1470,7 +1470,7 @@ export class CommonService {
   setWardBoundary(zoneNo: any, map: any) {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
-      if (cityName == "demo") {
+      if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
       const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";

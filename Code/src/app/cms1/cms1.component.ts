@@ -29,6 +29,41 @@ export class Cms1Component implements OnInit {
     );
   }
 
+  updateCardWardMapping() {
+
+    return;
+
+
+    let dbPath = "HousesCollectionInfo/55/2022/March/2022-03-21";
+    let collectionInstance = this.db.object(dbPath).valueChanges().subscribe(
+      collectionData => {
+        collectionInstance.unsubscribe();
+        if (collectionData != null) {
+          let keyArray = Object.keys(collectionData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let cardNo = keyArray[i];
+            for (let j = 1; j <= 311; j++) {
+              dbPath = "Houses/55/" + j + "/" + cardNo;
+              let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+                data => {
+                  houseInstance.unsubscribe();
+                  if (data != null) {
+                    let lineNo = data["line"];
+                    let cardNumber = data["cardNo"];
+                    console.log(cardNumber + " > " + lineNo);
+                    this.db.object("CardWardMapping/" + cardNumber).update({ line: lineNo, ward: "55" });
+
+                  }
+                }
+              );
+
+            }
+          }
+        }
+      }
+    );
+  }
+
   setData() {
     let date = "2021-10-04";
     let dbPath = "WastebinMonitor/ImagesData/" + date;
@@ -120,6 +155,27 @@ export class Cms1Component implements OnInit {
                 this.db.object(dbPath).update({ totalCount: total1 });
               }
             );
+          }
+        }
+      }
+    );
+  }
+
+  updateWardDustbin() {
+    let dbPath = "DustbinData/DustbinDetails";
+    let wardDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        wardDustbinInstance.unsubscribe();
+        if (data != null) {
+          console.log(data);
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let dustbin = keyArray[i];
+              let zone = data[dustbin]["zone"];
+              dbPath = "DustbinData/DustbinDetails/" + dustbin + "/";
+              // this.db.object(dbPath).update({ward: zone});
+            }
           }
         }
       }
@@ -534,6 +590,58 @@ export class Cms1Component implements OnInit {
     /* save to file */
     let fileName = "Wastebin.xlsx";
     XLSX.writeFile(wb, fileName);
+  }
+
+  downloadSikarDustbin() {
+    let dustbinList = JSON.parse(localStorage.getItem("dustbin"));
+    let dustbinListExcel = [];
+    if (dustbinList != null) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Zone";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Lat";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Lng";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Dustbin Address";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < dustbinList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += dustbinList[i]["zone"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += dustbinList[i]["lat"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += dustbinList[i]["lng"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += dustbinList[i]["address"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+
+      }
+      htmlString += "</table>";
+
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(htmlString, 'text/html');
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+      /* generate workbook and add the worksheet */
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+      /* save to file */
+      XLSX.writeFile(wb, "Sikar_Dustbin.xlsx");
+    }
   }
 
 }
