@@ -182,7 +182,7 @@ export class SidebarComponent implements OnInit {
     } else if (cityName == "test") {
       icon = "./assets/img/test.svg";
     } else if (cityName == "jaipur-office") {
-      icon = "./assets/img/demo.svg";
+      icon = "./assets/img/jaipur-office.svg";
     } else if (cityName == "jaipur-greater") {
       icon = "./assets/img/jaipur_greater.svg";
     } else if (cityName == "kishangarh") {
