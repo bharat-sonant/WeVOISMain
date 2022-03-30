@@ -24,7 +24,8 @@
 
       <div class="fix-home">
         <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px; display: none;">
-          <i class="fas fa-vr-cardboard" style="cursor: pointer;" (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
+          <i class="fas fa-vr-cardboard" style="cursor: pointer;"
+            (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
           <span class="house"> <span style="color: #1fda2f;"> {{progressData.cardNotScanedImages}}
             </span></span><br>
           <h6>Card Images</h6>
@@ -34,7 +35,7 @@
           <h6>Total House</h6>
         </div>
         <div id="divScannedHouses" class="float-third" style=" display: none;">
-          <i  class="fas fa-house-damage" style="cursor: pointer;"></i>
+          <i class="fas fa-house-damage" style="cursor: pointer;"></i>
           <span class="house">{{progressData.scanedHouses}} </span><br>
           <h6>Scanned House</h6>
         </div>
@@ -240,8 +241,20 @@
 
 <!--Line Detail Start-->
 <ng-template #contentLineDetail>
-  <div style="width: 100%;text-align: right;float: left;">
-    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+  <div style="width: 100%;text-align: left;float: left;">
+    <div class="row" style="height:50px; padding-left: 20px;">
+      <div class="col-md-10" style="padding-top: 15px;">
+        Scancard (%) for All Lines&nbsp;&nbsp; <input id="txtAllLineScancard" type="number" value="0"
+          style="width:50px; text-align: center;" /> &nbsp;&nbsp;<i class="fas fa-save"
+          style="color:green; font-size: 20px; cursor: pointer;" (click)="updateAllLineScancardPercentage()"></i>
+          &nbsp;&nbsp;&nbsp;
+          <input id="chkIsAvailableForScancard" type="checkbox" (change)="updateLineScancardPercentage()">&nbsp;&nbsp; Is available for scancard 
+      </div>
+      <div class="col-md-2" style="text-align: right;">
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+      </div>
+    </div>
+
   </div>
   <div class="modal-body" style="margin-top:-20px; ">
 
@@ -255,18 +268,25 @@
                   <tr>
                     <th scope="col" class="text-left">Line No </th>
                     <th scope="col" class="text-right">Length (meter)</th>
-                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save" style="color:green; font-size: 20px; cursor: pointer;" (click)="updateLineTimerTime()"></i></th>
+                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save"
+                        style="color:green; font-size: 20px; cursor: pointer;" (click)="updateLineTimerTime()"></i></th>
                     <th scope="col" class="text-right">Actual covered time (min)</th>
                     <th scope="col" class="text-right">No of houses</th>
+                    <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save"
+                        style="color:green; font-size: 20px; cursor: pointer;"
+                        (click)="updateLineScancardPercentage()"></i></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let dt of zoneLineList">
                     <td class="text-left border-left">{{dt.lineNo}} </td>
                     <td class="text-right border-left">{{dt.length}} </td>
-                    <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number" value="{{dt.timerTime}}" style="width:50px; text-align: center;"/> </td>
+                    <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number"
+                        value="{{dt.timerTime}}" style="width:50px; text-align: center;" /> </td>
                     <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
                     <td class="text-right border-left">{{dt.houseCount}} </td>
+                    <td class="text-right border-left"><input id="txtScancardPercentage{{dt.lineNo}}" type="number"
+                        value="{{dt.scancardPercentage}}" style="width:50px; text-align: center;" /> </td>
                   </tr>
                 </tbody>
               </table>

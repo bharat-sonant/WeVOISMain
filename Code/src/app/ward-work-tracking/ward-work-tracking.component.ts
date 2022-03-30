@@ -50,6 +50,7 @@ export class WardWorkTrackingComponent {
   skippedMarkerUrl = "../../../assets/img/red.svg";
   scanHouseUrl = "../assets/img/green-home.png";
   txtDate = "#txtDate";
+  txtAllLineScancard = "#txtAllLineScancard";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
   divParshadDetail = "#divParshadDetail";
@@ -60,6 +61,7 @@ export class WardWorkTrackingComponent {
   chkIsShowLineNo = "chkIsShowLineNo";
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
+  chkIsAvailableForScancard = "chkIsAvailableForScancard";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
@@ -499,7 +501,7 @@ export class WardWorkTrackingComponent {
     let divHeight = "0px";
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     if (type == "lineDetail") {
-      width = 850;
+      width = 900;
       height = (windowHeight * 90) / 100;
       divHeight = height - 50 + "px";
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
@@ -523,41 +525,15 @@ export class WardWorkTrackingComponent {
     this.hideSetting();
   }
 
-  updateLineTimerTime() {
-    if (this.zoneLineList != null) {
-      const obj = {};
-      for (let i = 0; i < this.zoneLineList.length; i++) {
-        let lineNo = this.zoneLineList[i]["lineNo"];
-        let timerTime = $('#txtTimer' + lineNo).val();
-        this.updateLineTimerInRealtimeDatabase(lineNo, this.zoneLineList[i]["timerTime"], timerTime);
-        this.zoneLineList[i]["timerTime"] = timerTime;
-        obj[lineNo] = { minimumTimeToCollectWaste: timerTime };
-      }
-      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseTimingDetailsInWard/");
-      this.commonService.setAlertMessage("success", "Data saved successfully !!!");
-    }
-  }
-
-  updateLineTimerInRealtimeDatabase(lineNo: any, preTimerTime: any, timerTime: any) {
-    let dbPath = "Settings/LinewiseTimingDetailsInWard/" + this.selectedZone + "/" + lineNo;
-    if (preTimerTime != timerTime) {
-      if (timerTime == 0) {
-        this.db.object(dbPath).update({ minimumTimeToCollectWaste: null });
-      }
-      else {
-        this.db.object(dbPath).update({ minimumTimeToCollectWaste: timerTime });
-      }
-    }
-  }
-
   getZoneLineDetail() {
     this.zoneLineList = [];
     for (let i = 0; i < this.lines.length; i++) {
-      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0 });
+      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0, scancardPercentage: 0 });
       this.getLineActualCoveredTime(this.lines[i]["lineNo"]);
       if (i == this.lines.length - 1) {
         this.getTimerTime();
         this.getWardLineLengthAndHouses();
+        this.getScancardPercentage();
       }
     }
   }
@@ -607,6 +583,89 @@ export class WardWorkTrackingComponent {
         }
       }
     });
+  }
+
+
+  getScancardPercentage() {
+    const scancardPercentageJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FLinewiseScancardPercentageInWard%2F" + this.selectedZone + ".json?alt=media";
+    let scancardPercentageInstance = this.httpService.get(scancardPercentageJsonPath).subscribe(scancardPercentageData => {
+      scancardPercentageInstance.unsubscribe();
+      if (scancardPercentageData != null) {
+        if (scancardPercentageData["isAvailable"] !=null) {
+          (<HTMLInputElement>document.getElementById(this.chkIsAvailableForScancard)).checked = scancardPercentageData["isAvailable"];
+        }
+        let keyArray = Object.keys(scancardPercentageData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
+            if (lineDetail != undefined) {
+              lineDetail.scancardPercentage = scancardPercentageData[lineNo]["scancardPercentage"];
+            }
+          }
+        }
+      }
+    });
+  }
+
+  updateLineScancardPercentage() {
+    if (this.zoneLineList != null) {
+      const obj = {};
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        let lineNo = this.zoneLineList[i]["lineNo"];
+        let scancardPercentage = $('#txtScancardPercentage' + lineNo).val();
+        this.zoneLineList[i]["scancardPercentage"] = scancardPercentage;
+        obj[lineNo] = { scancardPercentage: scancardPercentage };
+      }
+      if ((<HTMLInputElement>document.getElementById(this.chkIsAvailableForScancard)).checked == true) {
+        obj["isAvailable"] = true;
+      }
+      else {
+        obj["isAvailable"] = false;
+      }
+      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseScancardPercentageInWard/");
+      this.commonService.setAlertMessage("success", "Data saved successfully !!!");
+    }
+  }
+
+  updateAllLineScancardPercentage() {
+    if ($(this.txtAllLineScancard).val() == "0" || $(this.txtAllLineScancard).val() == "") {
+      this.commonService.setAlertMessage("error", "Please enter percentage !!!");
+      return;
+    }
+    if (this.zoneLineList != null) {
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        $('#txtScancardPercentage' + this.zoneLineList[i]["lineNo"]).val($(this.txtAllLineScancard).val());
+      }
+    }
+    this.updateLineScancardPercentage();
+  }
+
+  updateLineTimerTime() {
+    if (this.zoneLineList != null) {
+      const obj = {};
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        let lineNo = this.zoneLineList[i]["lineNo"];
+        let timerTime = $('#txtTimer' + lineNo).val();
+        this.updateLineTimerInRealtimeDatabase(lineNo, this.zoneLineList[i]["timerTime"], timerTime);
+        this.zoneLineList[i]["timerTime"] = timerTime;
+        obj[lineNo] = { minimumTimeToCollectWaste: timerTime };
+      }
+      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseTimingDetailsInWard/");
+      this.commonService.setAlertMessage("success", "Data saved successfully !!!");
+    }
+  }
+
+  updateLineTimerInRealtimeDatabase(lineNo: any, preTimerTime: any, timerTime: any) {
+    let dbPath = "Settings/LinewiseTimingDetailsInWard/" + this.selectedZone + "/" + lineNo;
+    if (preTimerTime != timerTime) {
+      if (timerTime == 0) {
+        this.db.object(dbPath).update({ minimumTimeToCollectWaste: null });
+      }
+      else {
+        this.db.object(dbPath).update({ minimumTimeToCollectWaste: timerTime });
+      }
+    }
   }
 
   closeModel() {
