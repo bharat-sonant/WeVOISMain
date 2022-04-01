@@ -397,7 +397,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
           this.workerDetails.wardName = "Market " + this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
         } else {
-          this.workerDetails.wardName =  this.selectedZoneName;
+          this.workerDetails.wardName = "Zone "+ this.selectedZoneName;
         }
         this.initGrpahProperties();
         this.initTimeDistance();
@@ -1072,7 +1072,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");
     } else {
-      this.workerDetails.wardName = this.selectedZoneName;
+      this.workerDetails.wardName = "Zone "+ this.selectedZoneName;
     }
     this.fillWardDetail();
   }
