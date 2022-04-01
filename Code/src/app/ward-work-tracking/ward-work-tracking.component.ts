@@ -1,4 +1,3 @@
-import { dustbinDetail } from './../reports/dustbin-analysis/dustbin-analysis.component';
 /// <reference types="@types/googlemaps" />
 import { Component, ViewChild } from "@angular/core";
 //services
@@ -54,6 +53,7 @@ export class WardWorkTrackingComponent {
   vehicleStopedUrl = "../assets/img/tipper-red.png";
   skippedMarkerUrl = "../../../assets/img/red.svg";
   scanHouseUrl = "../assets/img/green-home.png";
+  notScanHouseUrl = "../assets/img/red-home.png";
   txtDate = "#txtDate";
   txtAllLineScancard = "#txtAllLineScancard";
   divLoader = "#divLoader";
@@ -73,6 +73,7 @@ export class WardWorkTrackingComponent {
   divNotSacnned = "#divNotSacnned";
   divScannedHouses = "#divScannedHouses";
   wardLinesDataObj: any;
+  isShowAllHouse = false;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -124,28 +125,22 @@ export class WardWorkTrackingComponent {
 
   setDetailShowHideSetting() {
     if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
-      $(this.divDustbinDetail).css("top", "75px");
-    }
-    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
-      if (this.isParshadShow == false) {
-        $(this.divDustbinDetail).css("top", "200px");
-      }
-      else {
-        $(this.divDustbinDetail).css("top", "250px");
-      }
+      $(this.divDustbinDetail).css("right", "15px");
     }
     else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
-      $(this.divDustbinDetail).css("top", "240px");
-      $(this.divWorkDetail).css("top", "75px");
+      $(this.divDustbinDetail).css("right", "305px");
+      $(this.divWorkDetail).css("top", "80px");
+    }
+    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+      $(this.divDustbinDetail).css("right", "305px");
     }
     else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
+      $(this.divDustbinDetail).css("right", "305px");
       if (this.isParshadShow == false) {
-        $(this.divDustbinDetail).css("top", "365px");
-        $(this.divWorkDetail).css("top", "200px");
+        $(this.divWorkDetail).css("top", "215px");
       }
       else {
-        $(this.divDustbinDetail).css("top", "420px");
-        $(this.divWorkDetail).css("top", "250px");
+        $(this.divWorkDetail).css("top", "270px");
       }
     }
   }
@@ -244,6 +239,7 @@ export class WardWorkTrackingComponent {
   }
 
   getHouses() {
+    this.progressData.scanedHouses = 0;
     if (this.wardLinesDataObj != null) {
       let keyArray = Object.keys(this.wardLinesDataObj);
       if (this.wardLinesDataObj["totalHouseCount"] != null) {
@@ -257,14 +253,13 @@ export class WardWorkTrackingComponent {
           for (let j = 0; j < houses.length; j++) {
             let lat = houses[j]["latlong"]["latitude"];
             let lng = houses[j]["latlong"]["longitude"];
-            let markerType = "red";
             let cardNo = "";
             if (houses[j]["Basicinfo"] != null) {
               if (houses[j]["Basicinfo"]["CardNumber"] != null) {
                 cardNo = houses[j]["Basicinfo"]["CardNumber"];
               }
             }
-            this.setHouseMarker(cardNo, lat, lng, markerType);
+            this.setHouseMarker(cardNo, lat, lng);
           }
         }
         if (i == keyArray.length - 4) {
@@ -285,13 +280,27 @@ export class WardWorkTrackingComponent {
         let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
           this.instancesList.push({ instances: scanInfoInstance });
           if (scanBy != undefined) {
-            this.progressData.scanedHouses = this.progressData.scanedHouses + 1;
             let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
             if (houseDetail != undefined) {
-              this.setScanedIcon(houseDetail);
+              houseDetail.scanBy = scanBy;
+              this.setProgressDetailScanedHouseCount(scanBy);
+              this.setScanedIcon(houseDetail, houseDetail.scanBy);
             }
           }
         });
+      }
+    }
+  }
+
+  setProgressDetailScanedHouseCount(scanBy: any) {
+    if (this.isShowAllHouse == false) {
+      if (scanBy > -1) {
+        this.progressData.scanedHouses = this.progressData.scanedHouses + 1;
+      }
+    }
+    else {
+      if (scanBy > -2) {
+        this.progressData.scanedHouses = this.progressData.scanedHouses + 1;
       }
     }
   }
@@ -310,21 +319,49 @@ export class WardWorkTrackingComponent {
             let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
             if (houseDetail != undefined) {
               houseDetail.marker.setAnimation(google.maps.Animation.BOUNCE);
-              this.setScanedIcon(houseDetail);
+              this.setScanedIcon(houseDetail, houseDetail.scanBy);
             }
             let scanTime = recentScanData["scanTime"];
             let notificationTime = new Date(this.toDayDate + " " + scanTime);
             let currentTime = new Date();
-            let timeDiff = this.commonService.timeDifferenceMin(
-              currentTime,
-              notificationTime
-            );
+            let timeDiff = this.commonService.timeDifferenceMin(currentTime, notificationTime);
             if (timeDiff < 3) {
-              this.showScanedHouseMessage(cardNo, scanTime);
+              if (this.isShowAllHouse == true) {
+                if (recentScanData["isShowMessage"] == "yes") {
+                  this.showScanedHouseMessage(cardNo, scanTime);
+                }
+              }
+              else {
+                if (recentScanData["scanBy"] != "-1") {
+                  if (recentScanData["isShowMessage"] == "yes") {
+                    this.showScanedHouseMessage(cardNo, scanTime);
+                  }
+                }
+              }
             }
           }
         }
       );
+    }
+  }
+
+  showAllScanedHouses() {
+    this.progressData.scanedHouses = 0;
+    if (this.isShowAllHouse == false) {
+      this.isShowAllHouse = true;
+    }
+    else {
+      this.isShowAllHouse = false;
+    }
+    if (this.houseMarkerList.length > 0) {
+      for (let i = 0; i < this.houseMarkerList.length; i++) {
+        let cardNo = this.houseMarkerList[i]["cardNo"];
+        let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
+        if (houseDetail != undefined) {
+          this.setProgressDetailScanedHouseCount(houseDetail.scanBy);
+          this.setScanedIcon(houseDetail, houseDetail.scanBy);
+        }
+      }
     }
   }
 
@@ -349,8 +386,18 @@ export class WardWorkTrackingComponent {
     });
   }
 
-  setScanedIcon(houseDetail: any) {
-    let imgUrl = this.scanHouseUrl;
+  setScanedIcon(houseDetail: any, scanBy: any) {
+    let imgUrl = this.notScanHouseUrl;
+    if (this.isShowAllHouse == false) {
+      if (scanBy > -1) {
+        imgUrl = this.scanHouseUrl;
+      }
+    }
+    else {
+      if (scanBy > -2) {
+        imgUrl = this.scanHouseUrl;
+      }
+    }
     const icon = {
       url: imgUrl,
       fillOpacity: 1,
@@ -358,15 +405,16 @@ export class WardWorkTrackingComponent {
       scaledSize: new google.maps.Size(16, 15),
     }
     houseDetail.marker.setIcon(icon);
+
   }
 
-  setHouseMarker(cardNo: any, lat: any, lng: any, markerType: any) {
+  setHouseMarker(cardNo: any, lat: any, lng: any) {
     let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
     if (houseDetail != undefined) {
       houseDetail.marker.setMap(null);
       houseDetail.cardNo = null;
     }
-    let imgUrl = "../assets/img/" + markerType + "-home.png";
+    let imgUrl = this.notScanHouseUrl;
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
@@ -377,7 +425,7 @@ export class WardWorkTrackingComponent {
         scaledSize: new google.maps.Size(16, 15),
       },
     });
-    this.houseMarkerList.push({ cardNo: cardNo, marker: marker });
+    this.houseMarkerList.push({ cardNo: cardNo, marker: marker, scanBy: -2 });
   }
 
   clearHouseFromMap() {
@@ -447,6 +495,7 @@ export class WardWorkTrackingComponent {
   getLocalStorage() {
     if (localStorage.getItem("userType") == "External User") {
       $(this.divSetting).hide();
+      this.isShowAllHouse = true;
     }
     (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingAllDustbinShow"));
@@ -785,7 +834,7 @@ export class WardWorkTrackingComponent {
               }
               let completedBins = [];
               if (dustbinAssignedData["completedBins"] != null) {
-                completedBins = dustbinAssignedData["bins"].split(',');
+                completedBins = dustbinAssignedData["completedBins"].split(',');
                 for (let i = 0; i < completedBins.length; i++) {
                   let binDetail = binList.find(item => item.dustbin == completedBins[i].trim())
                   if (binDetail != undefined) {
@@ -869,7 +918,6 @@ export class WardWorkTrackingComponent {
     this.progressData.totalHouses = 0;
     this.progressData.cardNotScanedImages = 0;
     this.progressData.scanedHouses = 0;
-    (<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked = false;
     this.clearHouseFromMap();
     this.houseMarkerList = [];
     this.cardNotScanedList = [];
@@ -983,6 +1031,9 @@ export class WardWorkTrackingComponent {
       this.getCoverdWardLength();
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
         this.showHideLineNo();
+      }
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked == true || this.selectedZone != "0") {
+        this.showHouse();
       }
       $(this.divLoader).hide();
     });

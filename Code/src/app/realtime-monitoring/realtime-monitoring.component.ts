@@ -125,6 +125,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     totalUnAssignedVehicle: "0",
     peopleAtWork: "0",
     garageWorkDutyCount: "0",
+    garageWorkActiveDutyCount: "0",
   };
 
   // Time Graph
@@ -1763,7 +1764,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       var linePath = [];
-      for (let i = 0; i < keyArray.length - 1; i++) {
+      for (let i = 1; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         try {
           let points = wardLines[lineNo]["points"];
@@ -1929,6 +1930,11 @@ export class RealtimeMonitoringComponent implements OnInit {
               }
             }
           }
+          for (let i = 0; i < this.garageDutyList.length; i++) {
+            if (this.garageDutyList[i]["dutyOffTime"] == "") {
+              this.workerDetails.garageWorkActiveDutyCount = (Number(this.workerDetails.garageWorkActiveDutyCount) + 1).toString();
+            }
+          }
         }
       }
     });
@@ -1993,6 +1999,7 @@ export class WorkderDetails {
   totalUnAssignedVehicle: string;
   peopleAtWork: string;
   garageWorkDutyCount: string;
+  garageWorkActiveDutyCount: string;
 }
 
 export class graphHeaders {
