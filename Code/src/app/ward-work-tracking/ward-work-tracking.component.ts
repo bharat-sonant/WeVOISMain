@@ -1,3 +1,4 @@
+import { dustbinDetail } from './../reports/dustbin-analysis/dustbin-analysis.component';
 /// <reference types="@types/googlemaps" />
 import { Component, ViewChild } from "@angular/core";
 //services
@@ -44,6 +45,10 @@ export class WardWorkTrackingComponent {
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
   defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
+  defaultRectangularAssignedDustbinUrl = "../../assets/img/blue without tick rectangle.png";
+  defaultCircularAssignedDustbinUrl = "../../assets/img/dustbin-circular-blue.png";
+  defaultRectangularPickedDustbinUrl = "../assets/img/Green-Rectangle-dustbin.png";
+  defaultCircularPickedDustbinUrl = "../assets/img/dustbin-circular-green.png";
   vehicleRunningUrl = "../assets/img/tipper-green.png";
   vehicleCompletedUrl = "../assets/img/tipper-gray.png";
   vehicleStopedUrl = "../assets/img/tipper-red.png";
@@ -591,7 +596,7 @@ export class WardWorkTrackingComponent {
     let scancardPercentageInstance = this.httpService.get(scancardPercentageJsonPath).subscribe(scancardPercentageData => {
       scancardPercentageInstance.unsubscribe();
       if (scancardPercentageData != null) {
-        if (scancardPercentageData["isAvailable"] !=null) {
+        if (scancardPercentageData["isAvailable"] != null) {
           (<HTMLInputElement>document.getElementById(this.chkIsAvailableForScancard)).checked = scancardPercentageData["isAvailable"];
         }
         let keyArray = Object.keys(scancardPercentageData);
@@ -720,6 +725,7 @@ export class WardWorkTrackingComponent {
       if (zoneDustbins.length > 0) {
         this.progressData.totalDustbin = zoneDustbins.length;
         for (let i = 0; i < zoneDustbins.length; i++) {
+          let dustbin = zoneDustbins[i]["dustbin"];
           let lat = zoneDustbins[i]["lat"];
           let lng = zoneDustbins[i]["lng"];
           let markerUrl = this.defaultCircularDustbinUrl;
@@ -731,13 +737,16 @@ export class WardWorkTrackingComponent {
             this.progressData.circularDustbin += 1;
           }
           let contentString = '<br/>' + zoneDustbins[i]["address"];
-          this.setDustbinMarker(lat, lng, markerUrl, contentString);
+          this.setDustbinMarker(dustbin, lat, lng, markerUrl, contentString, zoneDustbins[i]["type"]);
+          if (i == zoneDustbins.length - 1) {
+            this.getWardAssignedDustbin();
+          }
         }
       }
     }
   }
 
-  setDustbinMarker(lat: any, lng: any, markerUrl: any, contentString: any) {
+  setDustbinMarker(dustbin: any, lat: any, lng: any, markerUrl: any, contentString: any, type: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
@@ -758,7 +767,64 @@ export class WardWorkTrackingComponent {
       infowindow.open(this.map, marker);
     });
 
-    this.dustbinMarkerList.push({ marker });
+    this.dustbinMarkerList.push({ dustbin: dustbin, marker: marker, type: type });
+  }
+
+  getWardAssignedDustbin() {
+    if (this.dustbinList.length > 0) {
+      let dbPath = "DustbinData/DustbinAssignToWard/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + this.selectedZone;
+      let dustbinAssignedInstance = this.db.object(dbPath).valueChanges().subscribe(
+        dustbinAssignedData => {
+          this.instancesList.push({ instances: dustbinAssignedInstance });
+          if (dustbinAssignedData != null) {
+            if (dustbinAssignedData["bins"] != null) {
+              let bins = dustbinAssignedData["bins"].split(',');
+              let binList = [];
+              for (let i = 0; i < bins.length; i++) {
+                binList.push({ dustbin: bins[i].trim(), status: 'assigned' });
+              }
+              let completedBins = [];
+              if (dustbinAssignedData["completedBins"] != null) {
+                completedBins = dustbinAssignedData["bins"].split(',');
+                for (let i = 0; i < completedBins.length; i++) {
+                  let binDetail = binList.find(item => item.dustbin == completedBins[i].trim())
+                  if (binDetail != undefined) {
+                    binDetail.status = "picked";
+                  }
+                }
+              }
+              for (let i = 0; i < binList.length; i++) {
+                let dustbinDetail = this.dustbinMarkerList.find(item => item.dustbin == binList[i]["dustbin"].trim());
+                if (dustbinDetail != undefined) {
+                  let imgUrl = this.defaultRectangularAssignedDustbinUrl;
+                  if (binList[i]["status"] == "picked") {
+                    imgUrl = this.defaultRectangularPickedDustbinUrl;
+                  }
+                  if (dustbinDetail.type != "Rectangular") {
+                    imgUrl = this.defaultCircularAssignedDustbinUrl;
+                    if (binList[i]["status"] == "picked") {
+                      imgUrl = this.defaultCircularPickedDustbinUrl;
+                    }
+                  }
+                  this.setIconForDustbinMarker(dustbinDetail, imgUrl);
+                }
+              }
+            }
+          }
+        }
+      );
+    }
+  }
+
+  setIconForDustbinMarker(dustbinDetail: any, imgUrl: any) {
+    const icon = {
+      url: imgUrl,
+      fillOpacity: 1,
+      strokeWeight: 0,
+      scaledSize: new google.maps.Size(25, 31),
+      labelOrigin: new google.maps.Point(15, 25)
+    }
+    dustbinDetail.marker.setIcon(icon);
   }
 
   changeZoneSelection(filterVal: any) {

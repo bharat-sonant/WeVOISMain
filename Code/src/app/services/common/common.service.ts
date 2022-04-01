@@ -1262,8 +1262,6 @@ export class CommonService {
             resolve(polylines);
           }
         }
-
-
       });
 
     });
