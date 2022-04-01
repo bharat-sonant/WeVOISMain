@@ -998,7 +998,7 @@ export class WardWorkTrackingComponent {
 
   getAllLinesFromJson() {
     this.clearMapAll();
-    this.commonService.getWardLineJson(this.selectedZone, this.selectedDate).then((linesData: any) => {
+    this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
       this.lines = [];
       this.wardLinesDataObj = JSON.parse(linesData);
       let keyArray = Object.keys(this.wardLinesDataObj);

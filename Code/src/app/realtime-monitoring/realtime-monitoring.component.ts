@@ -296,7 +296,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       let totalWard = this.allZones.length - 1;
       for (let index = 1; index < this.allZones.length; index++) {
         let zoneNo = this.allZones[index]["zoneNo"];
-        let zoneName = this.allZones[index]["zoneName"].replace("Ward ", "");
+        let zoneName = this.allZones[index]["zoneName"].replace("Zone ", "");
         let status = data[zoneNo]["activityStatus"];
         let isMic = "notActive";
         if (data[zoneNo]["micStatus"] != null) {
@@ -397,7 +397,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
           this.workerDetails.wardName = "Market " + this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
         } else {
-          this.workerDetails.wardName = "ZONE " + this.selectedZoneName;
+          this.workerDetails.wardName =  this.selectedZoneName;
         }
         this.initGrpahProperties();
         this.initTimeDistance();
@@ -1072,7 +1072,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");
     } else {
-      this.workerDetails.wardName = "ZONE " + this.selectedZoneName;
+      this.workerDetails.wardName = this.selectedZoneName;
     }
     this.fillWardDetail();
   }

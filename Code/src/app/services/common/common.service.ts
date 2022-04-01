@@ -744,15 +744,12 @@ export class CommonService {
   setLocalStorageData(newDb: any) {
     this.fsDb = newDb;
     this.setDesignation();
-    //this.setPortalPages();
-    //this.setWebPortalUsers();
     this.setZones();
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
     this.setDustbin(newDb);
     this.setWardLines(newDb);
     this.setMarkerZone();
-    //this.setWardKML(newDb);
     this.setMarkingWards();
   }
 
@@ -1015,10 +1012,10 @@ export class CommonService {
                 markingWards.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
-                  markingWards.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
+                  markingWards.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
                 }
                 else {
-                  markingWards.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                  markingWards.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
                 }
               }
             }
@@ -1067,10 +1064,10 @@ export class CommonService {
                 letestZone.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
-                  letestZone.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
+                  letestZone.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
                 }
                 else {
-                  letestZone.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                  letestZone.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
                 }
               }
             }
@@ -1338,10 +1335,10 @@ export class CommonService {
                     zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking2", });
                   } else {
                     if (cityName == 'kishangarh' || data[index].toString() == "60") {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
+                      zoneList.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
                     }
                     else {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
+                      zoneList.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
                     }
                   }
                 }
@@ -1593,63 +1590,6 @@ export class CommonService {
         });
       });
     });
-  }
-
-
-  getWardLineJson(zoneNo: any, date: any) {
-    return new Promise((resolve) => {
-      this.getMapUpdateHistory(zoneNo, date).then((data: any) => {
-        let jsonDate = data;
-        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
-          resolve(JSON.stringify(data));
-        }, error => {
-          const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-            wardLineInstance.unsubscribe();
-            if (data != null) {
-              resolve(JSON.stringify(data));
-            }
-          });
-        });
-      });
-    });
-  }
-
-  getMapUpdateHistory(zoneNo: any, date: any) {
-    return new Promise((resolve) => {
-      let jsonDate = "";
-      let mapUpdateHistoryList = [];
-      if (localStorage.getItem("mapUpdateHistory") != null) {
-        mapUpdateHistoryList = JSON.parse(localStorage.getItem("mapUpdateHistory"));
-        let detail = mapUpdateHistoryList.find(item => item.zoneNo == zoneNo);
-        if (detail != undefined) {
-          jsonDate = this.getJSONDate(detail.list, date);
-          resolve(jsonDate);
-        }
-      }
-      if (jsonDate == "") {
-        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
-        let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
-          jsonInstance.unsubscribe();
-          let list = JSON.parse(JSON.stringify(dataDate));
-          this.setMapUpdateHistoryLocalStorage(zoneNo, list);
-          jsonDate = this.getJSONDate(list, date);
-          resolve(jsonDate);
-        });
-      }
-    });
-  }
-
-  setMapUpdateHistoryLocalStorage(zoneNo: any, list: any) {
-    let mapUpdateHistoryList = [];
-    if (localStorage.getItem("mapUpdateHistory") != null) {
-      mapUpdateHistoryList = JSON.parse(localStorage.getItem("mapUpdateHistory"));
-    }
-    let detail = mapUpdateHistoryList.find(item => item.zoneNo == zoneNo);
-    if (detail == undefined) {
-      mapUpdateHistoryList.push({ zoneNo: zoneNo, list: list });
-      localStorage.setItem("mapUpdateHistory", JSON.stringify(mapUpdateHistoryList));
-    }
   }
 
   getJSONDate(list: any, date: any) {
