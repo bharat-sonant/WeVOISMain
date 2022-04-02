@@ -718,6 +718,8 @@ export class CommonService {
     return city;
   }
 
+  /*
+
   getWardLines(newDb: any, wardNo: any) {
     return new Promise((resolve) => {
       let wardLineCount = newDb.object("WardLines/" + wardNo + "").valueChanges().subscribe((lineCount) => {
@@ -729,6 +731,9 @@ export class CommonService {
     });
   }
 
+  */
+/*
+
   getWardKML(newDb: any, wardNo: any) {
     return new Promise((resolve) => {
       let boundaryInstance = newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
@@ -737,7 +742,7 @@ export class CommonService {
       });
     });
   }
-
+*/
 
   //#region  all local storage
 
@@ -804,7 +809,13 @@ export class CommonService {
                       } else if (zoneNo.toString().includes("mkt4")) {
                         zoneName = "Market 4";
                       } else {
-                        zoneName = "Ward " + zoneNo;
+                        if (localStorage.getItem("cityName") == 'kishangarh' || data[index].toString() == "60") {
+                          zoneName = "Zone 60";
+                        }
+                        else {
+                          zoneName = "Zone " + zoneNo;
+                        }
+                        zoneName = "Zone " + zoneNo;
                       }
                       let wardDetail = wardCheckList.find(item => item.wardNo == zoneNo);
                       if (wardDetail == undefined) {
@@ -921,6 +932,8 @@ export class CommonService {
     });
   }
 
+  /*
+
   setWardKML(newDb: any) {
     localStorage.setItem("wardKMList", null);
     let dbPath = "Defaults/KmlBoundary/";
@@ -945,6 +958,8 @@ export class CommonService {
       }
     );
   }
+
+  */
 
   setWardLines(newDb: any) {
     let dbPath = "WardLines";
@@ -1221,6 +1236,8 @@ export class CommonService {
     }
   }
 
+  /*
+
   setCityData() {
     if (localStorage.getItem("isCityChange") == "yes") {
       localStorage.setItem("isCityChange", "no");
@@ -1229,6 +1246,8 @@ export class CommonService {
       }, 1000);
     }
   }
+
+  */
 
   getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
     return new Promise((resolve) => {
@@ -1296,6 +1315,8 @@ export class CommonService {
 
   //#region  local json
 
+  /*
+
   getZones() {
     return new Promise((resolve) => {
       let zoneList = [];
@@ -1335,10 +1356,10 @@ export class CommonService {
                     zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking2", });
                   } else {
                     if (cityName == 'kishangarh' || data[index].toString() == "60") {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
+                      zoneList.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
                     }
                     else {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
+                      zoneList.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
                     }
                   }
                 }
@@ -1350,7 +1371,9 @@ export class CommonService {
       });
     });
   }
+*/
 
+  /*
   getWardTotalLength(wardNo: any) {
     return new Promise((resolve) => {
       let totalLength = 0;
@@ -1376,6 +1399,7 @@ export class CommonService {
       });
     });
   }
+  */
 
   getWardLineLength(wardNo: any) {
     return new Promise((resolve) => {
@@ -1525,7 +1549,7 @@ export class CommonService {
     });
   }
 
-
+/*
   setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
     return new Promise((resolve) => {
       const path = boundaryPath;
@@ -1555,7 +1579,7 @@ export class CommonService {
       });
     });
   }
-
+*/
 
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
@@ -1590,24 +1614,6 @@ export class CommonService {
         });
       });
     });
-  }
-
-  getJSONDate(list: any, date: any) {
-    let dat1 = new Date(date);
-    let jsonDate = "";
-    if (list.length == 1) {
-      jsonDate = list[0].toString().trim();
-    }
-    else {
-      for (let i = list.length - 1; i >= 0; i--) {
-        let dat2 = new Date(list[i]);
-        if (dat1 >= dat2) {
-          jsonDate = list[i].toString().trim();
-          i = -1;
-        }
-      }
-    }
-    return jsonDate;
   }
 
   getWardLineCount(zoneNo: any) {

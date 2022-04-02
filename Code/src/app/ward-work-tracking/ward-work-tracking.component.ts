@@ -48,9 +48,12 @@ export class WardWorkTrackingComponent {
   defaultCircularAssignedDustbinUrl = "../../assets/img/dustbin-circular-blue.png";
   defaultRectangularPickedDustbinUrl = "../assets/img/Green-Rectangle-dustbin.png";
   defaultCircularPickedDustbinUrl = "../assets/img/dustbin-circular-green.png";
-  vehicleRunningUrl = "../assets/img/tipper-green.png";
-  vehicleCompletedUrl = "../assets/img/tipper-gray.png";
-  vehicleStopedUrl = "../assets/img/tipper-red.png";
+  vehicleRunningTipperUrl = "../assets/img/tipper-green.png";
+  vehicleCompletedTipperUrl = "../assets/img/tipper-gray.png";
+  vehicleStopedTipperUrl = "../assets/img/tipper-red.png";
+  vehicleRunningTractorUrl = "../assets/img/active-tractormdpi.png";
+  vehicleCompletedTractorUrl = "../assets/img/disabled-tractormdpi.png";
+  vehicleStopedTractorUrl = "../assets/img/stop-tractormdpi.png";
   skippedMarkerUrl = "../../../assets/img/red.svg";
   scanHouseUrl = "../assets/img/green-home.png";
   notScanHouseUrl = "../assets/img/red-home.png";
@@ -169,7 +172,7 @@ export class WardWorkTrackingComponent {
     this.hideSetting();
   }
 
-  getVehicleLocation() {
+  getVehicleLocation(vehicle: any) {
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     let vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: vehicleLocationInstance });
@@ -177,12 +180,6 @@ export class WardWorkTrackingComponent {
         dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
         let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleStatusData) => {
           vehicleStatusInstance.unsubscribe();
-          let vehicleIcon = this.vehicleRunningUrl;
-          if (vehicleStatusData.toString() == "completed") {
-            vehicleIcon = this.vehicleCompletedUrl;
-          } else if (vehicleStatusData.toString() == "stopped") {
-            vehicleIcon = this.vehicleStopedUrl;
-          }
           if (data != null) {
             if (this.vehicleMarker != null) {
               this.vehicleMarker.setMap(null);
@@ -190,16 +187,35 @@ export class WardWorkTrackingComponent {
             let location = data.toString().split(",");
             let lat = Number(location[0]);
             let lng = Number(location[1]);
-
             this.vehicleMarker = new google.maps.Marker({
               position: { lat: Number(lat), lng: Number(lng) },
               map: this.map,
-              icon: vehicleIcon,
+              icon: this.getVehicleIcon(vehicleStatusData.toString(), vehicle)
             });
           }
         });
       }
     });
+  }
+
+  getVehicleIcon(vehicleStatus: any, vehicle: any) {
+    let vehicleIcon = this.vehicleRunningTipperUrl;
+    if (vehicle.includes("TRACTOR")) {
+      vehicleIcon = this.vehicleRunningTractorUrl;
+      if (vehicleStatus.toString() == "completed") {
+        vehicleIcon = this.vehicleCompletedTractorUrl;
+      } else if (vehicleStatus.toString() == "stopped") {
+        vehicleIcon = this.vehicleStopedTractorUrl;
+      }
+    }
+    else {
+      if (vehicleStatus.toString() == "completed") {
+        vehicleIcon = this.vehicleCompletedTipperUrl;
+      } else if (vehicleStatus.toString() == "stopped") {
+        vehicleIcon = this.vehicleStopedTipperUrl;
+      }
+    }
+    return vehicleIcon;
   }
 
   showHouse() {
@@ -557,7 +573,7 @@ export class WardWorkTrackingComponent {
     if (type == "lineDetail") {
       width = 900;
       height = (windowHeight * 90) / 100;
-      divHeight = height - 50 + "px";
+      divHeight = height - 80 + "px";
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
     else if (type == "notScanedImages") {
@@ -1100,9 +1116,6 @@ export class WardWorkTrackingComponent {
         } else {
           this.progressData.skippedLines = 0;
         }
-        if (this.selectedDate == this.toDayDate) {
-          this.getVehicleLocation();
-        }
       }
     });
   }
@@ -1129,6 +1142,15 @@ export class WardWorkTrackingComponent {
         let helperId = helperList[helperList.length - 1].trim();
         this.getEmployee(driverId, "driver");
         this.getEmployee(helperId, "helper");
+        if (workerData["vehicle"] != null) {
+          let vehicleList = workerData["vehicle"].split(',');
+          if (vehicleList.length > 0) {
+            if (this.selectedDate == this.toDayDate) {
+              this.getVehicleLocation(vehicleList[vehicleList.length - 1].trim());
+            }
+          }
+
+        }
       } else {
         this.commonService.setAlertMessage("success", "Work is not assigned for the selected date!!!");
       }

@@ -1,6 +1,5 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
