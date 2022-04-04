@@ -96,6 +96,7 @@ export class WardWorkPercentageComponent implements OnInit {
                 if (expectedLine > 0) {
                   let coveredLength = 0;
                   let count = 1;
+                  let completedLines = 0;
                   for (let i = 1; i <= wardTotalLines; i++) {
                     dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
                     let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -112,10 +113,11 @@ export class WardWorkPercentageComponent implements OnInit {
                           let lineDetail = wardLines.find(item => item.lineNo == i);
                           if (lineDetail != undefined) {
                             coveredLength = coveredLength + lineDetail.lineLength;
+                            completedLines++;
                           }
                           if (count == expectedLine) {
                             dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
-                            this.db.object(dbPath).update({ wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
+                            this.db.object(dbPath).update({ completedLines: completedLines, wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
                             i = wardTotalLines + 1;
                             $("#divLoader").hide();
                             this.commonService.setAlertMessage("success", "Ward work percentage updated !!!")
