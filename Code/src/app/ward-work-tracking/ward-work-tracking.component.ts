@@ -1052,6 +1052,8 @@ export class WardWorkTrackingComponent {
         this.showHouse();
       }
       $(this.divLoader).hide();
+    },error=>{
+      $(this.divLoader).hide();
     });
   }
 

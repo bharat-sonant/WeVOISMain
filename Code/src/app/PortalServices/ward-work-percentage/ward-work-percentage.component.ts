@@ -78,7 +78,6 @@ export class WardWorkPercentageComponent implements OnInit {
         dutyOnData => {
           dutyOnInstance.unsubscribe();
           if (dutyOnData != undefined) {
-            let dutyInTime = dutyOnData.split(',')[0];
             dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/workPercentage";
             let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
               workPercentageData => {
@@ -94,75 +93,54 @@ export class WardWorkPercentageComponent implements OnInit {
                   workPercentage = this.expectedPercentage - Number(workPercentageData);
                 }
                 expectedLine = Number(((workPercentage / 100) * wardTotalLines).toFixed(0));
-                let coveredLength = 0;
-                let count = 1;
-                for (let i = 1; i <= wardTotalLines; i++) {
-                  dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
-                  let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
-                    lineStatusData => {
-                      lineStatusInstance.unsubscribe();
-                      if (count <= expectedLine) {
-                        if (lineStatusData == null) {
-                          dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
-                          this.db.object(dbPath).update({ Status: "LineCompleted" });
-                          dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1) + "-" + i;
-                        }
-                        else {
-                          expectedLine++;
-                          if (lineStatusData["start-time"] != null) {
-                            dutyInTime = lineStatusData["start-time"];
+                if (expectedLine > 0) {
+                  let coveredLength = 0;
+                  let count = 1;
+                  for (let i = 1; i <= wardTotalLines; i++) {
+                    dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
+                    let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      lineStatusData => {
+                        lineStatusInstance.unsubscribe();
+                        if (count <= expectedLine) {
+                          if (lineStatusData == null) {
+                            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
+                            this.db.object(dbPath).update({ Status: "LineCompleted" });
                           }
                           else {
-                            dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1);
+                            expectedLine++;
                           }
-                        }
-                        let lineDetail = wardLines.find(item => item.lineNo == i);
-                        if (lineDetail != undefined) {
-                          coveredLength = coveredLength + lineDetail.lineLength;
-                          let latLng = this.getLatLng(lineDetail.points);
-                          const data = {
-                            "distance-in-meter": lineDetail.lineLength,
-                            "lat-lng": latLng
+                          let lineDetail = wardLines.find(item => item.lineNo == i);
+                          if (lineDetail != undefined) {
+                            coveredLength = coveredLength + lineDetail.lineLength;
                           }
-                          dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + dutyInTime;
-                         // this.db.object(dbPath).update(data);
+                          if (count == expectedLine) {
+                            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
+                            this.db.object(dbPath).update({ wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
+                            i = wardTotalLines + 1;
+                            $("#divLoader").hide();
+                            this.commonService.setAlertMessage("success", "Ward work percentage updated !!!")
+                          }
+                          count++;
                         }
-                        if (count == expectedLine) {
-                          dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
-                          this.db.object(dbPath).update({ wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
-                          i = wardTotalLines + 1;
-                          $("#divLoader").hide();
-                          this.commonService.setAlertMessage("success", "Ward work percentage updated !!!")
-                        }
-                        count++;
                       }
-                    }
-                  );
+                    );
+                  }
+                }
+                else {
+                  dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
+                  this.db.object(dbPath).update({ workPercentage: this.expectedPercentage });
+                  $("#divLoader").hide();
+                  this.commonService.setAlertMessage("success", "Ward work percentage updated !!!")
                 }
               }
             );
           }
+          else {
+            this.commonService.setAlertMessage("error", "Sorry, no work assign for this zone on selected date !!!");
+            $("#divLoader").hide();
+          }
         }
       );
     });
-  }
-
-  getLatLng(points: any) {
-    let latLng = "";
-    for (let i = 0; i < points.length; i++) {
-      if (i == 0) {
-        latLng = "(" + points[i][0] + "," + points[i][1] + ")";
-      }
-      else {
-        latLng = latLng + "~(" + points[i][0] + "," + points[i][1] + ")";
-      }
-    }
-    return latLng;
-  }
-
-  getTimeFormat(time: any, min: any) {
-    let oldDate = new Date(this.commonService.setTodayDate() + " " + time);
-    let newDate = new Date(oldDate.getTime() + min * 60000);
-    return (newDate.getHours() < 10 ? "0" : "") + newDate.getHours() + ":" + (newDate.getMinutes() < 10 ? "0" : "") + newDate.getMinutes()
   }
 }

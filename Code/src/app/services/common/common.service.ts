@@ -574,9 +574,7 @@ export class CommonService {
       if (employeeList == undefined) {
         employeeList = [];
       }
-      let employeeData = employeeList.find(
-        (item) => item.userName == employeeId && item.city == localStorage.getItem("cityName")
-      );
+      let employeeData = employeeList.find((item) => item.userName == employeeId && item.city == localStorage.getItem("cityName"));
       if (employeeData == undefined) {
         this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
         let employeeDbPath = "Employees/" + employeeId + "/GeneralDetails";
@@ -596,6 +594,7 @@ export class CommonService {
                 city: localStorage.getItem("cityName"),
                 empCode: data["empCode"]
               });
+              employeeList=this.transformNumeric(employeeList, "empCode");
               localStorage.setItem("employeeList", JSON.stringify(employeeList));
               let list = JSON.parse(localStorage.getItem("employeeList"));
               let employeeData = list.find((item) => item.userName == employeeId);
@@ -732,17 +731,17 @@ export class CommonService {
   }
 
   */
-/*
-
-  getWardKML(newDb: any, wardNo: any) {
-    return new Promise((resolve) => {
-      let boundaryInstance = newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
-        boundaryInstance.unsubscibe();
-        resolve(wardPath);
+  /*
+  
+    getWardKML(newDb: any, wardNo: any) {
+      return new Promise((resolve) => {
+        let boundaryInstance = newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
+          boundaryInstance.unsubscibe();
+          resolve(wardPath);
+        });
       });
-    });
-  }
-*/
+    }
+  */
 
   //#region  all local storage
 
@@ -1549,37 +1548,37 @@ export class CommonService {
     });
   }
 
-/*
-  setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
-    return new Promise((resolve) => {
-      const path = boundaryPath;
-      let boundaryInstance = this.httpService.get(path).subscribe(data => {
-        boundaryInstance.unsubscribe();
-        if (data != null) {
-          let strokeWeight = 8;
-          let points = data["points"];
-          if (points.length > 0) {
-            let bounds = new google.maps.LatLngBounds();
-            var latLng = [];
-            for (let j = 0; j < points.length; j++) {
-              latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-              bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+  /*
+    setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
+      return new Promise((resolve) => {
+        const path = boundaryPath;
+        let boundaryInstance = this.httpService.get(path).subscribe(data => {
+          boundaryInstance.unsubscribe();
+          if (data != null) {
+            let strokeWeight = 8;
+            let points = data["points"];
+            if (points.length > 0) {
+              let bounds = new google.maps.LatLngBounds();
+              var latLng = [];
+              for (let j = 0; j < points.length; j++) {
+                latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+                bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+              }
+              let line = new google.maps.Polyline({
+                path: latLng,
+                strokeColor: "black",
+                strokeWeight: strokeWeight,
+              });
+              this.polylines[0] = line;
+              this.polylines[0].setMap(map);
+              map.fitBounds(bounds);
+              resolve(this.polylines);
             }
-            let line = new google.maps.Polyline({
-              path: latLng,
-              strokeColor: "black",
-              strokeWeight: strokeWeight,
-            });
-            this.polylines[0] = line;
-            this.polylines[0].setMap(map);
-            map.fitBounds(bounds);
-            resolve(this.polylines);
           }
-        }
+        });
       });
-    });
-  }
-*/
+    }
+  */
 
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
@@ -1816,7 +1815,7 @@ export class CommonService {
     let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path =this.getFireStoreCity()+ filePath + fileName;
+    const path = this.getFireStoreCity() + filePath + fileName;
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
