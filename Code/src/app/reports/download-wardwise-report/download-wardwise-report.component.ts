@@ -119,43 +119,8 @@ export class DownloadWardwiseReportComponent {
     this.polylines = [];
     this.allLines = [];
     this.setMap();
-    this.getWardLines();
+    this.drawZoneAllLines();
     this.showReportCreationProgress();
-  }
-
-
-  getWardLines() {
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split('-')[0];
-    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/mapReference";
-
-    let lineMapRefrenceInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        if (data != null) {
-          lineMapRefrenceInstance.unsubscribe();
-          this.mapRefrence = data.toString();
-          dbPath = "Defaults/WardLines/" + this.selectedZone + "/" + this.mapRefrence + "/totalLines";
-
-          let wardLineCount = this.db.object(dbPath).valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.drawZoneAllLines();
-            }
-          });
-        }
-        else {
-          this.mapRefrence = "";
-          let wardLineCount = this.db.object("WardLines/" + this.selectedZone + "").valueChanges().subscribe((lineCount) => {
-            wardLineCount.unsubscribe();
-            if (lineCount != null) {
-              this.wardLines = Number(lineCount);
-              this.drawZoneAllLines();
-            }
-          });
-        }
-      }
-    );
   }
 
   setMap() {

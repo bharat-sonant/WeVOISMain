@@ -411,12 +411,11 @@ margin: 0px!important;
   }
 .date-input{
   height: 36px;
-  width: 100%;
+  width: 130px;
   padding-left: 10px;
   font-size: 12px;
   border: 1px solid lightgray;
   border-radius: 0.1875rem;
-  width: calc(190px - 65px);
   margin: 10px 8px 0px 8px;
 }
 select{
@@ -445,7 +444,7 @@ button{
 }
 .caret-select{
   height: 36px;
-  width: 130px;
+  width: 150px;
   border-radius: 5px;
   margin-top: 10px;
   margin-left: 8px;

@@ -85,10 +85,10 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   getZoneAllLines(wardNo: any) {
-    let wardLines = this.db.list('Defaults/WardLines/' + wardNo).valueChanges().subscribe(
+    let wardLines = this.db.object('WardLines/' + wardNo).valueChanges().subscribe(
       zoneLine => {
         wardLines.unsubscribe();
-        this.getStartTime(wardNo, zoneLine.length);
+        this.getStartTime(wardNo, zoneLine);
       });
   }
 

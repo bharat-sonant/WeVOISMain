@@ -106,7 +106,7 @@ export class WardWorkTrackingComponent {
 
   setDefault() {
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
-    if (this.cityName == "reengus" || this.cityName == "shahpura") {
+    if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai") {
       $(this.divParshadDetail).hide();
       this.isParshadShow = false;
     }
@@ -550,7 +550,7 @@ export class WardWorkTrackingComponent {
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
-    if (this.cityName != "reengus" || this.cityName != "shahpura") {
+    if (this.cityName != "reengus" || this.cityName != "shahpura" || this.cityName != "niwai") {
       this.getParshadDetail();
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {

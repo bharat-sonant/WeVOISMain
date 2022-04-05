@@ -215,10 +215,10 @@ export class DashboardComponent implements OnInit {
         data => {
           let completedCount = 0;
           // get total lines in the ward        
-          let wardLines = this.db.list('Defaults/WardLines/' + this.zoneList[index]["zoneNo"]).valueChanges().subscribe(
+          let wardLines = this.db.object('WardLines/' + this.zoneList[index]["zoneNo"]).valueChanges().subscribe(
             zoneLine => {
               this.instancesList.push({ instances: wardLines });
-              let totalLines = zoneLine.length;
+              let totalLines =Number(zoneLine);
               // total compelted lines
               for (let index = 0; index < data.length; index++) {
                 if (data[index]["Status"] == "LineCompleted") {

@@ -19,7 +19,6 @@ import { LogoutComponent } from '../../logout/logout.component';
 import { HouseEntryFormComponent } from '../../house-entry-form/house-entry-form.component';
 import { DownloadCollectionReportComponent } from '../../reports/download-collection-report/download-collection-report.component';
 import { HouseSearchComponent } from '../../housesearch/housesearch.component';
-import { HouseCardMappingComponent } from '../../house-card-mapping/house-card-mapping.component';
 import { SignupComponent } from '../../signup/signup.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
@@ -129,7 +128,6 @@ import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-perc
     HouseEntryFormComponent,
     DownloadCollectionReportComponent,
     HouseSearchComponent,
-    HouseCardMappingComponent,
     SignupComponent,
     FleetMonitorComponent,
     LineStatisticsComponent,
