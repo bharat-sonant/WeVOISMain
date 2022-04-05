@@ -904,4 +904,7 @@ top: 215px;
 .display{
 display:none;
 }
+.table > thead > tr > th{
+  z-index: 10;
+}
 
