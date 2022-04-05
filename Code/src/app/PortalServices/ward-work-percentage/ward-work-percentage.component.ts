@@ -73,11 +73,13 @@ export class WardWorkPercentageComponent implements OnInit {
         let points = wardLinesDataObj[lineNo]["points"];
         wardLines.push({ lineNo: lineNo, lineLength: lineLength, points: points });
       }
+
       let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/dutyInTime";
       let dutyOnInstance = this.db.object(dbPath).valueChanges().subscribe(
         dutyOnData => {
           dutyOnInstance.unsubscribe();
           if (dutyOnData != undefined) {
+            let dutyInTime = dutyOnData;
             dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/workPercentage";
             let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
               workPercentageData => {
@@ -94,39 +96,26 @@ export class WardWorkPercentageComponent implements OnInit {
                 }
                 expectedLine = Number(((workPercentage / 100) * wardTotalLines).toFixed(0));
                 if (expectedLine > 0) {
-                  let coveredLength = 0;
-                  let count = 1;
-                  let completedLines = 0;
-                  for (let i = 1; i <= wardTotalLines; i++) {
-                    dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
-                    let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      lineStatusData => {
-                        lineStatusInstance.unsubscribe();
-                        if (count <= expectedLine) {
-                          if (lineStatusData == null) {
-                            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
-                            this.db.object(dbPath).update({ Status: "LineCompleted" });
+                  dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus";
+                  let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                    lineStatusData => {
+                      lineStatusInstance.unsubscribe();
+                      let lineStatusList = [];
+                      if (lineStatusData != null) {
+                        let keyArray = Object.keys(lineStatusData);
+                        for (let i = 0; i < keyArray.length; i++) {
+                          let lineNo = keyArray[i];
+                          let startTime = lineStatusData[lineNo]["start-time"];
+                          let endTime = null;
+                          if (lineStatusData[lineNo]["end-time"] != null) {
+                            endTime = lineStatusData[lineNo]["end-time"];
                           }
-                          else {
-                            expectedLine++;
-                          }
-                          let lineDetail = wardLines.find(item => item.lineNo == i);
-                          if (lineDetail != undefined) {
-                            coveredLength = coveredLength + lineDetail.lineLength;
-                            completedLines++;
-                          }
-                          if (count == expectedLine) {
-                            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
-                            this.db.object(dbPath).update({ completedLines: completedLines, wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
-                            i = wardTotalLines + 1;
-                            $("#divLoader").hide();
-                            this.commonService.setAlertMessage("success", "Ward work percentage updated !!!")
-                          }
-                          count++;
+                          lineStatusList.push({ lineNo: lineNo, startTime: startTime, endTime: endTime });
                         }
                       }
-                    );
-                  }
+                      this.updateWorkPercentage(dutyInTime, wardTotalLines, expectedLine, wardLines, lineStatusList);
+                    }
+                  );
                 }
                 else {
                   dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
@@ -144,5 +133,117 @@ export class WardWorkPercentageComponent implements OnInit {
         }
       );
     });
+  }
+
+  updateWorkPercentage(dutyInTime: any, wardTotalLines: any, expectedLine: any, wardLines: any, lineStatusList: any) {
+    let coveredLength = 0;
+    let count = 1;
+    let completedLines = 0;
+    for (let i = 1; i <= wardTotalLines; i++) {
+      if (count <= expectedLine) {
+        let detail = lineStatusList.find(item => item.lineNo == i);
+        if (detail == undefined) {
+          let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
+          this.db.object(dbPath).update({ Status: "LineCompleted" });
+        }
+        else {
+          expectedLine++;
+        }
+        let lineDetail = wardLines.find(item => item.lineNo == i);
+        if (lineDetail != undefined) {
+          coveredLength = coveredLength + lineDetail.lineLength;
+          completedLines++;
+        }
+        if (count == expectedLine) {
+          let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
+          this.db.object(dbPath).update({ completedLines: completedLines, wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
+          i = wardTotalLines + 1;
+          this.updateLocationHistory(dutyInTime, lineStatusList, expectedLine, wardLines);
+        }
+        count++;
+      }
+    }
+  }
+
+  updateLocationHistory(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any) {
+    let coveredLength = 0;
+    let lastUpdatedTime = dutyInTime;
+    if (lineStatusList.length > 0) {
+      for (let i = 1; i <= expectedLine; i++) {
+        let detail = lineStatusList.find(item => item.lineNo == i);
+        if (detail == undefined) {
+          dutyInTime = dutyInTime.split('-')[0] + "-" + i;
+          let lineDetail = wardLines.find(item => item.lineNo == i);
+          if (lineDetail != undefined) {
+            coveredLength = coveredLength + lineDetail.lineLength;
+            let latLng = this.getLatLng(lineDetail.points);
+            const data = {
+              "distance-in-meter": lineDetail.lineLength,
+              "lat-lng": latLng
+            }
+            let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + dutyInTime;
+            this.db.object(dbPath).update(data);
+          }
+        }
+        else {
+          if (detail.endTime != null) {
+            dutyInTime = detail.endTime.split(':')[0] + ":" + detail.endTime.split(':')[1];
+          }
+        }
+      }
+      let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+      let totalDistanceCoveredInstance = this.db.object(dbPath).valueChanges().subscribe(
+        totalDistanceCovered => {
+          totalDistanceCoveredInstance.unsubscribe();
+          if (totalDistanceCovered != null) {
+            coveredLength += Number(totalDistanceCovered);
+          }
+          let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+          this.db.object(dbPath).update({ TotalCoveredDistance: coveredLength });
+          $("#divLoader").hide();
+          this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+        }
+      );
+    }
+    else {
+      for (let i = 1; i <= expectedLine; i++) {
+        dutyInTime = this.getTimeFormat(dutyInTime.split('-')[0], 1);
+        lastUpdatedTime = dutyInTime;
+        let lineDetail = wardLines.find(item => item.lineNo == i);
+        if (lineDetail != undefined) {
+          coveredLength = coveredLength + lineDetail.lineLength;
+          let latLng = this.getLatLng(lineDetail.points);
+          const data = {
+            "distance-in-meter": lineDetail.lineLength,
+            "lat-lng": latLng
+          }
+          let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + dutyInTime;
+          this.db.object(dbPath).update(data);
+        }
+      }
+      let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      this.db.object(dbPath).update({ TotalCoveredDistance: coveredLength, 'last-update-time': lastUpdatedTime });
+      $("#divLoader").hide();
+      this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+    }
+  }
+
+  getLatLng(points: any) {
+    let latLng = "";
+    for (let i = 0; i < points.length; i++) {
+      if (i == 0) {
+        latLng = "(" + points[i][0] + "," + points[i][1] + ")";
+      }
+      else {
+        latLng = latLng + "~(" + points[i][0] + "," + points[i][1] + ")";
+      }
+    }
+    return latLng;
+  }
+
+  getTimeFormat(time: any, min: any) {
+    let oldDate = new Date(this.commonService.setTodayDate() + " " + time);
+    let newDate = new Date(oldDate.getTime() + min * 60000);
+    return (newDate.getHours() < 10 ? "0" : "") + newDate.getHours() + ":" + (newDate.getMinutes() < 10 ? "0" : "") + newDate.getMinutes()
   }
 }
