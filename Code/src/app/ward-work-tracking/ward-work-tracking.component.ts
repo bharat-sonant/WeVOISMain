@@ -5,6 +5,7 @@ import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-ward-work-tracking',
@@ -14,7 +15,7 @@ import { HttpClient } from "@angular/common/http";
 export class WardWorkTrackingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -122,7 +123,15 @@ export class WardWorkTrackingComponent {
     this.setHeight();
     this.setDefaultMap();
     this.getZones().then(() => {
-      this.selectedZone = "0";
+      const id = this.actRoute.snapshot.paramMap.get("id");
+      console.log(id);
+      if (id != null) {
+        this.selectedZone = id.trim();
+        this.getWardData();
+      } else {
+        this.selectedZone = this.zoneList[1]["zoneNo"];
+        this.getWardData();
+      }
     });
   }
 
@@ -1052,7 +1061,7 @@ export class WardWorkTrackingComponent {
         this.showHouse();
       }
       $(this.divLoader).hide();
-    },error=>{
+    }, error => {
       $(this.divLoader).hide();
     });
   }

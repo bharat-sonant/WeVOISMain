@@ -97,6 +97,7 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
+import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -208,9 +209,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'sikar/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'sikar/cash-management', component: CashManagementComponent },
     { path: 'sikar/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'sikar/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -312,9 +315,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'sikar/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'sikar/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'sikar/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'sikar/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'sikar/:id/cash-management', component: CashManagementComponent },
     { path: 'sikar/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'sikar/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
 
     //jaipur-greater
@@ -420,6 +425,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaipur-greater/cash-management', component: CashManagementComponent },
     { path: 'jaipur-greater/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur-greater/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -524,6 +530,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaipur-greater/:id/cash-management', component: CashManagementComponent },
     { path: 'jaipur-greater/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur-greater/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     
 
     //reengus
@@ -626,9 +633,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'reengus/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'reengus/cash-management', component: CashManagementComponent },
     { path: 'reengus/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'reengus/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -730,9 +739,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'reengus/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'reengus/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'reengus/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'reengus/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'reengus/:id/cash-management', component: CashManagementComponent },
     { path: 'reengus/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'reengus/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -834,9 +845,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/salary-transaction', component: SalaryTransactionComponent },
     { path: 'shahpura/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'shahpura/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'shahpura/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'shahpura/cash-management', component: CashManagementComponent },
     { path: 'shahpura/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'shahpura/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -939,8 +952,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'shahpura/:id/ward-work-tracking', component: WardWorkTrackingComponent },
     { path: 'shahpura/:id/staff-account-detail', component: StaffAccountDetailComponent },
+    { path: 'shahpura/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'shahpura/:id/cash-management', component: CashManagementComponent },
     { path: 'shahpura/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'shahpura/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1042,9 +1057,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'test/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'test/cash-management', component: CashManagementComponent },
     { path: 'test/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'test/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1146,9 +1163,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'test/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'test/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'test/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'test/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'test/:id/cash-management', component: CashManagementComponent },
     { path: 'test/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'test/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1250,9 +1269,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-office/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-office/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-office/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'jaipur-office/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaipur-office/cash-management', component: CashManagementComponent },
     { path: 'jaipur-office/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur-office/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1353,9 +1374,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaipur-office/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaipur-office/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur-office/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'jaipur-office/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaipur-office/:id/cash-management', component: CashManagementComponent },
     { path: 'jaipur-office/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur-office/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
 
@@ -1459,9 +1482,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'kishangarh/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'kishangarh/cash-management', component: CashManagementComponent },
     { path: 'kishangarh/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'kishangarh/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1563,9 +1588,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'kishangarh/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'kishangarh/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'kishangarh/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'kishangarh/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'kishangarh/:id/cash-management', component: CashManagementComponent },
     { path: 'kishangarh/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'kishangarh/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
 
 
@@ -1670,9 +1697,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/salary-transaction', component: SalaryTransactionComponent },
     { path: 'niwai/dustbin-service', component: DustbinServiceComponent },
     { path: 'niwai/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'niwai/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'niwai/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'niwai/cash-management', component: CashManagementComponent },
     { path: 'niwai/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'niwai/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1774,9 +1803,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'niwai/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'niwai/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'niwai/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'niwai/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'niwai/:id/cash-management', component: CashManagementComponent },
     { path: 'niwai/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'niwai/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
 
 
@@ -1880,9 +1911,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaisalmer/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaisalmer/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaisalmer/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'jaisalmer/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaisalmer/cash-management', component: CashManagementComponent },
     { path: 'jaisalmer/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaisalmer/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -1984,9 +2017,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'jaisalmer/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'jaisalmer/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaisalmer/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'jaisalmer/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'jaisalmer/:id/cash-management', component: CashManagementComponent },
     { path: 'jaisalmer/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaisalmer/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2088,9 +2123,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/salary-transaction', component: SalaryTransactionComponent },
     { path: 'churu/dustbin-service', component: DustbinServiceComponent },
     { path: 'churu/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'churu/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'churu/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'churu/cash-management', component: CashManagementComponent },
     { path: 'churu/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'churu/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2192,7 +2229,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/salary-transaction', component: SalaryTransactionComponent },
     { path: 'churu/:id/dustbin-service', component: DustbinServiceComponent },
     { path: 'churu/:id/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'churu/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: 'churu/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: 'churu/:id/cash-management', component: CashManagementComponent },
     { path: 'churu/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'churu/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
 ]; 

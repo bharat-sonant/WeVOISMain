@@ -104,6 +104,7 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
+import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 
 @NgModule({
   imports: [
@@ -212,7 +213,8 @@ import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-perc
     WardWorkTrackingComponent,
     StaffAccountDetailComponent,
     CashManagementComponent,
-    WardWorkPercentageComponent
+    WardWorkPercentageComponent,
+    ChangeLineSurveyedDataComponent
   ]
 })
 

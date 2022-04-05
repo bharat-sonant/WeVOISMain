@@ -609,7 +609,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
       element.href = this.cityName + "/route-tracking/" + zoneNo;
       element = <HTMLAnchorElement>document.getElementById("mapsLink");
-      element.href = this.cityName + "/maps/" + zoneNo;
+      element.href = this.cityName + "/ward-work-tracking/" + zoneNo;
     }
   }
 

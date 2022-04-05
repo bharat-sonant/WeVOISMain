@@ -224,7 +224,7 @@ export class FleetMonitorComponent {
                               workDetails.unsubscribe();
                               details.vehicleNo = workerData["vehicle"];
                               this.cityName = localStorage.getItem('cityName');
-                              details.wardMonitorUrl = "/" + this.cityName + "/maps/" + wardNo;
+                              details.wardMonitorUrl = "/" + this.cityName + "/ward-work-tracking/" + wardNo;
                               // details.wardMonitorUrl = "maps/" + wardNo;
                               $('#helperMsgD').hide();
                               $('#helperMsgM').hide();
