@@ -4,7 +4,7 @@
   color:#fff;
   } 
   .caret-select{margin-top: 10px!important; margin-left:10px!important;
-  border-radius: 5px; width: 130px; font-size: 12px;
+  border-radius: 5px; width: 165px; font-size: 12px;
   padding:8px; border:none!important;}
   button{width: 50%;   border-radius: 5px; padding:10px; margin-top: 10px!important; border:none!important; margin-left: -30px; margin-left:20px!important; }
   
@@ -907,4 +907,183 @@ display:none;
 .table > thead > tr > th{
   z-index: 10;
 }
+button.button{
+  margin-left: 0px!important;
+}
+.float-first2{
+  margin-left: 10px;
+   margin-top: 12px; 
+   display: none;
+}
+.float-first2 i{
+  cursor: pointer;
+}
+.float-first2 span span{
+  color: #1fda2f
+}
+.float-second2{
+  margin-left: 10px;
+  margin-top: 0px;
+  display: none;
+}
+.float-third2{
+  display: none;
+}
+.float-third2 i{
+  cursor: pointer;
+}
+.float-third3{
+  font-size: 16px;
+  margin-top: 3px; 
+  text-align: right;
+}
+.float-third3 h6{
+  font-size: 9px!important;
+}
+.setting-box1 p{
+  margin-top: 10px;
+}
+.setting-box1 input{
+  float:right; 
+  margin-top: 10px; 
+  margin-right: 20px;
+
+}
+.setting-box5 p{
+  margin-top: 10px;
+}
+.setting-box5 i{
+  float:right; 
+  margin-top: 10px; 
+  margin-right: 20px; 
+  cursor: pointer;
+
+}
+.gmap{
+  width:100%;
+  height:600px;
+  margin-top: -50px; 
+  position:absolute;
+}
+.route{
+  border-right: 1px dotted #c3c5c3;
+}
+.route h3 span{
+  font-size: 10px;
+  font-weight: normal;
+}
+.route2{
+  border-right: 1px dotted #c3c5c3;
+}
+.route2 h3 span{
+  font-size: 10px;
+  font-weight: normal;
+}
+.route3{
+  border-right: 1px dotted #c3c5c3;
+}
+.route4{
+  cursor: pointer;
+  border-right: 1px dotted #adb2ad;
+}
+.route5{
+  border-right: 1px dotted #adb2ad;
+}
+.dustbin1{
+  border-right: 1px dotted #9fa29f;
+}
+.dustbin2{
+  border-right: 1px dotted #9fa29f;;
+}
+.main{
+  width: 100%;
+  text-align: left;
+  float: left;
+}
+.iner-main{
+  height:50px; 
+  padding-left: 20px;
+}
+.iner-main2{
+  padding-top: 15px;
+}
+.iner-main2 input{
+  width:50px; 
+  text-align: center;
+}
+.iner-main2 i{
+  color:green;
+   font-size: 20px; 
+   cursor: pointer;
+}
+.image-div{
+  text-align: right;
+}
+.modal-body2{
+  margin-top:-20px;
+  
+}
+.tableFixHead2 table{
+  margin-bottom: 0px;
+}
+input.td-input{
+  width:50px; 
+  text-align: center;
+}
+input.td-input2{
+  width:50px; 
+  text-align: center;
+}
+i.icon{
+  color:green; 
+  font-size: 
+  20px; cursor: pointer;
+}
+i.icon2{
+  color:green;
+   font-size: 20px; 
+   cursor: pointer;
+}
+.gray-img-box{
+  width: 100%;
+  text-align: right;
+  float: left;
+}
+.modal-body3{
+  margin-top:-20px;
+}
+.last2{
+  width:100%
+}
+.last2 img{
+  height:100%; 
+  width: 100%;
+}
+.close{
+  width: 100%;
+  text-align: right;
+  float: left;
+}
+.modal-body4{
+  margin-top:-20px;
+}
+.last3{
+  width:100%
+}
+.last3 a img{
+  height:100%; 
+  width: 100%;
+}
+i.eye{
+  float: right; 
+  cursor: pointer; 
+  font-size: 14px;
+}
+
+
+
+
+
+
+
 

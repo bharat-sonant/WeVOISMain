@@ -7,7 +7,7 @@
       <button class="btn btn-primary " (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-          <button class="btn btn-primary" style="margin-left: 0px!important;" (click)="setDate('','next');">
+          <button class="btn btn-primary button" (click)="setDate('','next');">
             >>
           </button>
           <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
@@ -23,26 +23,26 @@
     <div class="col-md-4 text-right total-house">
 
       <div class="fix-home">
-        <div id="divNotSacnned" class="float-first" style="margin-left: 10px; margin-top: 12px; display: none;">
-          <i class="fas fa-vr-cardboard" style="cursor: pointer;"
+        <div id="divNotSacnned" class="float-first float-first2">
+          <i class="fas fa-vr-cardboard"
             (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
-          <span class="house"> <span style="color: #1fda2f;"> {{progressData.cardNotScanedImages}}
+          <span class="house"> <span> {{progressData.cardNotScanedImages}}
             </span></span><br>
           <h6>Card Images</h6>
         </div>
-        <div id="divTotalHouse" class="float-second" style="margin-left: 10px; margin-top: 0px; display: none;">
+        <div id="divTotalHouse" class="float-second float-second2">
           <i class="fas fa-home"></i> <span class="house"> {{progressData.totalHouses}} </span><br>
           <h6>Total House</h6>
         </div>
-        <div id="divScannedHouses" class="float-third" style=" display: none;">
-          <i class="fas fa-house-damage" style="cursor: pointer;" (click)="showAllScanedHouses();"></i>
+        <div id="divScannedHouses" class="float-third float-third2">
+          <i class="fas fa-house-damage" (click)="showAllScanedHouses();"></i>
           <span class="house">{{progressData.scanedHouses}} </span><br>
           <h6>Scanned House</h6>
         </div>
-        <div id="divSetting" class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+        <div id="divSetting" class="float-third float-third3">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
             aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
-            <h6 style="font-size: 9px!important;">Settings</h6>
+            <h6>Settings</h6>
           </button>
 
         </div>
@@ -58,30 +58,30 @@
             <div class="panel-body">
               <div class="row">
                 <div class="col-md-12 text-left">
-                  <div class="setting-box">
-                    <p style="margin-top: 10px;"> Show Line No</p>
+                  <div class="setting-box setting-box1">
+                    <p> Show Line No</p>
                     <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()"
-                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                      >
                   </div>
-                  <div class="setting-box">
-                    <p style="margin-top: 10px;"> Show All Dustbin</p>
+                  <div class="setting-box setting-box1">
+                    <p> Show All Dustbin</p>
                     <input id="chkIsShowAllDustbin" type="checkbox" (change)="showHideAllDustbin()"
-                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                     >
                   </div>
-                  <div class="setting-box">
-                    <p style="margin-top: 10px;"> Show Worker Detail</p>
+                  <div class="setting-box setting-box1">
+                    <p> Show Worker Detail</p>
                     <input id="chkIsWorkerDetail" type="checkbox" (change)="showHideWorkerDetail()"
-                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                      >
                   </div>
-                  <div class="setting-box">
-                    <p style="margin-top: 10px;"> Show Work Detail</p>
+                  <div class="setting-box setting-box1">
+                    <p> Show Work Detail</p>
                     <input id="chkIsWorkDetail" type="checkbox" (change)="showHideWorkDetail()"
-                      style="float:right; margin-top: 10px; margin-right: 20px;">
+                     >
                   </div>
-                  <div class="setting-box" style="border-bottom: none!important;">
-                    <p style="margin-top: 10px;"> Show Line Details</p>
+                  <div class="setting-box setting-box5" style="border-bottom: none!important;">
+                    <p> Show Line Details</p>
                     <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
-                      style="float:right; margin-top: 10px; margin-right: 20px; cursor: pointer;"> </i>
+                      > </i>
                   </div>
                 </div>
               </div>
@@ -94,7 +94,7 @@
   </div>
 </section>
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="gmap" id="divMap"></div>
 
 
 
@@ -137,28 +137,28 @@
 
 <div id="divWorkDetail" class="line-details-box" style="display: none;">
   <div class="addclass">
-    <div class="lines bg-2" style="border-right: 1px dotted #c3c5c3;">
-      <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+    <div class="lines bg-2 route">
+      <h3>{{progressData.wardLength}}<span> km</span>
         <p>Route Length Length</p>
       </h3>
     </div>
-    <div class="lines2 bg-2 " style="border-right: 1px dotted #c3c5c3;">
-      <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+    <div class="lines2 bg-2 route2">
+      <h3>{{progressData.coveredLength}}<span> km</span>
         <p>Covered Ward Length</p>
       </h3>
     </div>
-    <div class="lines bg-4" style="border-right: 1px dotted #c3c5c3;">
+    <div class="lines bg-4 route3">
       <h3>{{progressData.totalLines}}
         <p>Total Lines</p>
       </h3>
      
     </div>
-    <div class="lines2 bg-4" style="cursor: pointer;border-right: 1px dotted #adb2ad;">
+    <div class="lines2 bg-4 route4">
       <h3>{{progressData.skippedLines}}
         <p>Skipped Lines</p>
       </h3>
     </div>
-    <div class="lines bg-6" style="border-right: 1px dotted #adb2ad;">
+    <div class="lines bg-6 route5">
       <h3>{{progressData.completedLines}}
         <p>Completed Lines</p>
       </h3>
@@ -174,12 +174,12 @@
 
 <div id="divDustbinDetail" class="dustbin-details-box" style="display: none;">
   <div class="addclass">
-    <div class="lines lines3 bg-1" style="border-right: 1px dotted #9fa29f;">
+    <div class="lines lines3 bg-1 dustbin1">
       <h3>{{progressData.rectangularDustbin}}
         <p>Rectangular Dustbin</p>
       </h3>
     </div>
-    <div class="lines2 lines4 bg-2" style="border-right: 1px dotted #9fa29f;">
+    <div class="lines2 lines4 bg-2 dustbin2">
       <h3>{{progressData.circularDustbin}}
         <p>Circular Dustbin</p>
       </h3>
@@ -345,39 +345,39 @@
 
 <!--Line Detail Start-->
 <ng-template #contentLineDetail>
-  <div style="width: 100%;text-align: left;float: left;">
-    <div class="row" style="height:50px; padding-left: 20px;">
-      <div class="col-md-10" style="padding-top: 15px;">
+  <div class="main">
+    <div class="row iner-main">
+      <div class="col-md-10 iner-main2">
         Scancard (%) for All Lines&nbsp;&nbsp; <input id="txtAllLineScancard" type="number" value="0"
-          style="width:50px; text-align: center;" /> &nbsp;&nbsp;<i class="fas fa-save"
-          style="color:green; font-size: 20px; cursor: pointer;" (click)="updateAllLineScancardPercentage()"></i>
+           /> &nbsp;&nbsp;<i class="fas fa-save"
+           (click)="updateAllLineScancardPercentage()"></i>
           &nbsp;&nbsp;&nbsp;
           <input id="chkIsAvailableForScancard" type="checkbox" (change)="updateLineScancardPercentage()">&nbsp;&nbsp; Is available for scancard 
       </div>
-      <div class="col-md-2" style="text-align: right;">
+      <div class="col-md-2 image-div">
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
       </div>
     </div>
 
   </div>
-  <div class="modal-body" style="margin-top:-20px; ">
+  <div class="modal-body modal-body2">
 
     <div class="row">
       <div class="col-md-12">
         <div class="dth">
           <div class="table-bg">
-            <div id="divLinePopup" class="tableFixHead">
-              <table class="table table-hover" style="margin-bottom: 0px;">
+            <div id="divLinePopup" class="tableFixHead tableFixHead2">
+              <table class="table table-hover">
                 <thead>
                   <tr>
                     <th scope="col" class="text-left">Line No </th>
                     <th scope="col" class="text-right">Length (meter)</th>
-                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save"
-                        style="color:green; font-size: 20px; cursor: pointer;" (click)="updateLineTimerTime()"></i></th>
+                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save icon"
+                         (click)="updateLineTimerTime()"></i></th>
                     <th scope="col" class="text-right">Actual covered time (min)</th>
                     <th scope="col" class="text-right">No of houses</th>
-                    <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save"
-                        style="color:green; font-size: 20px; cursor: pointer;"
+                    <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save icon2"
+                        
                         (click)="updateLineScancardPercentage()"></i></th>
                   </tr>
                 </thead>
@@ -386,11 +386,11 @@
                     <td class="text-left border-left">{{dt.lineNo}} </td>
                     <td class="text-right border-left">{{dt.length}} </td>
                     <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number"
-                        value="{{dt.timerTime}}" style="width:50px; text-align: center;" /> </td>
+                        value="{{dt.timerTime}}" class="td-input" /> </td>
                     <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
                     <td class="text-right border-left">{{dt.houseCount}} </td>
                     <td class="text-right border-left"><input id="txtScancardPercentage{{dt.lineNo}}" type="number"
-                        value="{{dt.scancardPercentage}}" style="width:50px; text-align: center;" /> </td>
+                        value="{{dt.scancardPercentage}}" class="td-input2" /> </td>
                   </tr>
                 </tbody>
               </table>
@@ -406,18 +406,18 @@
 
 <!--Card Not Scan Start-->
 <ng-template #contentCardNotScaned>
-  <div style="width: 100%;text-align: right;float: left;">
+  <div class="gray-img-box">
 
     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
   </div>
-  <div class="modal-body" style="margin-top:-20px; ">
+  <div class="modal-body modal-body3">
     <div id="divNotScanedImages" class="content-scroll">
       <div class="row">
         <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
-          <div style="width:100%">
+          <div class="last2">
             <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+              <img [src]="dt.imageUrl" />
             </a>
           </div>
           <div class="main-tag">
@@ -442,24 +442,24 @@
 
 <!--Skip lines Start-->
 <ng-template #contentSkipLines>
-  <div style="width: 100%;text-align: right;float: left;">
+  <div class="close">
 
     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
   </div>
-  <div class="modal-body" style="margin-top:-20px; ">
+  <div class="modal-body modal-body4">
     <div id="divStatus" class="content-scroll">
       <div class="row">
         <div class="col-md-2" *ngFor="let dt of skipLineList">
-          <div style="width:100%">
+          <div class="last3">
             <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+              <img [src]="dt.imageUrl" />
             </a>
           </div>
           <div class="main-tag">
             <div class="f-left">
               <p>Line <span class="f-right"> :</span></p>
-              <h3> {{dt.lineNo}} <i class="far fa-eye" style="float: right; cursor: pointer; font-size: 14px;"
+              <h3> {{dt.lineNo}} <i class="far fa-eye eye"
                   (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
               <p>Reason <span class="f-right"> :</span></p>
               <h3> {{dt.reason}} </h3><br />
