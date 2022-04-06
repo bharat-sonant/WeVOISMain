@@ -38,6 +38,8 @@ export class WardWorkTrackingComponent {
   skipLineList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
+  wardStartMarker: any;
+  wardEndMarker: any;
   vehicleMarker: any;
   firebaseStoragePath: any;
   skipLineMarker: any;
@@ -58,6 +60,8 @@ export class WardWorkTrackingComponent {
   skippedMarkerUrl = "../../../assets/img/red.svg";
   scanHouseUrl = "../assets/img/green-home.png";
   notScanHouseUrl = "../assets/img/red-home.png";
+  wardStartUrl = "../assets/img/go-image.png";
+  wardEndUrl = "../assets/img/end-image.png";
   txtDate = "#txtDate";
   txtAllLineScancard = "#txtAllLineScancard";
   divLoader = "#divLoader";
@@ -124,13 +128,11 @@ export class WardWorkTrackingComponent {
     this.setDefaultMap();
     this.getZones().then(() => {
       const id = this.actRoute.snapshot.paramMap.get("id");
-      console.log(id);
       if (id != null) {
         this.selectedZone = id.trim();
         this.getWardData();
       } else {
-        this.selectedZone = this.zoneList[1]["zoneNo"];
-        this.getWardData();
+        this.selectedZone = "0";
       }
     });
   }
@@ -924,6 +926,12 @@ export class WardWorkTrackingComponent {
     if (this.vehicleMarker != null) {
       this.vehicleMarker.setMap(null);
     }
+    if (this.wardStartMarker != null) {
+      this.wardStartMarker.setMap(null);
+    }
+    if (this.wardEndMarker != null) {
+      this.wardEndMarker.setMap(null);
+    }
     this.wardLinesDataObj = null;
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
@@ -1052,6 +1060,10 @@ export class WardWorkTrackingComponent {
           houseCount: houses.length
         });
         this.plotLineOnMap(lineNo, latLng, i);
+        if (i == keyArray.length - 4) {
+          this.setWardStartMarker();
+          this.setWardEndMarker();
+        }
       }
       this.getCoverdWardLength();
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
@@ -1064,6 +1076,50 @@ export class WardWorkTrackingComponent {
     }, error => {
       $(this.divLoader).hide();
     });
+  }
+
+  setWardStartMarker() {
+    if (this.lines.length > 0) {
+      let latLngArray = [];
+      if (this.lines[0]["latlng"].length > 0) {
+        latLngArray = this.lines[0]["latlng"];
+        let lat = latLngArray[0]["lat"];
+        let lng = latLngArray[0]["lng"];
+        this.wardStartMarker = new google.maps.Marker({
+          position: { lat: Number(lat), lng: Number(lng) },
+          map: this.map,
+          icon: {
+            url: this.wardStartUrl,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scaledSize: new google.maps.Size(32, 40),
+            origin: new google.maps.Point(0, 0),
+          },
+        });
+      }
+    }
+  }
+
+  setWardEndMarker() {
+    if (this.lines.length > 0) {
+      let latLngArray = [];
+      if (this.lines[this.lines.length - 1]["latlng"].length > 0) {
+        latLngArray = this.lines[this.lines.length - 1]["latlng"];
+        let lat = latLngArray[latLngArray.length - 1]["lat"];
+        let lng = latLngArray[latLngArray.length - 1]["lng"];
+        this.wardEndMarker = new google.maps.Marker({
+          position: { lat: Number(lat), lng: Number(lng) },
+          map: this.map,
+          icon: {
+            url: this.wardEndUrl,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scaledSize: new google.maps.Size(32, 40),
+            origin: new google.maps.Point(0, 0),
+          },
+        });
+      }
+    }
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
