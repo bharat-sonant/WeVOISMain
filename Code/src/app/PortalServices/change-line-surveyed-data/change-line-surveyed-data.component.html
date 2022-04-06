@@ -1,1 +1,220 @@
-<p>change-line-surveyed-data works!</p>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2" style="padding-left: 31px; margin-top: -4px;">
+        </div>
+        <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  ">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update House Line </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body" style="height:85vh!important;padding: 0px 10px 0px 0px; overflow: hidden;">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <b>From</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6  pr-1">
+                                <label>Zone No</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZoneFrom">
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Line No</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtLineNoFrom" class="caret-select" type="number" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <b>To</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6  pr-1">
+                                <label>Zone No</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZoneTo">
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Line No</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtLineNoTo" class="caret-select" type="number" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <button id="btnSave" class="btn btn-success btn-xs"
+                                        (click)="saveData();">SAVE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px;height: 85vh!important;overflow: hidden;">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Card Line Mapping </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body" style="padding: 15px 11px 15px 0px;">
+
+                    <div class="row">
+                        <div class="col-md-6  pr-1">
+                            <label>Zone No</label>
+                            <div class="wrap-input-effects" required>
+                                <select class="caret-select" id="ddlZone">
+                                    <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 15px;">
+                        <div class="col-md-12 pr-1">
+                            <div class="form-group">
+                                <button id="btnSave" class="btn btn-success btn-xs"
+                                    (click)="updateCardLineData();">SAVE</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">Are you
+                    sure you want to remove assignment ?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteId" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeAssignment()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Delete Confirmation End-->
+
+
+<!--ward assign  Start-->
+<ng-template #contentWard>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="empID" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlWard" class="input-green">
+                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                            {{zone.zoneName}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required style="display: none;">
+                    <input type="checkbox" id="chkRemove" style="vertical-align: middle;"> Remove assigned ward
+                </div>
+                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveWard();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--ward assign End-->
+
+<!--employee  Start-->
+<ng-template #contentEmployee>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtName" class="input-green" placeholder="Name" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-mobile-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-key" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="checkbox" id="chkAcive" style="vertical-align: middle;"> Is Active
+
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveEmployee();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
