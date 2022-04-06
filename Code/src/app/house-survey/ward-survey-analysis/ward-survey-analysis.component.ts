@@ -1061,7 +1061,7 @@ export class WardSurveyAnalysisComponent {
             cardCount = Number(data) + 1;
             this.db.object("Settings").update({ revisitLastCardNumber: cardCount });
             this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
-            let cardNumber = "SIKA" + cardCount;
+            let cardNumber = this.commonService.getCarePrefix(this.cityName) + cardCount;
             if (surveyType == "revisit") {
               this.generateMobileNo(cardNumber, index, markerNo);
             }
@@ -1076,7 +1076,7 @@ export class WardSurveyAnalysisComponent {
       );
     }
     else {
-      let cardNumber = "SIKA" + cardNo;
+      let cardNumber = this.commonService.getCarePrefix(this.cityName) + cardNo;
       let dbPath = "CardWardMapping/" + cardNumber;
       let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -1124,7 +1124,6 @@ export class WardSurveyAnalysisComponent {
   saveRevisitSurvedData(cardNumber: any, index: any, mobileNo: any, markerNo: any) {
     let rfId = Math.floor(1000000000 + Math.random() * 9000000000);
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
-    let surveyorId = this.revisitSurveyList[index]["surveyorId"];
     let lineNo = this.revisitSurveyList[index]["lineNo"];
 
     let dbPath = "CardWardMapping/" + cardNumber;
@@ -1201,7 +1200,7 @@ export class WardSurveyAnalysisComponent {
 
           // update counts
           this.updateRevisitCounts(lineNo, date, surveyorId, "survey");
-          this.updateSurveyedCounts(lineNo, date, surveyorId);
+          this.updateSurveyedCounts(lineNo);
 
           dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
           this.db.object(dbPath).remove();
@@ -1254,22 +1253,8 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
-  updateSurveyedCounts(lineNo: any, date: any, surveyorId: any) {
-    let dateNew = date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0];
-    let dbPath = "EntitySurveyData/DailyHouseCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
-    let dailyRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      count => {
-        dailyRevisitCountInstance.unsubscribe();
-        let surveyedCount = 1;
-        if (count != null) {
-          surveyedCount = Number(count) + 1;
-        }
-        dbPath = "EntitySurveyData/DailyHouseCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
-        this.db.database.ref(dbPath).set(surveyedCount);
-      }
-    );
-
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
+  updateSurveyedCounts(lineNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
     let lineSurvedCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         lineSurvedCountInstance.unsubscribe();
@@ -1282,31 +1267,6 @@ export class WardSurveyAnalysisComponent {
       }
     );
 
-    dbPath = "EntitySurveyData/SurveyDateWise/" + surveyorId + "/" + dateNew;
-    let datewiseRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      count => {
-        datewiseRevisitCountInstance.unsubscribe();
-        let surveyedCount = Number(count) + 1;
-        if (count != null) {
-          surveyedCount = Number(count) + 1;
-        }
-        dbPath = "EntitySurveyData/SurveyDateWise/" + surveyorId + "/" + dateNew;
-        this.db.database.ref(dbPath).set(surveyedCount);
-      }
-    );
-
-    dbPath = "EntitySurveyData/SurveyDateWise/" + surveyorId + "/totalCount";
-    let datewiseTotalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      count => {
-        datewiseTotalRevisitCountInstance.unsubscribe();
-        let surveyedCount = 1;
-        if (count != null) {
-          surveyedCount = Number(count) + 1;
-        }
-        dbPath = "EntitySurveyData/SurveyDateWise/" + surveyorId + "/totalCount";
-        this.db.database.ref(dbPath).set(surveyedCount);
-      }
-    );
 
     dbPath = "EntitySurveyData/TotalHouseCount/" + this.selectedZone;
     let totalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1335,7 +1295,7 @@ export class WardSurveyAnalysisComponent {
     let mobileNo = $('#spMobile' + index).html().trim();
     let rfidCardNo = $('#spCardNo' + index).html().trim().split(' ')[0];
     if (cardNumber != "") {
-      cardNumber = "SIKA" + cardNumber;
+      cardNumber = this.commonService.getCarePrefix(this.cityName) + cardNumber;
       let dbPath = "CardWardMapping/" + cardNumber;
       let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -1475,7 +1435,7 @@ export class WardSurveyAnalysisComponent {
               }
             }
           );
-          this.updateSurveyedCounts(this.lineNo, date, surveyorId);
+          this.updateSurveyedCounts(this.lineNo);
           this.updateRFIDNotCounts(this.lineNo, date, surveyorId);
           this.resetSurveyed();
           this.resetRFIDNot(index);
@@ -1510,6 +1470,8 @@ export class WardSurveyAnalysisComponent {
       "Shivnath singh", "Rich pal Singh batar", "Vimla jakhar", "Kanyalal dara", "Naresh bydania", "Suman davi", "Surya pal", "Makhan Lal", "Hem Singh", "Rajesh gadwal", "Amar Singh matwa", "Daksh", "Nakul bagaria", "Moti Singh pooniya", "Harpool Singh", "BALVEER SINGH BHASKAR", "OMPRAKASH BHASKAR", "MANGAL CHAND MISHRA", "Hera lalsharma", "Dindayal nehara", "Rajkumari", "Madan singh", "DEVKARAN CHOUDHARY", "AJAY CHOUDHARY", "Rajesh Bhukar", "Tan Singh", "Ram chandra dhaka", "VIJENDRA SINGH GILL", "SURAJ MAL ARYA", "Dr Bhim bijarniya", "Dayanand dhaka", "Rajendra meel", "RAJKUMAR FAGEDIYA", "SANTOSH DHAKA", "RATAN SINGH", "RAJENDRA BAGDIYA", "BHAGIRATH MAL KHAYALIYA", "Ramdev bijarniya", "Hoshiyar Singh meel", "Bhawar Singh", "ASHOK SAINI", "SOHANI DEVI", "Pokhar Singh", "Mahesh meel", "Pramod meel", "Rajkumar fagediya", "NEMICHAND", "SHILA DEVI", "VIKASH SHARMA", "Deshraj", "Shri shyam complex", "Aashiyana complex", "Shishpal", "Pardeep jakhar", "NAVEEN KUMAR", "Pardeep kymar", "Sukhbeer Singh bhukar", "Pawan kumar", "BHANWAR", "DR ABHISEK", "banwari lal", "Suresh godara", "VIDHYADAHR", "GORDHAN SINGH GUDHA", "Sobhagaya ragidansy", "Shawai singh", "Banwar lal", "MANOHAR LAL", "Ram parsad", "Gordhan singh", "Madan Singh", "Chataru Singh", "chotu ram kumawat", "Choturam", "Sanju davi", "Sumit", "Bhagwan ji", "Sarwan achra", "Mahendra bhaskar", "Bhomaram", "Mahendra poonia", "No rang singh", "Ramesh soni", "Madan Lal bagdiya", "Kailash butolia", "Vidhadhar dhaka", "Navdeep", "Bhaghath Mal", "REKHA RAM", "Radha krishan", "VIKASH", "Savran Singh", "Maninadar Singh", "Ramdhan", "Rajesh bagria", "Rajpal", "Raj Singh", "Rajpal bhkar", "Kelash shawar mal", "BUDHRAM", "Ram chandra ola", "SUBHITA KAJLA", "DINESH RANWA", "BABULAL KUMAWAT", "Sunita tiffin centre", "ASHOK", "Subhash kumawat", "Dilsukh thalor", "Vidhadhar Singh", "Er Narendra", "Sultan meel", "Subhash Kumar", "Dinesh gadwal", "SURESH KUMAR DHAKA", "Nemichand mahala", "Ramesh", "Mohan singh", "RAJU SARPANCH", "Rajendra seshma", "SHUSHIL BARI", "Ashok kumar", "Ghisaram jakhar", "Dilbag Singh", "Sukhbeer", "Kalu ram", "Bhagirath singh ranwa", "Shyamshunder shain", "Yash apartment", "New house", "Gopal githala", "VEER TEJA APARTMENT", "Mukesh", "MAHESH", "Ramsavroop joshi", "Parbhudayal", "Maya", "Vinod meena", "Mahaveer parsad", "Narayan Lal rewad", "Mahesh", "Mahendra", "Mahendra Kumar godara", "DHANSINGH LAMBA", "URMILA", "Ram chandra sevda", "Bajranglal", "Makhan lal", "Balbir bhukar", "Bhagarthai davi", "Mahindra Singh", "POONAM DEVI", "DEEPAK KUMAR", "DEVA NAND", "BHAGIRATH", "BOY'S HOSTEL", "SHANKAR LAL", "GUNJAN MATWA",
       "RANDHEER SINGH PILANIYA", "LOKESH MAHALA", "DHANE SINGH", "Surendra", "LAXMICHAND PILANIYA", "HANUMAN", "Mahandra sing", "Ramkuvar", "Ramkuwar", "Ram chandra samota", "Silpa devi", "Mahesh godara", "VISHVANATH SONI", "BIRJMOHAN", "SARWAN", "MUKESH KUMAR JANGID", "Mahendra Singh", "Vikram Singh", "Harish chahar", "Rajendra Singh", "Ramdevi", "Chandan sungh katewa", "Suresh kumawat", "Subhash sharma", "Bhawar singh", "Parkash", "Kuldeep Nehra", "Manoj kumar", "Meena sharma", "Banwari Lal baskar", "Tajpal", "Sarwan", "Mahendra singh mood", "Amarnath butolia", "Dwarka", "Rajesh Kumar bagdiya", "Jhabahar mal bajaya", "Keshar bagdiya", "Subhash kumar", "Amarnath butoliya", "SURESH KUMAR SHARMA", "HARFOOL SINGH KHICHAR", "KANEHYA LAL", "BHAGWAN SINGH JHURIYA", "Kundan singh", "Virendara dotasara", "Virendra Singh", "Hukum Singh mahala", "Bhawar basakar", "SATYAPAL MAHRIYA", "TARACHAND", "Norang Singh kajala", "Norang Singh kajla", "Bhawar Lal dotasara", "SUBASH", "Bhagirath singh matwa", "omparkash", "SURENDRA KUMAR", "PUJA DEVI / LALIT KUMAR", "KELASH CHAND", "Radeshyam kumawat", "Dawarka parsad", "Gopichand", "vikash", "mhadev kumavat", "ramavtar", "radeshyam sharma", "bejrang lal meel", "mahendra", "sankar kumat", "sankar", "Sudhir", "Ramatar dhaka", "KAMLESH KUMAR PUNIYA", "VIJAY KUMAR AGARWAL", "PRAVEEN AGARWAL", "MAHESH KUMAR / DINESH", "SARWAN KUMAR", "Mahesh agrawal", "Shiv bhagwan", "Parveen", "Barjmohan swami", "Vijay Pal", "Mahaveer ji Jangid", "Ramvtar Sharma", "Vimal kumar", "BHANWARLAL NAGA", "RICHPAL", "RAM DEVI / VIKASH KAJALA", "Birabl singh", "SUNIL KUMAR", "MAHENDRA KUMAR MEEL", "SUNDA COLONY", "Dr B R SAINI", "Kumbha ram", "Sahnaj fansy store", "Mahesh kumar", "MANI DEVI", "MAHENDRA KUMAR MEEL", "Ramniwash nithala", "Big apartment", "Ashok kulhari", "Radhika house", "Kiran swami", "Dharmpal", "Dadu ram", "Harish kumar", "Baba men's parler", "Kedar Maan Singh", "Ramlal Singh", "Dr. Ranveer Singh", "Kasar ram bijraniya", "Hari ram meel", "Gora devi", "Indraj", "Ramji lal", "Ramwataar", "Sewa ram", "Sandeep", "Arvind bhaskar", "Ramchandr", "GODAVARI DEVIF", "Ramniwas", "Sunita meel", "SHISHRAM", "Baldev meel", "RANVEER SINGH", "Ram sukh sunda", "Dharmveer", "Manoj kumar pooina", "Johimal", "Anup kumar", "Anil kumar", "Dharmpal sesma", "Pyarelal dhaka", "Ramniwas dhaka", "M. K. General store", "Ravidar jangar", "Makhan Lal jangir", "Prabhudayaal", "Wahid", "Saroj davi", "Sila devi", "Chain Singh khedar", "Karsan kumar", "Dharmendar choudhary", "Vidhader mila", "Santhosh", "Royal digital photo studio", "Birda ram", "Gangadhar"];
   }
+
+
 }
 
 export class progressDetail {

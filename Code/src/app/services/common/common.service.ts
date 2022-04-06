@@ -1837,5 +1837,29 @@ export class CommonService {
     const task = ref.put(blob);
   }
 
+  getCarePrefix(cityName:any){
+    let cardPrefix="SIKA"
+    if(cityName=="reengus"){     
+      cardPrefix="RENA"
+    }
+    else if(cityName=="kishangarh"){     
+      cardPrefix="KNGH"
+    }
+    else if(cityName=="shahpura"){     
+      cardPrefix="SHAH"
+    }
+    else if(cityName=="niwai"){
+      cardPrefix="NIW"
+    }
+    else if(cityName=="jaisalmer"){     
+      cardPrefix="JAI"
+    }
+    else if(cityName=="churu"){     
+      cardPrefix="CHU"
+    }
+
+    return cardPrefix;
+  }
+
 
 }
