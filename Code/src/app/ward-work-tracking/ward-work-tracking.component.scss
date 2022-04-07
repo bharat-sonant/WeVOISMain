@@ -1079,6 +1079,15 @@ i.eye{
   cursor: pointer; 
   font-size: 14px;
 }
+@media only screen and (max-width: 1440px) and (min-width: 991px){
+  .fix-home{
+    margin-right: 0px !important;
+  }
+  .float-first2{
+      margin-left: -106px !important;
+
+}
+}
 
 
 
