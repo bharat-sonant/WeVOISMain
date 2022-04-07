@@ -98,6 +98,7 @@ import { StaffAccountDetailComponent } from '../../salary-management/staff-accou
 import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
+import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -214,6 +215,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/cash-management', component: CashManagementComponent },
     { path: 'sikar/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'sikar/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'sikar/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -320,6 +322,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/cash-management', component: CashManagementComponent },
     { path: 'sikar/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'sikar/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'sikar/:id/ward-work-done', component: WardWorkDoneComponent },
 
 
     //jaipur-greater
@@ -426,6 +429,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/cash-management', component: CashManagementComponent },
     { path: 'jaipur-greater/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaipur-greater/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur-greater/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -531,6 +535,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/cash-management', component: CashManagementComponent },
     { path: 'jaipur-greater/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaipur-greater/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur-greater/id/ward-work-done', component: WardWorkDoneComponent },
     
 
     //reengus
@@ -638,6 +643,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/cash-management', component: CashManagementComponent },
     { path: 'reengus/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'reengus/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'reengus/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -744,6 +750,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/cash-management', component: CashManagementComponent },
     { path: 'reengus/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'reengus/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'reengus/:id/ward-work-done', component: WardWorkDoneComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -850,6 +857,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/cash-management', component: CashManagementComponent },
     { path: 'shahpura/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'shahpura/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'shahpura/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -956,6 +964,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/cash-management', component: CashManagementComponent },
     { path: 'shahpura/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'shahpura/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'shahpura/:id/ward-work-done', component: WardWorkDoneComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1062,6 +1071,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/cash-management', component: CashManagementComponent },
     { path: 'test/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'test/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'test/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1168,6 +1178,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/cash-management', component: CashManagementComponent },
     { path: 'test/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'test/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'test/:id/ward-work-done', component: WardWorkDoneComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1274,6 +1285,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/cash-management', component: CashManagementComponent },
     { path: 'jaipur-office/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaipur-office/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur-office/ward-work-done', component: WardWorkDoneComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1379,6 +1391,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/cash-management', component: CashManagementComponent },
     { path: 'jaipur-office/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaipur-office/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur-office/:id/ward-work-done', component: WardWorkDoneComponent },
 
     
 
@@ -1487,6 +1500,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/cash-management', component: CashManagementComponent },
     { path: 'kishangarh/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'kishangarh/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'kishangarh/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1593,6 +1607,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/cash-management', component: CashManagementComponent },
     { path: 'kishangarh/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'kishangarh/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'kishangarh/:id/ward-work-done', component: WardWorkDoneComponent },
 
 
 
@@ -1702,6 +1717,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/cash-management', component: CashManagementComponent },
     { path: 'niwai/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'niwai/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'niwai/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1808,6 +1824,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/cash-management', component: CashManagementComponent },
     { path: 'niwai/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'niwai/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'niwai/:id/ward-work-done', component: WardWorkDoneComponent },
 
 
 
@@ -1916,6 +1933,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/cash-management', component: CashManagementComponent },
     { path: 'jaisalmer/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaisalmer/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaisalmer/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2022,6 +2040,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/cash-management', component: CashManagementComponent },
     { path: 'jaisalmer/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'jaisalmer/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaisalmer/:id/ward-work-done', component: WardWorkDoneComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2128,6 +2147,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/cash-management', component: CashManagementComponent },
     { path: 'churu/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'churu/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'churu/ward-work-done', component: WardWorkDoneComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2234,4 +2254,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/cash-management', component: CashManagementComponent },
     { path: 'churu/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: 'churu/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'churu/:id/ward-work-done', component: WardWorkDoneComponent },
 ]; 

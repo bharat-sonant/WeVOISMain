@@ -107,16 +107,19 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
         if (houseData != null) {
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
+            let count=0;
             for (let i = 0; i < keyArray.length; i++) {
               let line = keyArray[i];
               let cardObj = houseData[line];
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
+                count++;
                 let cardNo = cardKeyArray[j];
                 dbPath = "CardWardMapping/" + cardNo;
                 this.db.object(dbPath).update({ line: line, ward: zoneNo });
               }
             }
+            console.log("total houses : "+count);
           }
         }
         this.commonService.setAlertMessage("success", "Card line mapping updated !!!");
