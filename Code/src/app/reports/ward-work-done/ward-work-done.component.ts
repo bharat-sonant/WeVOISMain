@@ -11,16 +11,12 @@ export class WardWorkDoneComponent implements OnInit {
 
   constructor(public fs: FirebaseService, private commonService: CommonService) { }
   cityName: any;
+  db: any;
+  toDayDate: any;
+  selectedCircle: any;
   zoneList: any[] = [];
   workDateList: any[] = [];
   workDoneList: any[] = [];
-  db: any;
-  toDayDate: any;
-  selectedDate: any;
-  selectedMonthName: any;
-  selectedYear: any;
-  selectedCircle: any;
-
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
