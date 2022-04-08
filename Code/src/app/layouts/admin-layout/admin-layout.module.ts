@@ -93,7 +93,6 @@ import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicl
 import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
-import { EmployeeAccountServiceComponent } from '../../PortalServices/employee-account-service/employee-account-service.component';
 import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 import { SalaryHoldingManagementComponent } from '../../salary-management/salary-holding-management/salary-holding-management.component';
 import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
@@ -204,7 +203,6 @@ import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-do
     EmployeePenaltyComponent,
     PenaltyPortalServiceComponent,
     AccountDetailComponent,
-    EmployeeAccountServiceComponent,
     EmployeeSalaryComponent,
     SalaryHoldingManagementComponent,
     FeDailyWorkReportComponent,
