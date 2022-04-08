@@ -1,17 +1,17 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-2" style="padding-left: 31px; margin-top: -4px;">
+        <div class="col-md-2 header1">
         </div>
-        <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-8 header2">
 
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-2 header3"></div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  ">
+        <div class="col-md-6 left">
+            <div class="card card2">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
@@ -20,7 +20,7 @@
                     </div>
 
                 </div>
-                <div class="card-body" style="height:85vh!important;padding: 0px 10px 0px 0px; overflow: hidden;">
+                <div class="card-body card-body2">
                    
                     <form>
                             <div class="form">
@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6  pr-1">
+                            <div class="col-md-6  pr-1 padding-remove">
                                 <label>Zone No</label>
                                 <div class="wrap-input-effects" required>
                                     <select class="caret-select" id="ddlZoneFrom">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6  pr-1">
+                            <div class="col-md-6  pr-1 padding-remove">
                                 <label>Zone No</label>
                                 <div class="wrap-input-effects" required>
                                     <select class="caret-select" id="ddlZoneTo">
@@ -59,14 +59,15 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 ">
                                 <label>Line No</label>
                                 <div class="wrap-input-effects" required>
                                     <input id="txtLineNoTo" class="caret-select" type="number" />
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 15px;">
+                        
+                        <div class="row form-group2">
                             <div class="col-md-12 pr-1">
                                 <div class="form-group">
                                     <button id="btnSave" class="btn btn-success btn-xs"
@@ -80,8 +81,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px;height: 85vh!important;overflow: hidden;">
+        <div class="col-md-6 Update2">
+            <div class="card card3">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
@@ -90,13 +91,13 @@
                     </div>
 
                 </div>
-                <div class="card-body" style="padding: 25px 120px">
+                <div class="card-body card-body3">
                     <div class="outer">
 
                     <div class="row">
                         <div class="col-md-12  pr-1">
                             <label>Zone No</label>
-                            <div class="d-flex">
+                            <div class="d-flex wrap-class">
                             <div class="wrap-input-effects" required>
                                 <select class="caret-select caret-select2" id="ddlZone">
                                     <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
@@ -122,8 +123,8 @@
 <ng-template #contentConfirmation>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">Are you
+            <div class="modal-header modal-header2">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you
                     sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
@@ -168,9 +169,9 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects" required style="display: none;">
-                    <input type="checkbox" id="chkRemove" style="vertical-align: middle;"> Remove assigned ward
+                    <input type="checkbox" id="chkRemove" class="input2"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                <input type="button" class="btn btn-success submit-btn input3" value="SUBMIT"
                     (click)="saveWard();" />
             </div>
         </div>
@@ -215,8 +216,8 @@
                     <input type="checkbox" id="chkAcive" style="vertical-align: middle;"> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveEmployee();" style="height: 45px;" />
+                <input type="button" class="btn w-100 btn-success submit-btn input4" value="SUBMIT"
+                    (click)="saveEmployee();"/>
             </div>
         </div>
     </div>

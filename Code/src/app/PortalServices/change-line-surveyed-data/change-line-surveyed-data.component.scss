@@ -472,3 +472,154 @@ form{
  select.caret-select2{
    width: 92% !important;
  }
+ .header1{
+  padding-left: 31px; 
+  margin-top: -4px;
+ }
+ .header2{
+  text-align:center;
+   margin-top: -2px;
+  font-size: 20px; 
+  letter-spacing: 1px;
+ }
+ .left{
+  padding-left: 0px;
+  padding-right:7px;
+ }
+ .card2{
+  margin-top:-6px;
+ }
+ .card-body2{
+  height:85vh!important;
+  padding: 0px 10px 0px 0px; 
+  overflow: hidden;
+ }
+ .form-group2{
+  margin-top: 15px;
+ }
+ .Update2{
+  padding-left: 7px;
+  padding-right:0px;
+ }
+ .card3{
+  margin-top:-6px;
+  height: 85vh!important;
+  overflow: hidden;
+ }
+ .card-body3{
+  padding: 25px 120px
+ }
+ .modal-header2 h5{
+  font-size: 14px; 
+  font-weight: bold;
+
+ }
+ input.input2{
+  vertical-align: middle;
+ }
+ input.input3{
+  width: 100%;
+ } 
+ input.input4{
+  width: 100%;
+  height: 45px;
+ }
+
+
+ @media only screen and (max-width: 1400px) and (min-width: 990px){
+  .card-body3{
+    padding: 25px 58px;
+}
+
+ }
+
+
+ @media only screen and (max-width: 988px) and (min-width: 765px){
+  .card-body3{
+    padding: 25px 40px;
+}
+
+ }
+
+ 
+ @media only screen and (max-width: 650px) and (min-width: 530px){
+  
+  .card-body3{
+    padding: 25px 45px !important;
+  }
+  .Update2{
+    padding-left: 0px;
+    padding-right: 17px;
+  }
+   }
+   
+
+ @media only screen and (max-width: 450px) and (min-width: 356px){
+  .card-body3{
+    padding: 25px 45px !important;
+}
+.wrap-class{
+  flex-wrap: wrap
+}
+.Update2{
+  padding-left: 0px;
+  padding-right: 7px;
+}
+.button button{
+  margin-top: 2px;
+  margin-left: 0px;
+  
+}
+.main-panel{
+  background-color: #fff !important;
+}
+.padding-remove{
+    padding-right: 15px !important
+}
+.card-body2{
+  height: 72vh !important;
+}
+.card-header{
+ 
+  padding: 15px 0px 15px 0px !important;
+ 
+}
+
+ }
+
+ @media only screen and (max-width: 355px) and (min-width: 270px){
+  .card-body3{
+    padding: 25px 15px !important;
+}
+.wrap-class{
+  flex-wrap: wrap
+}
+.Update2{
+  padding-left: 0px;
+  padding-right: 17px;
+}
+.button button{
+  margin-top: 2px;
+  margin-left: 0px;
+  
+}
+form{
+  padding: 25px 15px;
+}
+.custom-header h5{
+ font-size: 13px !important
+}
+.main-panel{
+  background:#fff !important;
+}
+.padding-remove{
+  padding-right: 15px !important
+}
+.card-header{
+ 
+  padding: 15px 0px 15px 0px !important;
+ 
+}
+
+
+ }
