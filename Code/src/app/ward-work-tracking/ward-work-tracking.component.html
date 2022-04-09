@@ -95,6 +95,8 @@
 </section>
 
 <div #gmap class="gmap" id="divMap"></div>
+<a id="routeTrackingLink"  target="_blank" title="Show Route" > <img
+  src="../../assets/img/route_tracking.svg" class="fa-expand-route" /> </a>
 
 
 
@@ -116,7 +118,7 @@
           <h5> H </h5>
         </div>
         <div class="all-details">
-          <h6>{{progressData.helperName}} <br>
+          <h6>{{progressData.helperName}} <span [hidden]="progressData.secondHelperName==''"> | {{progressData.secondHelperName}}</span> <br>
             <p>{{progressData.helperMobile}}</p>
           </h6>
         </div>
