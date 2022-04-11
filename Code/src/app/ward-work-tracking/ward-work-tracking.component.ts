@@ -93,6 +93,7 @@ export class WardWorkTrackingComponent {
     driverMobile: "",
     helperName: "---",
     helperMobile: "",
+    secondHelperName:"",
     parshadName: "",
     parshadMobile: "",
     totalDustbin: 0,
@@ -556,6 +557,8 @@ export class WardWorkTrackingComponent {
   getWardData() {
     this.resetData();
     $(this.divLoader).show();
+    let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
+    element.href = this.cityName + "/route-tracking/" + this.selectedZone;
     this.getEmployeeData();
     this.getCurrentLine();
     this.getSummaryData();
@@ -943,6 +946,7 @@ export class WardWorkTrackingComponent {
     this.progressData.driverName = "---";
     this.progressData.helperMobile = "";
     this.progressData.helperName = "---";
+    this.progressData.secondHelperName="";
     this.progressData.parshadMobile = "";
     this.progressData.parshadName = "";
     this.progressData.totalDustbin = 0;
@@ -1209,6 +1213,12 @@ export class WardWorkTrackingComponent {
         let helperId = helperList[helperList.length - 1].trim();
         this.getEmployee(driverId, "driver");
         this.getEmployee(helperId, "helper");
+
+        if (workerData["secondHelper"] != null) {
+          let secondHelperList = workerData["secondHelper"].toString().split(",");
+          let secondHelperId = secondHelperList[helperList.length - 1].trim();
+          this.getEmployee(secondHelperId, "secondHelper");
+        }
         if (workerData["vehicle"] != null) {
           let vehicleList = workerData["vehicle"].split(',');
           if (vehicleList.length > 0) {
@@ -1229,9 +1239,11 @@ export class WardWorkTrackingComponent {
       if (empType == "driver") {
         this.progressData.driverName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
         this.progressData.driverMobile = employee["mobile"] != null ? employee["mobile"] : "---";
-      } else {
+      } else if (empType == "helper") {
         this.progressData.helperName = employee["name"] != null ? employee["name"].toUpperCase() : "Not Assigned";
         this.progressData.helperMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+      } else {
+        this.progressData.secondHelperName = employee["name"] != null ? employee["name"].toUpperCase() : "";
       }
     });
   }
@@ -1267,6 +1279,7 @@ export class WardWorkTrackingComponent {
   setDefaultMap() {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+    this.map.setOptions({ zoomControl: false });
   }
 
   getZones() {
@@ -1392,6 +1405,7 @@ export class progressDetail {
   driverName: string;
   driverMobile: string;
   helperName: string;
+  secondHelperName:string;
   helperMobile: string;
   parshadName: string;
   parshadMobile: string;

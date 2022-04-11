@@ -33,14 +33,6 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
 
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    if (this.cityName == "test") {
-      this.zoneList = [];
-      this.zoneList.push({ zoneNo: 0, zoneName: "--Select--" });
-      this.zoneList.push({ zoneNo: 1, zoneName: "Zone 1" });
-      this.zoneList.push({ zoneNo: 2, zoneName: "Zone 2" });
-      this.zoneList.push({ zoneNo: 3, zoneName: "Zone 3" });
-      this.zoneList.push({ zoneNo: 4, zoneName: "Zone 4" });
-    }
   }
 
   saveData() {
@@ -107,7 +99,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
         if (houseData != null) {
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
-            let count=0;
+            let count = 0;
             for (let i = 0; i < keyArray.length; i++) {
               let line = keyArray[i];
               let cardObj = houseData[line];
@@ -119,12 +111,11 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 this.db.object(dbPath).update({ line: line, ward: zoneNo });
               }
             }
-            console.log("total houses : "+count);
+            console.log("total houses : " + count);
           }
         }
         this.commonService.setAlertMessage("success", "Card line mapping updated !!!");
       }
     );
   }
-
 }
