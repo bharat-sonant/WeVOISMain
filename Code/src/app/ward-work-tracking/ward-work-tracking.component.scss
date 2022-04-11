@@ -908,7 +908,7 @@ display:none;
   z-index: 10;
 }
 button.button{
-  margin-left: 0px!important;
+  margin-left: 0px !important;
 }
 .float-first2{
   margin-left: 10px;
@@ -938,7 +938,7 @@ button.button{
   text-align: right;
 }
 .float-third3 h6{
-  font-size: 9px!important;
+  font-size: 9px !important;
 }
 .setting-box1 p{
   margin-top: 10px;
@@ -948,6 +948,12 @@ button.button{
   margin-top: 10px; 
   margin-right: 20px;
 
+}
+.main-box1{
+  border-bottom:none !important;
+}
+.setting-box5{
+  border-bottom: none !important;
 }
 .setting-box5 p{
   margin-top: 10px;
@@ -993,7 +999,7 @@ button.button{
   border-right: 1px dotted #9fa29f;
 }
 .dustbin2{
-  border-right: 1px dotted #9fa29f;;
+  border-right: 1px dotted #9fa29f;
 }
 .main{
   width: 100%;
@@ -1078,6 +1084,9 @@ i.eye{
   float: right; 
   cursor: pointer; 
   font-size: 14px;
+}
+.panel-group2{
+  border-radius: 5px;
 }
 @media only screen and (max-width: 1440px) and (min-width: 991px){
   .fix-home{
