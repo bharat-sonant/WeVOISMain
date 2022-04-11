@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
     this.userDetail.cityName = this.getCityName();
     setTimeout(() => {
       $('#divLoader').hide();
-    }, 12000);
+    }, 18000);
   }
 
   getCityName() {

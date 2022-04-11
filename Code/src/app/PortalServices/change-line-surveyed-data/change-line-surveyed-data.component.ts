@@ -116,7 +116,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 count++;
                 let cardNo = cardKeyArray[j];
                 dbPath = "CardWardMapping/" + cardNo;
-                this.db.object(dbPath).update({ line: line, ward: zoneNo });
+               // this.db.object(dbPath).update({ line: line, ward: zoneNo });
               }
             }
             console.log("total houses : "+count);
