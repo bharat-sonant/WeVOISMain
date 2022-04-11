@@ -583,7 +583,6 @@ export class CommonService {
 
           if (localStorage.getItem("designation") != null) {
             let designationList = JSON.parse(localStorage.getItem("designation"));
-            console.log(designationList);
             let detail = designationList.find(item => item.designationId == data["designationId"]);
             if (detail != undefined) {
               employeeList.push({
