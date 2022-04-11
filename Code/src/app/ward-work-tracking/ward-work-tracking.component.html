@@ -48,7 +48,7 @@
         </div>
 
       </div>
-      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+      <div class="panel-group panel-group2" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="headingtwo">
             <h4 class="panel-title">
@@ -78,7 +78,7 @@
                     <input id="chkIsWorkDetail" type="checkbox" (change)="showHideWorkDetail()"
                      >
                   </div>
-                  <div class="setting-box setting-box5" style="border-bottom: none!important;">
+                  <div class="setting-box setting-box5">
                     <p> Show Line Details</p>
                     <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
                       > </i>
@@ -123,7 +123,7 @@
           </h6>
         </div>
       </div>
-      <div id="divParshadDetail" class="main-box" style="border-bottom:none!important;">
+      <div id="divParshadDetail" class="main-box main-box1">
         <div class="designation">
           <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
         </div>
@@ -200,152 +200,6 @@
   </div>
 </div>
 
-<!--
-
-<div id="divWorkerDetail" class="driver-helper-box" style="display: none;">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="main-box">
-        <div class="designation" style="padding:5px 10px 5px 10px;">
-          <h5> D </h5>
-        </div>
-        <div class="all-details" style="padding:5px 10px 5px 10px;">
-          <h6>{{progressData.driverName}} <br>
-            <p>{{progressData.driverMobile}}</p>
-          </h6>
-        </div>
-      </div>
-      <div class="main-box">
-        <div class="designation">
-          <h5> H </h5>
-        </div>
-        <div class="all-details">
-          <h6>{{progressData.helperName}} <br>
-            <p>{{progressData.helperMobile}}</p>
-          </h6>
-        </div>
-      </div>
-      <div id="divParshadDetail" class="main-box" style="border-bottom:none!important;">
-        <div class="designation">
-          <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
-        </div>
-        <div class="all-details">
-          <h6>{{progressData.parshadName}} (पार्षद)<br>
-            <p>{{progressData.parshadMobile}}</p>
-          </h6>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="divWorkDetail" class="line-details-box" style="display: none;">
-  <div>
-    <div class="lines">
-      <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
-        <p>Total Ward Length</p>
-      </h3>
-    </div>
-    <div class="lines2">
-      <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
-        <p>Covered Ward Length</p>
-      </h3>
-    </div>
-    <div class="lines" style="border-top: 1px dotted lightgray;">
-      <h3>{{progressData.totalLines}}
-        <p>Total Lines</p>
-      </h3>
-    </div>
-    <div class="lines2" style="border-top: 1px dotted lightgray; cursor: pointer;">
-      <h3 (click)="showSkipLineDetail(contentSkipLines)">{{progressData.skippedLines}}
-        <p>Skipped Lines</p>
-      </h3>
-    </div>
-    <div class="lines" style="border-top: 1px dotted lightgray;">
-      <h3>{{progressData.completedLines}}
-        <p>Completed Lines</p>
-      </h3>
-    </div>
-    <div class="lines2" style="border-top: 1px dotted lightgray; ">
-      <h3>{{progressData.currentLine}}
-        <p>Current Lines</p>
-      </h3>
-    </div>
-  </div>
-</div>
-
-
-<div id="divDustbinDetail" class="dustbin-details-box" style="display: none;">
-  <div>
-    <div class="lines">
-      <h3>{{progressData.rectangularDustbin}}
-        <p>Rectangular Dustbin</p>
-      </h3>
-    </div>
-    <div class="lines2">
-      <h3>{{progressData.circularDustbin}}
-        <p>Circular Dustbin</p>
-      </h3>
-    </div>
-    <div class="lines">
-      <h3>{{progressData.totalDustbin}}
-        <p>Total Dustbin</p>
-      </h3>
-
-    </div>
-    <div class="lines2">
-      <h3>---
-        <p>---</p>
-      </h3>
-    </div>
-  </div>
-</div>
--->
-
-<!--
-
-<div id="houseDetail" class="line-details-box-house">
-  <div class="lines" style="border-bottom: 1px dotted lightgray;">
-    <img src="../assets/img/blue-home.png">
-    <h3>
-      <p>Phase 1</p>
-    </h3>
-  </div>
-  <div class="lines2" style="border-bottom: 1px dotted lightgray; ">
-    <img src="../assets/img/purple-home.png" width="17">
-    <h3>
-      <p>Phase 1 (Approved)</p>
-    </h3>
-  </div>
-  <div class="lines" style="border-bottom: 1px dotted lightgray;">
-    <img src="../assets/img/red-home.png">
-    <h3>
-      <p>Phase 2 </p>
-    </h3>
-  </div>
-  <div class="lines2" style="border-bottom: 1px dotted lightgray;">
-    <img src="../assets/img/yellow-home.png" width="17">
-    <h3>
-      <p>Phase 2 (Approved)</p>
-    </h3>
-  </div>
-  <div class="lines">
-    <img src="../assets/img/green-home.png">
-    <h3>
-      <p>Scanned</p>
-    </h3>
-  </div>
-  <div class="lines2">
-    <img src="../assets/img/sweet-home.png" width="30">
-    <h3>
-      <p>Parshad House</p>
-    </h3>
-  </div>
-</div>
--->
-
-
-<!--Line Detail Start-->
 <ng-template #contentLineDetail>
   <div class="main">
     <div class="row iner-main">
