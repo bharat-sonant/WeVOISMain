@@ -105,6 +105,7 @@ import { CashManagementComponent } from '../../expense-management/cash-managemen
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
+import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 
 @NgModule({
   imports: [
@@ -214,7 +215,8 @@ import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-do
     CashManagementComponent,
     WardWorkPercentageComponent,
     ChangeLineSurveyedDataComponent,
-    WardWorkDoneComponent
+    WardWorkDoneComponent,
+    SettingsComponent
   ]
 })
 
