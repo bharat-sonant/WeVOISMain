@@ -560,7 +560,97 @@ button{
 .mob-mt-5{
   margin-top: 6px!important;
 }
-
-
-
 }
+
+
+
+
+.text-left1{
+  margin-top: -4px;
+}
+button.btn2{
+  margin-left: 0px;
+}
+
+span.paper2{
+            position: absolute;
+            top: 16px; width: 150px;
+            float: right;
+            z-index: 999;
+            right: 30px;
+            color: #fff;
+            font-weight: bold;
+}
+.main1{
+  margin-top: 8px;
+}
+.iner-main{
+  padding-left: 30px; 
+  padding-right: 10px;
+}
+i.check2{
+  color: green !important;
+}
+i.times2{
+  color: red !important;
+}
+i.registered2{
+  color: #0ba118;
+}
+i.alt2{
+  float: left;
+}
+p.location2{
+  margin-left: 15px;
+}
+.main2{
+  padding-left: 0px; 
+  padding-right: 25px;
+}
+.map-bg2{
+  padding-bottom: 5px;
+}
+.total-halt-iner{
+  padding-right: 0px;
+}
+
+.dh-back-main{
+  padding-left: 5px;
+   padding-right: 0px;
+}
+
+.on-map-main{
+  padding-left: 5px; 
+  padding-right: 15px;
+}
+.last-main{
+  padding: 5px; 
+  border: 1px solid lightgray; 
+  border-radius: 5px; 
+  margin-top: -5px;
+}
+.haltMap2{
+  width:100%;
+  height:75vh;
+}
+.list2{
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 770px) and (min-width: 768px){
+  .text-left1{
+    padding-right: 0 !important
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

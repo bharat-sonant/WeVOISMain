@@ -14,14 +14,14 @@
                     </h3>
                 </div>
             </div>
-            <div class="col-md-12 mob-20" style="padding-right: 0px; padding-left: 28px;">
+            <div class="col-md-12 mob-20 main1">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="row">
-                            <div class="col-md-12 pr-0" style="margin-top: 10px;">
+                            <div class="col-md-12 pr-0 main-top">
                                 <div class="top">
-                                    <div class="row" style="margin-top:-10px;">
-                                        <div class="col-md-12" style="width: 100%; display: flex;">
+                                    <div class="row iner-top">
+                                        <div class="col-md-12 click-main">
                                             <button class="btn btn-primary " (click)="setDate('','previous');">
                                                 << </button>
                                                     <input id="txtDate" class="date-input" type="date"
@@ -47,17 +47,15 @@
                                         <div class="col-md-12">
                                             <div class="float">
                                                 <div class="fleft">
-                                                    <h6> <i class="fas fa-mobile-alt" style="font-size: 20px;
-                                                        color: green;"></i>
+                                                    <h6> <i class="fas fa-mobile-alt alt2"></i>
                                                         &nbsp;&nbsp;{{logBookData.driverMobile}}</h6>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <div class="float" style="border-bottom:0px solid red;">
+                                            <div class="float float2">
                                                 <div class="fleft">
-                                                    <h6> <i class="fas fa-edit"  style="font-size: 16px;
-                                                        color: red;"></i>
+                                                    <h6> <i class="fas fa-edit edit2"></i>
                                                         &nbsp; {{logBookData.reason}}</h6>
                                                 </div>
                                             </div>
@@ -67,7 +65,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mob-mid" style="padding-right: 50px; padding-left: 10px; padding-bottom: 20px;">
+                    <div class="col-md-6 mob-mid mob-mid2">
                         <div class="row">
                             <div class="col-md-12 mob-hide">
                                 <div class="header">
@@ -75,7 +73,7 @@
                                     </h3>
                                 </div>
                             </div>
-                            <div class="col-md-12 mob-res" style="margin-top: -40px;">
+                            <div class="col-md-12 mob-res mob-res2">
                                 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
                                     data-interval="false">
                                     <div class="carousel-inner">
@@ -87,6 +85,7 @@
                                 </div>
                             </div>
                         </div>
+                       
                     </div>
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
@@ -94,7 +93,7 @@
                                 *ngFor="let data of zoneList ; let i=index"
                                 (click)="data.iconClass!='fas fa-ellipsis-h' && getLogBookDetail(data.zoneNo);">
                                 <i class="{{data.iconClass}}"></i>
-                                <div style="width: 76%; float: left;">
+                                <div class="address-text-main">
                                     <div class="address-text">
                                         <h6>
                                             {{data.zoneName}}

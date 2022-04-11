@@ -961,3 +961,133 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+.main1{
+  padding-right: 0px; 
+  padding-left: 28px;
+}
+.mob-hide2{
+  padding-left: 0px;
+}
+.mob-hide-iner{
+  margin-top: -40px;
+  padding-right: 5px;
+}
+.mob-hide-iner2{
+  margin-top:-10px;
+  margin-bottom: -10px;
+}
+.mob-hide-iner3{
+  width: 100%; 
+  display: flex;
+}
+.mob-mid2{
+  padding-right: 40px; 
+  padding-left: 15px; 
+  padding-bottom: 20px;
+}
+.mob-res2{
+  margin-top: 10px;
+}
+.img-left2{
+  width: 30px; 
+  float:left
+}
+h6.driver{
+  float: left; 
+  width: calc(100% - 30px);
+}
+.float2{
+  border-bottom:0px!important
+}
+.fleft-iner{
+  width: 30px; 
+  float:left
+}
+i.mobile2{
+  font-size: 18px !important; 
+  color: #4aad43 !important;
+}
+h6.driverMobile2{
+  float: left; 
+  width: calc(100% - 30px);
+}
+.all-data-iner{
+  border-right: 1px solid lightgray;
+
+}
+.radio-text2{
+  border-bottom: 1px dotted lightgray;
+}
+input.Status2{
+  margin-right: 5px;
+}
+input.Status3{
+  margin-right: 5px;
+}
+.dustbin-progress2{
+  padding: 10px 0px; 
+  height: 38px;
+}
+button.btn2{
+  height: 40px;
+}
+.remark-page2 p{
+  color: green;
+  margin-bottom: 0px;
+}
+
+.mob-res3{
+  margin-top: -57px; 
+  padding-left: 12px; 
+  padding-right: 25px;
+}
+
+.trip-data2{
+  background:#0ba118;
+}
+p.remark-analysis2{
+  color:#fff;
+}
+h5.trip2{
+  color:#fff;
+}
+.main2{
+  padding-left: 25px; 
+  padding-right: 30px;
+}
+.main2-iner{
+  background-color: #fff
+}
+.address-text2{
+  width: 76%; float: left;
+}
+.address-text3{
+  width: 24%; 
+  float: right; 
+  text-align: right;
+}
+.address-text3 h6{
+  font-size:10px;
+}
+
+
+@media only screen and (max-width: 576px) and (min-width: 240px) {
+  .mob-hide-iner{
+    margin-top: 10px;
+   
+}
+}
+

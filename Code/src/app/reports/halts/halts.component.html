@@ -4,10 +4,10 @@
       <div class="col-md-10 halt-header pl-0 pr-0">
         <!------------- Header Start ---------->
         <div class="row">
-          <div class="col-md-6 text-left" style="margin-top: -4px;">
+          <div class="col-md-6 text-left text-left1">
             <input id="txtDate" class="report-controls custom-date-input" type="date"
               (change)="setDate($event.target.value)" />
-            <button type="submit" (click)="showHaltSummary();" class="btn mob-btn" style="margin-left: 0px;">
+            <button type="submit" (click)="showHaltSummary();" class="btn mob-btn btn2">
               View Halt Summary</button>
           </div>
           <div class="col-md-3 text-left">
@@ -16,19 +16,13 @@
           </div>
           <div class="col-md-3 text-right pr-20">
             
-            <span style="position: absolute;
-            top: 16px; width: 150px;
-            float: right;
-            z-index: 999;
-            right: 30px;
-            color: #fff;
-            font-weight: bold;"> <i class="far fa-hand-paper"></i> {{haltDetails.wardHalt}} Hour</span>
+            <span class="paper2"> <i class="far fa-hand-paper"></i> {{haltDetails.wardHalt}} Hour</span>
              </div>
         </div>
         <!------------- Header End ---------->
-        <div class="row" style="margin-top: 8px;">
+        <div class="row main1">
           <!------------- Halt Scroll List Start ---------->
-          <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+          <div class="col-md-3 mob-space-25 iner-main">
             <div class="scrollable-halt">
               <div class="{{data.divClass}}" *ngFor="let data of haltDataList, let i=index" (click)="getHaltMap(i);">
                 <div class="halt-details">
@@ -40,62 +34,46 @@
                       {{data.duration}} Min.</strong></h5>
                   <span [hidden]="data.ishaltDisableAccess==0">
                     <button class="remark-btn button" [hidden]="data.canRemove=='no'"
-                      (click)="openModel(contentRemark,i,'disable');"><i class="fas fa-check"
-                        style="color: green;"></i></button>
+                      (click)="openModel(contentRemark,i,'disable');"><i class="fas fa-check check2"
+                        ></i></button>
                     <button class="remark-btn button" [hidden]="data.canRemove=='yes'"
-                      (click)="openModel(contentRemark,i,'show');"><i class="fas fa-times"
-                        style="color: red;"></i></button>
+                      (click)="openModel(contentRemark,i,'show');"><i class="fas fa-times times2"
+                        ></i></button>
                   </span>
                 </div>
                 <div class="work-stop-address" style="border-bottom: 1px dotted lightgray;">
-                  <p><i class="fas fa-registered" style="color: #0ba118;"></i> {{data.type}}</p>
+                  <p><i class="fas fa-registered registered2"></i> {{data.type}}</p>
                 </div>
                 <div class="work-stop-address">
-                  <i class="fas fa-map-marker-alt" style="float: left;"></i>
-                  <p style="margin-left: 15px;"><span> {{data.location}}</span></p>
+                  <i class="fas fa-map-marker-alt alt2" ></i>
+                  <p class="location2"><span> {{data.location}}</span></p>
                 </div>
               </div>
             </div>
           </div>
           <!------------- Halt Scroll List End ---------->
 
-          <div class="col-md-9 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
+          <div class="col-md-9 mob-map mob-space-25 main2">
             <div class="row">
-              <!------------- Driver Helper Summary Start ---------->
-              <!-- <div class="col-md-6" style="padding-right: 0px;">
-                <div class="dh-back">
-                  <h3> <i class="far fa-user"></i> {{haltDetails.driverName}}</h3>
-                  <h3 class="float-left"><i class="fas fa-car-alt"></i> Driver</h3>
-                  <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.driverMobile}}</a>
-                </div>
-              </div>
-              <div class="col-md-6" style="padding-left: 10px; padding-right: 5px;">
-                <div class="dh-back">
-                  <h3> <i class="far fa-user"></i> {{haltDetails.helperName}}</h3>
-                  <h3 class="float-left"><i class="fab fa-hire-a-helper"></i> Helper</h3>
-                  <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.helperMobile}}</a>
-                </div>
-              </div> -->
-              <!------------- Driver Helper Summary End ---------->
-              <!------------- Halt Map Start ---------->
+              
               <div class="col-md-12">
-                <div class="map-bg" style="padding-bottom: 5px;">
+                <div class="map-bg map-bg2">
                   <div class="row total-halt">
-                    <div class="col-md-5 mob-r-15" style="padding-right: 0px;">
-                      <div class="dh-back">
+                    <div class="col-md-5 mob-r-15 total-halt-iner">
+                      <div class="dh-back dh-back-main">
                         <h3> <i class="far fa-user"></i> {{haltDetails.driverName}}</h3>
                         <h3 class="float-left"><i class="fas fa-car-alt"></i> Driver</h3>
                         <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.driverMobile}}</a>
                       </div>
                     </div>
-                    <div class="col-md-5 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
+                    <div class="col-md-5 mob-mt-4 mob-r-15 mob-l-15 dh-back-main">
                       <div class="dh-back">
                         <h3> <i class="far fa-user"></i> {{haltDetails.helperName}}</h3>
                         <h3 class="float-left"><i class="fab fa-hire-a-helper"></i> Helper</h3>
                         <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.helperMobile}}</a>
                       </div>
                     </div>
-                    <div class="col-md-2 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
+                    <div class="col-md-2 mob-mt-4 mob-l-15 on-map-main">
                       <div class="on-map">
                         <h5 class="danger-halt"><i _ngcontent-pns-c5="" class="far fa-hand-paper"></i>
                           {{haltDetails.totalBreakHours}} Hour
@@ -106,9 +84,9 @@
                     </div>
                   </div>
 
-                  <div class="mob-mt-5"
-                    style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
-                    <div id="haltMap" style="width:100%;height:75vh; "></div>
+                  <div class="mob-mt-5 last-main"
+                    >
+                    <div id="haltMap" class="haltMap2"></div>
                   </div>
 
                 </div>
@@ -122,8 +100,8 @@
       <!------------- Ward Scroll List Start ---------->
       <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
         <div class="scroll-list">
-          <div class="{{list.divClass}}" *ngFor="let list of haltList"
-            (click)="list.totalBreak!=0 && getZoneDetail(list.zoneNo);" style="cursor: pointer;">
+          <div class="{{list.divClass}} list2" *ngFor="let list of haltList"
+            (click)="list.totalBreak!=0 && getZoneDetail(list.zoneNo);">
             <div class="ward-details">
               <h6>{{list.zoneName}}</h6>
               <div class="halt-time alert-halt">
