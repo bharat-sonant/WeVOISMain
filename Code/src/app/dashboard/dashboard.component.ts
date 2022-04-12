@@ -37,21 +37,21 @@ export class DashboardComponent implements OnInit {
   public lineBigDashboardChartLabels: Array<any>;
   public lineBigDashboardChartColors: Array<any>;
   db: any;
-  cityName:any;
+  cityName: any;
 
   dashboardData: dashboardSummary =
     {
       wardCompleted: '0',
       peopleAtWork: '0',
       vehiclesOnDuty: '0',
-      wasteCollected: '---'
+      wasteCollected: '0'
     };
 
   constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
     this.instancesList = [];
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.todayDate = this.commonService.setTodayDate();//"2019-07-24";
@@ -66,6 +66,12 @@ export class DashboardComponent implements OnInit {
     this.getCompletedWards();
     this.getActiveVehicles();
     this.drawWorkProgress();
+    if (localStorage.getItem("userType") == "External User") {
+      $('#divWasteCollected').hide();
+    }
+    else {
+      this.getWardCollection();
+    }
     this.getWardWorkProgressData(this.todayDate);
     let drawProgress = interval(60000).subscribe((val) => {
       this.instancesList.push({ instances: drawProgress });
@@ -74,7 +80,7 @@ export class DashboardComponent implements OnInit {
       this.getWardWorkProgressData(this.todayDate);
     });
   }
-/*
+
   getWardCollection() {
     let collectionInstance = this.db.object("WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/totalWasteCollection").valueChanges().subscribe(
       data => {
@@ -85,7 +91,7 @@ export class DashboardComponent implements OnInit {
       }
     );
   }
-  */
+
 
   getAssignedWardList() {
     let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate).valueChanges().subscribe(
@@ -218,7 +224,7 @@ export class DashboardComponent implements OnInit {
           let wardLines = this.db.object('WardLines/' + this.zoneList[index]["zoneNo"]).valueChanges().subscribe(
             zoneLine => {
               this.instancesList.push({ instances: wardLines });
-              let totalLines =Number(zoneLine);
+              let totalLines = Number(zoneLine);
               // total compelted lines
               for (let index = 0; index < data.length; index++) {
                 if (data[index]["Status"] == "LineCompleted") {
