@@ -25,6 +25,8 @@ export class VehicleFuelReportComponent implements OnInit {
   vehicleFuelList: any[];
   trackList: any[];
   vehicleTrackList: any[];
+  ddlYear="#ddlYear";
+  ddlMonth="#ddlMonth";
   fuelDetail: fuelDetail = {
     totalAmount: "0.00",
     totalQuantity: "0.00",
@@ -50,8 +52,8 @@ export class VehicleFuelReportComponent implements OnInit {
     this.getYear();
     this.selectedMonth = this.toDayDate.split('-')[1];
     this.selectedYear = this.toDayDate.split('-')[0];
-    $('#ddlMonth').val(this.selectedMonth);
-    $('#ddlYear').val(this.selectedYear);
+    $(this.ddlMonth).val(this.selectedMonth);
+    $(this.ddlYear).val(this.selectedYear);
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getVehicles();
   }
@@ -179,7 +181,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.selectedYear = filterVal;
     this.resetAll();
     this.selectedMonth = "0";
-    $('#ddlMonth').val("0");
+    $(this.ddlMonth).val("0");
     //this.changeMonthSelection(this.selectedMonth);
   }
 
@@ -295,6 +297,129 @@ export class VehicleFuelReportComponent implements OnInit {
       }
       else {
         this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
+      }
+    }
+  }
+
+  updateVehicleRunning() {
+    this.selectedYear = $(this.ddlYear).val();
+    this.selectedMonth = $(this.ddlMonth).val();
+    if (this.selectedYear == "0") {
+      this.commonService.setAlertMessage("error", "Please select year !!!");
+      return;
+    }
+    if (this.selectedMonth == "0") {
+      this.commonService.setAlertMessage("error", "Please select month !!!");
+      return;
+    }
+    $('#divLoader').show();
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    let days = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+    if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
+      days = parseInt(this.commonService.setTodayDate().split("-")[2]) - 1;
+    }
+    this.getVehicleRunning(1, days);
+  }
+
+  getVehicleRunning(stratDays: any, days: any) {
+    let workDetailList = [];
+    for (let i = stratDays; i <= days; i++) {
+      let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
+
+      let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        workData => {
+          workDetailInstance.unsubscribe();
+          if (workData != null) {
+            let keyArray = Object.keys(workData);
+            if (keyArray.length > 0) {
+              for (let j = 0; j < keyArray.length; j++) {
+                let empId = keyArray[j];
+                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+                  if (employee["designation"] == "Transportation Executive") {
+                    for (let k = 1; k <= 5; k++) {
+                      if (workData[empId]["task" + k] != null) {
+                        let ward = workData[empId]["task" + k]["task"];
+                        let vehicle = workData[empId]["task" + k]["vehicle"];
+                        if (vehicle != "NotApplicable") {
+                          let dbLocationPath = "LocationHistory/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                          if (ward.includes("BinLifting")) {
+                            dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                          }
+                          let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
+                            locationData => {
+                              locationInstance.unsubscribe();
+                              let distance = 0;
+                              if (locationData != null) {
+                                distance = locationData;
+                              }
+                              let preDetail = workDetailList.find(item => item.date == monthDate && item.ward == ward);
+                              if (preDetail == undefined) {
+                                let orderBy = new Date(monthDate).getTime();
+                                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+                                  let name = employee["name"];
+                                  workDetailList.push({ date: monthDate, vehicle: vehicle, ward: ward, distance: distance, empId: empId, orderBy: orderBy, name: name });
+                                });
+                              }
+                            }
+                          );
+                        }
+                      }
+                    }
+                  }
+                });
+              }
+            }
+          }
+        }
+      );
+    }
+    setTimeout(() => {
+      this.createJSON(workDetailList, days);
+      this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+      $('#divLoader').hide();
+    }, 24000);
+  }
+
+
+  createJSON(workDetailList: any, days: any) {
+    if (workDetailList.length > 0) {
+      workDetailList = workDetailList.sort((a, b) =>
+        b.orderBy > a.orderBy ? -1 : 1
+      );
+      const data = [];
+      const map = new Map();
+      for (const item of workDetailList) {
+        if (!map.has(item.vehicle)) {
+          map.set(item.vehicle, true);    // set any value to Map
+          data.push(item.vehicle);
+        }
+      }
+      if (data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          let vehicle = data[i];
+          let list = workDetailList.filter(item => item.vehicle == vehicle);
+          if (list.length > 0) {
+            const objDate = {}
+            const aa = []
+            for (let j = 0; j < list.length; j++) {
+              let date = list[j]["date"];
+              let list2 = list.filter(item => item.date == date);
+              const bb = [];
+              if (list2.length > 0) {
+                for (let k = 0; k < list2.length; k++) {
+                  let distance = Number(list2[k]["distance"]) / 1000;
+                  distance = Math.round(distance * 10) / 10;
+                  bb.push({ ward: list2[k]["ward"], distance: distance.toFixed(1), driver: list2[k]["empId"], name: list2[k]["name"] });
+                }
+              }
+              objDate[date] = bb;
+              aa[j] = objDate[date];
+            }
+            let filePath = "/VehicleWardKM/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+            this.commonService.saveJsonFile(objDate, vehicle+".json", filePath);
+          }
+        }
       }
     }
   }
