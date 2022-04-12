@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
       wardCompleted: '0',
       peopleAtWork: '0',
       vehiclesOnDuty: '0',
-      wasteCollected: '0'
+      wasteCollected: '---'
     };
 
   constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
@@ -66,7 +66,6 @@ export class DashboardComponent implements OnInit {
     this.getCompletedWards();
     this.getActiveVehicles();
     this.drawWorkProgress();
-    this.getWardCollection();
     this.getWardWorkProgressData(this.todayDate);
     let drawProgress = interval(60000).subscribe((val) => {
       this.instancesList.push({ instances: drawProgress });
@@ -75,7 +74,7 @@ export class DashboardComponent implements OnInit {
       this.getWardWorkProgressData(this.todayDate);
     });
   }
-
+/*
   getWardCollection() {
     let collectionInstance = this.db.object("WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/totalWasteCollection").valueChanges().subscribe(
       data => {
@@ -86,6 +85,7 @@ export class DashboardComponent implements OnInit {
       }
     );
   }
+  */
 
   getAssignedWardList() {
     let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate).valueChanges().subscribe(
