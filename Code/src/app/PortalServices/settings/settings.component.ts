@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FirebaseService } from "../../firebase.service";
+import { CommonService } from '../../services/common/common.service';
+import { HttpClient } from "@angular/common/http";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-settings',
@@ -7,9 +11,56 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  db: any;
+  cityName: any;
+  firestotagePath: any;
+  navigatorJsonObject: any;
+
+  txtFirstStartPointRange = "#txtFirstStartPointRange";
+  txtLineEndPointRange = "#txtLineEndPointRange";
 
   ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.setDefault();
+  }
+
+  setDefault() {
+    this.firestotagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.getCommonNavigatorSetting();
+  }
+
+  getCommonNavigatorSetting() {
+    const path = this.firestotagePath + "Common%2FSettings%2FNavigetorSetting.json?alt=media";
+    let navigatorJsonInstance = this.httpService.get(path).subscribe(navigetorJsonData => {
+      navigatorJsonInstance.unsubscribe();
+      if (navigetorJsonData != null) {
+        this.navigatorJsonObject = navigetorJsonData;
+        if (navigetorJsonData["firstStartPointRange"] != null) {
+          $(this.txtFirstStartPointRange).val(navigetorJsonData["firstStartPointRange"]);
+        }
+        if (navigetorJsonData["lineEndPointRange"] != null) {
+          $(this.txtLineEndPointRange).val(navigetorJsonData["lineEndPointRange"]);
+        }
+      }
+    });
+  }
+
+  saveCommonNavigatorSetting() {
+    if (this.navigatorJsonObject == null) {
+      this.navigatorJsonObject = {};
+    }
+    if($(this.txtFirstStartPointRange).val()!=""){
+    this.navigatorJsonObject["firstStartPointRange"] = $(this.txtFirstStartPointRange).val();
+    }
+    if($(this.txtLineEndPointRange).val()!=""){
+    this.navigatorJsonObject["lineEndPointRange"] = $(this.txtLineEndPointRange).val();
+    }
+    let fileName = "NavigetorSetting.json";
+    let path = "/Common/Settings/";
+    this.commonService.saveCommonJsonFile(this.navigatorJsonObject, fileName, path);
+    this.commonService.setAlertMessage("success", "Navigetory setting updated !!!");
   }
 
 }

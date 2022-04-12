@@ -84,3 +84,34 @@ label.margin{
     margin-left: 10px !important;
 }
 
+.wrap-input-effects { 
+    position: relative; 
+    width: 100%; 
+    margin-bottom: 10px;
+   }
+
+   
+  .caret-select{
+    margin-top: -5px!important;
+     margin-right:10px!important;
+    border-radius: 5px;
+    padding:10px;
+      width: 97%;
+      border: 1px solid lightgray!important;
+      font-size: 12px;
+    }
+
+    
+  .caret-select{
+    width: 100% !important
+  }
+  .form {
+   
+    padding: 15px;
+    box-shadow: 0px 0px 9px 3px rgba(179,179,179,1);
+}
+form{
+  padding: 25px 25%;
+ 
+}
+
