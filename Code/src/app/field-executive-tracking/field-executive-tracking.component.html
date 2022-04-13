@@ -4,8 +4,8 @@
 <section class="header">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-3 pl-35"
-        style="width: 100%; display: flex; margin-top: -4px;    padding-left: 20px!important;">
+      <div class="col-md-3 pl-35 main1"
+        >
         <button class="btn btn-primary " (click)="setDate('','previous');">
           << </button>
             <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
@@ -13,7 +13,7 @@
               >>
             </button>
       </div>
-      <div class="col-md-6" style="text-align: center!important; margin-left: -50px;">
+      <div class="col-md-6 main-header-txt">
         <h3 class="header-txt"> <b> Field Executive Tracking </b> </h3>
       </div>
 
@@ -42,7 +42,7 @@
           </h1>
         </div>
         <div class="totalhalt">
-          <h1 style="color:#ff0000!important;">{{executiveDetail.totalHalt}} <br>
+          <h1 class="tatal2">{{executiveDetail.totalHalt}} <br>
             <p>Total Halt</p>
           </h1>
         </div>
@@ -52,7 +52,7 @@
   </div>
 </section>
 
-<div #gmap style="width:100%;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="gmap" id="divMap"></div>
 
 <div id="myBox">
   <div class="accordion">
@@ -63,8 +63,8 @@
             <div class="tableFixHead">
               <table class="table table-hover">
                 <tbody>
-                  <tr class="{{dt.cssClass}}" *ngFor="let dt of executiveList"
-                    (click)="dt.cssClass!='not-active' && getExecutiveRoute(dt.executiveId);" style="cursor:pointer;">
+                  <tr class="{{dt.cssClass}} cursor2" *ngFor="let dt of executiveList"
+                    (click)="dt.cssClass!='not-active' && getExecutiveRoute(dt.executiveId);">
                     <td class="text-left">{{dt.name}}</td>
                   </tr>
                 </tbody>
