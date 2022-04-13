@@ -1216,7 +1216,7 @@ export class WardWorkTrackingComponent {
 
         if (workerData["secondHelper"] != null) {
           let secondHelperList = workerData["secondHelper"].toString().split(",");
-          let secondHelperId = secondHelperList[helperList.length - 1].trim();
+          let secondHelperId = secondHelperList[secondHelperList.length - 1].trim();
           this.getEmployee(secondHelperId, "secondHelper");
         }
         if (workerData["vehicle"] != null) {
@@ -1226,7 +1226,6 @@ export class WardWorkTrackingComponent {
               this.getVehicleLocation(vehicleList[vehicleList.length - 1].trim());
             }
           }
-
         }
       } else {
         this.commonService.setAlertMessage("success", "Work is not assigned for the selected date!!!");
