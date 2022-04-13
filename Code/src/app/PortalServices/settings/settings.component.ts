@@ -32,7 +32,7 @@ export class SettingsComponent implements OnInit {
   }
 
   getCommonNavigatorSetting() {
-    const path = this.firestotagePath + "Common%2FSettings%2FNavigetorSetting.json?alt=media";
+    const path = this.firestotagePath + "Common%2FSettings%2FNavigatorSetting.json?alt=media";
     let navigatorJsonInstance = this.httpService.get(path).subscribe(navigetorJsonData => {
       navigatorJsonInstance.unsubscribe();
       if (navigetorJsonData != null) {
@@ -57,10 +57,10 @@ export class SettingsComponent implements OnInit {
     if($(this.txtLineEndPointRange).val()!=""){
     this.navigatorJsonObject["lineEndPointRange"] = $(this.txtLineEndPointRange).val();
     }
-    let fileName = "NavigetorSetting.json";
+    let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";
     this.commonService.saveCommonJsonFile(this.navigatorJsonObject, fileName, path);
-    this.commonService.setAlertMessage("success", "Navigetory setting updated !!!");
+    this.commonService.setAlertMessage("success", "Navigatory setting updated !!!");
   }
 
 }
