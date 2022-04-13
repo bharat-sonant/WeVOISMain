@@ -637,10 +637,62 @@ p.location2{
   cursor: pointer;
 }
 
+.work-stop-address2{
+  border-bottom: 1px dotted lightgray;
+}
+
 @media only screen and (max-width: 770px) and (min-width: 768px){
   .text-left1{
     padding-right: 0 !important
   }
+}
+@media only screen and (max-width: 345px) and (min-width: 270px){
+  span.paper2{
+   top: -30px;
+   right: 23px
+  }
+  .halt-header{
+    height: 50px !important;
+}
+.text-left1{
+  margin-top: 7px;
+}
+
+button.btn2{
+ 
+  display: none !important;
+}
+}
+@media only screen and (max-width: 430px) and (min-width: 350px){
+  span.paper2{
+   top: -28px;
+   right: 45px
+  }
+  .halt-header{
+    height: 50px !important;
+}
+.mob-btn{
+  width: 164px;
+  display: none !important;
+}
+.text-left1{
+  margin-top: 7px;
+}
+
+}
+
+@media only screen and (max-width: 550px) and (min-width: 500px){
+  span.paper2{
+    top: -35px;
+    right: 45px
+   }
+  
+ .mob-btn{
+   width: 164px;
+ }
+ .halt-header{
+  height: 50px !important;
+}
 }
 
 
