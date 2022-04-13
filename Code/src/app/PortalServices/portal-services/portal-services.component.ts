@@ -77,7 +77,6 @@ export class PortalServicesComponent implements OnInit {
     }
   }
 
-
   showAlert() {
     this.toastr.error("Updated Successfully !!!", "", {
       timeOut: 2000,
@@ -89,7 +88,6 @@ export class PortalServicesComponent implements OnInit {
   }
 
   goToPage(url: any) {
-    console.log(url);
     url = localStorage.getItem("cityName") + url;
     this.router.navigate([url]);
   }
