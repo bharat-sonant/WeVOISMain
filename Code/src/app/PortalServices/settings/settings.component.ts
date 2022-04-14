@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
-import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-settings',
@@ -21,7 +20,7 @@ export class SettingsComponent implements OnInit {
   txtLineEndPointRange = "#txtLineEndPointRange";
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
-  txtTraveralPathDuration = "#txtTraveralPathDuration";
+  txtTraversalPathDuration = "#txtTraversalPathDuration";
   txtCapturingGap = "#txtCapturingGap";
 
   ngOnInit() {
@@ -53,8 +52,8 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["maxDistanceCanCover"] != null) {
           $(this.txtMaxDistanceCanCover).val(navigetorJsonData["maxDistanceCanCover"]);
         }
-        if (navigetorJsonData["traveralPathDuration"] != null) {
-          $(this.txtTraveralPathDuration).val(navigetorJsonData["traveralPathDuration"]);
+        if (navigetorJsonData["traversalPathDuration"] != null) {
+          $(this.txtTraversalPathDuration).val(navigetorJsonData["traversalPathDuration"]);
         }
         if (navigetorJsonData["capturingGap"] != null) {
           $(this.txtCapturingGap).val(navigetorJsonData["capturingGap"]);
@@ -80,8 +79,8 @@ export class SettingsComponent implements OnInit {
     if ($(this.txtMaxDistanceCanCover).val() != "") {
       this.navigatorJsonObject["maxDistanceCanCover"] = $(this.txtMaxDistanceCanCover).val();
     }
-    if ($(this.txtTraveralPathDuration).val() != "") {
-      this.navigatorJsonObject["traveralPathDuration"] = $(this.txtTraveralPathDuration).val();
+    if ($(this.txtTraversalPathDuration).val() != "") {
+      this.navigatorJsonObject["traversalPathDuration"] = $(this.txtTraversalPathDuration).val();
     }
     if ($(this.txtCapturingGap).val() != "") {
       this.navigatorJsonObject["capturingGap"] = $(this.txtCapturingGap).val();

@@ -21,8 +21,11 @@
                     <!------------- Halt Scroll List Start ---------->
                     <div class="col-md-3 mob-space-25 iner-main">
                         <div class="scrollable-halt">
-                            <div class="halt-bg" >
+                            <div class="halt-bg">
                                 <div class="work-stop-address work-stop-address2">
+                                    <i class="fas fa-user-edit"
+                                        style="cursor: pointer; color: green; position: absolute;z-index: 999;right: 25px;"
+                                        (click)="openModel(contentUpdateDetail)"></i>
                                     <p><i class="fas fa-user"></i> {{vendorData.name}} </p>
                                 </div>
                                 <div class="work-stop-address work-stop-address2">
@@ -54,11 +57,11 @@
                             <div class="col-md-12">
                                 <div class="map-bg map-bg2">
                                     <div class="row total-halt">
-                                        
+
                                     </div>
 
                                     <div class="mob-mt-5 last-main">
-                                        
+
                                     </div>
 
                                 </div>
@@ -72,7 +75,8 @@
             <!------------- Ward Scroll List Start ---------->
             <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
                 <div class="scroll-list">
-                    <div class="ward-header list2" *ngFor="let dt of vendorList" (click)="getVendorDetail(dt.vendorId);">
+                    <div class="ward-header list2" *ngFor="let dt of vendorList"
+                        (click)="getVendorDetail(dt.vendorId);">
                         <div class="ward-details">
                             <h6>{{dt.name}}</h6>
                         </div>
@@ -86,20 +90,47 @@
 
 
 <!--Remark Modal Start-->
-<ng-template #contentRemark>
+<ng-template #contentUpdateDetail>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Remark for halt</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Detail</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="haltId" value="0" />
-                <input type="hidden" id="type" value="0" />
-                <textarea id="txtRemark" placeholder="Type your concern"></textarea>
-                <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="saveRemark();" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Name</label>
+                        <input id="txtName" type="text" class="input-text">
+                    </div>
+                    <div class="col-md-12">
+                        <label>Mobile</label>
+                        <input id="txtMobile" type="text" class="input-text">
+                    </div>
+                    <div class="col-md-12">
+                        <label>Address</label>
+                        <textarea id="txtAddress" placeholder="Type your concern"></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label>Bank Name</label>
+                        <input id="txtBankName" type="text" class="input-text">
+                    </div>
+                    <div class="col-md-12">
+                        <label>Account No.</label>
+                        <input id="txtAccountNo" type="text" class="input-text">
+                    </div>
+                    <div class="col-md-12">
+                        <label>Bank Branch</label>
+                        <input id="txtBranch" type="text" class="input-text">
+                    </div>
+                    <div class="col-md-12">
+                        <label>IFSC</label>
+                        <input id="txtIfsc" type="text" class="input-text">
+                    </div>
+                </div>
+                <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="updateVendorDetail();" />
             </div>
         </div>
     </div>
