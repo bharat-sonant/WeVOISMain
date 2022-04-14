@@ -99,6 +99,7 @@ import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-perc
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
+import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -216,6 +217,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'sikar/ward-work-done', component: WardWorkDoneComponent },
     { path: 'sikar/settings', component: SettingsComponent },
+    { path: 'sikar/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -323,6 +325,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'sikar/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'sikar/:id/settings', component: SettingsComponent },
+    { path: 'sikar/:id/vendor-ledger', component: VendorLedgerComponent },
 
 
     //jaipur-greater
@@ -430,6 +433,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaipur-greater/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-greater/settings', component: SettingsComponent },
+    { path: 'jaipur-greater/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -536,6 +540,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaipur-greater/id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-greater/:id/settings', component: SettingsComponent },
+    { path: 'jaipur-greater/:id/vendor-ledger', component: VendorLedgerComponent },
     
 
     //reengus
@@ -644,6 +649,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'reengus/ward-work-done', component: WardWorkDoneComponent },
     { path: 'reengus/settings', component: SettingsComponent },
+    { path: 'reengus/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -751,6 +757,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'reengus/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'reengus/:id/settings', component: SettingsComponent },
+    { path: 'reengus/:id/vendor-ledger', component: VendorLedgerComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -858,6 +865,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'shahpura/ward-work-done', component: WardWorkDoneComponent },
     { path: 'shahpura/settings', component: SettingsComponent },
+    { path: 'shahpura/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -965,6 +973,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'shahpura/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'shahpura/:id/settings', component: SettingsComponent },
+    { path: 'shahpura/:id/vendor-ledger', component: VendorLedgerComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1072,6 +1081,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'test/ward-work-done', component: WardWorkDoneComponent },
     { path: 'test/settings', component: SettingsComponent },
+    { path: 'test/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1179,6 +1189,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'test/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'test/:id/settings', component: SettingsComponent },
+    { path: 'test/:id/vendor-ledger', component: VendorLedgerComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1286,6 +1297,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaipur-office/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-office/settings', component: SettingsComponent },
+    { path: 'jaipur-office/vendor-ledger', component: VendorLedgerComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1392,6 +1404,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaipur-office/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-office/:id/settings', component: SettingsComponent },
+    { path: 'jaipur-office/:id/vendor-ledger', component: VendorLedgerComponent },
 
     
 
@@ -1501,6 +1514,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'kishangarh/ward-work-done', component: WardWorkDoneComponent },
     { path: 'kishangarh/settings', component: SettingsComponent },
+    { path: 'kishangarh/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1608,6 +1622,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'kishangarh/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'kishangarh/:id/settings', component: SettingsComponent },
+    { path: 'kishangarh/:id/vendor-ledger', component: VendorLedgerComponent },
 
 
 
@@ -1718,6 +1733,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'niwai/ward-work-done', component: WardWorkDoneComponent },
     { path: 'niwai/settings', component: SettingsComponent },
+    { path: 'niwai/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1825,6 +1841,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'niwai/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'niwai/:id/settings', component: SettingsComponent },
+    { path: 'niwai/:id/vendor-ledger', component: VendorLedgerComponent },
 
 
 
@@ -1934,6 +1951,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaisalmer/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaisalmer/settings', component: SettingsComponent },
+    { path: 'jaisalmer/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2041,6 +2059,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'jaisalmer/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaisalmer/:id/settings', component: SettingsComponent },
+    { path: 'jaisalmer/:id/vendor-ledger', component: VendorLedgerComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2148,6 +2167,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'churu/ward-work-done', component: WardWorkDoneComponent },
     { path: 'churu/settings', component: SettingsComponent },
+    { path: 'churu/vendor-ledger', component: VendorLedgerComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2255,4 +2275,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: 'churu/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'churu/:id/settings', component: SettingsComponent },
+    { path: 'churu/:id/vendor-ledger', component: VendorLedgerComponent },
 ]; 

@@ -19,6 +19,10 @@ export class SettingsComponent implements OnInit {
 
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
+  txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
+  txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
+  txtTraveralPathDuration = "#txtTraveralPathDuration";
+  txtCapturingGap = "#txtCapturingGap";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -43,6 +47,19 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["lineEndPointRange"] != null) {
           $(this.txtLineEndPointRange).val(navigetorJsonData["lineEndPointRange"]);
         }
+        if (navigetorJsonData["currentLocationCaptureInterval"] != null) {
+          $(this.txtCurrentLocationCaptureInterval).val(navigetorJsonData["currentLocationCaptureInterval"]);
+        }
+        if (navigetorJsonData["maxDistanceCanCover"] != null) {
+          $(this.txtMaxDistanceCanCover).val(navigetorJsonData["maxDistanceCanCover"]);
+        }
+        if (navigetorJsonData["traveralPathDuration"] != null) {
+          $(this.txtTraveralPathDuration).val(navigetorJsonData["traveralPathDuration"]);
+        }
+        if (navigetorJsonData["capturingGap"] != null) {
+          $(this.txtCapturingGap).val(navigetorJsonData["capturingGap"]);
+        }
+
       }
     });
   }
@@ -51,11 +68,23 @@ export class SettingsComponent implements OnInit {
     if (this.navigatorJsonObject == null) {
       this.navigatorJsonObject = {};
     }
-    if($(this.txtFirstStartPointRange).val()!=""){
-    this.navigatorJsonObject["firstStartPointRange"] = $(this.txtFirstStartPointRange).val();
+    if ($(this.txtFirstStartPointRange).val() != "") {
+      this.navigatorJsonObject["firstStartPointRange"] = $(this.txtFirstStartPointRange).val();
     }
-    if($(this.txtLineEndPointRange).val()!=""){
-    this.navigatorJsonObject["lineEndPointRange"] = $(this.txtLineEndPointRange).val();
+    if ($(this.txtLineEndPointRange).val() != "") {
+      this.navigatorJsonObject["lineEndPointRange"] = $(this.txtLineEndPointRange).val();
+    }
+    if ($(this.txtCurrentLocationCaptureInterval).val() != "") {
+      this.navigatorJsonObject["currentLocationCaptureInterval"] = $(this.txtCurrentLocationCaptureInterval).val();
+    }
+    if ($(this.txtMaxDistanceCanCover).val() != "") {
+      this.navigatorJsonObject["maxDistanceCanCover"] = $(this.txtMaxDistanceCanCover).val();
+    }
+    if ($(this.txtTraveralPathDuration).val() != "") {
+      this.navigatorJsonObject["traveralPathDuration"] = $(this.txtTraveralPathDuration).val();
+    }
+    if ($(this.txtCapturingGap).val() != "") {
+      this.navigatorJsonObject["capturingGap"] = $(this.txtCapturingGap).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";

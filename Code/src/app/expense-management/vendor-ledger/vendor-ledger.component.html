@@ -1,0 +1,107 @@
+<section class="halt-data">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 halt-header pl-0 pr-0">
+                <!------------- Header Start ---------->
+                <div class="row">
+                    <div class="col-md-6 text-left text-left1">
+
+                    </div>
+                    <div class="col-md-3 text-left">
+                        <h5 class="hide">Vendor Ledger</h5>
+
+                    </div>
+                    <div class="col-md-3 text-right pr-20">
+
+
+                    </div>
+                </div>
+                <!------------- Header End ---------->
+                <div class="row main1">
+                    <!------------- Halt Scroll List Start ---------->
+                    <div class="col-md-3 mob-space-25 iner-main">
+                        <div class="scrollable-halt">
+                            <div class="halt-bg" >
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-user"></i> {{vendorData.name}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-mobile-alt"></i> {{vendorData.mobile}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-file-invoice-dollar"></i> {{vendorData.accountNumber}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-file-invoice-dollar"></i> {{vendorData.ifsc}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-file-invoice-dollar"></i> {{vendorData.branch}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-university"></i> {{vendorData.bankName}} </p>
+                                </div>
+                                <div class="work-stop-address work-stop-address2">
+                                    <p><i class="fas fa-map-marker-alt"></i> {{vendorData.address}} </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!------------- Halt Scroll List End ---------->
+
+                    <div class="col-md-9 mob-map mob-space-25 main2">
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <div class="map-bg map-bg2">
+                                    <div class="row total-halt">
+                                        
+                                    </div>
+
+                                    <div class="mob-mt-5 last-main">
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!------------- Halt Map End ---------->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!------------- Ward Scroll List Start ---------->
+            <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
+                <div class="scroll-list">
+                    <div class="ward-header list2" *ngFor="let dt of vendorList" (click)="getVendorDetail(dt.vendorId);">
+                        <div class="ward-details">
+                            <h6>{{dt.name}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!------------- Ward Scroll List End ---------->
+        </div>
+    </div>
+</section>
+
+
+<!--Remark Modal Start-->
+<ng-template #contentRemark>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Remark for halt</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="haltId" value="0" />
+                <input type="hidden" id="type" value="0" />
+                <textarea id="txtRemark" placeholder="Type your concern"></textarea>
+                <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="saveRemark();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Remark Modal End-->
