@@ -8,7 +8,7 @@
         <button class="btn btn-primary " (click)="setDate('','previous');">
           << </button>
             <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-            <button class="btn btn-primary" (click)="setDate('','next');">
+            <button class="btn btn-primary left" (click)="setDate('','next');">
               >>
             </button>
       </div>

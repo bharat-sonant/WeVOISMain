@@ -630,6 +630,130 @@ color: #fff;
 
 
 
+@media only screen and (min-width:280px) and (max-width:550px){
+  .header{
+    height: 165px !important;
+   
+}
+#myBox{
+ 
+  top: 165px !important;
+ 
+}
+.main-header-txt{
+  
+  display: none !important;
+}
+.field-box{
+  top: 70px !important;
+  position: unset !important;
+  margin-top: 20px;
+}
+.dutyin{
+  width: 135px !important;
+  border: none !important;
+  
+}
+.dutyoff{
+  width: 136px !important;
+  border: none !important;
+  
+}
+.totalKM{
+  width: 135px !important;
+  
+  margin-top: 15px !important;
+  border: none !important;
+}
+.totalImages{
+ border: none !important;
+}
+.totalhalt{
+width: 270px;
+margin-top: 20px !important;
+padding-top: 25px;
+}
+
+.left{
+  margin-left: 0px !important;
+}
+}
+
+@media only screen and (min-width:255px) and (max-width:362px){
+  .dutyin{
+    width: 125px !important;
+    border: none !important;
+    
+  }
+  .totalhalt{
+    width: 250px;
+    
+}
+}
+
+@media only screen and (min-width:750px) and (max-width:1025px){
+  .main-header-txt{
+   display: none !important;
+  }
+  button.btn.btn-primary {
+    margin-left: 24px;
+}
+.left{
+  margin-left: 0px !important;
+}
+.field-box h1{
+ 
+  font-size: 12px !important;
+  
+}
+
+}
+
+@media only screen and (min-width:535px) and (max-width:545px){
+  .totalhalt{
+    width: 365px;
+    margin-top: 20px !important;
+    padding-top: 25px;
+  }
+  .dutyin{
+    width: 170px !important;
+    border: none !important;
+  }
+  .dutyoff{
+    width: 170px !important;
+    border: none !important;
+  }
+  #myBox{
+ 
+    top: 165px !important;
+   
+  }
+  .header{
+    height: 165px !important;
+}
+}
+
+@media only screen and (min-width:270px) and (max-width:281px){
+
+  .dutyin{
+    width: 86px !important;
+   
+}
+.dutyoff{
+  width: 125px !important;
+  
+}
+.totalImages{
+  width: 45px;
+ 
+ 
+}
+
+}
+
+
+
+
 
 
 
