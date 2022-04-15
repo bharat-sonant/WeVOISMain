@@ -16,12 +16,18 @@ export class SettingsComponent implements OnInit {
   firestotagePath: any;
   navigatorJsonObject: any;
   readerJsonObject: any;
-
+// Navigator
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
   txtTraversalPathDuration = "#txtTraversalPathDuration";
+  txtInternetCheckInverval="#txtInternetCheckInverval";
+  txtScreenOffVoiceMessage="#txtScreenOffVoiceMessage";
+  txtInternetCheckVoiceMessage="#txtInternetCheckVoiceMessage";
+
+
+  // Reader
   txtCapturingGap = "#txtCapturingGap";
   txtCardScanWaitTime="#txtCardScanWaitTime";
   txtCardScanTimeGap="#txtCardScanTimeGap";
@@ -63,7 +69,15 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["capturingGap"] != null) {
           $(this.txtCapturingGap).val(navigetorJsonData["capturingGap"]);
         }
-
+        if (navigetorJsonData["internetCheckInverval"] != null) {
+          $(this.txtInternetCheckInverval).val(navigetorJsonData["internetCheckInverval"]);
+        }
+        if (navigetorJsonData["screenOffVoiceMessage"] != null) {
+          $(this.txtScreenOffVoiceMessage).val(navigetorJsonData["screenOffVoiceMessage"]);
+        }
+        if (navigetorJsonData["internetCheckVoiceMessage"] != null) {
+          $(this.txtInternetCheckVoiceMessage).val(navigetorJsonData["internetCheckVoiceMessage"]);
+        }
       }
     });
   }
@@ -89,6 +103,15 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtCapturingGap).val() != "") {
       this.navigatorJsonObject["capturingGap"] = $(this.txtCapturingGap).val();
+    }
+    if ($(this.txtInternetCheckInverval).val() != "") {
+      this.navigatorJsonObject["internetCheckInverval"] = $(this.txtInternetCheckInverval).val();
+    }
+    if ($(this.txtScreenOffVoiceMessage).val() != "") {
+      this.navigatorJsonObject["screenOffVoiceMessage"] = $(this.txtScreenOffVoiceMessage).val();
+    }
+    if ($(this.txtInternetCheckVoiceMessage).val() != "") {
+      this.navigatorJsonObject["internetCheckVoiceMessage"] = $(this.txtInternetCheckVoiceMessage).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";
