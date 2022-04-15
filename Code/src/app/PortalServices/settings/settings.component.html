@@ -13,13 +13,14 @@
                         <div class="col-md-12 bg-color">
                                 <nav class="main1">
                                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-home" type="button" role="tab"
-                                                        aria-controls="nav-home" aria-selected="true">Navigator
+                                                <button class="nav-link active" id="tabNavigator" data-bs-toggle="tab"
+                                                        data-bs-target="#Navigator" type="button" role="tab"
+                                                        aria-controls="Navigator" aria-selected="true" (click)="setActiveTab('Navigator');">Navigator
                                                 </button>
-                                                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-profile" type="button" role="tab"
-                                                        aria-controls="nav-profile" aria-selected="false"></button>
+                                                <button class="nav-link" id="tabReader" data-bs-toggle="tab"
+                                                        data-bs-target="#Reader" type="button" role="tab"
+                                                        aria-controls="Reader"
+                                                        aria-selected="false" (click)="setActiveTab('Reader');">Reader</button>
                                                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab"
                                                         data-bs-target="#nav-contact" type="button" role="tab"
                                                         aria-controls="nav-contact" aria-selected="false"></button>
@@ -29,8 +30,8 @@
                                         </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
-                                        <div class="tab-pane fade show active save" id="nav-home" role="tabpanel"
-                                                aria-labelledby="nav-home-tab">
+                                        <div class="tab-pane fade show active save" id="Navigator" role="tabpanel"
+                                                aria-labelledby="tabNavigator">
                                                 <form>
                                                         <div class="form">
 
@@ -56,7 +57,8 @@
                                                                                 </div>
                                                                         </div>
                                                                         <div class="col-md-12">
-                                                                                <label>Current Location Capture Interval (in
+                                                                                <label>Current Location Capture Interval
+                                                                                        (in
                                                                                         second)</label>
                                                                                 <div class="wrap-input-effects"
                                                                                         required>
@@ -109,23 +111,52 @@
                                                 </form>
 
                                         </div>
-                                        <div class="tab-pane fade" id="nav-profile" role="tabpanel"
-                                                aria-labelledby="nav-profile-tab">
-                                                <form action="" class="form">
+                                        <div class="tab-pane fade" id="Reader" role="tabpanel"
+                                                aria-labelledby="tabReader">
+                                                <form>
+                                                        <div class="form">
 
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <a href="#">save</a>
-
-
-
-
+                                                                <div class="row">
+                                                                        <div class="col-md-12">
+                                                                                <label>Card Scan Wait Time (in
+                                                                                        second)</label>
+                                                                                <div class="wrap-input-effects"
+                                                                                        required>
+                                                                                        <input id="txtCardScanWaitTime"
+                                                                                                class="caret-select"
+                                                                                                type="number" />
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="col-md-12">
+                                                                                <label>Card Scan Time Gap (in
+                                                                                        second)</label>
+                                                                                <div class="wrap-input-effects"
+                                                                                        required>
+                                                                                        <input id="txtCardScanTimeGap"
+                                                                                                class="caret-select"
+                                                                                                type="number" />
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="col-md-12">
+                                                                                <label>Card Scan Note</label>
+                                                                                <div class="wrap-input-effects"
+                                                                                        required>
+                                                                                        <input id="txtCardScanNote"
+                                                                                                class="caret-select"
+                                                                                                type="text" />
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="row form-group2">
+                                                                        <div class="col-md-12 pr-1">
+                                                                                <div class="form-group">
+                                                                                        <button
+                                                                                                class="btn btn-success btn-xs"
+                                                                                                (click)="saveCommonReaderSetting();">SAVE</button>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
                                                 </form>
                                         </div>
                                         <div class="tab-pane fade" id="nav-contact" role="tabpanel"

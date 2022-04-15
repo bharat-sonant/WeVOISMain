@@ -15,6 +15,7 @@ export class SettingsComponent implements OnInit {
   cityName: any;
   firestotagePath: any;
   navigatorJsonObject: any;
+  readerJsonObject: any;
 
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
@@ -22,6 +23,9 @@ export class SettingsComponent implements OnInit {
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
   txtTraversalPathDuration = "#txtTraversalPathDuration";
   txtCapturingGap = "#txtCapturingGap";
+  txtCardScanWaitTime="#txtCardScanWaitTime";
+  txtCardScanTimeGap="#txtCardScanTimeGap";
+  txtCardScanNote="#txtCardScanNote";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -32,6 +36,7 @@ export class SettingsComponent implements OnInit {
   setDefault() {
     this.firestotagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.getCommonNavigatorSetting();
+    this.getCommonReaderSetting();
   }
 
   getCommonNavigatorSetting() {
@@ -89,6 +94,85 @@ export class SettingsComponent implements OnInit {
     let path = "/Common/Settings/";
     this.commonService.saveCommonJsonFile(this.navigatorJsonObject, fileName, path);
     this.commonService.setAlertMessage("success", "Navigatory setting updated !!!");
+  }
+
+  getCommonReaderSetting(){
+    const path = this.firestotagePath + "Common%2FSettings%2FReaderSetting.json?alt=media";
+    let readerJsonInstance = this.httpService.get(path).subscribe(readerJsonData => {
+      readerJsonInstance.unsubscribe();
+      if (readerJsonData != null) {
+        this.readerJsonObject = readerJsonData;
+        if (readerJsonData["cardScanWaitTime"] != null) {
+          $(this.txtCardScanWaitTime).val(readerJsonData["cardScanWaitTime"]);
+        }
+        if (readerJsonData["cardScanTimeGap"] != null) {
+          $(this.txtCardScanTimeGap).val(readerJsonData["cardScanTimeGap"]);
+        }
+        if (readerJsonData["cardScanNote"] != null) {
+          $(this.txtCardScanNote).val(readerJsonData["cardScanNote"]);
+        }
+
+      }
+    });
+  }
+
+  saveCommonReaderSetting(){
+    if (this.readerJsonObject == null) {
+      this.readerJsonObject = {};
+    }
+    if ($(this.txtCardScanWaitTime).val() != "") {
+      this.readerJsonObject["cardScanWaitTime"] = $(this.txtCardScanWaitTime).val();
+    }
+    if ($(this.txtCardScanTimeGap).val() != "") {
+      this.readerJsonObject["cardScanTimeGap"] = $(this.txtCardScanTimeGap).val();
+    }
+    if ($(this.txtCardScanNote).val() != "") {
+      this.readerJsonObject["cardScanNote"] = $(this.txtCardScanNote).val();
+    }
+    let fileName = "ReaderSetting.json";
+    let path = "/Common/Settings/";
+    this.commonService.saveCommonJsonFile(this.readerJsonObject, fileName, path);
+    this.commonService.setAlertMessage("success", "Reader setting updated !!!");
+  }
+
+  
+  setActiveTab(tab: any) {
+    $("#Navigator").hide();
+    $("#Reader").hide();
+
+    let element = <HTMLButtonElement>document.getElementById("tabNavigator");
+    let className = element.className;
+    $("#tabNavigator").removeClass(className);
+    $("#tabNavigator").addClass("nav-link");
+
+    element = <HTMLButtonElement>document.getElementById("tabReader");
+    className = element.className;
+    $("#tabReader").removeClass(className);
+    $("#tabReader").addClass("nav-link");
+
+    if (tab == "Navigator") {
+      $("#Navigator").show();
+      element = <HTMLButtonElement>document.getElementById("tabNavigator");
+      className = element.className;
+      $("#tabNavigator").removeClass(className);
+      $("#tabNavigator").addClass("nav-link active");
+
+      element = <HTMLButtonElement>document.getElementById("Navigator");
+      className = element.className;
+      $("#Navigator").removeClass(className);
+      $("#Navigator").addClass("tab-pane fade show active save");
+    } else if (tab == "Reader") {
+      $("#Reader").show();
+      element = <HTMLButtonElement>document.getElementById("tabReader");
+      className = element.className;
+      $("#tabReader").removeClass(className);
+      $("#tabReader").addClass("nav-link active");
+
+      element = <HTMLButtonElement>document.getElementById("Reader");
+      className = element.className;
+      $("#Reader").removeClass(className);
+      $("#Reader").addClass("tab-pane fade show active save");
+    }
   }
 
 }
