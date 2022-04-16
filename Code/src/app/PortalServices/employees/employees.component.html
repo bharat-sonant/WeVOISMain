@@ -1,0 +1,120 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            Employees
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlDesignation"
+                                        (change)="filterData()">
+                                        <option value="all">
+                                            All Roles
+                                        </option>
+                                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                                            {{dt.designation}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Role</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Action
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of employeeList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{data.name}} <b>[{{data.empCode}}]</b>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.designation}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:red;" (click)="updateEmployee('2',data.empId)">De-activate</span>
+                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:green;" (click)="updateEmployee('1',data.empId)" >Activate</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
+                <!--  <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <h5> <b> </b></h5>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> </span> <br>
+                                    Total Lines
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

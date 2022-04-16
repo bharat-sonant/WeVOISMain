@@ -99,6 +99,8 @@ import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-lin
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
+import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
+import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -216,6 +218,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/ward-work-done', component: WardWorkDoneComponent },
     { path: 'sikar/settings', component: SettingsComponent },
     { path: 'sikar/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'sikar/employees', component: EmployeesComponent },
+    { path: 'sikar/special-users', component: SpecialUsersComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -323,6 +327,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'sikar/:id/settings', component: SettingsComponent },
     { path: 'sikar/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'sikar/:id/employees', component: EmployeesComponent },
+    { path: 'sikar/:id/special-users', component: SpecialUsersComponent },
 
 
     //jaipur-greater
@@ -430,6 +436,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-greater/settings', component: SettingsComponent },
     { path: 'jaipur-greater/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur-greater/employees', component: EmployeesComponent },
+    { path: 'jaipur-greater/special-users', component: SpecialUsersComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -536,6 +544,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-greater/:id/settings', component: SettingsComponent },
     { path: 'jaipur-greater/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur-greater/:id/employees', component: EmployeesComponent },
+    { path: 'jaipur-greater/:id/special-users', component: SpecialUsersComponent },
     
 
     //reengus
@@ -644,6 +654,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/ward-work-done', component: WardWorkDoneComponent },
     { path: 'reengus/settings', component: SettingsComponent },
     { path: 'reengus/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'reengus/employees', component: EmployeesComponent },
+    { path: 'reengus/special-users', component: SpecialUsersComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -751,6 +763,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'reengus/:id/settings', component: SettingsComponent },
     { path: 'reengus/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'reengus/:id/employees', component: EmployeesComponent },
+    { path: 'reengus/:id/special-users', component: SpecialUsersComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -858,6 +872,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/ward-work-done', component: WardWorkDoneComponent },
     { path: 'shahpura/settings', component: SettingsComponent },
     { path: 'shahpura/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'shahpura/employees', component: EmployeesComponent },
+    { path: 'shahpura/special-users', component: SpecialUsersComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -965,6 +981,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'shahpura/:id/settings', component: SettingsComponent },
     { path: 'shahpura/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'shahpura/:id/employees', component: EmployeesComponent },
+    { path: 'shahpura/:id/special-users', component: SpecialUsersComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1072,6 +1090,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/ward-work-done', component: WardWorkDoneComponent },
     { path: 'test/settings', component: SettingsComponent },
     { path: 'test/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'test/employees', component: EmployeesComponent },
+    { path: 'test/special-users', component: SpecialUsersComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1179,6 +1199,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'test/:id/settings', component: SettingsComponent },
     { path: 'test/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'test/:id/employees', component: EmployeesComponent },
+    { path: 'test/:id/special-users', component: SpecialUsersComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1286,6 +1308,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-office/settings', component: SettingsComponent },
     { path: 'jaipur-office/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur-office/employees', component: EmployeesComponent },
+    { path: 'jaipur-office/special-users', component: SpecialUsersComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1392,6 +1416,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaipur-office/:id/settings', component: SettingsComponent },
     { path: 'jaipur-office/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur-office/:id/employees', component: EmployeesComponent },
+    { path: 'jaipur-office/:id/special-users', component: SpecialUsersComponent },
 
     
 
@@ -1501,6 +1527,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/ward-work-done', component: WardWorkDoneComponent },
     { path: 'kishangarh/settings', component: SettingsComponent },
     { path: 'kishangarh/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'kishangarh/employees', component: EmployeesComponent },
+    { path: 'kishangarh/special-users', component: SpecialUsersComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1608,6 +1636,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'kishangarh/:id/settings', component: SettingsComponent },
     { path: 'kishangarh/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'kishangarh/:id/employees', component: EmployeesComponent },
+    { path: 'kishangarh/:id/special-users', component: SpecialUsersComponent },
 
 
 
@@ -1718,6 +1748,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/ward-work-done', component: WardWorkDoneComponent },
     { path: 'niwai/settings', component: SettingsComponent },
     { path: 'niwai/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'niwai/employees', component: EmployeesComponent },
+    { path: 'niwai/special-users', component: SpecialUsersComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1825,6 +1857,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'niwai/:id/settings', component: SettingsComponent },
     { path: 'niwai/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'niwai/:id/employees', component: EmployeesComponent },
+    { path: 'niwai/:id/special-users', component: SpecialUsersComponent },
 
 
 
@@ -1934,6 +1968,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaisalmer/settings', component: SettingsComponent },
     { path: 'jaisalmer/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaisalmer/employees', component: EmployeesComponent },
+    { path: 'jaisalmer/special-users', component: SpecialUsersComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2041,6 +2077,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'jaisalmer/:id/settings', component: SettingsComponent },
     { path: 'jaisalmer/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaisalmer/:id/employees', component: EmployeesComponent },
+    { path: 'jaisalmer/:id/special-users', component: SpecialUsersComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2148,6 +2186,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/ward-work-done', component: WardWorkDoneComponent },
     { path: 'churu/settings', component: SettingsComponent },
     { path: 'churu/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'churu/employees', component: EmployeesComponent },
+    { path: 'churu/special-users', component: SpecialUsersComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2255,4 +2295,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: 'churu/:id/settings', component: SettingsComponent },
     { path: 'churu/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'churu/:id/employees', component: EmployeesComponent },
+    { path: 'churu/:id/special-users', component: SpecialUsersComponent },
 ]; 

@@ -70,6 +70,12 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8S" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divSettings").show();
         }
+        if (userAccessList[i]["pageId"] == "8T" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divEmployee").show();
+        }
+        if (userAccessList[i]["pageId"] == "8U" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divSpecialUsers").show();
+        }
       }
     }
   }

@@ -106,6 +106,8 @@ import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-lin
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
+import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
+import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
 
 @NgModule({
   imports: [
@@ -216,7 +218,9 @@ import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/ve
     ChangeLineSurveyedDataComponent,
     WardWorkDoneComponent,
     SettingsComponent,
-    VendorLedgerComponent
+    VendorLedgerComponent,
+    EmployeesComponent,
+    SpecialUsersComponent
   ]
 })
 
