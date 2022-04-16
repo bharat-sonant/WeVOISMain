@@ -315,9 +315,6 @@ export class VehicleFuelReportComponent implements OnInit {
     $('#divLoader').show();
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     let days = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-    if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
-      days = parseInt(this.commonService.setTodayDate().split("-")[2]) - 1;
-    }
     this.getVehicleRunning(1, days);
   }
 
