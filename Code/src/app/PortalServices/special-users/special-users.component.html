@@ -1,1 +1,158 @@
-<p>special-users works!</p>
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            <span class="btn success addNew" (click)="openModel(contentUser,0);"  >Add New</span>
+            Special Users
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Password</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                User Type
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Action
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of userList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{data.type}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.username}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.password}}
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    <i class="fas fa-user-edit" style="cursor: pointer; font-size: 20px;" (click)="openModel(contentUser,data.id);" ></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
+                <!--  <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <h5> <b> </b></h5>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> </span> <br>
+                                    Total Lines
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--user  Start-->
+<ng-template #contentUser>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlType" class="input-green">
+                        <option value="0">Select Type</option>
+                        <option value="superadmin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="accountadmin">Account Admin</option>
+                        <option value="cityadmin">City Admin</option>
+                        <option value="empapproveradmin">Employee Approve Admin</option>
+                        <option value="humanresources">Human Resources</option>
+                        <option value="siadmin">SI Admin</option>
+                        <option value="supportteam">Support Team</option>
+                        <option value="siadmin">SI Admin</option>
+                    </select>     
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>              
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtUserName" class="input-green" placeholder="Name" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-key" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                    (click)="saveUsers();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--user End-->

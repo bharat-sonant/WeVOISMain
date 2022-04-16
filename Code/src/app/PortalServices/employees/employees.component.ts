@@ -3,7 +3,6 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-employees',
@@ -12,7 +11,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class EmployeesComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[] = [];
@@ -94,7 +93,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateInDatabase(empId: any, status: any) {
-    let dbPath = "Employees/" + empId + "/GeneralDetails/status";
+    let dbPath = "Employees/" + empId + "/GeneralDetails/";
     this.db.object(dbPath).update({ status: status });
   }
 }
