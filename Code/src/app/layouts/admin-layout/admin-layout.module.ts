@@ -89,7 +89,6 @@ import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/
 import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
-import { VehicleTrackComponent } from '../../PortalServices/vehicle-track/vehicle-track.component';
 import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
@@ -201,7 +200,6 @@ import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/ve
     ShowRouteComponent,
     FieldExecutiveAttendanceComponent,
     VehicleFuelReportComponent,
-    VehicleTrackComponent,
     EmployeePenaltyComponent,
     PenaltyPortalServiceComponent,
     AccountDetailComponent,
