@@ -433,14 +433,22 @@ export class HaltsComponent {
     });
   }
 
-  setDate(filterVal: any) {
-    this.selectedDate = filterVal;
+  setDate(filterVal: any,type:any) {
+    if (type == 'current') {
+      this.selectedDate = filterVal;
+    } else if (type == 'next') {
+      let nextDate = this.commonService.getNextDate($('#txtDate').val(), 1);
+      this.selectedDate = nextDate;
+    } else if (type == 'previous') {
+      let previousDate = this.commonService.getPreviousDate($('#txtDate').val(), 1);
+      this.selectedDate = previousDate;
+    }
+    $('#txtDate').val(this.selectedDate);
     if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
       this.selectedDate = this.toDayDate;
       this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
       this.selectedDate = this.toDayDate;
       $('#txtDate').val(this.selectedDate);
-      //return;
     }
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = this.selectedDate.split("-")[0];
