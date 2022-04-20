@@ -22,7 +22,7 @@ export class SettingsComponent implements OnInit {
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
   txtTraversalPathDuration = "#txtTraversalPathDuration";
-  txtInternetCheckInverval="#txtInternetCheckInverval";
+  txtInternetCheckInterval="#txtInternetCheckInterval";
   txtScreenOffVoiceMessage="#txtScreenOffVoiceMessage";
   txtInternetCheckVoiceMessage="#txtInternetCheckVoiceMessage";
 
@@ -69,8 +69,8 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["capturingGap"] != null) {
           $(this.txtCapturingGap).val(navigetorJsonData["capturingGap"]);
         }
-        if (navigetorJsonData["internetCheckInverval"] != null) {
-          $(this.txtInternetCheckInverval).val(navigetorJsonData["internetCheckInverval"]);
+        if (navigetorJsonData["internetCheckInterval"] != null) {
+          $(this.txtInternetCheckInterval).val(navigetorJsonData["internetCheckInterval"]);
         }
         if (navigetorJsonData["screenOffVoiceMessage"] != null) {
           $(this.txtScreenOffVoiceMessage).val(navigetorJsonData["screenOffVoiceMessage"]);
@@ -104,8 +104,8 @@ export class SettingsComponent implements OnInit {
     if ($(this.txtCapturingGap).val() != "") {
       this.navigatorJsonObject["capturingGap"] = $(this.txtCapturingGap).val();
     }
-    if ($(this.txtInternetCheckInverval).val() != "") {
-      this.navigatorJsonObject["internetCheckInverval"] = $(this.txtInternetCheckInverval).val();
+    if ($(this.txtInternetCheckInterval).val() != "") {
+      this.navigatorJsonObject["internetCheckInterval"] = $(this.txtInternetCheckInterval).val();
     }
     if ($(this.txtScreenOffVoiceMessage).val() != "") {
       this.navigatorJsonObject["screenOffVoiceMessage"] = $(this.txtScreenOffVoiceMessage).val();

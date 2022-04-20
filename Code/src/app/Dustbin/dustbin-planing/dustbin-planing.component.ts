@@ -26,6 +26,7 @@ export class DustbinPlaningComponent implements OnInit {
   dustbinStorageList: any[] = [];
   dustbinList: any[] = [];
   planList: any;
+  dustbinJsonList: any[] = [];
 
   ddlMonth = "#ddlMonth";
   ddlYear = "#ddlYear";
@@ -98,13 +99,32 @@ export class DustbinPlaningComponent implements OnInit {
       }
       if (this.dustbinList.length > 0) {
         $(this.divLoader).show();
+        this.getDustbinHistoryJson();
         this.getDustbinPickingPlanHistory();
         this.getDustbinPickingPlans();
         setTimeout(() => {
+           this.saveDustbinReportJSON();
           $(this.divLoader).hide();
         }, 12000);
       }
     }
+  }
+
+  saveDustbinReportJSON() {
+    let filePath = "/DustbinData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+    let fileName = this.selectedZone + ".json";
+    this.commonService.saveJsonFile(this.dustbinList, fileName, filePath);
+  }
+
+  getDustbinHistoryJson() {
+    this.dustbinJsonList = [];
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedZone + ".json?alt=media";
+    let dutbinJSONInstance = this.httpService.get(path).subscribe(planJsonData => {
+      dutbinJSONInstance.unsubscribe();
+      if (planJsonData != null) {
+        this.dustbinJsonList = JSON.parse(JSON.stringify(planJsonData));
+      }
+    });
   }
 
   getDustbinPickingPlanHistory() {
@@ -175,11 +195,65 @@ export class DustbinPlaningComponent implements OnInit {
             binDetail[day].push({ status: this.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
           }
           else {
-            this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planName);
+            this.checkDustbinFromDustbinJsonList(day, binDetail, dustbin, planDate, planName);
           }
         }
       }
     }
+  }
+
+  checkDustbinFromDustbinJsonList(day: any, binDetail: any, dustbin: any, planDate: any, planName: any) {
+    if (this.dustbinJsonList.length > 0) {
+      let jsonBinDetail = this.dustbinJsonList.find(item => item.dustbin == dustbin);
+      if (jsonBinDetail != undefined) {
+        if (jsonBinDetail[day] != null) {
+          let binPlanDetail = jsonBinDetail[day].find(item => item.planDate == planDate && item.planName == planName);
+          if (binPlanDetail != undefined) {
+            this.getDustbinPickedAnalysisDetail(binDetail, binPlanDetail, day, dustbin, planDate, planName);
+          }
+        }
+        else {
+          this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planName);
+        }
+      }
+      else {
+        this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planName);
+      }
+    }
+    else {
+      this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planName);
+    }
+  }
+
+  getDustbinPickedAnalysisDetail(binDetail: any, binPlanDetail: any, day: any, dustbin: any, planDate: any, planName: any) {
+    let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + planDate + "/" + dustbin + "/" + planName + "/Analysis";
+    let pickedAnalysisDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
+      pickAnalysisData => {
+        pickedAnalysisDustbinInstance.unsubscribe();
+        let icon = this.getIcon("picked");
+        let pickTime = binPlanDetail.pickTime;
+        let name = binPlanDetail.name;
+        if (pickAnalysisData != null) {
+          let filledPercentage = "";
+          let remark = "";
+          if (pickAnalysisData["filledPercentage"] != null) {
+            filledPercentage = "<b>(" + pickAnalysisData["filledPercentage"] + "%)</b>";
+          }
+          if (pickAnalysisData["remark"] != null) {
+            remark = pickAnalysisData["remark"];
+          }
+          let pickStatus = icon + filledPercentage + " at " + pickTime + " by " + name;
+          if (remark != "") {
+            pickStatus = pickStatus + "<br/>" + remark;
+          }
+          binDetail[day].push({ status: pickStatus, filledPercentage: filledPercentage, planDate: planDate, planName: planName, isPicked: true });
+        }
+        else {
+          let pickStatus = icon + " at " + pickTime + " by " + name;
+          binDetail[day].push({ status: pickStatus, planDate: planDate, planName: planName, isPicked: true, pickTime: pickTime, name: name });
+        }
+      }
+    );
   }
 
   getDustbinPickedDetail(binDetail: any, day: any, dustbin: any, planDate: any, planName: any) {
@@ -226,17 +300,17 @@ export class DustbinPlaningComponent implements OnInit {
       }
     }
     let pickStatus = icon + filledPercentage + " at " + pickTime + "";
-    this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planName);
+    this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planName, pickTime);
   }
 
-  getEmployeeDetail(empId: any, binDetail: any, day: any, pickStatus: any, remark: any, filledPercentage: any, planDate: any, planName: any) {
+  getEmployeeDetail(empId: any, binDetail: any, day: any, pickStatus: any, remark: any, filledPercentage: any, planDate: any, planName: any, pickTime: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       let name = employee["name"];
       pickStatus = pickStatus + " by " + name;
       if (remark != "") {
         pickStatus = pickStatus + "<br/>" + remark;
       }
-      binDetail[day].push({ status: pickStatus, filledPercentage: filledPercentage, planDate: planDate, planName: planName, isPicked: true });
+      binDetail[day].push({ status: pickStatus, filledPercentage: filledPercentage, planDate: planDate, planName: planName, isPicked: true, pickTime: pickTime, remark: remark, name: name });
     });
   }
 
