@@ -108,6 +108,7 @@ import { SettingsComponent } from '../../PortalServices/settings/settings.compon
 import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
 import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
 import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
+import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
 
 @NgModule({
   imports: [
@@ -220,7 +221,8 @@ import { SpecialUsersComponent } from '../../PortalServices/special-users/specia
     SettingsComponent,
     VendorLedgerComponent,
     EmployeesComponent,
-    SpecialUsersComponent
+    SpecialUsersComponent,
+    DustbinPlaningComponent
   ]
 })
 

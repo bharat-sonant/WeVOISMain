@@ -1,0 +1,789 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  </div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-5" style="padding-left: 10px;    margin-top: -8px;">
+            <select class="caret-select" id="ddlYear" (change)="changeSelection();" style="width: 150px; height:36px"
+                [(ngModel)]="selectedYear">
+                <option value={{yer.year}} *ngFor="let yer of yearList"
+                    ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
+            <select class="caret-select" id="ddlMonth" (change)="changeSelection();" style="width: 150px; height:36px"
+                [(ngModel)]="selectedMonth">
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 150px; height:36px"
+                [(ngModel)]="selectedZone" ngSelected="zoneList.zoneNo == selectedZone?'selected':''">
+                <option value="0">All Zone</option>
+                <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zone}}</option>
+            </select>
+        </div>
+        <div class="col-md-3 text-center"
+            style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+            Dustbin Details
+        </div>
+        <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
+            <button id="btnSave" class="btn btn-success add-btn btn-xs" style="font-weight: normal; letter-spacing: 0px;" 
+            (click)="openModel(contentPlan,'addPlan','','0','00');">Add
+                Plan <span><i class="fas fa-plus"></i></span></button>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+</section>
+
+<section class="halts" style="padding-left: 10px;">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: -40px;">
+            <div class="col-md-12" style="padding-left: 5px;">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class=" thFixed"
+                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 310px!important;">
+                                            <div style="width: 180px!important;">Dustbin</div>
+                                        </th>
+                                        <th scope="col" class="text-left thFixed2 "
+                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            Freq</th>
+                                        <th scope="col" class="text-center">01</th>
+                                        <th scope="col" class="text-center">02</th>
+                                        <th scope="col" class="text-center">03</th>
+                                        <th scope="col" class="text-center">04</th>
+                                        <th scope="col" class="text-center">05</th>
+                                        <th scope="col" class="text-center">06</th>
+                                        <th scope="col" class="text-center">07</th>
+                                        <th scope="col" class="text-center">08</th>
+                                        <th scope="col" class="text-center">09</th>
+                                        <th scope="col" class="text-center">10</th>
+                                        <th scope="col" class="text-center">11</th>
+                                        <th scope="col" class="text-center">12</th>
+                                        <th scope="col" class="text-center">13</th>
+                                        <th scope="col" class="text-center">14</th>
+                                        <th scope="col" class="text-center">15</th>
+                                        <th scope="col" class="text-center">16</th>
+                                        <th scope="col" class="text-center">17</th>
+                                        <th scope="col" class="text-center">18</th>
+                                        <th scope="col" class="text-center">19</th>
+                                        <th scope="col" class="text-center">20</th>
+                                        <th scope="col" class="text-center">21</th>
+                                        <th scope="col" class="text-center">22</th>
+                                        <th scope="col" class="text-center">23</th>
+                                        <th scope="col" class="text-center">24</th>
+                                        <th scope="col" class="text-center">25</th>
+                                        <th scope="col" class="text-center">26</th>
+                                        <th scope="col" class="text-center">27</th>
+                                        <th scope="col" class="text-center">28</th>
+                                        <th scope="col" class="text-center">29</th>
+                                        <th scope="col" class="text-center">30</th>
+                                        <th scope="col" class="text-center">31</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of dustbinList">
+                                        <td class=" thFixed" style=" border-right:none;">
+                                            {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
+                                        <td class="text-center thFixed2"
+                                            style="vertical-align: top; font-weight: bold; ">{{dt.pickFrequency}}</td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day1" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day1"></label>
+                                            <span id="sp-{{dt.dustbin}}-day1" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day1" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'01');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay1" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day2" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                           
+                                            <label id="lbl-{{dt.dustbin}}-day2"></label>
+                                            <span id="sp-{{dt.dustbin}}-day2" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day2" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'02');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay2" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day3" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day3"></label>
+                                            <span id="sp-{{dt.dustbin}}-day3" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day3" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'03');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay3" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day4" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day4"></label>
+                                            <span id="sp-{{dt.dustbin}}-day4" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day4" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'04');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay4" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day5" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day5"></label>
+                                            <span id="sp-{{dt.dustbin}}-day5" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day5" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'05');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay5" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day6" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day6"></label>
+                                            <span id="sp-{{dt.dustbin}}-day6" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day6" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'06');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay6" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day7" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day7"></label>
+                                            <span id="sp-{{dt.dustbin}}-day7" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day7" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'07');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay7" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day8" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day8"></label>
+                                            <span id="sp-{{dt.dustbin}}-day8" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day8" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'08');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay8" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day9" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day9"></label>
+                                            <span id="sp-{{dt.dustbin}}-day9" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day9" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'09');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay9" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day10" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day10"></label>
+                                            <span id="sp-{{dt.dustbin}}-day10" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day10" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'10');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay10" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day11" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day11"></label>
+                                            <span id="sp-{{dt.dustbin}}-day11" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day11" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'11');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay11" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day12" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day12"></label>
+                                            <span id="sp-{{dt.dustbin}}-day12" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day12" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'12');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay12" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day13" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day13"></label>
+                                            <span id="sp-{{dt.dustbin}}-day13" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day13" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'13');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay13" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day14" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day14"></label>
+                                            <span id="sp-{{dt.dustbin}}-day14" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day14" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'14');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay14" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day15" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day15"></label>
+                                            <span id="sp-{{dt.dustbin}}-day15" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day15" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'15');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay15" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day16" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day16"></label>
+                                            <span id="sp-{{dt.dustbin}}-day16" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day16" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'16');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay16" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day17" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day17"></label>
+                                            <span id="sp-{{dt.dustbin}}-day17" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day17" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'17');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay17" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day18" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day18"></label>
+                                            <span id="sp-{{dt.dustbin}}-day18" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day18" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'18');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay18" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day19" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day19"></label>
+                                            <span id="sp-{{dt.dustbin}}-day19" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day19" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'19');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay19" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day20" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day20"></label>
+                                            <span id="sp-{{dt.dustbin}}-day20" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day20" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'20');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay20" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day21" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day21"></label>
+                                            <span id="sp-{{dt.dustbin}}-day21" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day21" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'21');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay21" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day22" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day22"></label>
+                                            <span id="sp-{{dt.dustbin}}-day22" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day22" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'22');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay22" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day23" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day23"></label>
+                                            <span id="sp-{{dt.dustbin}}-day23" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day23" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'23');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay23" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day24" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day24"></label>
+                                            <span id="sp-{{dt.dustbin}}-day24" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day24" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'24');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay24" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day25" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day25"></label>
+                                            <span id="sp-{{dt.dustbin}}-day25" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day25" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'25');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay25" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day26" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day26"></label>
+                                            <span id="sp-{{dt.dustbin}}-day26" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day26" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'26');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay26" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day27" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day27"></label>
+                                            <span id="sp-{{dt.dustbin}}-day27" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day27" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'27');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay27" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day28" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day28"></label>
+                                            <span id="sp-{{dt.dustbin}}-day28" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day28" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'28');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay28" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day29" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day29"></label>
+                                            <span id="sp-{{dt.dustbin}}-day29" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day29" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'29');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay29" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day30" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day30"></label>
+                                            <span id="sp-{{dt.dustbin}}-day30" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day30" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'30');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay30" class="rowWidth"></div>
+                                        </td>
+                                        <td class="tdStyle">
+                                            <div style="width:100%" *ngFor="let days of dt.day31" [innerHTML]="days.status">
+                                                {{days.status}}
+                                                </div>
+                                            <label id="lbl-{{dt.dustbin}}-day31"></label>
+                                            <span id="sp-{{dt.dustbin}}-day31" style="display: none;">
+                                                <i id="btn-{{dt.dustbin}}-day31" class="fas fa-plus-circle"
+                                                    style="cursor:pointer;"
+                                                    (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'31');"></i>
+                                            </span><br/>
+                                            <div [innerHTML]="dt.wardDay31" class="rowWidth"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!---------Add Plan Accordion Start-------->
+<a role="button" class="plan-btn" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+    aria-expanded="true" aria-controls="collapseOne">
+    PLANS <i class="fas fa-angle-down" style="padding-left: 5px;"></i>
+</a>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                <table class="table" style="margin-bottom: 0px;">
+                    <tr *ngFor="let plan of planList">
+                        <td>{{plan.planName}}</td>
+                        <td><span style="color:green">{{plan.dustbinPicked}}</span></td>
+                        <td style="width: 90px!important;">{{plan.date}}</td>
+                        <td style="width: 30px!important;"><span style="color:blue">{{plan.dustbinAssigned}}</span>/{{plan.maxDustbin}}</td>
+                        <td style="width: 90px!important;">
+                            <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0"
+                                (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>&nbsp;&nbsp;
+                            <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');"
+                                title="Edit Plan"
+                                style="cursor:pointer !important; font-size: 10px;color: royalblue;"></i>&nbsp;&nbsp;
+                            <i class="far fa-trash-alt"
+                                (click)="openModel(contentPlanConfirm,'deletePlanConfirmation',plan,'','','');"
+                                title="Remove Plan" [hidden]="plan.isAssigned!='false'"
+                                style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!---------Add Plan Accordion End-------->
+
+<!--Plan Form Start-->
+<ng-template #contentPlan>
+    <div class="modal-dialog modal-dialog-centered" role="document" data-backdrop="false" style="margin-top: 27px!important;padding-right: 2px;">
+        <div class="modal-content" style="border-top-left-radius: 12px!important; border-top-right-radius: 12px!important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Your Plan</h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <input id="perPlanDate" type="hidden" value="">
+                <label>Plan Name</label>
+                <div class="wrap-input-effects" required>
+                    <input id="txtPlanName" type="text" class="input-green" placeholder="Plan Name" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <label>Date</label>
+                <div class="wrap-input-effects" required>
+                    <input id="txtPlanDate" class="date-input input-green" type="date" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <label>Max. Dustbin Capacity</label>
+                <div class="wrap-input-effects" required>
+                    <input id="txtDustbinCapacity" class="input-green" type="number" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <input type="button" class="btn btn-success" value="Submit" (click)="savePlan();"
+                    style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
+            </div>
+        </div>
+    </div>
+
+</ng-template>
+<!--Plan Form End-->
+
+
+<!--Plan Dustbin Form Start-->
+<ng-template #contentDustbinPlan>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Dustbin in Plan</h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="dustbinId" type="hidden" value="0" />
+               <img src="../../../assets/img/calender-day.png"> &nbsp;
+                <span id="planDate" style="font-weight: bold; font-size: 12px;"></span> <br>
+                <label style="margin-top: 18px;">Select Plan</label>
+                <div class="wrap-input-effects" required>
+                    <select class="input-green" id="ddlPlan" (change)="getPlanDetail();">
+                        <option value="0">Select Plan</option>
+                        <option value="{{plan.key}}" *ngFor="let plan of dustbinPlanList">{{plan.planName}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                    </span>
+                </div>
+                 <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
+                    <div style="float: left; width: 33.33%; text-align: center; font-size: 12px;margin-top: 5px;">
+                        <input type="checkbox" id="chkHigh"><br/> Is High Priority
+                    </div>
+                    <div class="text-center" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;">
+                        <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span
+                            id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
+                    </div>
+                    <div class="text-center" style="width: 33.34%;float: left;font-size: 12px;  margin-top: 5px;">
+                        <img src="../../../assets/img/dustbin-report-check.png" style="padding-right: 6px;"> <span
+                            id="assignedDustbin" style="font-weight: bold;"> 0 </span> <br> Assigned Dustbin
+                    </div>
+
+                </div>
+
+                <input type="button" class="btn btn-success" value="Save" (click)="saveDustbinPlan();"
+                    style="width: 100%; height: 45px; padding-top: 4px;" />
+
+                 <!--   <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
+                        <div class="text-left" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;">
+                            <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span
+                                id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
+                        </div>
+                        <div class="text-left" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;padding-left: 20px;">
+                            <img src="../../../assets/img/dustbin-report-check.png" style="padding-right: 6px;"> <span
+                                id="assignedDustbin" style="font-weight: bold;"> 0 </span> <br> Assigned Dustbin
+                        </div>
+                        <div class="text-center" style="width: 33.34%;float: left;font-size: 12px;  margin-top: -12px;">
+                            <input type="button" class="btn btn-success" value="Save" (click)="saveDustbinPlan();"
+                            style="width: 100%; height: 45px; padding-top: 4px;" />
+                        </div>
+    
+                    </div>-->
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Plan Dustbin Form End-->
+
+
+<!--Plan Dustbin Detail Start-->
+<ng-template #contentDustbinPlanDetail>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="d-plans" style="height: 455px;overflow-y: scroll;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="border-right: 1px solid #dee2e6;">Sno.</th>
+                                <th style="border-right: 1px solid #dee2e6;" class="text-center">Zone</th>
+                                <th style="border-right: 1px solid #dee2e6;" class="text-center">Address</th>
+                                <th style="border-right: 1px solid #dee2e6;" class="text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let planDustbin of dustbinPlanDetailList; let i=index"
+                                style="border-top: 1px solid #dee2e6;">
+                                <td style="width: 40px; border-left: 1px solid #dee2e6;text-align: center;">{{i+1}}</td>
+                                <td>{{planDustbin.zone}}</td>
+                                <td>{{planDustbin.address}}</td>
+                                <td style="width: 40px;text-align: center;">
+                                    <i class="far fa-trash-alt" (click)="deletePlanDustbin(planDustbin.dustbin)"
+                                        title="Remove Dustbin"
+                                        style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Plan Dustbin Detail End-->
+
+<!--Plan Confirmation Start-->
+<ng-template #contentPlanConfirm>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure to delete?</h5>                
+            </div>
+            <div class="modal-body">
+                <input id="deletePlanId" type="hidden" value="0" />
+                <input id="deletePlanDate" type="hidden" value="0" />
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;">
+                        <button class="btn btn-success " (click)="deleteConfirmPlan();">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center;">
+                        <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Plan Confirmation End-->
+
+<!--Dustbin Sequence Start-->
+<ng-template #contentDustbinPlanSequence>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center">Manage Sequences</h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="divDustbin" style="display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>                   
+                    <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                        <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                            <button class="btn btn-success " (click)="deleteDustbin();">
+                                Confirm</button>
+                        </div>
+                        <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                            <button class="btn btn-danger " (click)="cancelDustbinDelete();" style="text-transform: uppercase;"> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <input id="deleteDustbinId" type="hidden" value="0" />
+                <input id="mapPlanId" type="hidden" value="0" />
+                <input id="mapDate" type="hidden" value="0" />
+                <div class="row">
+                    <div class="col-md-3" style="margin-top: -15px; padding-right: 5px; padding-left: 10px;">
+                        <div class="row">
+
+                            <div class="col-md-9">
+                                <button id="btnSave" class="btn btn-success " (click)="updateDustbinSequence();">
+                                    Update Sequence  </button>
+                            </div>
+                            <div class="col-md-1" style="margin-top: -3px;">
+                                <i class="far fa-arrow-alt-circle-up arrow" (click)="setSequenceIndex('up');"></i>
+                            </div>
+                            <div class="col-md-1" style="margin-top: -3px;">
+                                <i class="far fa-arrow-alt-circle-down arrow" (click)="setSequenceIndex('down');"></i>
+                            </div>
+
+                        </div>
+                        <div id="divSequence" class="seq-scroll" style="margin-top: 2px;">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="border-right: 1px solid #dee2e6;">Sno.</th>
+                                        <th style="border-right:1px solid #dee2e5;">Zone</th>
+                                        <th style="border-right: 1px solid #dee2e6;" class="text-left">Address</th>
+                                        <th style="border-right: 1px solid #dee2e6;" class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="tr{{i}}" *ngFor="let dt of dustbinMapList; let i=index"
+                                        class="selected-dustbin" (click)="getSelctedDustbin(i);"
+                                        style="border-top: 1px solid #dee2e6;">
+                                        <td style="width: 20px; border-left: 1px solid #dee2e6;">{{i+1}}</td>
+                                        <td style="width: 20px; border-left: 1px solid #dee2e6;">{{dt.zone}}</td>
+                                        <td style="border-right: 1px solid #dee2e6;">{{dt.address}}<span style="color:red;"> {{dt.isHighPriority}}</span></td>
+                                        <td style="width: 40px;text-align: center;">
+                                            <i class="far fa-trash-alt" (click)="deletePlanDustbin(dt.dustbin)"
+                                                title="Remove Dustbin"
+                                                style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="col-md-9 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
+                        <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
+                            <div id="haltMap" style="width:100%; "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Dustbin Sequence End-->

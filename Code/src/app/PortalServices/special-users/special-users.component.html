@@ -34,13 +34,13 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of userList; let i=index">
                                                 <td class="text-left br-1">
-                                                    {{data.type}}
-                                                </td>
-                                                <td class="text-left br-1">
                                                     {{data.username}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.password}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.type}}
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <i class="fas fa-user-edit" style="cursor: pointer; font-size: 20px;" (click)="openModel(contentUser,data.id);" ></i>

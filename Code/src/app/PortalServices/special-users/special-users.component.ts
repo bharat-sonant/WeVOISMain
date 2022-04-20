@@ -43,6 +43,7 @@ export class SpecialUsersComponent implements OnInit {
             let id = keyArray[i];
             if (id != "lastKey") {
               this.userList.push({ id: id, password: userData[id]["password"], type: userData[id]["type"], username: userData[id]["username"] });
+              this.userList=this.commonService.transformNumeric(this.userList,"username");
             }
           }
         }
@@ -119,6 +120,7 @@ export class SpecialUsersComponent implements OnInit {
       let userDetail = this.userList.find((item) => item.id == lastKey);
       if (userDetail == undefined) {
         this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
+        this.userList=this.commonService.transformNumeric(this.userList,"username");
       }
       else {
         userDetail.password = $(this.txtPassword).val();
