@@ -25,6 +25,12 @@ export class SettingsComponent implements OnInit {
   txtInternetCheckInterval="#txtInternetCheckInterval";
   txtScreenOffVoiceMessage="#txtScreenOffVoiceMessage";
   txtInternetCheckVoiceMessage="#txtInternetCheckVoiceMessage";
+  txtStartLineNote="#txtStartLineNote";
+  txtLineHeading="#txtLineHeading";
+  txtSkipWarningMessage="#txtSkipWarningMessage";
+  txtHaltVoiceMessage="#txtHaltVoiceMessage";
+  txtHaltVoiceMessageInterval="#txtHaltVoiceMessageInterval";
+  txtHaltVoiceMessageMinimumTime="#txtHaltVoiceMessageMinimumTime";
 
 
   // Reader
@@ -78,6 +84,24 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["internetCheckVoiceMessage"] != null) {
           $(this.txtInternetCheckVoiceMessage).val(navigetorJsonData["internetCheckVoiceMessage"]);
         }
+        if (navigetorJsonData["startLineNote"] != null) {
+          $(this.txtStartLineNote).val(navigetorJsonData["startLineNote"]);
+        }
+        if (navigetorJsonData["lineHeading"] != null) {
+          $(this.txtLineHeading).val(navigetorJsonData["lineHeading"]);
+        }
+        if (navigetorJsonData["skipWarningMessage"] != null) {
+          $(this.txtSkipWarningMessage).val(navigetorJsonData["skipWarningMessage"]);
+        }
+        if (navigetorJsonData["haltVoiceMessage"] != null) {
+          $(this.txtHaltVoiceMessage).val(navigetorJsonData["haltVoiceMessage"]);
+        }
+        if (navigetorJsonData["haltVoiceMessageInterval"] != null) {
+          $(this.txtHaltVoiceMessageInterval).val(navigetorJsonData["haltVoiceMessageInterval"]);
+        }
+        if (navigetorJsonData["haltVoiceMessageMinimumTime"] != null) {
+          $(this.txtHaltVoiceMessageMinimumTime).val(navigetorJsonData["haltVoiceMessageMinimumTime"]);
+        }
       }
     });
   }
@@ -112,6 +136,24 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtInternetCheckVoiceMessage).val() != "") {
       this.navigatorJsonObject["internetCheckVoiceMessage"] = $(this.txtInternetCheckVoiceMessage).val();
+    }
+    if ($(this.txtStartLineNote).val() != "") {
+      this.navigatorJsonObject["startLineNote"] = $(this.txtStartLineNote).val();
+    }
+    if ($(this.txtLineHeading).val() != "") {
+      this.navigatorJsonObject["lineHeading"] = $(this.txtLineHeading).val();
+    }
+    if ($(this.txtSkipWarningMessage).val() != "") {
+      this.navigatorJsonObject["skipWarningMessage"] = $(this.txtSkipWarningMessage).val();
+    }
+    if ($(this.txtHaltVoiceMessage).val() != "") {
+      this.navigatorJsonObject["haltVoiceMessage"] = $(this.txtHaltVoiceMessage).val();
+    }
+    if ($(this.txtHaltVoiceMessageInterval).val() != "") {
+      this.navigatorJsonObject["haltVoiceMessageInterval"] = $(this.txtHaltVoiceMessageInterval).val();
+    }
+    if ($(this.txtHaltVoiceMessageMinimumTime).val() != "") {
+      this.navigatorJsonObject["haltVoiceMessageMinimumTime"] = $(this.txtHaltVoiceMessageMinimumTime).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";

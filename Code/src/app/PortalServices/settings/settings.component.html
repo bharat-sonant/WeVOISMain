@@ -15,12 +15,13 @@
                                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                                 <button class="nav-link active" id="tabNavigator" data-bs-toggle="tab"
                                                         data-bs-target="#Navigator" type="button" role="tab"
-                                                        aria-controls="Navigator" aria-selected="true" (click)="setActiveTab('Navigator');">Navigator
+                                                        aria-controls="Navigator" aria-selected="true"
+                                                        (click)="setActiveTab('Navigator');">Navigator
                                                 </button>
                                                 <button class="nav-link" id="tabReader" data-bs-toggle="tab"
                                                         data-bs-target="#Reader" type="button" role="tab"
-                                                        aria-controls="Reader"
-                                                        aria-selected="false" (click)="setActiveTab('Reader');">Reader</button>
+                                                        aria-controls="Reader" aria-selected="false"
+                                                        (click)="setActiveTab('Reader');">Reader</button>
                                                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab"
                                                         data-bs-target="#nav-contact" type="button" role="tab"
                                                         aria-controls="nav-contact" aria-selected="false"></button>
@@ -38,7 +39,8 @@
                                                                         <div class="col-md-3">
                                                                                 <div class="row">
                                                                                         <div class="col-md-12">
-                                                                                                <label>First Start Point Range (in
+                                                                                                <label>First Start Point
+                                                                                                        Range (in
                                                                                                         meters)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -48,7 +50,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Line End Point Range (in
+                                                                                                <label>Line End Point
+                                                                                                        Range (in
                                                                                                         meters)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -58,7 +61,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Current Location Capture Interval
+                                                                                                <label>Current Location
+                                                                                                        Capture Interval
                                                                                                         (in
                                                                                                         second)</label>
                                                                                                 <div class="wrap-input-effects"
@@ -69,7 +73,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Max Distance Can Cover (in
+                                                                                                <label>Max Distance Can
+                                                                                                        Cover (in
                                                                                                         meters)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -79,7 +84,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Traversal Path Duration (in
+                                                                                                <label>Traversal Path
+                                                                                                        Duration (in
                                                                                                         second)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -103,7 +109,8 @@
                                                                         <div class="col-md-3">
                                                                                 <div class="row">
                                                                                         <div class="col-md-12">
-                                                                                                <label>Internet Check Interval 
+                                                                                                <label>Internet Check
+                                                                                                        Interval
                                                                                                         (in
                                                                                                         second)</label>
                                                                                                 <div class="wrap-input-effects"
@@ -114,8 +121,9 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Internet Check Voice Message
-                                                                                                        </label>
+                                                                                                <label>Internet Check
+                                                                                                        Voice Message
+                                                                                                </label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtInternetCheckVoiceMessage"
@@ -124,7 +132,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Screen Off Voice Message </label>
+                                                                                                <label>Screen Off Voice
+                                                                                                        Message </label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtScreenOffVoiceMessage"
@@ -132,18 +141,78 @@
                                                                                                                 type="text" />
                                                                                                 </div>
                                                                                         </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Start Line Note
+                                                                                                </label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtStartLineNote"
+                                                                                                                class="caret-select"
+                                                                                                                type="text" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Line Heading
+                                                                                                </label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtLineHeading"
+                                                                                                                class="caret-select"
+                                                                                                                type="text" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Skip Warning Message
+                                                                                                </label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtSkipWarningMessage"
+                                                                                                                class="caret-select"
+                                                                                                                type="text" />
+                                                                                                </div>
+                                                                                        </div>
                                                                                 </div>
                                                                         </div>
                                                                         <div class="col-md-3">
-                                                                                
+
+                                                                                <div class="col-md-12">
+                                                                                        <label>Halt Voice Message
+                                                                                        </label>
+                                                                                        <div class="wrap-input-effects"
+                                                                                                required>
+                                                                                                <input id="txtHaltVoiceMessage"
+                                                                                                        class="caret-select"
+                                                                                                        type="text" />
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                        <label>Halt Voice Message Interval (in minutes)
+                                                                                        </label>
+                                                                                        <div class="wrap-input-effects"
+                                                                                                required>
+                                                                                                <input id="txtHaltVoiceMessageInterval"
+                                                                                                        class="caret-select"
+                                                                                                        type="text" />
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                        <label>halt Voice Message Minimum Time (in minutes)
+                                                                                        </label>
+                                                                                        <div class="wrap-input-effects"
+                                                                                                required>
+                                                                                                <input id="txtHaltVoiceMessageMinimumTime"
+                                                                                                        class="caret-select"
+                                                                                                        type="text" />
+                                                                                        </div>
+                                                                                </div>
                                                                         </div>
                                                                         <div class="col-md-3">
-                                                                                
+
                                                                         </div>
 
                                                                 </div>
 
-                                                               
+
                                                                 <div class="row form-group2">
                                                                         <div class="col-md-12 pr-1">
                                                                                 <div class="form-group">
@@ -165,7 +234,8 @@
                                                                         <div class="col-md-3">
                                                                                 <div class="row">
                                                                                         <div class="col-md-12">
-                                                                                                <label>Card Scan Wait Time (in
+                                                                                                <label>Card Scan Wait
+                                                                                                        Time (in
                                                                                                         second)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -175,7 +245,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Card Scan Time Gap (in
+                                                                                                <label>Card Scan Time
+                                                                                                        Gap (in
                                                                                                         second)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -185,7 +256,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Card Scan Note</label>
+                                                                                                <label>Card Scan
+                                                                                                        Note</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtCardScanNote"
@@ -205,12 +277,11 @@
 
                                                                         </div>
                                                                 </div>
-                                                                
+
                                                                 <div class="row form-group2">
                                                                         <div class="col-md-12 pr-1">
                                                                                 <div class="form-group">
-                                                                                        <button
-                                                                                                class="btn btn-success btn-xs"
+                                                                                        <button class="btn btn-success btn-xs"
                                                                                                 (click)="saveCommonReaderSetting();">SAVE</button>
                                                                                 </div>
                                                                         </div>
