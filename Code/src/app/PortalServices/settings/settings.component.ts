@@ -31,6 +31,9 @@ export class SettingsComponent implements OnInit {
   txtHaltVoiceMessage="#txtHaltVoiceMessage";
   txtHaltVoiceMessageInterval="#txtHaltVoiceMessageInterval";
   txtHaltVoiceMessageMinimumTime="#txtHaltVoiceMessageMinimumTime";
+  txtLunchBreakMessage="#txtLunchBreakMessage";
+  txtLunchBreakMessageInterval="#txtLunchBreakMessageInterval";
+  txtLunchBreakMessageMinimumTime="#txtLunchBreakMessageMinimumTime";
 
 
   // Reader
@@ -102,6 +105,15 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["haltVoiceMessageMinimumTime"] != null) {
           $(this.txtHaltVoiceMessageMinimumTime).val(navigetorJsonData["haltVoiceMessageMinimumTime"]);
         }
+        if (navigetorJsonData["lunchBreakMessage"] != null) {
+          $(this.txtLunchBreakMessage).val(navigetorJsonData["lunchBreakMessage"]);
+        }
+        if (navigetorJsonData["lunchBreakMessageInterval"] != null) {
+          $(this.txtLunchBreakMessageInterval).val(navigetorJsonData["lunchBreakMessageInterval"]);
+        }
+        if (navigetorJsonData["lunchBreakMessageMinimumTime"] != null) {
+          $(this.txtLunchBreakMessageMinimumTime).val(navigetorJsonData["lunchBreakMessageMinimumTime"]);
+        }
       }
     });
   }
@@ -154,6 +166,15 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtHaltVoiceMessageMinimumTime).val() != "") {
       this.navigatorJsonObject["haltVoiceMessageMinimumTime"] = $(this.txtHaltVoiceMessageMinimumTime).val();
+    }
+    if ($(this.txtLunchBreakMessage).val() != "") {
+      this.navigatorJsonObject["lunchBreakMessage"] = $(this.txtLunchBreakMessage).val();
+    }
+    if ($(this.txtLunchBreakMessageInterval).val() != "") {
+      this.navigatorJsonObject["lunchBreakMessageInterval"] = $(this.txtLunchBreakMessageInterval).val();
+    }
+    if ($(this.txtLunchBreakMessageMinimumTime).val() != "") {
+      this.navigatorJsonObject["lunchBreakMessageMinimumTime"] = $(this.txtLunchBreakMessageMinimumTime).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";
