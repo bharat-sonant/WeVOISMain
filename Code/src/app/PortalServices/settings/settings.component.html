@@ -22,9 +22,10 @@
                                                         data-bs-target="#Reader" type="button" role="tab"
                                                         aria-controls="Reader" aria-selected="false"
                                                         (click)="setActiveTab('Reader');">Reader</button>
-                                                <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-contact" type="button" role="tab"
-                                                        aria-controls="nav-contact" aria-selected="false"></button>
+                                                <button class="nav-link" id="tabHalt" data-bs-toggle="tab"
+                                                        data-bs-target="#Halt" type="button" role="tab"
+                                                        aria-controls="Halt" aria-selected="false"
+                                                        (click)="setActiveTab('Halt');">Halt</button>
                                                 <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab"
                                                         data-bs-target="#nav-help" type="button" role="tab"
                                                         aria-controls="nav-help" aria-selected="false"></button>
@@ -64,7 +65,7 @@
                                                                                                 <label>Current Location
                                                                                                         Capture Interval
                                                                                                         (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtCurrentLocationCaptureInterval"
@@ -86,7 +87,7 @@
                                                                                         <div class="col-md-12">
                                                                                                 <label>Traversal Path
                                                                                                         Duration (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtTraversalPathDuration"
@@ -96,7 +97,7 @@
                                                                                         </div>
                                                                                         <div class="col-md-12">
                                                                                                 <label>Capturing Gap (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtCapturingGap"
@@ -112,7 +113,7 @@
                                                                                                 <label>Internet Check
                                                                                                         Interval
                                                                                                         (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtInternetCheckInterval"
@@ -162,7 +163,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Skip Warning Message
+                                                                                                <label>Skip Warning
+                                                                                                        Message
                                                                                                 </label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -186,7 +188,8 @@
                                                                                         </div>
                                                                                 </div>
                                                                                 <div class="col-md-12">
-                                                                                        <label>Halt Voice Message Interval (in minutes)
+                                                                                        <label>Halt Voice Message
+                                                                                                Interval (in minutes)
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -196,7 +199,9 @@
                                                                                         </div>
                                                                                 </div>
                                                                                 <div class="col-md-12">
-                                                                                        <label>Halt Voice Message Minimum Time (in minutes)
+                                                                                        <label>Halt Voice Message
+                                                                                                Minimum Time (in
+                                                                                                minutes)
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -216,7 +221,8 @@
                                                                                         </div>
                                                                                 </div>
                                                                                 <div class="col-md-12">
-                                                                                        <label>Lunch Break Message Interval (in minutes)
+                                                                                        <label>Lunch Break Message
+                                                                                                Interval (in minutes)
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -226,7 +232,9 @@
                                                                                         </div>
                                                                                 </div>
                                                                                 <div class="col-md-12">
-                                                                                        <label>Lunch Break Message Minimum Time (in minutes)
+                                                                                        <label>Lunch Break Message
+                                                                                                Minimum Time (in
+                                                                                                minutes)
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -238,7 +246,8 @@
                                                                         </div>
                                                                         <div class="col-md-3">
                                                                                 <div class="col-md-12">
-                                                                                        <label>Reader Device Offline Interval (in second)
+                                                                                        <label>Reader Device Offline
+                                                                                                Interval (in seconds)
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -248,7 +257,8 @@
                                                                                         </div>
                                                                                 </div>
                                                                                 <div class="col-md-12">
-                                                                                        <label>Reader Device Offline Message
+                                                                                        <label>Reader Device Offline
+                                                                                                Message
                                                                                         </label>
                                                                                         <div class="wrap-input-effects"
                                                                                                 required>
@@ -286,7 +296,7 @@
                                                                                         <div class="col-md-12">
                                                                                                 <label>Card Scan Wait
                                                                                                         Time (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtCardScanWaitTime"
@@ -297,7 +307,7 @@
                                                                                         <div class="col-md-12">
                                                                                                 <label>Card Scan Time
                                                                                                         Gap (in
-                                                                                                        second)</label>
+                                                                                                        seconds)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
                                                                                                         <input id="txtCardScanTimeGap"
@@ -339,23 +349,78 @@
                                                         </div>
                                                 </form>
                                         </div>
-                                        <div class="tab-pane fade" id="nav-contact" role="tabpanel"
-                                                aria-labelledby="nav-contact-tab">
-                                                <form action="" class="form">
+                                        <div class="tab-pane fade" id="Halt" role="tabpanel" aria-labelledby="tabHalt">
+                                                <form>
+                                                        <div class="form">
+                                                                <div class="row">
+                                                                        <div class="col-md-3">
+                                                                                <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Allowed Halt (in
+                                                                                                        minutes)</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtAllowedHalt"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Halt Allowed
+                                                                                                        Range (in
+                                                                                                        meters)</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtHaltAllowedRange"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Distance Covered
+                                                                                                        Check Interval
+                                                                                                        (in
+                                                                                                        seconds)</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtDistanceCoveredCheckInterval"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Mobile Off
+                                                                                                        Allowed Halt (in
+                                                                                                        minutes)</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtMobileOffAllowedHalt"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <a href="#">save</a>
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
+                                                                        </div>
+                                                                </div>
 
-
+                                                                <div class="row form-group2">
+                                                                        <div class="col-md-12 pr-1">
+                                                                                <div class="form-group">
+                                                                                        <button class="btn btn-success btn-xs"
+                                                                                                (click)="saveCityHaltSetting();">SAVE</button>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
                                                 </form>
                                         </div>
                                         <div class="tab-pane fade" id="nav-help" role="tabpanel"

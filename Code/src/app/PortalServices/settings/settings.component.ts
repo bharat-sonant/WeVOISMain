@@ -16,33 +16,40 @@ export class SettingsComponent implements OnInit {
   firestotagePath: any;
   navigatorJsonObject: any;
   readerJsonObject: any;
-// Navigator
+  haltJsonObject: any;
+  // Navigator
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
   txtTraversalPathDuration = "#txtTraversalPathDuration";
-  txtInternetCheckInterval="#txtInternetCheckInterval";
-  txtScreenOffVoiceMessage="#txtScreenOffVoiceMessage";
-  txtInternetCheckVoiceMessage="#txtInternetCheckVoiceMessage";
-  txtStartLineNote="#txtStartLineNote";
-  txtLineHeading="#txtLineHeading";
-  txtSkipWarningMessage="#txtSkipWarningMessage";
-  txtHaltVoiceMessage="#txtHaltVoiceMessage";
-  txtHaltVoiceMessageInterval="#txtHaltVoiceMessageInterval";
-  txtHaltVoiceMessageMinimumTime="#txtHaltVoiceMessageMinimumTime";
-  txtLunchBreakMessage="#txtLunchBreakMessage";
-  txtLunchBreakMessageInterval="#txtLunchBreakMessageInterval";
-  txtLunchBreakMessageMinimumTime="#txtLunchBreakMessageMinimumTime";
-  txtReaderDeviceOfflineInterval="#txtReaderDeviceOfflineInterval";
-  txtReaderDeviceOfflineMessage="#txtReaderDeviceOfflineMessage";
+  txtInternetCheckInterval = "#txtInternetCheckInterval";
+  txtScreenOffVoiceMessage = "#txtScreenOffVoiceMessage";
+  txtInternetCheckVoiceMessage = "#txtInternetCheckVoiceMessage";
+  txtStartLineNote = "#txtStartLineNote";
+  txtLineHeading = "#txtLineHeading";
+  txtSkipWarningMessage = "#txtSkipWarningMessage";
+  txtHaltVoiceMessage = "#txtHaltVoiceMessage";
+  txtHaltVoiceMessageInterval = "#txtHaltVoiceMessageInterval";
+  txtHaltVoiceMessageMinimumTime = "#txtHaltVoiceMessageMinimumTime";
+  txtLunchBreakMessage = "#txtLunchBreakMessage";
+  txtLunchBreakMessageInterval = "#txtLunchBreakMessageInterval";
+  txtLunchBreakMessageMinimumTime = "#txtLunchBreakMessageMinimumTime";
+  txtReaderDeviceOfflineInterval = "#txtReaderDeviceOfflineInterval";
+  txtReaderDeviceOfflineMessage = "#txtReaderDeviceOfflineMessage";
 
 
   // Reader
   txtCapturingGap = "#txtCapturingGap";
-  txtCardScanWaitTime="#txtCardScanWaitTime";
-  txtCardScanTimeGap="#txtCardScanTimeGap";
-  txtCardScanNote="#txtCardScanNote";
+  txtCardScanWaitTime = "#txtCardScanWaitTime";
+  txtCardScanTimeGap = "#txtCardScanTimeGap";
+  txtCardScanNote = "#txtCardScanNote";
+
+  // Halt
+  txtAllowedHalt="#txtAllowedHalt";
+  txtHaltAllowedRange="#txtHaltAllowedRange";
+  txtDistanceCoveredCheckInterval="#txtDistanceCoveredCheckInterval";
+  txtMobileOffAllowedHalt="#txtMobileOffAllowedHalt";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -54,8 +61,9 @@ export class SettingsComponent implements OnInit {
     this.firestotagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.getCommonNavigatorSetting();
     this.getCommonReaderSetting();
+    this.getCityHaltSetting();
   }
-
+  // Navigator
   getCommonNavigatorSetting() {
     const path = this.firestotagePath + "Common%2FSettings%2FNavigatorSetting.json?alt=media";
     let navigatorJsonInstance = this.httpService.get(path).subscribe(navigetorJsonData => {
@@ -196,7 +204,9 @@ export class SettingsComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Navigatory setting updated !!!");
   }
 
-  getCommonReaderSetting(){
+  //Reader
+
+  getCommonReaderSetting() {
     const path = this.firestotagePath + "Common%2FSettings%2FReaderSetting.json?alt=media";
     let readerJsonInstance = this.httpService.get(path).subscribe(readerJsonData => {
       readerJsonInstance.unsubscribe();
@@ -216,7 +226,7 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  saveCommonReaderSetting(){
+  saveCommonReaderSetting() {
     if (this.readerJsonObject == null) {
       this.readerJsonObject = {};
     }
@@ -235,10 +245,58 @@ export class SettingsComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Reader setting updated !!!");
   }
 
-  
+  //Halt
+
+  getCityHaltSetting() {
+    const path = this.firestotagePath + this.commonService.getFireStoreCity() + "%2FCommon%2FSettings%2FHaltSetting.json?alt=media";
+    let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
+      haltJsonInstance.unsubscribe();
+      if (haltJsonData != null) {
+        this.haltJsonObject = haltJsonData;
+        if (haltJsonData["allowedHalt"] != null) {
+          $(this.txtAllowedHalt).val(haltJsonData["allowedHalt"]);
+        }
+        if (haltJsonData["haltAllowedRange"] != null) {
+          $(this.txtHaltAllowedRange).val(haltJsonData["haltAllowedRange"]);
+        }
+        if (haltJsonData["distanceCoveredCheckInterval"] != null) {
+          $(this.txtDistanceCoveredCheckInterval).val(haltJsonData["distanceCoveredCheckInterval"]);
+        }
+        if (haltJsonData["mobileOffAllowedHalt"] != null) {
+          $(this.txtMobileOffAllowedHalt).val(haltJsonData["mobileOffAllowedHalt"]);
+        }
+
+      }
+    });
+  }
+
+  saveCityHaltSetting() {
+    if (this.haltJsonObject == null) {
+      this.haltJsonObject = {};
+    }
+    if ($(this.txtAllowedHalt).val() != "") {
+      this.haltJsonObject["allowedHalt"] = $(this.txtAllowedHalt).val();
+    }
+    if ($(this.txtHaltAllowedRange).val() != "") {
+      this.haltJsonObject["haltAllowedRange"] = $(this.txtHaltAllowedRange).val();
+    }
+    if ($(this.txtDistanceCoveredCheckInterval).val() != "") {
+      this.haltJsonObject["distanceCoveredCheckInterval"] = $(this.txtDistanceCoveredCheckInterval).val();
+    }
+    if ($(this.txtMobileOffAllowedHalt).val() != "") {
+      this.haltJsonObject["mobileOffAllowedHalt"] = $(this.txtMobileOffAllowedHalt).val();
+    }
+    let fileName = "HaltSetting.json";
+    let path = "/Common/Settings/";
+    this.commonService.saveJsonFile(this.haltJsonObject, fileName, path);
+    this.commonService.setAlertMessage("success", "Halt setting updated !!!");
+  }
+
+
   setActiveTab(tab: any) {
     $("#Navigator").hide();
     $("#Reader").hide();
+    $("#Halt").hide();
 
     let element = <HTMLButtonElement>document.getElementById("tabNavigator");
     let className = element.className;
@@ -249,6 +307,11 @@ export class SettingsComponent implements OnInit {
     className = element.className;
     $("#tabReader").removeClass(className);
     $("#tabReader").addClass("nav-link");
+
+    element = <HTMLButtonElement>document.getElementById("tabHalt");
+    className = element.className;
+    $("#tabHalt").removeClass(className);
+    $("#tabHalt").addClass("nav-link");
 
     if (tab == "Navigator") {
       $("#Navigator").show();
@@ -272,6 +335,17 @@ export class SettingsComponent implements OnInit {
       className = element.className;
       $("#Reader").removeClass(className);
       $("#Reader").addClass("tab-pane fade show active save");
+    } else if (tab == "Halt") {
+      $("#Halt").show();
+      element = <HTMLButtonElement>document.getElementById("tabHalt");
+      className = element.className;
+      $("#tabHalt").removeClass(className);
+      $("#tabHalt").addClass("nav-link active");
+
+      element = <HTMLButtonElement>document.getElementById("Halt");
+      className = element.className;
+      $("#Halt").removeClass(className);
+      $("#Halt").addClass("tab-pane fade show active save");
     }
   }
 
