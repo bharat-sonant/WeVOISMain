@@ -34,6 +34,8 @@ export class SettingsComponent implements OnInit {
   txtLunchBreakMessage="#txtLunchBreakMessage";
   txtLunchBreakMessageInterval="#txtLunchBreakMessageInterval";
   txtLunchBreakMessageMinimumTime="#txtLunchBreakMessageMinimumTime";
+  txtReaderDeviceOfflineInterval="#txtReaderDeviceOfflineInterval";
+  txtReaderDeviceOfflineMessage="#txtReaderDeviceOfflineMessage";
 
 
   // Reader
@@ -114,6 +116,12 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["lunchBreakMessageMinimumTime"] != null) {
           $(this.txtLunchBreakMessageMinimumTime).val(navigetorJsonData["lunchBreakMessageMinimumTime"]);
         }
+        if (navigetorJsonData["readerDeviceOfflineInterval"] != null) {
+          $(this.txtReaderDeviceOfflineInterval).val(navigetorJsonData["readerDeviceOfflineInterval"]);
+        }
+        if (navigetorJsonData["readerDeviceOfflineMessage"] != null) {
+          $(this.txtReaderDeviceOfflineMessage).val(navigetorJsonData["readerDeviceOfflineMessage"]);
+        }
       }
     });
   }
@@ -175,6 +183,12 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtLunchBreakMessageMinimumTime).val() != "") {
       this.navigatorJsonObject["lunchBreakMessageMinimumTime"] = $(this.txtLunchBreakMessageMinimumTime).val();
+    }
+    if ($(this.txtReaderDeviceOfflineInterval).val() != "") {
+      this.navigatorJsonObject["readerDeviceOfflineInterval"] = $(this.txtReaderDeviceOfflineInterval).val();
+    }
+    if ($(this.txtReaderDeviceOfflineMessage).val() != "") {
+      this.navigatorJsonObject["readerDeviceOfflineMessage"] = $(this.txtReaderDeviceOfflineMessage).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";
