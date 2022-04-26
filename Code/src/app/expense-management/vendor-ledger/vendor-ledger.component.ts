@@ -15,9 +15,14 @@ export class VendorLedgerComponent implements OnInit {
   db: any;
   cityName: any;
   vendorList: any[] = [];
+  yearList: any[] = [];
+  allLedgerList: any[];
+  ledgerList: any[];
   firebaseStoragePath: any;
   selectedVendorId: any;
   vendorJsonObject: any;
+  toDayDate: any;
+  selectedYear: any;
 
   txtName = "#txtName";
   txtMobile = "#txtMobile";
@@ -45,7 +50,18 @@ export class VendorLedgerComponent implements OnInit {
 
   setDefault() {
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.toDayDate = this.commonService.setTodayDate();
     this.getVendorList();
+    this.getYear();
+  }
+
+  getYear() {
+    this.yearList = [];
+    let year = parseInt(this.toDayDate.split('-')[0]);
+    for (let i = year - 2; i <= year; i++) {
+      this.yearList.push({ year: i });
+    }
+    this.selectedYear = this.toDayDate.split('-')[0];
   }
 
   getVendorList() {
@@ -61,8 +77,9 @@ export class VendorLedgerComponent implements OnInit {
             if (vendorId != "lastVendorId") {
               this.vendorList.push({ vendorId: vendorId, name: vendorJsonData[vendorId]["name"], mobile: vendorJsonData[vendorId]["mobile"], address: vendorJsonData[vendorId]["address"], bankName: vendorJsonData[vendorId]["bankName"], accountNumber: vendorJsonData[vendorId]["accountNumber"], branch: vendorJsonData[vendorId]["branch"], ifsc: vendorJsonData[vendorId]["ifsc"] });
             }
-            this.getVendorDetail(this.vendorList[0]["vendorId"]);
           }
+          this.selectedVendorId = this.vendorList[0]["vendorId"];
+          this.getVendorDetail(this.selectedVendorId);
         }
       }
     });
@@ -80,8 +97,47 @@ export class VendorLedgerComponent implements OnInit {
         this.vendorData.accountNumber = vendorDetail.accountNumber;
         this.vendorData.branch = vendorDetail.branch;
         this.vendorData.ifsc = vendorDetail.ifsc;
+        this.getVendorLedger();
       }
     }
+  }
+
+  getVendorLedger() {
+    this.allLedgerList = [];
+    this.ledgerList = [];
+    this.getExpenses();
+  }
+
+  getExpenses() {
+    const path = this.firebaseStoragePath + "Common%2FExpenses%2F" + this.selectedVendorId + ".json?alt=media";
+    let expensesJsonInstance = this.httpService.get(path).subscribe(expenseJsonData => {
+      expensesJsonInstance.unsubscribe();
+      if (expenseJsonData != null) {
+        let keyArray = Object.keys(expenseJsonData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let dateKey = keyArray[i];
+            let expenseData = expenseJsonData[dateKey];
+            let year = dateKey.split('-')[0];
+            let billNo = expenseData["billNo"];
+            let amount = Number(expenseData["amount"]);
+            this.allLedgerList.push({ date: dateKey, year: year, billNo: billNo, amount: amount.toFixed(2) });
+          }
+          this.getSelectedYearLedger();
+        }
+      }
+    });
+  }
+
+  getSelectedYearLedger() {
+    if (this.allLedgerList.length > 0) {
+      this.ledgerList = this.allLedgerList.filter(item => item.year == this.selectedYear);
+    }
+  }
+
+  changeYearSelection(year: any) {
+    this.selectedYear = year;
+    this.getSelectedYearLedger();
   }
 
   openModel(content: any) {
@@ -118,8 +174,8 @@ export class VendorLedgerComponent implements OnInit {
   }
 
   updateVendorDetail() {
-    if(this.checkUpdateVendorValidation()!="yes"){
-      this.commonService.setAlertMessage("error",this.checkUpdateVendorValidation());
+    if (this.checkUpdateVendorValidation() != "yes") {
+      this.commonService.setAlertMessage("error", this.checkUpdateVendorValidation());
       return;
     }
     let vendorDetail = this.vendorList.find(item => item.vendorId == this.selectedVendorId);
@@ -137,28 +193,28 @@ export class VendorLedgerComponent implements OnInit {
     }
   }
 
-  checkUpdateVendorValidation(){
-    let message="yes";
-    if($(this.txtIfsc).val()==""){
-      message="Please enter IFSC !!!";
+  checkUpdateVendorValidation() {
+    let message = "yes";
+    if ($(this.txtIfsc).val() == "") {
+      message = "Please enter IFSC !!!";
     }
-    if($(this.txtBranch).val()==""){
-      message="Please enter bank branch !!!";
+    if ($(this.txtBranch).val() == "") {
+      message = "Please enter bank branch !!!";
     }
-    if($(this.txtAccountNo).val()==""){
-      message="Please enter account number !!!";
+    if ($(this.txtAccountNo).val() == "") {
+      message = "Please enter account number !!!";
     }
-    if($(this.txtBankName).val()==""){
-      message="Please enter bank name !!!";
+    if ($(this.txtBankName).val() == "") {
+      message = "Please enter bank name !!!";
     }
-    if($(this.txtAddress).val()==""){
-      message="Please enter address !!!";
+    if ($(this.txtAddress).val() == "") {
+      message = "Please enter address !!!";
     }
-    if($(this.txtMobile).val()==""){
-      message="Please enter mobile number !!!";
+    if ($(this.txtMobile).val() == "") {
+      message = "Please enter mobile number !!!";
     }
-    if($(this.txtName).val()==""){
-      message="Please enter name !!!";
+    if ($(this.txtName).val() == "") {
+      message = "Please enter name !!!";
     }
     return message;
   }

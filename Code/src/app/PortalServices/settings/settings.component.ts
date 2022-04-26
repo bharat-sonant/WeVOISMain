@@ -50,6 +50,10 @@ export class SettingsComponent implements OnInit {
   txtHaltAllowedRange="#txtHaltAllowedRange";
   txtDistanceCoveredCheckInterval="#txtDistanceCoveredCheckInterval";
   txtMobileOffAllowedHalt="#txtMobileOffAllowedHalt";
+  txtNetworkOffAllowedHalt="#txtNetworkOffAllowedHalt";
+  txtMaxHaltAllowed="#txtMaxHaltAllowed";
+  txtLunchMaxHalt="#txtLunchMaxHalt";
+  txtLunchAllowedRange="#txtLunchAllowedRange";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -265,7 +269,18 @@ export class SettingsComponent implements OnInit {
         if (haltJsonData["mobileOffAllowedHalt"] != null) {
           $(this.txtMobileOffAllowedHalt).val(haltJsonData["mobileOffAllowedHalt"]);
         }
-
+        if (haltJsonData["networkOffAllowedHalt"] != null) {
+          $(this.txtNetworkOffAllowedHalt).val(haltJsonData["networkOffAllowedHalt"]);
+        }
+        if (haltJsonData["maxHaltAllowed"] != null) {
+          $(this.txtMaxHaltAllowed).val(haltJsonData["maxHaltAllowed"]);
+        }
+        if (haltJsonData["lunchMaxHalt"] != null) {
+          $(this.txtLunchMaxHalt).val(haltJsonData["lunchMaxHalt"]);
+        }
+        if (haltJsonData["lunchAllowedRange"] != null) {
+          $(this.txtLunchAllowedRange).val(haltJsonData["lunchAllowedRange"]);
+        }
       }
     });
   }
@@ -285,6 +300,18 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtMobileOffAllowedHalt).val() != "") {
       this.haltJsonObject["mobileOffAllowedHalt"] = $(this.txtMobileOffAllowedHalt).val();
+    }
+    if ($(this.txtNetworkOffAllowedHalt).val() != "") {
+      this.haltJsonObject["networkOffAllowedHalt"] = $(this.txtNetworkOffAllowedHalt).val();
+    }
+    if ($(this.txtMaxHaltAllowed).val() != "") {
+      this.haltJsonObject["maxHaltAllowed"] = $(this.txtMaxHaltAllowed).val();
+    }
+    if ($(this.txtLunchMaxHalt).val() != "") {
+      this.haltJsonObject["lunchMaxHalt"] = $(this.txtLunchMaxHalt).val();
+    }
+    if ($(this.txtLunchAllowedRange).val() != "") {
+      this.haltJsonObject["lunchAllowedRange"] = $(this.txtLunchAllowedRange).val();
     }
     let fileName = "HaltSetting.json";
     let path = "/Common/Settings/";

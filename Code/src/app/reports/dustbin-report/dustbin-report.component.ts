@@ -841,7 +841,7 @@ export class DustbinReportComponent implements OnInit {
         }
       }
     }
-    this.getAssignedPlanDustbin();
+    //this.getAssignedPlanDustbin();
     this.getDustbinPlanAdd();
   }
 

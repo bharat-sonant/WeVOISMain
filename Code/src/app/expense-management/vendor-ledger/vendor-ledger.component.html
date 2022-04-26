@@ -18,7 +18,6 @@
                 </div>
                 <!------------- Header End ---------->
                 <div class="row main1">
-                    <!------------- Halt Scroll List Start ---------->
                     <div class="col-md-3 mob-space-25 iner-main">
                         <div class="scrollable-halt">
                             <div class="halt-bg">
@@ -26,7 +25,7 @@
                                     <i class="fas fa-user-edit"
                                         style="cursor: pointer; color: green; position: absolute;z-index: 999;right: 25px;"
                                         (click)="openModel(contentUpdateDetail)"></i>
-                                    <p><i class="fas fa-user"></i> {{vendorData.name}} </p>
+                                    <p><i class="fas fa-user"></i><b> {{vendorData.name}} </b></p>
                                 </div>
                                 <div class="work-stop-address work-stop-address2">
                                     <p><i class="fas fa-mobile-alt"></i> {{vendorData.mobile}} </p>
@@ -49,30 +48,78 @@
                             </div>
                         </div>
                     </div>
-                    <!------------- Halt Scroll List End ---------->
 
                     <div class="col-md-9 mob-map mob-space-25 main2">
                         <div class="row">
-
                             <div class="col-md-12">
-                                <div class="map-bg map-bg2">
-                                    <div class="row total-halt">
-
+                                <div class="card" style="margin-top:-6px; height: 90vh!important;overflow: hidden;">
+                                    <div style="padding: 10px 10px; background-color: rgba(0,0,0,.03);
+                                    border-bottom: 1px solid rgba(0,0,0,.125);">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <select class="input-text" id="ddlYear" [(ngModel)]="selectedYear" (change)="changeYearSelection($event.target.value)">
+                                                    <option value="0">Year</option>
+                                                    <option value={{yer.year}} *ngFor="let yer of yearList"
+                                                        ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    <div class="mob-mt-5 last-main">
-
+                                    <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form>
+                                                    <div class="row">
+                                                        <div class="col-md-12 pr-1">
+                                                            <div class="table-wrapper table-scroll"
+                                                                style="padding: 0px 0px 20px 0px;">
+                                                                <table class="table"
+                                                                    style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                                                    <thead>
+                                                                        <th class="text-left" 
+                                                                            style="border-right:1px solid #dee2e6;">
+                                                                            Date</th>
+                                                                        <th class="text-left"
+                                                                            style="border-right:1px solid #dee2e6; ">
+                                                                            Bill No.</th>
+                                                                        <th class="text-right"
+                                                                            style="border-right:1px solid #dee2e6; ">
+                                                                            Amount</th>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr *ngFor="let data of ledgerList;">
+                                                                            <td class="text-left" style="border-right:1px solid #dee2e6" >
+                                                                                {{data.date}}
+                                                                            </td>
+                                                                            <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                                                {{data.billNo}}</td>
+                                                                            <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                                                {{data.amount}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                                            style="padding-top: 20vh; display: none;">
+                                                            <div class="form-group">
+                                                                <h5>No data available</h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
-                            <!------------- Halt Map End ---------->
                         </div>
                     </div>
                 </div>
 
             </div>
-            <!------------- Ward Scroll List Start ---------->
+            <!------------- Vendor Scroll List Start ---------->
             <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
                 <div class="scroll-list">
                     <div class="ward-header list2" *ngFor="let dt of vendorList"
@@ -83,13 +130,13 @@
                     </div>
                 </div>
             </div>
-            <!------------- Ward Scroll List End ---------->
+            <!------------- Vendor Scroll List End ---------->
         </div>
     </div>
 </section>
 
 
-<!--Remark Modal Start-->
+<!--Vendor Detail Modal Start-->
 <ng-template #contentUpdateDetail>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -130,9 +177,10 @@
                         <input id="txtIfsc" type="text" class="input-text">
                     </div>
                 </div>
-                <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="updateVendorDetail();" />
+                <input id="btnRemark" type="button" class="btn btn-success" value="Submit"
+                    (click)="updateVendorDetail();" />
             </div>
         </div>
     </div>
 </ng-template>
-<!--Remark Modal End-->
+<!--Vendor Detail Modal End-->
