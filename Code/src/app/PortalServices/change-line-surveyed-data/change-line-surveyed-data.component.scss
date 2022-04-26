@@ -554,6 +554,10 @@ form{
     padding-right: 17px;
     margin-top: 15px !important
   }
+  .card-body3{
+ 
+    height: 32vh !important;
+  }
    }
    
 
@@ -592,7 +596,14 @@ form{
   margin-top: 15px !important;
   
 }
-
+.card-body3{
+ 
+  height: 25vh !important;
+}
+.card-body2{
+ 
+  height: 58vh !important;
+}
 
  }
 
@@ -635,5 +646,21 @@ form{
   margin-top: 15px !important;
   
 }
+.card-body3{
+ 
+  height: 32vh !important;
+}
 
+ }
+
+ @media only screen and (max-width: 376px) and (min-width: 359px){
+  .card-body3{
+ 
+    height: 30vh !important;
+  }
+  .card-body2{
+   
+    height: 75vh !important;
+  }
+  
  }
