@@ -26,9 +26,10 @@
                                                         data-bs-target="#Halt" type="button" role="tab"
                                                         aria-controls="Halt" aria-selected="false"
                                                         (click)="setActiveTab('Halt');">Halt</button>
-                                                <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-help" type="button" role="tab"
-                                                        aria-controls="nav-help" aria-selected="false"></button>
+                                                <button class="nav-link" id="tabSalary" data-bs-toggle="tab"
+                                                        data-bs-target="#Salary" type="button" role="tab"
+                                                        aria-controls="Salary" aria-selected="false"
+                                                        (click)="setActiveTab('Salary');">Salary</button>
                                         </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
@@ -400,7 +401,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Network Off Allowed Halt (in
+                                                                                                <label>Network Off
+                                                                                                        Allowed Halt (in
                                                                                                         minutes)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -410,7 +412,8 @@
                                                                                                 </div>
                                                                                         </div>
                                                                                         <div class="col-md-12">
-                                                                                                <label>Max Halt Allowed (in
+                                                                                                <label>Max Halt Allowed
+                                                                                                        (in
                                                                                                         minutes)</label>
                                                                                                 <div class="wrap-input-effects"
                                                                                                         required>
@@ -462,23 +465,76 @@
                                                         </div>
                                                 </form>
                                         </div>
-                                        <div class="tab-pane fade" id="nav-help" role="tabpanel"
-                                                aria-labelledby="nav-help-tab">
-                                                <form action="" class="form">
+                                        <div class="tab-pane fade" id="Salary" role="tabpanel"
+                                                aria-labelledby="tabSalary">
+                                                <form>
+                                                        <div class="form">
+                                                                <div class="row">
+                                                                        <div class="col-md-3">
+                                                                                <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Driver Salary Per
+                                                                                                        Hour</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtDriverSalaryPerHour"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Helper Salary Per
+                                                                                                        Hour</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtHelperSalaryPerHour"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Driver Salary Per
+                                                                                                        Hour For
+                                                                                                        Tractor</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtDriverSalaryPerHourForTractor"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12">
+                                                                                                <label>Basic Min
+                                                                                                        Hours</label>
+                                                                                                <div class="wrap-input-effects"
+                                                                                                        required>
+                                                                                                        <input id="txtBasicMinHours"
+                                                                                                                class="caret-select"
+                                                                                                                type="number" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <label>Name</label>
-                                                        <input type="text">
-                                                        <label class="margin">Name</label>
-                                                        <input type="text">
-                                                        <a href="#">save</a>
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
+                                                                        </div>
+                                                                        <div class="col-md-3">
 
+                                                                        </div>
+                                                                </div>
 
-
+                                                                <div class="row form-group2">
+                                                                        <div class="col-md-12 pr-1">
+                                                                                <div class="form-group">
+                                                                                        <button class="btn btn-success btn-xs"
+                                                                                                (click)="saveCitySalarySetting();">SAVE</button>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
                                                 </form>
                                         </div>
                                 </div>

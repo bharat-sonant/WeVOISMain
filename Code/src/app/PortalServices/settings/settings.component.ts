@@ -17,6 +17,7 @@ export class SettingsComponent implements OnInit {
   navigatorJsonObject: any;
   readerJsonObject: any;
   haltJsonObject: any;
+  salaryJsonObject: any;
   // Navigator
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
@@ -55,6 +56,12 @@ export class SettingsComponent implements OnInit {
   txtLunchMaxHalt="#txtLunchMaxHalt";
   txtLunchAllowedRange="#txtLunchAllowedRange";
 
+  // Salary
+  txtDriverSalaryPerHour="#txtDriverSalaryPerHour";
+  txtHelperSalaryPerHour="#txtHelperSalaryPerHour";
+  txtDriverSalaryPerHourForTractor="#txtDriverSalaryPerHourForTractor";
+  txtBasicMinHours="#txtBasicMinHours";
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -66,7 +73,56 @@ export class SettingsComponent implements OnInit {
     this.getCommonNavigatorSetting();
     this.getCommonReaderSetting();
     this.getCityHaltSetting();
+    this.getCitySalarySetting();
   }
+
+  //Salary
+
+  getCitySalarySetting() {
+    const path = this.firestotagePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSalarySetting.json?alt=media";
+    let haltJsonInstance = this.httpService.get(path).subscribe(salaryJsonData => {
+      haltJsonInstance.unsubscribe();
+      if (salaryJsonData != null) {
+        this.salaryJsonObject = salaryJsonData;
+        if (salaryJsonData["driverSalaryPerHour"] != null) {
+          $(this.txtDriverSalaryPerHour).val(salaryJsonData["driverSalaryPerHour"]);
+        }
+        if (salaryJsonData["helperSalaryPerHour"] != null) {
+          $(this.txtHelperSalaryPerHour).val(salaryJsonData["helperSalaryPerHour"]);
+        }
+        if (salaryJsonData["driverSalaryPerHourForTractor"] != null) {
+          $(this.txtDriverSalaryPerHourForTractor).val(salaryJsonData["driverSalaryPerHourForTractor"]);
+        }
+        if (salaryJsonData["basicMinHours"] != null) {
+          $(this.txtBasicMinHours).val(salaryJsonData["basicMinHours"]);
+        }
+      }
+    });
+  }
+
+  saveCitySalarySetting() {
+    if (this.salaryJsonObject == null) {
+      this.salaryJsonObject = {};
+    }
+    if ($(this.txtDriverSalaryPerHour).val() != "") {
+      this.salaryJsonObject["driverSalaryPerHour"] = $(this.txtDriverSalaryPerHour).val();
+    }
+    if ($(this.txtHelperSalaryPerHour).val() != "") {
+      this.salaryJsonObject["helperSalaryPerHour"] = $(this.txtHelperSalaryPerHour).val();
+    }
+    if ($(this.txtDriverSalaryPerHourForTractor).val() != "") {
+      this.salaryJsonObject["driverSalaryPerHourForTractor"] = $(this.txtDriverSalaryPerHourForTractor).val();
+    }
+    if ($(this.txtBasicMinHours).val() != "") {
+      this.salaryJsonObject["basicMinHours"] = $(this.txtBasicMinHours).val();
+    }
+    let fileName = "SalarySetting.json";
+    let path = "/Settings/";
+    this.commonService.saveJsonFile(this.salaryJsonObject, fileName, path);
+    this.commonService.setAlertMessage("success", "Salary setting updated !!!");
+  }
+
+
   // Navigator
   getCommonNavigatorSetting() {
     const path = this.firestotagePath + "Common%2FSettings%2FNavigatorSetting.json?alt=media";
@@ -252,7 +308,7 @@ export class SettingsComponent implements OnInit {
   //Halt
 
   getCityHaltSetting() {
-    const path = this.firestotagePath + this.commonService.getFireStoreCity() + "%2FCommon%2FSettings%2FHaltSetting.json?alt=media";
+    const path = this.firestotagePath + this.commonService.getFireStoreCity() + "%2FSettings%2FHaltSetting.json?alt=media";
     let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
       haltJsonInstance.unsubscribe();
       if (haltJsonData != null) {
@@ -314,7 +370,7 @@ export class SettingsComponent implements OnInit {
       this.haltJsonObject["lunchAllowedRange"] = $(this.txtLunchAllowedRange).val();
     }
     let fileName = "HaltSetting.json";
-    let path = "/Common/Settings/";
+    let path = "/Settings/";
     this.commonService.saveJsonFile(this.haltJsonObject, fileName, path);
     this.commonService.setAlertMessage("success", "Halt setting updated !!!");
   }
@@ -324,6 +380,7 @@ export class SettingsComponent implements OnInit {
     $("#Navigator").hide();
     $("#Reader").hide();
     $("#Halt").hide();
+    $("#Salary").hide();
 
     let element = <HTMLButtonElement>document.getElementById("tabNavigator");
     let className = element.className;
@@ -339,6 +396,11 @@ export class SettingsComponent implements OnInit {
     className = element.className;
     $("#tabHalt").removeClass(className);
     $("#tabHalt").addClass("nav-link");
+
+    element = <HTMLButtonElement>document.getElementById("tabSalary");
+    className = element.className;
+    $("#tabSalary").removeClass(className);
+    $("#tabSalary").addClass("nav-link");
 
     if (tab == "Navigator") {
       $("#Navigator").show();
@@ -373,6 +435,17 @@ export class SettingsComponent implements OnInit {
       className = element.className;
       $("#Halt").removeClass(className);
       $("#Halt").addClass("tab-pane fade show active save");
+    } else if (tab == "Salary") {
+      $("#Salary").show();
+      element = <HTMLButtonElement>document.getElementById("tabSalary");
+      className = element.className;
+      $("#tabSalary").removeClass(className);
+      $("#tabSalary").addClass("nav-link active");
+
+      element = <HTMLButtonElement>document.getElementById("Salary");
+      className = element.className;
+      $("#Salary").removeClass(className);
+      $("#Salary").addClass("tab-pane fade show active save");
     }
   }
 
