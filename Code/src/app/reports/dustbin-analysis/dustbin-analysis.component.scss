@@ -802,6 +802,7 @@ label{
   .desk-hide{
     display: block;
   }
+
   .mob-20{
     margin-top: -50px!important;
     padding-left: 20px!important;
@@ -862,4 +863,144 @@ label{
 .carousel-inner img{
   height: 50vh;
 }
+}
+
+
+
+
+
+
+
+
+
+
+
+.header-span{
+  float:right; 
+  font-size: 8px; 
+  line-height: 15px; 
+  padding-right:58px; 
+  text-align: right; 
+  color: #fff;
+}
+.header-span-iner{
+  font-size: 16px; 
+  font-weight: bold;
+}
+.date-main{
+  padding-right: 0px; 
+  padding-left: 28px;
+}
+.date-main-iner{
+  margin-top: 10px;
+}
+
+.date-main-iner2{
+  margin-top:-10px;
+}
+.date-main-iner4{
+  width: 100%; display: flex;
+}
+.fright-iner span{
+  display: inline-block; 
+  position: absolute; 
+  right: 25px; 
+  top: 3px;
+
+}
+.fleft-outer{
+  border-bottom:0px solid red;
+}
+
+.end-time-outer span{
+  display: inline-block; 
+  position: absolute;
+   right: 25px; 
+   top: 3px;
+}
+.pen-analysis-outer{
+  border-right: 1px solid lightgray;
+}
+.summ-text-outer{
+  border-right: 1px solid lightgray;
+}
+.padding-bottom{
+  padding-bottom: 10px;
+}
+.dust-main{
+  font-size: 11px !important;
+}
+.align-self-center-outer{
+  margin-top: 5px;
+  height: 38px;
+}
+
+.align-self-center-outer p{
+  color: green !important;
+}
+
+.dustbin-history{
+  padding-bottom: 10px;
+}
+
+.mob-hide-outer{
+  padding-right: 50px; 
+  padding-left: 10px; 
+  padding-bottom: 20px;
+}
+
+
+.slide-outer{
+  margin-top: -40px;
+}
+.full{
+  margin-top: 15px;
+}
+.address-text-outer{
+  width: 76%; 
+  float: left;
+}
+
+.address-main{
+  width: 24%; 
+  float: right; 
+  text-align: right;
+}
+
+.address-main h6{
+
+  font-size:10px;
+}
+
+
+
+
+
+@media only screen and (min-width:750px) and (max-width:950px){
+   .dustin-span{
+    display: none !important;
+  }
+ 
+  .refresh{
+    margin-top: -20px !important
+  }
+  .carousel-inner img{
+    height: 50vh !important;
+}
+}
+
+
+@media only screen and (min-width:270px) and (max-width:290px){
+  .dustin-span{
+   display: none !important;
+ }
+
+}
+
+@media only screen and (min-width:1023px) and (max-width:1025px){
+
+  span.dustin-span{
+    font-size: 14px !important;
+}
+
 }
