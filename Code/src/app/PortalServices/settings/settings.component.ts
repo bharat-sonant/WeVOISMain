@@ -38,6 +38,11 @@ export class SettingsComponent implements OnInit {
   txtLunchBreakMessageMinimumTime = "#txtLunchBreakMessageMinimumTime";
   txtReaderDeviceOfflineInterval = "#txtReaderDeviceOfflineInterval";
   txtReaderDeviceOfflineMessage = "#txtReaderDeviceOfflineMessage";
+  txtScreenOffIntervalTime="#txtScreenOffIntervalTime";
+  txtMicCapturingTime="#txtMicCapturingTime";
+  txtMicNotificationTime="#txtMicNotificationTime";
+  txtMicCapturingRangeInAmp="#txtMicCapturingRangeInAmp";
+  txtMicRecordingStartTime="#txtMicRecordingStartTime";
 
 
   // Reader
@@ -190,6 +195,21 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["readerDeviceOfflineMessage"] != null) {
           $(this.txtReaderDeviceOfflineMessage).val(navigetorJsonData["readerDeviceOfflineMessage"]);
         }
+        if (navigetorJsonData["screenOffIntervalTime"] != null) {
+          $(this.txtScreenOffIntervalTime).val(navigetorJsonData["screenOffIntervalTime"]);
+        }
+        if (navigetorJsonData["micCapturingTime"] != null) {
+          $(this.txtMicCapturingTime).val(navigetorJsonData["micCapturingTime"]);
+        }
+        if (navigetorJsonData["micNotificationTime"] != null) {
+          $(this.txtMicNotificationTime).val(navigetorJsonData["micNotificationTime"]);
+        }
+        if (navigetorJsonData["micCapturingRangeInAmp"] != null) {
+          $(this.txtMicCapturingRangeInAmp).val(navigetorJsonData["micCapturingRangeInAmp"]);
+        }
+        if (navigetorJsonData["micRecordingStartTime"] != null) {
+          $(this.txtMicRecordingStartTime).val(navigetorJsonData["micRecordingStartTime"]);
+        }
       }
     });
   }
@@ -257,6 +277,21 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtReaderDeviceOfflineMessage).val() != "") {
       this.navigatorJsonObject["readerDeviceOfflineMessage"] = $(this.txtReaderDeviceOfflineMessage).val();
+    }
+    if ($(this.txtScreenOffIntervalTime).val() != "") {
+      this.navigatorJsonObject["screenOffIntervalTime"] = $(this.txtScreenOffIntervalTime).val();
+    }
+    if ($(this.txtMicCapturingTime).val() != "") {
+      this.navigatorJsonObject["micCapturingTime"] = $(this.txtMicCapturingTime).val();
+    }
+    if ($(this.txtMicNotificationTime).val() != "") {
+      this.navigatorJsonObject["micNotificationTime"] = $(this.txtMicNotificationTime).val();
+    }
+    if ($(this.txtMicCapturingRangeInAmp).val() != "") {
+      this.navigatorJsonObject["micCapturingRangeInAmp"] = $(this.txtMicCapturingRangeInAmp).val();
+    }
+    if ($(this.txtMicRecordingStartTime).val() != "") {
+      this.navigatorJsonObject["micRecordingStartTime"] = $(this.txtMicRecordingStartTime).val();
     }
     let fileName = "NavigatorSetting.json";
     let path = "/Common/Settings/";
