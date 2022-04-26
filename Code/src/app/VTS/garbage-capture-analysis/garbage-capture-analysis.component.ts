@@ -650,10 +650,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         elementButton.disabled = false;
       }
       if (imageName.split('~').length == 4) {
-        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
       }
       else {
-        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+        imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
       }
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
@@ -703,10 +703,10 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         let imageURL = this.imageNoFoundURL;
 
         if (imageName.split('~').length == 4) {
-          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
+          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWastebinMonitorImages%2F" + imageName + "?alt=media";
         }
         else {
-          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.storageCityName + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+          imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Jaipur-Greater%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
         }
         let element = <HTMLImageElement>document.getElementById("mainImageResolved");
         element.src = imageURL;

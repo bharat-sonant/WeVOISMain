@@ -61,6 +61,7 @@ export class WardWorkPercentageComponent implements OnInit {
     $("#divLoader").show();
     let wardLines = [];
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
+      console.log(linesData);
       let wardLinesDataObj = JSON.parse(linesData);
       let wardTotalLines = wardLinesDataObj["totalLines"];
       let keyArray = Object.keys(wardLinesDataObj);

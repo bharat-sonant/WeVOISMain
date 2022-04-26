@@ -72,7 +72,6 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
             dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
             this.db.object(dbPath).update(data);
             dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-            const data1 = null;
             this.db.object(dbPath).remove();
             dbPath = "CardWardMapping/" + cardNo;
             this.db.object(dbPath).update({ line: lineTo, ward: zoneTo });

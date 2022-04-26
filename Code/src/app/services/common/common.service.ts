@@ -168,6 +168,9 @@ export class CommonService {
     else if (cityName == "churu") {
       latLng.push({ lat: 28.2928367, lng: 74.9664406 });
     }
+    else if (cityName == "behror") {
+      latLng.push({ lat: 27.8952227, lng: 76.28591559 });
+    }
     return latLng;
   }
 

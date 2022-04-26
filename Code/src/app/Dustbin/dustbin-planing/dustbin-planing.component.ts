@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
+import { DustbinService } from "../../services/dustbin/dustbin.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
@@ -11,7 +12,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class DustbinPlaningComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private dustbinService: DustbinService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   selectedZone: any;
   cityName: any;
@@ -33,6 +34,33 @@ export class DustbinPlaningComponent implements OnInit {
   ddlZone = "#ddlZone";
   divLoader = "#divLoader";
 
+  // plan section
+  key = "#key";
+  perPlanDate = "#perPlanDate";
+  txtPlanName = "#txtPlanName";
+  txtPlanDate = "#txtPlanDate";
+  txtDustbinCapacity = "#txtDustbinCapacity";
+  deletePlanId = "#deletePlanId";
+  deletePlanDate = "#deletePlanDate";
+
+  bins: any;
+  createdAt: any;
+  createdBy: any;
+  userId: any;
+  dustbinPickingPosition: any;
+  isAssigned: any;
+  isConfirmed: any;
+  maxDustbinCapacity: any;
+  pickingSequence: any;
+  planName: any;
+  totalDustbin: any;
+  updatedAt: any;
+  updatedBy: any;
+  zone: any;
+  pickedDustbin: any;
+  highPriority: any;
+  planAddDays = 5;
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -40,6 +68,7 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   setDefault() {
+    this.userId = localStorage.getItem("userID");
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.todayDate = this.commonService.setTodayDate();
@@ -58,6 +87,7 @@ export class DustbinPlaningComponent implements OnInit {
     this.selectedYear = this.todayDate.split('-')[0];
     $(this.ddlMonth).val(this.selectedMonth);
     $(this.ddlYear).val(this.selectedYear);
+    this.getDustbinPickingPlans("plan");
   }
 
   getZoneList() {
@@ -75,8 +105,11 @@ export class DustbinPlaningComponent implements OnInit {
     }
   }
 
+  //#region report
+
   getDustbins() {
     this.dustbinList = [];
+    this.dustbinJsonList = [];
     let list = [];
     if (this.dustbinStorageList.length > 0) {
       if (this.selectedZone == "0") {
@@ -98,15 +131,26 @@ export class DustbinPlaningComponent implements OnInit {
         this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
       }
       if (this.dustbinList.length > 0) {
-        $(this.divLoader).show();
-        this.getDustbinHistoryJson();
-        this.getDustbinPickingPlanHistory();
-        this.getDustbinPickingPlans();
-        setTimeout(() => {
-           this.saveDustbinReportJSON();
-          $(this.divLoader).hide();
-        }, 12000);
+        this.getDustbinAllPlan();
       }
+    }
+  }
+
+  getDustbinAllPlan() {
+    $(this.divLoader).show();
+    this.getDustbinPickingPlanHistory();
+    this.getDustbinPickingPlans("Report");
+    if (this.selectedZone != "0") {
+      // this.getDustbinHistoryJson();
+      setTimeout(() => {
+        // this.saveDustbinReportJSON();
+        $(this.divLoader).hide();
+      }, 12000);
+    }
+    else {
+      setTimeout(() => {
+        $(this.divLoader).hide();
+      }, 60000);
     }
   }
 
@@ -118,9 +162,7 @@ export class DustbinPlaningComponent implements OnInit {
 
   getDustbinHistoryJson() {
     this.dustbinJsonList = [];
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedZone + ".json?alt=media";
-    let dutbinJSONInstance = this.httpService.get(path).subscribe(planJsonData => {
-      dutbinJSONInstance.unsubscribe();
+    this.dustbinService.getDustbinHistoryJson(this.selectedYear, this.selectedMonthName, this.selectedZone).then((planJsonData: any) => {
       if (planJsonData != null) {
         this.dustbinJsonList = JSON.parse(JSON.stringify(planJsonData));
       }
@@ -128,27 +170,24 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   getDustbinPickingPlanHistory() {
-    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName;
-    let dustbinPlanHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(
-      planHistoryData => {
-        dustbinPlanHistoryInstance.unsubscribe();
-        if (planHistoryData != null) {
-          this.getDustbinePlanedStatus(planHistoryData);
-        }
+    this.dustbinService.getDustbinPickingPlanHistory(this.selectedYear, this.selectedMonthName).then((planHistoryData: any) => {
+      if (planHistoryData != null) {
+        this.getDustbinePlanedStatus(planHistoryData);
       }
-    );
+    });
   }
 
-  getDustbinPickingPlans() {
-    let dbPath = "DustbinData/DustbinPickingPlans";
-    let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
-      planData => {
-        dustbinPlanInstance.unsubscribe();
-        if (planData != null) {
+  getDustbinPickingPlans(type: any) {
+    this.dustbinService.getDustbinPickingPlans().then((planData: any) => {
+      if (planData != null) {
+        if (type == "Report") {
           this.getDustbinePlanedStatus(planData);
         }
+        else {
+          this.getPlanList(planData);
+        }
       }
-    );
+    });
   }
 
   getDustbinePlanedStatus(planData: any) {
@@ -192,7 +231,7 @@ export class DustbinPlaningComponent implements OnInit {
             }
           }
           if (isPicked == false) {
-            binDetail[day].push({ status: this.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
+            binDetail[day].push({ status: this.dustbinService.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
           }
           else {
             this.checkDustbinFromDustbinJsonList(day, binDetail, dustbin, planDate, planName);
@@ -230,7 +269,7 @@ export class DustbinPlaningComponent implements OnInit {
     let pickedAnalysisDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
       pickAnalysisData => {
         pickedAnalysisDustbinInstance.unsubscribe();
-        let icon = this.getIcon("picked");
+        let icon = this.dustbinService.getIcon("picked");
         let pickTime = binPlanDetail.pickTime;
         let name = binPlanDetail.name;
         if (pickAnalysisData != null) {
@@ -262,11 +301,11 @@ export class DustbinPlaningComponent implements OnInit {
       pickData => {
         pickedDustbinInstance.unsubscribe();
         if (pickData == null) {
-          binDetail[day].push({ status: this.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
+          binDetail[day].push({ status: this.dustbinService.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
         }
         else {
           if (pickData["endTime"] == null) {
-            binDetail[day].push({ status: this.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
+            binDetail[day].push({ status: this.dustbinService.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planName, isPicked: false });
           }
           else {
             this.setDustbinPickedDetail(pickData, binDetail, day, planDate, planName);
@@ -277,13 +316,13 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   setDustbinPickedDetail(pickData: any, binDetail: any, day: any, planDate: any, planName: any) {
-    let icon = this.getIcon("picked");
+    let icon = this.dustbinService.getIcon("picked");
     let empId = pickData["pickedBy"];
     if (pickData["remarks"] == "डस्टबिन लोकेशन पर नहीं है") {
-      icon = this.getIcon("dustbinNotFound");
+      icon = this.dustbinService.getIcon("dustbinNotFound");
     }
     else if (pickData["remarks"] == "डस्टबिन खाली है") {
-      icon = this.getIcon("dustbinNotFilled");
+      icon = this.dustbinService.getIcon("dustbinNotFilled");
     }
     let pickTime = "";
     if (pickData["endTime"] != null) {
@@ -314,47 +353,283 @@ export class DustbinPlaningComponent implements OnInit {
     });
   }
 
-  getIcon(type: any) {
-    let icon = "";
-    if (type == "picked") {
-      icon = "<img src='../../assets/img/Green-Circle-dustbin.png' height='20px'>";
-    }
-    else if (type == "dustbinNotFound") {
-      icon = "<img src='../../assets/img/dustbin-circular-red.png' height='20px'>";
-    }
-    else if (type == "assignedNotPicked") {
-      icon = "<img src='../../assets/img/blue without tick rectangle.png' height='20px'>";
-    }
-    else if (type == "dustbinNotFilled") {
-      icon = "<img src='../../assets/img/Green-Circle-dustbin.png' height='20px'>";
-    }
-    else if (type == "planDustbin") {
-      icon = "../../assets/img/blue-rectange-dustbin.svg";
-    }
-    else if (type == "selectedDustbin") {
-      icon = "../../assets/img/blue-rectange-dustbin.svg";
-    }
-    else if (type == "pickedDustbin") {
-      icon = "../../assets/img/green-rectange-dustbin.svg";
-    }
-    return icon;
-  }
+
 
   changeSelection() {
     this.selectedYear = $(this.ddlYear).val();
     this.selectedMonth = $(this.ddlMonth).val();
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.selectedZone = $(this.ddlZone).val();
-    if (this.selectedZone != "0") {
-      this.getDustbins();
+    this.getDustbins();
+  }
+
+  //#endregion
+
+  //#region Plans
+
+  getPlanList(planData: any) {
+    this.planList = [];
+    let keyArray = Object.keys(planData);
+    if (keyArray.length > 0) {
+      for (let i = 0; i < keyArray.length; i++) {
+        let date = keyArray[i];
+        let planObject = planData[date];
+        let planArray = Object.keys(planObject);
+        for (let j = 0; j < planArray.length; j++) {
+          let dustbinAssigned = 0;
+          let bins = "";
+          let dustbinPicked = 0;
+          let highPriority = "";
+          if (planObject[planArray[j]]["bins"] != undefined) {
+            bins = planObject[planArray[j]]["bins"];
+            if (bins != "") {
+              dustbinAssigned = bins.toString().split(',').length;
+            }
+            if (planObject[planArray[j]]["pickedDustbin"] != undefined) {
+              if (planObject[planArray[j]]["pickedDustbin"] != "") {
+                dustbinPicked = planObject[planArray[j]]["pickedDustbin"].toString().split(',').length;
+              }
+            }
+            if (planObject[planArray[j]]["highPriority"] != null) {
+              highPriority = planObject[planArray[j]]["highPriority"];
+            }
+          }
+          this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
+
+        }
+      }
+      this.removeAssignedPlan();
+    }
+  }
+
+  clearPlan() {
+    $(this.key).val("0");
+    $(this.perPlanDate).val("");
+    $(this.txtPlanName).val("");
+    $(this.txtPlanDate).val(this.commonService.setTodayDate());
+    $(this.txtDustbinCapacity).val("");
+    this.bins = "";
+    this.createdAt = this.commonService.getTodayDateTime();
+    this.createdBy = this.userId;
+    this.dustbinPickingPosition = "0";
+    this.isAssigned = "false";
+    this.isConfirmed = "false";
+    this.maxDustbinCapacity = 0;
+    this.pickingSequence = "";
+    this.planName = "";
+    this.totalDustbin = 0;
+    this.updatedAt = "";
+    this.updatedBy = "";
+    this.zone = "";
+    this.pickedDustbin = "";
+    this.highPriority = "";
+  }
+
+  addUpdatePlan() {
+    let $Key = $(this.key).val();
+    let perPlanDate = $(this.perPlanDate).val();
+    let planName = $(this.txtPlanName).val();
+    let planDate = $(this.txtPlanDate).val();
+    let maxDustbinCapacity = $(this.txtDustbinCapacity).val();
+
+    if (planName == "") {
+      this.commonService.setAlertMessage("error", "Please fill plan name !!!");
+      return;
+    }
+    if (planDate == "") {
+      this.commonService.setAlertMessage("error", "Please fill plan date !!!");
+      return;
+    }
+    if (maxDustbinCapacity == "") {
+      this.commonService.setAlertMessage("error", "Please fill max. dustbin capacity !!!");
+      return;
+    }
+    if (new Date(planDate.toString()) < new Date(this.todayDate)) {
+      if (perPlanDate != "") {
+        $(this.txtPlanDate).val(perPlanDate);
+      }
+      this.commonService.setAlertMessage("error", "plan date can not be less than today date !!!");
+      return;
+    }
+    let dbPath = "DustbinData/DustbinPickingPlans/" + planDate;
+    const plan = {
+      $Key: $Key,
+      bins: this.bins,
+      createdAt: this.createdAt,
+      createdBy: this.userId,
+      dustbinPickingPosition: this.dustbinPickingPosition,
+      isAssigned: this.isAssigned,
+      pickingSequence: this.pickingSequence,
+      planName: planName.toString(),
+      totalDustbin: this.totalDustbin,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy,
+      zone: this.zone,
+      maxDustbinCapacity: Number(maxDustbinCapacity),
+      isConfirmed: this.isConfirmed,
+      pickedDustbin: this.pickedDustbin,
+      highPriority: this.highPriority
+    };
+    if ($Key == "0") {
+      this.addPlan(plan, dbPath, "Plan added successfully !!!");
+    }
+    else {
+      let planDetails = this.planList.find(item => item.key == $Key);
+      if (planDetails != undefined) {
+        if (Number(maxDustbinCapacity) < Number(planDetails.dustbinAssigned)) {
+          this.commonService.setAlertMessage("error", "Max dustbin capacity can not be less than " + planDetails.dustbinAssigned + " !!!");
+          $('#txtDustbinCapacity').val(planDetails.maxDustbin);
+          return;
+        }
+        if (perPlanDate == planDate) {
+          this.dustbinService.UpdatePlan(plan, dbPath);
+          this.commonService.setAlertMessage("success", "Plan updated successfully !!!");
+        }
+        else {
+          if (planDetails.isAssigned == "true") {
+            this.commonService.setAlertMessage("error", "Plan already assigned !!!");
+            return;
+          }
+          this.dustbinService.deletePlan(planDetails.date, planDetails.key);
+          this.addPlan(plan, dbPath, "Plan updated successfully !!!");
+        }
+        this.closeModel();
+        this.getDustbinPickingPlans("Plan");
+      }
+    }
+  }
+
+  addPlan(plan: any, dbPath: any, message: any) {
+    this.dustbinService.addPlan(plan, dbPath);
+    this.commonService.setAlertMessage("success", message);
+    this.clearPlan();
+    this.getDustbinPickingPlans("Plan");
+  }
+
+  updatePlan(plan: any) {
+    this.dustbinService.getDustbinPlanDetail(plan.date, plan.key).then((planDetailData: any) => {
+      if (planDetailData != null) {
+        $(this.key).val(plan.key);
+        $(this.perPlanDate).val(plan.date);
+        $(this.txtPlanName).val(planDetailData["planName"]);
+        $(this.txtPlanDate).val(plan.date);
+        $(this.txtDustbinCapacity).val(planDetailData["maxDustbinCapacity"]);
+        let elementPlanName = <HTMLInputElement>document.getElementById('txtPlanName');
+        let elementDate = <HTMLInputElement>document.getElementById('txtPlanDate');
+        if (planDetailData["isAssigned"] == "true") {
+          elementPlanName.readOnly = true;
+          elementDate.readOnly = true;
+        }
+        else {
+          elementPlanName.readOnly = false;
+          elementDate.readOnly = false;
+        }
+        this.bins = planDetailData["bins"];
+        this.createdAt = planDetailData["createdAt"];
+        this.createdBy = planDetailData["createdBy"];
+        this.dustbinPickingPosition = planDetailData["dustbinPickingPosition"];
+        this.isAssigned = planDetailData["isAssigned"];
+        this.isConfirmed = planDetailData["isConfirmed"];
+        this.maxDustbinCapacity = planDetailData["maxDustbinCapacity"];
+        this.pickingSequence = planDetailData["pickingSequence"];
+        this.planName = planDetailData["planName"];
+        this.totalDustbin = planDetailData["totalDustbin"];
+        this.updatedAt = this.commonService.getTodayDateTime();
+        this.updatedBy = this.userId;
+        this.zone = planDetailData["zone"];
+        this.pickedDustbin = planDetailData["pickedDustbin"];
+        if (planDetailData["highPriority"] != null) {
+          this.highPriority = planDetailData["highPriority"];
+        }
+        else {
+          this.highPriority = "";
+        }
+      }
+    });
+  }
+
+  deleteConfirmPlan() {
+    this.dustbinService.deletePlan($(this.deletePlanDate).val(), $(this.deletePlanId).val());
+    this.commonService.setAlertMessage("success", "Plan deleted successfully !!!");
+    this.closeModel();
+    this.getDustbinPickingPlans("Plan");
+  }
+
+  removeAssignedPlan() {
+    for (let i = 0; i < this.dustbinList.length; i++) {
+      for (let j = 1; j <= 31; j++) {
+        let day = "day" + j;
+        let labelId = 'lbl-' + this.dustbinList[i]["dustbin"] + '-' + day;
+        let spanId = 'sp-' + this.dustbinList[i]["dustbin"] + '-' + day;
+        $('#' + labelId).html("");
+        $('#' + spanId).hide();
+      }
+    }
+    this.getDustbinPlanAdd();
+  }
+
+  getDustbinPlanAdd() {
+    let currentDate = this.commonService.setTodayDate();
+    for (let i = 0; i < this.planAddDays; i++) {
+      let planDate = this.commonService.getNextDate(currentDate, i);
+      if (this.selectedYear == planDate.split('-')[0] && this.selectedMonth == planDate.split('-')[1]) {
+        this.getDustbinPlans(planDate);
+      }
+    }
+  }
+
+  getDustbinPlans(date: any) {
+    let planDetails = this.planList.find(item => item.date == date);
+    if (planDetails != undefined) {
+      let d = "day" + parseFloat(date.split("-")[2]);
+      for (let i = 0; i < this.dustbinList.length; i++) {
+        if (this.dustbinList[i]["isDisabled"] == "no") {
+          let id = "sp-" + this.dustbinList[i]["dustbin"] + "-" + d;
+          $('#' + id).show();
+        }
+        else {
+          let id = "sp-" + this.dustbinList[i]["dustbin"] + "-" + d;
+          $('#' + id).hide();
+        }
+      }
     }
   }
 
   openModel(content: any, type: any, plan: any, dustbin: any, day: any) {
-
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 0;
+    let width = 0;
+    let marginTop = "0px";
+    if (type == "updatePlan" || type == "addPlan") {
+      height = 380;
+      width = 350;
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    }
+    else if (type == "deletePlanConfirmation" || type == "deleteDustbinConfirmation") {
+      height = 145;
+      width = 350;
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    }
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+    if (type == "addPlan") {
+      this.clearPlan();
+    }
+    else if (type == "updatePlan") {
+      this.updatePlan(plan);
+    }
+    else if (type == "deletePlanConfirmation") {
+      $(this.deletePlanId).val(plan.key);
+      $(this.deletePlanDate).val(plan.date);
+    }
   }
 
   closeModel() {
-
+    this.modalService.dismissAll();
   }
+
+  //#endregion
 }

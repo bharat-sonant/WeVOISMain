@@ -7,29 +7,30 @@ import { CommonService } from "../services/common/common.service";
   styleUrls: ["./portal-access.component.scss"],
 })
 export class PortalAccessComponent implements OnInit {
-  constructor(private commonService: CommonService) {}
+  constructor(private commonService: CommonService) { }
   cityList: any[] = [];
   ngOnInit() {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.cityList.push({ city: "sikar",name:"Sikar" });
-    this.cityList.push({ city: "reengus",name:"Reengus" });
-    this.cityList.push({ city: "shahpura",name:"Shahpura" });
-    this.cityList.push({ city: "test",name:"Test" });
-    this.cityList.push({ city: "jaipur-office",name:"Jaipur Office" });
-    this.cityList.push({ city: "jaipur-greater",name:"Jaipur Greater" });
-    this.cityList.push({ city: "kishangarh",name:"Kishangarh" });
-    this.cityList.push({ city: "niwai",name:"Niwai" });
-    this.cityList.push({ city: "jaisalmer",name:"Jaisalmer" });
-    this.cityList.push({ city: "churu",name:"Churu" });
+    this.cityList.push({ city: "sikar", name: "Sikar" });
+    this.cityList.push({ city: "reengus", name: "Reengus" });
+    this.cityList.push({ city: "shahpura", name: "Shahpura" });
+    this.cityList.push({ city: "test", name: "Test" });
+    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office" });
+    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater" });
+    this.cityList.push({ city: "kishangarh", name: "Kishangarh" });
+    this.cityList.push({ city: "niwai", name: "Niwai" });
+    this.cityList.push({ city: "jaisalmer", name: "Jaisalmer" });
+    this.cityList.push({ city: "churu", name: "Churu" });
+    this.cityList.push({ city: "behror", name: "Behror" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
   getCity(city: any) {
-      localStorage.setItem("cityName", city);
-      localStorage.setItem("isCityChange", "yes");
-      let path = city + "/login";
-      window.location.href = path;
-  }  
+    localStorage.setItem("cityName", city);
+    localStorage.setItem("isCityChange", "yes");
+    let path = city + "/login";
+    window.location.href = path;
+  }
 }

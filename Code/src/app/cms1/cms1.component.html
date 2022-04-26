@@ -1,4 +1,4 @@
-<button (click)="setData();" style="margin-left: 20px; margin-top: 10px; display:none;" >set data</button>
+<button (click)="setData();" style="margin-left: 20px; margin-top: 10px; display:none;">set data</button>
 
 
 
@@ -7,8 +7,8 @@
 <button (click)="setSurveyorId();" style="margin-left: 20px; margin-top: 10px; display:none;">Update SurveyID</button>
 
 <button (click)="getWastebinData();" style="margin-left: 20px; margin-top: 10px; ">Get WasteBin Data</button>
-<br/>
-<br/>
+<br />
+<br />
 <div style="padding-left: 20px;">
     <table>
         <tr>
@@ -17,25 +17,26 @@
         </tr>
         <tr>
             <td>ward No</td>
-            <td><input id="txtWardNo" type="text" ></td>
+            <td><input id="txtWardNo" type="text"></td>
         </tr>
         <tr>
             <td>ward Total Length</td>
-            <td><input id="txtWardTotalLength" type="text" ></td>
+            <td><input id="txtWardTotalLength" type="text"></td>
         </tr>
         <tr>
             <td>month</td>
-            <td><input id="txtMonth" type="text" ></td>
+            <td><input id="txtMonth" type="text"></td>
         </tr>
         <tr>
             <td>date</td>
-            <td><input id="txtDate" type="text" placeholder="yyyy-mm-dd" ></td>
+            <td><input id="txtDate" type="text" placeholder="yyyy-mm-dd"></td>
         </tr>
     </table>
 </div>
 
 
-<button (click)="setWasteCollectionInfoData();" style="margin-left: 20px; margin-top: 10px;">Update WasteCollectionInfo Sumary</button>
+<button (click)="setWasteCollectionInfoData();" style="margin-left: 20px; margin-top: 10px;">Update WasteCollectionInfo
+    Sumary</button>
 
 <button (click)="setSummary();" style="margin-left: 20px; margin-top: 10px;">Update Sumary</button>
 <button (click)="getJulyData();" style="margin-left: 20px; margin-top: 10px;">Get July data</button>
@@ -43,8 +44,22 @@
 
 <button (click)="updateWardDustbin();" style="margin-left: 20px; margin-top: 10px;">Update ward dustbin</button>
 
-<button (click)="updateCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Update card ward mapping</button>
+<button (click)="updateCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Update card ward
+    mapping</button>
 
 
 
 <button (click)="downloadSikarDustbin();" style="margin-left: 20px; margin-top: 10px;">Download Sikar Dustbin</button>
+
+
+
+
+<button (click)="updateGarbageData();" style="margin-left: 20px; margin-top: 10px;">Update Garbage Data</button>
+
+<br />
+<br />
+<br />
+<input id="fileUpload" type="file" name="file" class="file-upload-field" value="">
+<br />
+<br />
+<button (click)="uploadDustbinData();" style="margin-left: 20px; margin-top: 10px;">Update Dustbin Detail</button>

@@ -581,4 +581,99 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  updateGarbageData() {
+    let userID = "04ZR7M0KarbLlReZaMmM4sUnnZK2";
+    let year = "2022";
+    let month = "April";
+    let date = "2022-04-06";
+    let lastKey = 0
+    let dbPath = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/1";
+    let imageDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+      imageData => {
+        imageDataInstance.unsubscribe();
+        if (imageData != null) {
+          dbPath = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/2/lastKey";
+          let lastKeyInstance = this.db.object(dbPath).valueChanges().subscribe(
+            lastKeyData => {
+              lastKeyInstance.unsubscribe();
+              if (lastKeyData != null) {
+                lastKey = Number(lastKeyData);
+              }
+              console.log("Pre Last Key : " + lastKey)
+              let keyArray = Object.keys(imageData);
+              let count = 0;
+              for (let i = 0; i < keyArray.length; i++) {
+                let id = keyArray[i];
+                if (id != "lastKey") {
+                  if (imageData[id]["user"] == userID) {
+                    count++;
+                    const data = imageData[id];
+                    lastKey++;
+                    let dbPath1 = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/2/" + lastKey;
+                    this.db.object(dbPath1).update(data);
+                    let dbPathDelete = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/1/" + id;
+                    this.db.object(dbPathDelete).remove();
+                  }
+                }
+              }
+              console.log("Last Key : "+lastKey);
+              let dbPathLastKey = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/2/";
+              this.db.object(dbPathLastKey).update({ lastKey: lastKey });
+              console.log("count : " + count);
+
+            }
+          );
+        }
+      }
+    );
+
+
+  }
+
+  
+  arrayBuffer: any;
+  first_sheet_name: any;
+
+  uploadDustbinData(){
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(fileList);
+      let key=1;
+      const jsonObj={};
+      for(let i=0;i<fileList.length;i++){
+        let address=fileList[i]["Ward No"];
+        let lat=fileList[i]["Latitude"];
+        let lng=fileList[i]["Longitude"];
+        const data={
+          address:address,
+          lat:lat,
+          lng:lng,
+          isApproved:false,
+          pickFrequency:"1",
+          type:"Rectangular",
+          ward:"0",
+          zone:"A",
+          createdDate:"2022-04-19"
+        }
+        jsonObj[key]=data;
+        key++;
+      }
+      console.log(jsonObj);
+      this.db.object("DustbinData/DustbinDetails").update(jsonObj);
+      
+    }
+  }
+
 }
