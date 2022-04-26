@@ -15,9 +15,10 @@ export class SettingsComponent implements OnInit {
   cityName: any;
   firestotagePath: any;
   navigatorJsonObject: any;
-  readerJsonObject: any;
+  readerJsonObject: any;   
   haltJsonObject: any;
   salaryJsonObject: any;
+  
   // Navigator
   txtFirstStartPointRange = "#txtFirstStartPointRange";
   txtLineEndPointRange = "#txtLineEndPointRange";
