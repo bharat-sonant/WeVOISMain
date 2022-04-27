@@ -4,7 +4,7 @@
     border: none !important;
 }
 .container-fluid{
-    overflow: hidden;
+    overflow-x: hidden;
 }
 .padding{
     padding: 15px 15px !important;
@@ -58,9 +58,7 @@ form.form{
     padding: 25px 25px;
    
    
-    
    
-
 }
 .form input{
     width: 100%;
@@ -114,5 +112,57 @@ form{
   padding: 10px 0px;
  
 }
+
+.buttons {
+    margin: auto !important;
+}
+.row {
+   
+    background: #fff !important;
+}
+
+
+
+
+
+@media only screen and (min-width:270px) and (max-width:415px){
+    .nav-tabs .nav-link {
+        width: 100% !important;
+       
+    }
+    .nav-tabs {
+      
+      
+         padding-left: 0px; 
+         padding-right: 0px; 
+     
+    }
+}
+
+@media only screen and (min-width:450px) and (max-width:770px){
+    .nav-tabs .nav-link {
+        width: 100% !important;
+       
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
