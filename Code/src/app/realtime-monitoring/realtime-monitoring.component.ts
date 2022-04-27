@@ -1183,7 +1183,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   openDutyModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 325;
+    let height = 450;
     let width = 550;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 26 + "px";
