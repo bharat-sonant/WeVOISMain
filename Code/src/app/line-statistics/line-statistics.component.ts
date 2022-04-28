@@ -267,9 +267,9 @@ export class LineStatisticsComponent implements OnInit {
         }
 
         this.maxDistance.push(Math.max.apply(null, distanceCollection));
-
-        let wardLines = this.db.object("WardLines/" + this.activeZone).valueChanges().subscribe((lines) => {
-          wardLines.unsubscribe();
+        this.commonService.getWardLine(this.activeZone, this.commonService.setTodayDate()).then((data: any) => {
+          let wardLines = JSON.parse(data);
+          let lines = wardLines["totalLines"];
           if (this.days == 2) {
             this.graphHeaderData.workprogress = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
@@ -285,6 +285,11 @@ export class LineStatisticsComponent implements OnInit {
           if (this.days == 6) {
             this.graphHeaderData.workprogress4 = ((Number(lineCompleted) / Number(lines)) * 100).toFixed(2).toString();
           }
+        });
+
+        let wardLines = this.db.object("WardLines/" + this.activeZone).valueChanges().subscribe((lines) => {
+          wardLines.unsubscribe();
+
         });
       }
 

@@ -286,7 +286,6 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   getWardsStatusWise() {
     let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe((data) => {
-
       this.instancesList.push({ instances: getRealTimeWardDetails });
       let activeWard = 0;
       let inActiveWard = 0;
@@ -374,16 +373,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.workerDetails.completedWard = completedWard.toString();
         this.workerDetails.totalWard = totalWard.toString();
         if (this.firstData == false) {
-          let totalLineData = this.db.object("WardLines/" + zoneNo).valueChanges().subscribe((totalLines) => {
-            this.instancesList.push({ instances: totalLineData });
-            let wardNo = zoneNo;
-            let zoneDetails = this.zoneList.find((item) => item.zoneNo == wardNo);
-            if (zoneDetails != undefined) {
-              zoneDetails.totalLines = totalLines;
-              this.getWardDetail(wardNo);
-            }
-            totalLineData.unsubscribe();
-          });
+          this.getWardDetail(zoneNo);
         }
       }
 
@@ -396,7 +386,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (this.zoneList[0]["zoneNo"].toString().includes("mkt")) {
           this.workerDetails.wardName = "Market " + this.zoneList[0]["zoneNo"].toString().replace("mkt", "");
         } else {
-          this.workerDetails.wardName = "Zone "+ this.selectedZoneName;
+          this.workerDetails.wardName = "Zone " + this.selectedZoneName;
         }
         this.initGrpahProperties();
         this.initTimeDistance();
@@ -520,7 +510,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             } else {
               $(this.vehicleStatusH3).css("color", "red");
             }
-            this.workerDetails.totalLines = zoneDetails.totalLines;
+            // this.workerDetails.totalLines = zoneDetails.totalLines;
             setTimeout(() => {
               this.getEmployeeData();
             }, 1500);
@@ -1071,7 +1061,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (wardNo.toString().includes("mkt")) {
       this.workerDetails.wardName = wardNo.toString().replace("mkt", "Market ");
     } else {
-      this.workerDetails.wardName = "Zone "+ this.selectedZoneName;
+      this.workerDetails.wardName = "Zone " + this.selectedZoneName;
     }
     this.fillWardDetail();
   }
@@ -1763,6 +1753,11 @@ export class RealtimeMonitoringComponent implements OnInit {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       var linePath = [];
+      let zoneDetail = this.zoneList.find(item => item.zoneNo == this.selectedZone);
+      if (zoneDetail != undefined) {
+        zoneDetail.totalLines = Number(wardLines["totalLines"]);
+        this.workerDetails.totalLines = wardLines["totalLines"];
+      }
       for (let i = 1; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         try {

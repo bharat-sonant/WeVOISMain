@@ -28,9 +28,9 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
-  
+
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getWards();
@@ -42,53 +42,55 @@ export class WardMarkingSummaryComponent implements OnInit {
     if (wardList.length > 0) {
       for (let i = 0; i < wardList.length; i++) {
         let wardNo = wardList[i]["zoneNo"];
-          let url = this.cityName + "/13A3/house-marking/" + wardNo;
-          this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
-          if (i == 1) {
-            setTimeout(() => {
-              this.getMarkingDetail(wardNo, 1);
-              $("#tr1").addClass("active");
-            }, 1000);
-          }
-          this.getWardSummary(i, wardNo);
+        let url = this.cityName + "/13A3/house-marking/" + wardNo;
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
+        if (i == 1) {
+          setTimeout(() => {
+            this.getMarkingDetail(wardNo, 1);
+            $("#tr1").addClass("active");
+          }, 1000);
+        }
+        this.getWardSummary(i, wardNo);
       }
     }
   }
 
   getWardSummary(index: any, wardNo: any) {
-    this.wardLines = this.commonService.getWardLineCount(wardNo);
-    this.wardProgressList[index]["wardLines"] = this.wardLines;
-
-    let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      markerInstance.unsubscribe();
-      if (data != null) {
-        let markers = 0;
-        if(data["marked"]!=null){
-          markers=Number(data["marked"]);
-        }
-        let alreadyInstalled = 0;
-        if (data["alreadyInstalled"] != null) {
-          alreadyInstalled = Number(data["alreadyInstalled"]);
-          this.markerData.totalAlreadyCard = this.markerData.totalAlreadyCard + alreadyInstalled;
-        }
-        this.wardProgressList[index]["markers"] = markers;
-        if (markers > 0) {
-          this.wardProgressList[index]["status"] = "In progress";
-          this.wardProgressList[index]["cssClass"] = "in-progress";
-        }
-        this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
-        this.markerData.totalMarkers = this.markerData.totalMarkers + markers;
-        let approved = 0;
-        if (data["approved"] != null) {
-          approved = Number(data["approved"]);
-          this.wardProgressList[index]["approvedLines"] = approved;
-          if (approved == Number(this.wardProgressList[index]["wardLines"])) {
-            this.wardProgressList[index]["status"] = "Marking done";
-            this.wardProgressList[index]["cssClass"] = "marking-done";
+    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+      let wardLines = JSON.parse(data);
+      this.wardLines = wardLines["totalLines"];
+      this.wardProgressList[index]["wardLines"] = this.wardLines;
+      let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let markers = 0;
+          if (data["marked"] != null) {
+            markers = Number(data["marked"]);
+          }
+          let alreadyInstalled = 0;
+          if (data["alreadyInstalled"] != null) {
+            alreadyInstalled = Number(data["alreadyInstalled"]);
+            this.markerData.totalAlreadyCard = this.markerData.totalAlreadyCard + alreadyInstalled;
+          }
+          this.wardProgressList[index]["markers"] = markers;
+          if (markers > 0) {
+            this.wardProgressList[index]["status"] = "In progress";
+            this.wardProgressList[index]["cssClass"] = "in-progress";
+          }
+          this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
+          this.markerData.totalMarkers = this.markerData.totalMarkers + markers;
+          let approved = 0;
+          if (data["approved"] != null) {
+            approved = Number(data["approved"]);
+            this.wardProgressList[index]["approvedLines"] = approved;
+            if (approved == Number(this.wardProgressList[index]["wardLines"])) {
+              this.wardProgressList[index]["status"] = "Marking done";
+              this.wardProgressList[index]["cssClass"] = "marking-done";
+            }
           }
         }
-      }
+      });
     });
   }
 
@@ -289,7 +291,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             );
           }
           this.updateCount(wardNo, date, userId, "remove");
-          this.commonService.setAlertMessage(            "success",            "Marker deleted successfully !!!"          );
+          this.commonService.setAlertMessage("success", "Marker deleted successfully !!!");
         }
       });
     }
@@ -304,7 +306,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
       this.db.object(dbPath).update({ status: "Reject", });
       this.updateCount(wardNo, date, userId, "reject");
-      this.commonService.setAlertMessage(        "success",        "Marker rejected succfuly !!!"      );
+      this.commonService.setAlertMessage("success", "Marker rejected succfuly !!!");
     }
   }
 
@@ -512,8 +514,8 @@ export class WardMarkingSummaryComponent implements OnInit {
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 50 + "px";
-    $("div .modal-content")      .parent()      .css("max-width", "" + width + "px")      .css("margin-top", marginTop);
-    $("div .modal-content")      .css("height", height + "px")      .css("width", "" + width + "px");
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
     $("#divStatus").css("height", divHeight);
   }

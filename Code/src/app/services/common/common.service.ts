@@ -755,7 +755,7 @@ export class CommonService {
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
     this.setDustbin(newDb);
-    this.setWardLines(newDb);
+   // this.setWardLines(newDb);
     this.setMarkerZone();
     this.setMarkingWards();
   }
@@ -961,7 +961,7 @@ export class CommonService {
     );
   }
 
-  */
+  
 
   setWardLines(newDb: any) {
     let dbPath = "WardLines";
@@ -989,7 +989,7 @@ export class CommonService {
       }
     );
   }
-
+*/
   setMarkingWards() {
     let markingWards = [];
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
@@ -1617,7 +1617,7 @@ export class CommonService {
       });
     });
   }
-
+/*
   getWardLineCount(zoneNo: any) {
     let wardLines = 0;
     let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
@@ -1629,7 +1629,7 @@ export class CommonService {
     }
     return wardLines;
   }
-
+*/
 
   getDesignation() {
     return new Promise((resolve) => {
