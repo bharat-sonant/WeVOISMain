@@ -64,6 +64,54 @@ export class DustbinService {
     });
   }
 
+  getDustbinPlanData(date: any, planId: any, type: any, year: any, monthName: any) {
+    return new Promise((resolve) => {
+      let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId + "";
+      if (type == "History") {
+        dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date + "/" + planId + "";
+      }
+      let planDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
+        planDustbinData => {
+          planDustbinInstance.unsubscribe();
+          resolve(planDustbinData);
+        });
+    });
+  }
+
+  getDustbinPickHistory(year: any, monthName: any, date: any, dustbinId: any, planId: any) {
+    return new Promise((resolve) => {
+      let dbPath = "DustbinData/DustbinPickHistory/" + year + "/" + monthName + "/" + date + "/" + dustbinId + "/" + planId;
+      let dustbinPickInstance = this.db.object(dbPath).valueChanges().subscribe(
+        dustbinPickData => {
+          dustbinPickInstance.unsubscribe();
+          resolve(dustbinPickData);
+        });
+    });
+  }
+
+  getDustbinPickedAnalysisDetail(year: any, monthName: any, date: any, dustbinId: any, planId: any) {
+    return new Promise((resolve) => {
+      let dbPath = "DustbinData/DustbinPickHistory/" + year + "/" + monthName + "/" + date + "/" + dustbinId + "/" + planId + "/Analysis";
+      let pickedAnalysisDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
+        pickAnalysisData => {
+          pickedAnalysisDustbinInstance.unsubscribe();
+          resolve(pickAnalysisData);
+        });
+    });
+  }
+
+  updateDustbinPlans(bins: any, zone: any, totalDustbin: any, date, planId: any, sequence: any, highPriority: any) {
+    this.db.object("DustbinData/DustbinPickingPlans/" + date + "/" + planId + "").update({
+      "bins": bins,
+      "pickingSequence": sequence,
+      "updatedAt": this.commonService.getTodayDateTime(),
+      "updatedBy": localStorage.getItem("userId"),
+      "zone": zone,
+      "totalDustbin": totalDustbin,
+      "highPriority": highPriority
+    });
+  }
+
   getIcon(type: any) {
     let icon = "";
     if (type == "picked") {
