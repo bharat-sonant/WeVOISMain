@@ -9,25 +9,25 @@
         </option>
       </select>
     </div>
-    <div class="col-md-3" style="padding-top: 0px; padding-left: 10px;">
+    <div class="col-md-3 ward-header-outer">
       <h1 class="ward-header"> Marker Approval </h1>
     </div>
 
     <div class="col-md-6 text-right total-house" id="houseCount">
 
       <div class="fix-home">
-        <div id="divLastUpdate" class="float-fourth" style="margin-left: 10px; margin-top: 12px; display: none;">
-          <i class="far fa-clock"></i><span class="house"><span style="color: #fff;">
+        <div id="divLastUpdate" class="float-fourth fix-home-iner">
+          <i class="far fa-clock"></i><span class="house"><span class="clock-span">
             {{markerData.lastScanTime}}</span></span><br>
           <h6>Last Marked At</h6>
         </div>
-        <div class="float-first" style="margin-left: 10px; margin-top: 12px;">
-          <i class="fas fa-vr-cardboard"></i> <span class="house"><span style="color: #1fda2f;">
+        <div class="float-first cardboard-icon-main">
+          <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="cardboard-span">
               {{markerData.alreadyCardCount}}</span></span><br>
           <h6>Already Card Count</h6>
         </div>
-        <div class="float-second" style="margin-left: 10px; margin-top: 12px;">
-          <i class="fas fa-check-circle"></i> <span class="house"><span style="color: #1fda2f;">
+        <div class="float-second circle-icon-main">
+          <i class="fas fa-check-circle"></i> <span class="house"><span class="circle-span">
               {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
           <h6>Approved Lines</h6>
         </div>
@@ -42,57 +42,58 @@
   </div>
 </section>
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="divmap" id="divMap"></div>
 <div class="house-card-box">
-  <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
-    <div class="row" style="padding-top: 10px; text-align: center;">
-      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;">
-        <button (click)="getNextPrevious('pre');" class="btn-hvr"
-          style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 9px!important;">
+  <div id="divDetails" class="house-card-box-iner">
+    <div class="row house-card-box-iner2">
+      <div class="col-md-12 arrow-btn-div">
+        <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn"
+          >
           << </button>
-            <input id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
-              style="width: 105px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
+              
               value="1" />
-            <button (click)="getNextPrevious('next');" class="btn-hvr"
-              style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2"
+              >
               >>
             </button>
       </div>
-      <div class="col-md-12 text-left ml-10">
-        <span style="padding-top: 10px;font-size: 11px">
-          <input type="checkbox" id="chkAll" (change)="showAllMarkers();" style="vertical-align: middle;"> Show All
-          Markers</span> | <span style="padding-top: 10px;font-size: 11px; cursor: pointer;"
+      <div class="col-md-12 text-left ml-10 markera-all">
+        <span class="markera-allspan">
+          <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show All
+          Markers</span> <span class="markera-allspan2"
           (click)="showLineDetail(contentLineMarkers);">
           <i class="fas fa-eye"></i> View Detail</span>
       </div>
 
-      <div class="col-md-6 markers" style="border-right: 1px solid lightgray;padding-left: 30px;">
+      <div class="col-md-6 markers markers-heading-main">
         <h5> {{markerData.totalLineMarkers}} </h5>
         <p>Markers</p>
       </div>
-      <div class="col-md-6 markers" style="padding-right:30px;">
+      <div class="col-md-6 markers Already-heading-main">
         <h5> {{markerData.alreadyCardLineCount}} </h5>
         <p>Already Card</p>
       </div>
 
-
-      <div class="col-md-6" style="padding-top: 10px; display: none;">
+ 
+      <div class="col-md-6 Confirm-main">
         <div class="row">
-          <div class="col-md-12" style="padding-left: 15px;font-size: 12px;">
+          <div class="col-md-12 rdoConfirm">
             <input id="rdoConfirm" type="radio" name="gender">&nbsp; Confirm
           </div>
-          <div class="col-md-12" style="padding-top: 2px;padding-left: 3px;font-size: 12px;">
+
+          <div class="col-md-12 rdoReject">
             <input id="rdoReject" type="radio" name="gender">&nbsp; Reject
           </div>
-          <div class="col-md-12" style="padding-top: 10px; display: none;">
-            <textarea id="txtReamrk" placeholder="Remark" style="width: 100%;"></textarea>
+          <div class="col-md-12 txtReamrk">
+            <textarea id="txtReamrk" class="txtReamrk-iner" placeholder="Remark"></textarea>
           </div>
         </div>
       </div>
 
       <div class="col-md-12 pl-5 pr-46">
-        <button id="btnSave" class="btn btn-success w-100" (click)="saveData();"
-          style="width:100px; background:#0ba118!important;">Approve Line</button>
+        <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();"
+          >Approve Line</button>
       </div>
     </div>
   </div>
@@ -112,7 +113,7 @@
       <div class="col-md-12">
         <div class="main-box">
           <a href="{{markerData.markerImgURL}}" target="_blank">
-            <img id="markingImg" [src]="markerData.markerImgURL" style="height:165px; width: 274px;" />
+            <img id="markingImg" class="markerdata-img" [src]="markerData.markerImgURL"/>
           </a>
         </div>
       </div>
@@ -135,7 +136,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-shop.svg" style="margin-top: -5px;"> </h5>
+            <h5> <img src="../assets/img/marking-shop.svg" class="shop-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -144,7 +145,7 @@
           </div>
         </div>
         <div class="main-box">
-          <div class="designation" style="margin-top: -5px;">
+          <div class="designation warehouse-img-box">
             <h5> <img src="../assets/img/marking-warehouse.svg"> </h5>
           </div>
           <div class="all-details">
@@ -156,7 +157,7 @@
 
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-institute.svg" style="margin-top: -8px;"> </h5>
+            <h5> <img src="../assets/img/marking-institute.svg" class="institute-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -166,7 +167,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-hotel.svg" style="height: 38px; margin-top: -4px;"> </h5>
+            <h5> <img src="../assets/img/marking-hotel.svg" class="hotel-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -176,7 +177,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-mela.svg" style="margin-top: -8px;"> </h5>
+            <h5> <img src="../assets/img/marking-mela.svg" class="mela-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -186,7 +187,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-thela.svg" style="height: 32px;margin-top: -5px;"> </h5>
+            <h5> <img src="../assets/img/marking-thela.svg" class="thela-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -196,7 +197,7 @@
         </div>
         <div class="main-box">
           <div class="designation">
-            <h5> <img src="../assets/img/marking-hospital.svg" style="margin-top: -9px;height: 50px;"> </h5>
+            <h5> <img src="../assets/img/marking-hospital.svg" class="hospital-svg-img"> </h5>
           </div>
           <div class="all-details">
             <h6>
@@ -208,31 +209,31 @@
     </div>
   </div>
 
-  <button id="btnAssign" class="btn btn-success assign-button" (click)="assignUrl();"
-    style="background:#0ba118!important;">Assign this ward
+  <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();"
+    >Assign this ward
     <span><i class="far fa-hand-point-right"></i></span>
   </button>
 
 
   <!--Vehicle Status Start-->
   <ng-template #contentLineMarkers>
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="grey-img-div">
 
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
+    <div class="modal-body divStatus">
       <div id="divStatus" class="content-scroll">
         <div class="row">
           <div class="col-md-2" *ngFor="let dt of markerList">
-            <div style="width:100%">
+            <div class="markerList-iner">
               <a href="{{dt.imageUrl}}" target="_blank">
-                <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+                <img class="markerList-iner-img" [src]="dt.imageUrl" />
               </a>
             </div>
             <div class="main-tag">
               <div class="f-left">
-                <h3 style="width: 100%;"> {{dt.type}} </h3><br />
+                <h3 class="f-left-heading"> {{dt.type}} </h3><br />
                 <p>Already Card <span class="f-right"> :</span></p>
                 <h3> {{dt.alreadyInstalled}} </h3><br />
                 <span [hidden]="dt.status==''">
@@ -242,17 +243,17 @@
               </div>
             </div>
 
-            <button class="btn btn-success" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);"
-              style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+            <button class="btn btn-success Reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);"
+              
               [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
-            <button class="btn btn-danger" [hidden]="dt.status==''"
+            <button class="btn btn-danger Delete-btn" [hidden]="dt.status==''"
               (click)="removeMarker(dt.index,dt.alreadyInstalled);"
-              style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+              
               [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
 
-              <button class="btn btn-danger" [hidden]="dt.isRevisit=='0'"
+              <button class="btn btn-danger Delete-btn-2" [hidden]="dt.isRevisit=='0'"
               (click)="removeMarker(dt.index,dt.alreadyInstalled);"
-              style="width:45%; background:red!important;   margin-left: 0px!important; margin-bottom: 10px!important;"
+              
               [hidden]="dt.isRevisit=='0'"><i class="fas fa-times"></i> Delete</button>
 
           </div>
