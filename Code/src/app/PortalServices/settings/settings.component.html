@@ -1,600 +1,457 @@
 <div class="container-fluid">
-        <div class="row">
-                <div class="col-md-12 top-header">
-                        <b>settings</b>
-                </div>
+    <div class="row">
+        <div class="col-md-12 top-header">
+            <b>settings</b>
         </div>
+    </div>
 
 </div>
 
 <section class="padding">
-        <div class="container-fluid p-0">
-                <div class="row">
-                        <div class="col-md-12 bg-color">
-                                <nav class="main1">
-                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                <button class="nav-link active buttons" id="tabNavigator" data-bs-toggle="tab"
-                                                        data-bs-target="#Navigator" type="button" role="tab"
-                                                        aria-controls="Navigator" aria-selected="true"
-                                                        (click)="setActiveTab('Navigator');">Navigator
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col-md-12 bg-color">
+                <nav class="main1">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active buttons" id="tabNavigator" data-bs-toggle="tab" data-bs-target="#Navigator" type="button" role="tab" aria-controls="Navigator" aria-selected="true" (click)="setActiveTab('Navigator');">Navigator
                                                 </button>
-                                                <button class="nav-link buttons" id="tabReader" data-bs-toggle="tab"
-                                                        data-bs-target="#Reader" type="button" role="tab"
-                                                        aria-controls="Reader" aria-selected="false"
-                                                        (click)="setActiveTab('Reader');">Reader</button>
-                                                <button class="nav-link buttons" id="tabHalt" data-bs-toggle="tab"
-                                                        data-bs-target="#Halt" type="button" role="tab"
-                                                        aria-controls="Halt" aria-selected="false"
-                                                        (click)="setActiveTab('Halt');">Halt</button>
-                                                <button class="nav-link buttons" id="tabSalary" data-bs-toggle="tab"
-                                                        data-bs-target="#Salary" type="button" role="tab"
-                                                        aria-controls="Salary" aria-selected="false"
-                                                        (click)="setActiveTab('Salary');">Salary</button>
-                                        </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                        <div class="tab-pane fade show active save" id="Navigator" role="tabpanel"
-                                                aria-labelledby="tabNavigator">
-                                                <form>
-                                                        <div class="form">
-                                                                <div class="row">
-                                                                        <div class="col-md-3">
-                                                                                <div class="row">
-                                                                                        <div class="col-md-12">
-                                                                                                <label>First Start Point
+                        <button class="nav-link buttons" id="tabReader" data-bs-toggle="tab" data-bs-target="#Reader" type="button" role="tab" aria-controls="Reader" aria-selected="false" (click)="setActiveTab('Reader');">Reader</button>
+                        <button class="nav-link buttons" id="tabHalt" data-bs-toggle="tab" data-bs-target="#Halt" type="button" role="tab" aria-controls="Halt" aria-selected="false" (click)="setActiveTab('Halt');">Halt</button>
+                        <button class="nav-link buttons" id="tabSalary" data-bs-toggle="tab" data-bs-target="#Salary" type="button" role="tab" aria-controls="Salary" aria-selected="false" (click)="setActiveTab('Salary');">Salary</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active save" id="Navigator" role="tabpanel" aria-labelledby="tabNavigator">
+                        <form>
+                            <div class="form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>First Start Point
                                                                                                         Range (in
                                                                                                         meters)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtFirstStartPointRange"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Line End Point
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtFirstStartPointRange" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Line End Point
                                                                                                         Range (in
                                                                                                         meters)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtLineEndPointRange"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Current Location
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtLineEndPointRange" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Current Location
                                                                                                         Capture Interval
                                                                                                         (in
                                                                                                         seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtCurrentLocationCaptureInterval"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Max Distance Can
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtCurrentLocationCaptureInterval" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Max Distance Can
                                                                                                         Cover (in
                                                                                                         meters)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtMaxDistanceCanCover"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Traversal Path
-                                                                                                        Duration (in
-                                                                                                        seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtTraversalPathDuration"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Capturing Gap (in
-                                                                                                        seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtCapturingGap"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Internet Check
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtMaxDistanceCanCover" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Internet Check
                                                                                                         Interval
                                                                                                         (in
                                                                                                         seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtInternetCheckInterval"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-                                                                                <div class="row">
-                                                                                        
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Internet Check
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtInternetCheckInterval" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Internet Check
                                                                                                         Voice Message
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtInternetCheckVoiceMessage"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Screen Off Voice
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtInternetCheckVoiceMessage" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Screen Off Voice
                                                                                                         Message </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtScreenOffVoiceMessage"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Start Line Note
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtScreenOffVoiceMessage" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+
+
+                                            <div class="col-md-12">
+                                                <label>Start Line Note
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtStartLineNote"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Line Heading
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtStartLineNote" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Line Heading
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtLineHeading"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Skip Warning
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtLineHeading" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Skip Warning
                                                                                                         Message
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtSkipWarningMessage"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Halt Voice Message
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtSkipWarningMessage" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Halt Voice
+                                                                                                        Message
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtHaltVoiceMessage"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Halt Voice Message
-                                                                                                        Interval (in minutes)
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtHaltVoiceMessage" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Halt Voice
+                                                                                                        Message
+                                                                                                        Interval (in
+                                                                                                        minutes)
                                                                                                 </label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtHaltVoiceMessageInterval"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtHaltVoiceMessageInterval" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Halt Voice
+                                                                                                        Message
+                                                                                                        Minimum Time (in
+                                                                                                        minutes)
+                                                                                                </label>
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtHaltVoiceMessageMinimumTime" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Lunch Break
+                                                                                                        Message
+                                                                                                </label>
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtLunchBreakMessage" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
 
-                                                                                
-                                                                                <div class="col-md-12">
-                                                                                        <label>Halt Voice Message
-                                                                                                Minimum Time (in
-                                                                                                minutes)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtHaltVoiceMessageMinimumTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Lunch Break Message
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtLunchBreakMessage"
-                                                                                                        class="caret-select"
-                                                                                                        type="text" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Lunch Break Message
+
+                                        <div class="col-md-12">
+                                            <label>Lunch Break Message
                                                                                                 Interval (in minutes)
                                                                                         </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtLunchBreakMessageInterval"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Lunch Break Message
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtLunchBreakMessageInterval" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Lunch Break Message
                                                                                                 Minimum Time (in
                                                                                                 minutes)
                                                                                         </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtLunchBreakMessageMinimumTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Reader Device Offline
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtLunchBreakMessageMinimumTime" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Reader Device Offline
                                                                                                 Interval (in seconds)
                                                                                         </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtReaderDeviceOfflineInterval"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Reader Device Offline
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtReaderDeviceOfflineInterval" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Reader Device Offline
                                                                                                 Message
                                                                                         </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtReaderDeviceOfflineMessage"
-                                                                                                        class="caret-select"
-                                                                                                        type="text" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Screen Off Interval Time (in seconds)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtScreenOffIntervalTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-                                                                                <div class="col-md-12">
-                                                                                        <label>Mic Capturing Time (in seconds)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtMicCapturingTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Mic Notification Time (in seconds)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtMicNotificationTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Mic Capturing Range (in Amp)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtMicCapturingRangeInAmp"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Mic Recording Start Time (in seconds)
-                                                                                        </label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtMicRecordingStartTime"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-
-                                                                        </div>
-                                                                        
-
-                                                                </div>
-
-
-                                                                <div class="row form-group2">
-                                                                        <div class="col-md-12 pr-1">
-                                                                                <div class="form-group">
-                                                                                        <button id="btnSave"
-                                                                                                class="btn btn-success btn-xs"
-                                                                                                (click)="saveCommonNavigatorSetting();">SAVE</button>
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
-                                                </form>
-
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtReaderDeviceOfflineMessage" class="caret-select" type="text" />
+                                            </div>
                                         </div>
-                                        <div class="tab-pane fade" id="Reader" role="tabpanel"
-                                                aria-labelledby="tabReader">
-                                                <form>
-                                                        <div class="form">
-                                                                <div class="row">
-                                                                        <div class="col-md-3">
-                                                                                <div class="row">
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Card Scan Wait
+                                        <div class="col-md-12">
+                                            <label>Screen Off Interval Time
+                                                                                                (in seconds)
+                                                                                        </label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtScreenOffIntervalTime" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Mic Capturing Time (in
+                                                                                                seconds)
+                                                                                        </label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtMicCapturingTime" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Mic Notification Time (in
+                                                                                                seconds)
+                                                                                        </label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtMicNotificationTime" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <div class="col-md-12">
+                                            <label>Mic Capturing Range (in
+                                                                                                Amp)
+                                                                                        </label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtMicCapturingRangeInAmp" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Mic Recording Start Time
+                                                                                                (in seconds)
+                                                                                        </label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtMicRecordingStartTime" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="row form-group2">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="form-group">
+                                            <button id="btnSave" class="btn btn-success btn-xs" (click)="saveCommonNavigatorSetting();">SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="tab-pane fade" id="Reader" role="tabpanel" aria-labelledby="tabReader">
+                        <form>
+                            <div class="form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Card Scan Wait
                                                                                                         Time (in
                                                                                                         seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtCardScanWaitTime"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Card Scan Time
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtCardScanWaitTime" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Card Scan Time
                                                                                                         Gap (in
                                                                                                         seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtCardScanTimeGap"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Card Scan
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtCardScanTimeGap" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Card Scan
                                                                                                         Note</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtCardScanNote"
-                                                                                                                class="caret-select"
-                                                                                                                type="text" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                </div>
-
-                                                                <div class="row form-group2">
-                                                                        <div class="col-md-12 pr-1">
-                                                                                <div class="form-group">
-                                                                                        <button class="btn btn-success btn-xs"
-                                                                                                (click)="saveCommonReaderSetting();">SAVE</button>
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
-                                                </form>
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtCardScanNote" class="caret-select" type="text" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="tab-pane fade" id="Halt" role="tabpanel" aria-labelledby="tabHalt">
-                                                <form>
-                                                        <div class="form">
-                                                                <div class="row">
-                                                                        <div class="col-md-3">
-                                                                                <div class="row">
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Allowed Halt (in
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                </div>
+
+                                <div class="row form-group2">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="form-group">
+                                            <button class="btn btn-success btn-xs" (click)="saveCommonReaderSetting();">SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="Halt" role="tabpanel" aria-labelledby="tabHalt">
+                        <form>
+                            <div class="form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Allowed Halt (in
                                                                                                         minutes)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtAllowedHalt"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Halt Allowed
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtAllowedHalt" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Halt Allowed
                                                                                                         Range (in
                                                                                                         meters)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtHaltAllowedRange"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Distance Covered
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtHaltAllowedRange" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Distance Covered
                                                                                                         Check Interval
                                                                                                         (in
                                                                                                         seconds)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtDistanceCoveredCheckInterval"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Mobile Off
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtDistanceCoveredCheckInterval" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Mobile Off
                                                                                                         Allowed Halt (in
                                                                                                         minutes)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtMobileOffAllowedHalt"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Network Off
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtMobileOffAllowedHalt" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Network Off
                                                                                                         Allowed Halt (in
                                                                                                         minutes)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtNetworkOffAllowedHalt"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Max Halt Allowed
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtNetworkOffAllowedHalt" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Max Halt Allowed
                                                                                                         (in
                                                                                                         minutes)</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtMaxHaltAllowed"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-                                                                                <div class="col-md-12">
-                                                                                        <label>Lunch Max Halt (in
-                                                                                                minutes)</label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtLunchMaxHalt"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                        <label>Lunch Allowed Range (in
-                                                                                                meters)</label>
-                                                                                        <div class="wrap-input-effects"
-                                                                                                required>
-                                                                                                <input id="txtLunchAllowedRange"
-                                                                                                        class="caret-select"
-                                                                                                        type="number" />
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                </div>
-
-                                                                <div class="row form-group2">
-                                                                        <div class="col-md-12 pr-1">
-                                                                                <div class="form-group">
-                                                                                        <button class="btn btn-success btn-xs"
-                                                                                                (click)="saveCityHaltSetting();">SAVE</button>
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
-                                                </form>
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtMaxHaltAllowed" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="tab-pane fade" id="Salary" role="tabpanel"
-                                                aria-labelledby="tabSalary">
-                                                <form>
-                                                        <div class="form">
-                                                                <div class="row">
-                                                                        <div class="col-md-3">
-                                                                                <div class="row">
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Driver Salary Per
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <label>Lunch Max Halt (in
+                                                                                                minutes)</label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtLunchMaxHalt" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Lunch Allowed Range (in
+                                                                                                meters)</label>
+                                            <div class="wrap-input-effects" required>
+                                                <input id="txtLunchAllowedRange" class="caret-select" type="number" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                </div>
+
+                                <div class="row form-group2">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="form-group">
+                                            <button class="btn btn-success btn-xs" (click)="saveCityHaltSetting();">SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="Salary" role="tabpanel" aria-labelledby="tabSalary">
+                        <form>
+                            <div class="form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Driver Salary Per
                                                                                                         Hour</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtDriverSalaryPerHour"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Helper Salary Per
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtDriverSalaryPerHour" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Helper Salary Per
                                                                                                         Hour</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtHelperSalaryPerHour"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Driver Salary Per
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtHelperSalaryPerHour" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Driver Salary Per
                                                                                                         Hour For
                                                                                                         Tractor</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtDriverSalaryPerHourForTractor"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-12">
-                                                                                                <label>Basic Min
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtDriverSalaryPerHourForTractor" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>Basic Min
                                                                                                         Hours</label>
-                                                                                                <div class="wrap-input-effects"
-                                                                                                        required>
-                                                                                                        <input id="txtBasicMinHours"
-                                                                                                                class="caret-select"
-                                                                                                                type="number" />
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                        <div class="col-md-3">
-
-                                                                        </div>
-                                                                </div>
-
-                                                                <div class="row form-group2">
-                                                                        <div class="col-md-12 pr-1">
-                                                                                <div class="form-group">
-                                                                                        <button class="btn btn-success btn-xs"
-                                                                                                (click)="saveCitySalarySetting();">SAVE</button>
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
-                                                </form>
+                                                <div class="wrap-input-effects" required>
+                                                    <input id="txtBasicMinHours" class="caret-select" type="number" />
+                                                </div>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
                                 </div>
-                        </div>
 
-
-
+                                <div class="row form-group2">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="form-group">
+                                            <button class="btn btn-success btn-xs" (click)="saveCitySalarySetting();">SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+            </div>
+
+
+
         </div>
+    </div>
 </section>

@@ -695,57 +695,54 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   getDustbinPickHistoryForHighPriority(planDetails: any, date: any, checkDustbin: any, planId: any, dustbinPickingPosition: any, sequenceList: any, dustbinId: any, binList: any, highPriority: any, zone: any, totalDustbin: any) {
-    
     this.dustbinService.getDustbinPickHistory(this.selectedYear, this.selectedMonthName, date, checkDustbin, planId).then((dustbinPickData: any) => {
+      let bins = "";
+      let sequence = "";
       if (dustbinPickData != null) {
-        let bins = "";
-        let sequence = "";
-        if (dustbinPickData != null) {
-          let dustbinPosion = Number(dustbinPickingPosition) + 1;
-          checkDustbin = sequenceList[dustbinPosion];
-          for (let i = 0; i < sequenceList.length; i++) {
-            if (sequence != "") { sequence = sequence + ", " }
-            if (checkDustbin == sequenceList[i].trim()) {
-              sequence = sequence + dustbinId + ", " + sequenceList[i].trim();
-            }
-            else {
-              sequence = sequence + sequenceList[i].trim();
-            }
+        let dustbinPosion = Number(dustbinPickingPosition) + 1;
+        checkDustbin = sequenceList[dustbinPosion];
+        for (let i = 0; i < sequenceList.length; i++) {
+          if (sequence != "") { sequence = sequence + ", " }
+          if (checkDustbin == sequenceList[i].trim()) {
+            sequence = sequence + dustbinId + ", " + sequenceList[i].trim();
           }
-          for (let i = 0; i < binList.length; i++) {
-            if (bins != "") { bins = bins + ", " }
-            if (checkDustbin == binList[i].trim()) {
-              bins = bins + dustbinId + ", " + binList[i].trim();
-            }
-            else {
-              bins = bins + binList[i].trim();
-            }
+          else {
+            sequence = sequence + sequenceList[i].trim();
           }
         }
-        else {
-          let dustbinPosion = Number(dustbinPickingPosition);
-          checkDustbin = sequenceList[dustbinPosion];
-          for (let i = 0; i < sequenceList.length; i++) {
-            if (sequence != "") { sequence = sequence + ", " }
-            if (checkDustbin == sequenceList[i].trim()) {
-              sequence = sequence + dustbinId + ", " + sequenceList[i].trim();
-            }
-            else {
-              sequence = sequence + sequenceList[i].trim();
-            }
+        for (let i = 0; i < binList.length; i++) {
+          if (bins != "") { bins = bins + ", " }
+          if (checkDustbin == binList[i].trim()) {
+            bins = bins + dustbinId + ", " + binList[i].trim();
           }
-          for (let i = 0; i < binList.length; i++) {
-            if (bins != "") { bins = bins + ", " }
-            if (checkDustbin == binList[i].trim()) {
-              bins = bins + dustbinId + ", " + binList[i].trim();
-            }
-            else {
-              bins = bins + binList[i].trim();
-            }
+          else {
+            bins = bins + binList[i].trim();
           }
         }
-        this.setDustbinPlan(planDetails, bins, sequence, highPriority, zone, totalDustbin, date, planId, dustbinId);
       }
+      else {
+        let dustbinPosion = Number(dustbinPickingPosition);
+        checkDustbin = sequenceList[dustbinPosion];
+        for (let i = 0; i < sequenceList.length; i++) {
+          if (sequence != "") { sequence = sequence + ", " }
+          if (checkDustbin == sequenceList[i].trim()) {
+            sequence = sequence + dustbinId + ", " + sequenceList[i].trim();
+          }
+          else {
+            sequence = sequence + sequenceList[i].trim();
+          }
+        }
+        for (let i = 0; i < binList.length; i++) {
+          if (bins != "") { bins = bins + ", " }
+          if (checkDustbin == binList[i].trim()) {
+            bins = bins + dustbinId + ", " + binList[i].trim();
+          }
+          else {
+            bins = bins + binList[i].trim();
+          }
+        }
+      }
+      this.setDustbinPlan(planDetails, bins, sequence, highPriority, zone, totalDustbin, date, planId, dustbinId);
     });
   }
 
@@ -777,7 +774,6 @@ export class DustbinPlaningComponent implements OnInit {
     }
   }
 
-
   setSequenceIndex(type: any) {
     let currentIndex = this.selectedDustbin;
     let nextIndex = 0;
@@ -797,7 +793,6 @@ export class DustbinPlaningComponent implements OnInit {
         nextIndex = currentIndex + 1;
       }
     }
-
 
     let dustbinPre = this.dustbinMapList[currentIndex]["dustbin"];
     let addressPre = this.dustbinMapList[currentIndex]["address"];
@@ -833,7 +828,6 @@ export class DustbinPlaningComponent implements OnInit {
     this.getSelctedDustbin(nextIndex);
   }
 
-
   updateDustbinSequence() {
     let planId = $(this.mapPlanId).val();
     let date = $(this.mapDate).val();
@@ -863,7 +857,6 @@ export class DustbinPlaningComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Dusting sequence updated successfully !!!");
     this.modalService.dismissAll();
   }
-
 
   openMapModel(date: any, planId: any) {
     this.dustbinMarker = [];
@@ -995,7 +988,6 @@ export class DustbinPlaningComponent implements OnInit {
         }
       }
       if (isDelete == true) {
-        
         this.dustbinService.getDustbinPickHistory(this.selectedYear, this.selectedMonthName, date, dustbin, planId).then((dustbinPickData: any) => {
           if (dustbinPickData == null) {
             $(this.deleteDustbinId).val(dustbin);
@@ -1008,7 +1000,7 @@ export class DustbinPlaningComponent implements OnInit {
       }
     }
   }
-  
+
   deleteDustbin() {
     let planId = $(this.mapPlanId).val();
     let date = $(this.mapDate).val();
@@ -1016,8 +1008,8 @@ export class DustbinPlaningComponent implements OnInit {
     $(this.deleteDustbinId).val("0");
     let planDetails = this.planList.find(item => item.key == planId);
     if (planDetails != undefined) {
-      this.dustbinService.getDustbinPlanData(planDetails.date,planId,"today","","").then((planDustbinData: any) => {
-        if(planDustbinData!=null){
+      this.dustbinService.getDustbinPlanData(planDetails.date, planId, "today", "", "").then((planDustbinData: any) => {
+        if (planDustbinData != null) {
           let bins = planDustbinData["bins"];
           let binArray = bins.toString().replaceAll(" ", "").split(',');
           if (binArray.length > 0) {

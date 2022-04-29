@@ -24,7 +24,6 @@ export class SettingsComponent implements OnInit {
   txtLineEndPointRange = "#txtLineEndPointRange";
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
-  txtTraversalPathDuration = "#txtTraversalPathDuration";
   txtInternetCheckInterval = "#txtInternetCheckInterval";
   txtScreenOffVoiceMessage = "#txtScreenOffVoiceMessage";
   txtInternetCheckVoiceMessage = "#txtInternetCheckVoiceMessage";
@@ -47,7 +46,6 @@ export class SettingsComponent implements OnInit {
 
 
   // Reader
-  txtCapturingGap = "#txtCapturingGap";
   txtCardScanWaitTime = "#txtCardScanWaitTime";
   txtCardScanTimeGap = "#txtCardScanTimeGap";
   txtCardScanNote = "#txtCardScanNote";
@@ -148,12 +146,6 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["maxDistanceCanCover"] != null) {
           $(this.txtMaxDistanceCanCover).val(navigetorJsonData["maxDistanceCanCover"]);
         }
-        if (navigetorJsonData["traversalPathDuration"] != null) {
-          $(this.txtTraversalPathDuration).val(navigetorJsonData["traversalPathDuration"]);
-        }
-        if (navigetorJsonData["capturingGap"] != null) {
-          $(this.txtCapturingGap).val(navigetorJsonData["capturingGap"]);
-        }
         if (navigetorJsonData["internetCheckInterval"] != null) {
           $(this.txtInternetCheckInterval).val(navigetorJsonData["internetCheckInterval"]);
         }
@@ -230,12 +222,6 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtMaxDistanceCanCover).val() != "") {
       this.navigatorJsonObject["maxDistanceCanCover"] = $(this.txtMaxDistanceCanCover).val();
-    }
-    if ($(this.txtTraversalPathDuration).val() != "") {
-      this.navigatorJsonObject["traversalPathDuration"] = $(this.txtTraversalPathDuration).val();
-    }
-    if ($(this.txtCapturingGap).val() != "") {
-      this.navigatorJsonObject["capturingGap"] = $(this.txtCapturingGap).val();
     }
     if ($(this.txtInternetCheckInterval).val() != "") {
       this.navigatorJsonObject["internetCheckInterval"] = $(this.txtInternetCheckInterval).val();
