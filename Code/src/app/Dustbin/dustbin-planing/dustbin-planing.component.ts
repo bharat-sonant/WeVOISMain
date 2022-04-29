@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { DustbinService } from "../../services/dustbin/dustbin.service";
 import { FirebaseService } from "../../firebase.service";
@@ -12,6 +12,8 @@ import { HttpClient } from "@angular/common/http";
 })
 export class DustbinPlaningComponent implements OnInit {
 
+  @ViewChild('gmap', null) gmap: any;
+  public map: google.maps.Map;
   constructor(public fs: FirebaseService, private dustbinService: DustbinService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   selectedZone: any;
@@ -48,6 +50,10 @@ export class DustbinPlaningComponent implements OnInit {
   ddlPlan = "#ddlPlan";
   maxCapacity = "#maxCapacity";
   assignedDustbin = "#assignedDustbin";
+  mapPlanId = "#mapPlanId";
+  mapDate = "#mapDate";
+  deleteDustbinId = "#deleteDustbinId";
+  divDustbin = "#divDustbin";
 
   bins: any;
   createdAt: any;
@@ -66,6 +72,11 @@ export class DustbinPlaningComponent implements OnInit {
   pickedDustbin: any;
   highPriority: any;
   planAddDays = 5;
+  dustbinMarker: any[] = [];
+  dustbinMapList: any[] = [];
+  preSelectedMarker: any;
+  public bounds: any;
+  selectedDustbin: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -147,9 +158,7 @@ export class DustbinPlaningComponent implements OnInit {
     this.getDustbinPickingPlanHistory();
     this.getDustbinPickingPlans("Report");
     if (this.selectedZone != "0") {
-      this.getDustbinHistoryJson();
       setTimeout(() => {
-        this.saveDustbinReportJSON();
         $(this.divLoader).hide();
       }, 12000);
     }
@@ -158,21 +167,6 @@ export class DustbinPlaningComponent implements OnInit {
         $(this.divLoader).hide();
       }, 60000);
     }
-  }
-
-  saveDustbinReportJSON() {
-    let filePath = "/DustbinData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
-    let fileName = this.selectedZone + ".json";
-    this.commonService.saveJsonFile(this.dustbinList, fileName, filePath);
-  }
-
-  getDustbinHistoryJson() {
-    this.dustbinJsonList = [];
-    this.dustbinService.getDustbinHistoryJson(this.selectedYear, this.selectedMonthName, this.selectedZone).then((planJsonData: any) => {
-      if (planJsonData != null) {
-        this.dustbinJsonList = JSON.parse(JSON.stringify(planJsonData));
-      }
-    });
   }
 
   getDustbinPickingPlanHistory() {
@@ -244,61 +238,11 @@ export class DustbinPlaningComponent implements OnInit {
             binDetail[day].push({ status: this.dustbinService.getIcon("assignedNotPicked") + " Assigned but not Picked", planDate: planDate, planName: planId, isPicked: false });
           }
           else {
-            this.checkDustbinFromDustbinJsonList(day, binDetail, dustbin, planDate, planId);
+            this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planId);
           }
         }
       }
     }
-  }
-
-  checkDustbinFromDustbinJsonList(day: any, binDetail: any, dustbin: any, planDate: any, planId: any) {
-    if (this.dustbinJsonList.length > 0) {
-      let jsonBinDetail = this.dustbinJsonList.find(item => item.dustbin == dustbin);
-      if (jsonBinDetail != undefined) {
-        if (jsonBinDetail[day] != null) {
-          let binPlanDetail = jsonBinDetail[day].find(item => item.planDate == planDate && item.planName == planId);
-          if (binPlanDetail != undefined) {
-            this.getDustbinPickedAnalysisDetail(binDetail, binPlanDetail, day, dustbin, planDate, planId);
-          }
-        }
-        else {
-          this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planId);
-        }
-      }
-      else {
-        this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planId);
-      }
-    }
-    else {
-      this.getDustbinPickedDetail(binDetail, day, dustbin, planDate, planId);
-    }
-  }
-
-  getDustbinPickedAnalysisDetail(binDetail: any, binPlanDetail: any, day: any, dustbin: any, planDate: any, planId: any) {
-    this.dustbinService.getDustbinPickedAnalysisDetail(this.selectedYear, this.selectedMonthName, planDate, dustbin, planId).then((pickAnalysisData: any) => {
-      let icon = this.dustbinService.getIcon("picked");
-      let pickTime = binPlanDetail.pickTime;
-      let name = binPlanDetail.name;
-      if (pickAnalysisData != null) {
-        let filledPercentage = "";
-        let remark = "";
-        if (pickAnalysisData["filledPercentage"] != null) {
-          filledPercentage = "<b>(" + pickAnalysisData["filledPercentage"] + "%)</b>";
-        }
-        if (pickAnalysisData["remark"] != null) {
-          remark = pickAnalysisData["remark"];
-        }
-        let pickStatus = icon + filledPercentage + " at " + pickTime + " by " + name;
-        if (remark != "") {
-          pickStatus = pickStatus + "<br/>" + remark;
-        }
-        binDetail[day].push({ status: pickStatus, filledPercentage: filledPercentage, planDate: planDate, planName: planId, isPicked: true });
-      }
-      else {
-        let pickStatus = icon + " at " + pickTime + " by " + name;
-        binDetail[day].push({ status: pickStatus, planDate: planDate, planName: planId, isPicked: true, pickTime: pickTime, name: name });
-      }
-    });
   }
 
   getDustbinPickedDetail(binDetail: any, day: any, dustbin: any, planDate: any, planId: any) {
@@ -313,7 +257,7 @@ export class DustbinPlaningComponent implements OnInit {
         else {
           this.setDustbinPickedDetail(dustbinPickData, binDetail, day, planDate, planId);
         }
-      }     
+      }
     });
   }
 
@@ -398,7 +342,6 @@ export class DustbinPlaningComponent implements OnInit {
             }
           }
           this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
-
         }
       }
       this.removeAssignedPlan();
@@ -752,8 +695,8 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   getDustbinPickHistoryForHighPriority(planDetails: any, date: any, checkDustbin: any, planId: any, dustbinPickingPosition: any, sequenceList: any, dustbinId: any, binList: any, highPriority: any, zone: any, totalDustbin: any) {
-    let monthName = this.commonService.getCurrentMonthName(parseInt(date.toString().split('-')[1]) - 1);
-    this.dustbinService.getDustbinPickHistory(this.selectedYear, monthName, date, checkDustbin, planId).then((dustbinPickData: any) => {
+    
+    this.dustbinService.getDustbinPickHistory(this.selectedYear, this.selectedMonthName, date, checkDustbin, planId).then((dustbinPickData: any) => {
       if (dustbinPickData != null) {
         let bins = "";
         let sequence = "";
@@ -834,6 +777,465 @@ export class DustbinPlaningComponent implements OnInit {
     }
   }
 
+
+  setSequenceIndex(type: any) {
+    let currentIndex = this.selectedDustbin;
+    let nextIndex = 0;
+    if (type == "up") {
+      if (currentIndex == 0) {
+        nextIndex = this.dustbinMapList.length - 1;
+      }
+      else {
+        nextIndex = currentIndex - 1;
+      }
+    }
+    else {
+      if (currentIndex == this.dustbinMapList.length - 1) {
+        nextIndex = 0;
+      }
+      else {
+        nextIndex = currentIndex + 1;
+      }
+    }
+
+
+    let dustbinPre = this.dustbinMapList[currentIndex]["dustbin"];
+    let addressPre = this.dustbinMapList[currentIndex]["address"];
+    let latPre = this.dustbinMapList[currentIndex]["lat"];
+    let lngPre = this.dustbinMapList[currentIndex]["lng"];
+    let isPickedPre = this.dustbinMapList[currentIndex]["isPicked"];
+    let isHighPriorityPre = this.dustbinMapList[currentIndex]["isHighPriority"];
+    let zonePre = this.dustbinMapList[currentIndex]["zone"];
+
+    let dustbinNext = this.dustbinMapList[nextIndex]["dustbin"];
+    let addressNext = this.dustbinMapList[nextIndex]["address"];
+    let latNext = this.dustbinMapList[nextIndex]["lat"];
+    let lngNext = this.dustbinMapList[nextIndex]["lng"];
+    let isPickedNext = this.dustbinMapList[nextIndex]["isPicked"];
+    let isHighPriorityNext = this.dustbinMapList[nextIndex]["isHighPriority"];
+    let zoneNext = this.dustbinMapList[nextIndex]["zone"];
+
+    this.dustbinMapList[currentIndex]["dustbin"] = dustbinNext;
+    this.dustbinMapList[currentIndex]["address"] = addressNext;
+    this.dustbinMapList[currentIndex]["lat"] = latNext;
+    this.dustbinMapList[currentIndex]["lng"] = lngNext;
+    this.dustbinMapList[currentIndex]["isPicked"] = isPickedNext;
+    this.dustbinMapList[currentIndex]["isHighPriority"] = isHighPriorityNext;
+    this.dustbinMapList[currentIndex]["zone"] = zoneNext;
+
+    this.dustbinMapList[nextIndex]["dustbin"] = dustbinPre;
+    this.dustbinMapList[nextIndex]["address"] = addressPre;
+    this.dustbinMapList[nextIndex]["lat"] = latPre;
+    this.dustbinMapList[nextIndex]["lng"] = lngPre;
+    this.dustbinMapList[nextIndex]["isPicked"] = isPickedPre;
+    this.dustbinMapList[nextIndex]["isHighPriority"] = isHighPriorityPre;
+    this.dustbinMapList[nextIndex]["zone"] = zonePre;
+    this.getSelctedDustbin(nextIndex);
+  }
+
+
+  updateDustbinSequence() {
+    let planId = $(this.mapPlanId).val();
+    let date = $(this.mapDate).val();
+    let bins = "";
+
+    if (this.dustbinMapList.length > 0) {
+      for (let i = 0; i < this.dustbinMapList.length; i++) {
+        if (bins == "") {
+          bins = this.dustbinMapList[i]["dustbin"];
+        }
+        else {
+          bins = bins + ", " + this.dustbinMapList[i]["dustbin"];
+        }
+      }
+    }
+    let highPriority = "";
+    let sequence = "";
+    let zone = "";
+    let planDetails = this.planList.find(item => item.key == planId);
+    if (planDetails != undefined) {
+      planDetails.bins = bins;
+      zone = planDetails.zone;
+      highPriority = planDetails.highPriority;
+      sequence = planDetails.sequence;
+    }
+    this.dustbinService.updateDustbinPlans(bins, zone, this.dustbinMapList.length, date, planId, sequence, highPriority);
+    this.commonService.setAlertMessage("success", "Dusting sequence updated successfully !!!");
+    this.modalService.dismissAll();
+  }
+
+
+  openMapModel(date: any, planId: any) {
+    this.dustbinMarker = [];
+    this.dustbinMapList = [];
+    this.bounds = new google.maps.LatLngBounds();
+    this.setMaps();
+    $(this.mapPlanId).val(planId);
+    $(this.mapDate).val(date);
+    if (this.planList.length > 0) {
+      let planDetails = this.planList.find(item => item.key == planId);
+      if (planDetails != undefined) {
+        this.dustbinService.getDustbinPlanData(planDetails.date, planId, "today", "", "").then((planDustbinData: any) => {
+          if (planDustbinData != null) {
+            let bins = planDustbinData["bins"];
+            let picked = planDustbinData["pickedDustbin"];
+            let highPriority = planDustbinData["highPriority"];
+            planDetails.sequence = planDustbinData["pickingSequence"];
+            let pickedList = [];
+            if (picked != "") {
+              pickedList = picked.toString().replaceAll(" ", "").split(',');
+            }
+            let highPriorityList = [];
+            if (highPriority != "") {
+              highPriorityList = highPriority.toString().replaceAll(" ", "").split(',');
+            }
+            if (bins != "") {
+              let binList = bins.toString().replaceAll(" ", "").split(',');
+              if (binList.length > 0) {
+                for (let i = 0; i < binList.length; i++) {
+                  let dustbinDetails = this.dustbinStorageList.find(item => item.dustbin == binList[i]);
+                  if (dustbinDetails != undefined) {
+                    let isPicked = false;
+                    if (pickedList.length > 0) {
+                      for (let j = 0; j < pickedList.length; j++) {
+                        if (dustbinDetails.dustbin == pickedList[j]) {
+                          isPicked = true;
+                        }
+                      }
+                    }
+                    let isHighPriority = "";
+                    for (let k = 0; k < highPriorityList.length; k++) {
+                      if (dustbinDetails.dustbin == highPriorityList[k].trim()) {
+                        isHighPriority = "(HP)";
+                      }
+                    }
+                    this.dustbinMapList.push({ dustbin: dustbinDetails.dustbin, address: dustbinDetails.address, lat: dustbinDetails.lat, lng: dustbinDetails.lng, isPicked: isPicked, isHighPriority: isHighPriority, zone: dustbinDetails.zone });
+                  }
+                }
+                if (this.dustbinMapList.length > 0) {
+                  this.preSelectedMarker = 0;
+                  this.setMarker(0);
+                  setTimeout(() => {
+                    this.getSelctedDustbin(0);
+                  }, 600);
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+
+  getSelctedDustbin(index: any) {
+    this.selectedDustbin = index;
+    if (this.dustbinMapList.length > 0) {
+      for (let i = 0; i < this.dustbinMapList.length; i++) {
+        let className = $('#tr' + i).attr('class');
+        $('#tr' + i).removeClass(className);
+        if (i == index) {
+          $('#tr' + i).addClass("selected-dustbin-active");
+        }
+        else {
+          $('#tr' + i).addClass("selected-dustbin");
+        }
+
+        if (this.dustbinMapList[i]["isPicked"] == true) {
+          let className = $('#tr' + i).attr('class');
+          $('#tr' + i).removeClass(className);
+          $('#tr' + i).addClass("picked-dustbin");
+        }
+      }
+
+      this.dustbinMarker[this.preSelectedMarker]["marker"].setMap(null);
+      let i = this.preSelectedMarker;
+      let imgPath = this.dustbinService.getIcon("planDustbin");
+      let scaledheight = 30;
+      let scaledWidth = 35;
+      let point1 = 15;
+      let point2 = 25;
+      let fontSize = "10px";
+      let sequence = (i + 1);
+      let contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+      this.setSelectedMarker(i, this.dustbinMapList[i]["lat"], this.dustbinMapList[i]["lng"], sequence, imgPath, contentString, scaledheight, scaledWidth, point1, point2, fontSize, "preSelected", this.dustbinMapList[i]["isPicked"]);
+
+      i = index;
+      this.preSelectedMarker = index;
+      this.dustbinMarker[i]["marker"].setMap(null);
+      imgPath = this.dustbinService.getIcon("selectedDustbin");
+      scaledheight = 40;
+      scaledWidth = 45;
+      point1 = 20;
+      point2 = 15;
+      fontSize = "14px";
+      sequence = (i + 1);
+      contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+      this.setSelectedMarker(i, this.dustbinMapList[i]["lat"], this.dustbinMapList[i]["lng"], sequence, imgPath, contentString, scaledheight, scaledWidth, point1, point2, fontSize, "selected", this.dustbinMapList[i]["isPicked"]);
+    }
+  }
+
+  deletePlanDustbin(dustbin: any) {
+    let planId = $(this.mapPlanId).val();
+    let date = $(this.mapDate).val();
+    let planDetails = this.planList.find(item => item.key == planId);
+    let highPriority = "";
+    if (planDetails != undefined) {
+      highPriority = planDetails.highPriority;
+      let isDelete = true;
+      if (planDetails.pickedDustbin != "") {
+        let pickedDustbinArray = planDetails.pickedDustbin.toString().split(',');
+        if (pickedDustbinArray.length > 0) {
+          for (let i = 0; i < pickedDustbinArray.length; i++) {
+            if (pickedDustbinArray[i].trim() == dustbin) {
+              isDelete = false;
+              this.commonService.setAlertMessage("error", "this dustbin has picked !!!");
+              break;
+            }
+          }
+        }
+      }
+      if (isDelete == true) {
+        
+        this.dustbinService.getDustbinPickHistory(this.selectedYear, this.selectedMonthName, date, dustbin, planId).then((dustbinPickData: any) => {
+          if (dustbinPickData == null) {
+            $(this.deleteDustbinId).val(dustbin);
+            $(this.divDustbin).show();
+          }
+          else {
+            this.commonService.setAlertMessage("error", "this dustbin is on work !!!")
+          }
+        });
+      }
+    }
+  }
+  
+  deleteDustbin() {
+    let planId = $(this.mapPlanId).val();
+    let date = $(this.mapDate).val();
+    let dustbin = $(this.deleteDustbinId).val();
+    $(this.deleteDustbinId).val("0");
+    let planDetails = this.planList.find(item => item.key == planId);
+    if (planDetails != undefined) {
+      this.dustbinService.getDustbinPlanData(planDetails.date,planId,"today","","").then((planDustbinData: any) => {
+        if(planDustbinData!=null){
+          let bins = planDustbinData["bins"];
+          let binArray = bins.toString().replaceAll(" ", "").split(',');
+          if (binArray.length > 0) {
+            bins = "";
+            let zone = "";
+            let zones = [];
+            let assigned = 0;
+            let totalDustbin = 0;
+            for (let i = 0; i < binArray.length; i++) {
+              if (binArray[i] != dustbin) {
+                totalDustbin = totalDustbin + 1;
+                assigned = assigned + 1;
+                if (bins == "") {
+                  bins = binArray[i];
+                }
+                else {
+                  bins = bins + ", " + binArray[i];
+                }
+                let dustbinDetails = this.dustbinStorageList.find(item => item.dustbin == binArray[i]);
+                if (dustbinDetails != undefined) {
+                  if (zones.length == 0) {
+                    zones.push({ zone: dustbinDetails.zone });
+                  }
+                  else {
+                    let zoneDetails = zones.find(item => item.zone == dustbinDetails.zone);
+                    if (zoneDetails == undefined) {
+                      zones.push({ zone: dustbinDetails.zone });
+                    }
+                  }
+                }
+              }
+            }
+            if (zones.length > 0) {
+              for (let z = 0; z < zones.length; z++) {
+                if (z == 0) {
+                  zone = zones[z]["zone"];
+                }
+                else {
+                  zone = zone + ", " + zones[z]["zone"];
+                }
+              }
+            }
+            let highPriority = planDustbinData["highPriority"];
+            let highPriorityArray = highPriority.toString().replaceAll(" ", "").split(',');
+            if (highPriorityArray.length > 0) {
+              highPriority = "";
+              for (let i = 0; i < highPriorityArray.length; i++) {
+                if (highPriorityArray[i] != dustbin) {
+                  if (highPriority == "") {
+                    highPriority = highPriorityArray[i];
+                  }
+                  else {
+                    highPriority = highPriority + ", " + highPriorityArray[i];
+                  }
+                }
+              }
+            }
+            let sequence = planDustbinData["pickingSequence"];;
+            let sequenceArray = sequence.toString().replaceAll(" ", "").split(',');
+            if (sequenceArray.length > 0) {
+              sequence = "";
+              for (let i = 0; i < sequenceArray.length; i++) {
+                if (sequenceArray[i] != dustbin) {
+                  if (sequence == "") {
+                    sequence = sequenceArray[i];
+                  }
+                  else {
+                    sequence = sequence + ", " + sequenceArray[i];
+                  }
+                }
+              }
+            }
+            planDetails.zone = zone;
+            planDetails.bins = bins;
+            planDetails.dustbinAssigned = assigned;
+            planDetails.sequence = sequence;
+            planDetails.highPriority = highPriority;
+            this.dustbinService.updateDustbinPlans(bins, zone, totalDustbin, date, planDetails.key, sequence, highPriority);
+
+            let plan = "";
+            let day = "day" + Number(date.toString().split('-')[2]);
+            let spanId = "lbl-" + dustbin + "-" + day;
+            let spanData = $('#' + spanId).html();
+            if (spanData != "" && spanData != undefined) {
+              let lblAssigned = spanData.split('</b>')[0];
+              let spanDataList = spanData.split('</b>')[1].split('||');
+              for (let spIndex = 0; spIndex < spanDataList.length; spIndex++) {
+                if (planDetails.planName != spanDataList[spIndex].trim()) {
+                  if (plan == "") {
+                    plan = spanDataList[spIndex].trim();
+                  }
+                  else {
+                    plan = plan + " || " + spanDataList[spIndex].trim();
+                  }
+                }
+              }
+              if (plan != "") {
+                plan = lblAssigned + "</b> " + plan;
+              }
+              $('#' + spanId).html(plan);
+            }
+            this.openMapModel(planDetails.date, planDetails.key);
+            this.removeAssignedPlan();
+            this.commonService.setAlertMessage("success", "Dustbin deleted successfully !!!");
+            $(this.divDustbin).hide();
+          }
+        }
+      });
+    }
+  }
+
+  cancelDustbinDelete() {
+    $(this.deleteDustbinId).val("0");
+    $(this.divDustbin).hide();
+  }
+
+  setSelectedMarker(index: any, lat: any, lng: any, markerLabel: any, markerUrl: any, contentString: any, scaledheight: any, scaledWidth: any, point1: any, point2: any, fontSize: any, type: any, isPicked: any) {
+    if (isPicked == true) {
+      markerUrl = this.dustbinService.getIcon("pickedDustbin");
+    }
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: markerUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(scaledheight, scaledWidth),
+        labelOrigin: new google.maps.Point(point1, point2)
+      },
+      label: {
+        text: markerLabel + '',
+        color: '#fff',
+        fontSize: fontSize,
+        fontWeight: "bold"
+      }
+    });
+    this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+    let infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    marker.addListener('click', function () {
+      infowindow.open(this.map, marker);
+    });
+    if (type == "selected") {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+    this.dustbinMarker[index]["marker"] = marker;
+  }
+
+  setMarker(selectedIndex: any) {
+    if (this.dustbinMarker.length > 0) {
+      for (let i = 0; i < this.dustbinMarker.length; i++) {
+        this.dustbinMarker[i]["marker"].setMap(null);
+      }
+      this.dustbinMarker = [];
+    }
+    if (this.dustbinMapList.length > 0) {
+      for (let i = 0; i < this.dustbinMapList.length; i++) {
+        let scaledheight = 30;
+        let scaledWidth = 35;
+        let point1 = 15;
+        let point2 = 25;
+        let fontSize = "10px";
+        let imgPath = this.dustbinService.getIcon("planDustbin");
+        if (this.dustbinMapList[i]["isPicked"] == true) {
+          imgPath = this.dustbinService.getIcon("pickedDustbin");
+        }
+        if (selectedIndex == i) {
+          scaledheight = 40;
+          scaledWidth = 45;
+          point1 = 20;
+          point2 = 15;
+          fontSize = "14px";
+        }
+        let sequence = (i + 1);
+
+        let marker = new google.maps.Marker({
+          position: { lat: Number(this.dustbinMapList[i]["lat"]), lng: Number(this.dustbinMapList[i]["lng"]) },
+          map: this.map,
+          icon: {
+            url: imgPath,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scaledSize: new google.maps.Size(scaledheight, scaledWidth),
+            labelOrigin: new google.maps.Point(point1, point2)
+          },
+          label: {
+            text: sequence + '',
+            color: '#fff',
+            fontSize: fontSize,
+            fontWeight: "bold"
+          }
+        });
+        this.bounds.extend({ lat: Number(this.dustbinMapList[i]["lat"]), lng: Number(this.dustbinMapList[i]["lng"]) });
+        let contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+        let infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+        if (selectedIndex == i) {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+        marker.addListener('click', function () {
+          infowindow.open(this.map, marker);
+        });
+        this.dustbinMarker.push({ marker });
+        if (selectedIndex == 0) {
+          this.map.fitBounds(this.bounds);
+        }
+      }
+    }
+  }
+
+  setMaps() {
+    let mapProp = this.commonService.initMapProperties();
+    this.map = new google.maps.Map(document.getElementById("haltMap"), mapProp);
+  }
+
   openModel(content: any, type: any, plan: any, dustbin: any, day: any) {
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
@@ -856,6 +1258,15 @@ export class DustbinPlaningComponent implements OnInit {
       width = 450;
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
+    else if (type == "openMapModel") {
+      height = (windowHeight * 90) / 100;
+      width = (windowWidth * 90) / 100;
+      let mapHeight = (height - 100) + "px";
+      let divHeight = (height - 136) + "px";
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $('#haltMap').css("height", mapHeight)
+      $('#divSequence').css("height", divHeight);
+    }
     $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
     $('div .modal-dialog-centered').css("margin-top", "26px");
@@ -871,6 +1282,9 @@ export class DustbinPlaningComponent implements OnInit {
     }
     else if (type == "addDustbin") {
       this.addDustbin(dustbin, day);
+    }
+    else if (type == "openMapModel") {
+      this.openMapModel(plan.date, plan.key);
     }
   }
 
