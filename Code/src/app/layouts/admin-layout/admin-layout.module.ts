@@ -109,6 +109,7 @@ import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/ve
 import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
 import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
+import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
 
 @NgModule({
   imports: [
@@ -222,7 +223,8 @@ import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-p
     VendorLedgerComponent,
     EmployeesComponent,
     SpecialUsersComponent,
-    DustbinPlaningComponent
+    DustbinPlaningComponent,
+    DustbinWardMappingComponent
   ]
 })
 

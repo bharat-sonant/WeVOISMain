@@ -102,6 +102,8 @@ import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/ve
 import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
 import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
+import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
+
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -222,6 +224,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/employees', component: EmployeesComponent },
     { path: 'sikar/special-users', component: SpecialUsersComponent },
     { path: 'sikar/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'sikar/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -332,6 +335,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/employees', component: EmployeesComponent },
     { path: 'sikar/:id/special-users', component: SpecialUsersComponent },
     { path: 'sikar/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'sikar/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
 
     //jaipur-greater
@@ -442,6 +446,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/employees', component: EmployeesComponent },
     { path: 'jaipur-greater/special-users', component: SpecialUsersComponent },
     { path: 'jaipur-greater/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur-greater/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -551,6 +556,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/employees', component: EmployeesComponent },
     { path: 'jaipur-greater/:id/special-users', component: SpecialUsersComponent },
     { path: 'jaipur-greater/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur-greater/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     
 
     //reengus
@@ -662,6 +668,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/employees', component: EmployeesComponent },
     { path: 'reengus/special-users', component: SpecialUsersComponent },
     { path: 'reengus/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'reengus/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -772,6 +779,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/employees', component: EmployeesComponent },
     { path: 'reengus/:id/special-users', component: SpecialUsersComponent },
     { path: 'reengus/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'reengus/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -882,6 +890,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/employees', component: EmployeesComponent },
     { path: 'shahpura/special-users', component: SpecialUsersComponent },
     { path: 'shahpura/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'shahpura/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -992,6 +1001,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/employees', component: EmployeesComponent },
     { path: 'shahpura/:id/special-users', component: SpecialUsersComponent },
     { path: 'shahpura/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'shahpura/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1102,6 +1112,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/employees', component: EmployeesComponent },
     { path: 'test/special-users', component: SpecialUsersComponent },
     { path: 'test/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'test/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1212,6 +1223,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/employees', component: EmployeesComponent },
     { path: 'test/:id/special-users', component: SpecialUsersComponent },
     { path: 'test/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'test/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1322,6 +1334,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/employees', component: EmployeesComponent },
     { path: 'jaipur-office/special-users', component: SpecialUsersComponent },
     { path: 'jaipur-office/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur-office/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1431,6 +1444,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/employees', component: EmployeesComponent },
     { path: 'jaipur-office/:id/special-users', component: SpecialUsersComponent },
     { path: 'jaipur-office/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur-office/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
 
@@ -1543,6 +1557,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/employees', component: EmployeesComponent },
     { path: 'kishangarh/special-users', component: SpecialUsersComponent },
     { path: 'kishangarh/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'kishangarh/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1653,6 +1668,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/employees', component: EmployeesComponent },
     { path: 'kishangarh/:id/special-users', component: SpecialUsersComponent },
     { path: 'kishangarh/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'kishangarh/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
 
 
@@ -1766,6 +1782,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/employees', component: EmployeesComponent },
     { path: 'niwai/special-users', component: SpecialUsersComponent },
     { path: 'niwai/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'niwai/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1876,6 +1893,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/employees', component: EmployeesComponent },
     { path: 'niwai/:id/special-users', component: SpecialUsersComponent },
     { path: 'niwai/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'niwai/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
 
 
@@ -1988,6 +2006,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/employees', component: EmployeesComponent },
     { path: 'jaisalmer/special-users', component: SpecialUsersComponent },
     { path: 'jaisalmer/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaisalmer/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2098,6 +2117,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/employees', component: EmployeesComponent },
     { path: 'jaisalmer/:id/special-users', component: SpecialUsersComponent },
     { path: 'jaisalmer/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaisalmer/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2208,6 +2228,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/employees', component: EmployeesComponent },
     { path: 'churu/special-users', component: SpecialUsersComponent },
     { path: 'churu/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'churu/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2318,8 +2339,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/employees', component: EmployeesComponent },
     { path: 'churu/:id/special-users', component: SpecialUsersComponent },
     { path: 'churu/:id/dustbin-planing', component: DustbinPlaningComponent },
-
-
+    { path: 'churu/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
 
 
@@ -2432,6 +2452,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/employees', component: EmployeesComponent },
     { path: 'behror/special-users', component: SpecialUsersComponent },
     { path: 'behror/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'behror/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2542,4 +2563,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/employees', component: EmployeesComponent },
     { path: 'behror/:id/special-users', component: SpecialUsersComponent },
     { path: 'behror/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'behror/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
 ]; 
