@@ -828,7 +828,7 @@ export class DustbinPlaningComponent implements OnInit {
     this.getSelctedDustbin(nextIndex);
   }
 
-  updateDustbinSequence() {
+  updateDustbinSequence() { 
     let planId = $(this.mapPlanId).val();
     let date = $(this.mapDate).val();
     let bins = "";
