@@ -1,333 +1,318 @@
 <div id="divLoader" class="loaderClass">
-  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
 <section class="header">
-  <div class="row no-gutters">
-    <div class="col-md-8">
-      <button class="btn btn-primary " (click)="setDate('','previous');">
+    <div class="row no-gutters">
+        <div class="col-md-8">
+            <button class="btn btn-primary " (click)="setDate('','previous');">
         << </button>
-          <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-          <button class="btn btn-primary button" (click)="setDate('','next');">
+            <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+            <button class="btn btn-primary button" (click)="setDate('','next');">
             >>
           </button>
-          <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-            [(ngModel)]="selectedZone">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
             <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
               ngSelected="zone.zoneNo == selectedZone?'selected':''">
               {{zone.zoneName}}
             </option>
           </select>&nbsp;&nbsp;
-          <input id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span id="showHouseLabel"> Show
+            <input id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span id="showHouseLabel"> Show
             Houses</span>
-    </div>
-    <div class="col-md-4 text-right total-house">
+        </div>
+        <div class="col-md-4 text-right total-house">
 
-      <div class="fix-home">
-        <div id="divNotSacnned" class="float-first float-first2">
-          <i class="fas fa-vr-cardboard"
-            (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
-          <span class="house"> <span> {{progressData.cardNotScanedImages}}
+            <div class="fix-home">
+                <div id="divNotSacnned" class="float-first float-first2">
+                    <i class="fas fa-vr-cardboard" (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
+                    <span class="house"> <span> {{progressData.cardNotScanedImages}}
             </span></span><br>
-          <h6>Card Images</h6>
-        </div>
-        <div id="divTotalHouse" class="float-second float-second2">
-          <i class="fas fa-home"></i> <span class="house"> {{progressData.totalHouses}} </span><br>
-          <h6>Total House</h6>
-        </div>
-        <div id="divScannedHouses" class="float-third float-third2">
-          <i class="fas fa-house-damage" (click)="showAllScanedHouses();"></i>
-          <span class="house">{{progressData.scanedHouses}} </span><br>
-          <h6>Scanned House</h6>
-        </div>
-        <div id="divSetting" class="float-third float-third3">
-          <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
-            aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
+                    <h6>Card Images</h6>
+                </div>
+                <div id="divTotalHouse" class="float-second float-second2">
+                    <i class="fas fa-home"></i> <span class="house"> {{progressData.totalHouses}} </span><br>
+                    <h6>Total House</h6>
+                </div>
+                <div id="divScannedHouses" class="float-third float-third2">
+                    <i class="fas fa-house-damage" (click)="showAllScanedHouses();"></i>
+                    <span class="house">{{progressData.scanedHouses}} </span><br>
+                    <h6>Scanned House</h6>
+                </div>
+                <div id="divSetting" class="float-third float-third3">
+                    <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo" aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
             <h6>Settings</h6>
           </button>
 
-        </div>
-
-      </div>
-      <div class="panel-group panel-group2" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="headingtwo">
-            <h4 class="panel-title">
-            </h4>
-          </div>
-          <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-12 text-left">
-                  <div class="setting-box setting-box1">
-                    <p> Show Line No</p>
-                    <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()"
-                      >
-                  </div>
-                  <div class="setting-box setting-box1">
-                    <p> Show All Dustbin</p>
-                    <input id="chkIsShowAllDustbin" type="checkbox" (change)="showHideAllDustbin()"
-                     >
-                  </div>
-                  <div class="setting-box setting-box1">
-                    <p> Show Worker Detail</p>
-                    <input id="chkIsWorkerDetail" type="checkbox" (change)="showHideWorkerDetail()"
-                      >
-                  </div>
-                  <div class="setting-box setting-box1">
-                    <p> Show Work Detail</p>
-                    <input id="chkIsWorkDetail" type="checkbox" (change)="showHideWorkDetail()"
-                     >
-                  </div>
-                  <div class="setting-box setting-box5">
-                    <p> Show Line Details</p>
-                    <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"
-                      > </i>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-  </div>
+            </div>
+            <div class="panel-group panel-group2" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingtwo">
+                        <h4 class="panel-title">
+                        </h4>
+                    </div>
+                    <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingtwo">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 text-left">
+                                    <div class="setting-box setting-box1">
+                                        <p> Show Line No</p>
+                                        <input id="chkIsShowLineNo" type="checkbox" (change)="showLineNo()">
+                                    </div>
+                                    <div class="setting-box setting-box1">
+                                        <p> Show All Dustbin</p>
+                                        <input id="chkIsShowAllDustbin" type="checkbox" (change)="showHideAllDustbin()">
+                                    </div>
+                                    <div class="setting-box setting-box1">
+                                        <p> Show Worker Detail</p>
+                                        <input id="chkIsWorkerDetail" type="checkbox" (change)="showHideWorkerDetail()">
+                                    </div>
+                                    <div class="setting-box setting-box1">
+                                        <p> Show Work Detail</p>
+                                        <input id="chkIsWorkDetail" type="checkbox" (change)="showHideWorkDetail()">
+                                    </div>
+                                    <div class="setting-box setting-box5">
+                                        <p> Show Line Details</p>
+                                        <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"> </i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </section>
 
 <div #gmap class="gmap" id="divMap"></div>
-<a id="routeTrackingLink"  target="_blank" title="Show Route" > <img
-  src="../../assets/img/route_tracking.svg" class="fa-expand-route" /> </a>
+<a id="routeTrackingLink" target="_blank" title="Show Route"> <img src="../../assets/img/route_tracking.svg" class="fa-expand-route" /> </a>
 
 
 
 <div id="divWorkerDetail" class="driver-helper-box" style="display: none;">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="main-box">
-        <div class="designation">
-          <h5> D </h5>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-box">
+                <div class="designation">
+                    <h5> D </h5>
+                </div>
+                <div class="all-details">
+                    <h6>{{progressData.driverName}} <br>
+                        <p>{{progressData.driverMobile}}</p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation designation2">
+                    <h5> H </h5>
+                </div>
+                <div class="all-details">
+                    <h6>{{progressData.helperName}} <span [hidden]="progressData.secondHelperName==''"> | {{progressData.secondHelperName}}</span> <br>
+                        <p>{{progressData.helperMobile}}</p>
+                    </h6>
+                </div>
+            </div>
+            <div id="divParshadDetail" class="main-box main-box1">
+                <div class="designation">
+                    <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>{{progressData.parshadName}} (पार्षद)<br>
+                        <p>{{progressData.parshadMobile}}</p>
+                    </h6>
+                </div>
+            </div>
         </div>
-        <div class="all-details">
-          <h6>{{progressData.driverName}} <br>
-            <p>{{progressData.driverMobile}}</p>
-          </h6>
-        </div>
-      </div>
-      <div class="main-box">
-        <div class="designation designation2">
-          <h5> H </h5>
-        </div>
-        <div class="all-details">
-          <h6>{{progressData.helperName}} <span [hidden]="progressData.secondHelperName==''"> | {{progressData.secondHelperName}}</span> <br>
-            <p>{{progressData.helperMobile}}</p>
-          </h6>
-        </div>
-      </div>
-      <div id="divParshadDetail" class="main-box main-box1">
-        <div class="designation">
-          <h5> <img src="../assets/img/sweet-home.png" width="30"> </h5>
-        </div>
-        <div class="all-details">
-          <h6>{{progressData.parshadName}} (पार्षद)<br>
-            <p>{{progressData.parshadMobile}}</p>
-          </h6>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div id="divWorkDetail" class="line-details-box" style="display: none;">
-  <div class="addclass">
-    <div class="lines bg-2 route">
-      <h3>{{progressData.wardLength}}<span> km</span>
-        <p>Route Length</p>
-      </h3>
+    <div class="addclass">
+        <div class="lines bg-2 route">
+            <h3>{{progressData.wardLength}}<span> km</span>
+                <p>Route Length</p>
+            </h3>
+        </div>
+        <div class="lines2 bg-2 route2">
+            <h3>{{progressData.coveredLength}}<span> km</span>
+                <p>Covered Length</p>
+            </h3>
+        </div>
+        <div class="lines bg-4 route3">
+            <h3>{{progressData.totalLines}}
+                <p>Total Lines</p>
+            </h3>
+
+        </div>
+        <div class="lines2 bg-4 route4" (click)="showSkipLineDetail(contentSkipLines)">
+            <h3>{{progressData.skippedLines}}
+                <p>Skipped Lines</p>
+            </h3>
+        </div>
+        <div class="lines bg-6 route5">
+            <h3>{{progressData.completedLines}}
+                <p>Completed Lines</p>
+            </h3>
+        </div>
+        <div class="lines2 bg-6">
+            <h3>{{progressData.currentLine}}
+                <p>Current Lines</p>
+            </h3>
+        </div>
     </div>
-    <div class="lines2 bg-2 route2">
-      <h3>{{progressData.coveredLength}}<span> km</span>
-        <p>Covered Length</p>
-      </h3>
-    </div>
-    <div class="lines bg-4 route3">
-      <h3>{{progressData.totalLines}}
-        <p>Total Lines</p>
-      </h3>
-     
-    </div>
-    <div class="lines2 bg-4 route4" (click)="showSkipLineDetail(contentSkipLines)">
-      <h3>{{progressData.skippedLines}}
-        <p>Skipped Lines</p>
-      </h3>
-    </div>
-    <div class="lines bg-6 route5">
-      <h3>{{progressData.completedLines}}
-        <p>Completed Lines</p>
-      </h3>
-    </div>
-    <div class="lines2 bg-6">
-      <h3>{{progressData.currentLine}}
-        <p>Current Lines</p>
-      </h3>
-    </div>
-  </div>
 </div>
 
 
 <div id="divDustbinDetail" class="dustbin-details-box" style="display: none;">
-  <div class="addclass">
-    <div class="lines lines3 bg-1 dustbin1">
-      <h3>{{progressData.rectangularDustbin}}
-        <p>Rectangular Dustbin</p>
-      </h3>
-    </div>
-    <div class="lines2 lines4 bg-2 dustbin2">
-      <h3>{{progressData.circularDustbin}}
-        <p>Circular Dustbin</p>
-      </h3>
-    </div>
-    <div class="lines lines3 bg-4">
-      <h3>{{progressData.totalDustbin}}
-        <p>Total Dustbin</p>
-      </h3>
+    <div class="addclass">
+        <div class="lines lines3 bg-1 dustbin1">
+            <h3>{{progressData.rectangularDustbin}}
+                <p>Rectangular Dustbin</p>
+            </h3>
+        </div>
+        <div class="lines2 lines4 bg-2 dustbin2">
+            <h3>{{progressData.circularDustbin}}
+                <p>Circular Dustbin</p>
+            </h3>
+        </div>
+        <div class="lines lines3 bg-4">
+            <h3>{{progressData.totalDustbin}}
+                <p>Total Dustbin</p>
+            </h3>
 
+        </div>
+        <div class="lines2 lines4 display bg-6">
+            <h3>---
+                <p>---</p>
+            </h3>
+        </div>
     </div>
-    <div class="lines2 lines4 display bg-6">
-      <h3>---
-        <p>---</p>
-      </h3>
-    </div>
-  </div>
 </div>
 
 <ng-template #contentLineDetail>
-  <div class="main">
-    <div class="row iner-main">
-      <div class="col-md-10 iner-main2">
-        Scancard (%) for All Lines&nbsp;&nbsp; <input id="txtAllLineScancard" type="number" value="0"
-           /> &nbsp;&nbsp;<i class="fas fa-save"
-           (click)="updateAllLineScancardPercentage()"></i>
-          &nbsp;&nbsp;&nbsp;
+    <div class="main">
+        <div class="row iner-main">
+            <div class="col-md-8 iner-main2">
+                Scancard (%) for All Lines&nbsp;&nbsp; <input id="txtAllLineScancard" type="number" value="0" /> &nbsp;&nbsp;<i class="fas fa-save" (click)="updateAllLineScancardPercentage()"></i> &nbsp;&nbsp;&nbsp;
+                <span style="display:none">
           <input id="chkIsAvailableForScancard" type="checkbox" (change)="updateLineScancardPercentage()">&nbsp;&nbsp; Is available for scancard 
-      </div>
-      <div class="col-md-2 image-div">
-        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-      </div>
-    </div>
-
-  </div>
-  <div class="modal-body modal-body2">
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="dth">
-          <div class="table-bg">
-            <div id="divLinePopup" class="tableFixHead tableFixHead2">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col" class="text-left">Line No </th>
-                    <th scope="col" class="text-right">Length (meter)</th>
-                    <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save icon"
-                         (click)="updateLineTimerTime()"></i></th>
-                    <th scope="col" class="text-right">Actual covered time (min)</th>
-                    <th scope="col" class="text-right">No of houses</th>
-                    <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save icon2"
-                        
-                        (click)="updateLineScancardPercentage()"></i></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let dt of zoneLineList">
-                    <td class="text-left border-left">{{dt.lineNo}} </td>
-                    <td class="text-right border-left">{{dt.length}} </td>
-                    <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number"
-                        value="{{dt.timerTime}}" class="td-input" /> </td>
-                    <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
-                    <td class="text-right border-left">{{dt.houseCount}} </td>
-                    <td class="text-right border-left"><input id="txtScancardPercentage{{dt.lineNo}}" type="number"
-                        value="{{dt.scancardPercentage}}" class="td-input2" /> </td>
-                  </tr>
-                </tbody>
-              </table>
+        </span>
             </div>
-          </div>
+            <div class="col-md-4 image-div">
+                <span style="margin-top: 10px; margin-right: 20px;"> Total timer <b> {{progressData.totalTimer}} min</b></span>
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+            </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
+    <div class="modal-body modal-body2">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="dth">
+                    <div class="table-bg">
+                        <div id="divLinePopup" class="tableFixHead tableFixHead2">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-left">Line No </th>
+                                        <th scope="col" class="text-right">Length (meter)</th>
+                                        <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save icon" (click)="updateLineTimerTime()"></i></th>
+                                        <th scope="col" class="text-right">Actual covered time (min)</th>
+                                        <th scope="col" class="text-right">No of houses</th>
+                                        <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save icon2" (click)="updateLineScancardPercentage()"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of zoneLineList">
+                                        <td class="text-left border-left">{{dt.lineNo}} </td>
+                                        <td class="text-right border-left">{{dt.length}} </td>
+                                        <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number" value="{{dt.timerTime}}" class="td-input" (change)="getTotalTimer();" /> </td>
+                                        <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
+                                        <td class="text-right border-left">{{dt.houseCount}} </td>
+                                        <td class="text-right border-left"><input id="txtScancardPercentage{{dt.lineNo}}" type="number" value="{{dt.scancardPercentage}}" class="td-input2" /> </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </ng-template>
 <!--Line Detail Scan End-->
 
 <!--Card Not Scan Start-->
 <ng-template #contentCardNotScaned>
-  <div class="gray-img-box">
+    <div class="gray-img-box">
 
-    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-  </div>
-  <div class="modal-body modal-body3">
-    <div id="divNotScanedImages" class="content-scroll">
-      <div class="row">
-        <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
-          <div class="last2">
-            <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" />
-            </a>
-          </div>
-          <div class="main-tag">
-            <div class="f-left">
-              <span [hidden]="dt.lineNo==null">
-                <p>Line No. <span class="f-right"> :</span></p>
-                <h3> {{dt.lineNo}} </h3><br />
-              </span>
-              <p>Scan Time <span class="f-right"> :</span></p>
-              <h3> {{dt.time}} </h3>
-
-            </div>
-          </div>
-        </div>
-      </div>
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-  </div>
+    <div class="modal-body modal-body3">
+        <div id="divNotScanedImages" class="content-scroll">
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of cardNotScanedList">
+                    <div class="last2">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <span [hidden]="dt.lineNo==null">
+                <p>Line No. <span class="f-right"> :</span></p>
+                            <h3> {{dt.lineNo}} </h3><br />
+                            </span>
+                            <p>Scan Time <span class="f-right"> :</span></p>
+                            <h3> {{dt.time}} </h3>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </ng-template>
 <!--Card Not Scan End-->
 
 
 <!--Skip lines Start-->
 <ng-template #contentSkipLines>
-  <div class="close">
+    <div class="close">
 
-    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
-  </div>
-  <div class="modal-body modal-body4">
-    <div id="divStatus" class="content-scroll">
-      <div class="row">
-        <div class="col-md-2" *ngFor="let dt of skipLineList">
-          <div class="last3">
-            <a href="{{dt.imageUrl}}" target="_blank">
-              <img [src]="dt.imageUrl" />
-            </a>
-          </div>
-          <div class="main-tag">
-            <div class="f-left">
-              <p>Line <span class="f-right"> :</span></p>
-              <h3> {{dt.lineNo}} <i class="far fa-eye eye"
-                  (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
-              <p>Reason <span class="f-right"> :</span></p>
-              <h3> {{dt.reason}} </h3><br />
-              <span [hidden]="dt.status==''">
-                <p>Time <span class="f-right"> :</span></p>
-                <h3> {{dt.time}} </h3>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+    <div class="modal-body modal-body4">
+        <div id="divStatus" class="content-scroll">
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of skipLineList">
+                    <div class="last3">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <p>Line <span class="f-right"> :</span></p>
+                            <h3> {{dt.lineNo}} <i class="far fa-eye eye" (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
+                            <p>Reason <span class="f-right"> :</span></p>
+                            <h3> {{dt.reason}} </h3><br />
+                            <span [hidden]="dt.status==''">
+                <p>Time <span class="f-right"> :</span></p>
+                            <h3> {{dt.time}} </h3>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-template>
 <!--Skip lines End-->

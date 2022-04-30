@@ -93,7 +93,7 @@ export class WardWorkTrackingComponent {
     driverMobile: "",
     helperName: "---",
     helperMobile: "",
-    secondHelperName:"",
+    secondHelperName: "",
     parshadName: "",
     parshadMobile: "",
     totalDustbin: 0,
@@ -101,7 +101,8 @@ export class WardWorkTrackingComponent {
     rectangularDustbin: 0,
     totalHouses: 0,
     cardNotScanedImages: 0,
-    scanedHouses: 0
+    scanedHouses: 0,
+    totalTimer: 0
   };
 
   ngOnInit() {
@@ -651,22 +652,38 @@ export class WardWorkTrackingComponent {
   }
 
   getTimerTime() {
+    this.progressData.totalTimer = 0;
     const timerTimeJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FLinewiseTimingDetailsInWard%2F" + this.selectedZone + ".json?alt=media";
     let timerTimeInstance = this.httpService.get(timerTimeJsonPath).subscribe(timerTimeData => {
       timerTimeInstance.unsubscribe();
       if (timerTimeData != null) {
         let keyArray = Object.keys(timerTimeData);
         if (keyArray.length > 0) {
+          let totalTimer = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
             let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
               lineDetail.timerTime = timerTimeData[lineNo]["minimumTimeToCollectWaste"];
+              totalTimer += Number(timerTimeData[lineNo]["minimumTimeToCollectWaste"]);
             }
           }
+          this.progressData.totalTimer = totalTimer;
         }
       }
     });
+  }
+
+  getTotalTimer() {
+    let totalTimer = 0;
+    if (this.zoneLineList.length > 0) {
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        if ($("#txtTimer" + this.zoneLineList[i]["lineNo"]).val() != "") {
+          totalTimer += Number($("#txtTimer" + this.zoneLineList[i]["lineNo"]).val());
+        }
+      }
+      this.progressData.totalTimer = totalTimer;
+    }
   }
 
 
@@ -946,7 +963,7 @@ export class WardWorkTrackingComponent {
     this.progressData.driverName = "---";
     this.progressData.helperMobile = "";
     this.progressData.helperName = "---";
-    this.progressData.secondHelperName="";
+    this.progressData.secondHelperName = "";
     this.progressData.parshadMobile = "";
     this.progressData.parshadName = "";
     this.progressData.totalDustbin = 0;
@@ -1404,7 +1421,7 @@ export class progressDetail {
   driverName: string;
   driverMobile: string;
   helperName: string;
-  secondHelperName:string;
+  secondHelperName: string;
   helperMobile: string;
   parshadName: string;
   parshadMobile: string;
@@ -1414,4 +1431,5 @@ export class progressDetail {
   totalHouses: number;
   cardNotScanedImages: number;
   scanedHouses: number;
+  totalTimer: number;
 }
