@@ -380,16 +380,14 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   }
 
 
+.close-icon{
+    padding: 20px !important;
+    display: unset !important;
+}
 
 
 
 
-
-    .Shahpura-box{
-        margin-right: 30px !important;
-    }
-    .Jaipur-box{
-        margin-right: 30px !important;
-    }
+    
 
 
