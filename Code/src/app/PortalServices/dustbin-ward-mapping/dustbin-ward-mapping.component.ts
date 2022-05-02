@@ -21,7 +21,7 @@ export class DustbinWardMappingComponent implements OnInit {
   selectedDustbinList: any[] = [];
   cityName: any;
   wardBoundary: any;
-  zoneDustbinMarkerList: any[] = [];
+  dustbinMarkerList: any[] = [];
 
   defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
@@ -48,7 +48,7 @@ export class DustbinWardMappingComponent implements OnInit {
 
   getDustbinWardMapping() {
     this.dustbinService.getDustbinWardMappingJson().then((mapData: any) => {
-      let dustbinMapList=[];
+      let dustbinMapList = [];
       if (mapData != null) {
         let keyArray = Object.keys(mapData);
         if (keyArray.length > 0) {
@@ -70,15 +70,18 @@ export class DustbinWardMappingComponent implements OnInit {
   }
 
   clearAll() {
-    if (this.zoneDustbinMarkerList.length > 0) {
-      for (let i = 0; i < this.zoneDustbinMarkerList.length; i++) {
-        if (this.zoneDustbinMarkerList[i]["marker"] != null) {
-          this.zoneDustbinMarkerList[i]["marker"].setMap(null);
+    if (this.dustbinMarkerList.length > 0) {
+      for (let i = 0; i < this.dustbinMarkerList.length; i++) {
+        if (this.dustbinMarkerList[i]["marker"] != null) {
+          this.dustbinMarkerList[i]["marker"].setMap(null);
         }
       }
     }
+    if (this.wardBoundary != undefined) {
+      this.wardBoundary[0]["line"].setMap(null);
+    }
     this.selectedDustbinList = [];
-    this.zoneDustbinMarkerList = [];
+    this.dustbinMarkerList = [];
     this.showUnMappedDustbin();
   }
 
@@ -91,7 +94,6 @@ export class DustbinWardMappingComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select at least one dustbin !!!");
       return;
     }
-
     for (let i = 0; i < this.dustbinList.length; i++) {
       if (this.dustbinList[i]["zone"] == this.selectedZone) {
         this.dustbinList[i]["zone"] = "0";
@@ -125,7 +127,7 @@ export class DustbinWardMappingComponent implements OnInit {
         obj[this.dustbinList[i]["dustbin"]] = { zone: this.dustbinList[i]["zone"] };
       }
     }
-    this.getAssignedDustbinCount();
+    this.dustbinSummary.assignedDustbin = this.dustbinList.filter(item => item.zone != "0").length;
     this.commonService.saveJsonFile(obj, "mappingDustbinWard.json", "/DustbinData/");
     this.commonService.setAlertMessage("success", "Dustbin mapped with ward successfully !!!");
   }
@@ -145,7 +147,7 @@ export class DustbinWardMappingComponent implements OnInit {
     });
   }
 
-  getDustbinList(dustbinMapList:any) {
+  getDustbinList(dustbinMapList: any) {
     this.allDustbinList = [];
     this.allDustbinList = JSON.parse(localStorage.getItem("dustbin"));
     for (let i = 0; i < this.allDustbinList.length; i++) {
@@ -168,21 +170,16 @@ export class DustbinWardMappingComponent implements OnInit {
       }
       this.dustbinList.push({ dustbin: this.allDustbinList[i]["dustbin"], lat: this.allDustbinList[i]["lat"], lng: this.allDustbinList[i]["lng"], zone: zone, markerUrl: markerUrl, type: this.allDustbinList[i]["type"] });
     }
-    this.dustbinSummary.totalDustbin=this.dustbinList.length;
-    this.getAssignedDustbinCount();
+    this.dustbinSummary.totalDustbin = this.dustbinList.length;
+    this.dustbinSummary.assignedDustbin = this.dustbinList.filter(item => item.zone != "0").length;
     this.showUnMappedDustbin();
-  }
-
-  getAssignedDustbinCount(){    
-    let list=this.dustbinList.filter(item=>item.zone!="0");
-    this.dustbinSummary.assignedDustbin=list.length;
   }
 
   showUnMappedDustbin() {
     if (this.dustbinList.length > 0) {
       for (let i = 0; i < this.dustbinList.length; i++) {
         if (this.dustbinList[i]["zone"] == "0") {
-          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"], "unMapped");
+          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
         }
       }
     }
@@ -193,13 +190,13 @@ export class DustbinWardMappingComponent implements OnInit {
       for (let i = 0; i < this.dustbinList.length; i++) {
         if (this.dustbinList[i]["zone"] == this.selectedZone) {
           this.selectedDustbinList.push({ dustbin: this.dustbinList[i]["dustbin"] });
-          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"], "zone");
+          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
         }
       }
     }
   }
 
-  setDustbinMarker(dustbin: any, lat: any, lng: any, markerUrl: any, type: any, markerType: any) {
+  setDustbinMarker(dustbin: any, lat: any, lng: any, markerUrl: any, type: any) {
     let isSelected = false;
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -228,7 +225,7 @@ export class DustbinWardMappingComponent implements OnInit {
       }
       this.setMarkerAsSelected(marker, isSelected, type);
     });
-    this.zoneDustbinMarkerList.push({ marker });
+    this.dustbinMarkerList.push({ marker });
   }
 
   setMarkerAsSelected(marker: any, isSelected: boolean, type: any) {
@@ -239,7 +236,6 @@ export class DustbinWardMappingComponent implements OnInit {
       else {
         marker.icon.url = this.defaultCircularPickedDustbinUrl;
       }
-      this.zoneDustbinMarkerList.push({ marker });
     } else {
       if (type == "Rectangular") {
         marker.icon.url = this.defaultRectangularDustbinUrl;
@@ -269,7 +265,7 @@ export class DustbinWardMappingComponent implements OnInit {
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
     this.map.setOptions({ zoomControl: false });
   }
-} 
+}
 export class dustbinSummary {
   totalDustbin: number;
   assignedDustbin: number;
