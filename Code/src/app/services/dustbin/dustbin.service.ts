@@ -16,6 +16,18 @@ export class DustbinService {
 
   }
 
+  getDustbinWardMappingJson() {
+    return new Promise((resolve) => {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingDustbinWard.json?alt=media";
+      let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
+        dutbinWardJSONInstance.unsubscribe();
+        resolve(DustbinWardJsonData);
+      },error=>{
+        resolve(null);
+      });
+    });
+  }
+
   getDustbinPickingPlanHistory(year: any, monthName: any) {
     return new Promise((resolve) => {
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));

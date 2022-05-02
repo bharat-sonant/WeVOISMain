@@ -166,11 +166,12 @@ export class WardSurveySummaryComponent implements OnInit {
     } else {
       this.isFirst = false;
     }
-    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
-    if (wardLineCountList != null) {
-      let lineCount = wardLineCountList.find(item => item.wardNo == wardNo);
+
+    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+      let wardLines = JSON.parse(data);
+      let lineCount = Number(wardLines["totalLines"]);
       if (lineCount != undefined) {
-        this.wardLineCount = Number(lineCount.lineCount);
+        this.wardLineCount = Number(lineCount);
         this.surveyData.totalLines = this.wardLineCount;
         let wardSummary = this.wardProgressList.find(item => item.wardNo == wardNo);
         if (wardSummary != undefined) {
@@ -249,42 +250,40 @@ export class WardSurveySummaryComponent implements OnInit {
           );
         }
       }
-    }
+
+    });
+
+
   }
 
   getNameNotCorrect() {
     let nameNotCorrectCount = 0;
-    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
-    let lineCount = wardLineCountList.find(item => item.wardNo == this.selectedWard);
-    if (lineCount != undefined) {
-      let wardLineCount = Number(lineCount.lineCount);
-      for (let i = 1; i <= wardLineCount; i++) {
-        let dbPath = "Houses/" + this.selectedWard + "/" + i;
-        let wardNameInstance = this.db.list(dbPath).valueChanges().subscribe(
-          data => {
-            wardNameInstance.unsubscribe();
-            if (data.length > 0) {
-              for (let j = 0; j < data.length; j++) {
-                if (data[j]["isNameCorrect"] == null) {
-                  nameNotCorrectCount = nameNotCorrectCount + 1;
-                }
-                else if (data[j]["isNameCorrect"] != "yes") {
-                  nameNotCorrectCount = nameNotCorrectCount + 1;
-                }
+    for (let i = 1; i <= this.wardLineCount; i++) {
+      let dbPath = "Houses/" + this.selectedWard + "/" + i;
+      let wardNameInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          wardNameInstance.unsubscribe();
+          if (data.length > 0) {
+            for (let j = 0; j < data.length; j++) {
+              if (data[j]["isNameCorrect"] == null) {
+                nameNotCorrectCount = nameNotCorrectCount + 1;
               }
-              this.surveyData.wardNameNotCorrect = nameNotCorrectCount;
+              else if (data[j]["isNameCorrect"] != "yes") {
+                nameNotCorrectCount = nameNotCorrectCount + 1;
+              }
             }
+            this.surveyData.wardNameNotCorrect = nameNotCorrectCount;
           }
-        );
-      }
-      setTimeout(() => {
-        let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
-        if (wardSummary != undefined) {
-          wardSummary.nameNotCorrect = nameNotCorrectCount;
-          this.setWardNameNotCorrectList(this.selectedWard, nameNotCorrectCount);
         }
-      }, 1000);
+      );
     }
+    setTimeout(() => {
+      let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
+      if (wardSummary != undefined) {
+        wardSummary.nameNotCorrect = nameNotCorrectCount;
+        this.setWardNameNotCorrectList(this.selectedWard, nameNotCorrectCount);
+      }
+    }, 1000);
   }
 
   setWardNameNotCorrectList(ward: any, count: any) {
