@@ -4,18 +4,17 @@
 <!------------Desktop Navbar Start------------->
 <section class="header">
   <div class="row no-gutters">
-    <div class="main-headers hide-on-ipad"
-      style="position: absolute; z-index: 999; margin-left: 50%; margin-top: 15px;">
+    <div class="main-headers hide-on-ipad no-gutters-iner">
       VTS Analysis
     </div>
     <div class="col-md-7 col-xl-8 ipad-pl-25">
-      <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;" (click)="setDate('','previous');">
+      <button class="btn btn-primary ipad-btn ipad-btn2" (click)="setDate('','previous');">
         << </button>
           <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-          <button class="btn btn-primary ipad-btn" style="margin-left: 0px!important;" (click)="setDate('','next');">
+          <button class="btn btn-primary ipad-btn date-input-btn" (click)="setDate('','next');">
             >>
           </button>
-          <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
+          <select class="caret-select ipad-ipt-1 Select-Zone" id="ddlZone"
             (change)="changeZoneSelection($event.target.value)">
             <option value="0">
               --Select Zone--
@@ -37,28 +36,28 @@
 
     <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
       <div class="fix-home">
-        <div class="float-first" style="margin-left: 10px; margin-top: 14px;">
-          <i id="iconDone" (click)="showHideMarkers('hide');" class="fas fa-check-double"
-            style="color: #0ba118; font-size: 18px!important; cursor: pointer;"></i>
-          <i id="iconPending" (click)="showHideMarkers('show');" class="fas fa-times"
-            style="color:red; font-size: 20px!important; cursor: pointer;"></i> <br>
-          <h6 id="divTracking" style="font-size: 9px!important;">Show Markers</h6>
+        <div class="float-first float-first1">
+          <i id="iconDone" (click)="showHideMarkers('hide');" class="fas fa-check-double check"
+            ></i>
+          <i id="iconPending" (click)="showHideMarkers('show');" class="fas fa-times times"
+            ></i> <br>
+          <h6 id="divTracking" class="markers">Show Markers</h6>
         </div>
-        <div class="float-second" style="margin-top: 10px;display: none;">
+        <div class="float-second float-second2">
           <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
               class="img-fluid header-penalty" alt=""> </span><br>
-          <h6 style="font-size: 9px!important;">Penalty</h6>
+          <h6 class="Penalty-heading">Penalty</h6>
         </div>
 
-        <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+        <div class="float-third float-third3">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
             aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
-            <h6 style="font-size: 9px!important;">Settings</h6>
+            <h6 class="setting-heading">Settings</h6>
           </button>
 
         </div>
       </div>
-      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+      <div class="panel-group panel-main" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="headingtwo">
             <h4 class="panel-title">
@@ -90,15 +89,15 @@
                     <input class="date-input date" id="txtPreDate" type="date">
                     <button type="button" class="btn btn-success" (click)="setPreviousData();">Get</button>
                   </div>
-                  <div class="setting-box" style="padding-bottom: 10px!important;">
-                    <button class="btn-primary" (click)="getNextPrevious('pre');"
-                      style="background-color: #0ba118!important;">
+                  <div class="setting-box arrow-button-main">
+                    <button class="btn-primary arrow-button" (click)="getNextPrevious('pre');"
+                      >
                       << </button>
                         <input id="txtStrokeWeight" type="text" (keyup)="getCurrentStrokeWeight($event,'web');"
-                          autocomplete="off" class="date-input"
-                          style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                        <button class="btn-primary" (click)="getNextPrevious('next');"
-                          style="background-color: #0ba118!important;">
+                          autocomplete="off" class="date-input event-input"
+                           value="4" />
+                        <button class="btn-primary arrow-button" (click)="getNextPrevious('next');"
+                          >
                           >>
                         </button>
                   </div>
@@ -138,7 +137,7 @@
           <button class="btn btn-primary" (click)="setDate('','next');"> >> </button>
         </div>
         <div class="col-12 pr-25 pl-5 mob-pl-15 mob-pr-15">
-          <select class="caret-select" id="ddlZoneNav" style="width: 150px;"
+          <select class="caret-select mobile-caret-select" id="ddlZoneNav"
             (change)="changeZoneSelection($event.target.value)">
             <option value="0">
               --Select Zone--
@@ -161,23 +160,23 @@
 
         <div class="col-4 mt-10 pr-0">
           <div class="mb-home  text-left" style="display: none;">
-            <i id="iconDoneNav" class="fas fa-check-double" style="color: #0ba118; font-size: 18px!important;"></i>
-            <i id="iconPendingNav" class="fas fa-times" style="color:red; font-size: 20px!important;"></i> <br>
-            <h6 id="divTrackingNav" style="font-size: 9px!important;">Analysis</h6>
+            <i id="iconDoneNav" class="fas fa-check-double check2"></i>
+            <i id="iconPendingNav" class="fas fa-times times2"></i> <br>
+            <h6 class="Analysis-heading" id="divTrackingNav">Analysis</h6>
           </div>
         </div>
         <div class="col-4 mb-home mt-10 text-center pl-0">
           <span class="house"> {{progressData.penalty}} <img src="../../assets/img/penalty-bag.svg"
               class="img-fluid header-penalty" alt=""> </span><br>
-          <h6 style="font-size: 9px!important;">Penalty</h6>
+          <h6 class="Analysis-heading">Penalty</h6>
         </div>
         <div class="col-4 mb-home mt-5 pl-0">
           <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
             aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
-            <h6 style="font-size: 9px!important;">Settings</h6>
+            <h6 class="Analysis-heading">Settings</h6>
           </button>
         </div>
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
+        <div class="panel-group panel-default-outer" id="accordion" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="headingtwo">
               <h4 class="panel-title">
@@ -208,16 +207,16 @@
                       <input class="date-input date-input-mob-1 date" id="txtPreDateNav" type="date">
                       <button type="button" class="btn btn-success" (click)="setPreviousData();">Get</button>
                     </div>
-                    <div class="setting-box" style="padding-bottom: 10px!important;">
+                    <div class="setting-box button-main">
 
-                      <button (click)="getNextPrevious('pre');" class="btn-primary mob-btn-primary"
-                        style="background-color: #0ba118!important;">
+                      <button (click)="getNextPrevious('pre');" class="btn-primary mob-btn-primary mob-btn-iner"
+                        >
                         << </button>
-                          <input class="date-input-mob-2 date-input" id="txtStrokeWeightNav" type="text"
+                          <input class="date-input-mob-2 date-input mob-input" id="txtStrokeWeightNav" type="text"
                             autocomplete="off" (keyup)="getCurrentStrokeWeight($event,'mob');"
-                            style="text-align: center; width: 170px; font-weight: bold;" value="4" />
-                          <button class="btn-primary mob-btn-primary" (click)="getNextPrevious('next');"
-                            style="background-color: #0ba118!important;">
+                             value="4" />
+                          <button class="btn-primary mob-btn-primary mob-btn-iner" (click)="getNextPrevious('next');"
+                            >
                             >>
                           </button>
                     </div>
@@ -236,15 +235,15 @@
 </nav>
 <!----Mobile Navbar End----->
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="map-div" id="divMap"></div>
 
 <!----Map Content on Mobile Start----->
 <div class="col-4 mb-home hide-on-desk mt-5 pl-0">
   <button class="btn-accordion mob-btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsethree"
     aria-expanded="true" aria-controls="collapsethree">Ward Details</button>
 </div>
-<div class="panel-group hide-on-desk" id="accordion" role="tablist" aria-multiselectable="true"
-  style="border-radius: 5px;">
+<div class="panel-group hide-on-desk panel-outer" id="accordion" role="tablist" aria-multiselectable="true"
+  >
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingthree">
       <h4 class="panel-title">
@@ -255,29 +254,29 @@
         <div id="divJaipurGreaterDetail">
           <div class="jaipur-line-details-box">
             <div class="seprater" style="display: none;">
-              <div class="lines-left" style="margin-top: 7px;padding: 5px;padding-bottom: 0px;">
+              <div class="lines-left seprater-iner">
                 {{progressData.lastShowDate}}
-                <i class="fas fa-sync-alt" style="cursor: pointer; float:right; color:green;"></i>
+                <i class="fas fa-sync-alt"></i>
               </div>
             </div>
-            <div style="padding:15px 15px 15px 10px; border-bottom: 1px solid lightgray;">
+            <div class="lines-left-outer">
               <div class="lines-left">
                 <h3>
                   <div class="progress">
-                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-                      [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25"
+                    <div class="progress-bar progress-bar-striped bg-success progress-iner" role="progressbar"
+                      [style.width]="progressData.workPercentage" aria-valuenow="25"
                       aria-valuemin="0" aria-valuemax="100">{{progressData.workPercentage}}</div>
                   </div>
                 </h3>
               </div>
             </div>
             <div class="lines">
-              <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+              <h3 class="lines-heading">{{progressData.wardLength}}<span> km</span>
                 <p>Total Ward Length</p>
               </h3>
             </div>
             <div class="lines2">
-              <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+              <h3 class="lines-heading">{{progressData.coveredLength}}<span> km</span>
                 <p>Covered Ward Length</p>
               </h3>
             </div>
@@ -285,12 +284,12 @@
         </div>
 
         <div id="divDriverDetail" class="driver-helper-box">
-          <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+          <div class="col-md-12 driver-helper-box-iner">
             <div>
-              <input id="txtVehicle" type="text" autocomplete="off"
-                style="width: 115px;border: 1px solid lightgray;border-radius: 5px; margin-top: 20px; padding: 8px; font-weight: bold;" />
-              <button (click)="addVehicle();"
-                style="background-color: #888;font-size: 12px; width: 115px; padding: 10px 8px; color: #fff;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+              <input class="Add-Vehicle-input" id="txtVehicle" type="text" autocomplete="off"
+                 />
+              <button class="Add-Vehicle-btn" (click)="addVehicle();"
+                >
                 Add Vehicle
               </button>
             </div>
@@ -306,17 +305,17 @@
                           <thead>
                             <tr>
                               <th scope="col"><b>Sno</b></th>
-                              <th class="text-left" scope="col" style="text-align: left!important;"><b>Vehicle</b></th>
+                              <th class="text-left Vehicle-table-heading" scope="col"><b>Vehicle</b></th>
                             </tr>
                           </thead>
                           <tbody>
                             <!---->
                             <tr *ngFor="let dt of vehicleList, let i=index">
-                              <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
+                              <td class="Vehicle-table-data">{{i+1}}</td>
                               <td class="text-left">{{dt.vehicle}}
-                                <span style="float:right;">{{dt.message}}
+                                <span class="right">{{dt.message}}
                                   <input type="checkbox" [hidden]="dt.showCheckBox==0"></span>
-                                <i class="fas fa-times" style="color: red;"></i>
+                                <i class="fas fa-times times3"></i>
                               </td>
                             </tr>
                           </tbody>
@@ -328,14 +327,14 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+          <div class="col-md-12 d-ib-outer">
             <div class="d-ib">
               <img src="../../assets/img/penalty-bag.svg" class="img-fluid penalty-icon" alt="Penalty" title="Penalty">
               <input class="penalty-input" id="txtPenalty" type="number" min="0" autocomplete="off" value="0" />
 
             </div>
             <div class="d-ib">
-              <button class="VTS-button" style="margin-left: 10px!important;">Analysis
+              <button class="VTS-button d-ib-buttoon">Analysis
                 Done</button>
             </div>
           </div>
@@ -353,29 +352,29 @@
   <div class="jaipur-line-details-box">
 
     <div class="seprater" style="display: none;">
-      <div class="lines-left" style="margin-top: -10px; padding-bottom: 10px;">
+      <div class="lines-left lines-left2">
         {{progressData.lastShowDate}}
-        <i class="fas fa-sync-alt" style="cursor: pointer; float:right; color:green;"></i>
+        <i class="fas fa-sync-alt"></i>
       </div>
     </div>
-    <div style="padding:15px 15px 15px 10px; border-bottom: 1px solid lightgray;">
+    <div class="lines-left-outer2">
       <div class="lines-left">
         <h3>
           <div class="progress">
-            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-              [style.width]="progressData.workPercentage" style="color:#000;" aria-valuenow="25" aria-valuemin="0"
+            <div class="progress-bar progress-bar-striped bg-success progress-iner2" role="progressbar"
+              [style.width]="progressData.workPercentage" aria-valuenow="25" aria-valuemin="0"
               aria-valuemax="100">{{progressData.workPercentage}}</div>
           </div>
         </h3>
       </div>
     </div>
     <div class="lines">
-      <h3>{{progressData.wardLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+      <h3 class="km">{{progressData.wardLength}}<span> km</span>
         <p>Total Ward Length</p>
       </h3>
     </div>
     <div class="lines2">
-      <h3>{{progressData.coveredLength}}<span style="font-size: 10px;font-weight: normal;"> km</span>
+      <h3 class="km">{{progressData.coveredLength}}<span> km</span>
         <p>Covered Ward Length</p>
       </h3>
     </div>
@@ -384,11 +383,11 @@
 
 
 <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
-  <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+  <div class="col-md-12 popup-box-outer">
     <div class="popup-box">
       <input class="txt-inpt" id="txtVehicleNav" type="text" autocomplete="off" />
       <div class="add-icon-vehicle">
-       <span style="font-size: 21px; font-weight: bold;">{{progressData.totalVehicle}}</span>  <br>
+       <span class="add-icon-vehicle-span">{{progressData.totalVehicle}}</span>  <br>
         <p>Vehicles</p>
       </div>
       <div class="add-icon">
@@ -403,26 +402,26 @@
         <div aria-labelledby="headingOne">
           <div class="dth">
             <div class="table-bg">
-              <div class="tableFixHead" style="overflow-x: hidden;">
-                <table class="table table-hover" style="margin-top: 0px!important;">
+              <div class="tableFixHead table-bg-iner2">
+                <table class="table table-hover tableFixHead-iner">
                   <thead>
                     <tr>
-                      <th class="text-left" scope="col" style="border-bottom: 1px solid lightgray; text-align: right!important;padding:3px 26px;background-color: #fff; color: #000;"><p class="label-tbl">Select All</p> 
-                        <input id="chkSelectAll" type="checkbox" (change)="selectAllVehicle();" style="margin-right: 1px; margin-top: 5px;"> </th>
+                      <th class="text-left table-heading" scope="col"><p class="label-tbl">Select All</p> 
+                        <input class="checkbox-input" id="chkSelectAll" type="checkbox" (change)="selectAllVehicle();"> </th>
                     </tr>
                   </thead>
                   <tbody>
                     <!---->
                     <tr *ngFor="let dt of vehicleList, let i=index">
-                      <td class="text-left"
-                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                        {{dt.vehicle}} <i class="far fa-check-square" [hidden]="dt.isDone==0"
-                          style="color: #0ba118; font-size: 12px!important;"></i>
-                        <span class="tbl-span" style="float:right;margin-top: -1px; font-size: 10px; "> <span
+                      <td class="text-left text-left-data"
+                        >
+                        {{dt.vehicle}} <i class="far fa-check-square square-icon" [hidden]="dt.isDone==0"
+                          ></i>
+                        <span class="tbl-span tbl-span2"> <span
                             class="{{dt.cssClass}}"> {{dt.message}}</span>
                           <input id="chkVehicle{{i}}" [hidden]="dt.showCheckBox==0" type="checkbox"
                             (change)="getVtsRoute(dt.vehicle,i)">
-                          &nbsp; <i class="fas fa-times" style="color: red;cursor: pointer; font-size: 16px;"
+                          &nbsp; <i class="fas fa-times times-icon"
                             (click)="removeVehicle(i)"></i>
                         </span>
                       </td>
@@ -438,9 +437,9 @@
     </div>
   </div>
 
-  <div class="col-md-12" style="width:100%">
-    <button type="button" class="btn btn-success btn-clk"
-      style="padding-left: 10px!important;     margin-left: 2px; padding-right: 10px!important; width: 250px; text-transform: uppercase;"
+  <div class="col-md-12 btn-clk-outer">
+    <button type="button" class="btn btn-success btn-clk Apply-btn"
+      
       (click)="selectLines();">Apply auto route selection</button>
   </div>
 </div>
@@ -455,20 +454,20 @@
   </div>
 </div>
 <div class="line-count">
-  <div class="f-msg" style="margin-left:10px!important;width:210px!important;">
-    <p style="margin-left:-5px!important;">
+  <div class="f-msg line-count-iner">
+    <p>
       <span>
-        <b style="font-size: 25px;">{{progressData.savedLines}}/{{progressData.selectedLines}}</b> Saved</span>
+        <b>{{progressData.savedLines}}/{{progressData.selectedLines}}</b> Saved</span>
     </p>
   </div>
   <div class="r-msg">
-    <img id="imgSync" src="../../../assets/img/green_data.svg" style="width: 38px; cursor: pointer;"
+    <img id="imgSync" src="../../../assets/img/green_data.svg"
       (click)="getSavedLines();">
   </div>
 </div>
 <div id="divApproved" class="alert-box">
   <div class="apr-msg">
-    <h3 style="color:#0ba118"><b>Approved By</b> <br> <span> <b id="approvalName"> Harendra Singh on 6 Dec
+    <h3 class="Approved-heading"><b>Approved By</b> <br> <span> <b id="approvalName"> Harendra Singh on 6 Dec
           2020</b></span></h3>
   </div>
 </div>
@@ -476,12 +475,12 @@
 <div id="divEventHistory" class="event-history-box" style="display: none;">
   <div class="dth">
     <div class="table-bg">
-      <div id="tblEventHistory" class="tableFixHead" style="overflow-y: scroll;overflow-x: hidden; height: 75vh!important;">
-        <table class="table table-hover" style="margin-top: 6px!important;">
+      <div id="tblEventHistory" class="tableFixHead table-bg-iner">
+        <table class="table table-hover tableFixHead-iner2">
           <tbody>
             <tr *ngFor="let dt of eventHistoryList, let i=index">
-              <td class="text-left"
-                style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+              <td class="text-left username-data"
+                >
                 {{dt.name}} by {{dt.userName}}<br />
                 at {{dt.time}} - {{dt.desc}}
               </td>
@@ -505,11 +504,11 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6" style="text-align: center;">
-            <button class="btn btn-success " (click)="selectAll();" style="background-color: #0ba118;">
+          <div class="col-md-6 modal-body-iner">
+            <button class="btn btn-success success-btn" (click)="selectAll();">
               Confirm</button>
           </div>
-          <div class="col-md-6" style="text-align: center;">
+          <div class="col-md-6 modal-body-iner">
             <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
           </div>
         </div>
@@ -529,11 +528,11 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6" style="text-align: center;">
-            <button class="btn btn-success " (click)="resetAllLines();" style="background-color: #0ba118;">
+          <div class="col-md-6 modal-body-iner">
+            <button class="btn btn-success success-btn" (click)="resetAllLines();">
               Confirm</button>
           </div>
-          <div class="col-md-6" style="text-align: center;">
+          <div class="col-md-6 modal-body-iner">
             <button class="btn btn-danger " (click)="closeModel();"> Cancel</button>
           </div>
         </div>
