@@ -4,15 +4,15 @@
 <!------------Desktop Navbar Start------------->
 <section class="header">
     <div class="row no-gutters">
-        <div class="main-headers hide-on-ipad"
-            style="position: absolute; z-index: 999; margin-left: 45%; margin-top: 15px;">
+        <div class="main-headers hide-on-ipad no-gutters-iner"
+            >
             BVG Routes
         </div>
         <div class="col-md-12 col-xl-12 ml-7 ipad-pl-25">
-            <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
+            <button class="btn-hvr" (click)="setDate('','previous');"><span class="btn-hvr-span">
                 << </span></button>
             <input id="txtDate"  class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" />
-            <button class="btn-hvr" (click)="setDate('','next');" style="margin-left: 0px!important;"><span style="color: #fff;">>></span></button>
+            <button class="btn-hvr input-button" (click)="setDate('','next');"><span class="btn-hvr-span">>></span></button>
             &nbsp;&nbsp;
             <input type="checkbox" id="chkShowLines" checked="checked" (change)="showHideLines()"> Show Lines &nbsp;
             <input type="checkbox" id="chkShowMarker" checked="checked" (change)="showHideMarkers()"> Show Markers
@@ -21,7 +21,7 @@
 </section>
 <!------------Desktop Navbar End------------->
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="div-map" id="divMap"></div>
 
 <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
     <div id="myBox">
@@ -35,16 +35,16 @@
                                     <thead>
                                         <tr>
                                             <th scope="col"><b>Sno</b></th>
-                                            <th class="text-left" scope="col" style="text-align: left!important;">
+                                            <th class="text-left Vehicles-heading" scope="col">
                                                 <b>Vehicles</b>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let dt of vehicleList, let i=index">
-                                            <td style="vertical-align: top; width: 50px;">{{i+1}}</td>
+                                            <td class="Vehicles-data">{{i+1}}</td>
                                             <td class="text-left">{{dt.vehicle}}
-                                                <input type="radio" id="chk{{i}}" [checked]="dt.isShow==1" style="float: right;" (change)="changeRef(i);">
+                                                <input class="redio-input" type="radio" id="chk{{i}}" [checked]="dt.isShow==1" (change)="changeRef(i);">
                                             </td>
                                         </tr>
                                     </tbody>
