@@ -1,15 +1,15 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-4" style="padding-left: 18px;">
+        <div class="col-md-4 no-gutters-iner">
            
         </div>
-        <div class="col-md-4" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-4 Ward-Marking-heading">
             Ward Marking Summary
         </div>
-        <div class="col-md-4 text-right total-house" style="padding-left: 18px;">
+        <div class="col-md-4 text-right total-house fix-home-outer">
             <div class="fix-home">
-                <div class="float-first" style="margin-left: 10px; margin-top: 0px;">
-                    <i class="fas fa-vr-cardboard"></i> <span class="house"><span style="color: #1fda2f;">
+                <div class="float-first fix-home-iner">
+                    <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="fix-home-span">
                             {{markerData.totalAlreadyCard}}</span></span><br>
                     <h6>Already Installed</h6>
                 </div>
@@ -23,47 +23,47 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 85vh!important">
-                <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
+        <div class="col-md-6 card-outer">
+            <div class="card card-body-outer">
+                <div class="card-body card-body2">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table table-one-iner"
+                                        >
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:12%;">Ward</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:12%;">
+                                            <th class="ward-table-heading">Ward</th>
+                                            <th class="text-right Markers-table-heading">
                                                 Markers</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:28%;">
+                                            <th class="text-right Already-table-heading">
                                                 Already Installed</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:28%;">
+                                            <th class="text-right Approved-table-heading">
                                                 Approved Lines</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:20%;">
+                                            <th class="text-left Status-table-heading">
                                                 Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                style="cursor: pointer;" (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0">
-                                                <td style="border-right:1px solid #dee2e6">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
+                                                 (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0">
+                                                <td class="table-data">
                                                     {{data.wardNo}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data">
                                                     {{data.markers}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data">
                                                     {{data.alreadyInstalled}}</td>
 
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data">
                                                     {{data.approvedLines}} / {{data.wardLines}}</td>
-                                                <td class="text-left {{data.cssClass}}" style="border-right:1px solid #dee2e6">
+                                                <td class="text-left {{data.cssClass}} table-data">
                                                     {{data.status}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                style="padding-top: 20vh; display: none;">
+                            <div id="divMessage" class="col-md-12 pr-1 text-center no-available"
+                                >
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -73,11 +73,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-6 loaderClass-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
               </div>
-            <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-3 text-center">
@@ -114,53 +114,53 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                <div class="card-body card-body3">
                     <div class="row">
 
                         <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
-                                            <table class="table"
-                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                        <div class="table-wrapper table-scroll table-outer">
+                                            <table class="table table-outer-iner"
+                                                >
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Line</th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">Markers</th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:30%;">Already
+                                                    <th class="table-data-line2">Line</th>
+                                                    <th class="text-right table-data-Markers2"
+                                                        >Markers</th>
+                                                    <th class="text-right table-data-Already2"
+                                                        >Already
                                                         Installed
                                                     </th>
-                                                    <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:15%;">Approved
+                                                    <th class="text-center table-data-Approved2"
+                                                        >Approved
                                                     </th>
 
-                                                    <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:15%;">#</th>
+                                                    <th class="text-center table-data-hesh"
+                                                        >#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
-                                                        <td style="border-right:1px solid #dee2e6">
+                                                        <td class="table-data2">
                                                             {{data.lineNo}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data2">
                                                             {{data.markers}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data2">
                                                             {{data.alreadyCard}}</td>
-                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-center table-data2">
                                                             <span [hidden]="data.markers==0">
-                                                                <i class="fas fa-check"
-                                                                    style="font-size: 18px; color: green;"
+                                                                <i class="fas fa-check check-icon"
+                                                                    
                                                                     [hidden]="data.isApproved==false"></i>
-                                                                <i class="fas fa-times"
-                                                                    style="font-size: 18px; color: red;"
+                                                                <i class="fas fa-times times-icon"
+                                                                    
                                                                     [hidden]="data.isApproved==true"></i>
                                                             </span>
                                                         </td>
-                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-center table-data2">
 
-                                                            <i class="far fa-eye"
-                                                                style="font-size: 20px; cursor: pointer;"
+                                                            <i class="far fa-eye eye-icon"
+                                                                
                                                                 [hidden]="data.markers==0"
                                                                 (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
                                                         </td>
@@ -169,8 +169,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div class="divmessage" id="divMessage" class="col-md-12 pr-1 text-center"
+                                        >
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -181,30 +181,30 @@
                     </div>
                 </div>
             </div>
-        </div>
+         </div>
     </div>
-</div>
+</div> 
 
 
 <!--Vehicle Status Start-->
 <ng-template #contentLineMarkers>
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="img-close-outer">
 
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
+    <div class="modal-body content-scroll-outer">
         <div id="divStatus" class="content-scroll">
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerDetailList">
-                    <div style="width:100%">
+                    <div class="dt-img-outer">
                         <a href="{{dt.imageUrl}}" target="_blank">
-                            <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+                            <img class="dt-img" [src]="dt.imageUrl"/>
                         </a>
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 style="width: 100%;"> {{dt.type}} </h3><br />
+                            <h3 class="f-left-heading" > {{dt.type}} </h3><br />
                             <p>Already Card <span class="f-right"> :</span></p>
                             <h3> {{dt.alreadyInstalled}} </h3><br />
                             <span [hidden]="dt.status==''">
@@ -214,13 +214,13 @@
                         </div>
                     </div>
 
-                    <button class="btn-cancel" [hidden]="dt.status==''"
+                    <button class="btn-cancel reject-btn" [hidden]="dt.status==''"
                         (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);"
-                        style="width:45%; background:#0ba118!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+                        
                         [hidden]="dt.status!=''">Reject</button>&nbsp;
-                    <button class="btn-cancel" [hidden]="dt.status==''"
+                    <button class="btn-cancel delete-btn" [hidden]="dt.status==''"
                         (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);"
-                        style="width:45%; background:red!important;    margin-left: 0px!important; margin-bottom: 10px!important;"
+                        
                         [hidden]="dt.status!=''">Delete</button>
 
                 </div>

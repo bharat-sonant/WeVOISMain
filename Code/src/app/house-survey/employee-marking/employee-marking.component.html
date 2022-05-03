@@ -1,13 +1,13 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-2" style="padding-left: 31px; margin-top: -4px;">
-            <button type="button" class="user-button" style="cursor: cell;"
+        <div class="col-md-2 no-gutters-iner">
+            <button type="button" class="user-button no-gutters-btn"
                 (click)="openModel(contentEmployee,0,'add');">
                 <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
                     NEW</span></button>
 
         </div>
-        <div class="col-md-8" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-8 Surveyor-box">
             Manage Surveyor
             [For Marking]
         </div>
@@ -16,53 +16,53 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  ">
-                <div class="card-body" style="height:85vh!important;padding: 0px 10px 0px 0px; overflow: hidden;">
+        <div class="col-md-6 card-main">
+            <div class="card card-main-iner">
+                <div class="card-body card-body2">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-right: 1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table table-one-iner"
+                                        >
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:8%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:30%;">Name</th>
-                                            <th style="border-right:1px solid #dee2e6; width:30%;">Login ID/Password
+                                            <th class="table-head1">S.No.</th>
+                                            <th class="table-head2">Name</th>
+                                            <th class="table-head3">Login ID/Password
                                             </th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-right table-head4">
                                                 Assigned</th>
-                                            <th class="text-right"
-                                                style="border-right:1px solid #dee2e6; width:17%;padding-right: 20px;">
+                                            <th class="text-right table-head5"
+                                               >
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of userList; let i=index"
-                                                style="cursor: pointer;" class="{{data.trClass}}"
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
+                                                 class="{{data.trClass}}"
                                                 (click)="getMarkerDetail(data.empId, data.wardNo,i);">
-                                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="table-data-1">{{i+1}}</td>
+                                                <td class="table-data-2">
                                                     {{data.name}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="table-data-3">
                                                     {{data.empId}} / {{data.password}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data-4">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-center">
                                                     <span [hidden]="data.isActive==false">
-                                                        <i class="fas fa-map-marked-alt"
+                                                        <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentWard,data.empId,'ward');"
                                                             title="Assign Ward"
-                                                            style="cursor:pointer !important; font-size: 14px;color: #0ba118;margin-right:8px;"></i>
-                                                        <i class="far fa-times-circle"
+                                                            ></i>
+                                                        <i class="far fa-times-circle circle-icon"
                                                             (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                             title="Remove Assignment"
-                                                            style="cursor:pointer !important; font-size: 14px;color: red;margin-right:8px;"></i>
-                                                        <i class="far fa-edit"
+                                                            ></i>
+                                                        <i class="far fa-edit edit-icon"
                                                             (click)="openModel(contentEmployee,data.empId,'update');"
                                                             title="Edit Entry"
-                                                            style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>
+                                                            ></i>
                                                     </span>
-                                                    <span [hidden]="data.isActive==true" style="color: red;">Inactive</span>
+                                                    <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
                                                 </td>
                                             </tr>
 
@@ -70,8 +70,8 @@
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                style="padding-top: 20vh; display: none;">
+                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center"
+                                >
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -81,8 +81,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px;height: 85vh!important;overflow: hidden;">
+        <div class="col-md-6 cards-main">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
@@ -91,7 +91,7 @@
                     </div>
 
                 </div>
-                <div class="card-body" style="padding: 15px 11px 15px 0px;">
+                <div class="card-body card-body-2">
                     <div class="row ml-0 mr-10">
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
                             <div class="table-heading">
@@ -118,7 +118,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center">
-                            <div class="table-heading" style="border-right:none!important;">
+                            <div class="table-heading current-heading">
                                 <h3>
                                     <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />
                                     Current Ward Marking
@@ -130,22 +130,22 @@
                         <div class="col-md-6">
                             <form>
                                 <div class="row">
-                                    <div class="col-md-12 pr-1" style="padding-left:35px;">
-                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 0px 0px;">
-                                            <table class="table"
-                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;padding-bottom: 0px!important">
+                                    <div class="col-md-12 pr-1 table-outer">
+                                        <div class="table-wrapper table-scroll table-scroll-2">
+                                            <table class="table table-scroll-iner"
+                                                >
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:110px;">Date</th>
-                                                    <th class="text-right"
-                                                        style="padding-right:20px; border-right:1px solid #dee2e6;">
+                                                    <th class="table-heading-1">Date</th>
+                                                    <th class="text-right table-heading-2"
+                                                        >
                                                         Markers</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of markerList; let i=index">
-                                                        <td style="border-right:1px solid #dee2e6">
+                                                        <td class="date-details">
                                                             {{data.date}}</td>
-                                                        <td class="text-right"
-                                                            style="border-right:1px solid #dee2e6;padding-right:20px; ">
+                                                        <td class="text-right markers-details"
+                                                            >
                                                             {{data.markers}}</td>
                                                     </tr>
 
@@ -154,8 +154,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center"
+                                        >
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -164,26 +164,26 @@
                             </form>
                         </div>
 
-                        <div class="col-md-6" style="padding-right:35px;">
+                        <div class="col-md-6 main-div">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 00px 0px;">
-                                            <table class="table"
-                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;padding-bottom: 0px!important">
+                                        <div class="table-wrapper table-scroll table-main">
+                                            <table class="table table-main-iner"
+                                                >
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:110px;">Ward No.
+                                                    <th class="ward-heading">Ward No.
                                                     </th>
-                                                    <th class="text-right"
-                                                        style="padding-right:20px; border-right:1px solid #dee2e6;">
+                                                    <th class="text-right markers-heading"
+                                                        >
                                                         Markers</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of markerWardList; let i=index">
-                                                        <td style="border-right:1px solid #dee2e6">
+                                                        <td class="ward-data">
                                                             {{data.wardNo}}</td>
-                                                        <td class="text-right"
-                                                            style="border-right:1px solid #dee2e6;padding-right:20px; ">
+                                                        <td class="text-right markers-data"
+                                                            >
                                                             {{data.markers}}</td>
                                                     </tr>
 
@@ -191,8 +191,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main"
+                                        >
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -213,7 +213,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">Are you
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you
                     sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
@@ -258,9 +258,9 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects" required style="display: none;">
-                    <input type="checkbox" id="chkRemove" style="vertical-align: middle;"> Remove assigned ward
+                    <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
                     (click)="saveWard();" />
             </div>
         </div>
@@ -302,11 +302,11 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input type="checkbox" id="chkAcive" style="vertical-align: middle;"> Is Active
+                    <input class="active-input" type="checkbox" id="chkAcive"> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveEmployee();" style="height: 45px;" />
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                    (click)="saveEmployee();" />
             </div>
         </div>
     </div>

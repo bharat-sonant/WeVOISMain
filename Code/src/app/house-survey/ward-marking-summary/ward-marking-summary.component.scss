@@ -581,3 +581,234 @@ label{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.no-gutters-iner{
+  padding-left: 18px;
+}
+.Ward-Marking-heading{
+  text-align:center; 
+  margin-top: -2px; 
+  font-size: 20px; 
+  letter-spacing: 1px;
+}
+.fix-home-outer{
+  padding-left: 18px;
+}
+.fix-home-iner{
+  margin-left: 10px; 
+  margin-top: 0px;
+}
+.fix-home-span{
+  color: #1fda2f;
+}
+.card-outer{
+  padding-left: 0px;
+  padding-right:7px;
+}
+.card-body-outer{
+  margin-top:-6px;  
+  height: 85vh!important
+}
+.card-body2{
+  height:88vh; 
+  padding: 0px 10px 0px 0px;
+}
+.ward-table-heading{
+  border-right:1px solid #dee2e6; 
+  width:12%;
+}
+.Markers-table-heading{
+  border-right:1px solid #dee2e6; 
+  width:12%;
+}
+.Already-table-heading{
+  border-right:1px solid #dee2e6; 
+  width:28%;
+}
+.Approved-table-heading{
+  border-right:1px solid #dee2e6; 
+  width:28%;
+}
+.Status-table-heading{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+.table-data{
+  border-right:1px solid #dee2e6;
+}
+.no-available{
+  padding-top: 20vh; 
+  display: none;
+}
+.loaderClass-outer{
+  padding-left: 7px;
+  padding-right:0px;
+}
+.custom-header-outer{
+  margin-top:-6px; 
+  height: 85vh!important;
+  overflow: hidden;
+}
+.table-one-iner{
+  border-bottom:1px solid #dee2e6;
+  border-left:1px solid #dee2e6
+  ;margin-bottom: 0px!important
+}
+.card-body3{
+  padding: 3px 11px 15px 0px;
+}
+.table-outer{
+  padding: 0px 0px 20px 0px;
+}
+.table-outer-iner{
+  border-bottom:1px solid #dee2e6;
+  border-left:1px solid #dee2e6;
+}
+.table-data-line2{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+.table-data-Markers2{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+.table-data-Already2{
+  border-right:1px solid #dee2e6;
+  width:30%;
+}
+.table-data-Approved2{
+  border-right:1px solid #dee2e6; 
+  width:15%;
+}
+.table-data-hesh{
+  border-right:1px solid #dee2e6; 
+  width:15%;
+}
+.table-data2{
+  border-right:1px solid #dee2e6;
+}
+.check-icon{
+  font-size: 18px; 
+  color: green;
+}
+.times-icon{
+  font-size: 18px; 
+  color: red;
+}
+.table-row{
+  cursor: pointer;
+}
+.eye-icon{
+  font-size: 20px; 
+  cursor: pointer;
+}
+.divmessage{
+  padding-top: 20vh; 
+  display: none;
+}
+.img-close-outer{
+  width: 100%;
+  text-align: right;
+  float: left;
+}
+.content-scroll-outer{
+  margin-top:-20px;
+}
+.dt-img{
+  height:100%; width: 100%;
+}
+.f-left-heading{
+  width: 100%;
+}
+.dt-img-outer{
+  width:100%
+}
+.reject-btn{
+  width:45%; 
+  background:#0ba118!important;    
+  margin-left: 0px!important;
+   margin-bottom: 10px!important;
+}
+.delete-btn{
+  width:45%; 
+  background:red!important;    
+  margin-left: 0px!important; 
+  margin-bottom: 10px!important;
+}
+
+
+
+@media only screen and (min-width:270px) and (max-width:550px){
+  .Ward-Marking-heading{
+   display: none ;
+}
+.card-body3{
+ 
+  margin-top: 270px;
+}
+.custom-header-outer{
+ height:unset !important;
+}
+.loaderClass-outer{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.card-outer{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.table-one{
+  overflow-x: scroll;
+}
+.table-outer{
+ overflow-x: scroll;
+}
+div#divMessage {
+  display: none;
+}
+.fix-home-outer{
+  margin-left: auto;
+}
+} 
+
+@media only screen and (min-width:560px) and (max-width:821px){
+  .table-one{
+    overflow-x: scroll;
+  }
+  .Ward-Marking-heading{
+    display: none ;
+ }
+ .fix-home-outer{
+  margin-left: auto;
+}
+}
+@media only screen and (min-width:900px) and (max-width:921px){
+  .Ward-Marking-heading{
+    display: none ;
+ }
+ .fix-home-outer{
+   margin-left: auto;
+ }
+}
+
+
+
+

@@ -1,58 +1,58 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-12 no-gutters-iner">
             Surveyor Assignment
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 85vh!important">
-                <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
+        <div class="col-md-6 card-main">
+            <div class="card card-body-outer">
+                <div class="card-body card-iner">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table table-main"
+                                        >
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:5%;">S.No.</th>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Name</th>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Login ID</th>
-                                            <th style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="table-heading-sno">S.No.</th>
+                                            <th class="table-heading-Name">Name</th>
+                                            <th class="table-heading-Login">Login ID</th>
+                                            <th class="table-heading-Assigned">
                                                 Assigned</th>
-                                            <th style="border-right:1px solid #dee2e6; width:25%;">
+                                            <th class="table-heading-Line">
                                                 Line No.</th>
-                                            <th class="text-right" style="width:15%;">
+                                            <th class="table-heading-Show"  class="text-right">
                                                 <input id="chkAll" type="checkbox" (change)="showAll();" />
                                                 Show All
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of assignedList; let i=index"
-                                                style="cursor: pointer;" (click)="getServeyorDetail(data.userId,i);">
-                                                <td style="border-right:1px solid #dee2e6">{{i+1}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of assignedList; let i=index"
+                                                 (click)="getServeyorDetail(data.userId,i);">
+                                                <td class="table-data">{{i+1}}</td>
+                                                <td class="table-data">
                                                     {{data.name}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="table-data">
                                                     {{data.loginId}}</td>
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="table-data">
                                                     {{data.wardNo}}</td>
-                                                <td style="border-right:1px solid #dee2e6;">
+                                                <td class="table-data">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
-                                                    <span [hidden]="data.isActive==true"
-                                                        style="color: red;">Inactive</span>
+                                                    <span class="Inactive-span" [hidden]="data.isActive==true"
+                                                        >Inactive</span>
                                                     <span [hidden]="data.isActive==false">
-                                                        <i class="fas fa-map-marked-alt"
+                                                        <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentAssign,data.userId,'update');"
                                                             title="Edit Assignment"
-                                                            style="cursor:pointer !important; font-size: 14px;color: #0ba118;"></i>
-                                                        <i class="far fa-times-circle"
+                                                            ></i>
+                                                        <i class="far fa-times-circle circle-icon"
                                                             (click)="openModel(contentConfirmation,data.userId,'delete')"
                                                             title="Remove Entry"
-                                                            style="cursor:pointer !important; font-size: 14px;color: red; margin-left: 10px;"></i>
+                                                            ></i>
                                                     </span>
                                                 </td>
                                             </tr>
@@ -60,8 +60,8 @@
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                style="padding-top: 20vh; display: none;">
+                            <div class="divMessage" id="divMessage" class="col-md-12 pr-1 text-center"
+                                >
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -71,12 +71,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+        <div class="col-md-6 custom-header-main">
 
-            <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col text-center">
+                        <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalDays}}</span> <br>
@@ -84,7 +84,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col text-center">
+                        <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.average}}</span> <br>
@@ -92,7 +92,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col text-center">
+                        <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br>
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                         
-                        <div class="col text-center">
+                        <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br>
@@ -109,7 +109,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col text-center">
+                        <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalRFID}}</span> <br>
@@ -119,41 +119,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                <div class="card-body card-body2">
                     <div class="row">
 
                         <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
-                                            <table class="table"
-                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                        <div class="table-wrapper table-scroll table-main2">
+                                            <table class="table table2"
+                                                >
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:20%;">Date</th>
-                                                    <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Surveyed
+                                                    <th class="date-tableheading">Date</th>
+                                                    <th class="border-right Surveyed-tableheading"
+                                                        >Surveyed
                                                     </th>
-                                                    <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:25%;">Revisit</th>
-                                                    <th class="border-right"
-                                                        style="border-right:1px solid #dee2e6; width:30%;">RFID not
+                                                    <th class="border-right Revisit-tableheading"
+                                                        >Revisit</th>
+                                                    <th class="border-right RFID-tableheading"
+                                                        >RFID not
                                                         matched</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
-                                                        <td style="border-right:1px solid #dee2e6">
+                                                        <td class="table-data2">
                                                             {{data.date}}</td>
-                                                            <td class="border-right"
-                                                                style="border-right:1px solid #dee2e6;">
+                                                            <td class="border-right table-data2"
+                                                                >
                                                                 <span [hidden]="data.surveyed!=null">-</span>
                                                                 {{data.surveyed}}</td>
-                                                                <td class="border-right"
-                                                                    style="border-right:1px solid #dee2e6;">
+                                                                <td class="border-right table-data2"
+                                                                   >
                                                                     <span [hidden]="data.revisit!=null">-</span>
                                                                     {{data.revisit}}</td>
-                                                        <td class="border-right"
-                                                            style="border-right:1px solid #dee2e6;">
+                                                        <td class="border-right table-data2"
+                                                          >
                                                             <span [hidden]="data.rfid!=null">-</span>
                                                             {{data.rfid}}</td>
                                                     </tr>
@@ -161,8 +161,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div class="divMessage" id="divMessage" class="col-md-12 pr-1 text-center"
+                                        >
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -182,7 +182,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 14px; font-weight: bold;">Are you
+                <h5 class="modal-title modal-header-title" id="exampleModalLongTitle">Are you
                     sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
@@ -230,15 +230,15 @@
                     <div class="col-md-12">
                         <div class="checkbox-scroll">
                             <div class="row">
-                                <div class="col-md-2" *ngFor="let line of lineList" style="margin-bottom: 10px;">
-                                    <input type="checkbox" id="chk{{line.lineNo}}" style="vertical-align: middle;" />
+                                <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
+                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
                                     {{line.lineNo}}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <input type="button" class="btn btn-success submit-btn" style="width: 100%;" value="SUBMIT"
+                <input type="button" class="btn btn-success submit-btn saveAssignment-btn" value="SUBMIT"
                     (click)="saveAssignment();" />
             </div>
         </div>

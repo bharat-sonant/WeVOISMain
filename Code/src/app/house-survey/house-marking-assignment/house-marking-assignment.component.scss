@@ -436,3 +436,207 @@ label{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.no-gutters-iner{
+  text-align:center;
+  margin-top: -2px; 
+  font-size: 20px; 
+  letter-spacing: 1px;
+}
+.card-main{
+  padding-left: 0px;
+  padding-right:7px;
+}
+.card-body-outer{
+  margin-top:-6px;  
+  height: 85vh!important
+}
+.card-iner{
+  height:88vh; 
+  padding: 0px 10px 0px 0px;
+}
+.table-main{
+  border-bottom:1px solid #dee2e6;
+  border-left:1px solid #dee2e6;
+  margin-bottom: 0px!important
+}
+.table-heading-sno{
+  border-right:1px solid #dee2e6;
+  width:5%;
+}
+.table-heading-Name{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+
+.table-heading-Login{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+
+.table-heading-Assigned{
+  border-right:1px solid #dee2e6; 
+  width:15%;
+}
+
+.table-heading-Line{
+  border-right:1px solid #dee2e6; 
+  width:25%;
+}
+
+.table-heading-Show{
+  width:15%;
+}
+
+.table-data{
+  border-right:1px solid #dee2e6
+}
+.Inactive-span{
+  color: red;
+}
+.marked-icon{
+  cursor:pointer !important; 
+  font-size: 14px;
+  color: #0ba118;
+}
+.circle-icon{
+  cursor:pointer !important; 
+  font-size: 14px;
+  color: red; 
+  margin-left: 10px;
+}
+.divMessage{
+  padding-top: 20vh !important; 
+  display: none !important;
+}
+.custom-header-main{
+  padding-left: 7px;
+  padding-right:0px;
+}
+.custom-header-outer{
+  margin-top:-6px; 
+  height: 85vh!important;
+  overflow: hidden;
+}
+.card-body2{
+  padding: 3px 11px 15px 0px;
+}
+.table-main2{
+  padding: 0px 0px 20px 0px;
+}
+.table2{
+  border-bottom:1px solid #dee2e6;
+  border-left:1px solid #dee2e6;
+}
+.date-tabledata{
+  border-right:1px solid #dee2e6; 
+  width:20%;
+}
+
+.Surveyed-tableheading{
+  border-right:1px solid #dee2e6; 
+  width:25%;
+}
+.Revisit-tableheading{
+  border-right:1px solid #dee2e6; 
+  width:25%;
+}
+.RFID-tableheading{
+  border-right:1px solid #dee2e6; 
+  width:30%;
+}
+.table-data2{
+  border-right:1px solid #dee2e6;
+}
+.modal-header-title{
+  font-size: 14px; 
+  font-weight: bold;
+}
+
+.checkbox-div{
+  margin-bottom: 10px;
+}
+.lineNo-checkbox{
+  vertical-align: middle;
+}
+
+.saveAssignment-btn{
+  width: 100%;
+}
+
+.table-row{
+  cursor: pointer;
+}
+
+
+
+@media only screen and (min-width:285px) and (max-width:550px){
+  .extra-class{
+    min-width: 90px !important;
+  }
+  .card-body2{
+    margin-top: 80px !important;
+  }
+  .custom-header-main{
+    margin-top: 35px !important;
+  }
+  .table-one{
+    overflow-x: scroll;
+  }
+  .table-scroll{
+    overflow-x: scroll;
+  }
+  .no-gutters-iner{
+    display: none !important;
+  }
+}
+@media only screen and (min-width:560px) and (max-width:830px){
+  .table-one{
+    overflow-x: scroll;
+  }
+  .table-scroll{
+    overflow-x: scroll;
+  }
+}
+
+@media only screen and (min-width:250px) and (max-width:284px){
+  .extra-class{
+    min-width: 90px !important;
+  }
+  .card-body2{
+    margin-top: 160px !important;
+  }
+  .custom-header-main{
+    margin-top: 35px !important;
+    padding-left: 0;
+  }
+  .table-one{
+    overflow-x: scroll;
+  }
+  .table-scroll{
+    overflow-x: scroll;
+  }
+  .no-gutters-iner{
+    display: none !important;
+  }
+}
+
+
+
+
+
+
+
