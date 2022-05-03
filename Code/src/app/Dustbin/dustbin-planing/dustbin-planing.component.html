@@ -23,7 +23,7 @@
                 <option value="12">December</option>
             </select>
             <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedZone" ngSelected="zoneList.zoneNo == selectedZone?'selected':''">
-                <option value="0">All Zone</option>
+                <option value="0">Select Zone</option>
                 <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zone}}</option>
             </select>
         </div>
@@ -520,7 +520,7 @@
             </div>
             <div class="modal-body">
                 <input id="key" type="hidden" value="0" />
-                <input id="perPlanDate" type="hidden" value="">
+                <input id="prePlanDate" type="hidden" value="">
                 <label>Plan Name</label>
                 <div class="wrap-input-effects" required>
                     <input id="txtPlanName" type="text" class="input-green" placeholder="Plan Name" />

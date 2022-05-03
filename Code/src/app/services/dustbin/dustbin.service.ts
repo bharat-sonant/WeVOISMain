@@ -22,7 +22,7 @@ export class DustbinService {
       let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
         dutbinWardJSONInstance.unsubscribe();
         resolve(DustbinWardJsonData);
-      },error=>{
+      }, error => {
         resolve(null);
       });
     });
@@ -48,6 +48,19 @@ export class DustbinService {
       let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
         planData => {
           dustbinPlanInstance.unsubscribe();
+          resolve(planData);
+        }
+      );
+    });
+  }
+
+  getWardAssignedDustbin(year: any, monthName: any) {
+    return new Promise((resolve) => {
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinAssignToWard/" + year + "/" + monthName;
+      let wardDustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
+        planData => {
+          wardDustbinPlanInstance.unsubscribe();
           resolve(planData);
         }
       );
