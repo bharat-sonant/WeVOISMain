@@ -6,12 +6,12 @@
 
 <section class="header">
     <div class="row no-gutters">
-        <div class="main-headers hide-on-ipad"
-            style="position: absolute; z-index: 999; margin-left: 45%; margin-top: 15px;">
+        <div class="main-headers hide-on-ipad no-gutters-iner"
+            >
             Show Route
         </div>
         <div class="col-md-7 col-xl-8 ipad-pl-25">
-            <select class="caret-select ipad-ipt-1" id="ddlZone" style="width: 150px;"
+            <select class="caret-select ipad-ipt-1 select-class" id="ddlZone"
                 (change)="changeZoneSelection($event.target.value)">
                 <option value="0">
                     --Select Zone--
@@ -32,23 +32,23 @@
 
         <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
             <div class="fix-home">
-                <div class="float-second" style="margin-top: 10px; cursor: pointer;"
+                <div class="float-second fix-home-iner"
                     >
                     <span class="house"> 
                     <input type="checkbox" id="chkNGGJ" (change)="setNGGJ();">    
                     </span><br>
-                    <h6 style="font-size: 9px!important;">NNGJ Routes</h6>
+                    <h6 class="routes-heading">NNGJ Routes</h6>
                 </div>
-                <div class="float-third" style="font-size: 16px;margin-top: 3px; text-align: right;">
+                <div class="float-third main-setting">
                     <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
                         aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
-                        <h6 style="font-size: 9px!important;">Settings</h6>
+                        <h6 class="routes-heading">Settings</h6>
                     </button>
 
                 </div>
             </div>
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
-                style="border-radius: 5px;">
+            <div class="panel-group panel-outer" id="accordion" role="tablist" aria-multiselectable="true"
+                >
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingtwo">
                         <h4 class="panel-title">
@@ -59,17 +59,17 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-12 text-left">
-                                    <div class="setting-box" style="padding-bottom: 10px!important;">
-                                        <button (click)="getNextPrevious('pre');" class="btn-primary"
-                                            style="background-color: #0ba118!important;">
+                                    <div class="setting-box text-left-iner">
+                                        <button class="setting-box-btn" (click)="getNextPrevious('pre');" class="btn-primary"
+                                            >
                                             << </button>
                                                 <input id="txtStrokeWeight" type="text"
                                                     (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
-                                                    class="date-input"
-                                                    style="text-align: center; width: 170px; font-weight: bold;"
+                                                    class="date-input data-input2"
+                                                    
                                                     value="4" />
-                                                <button (click)="getNextPrevious('next');" class="btn-primary"
-                                                    style="background-color: #0ba118!important;">
+                                                <button class="setting-box-btn" (click)="getNextPrevious('next');" class="btn-primary"
+                                                   >
                                                     >>
                                                 </button>
                                     </div>
@@ -88,10 +88,10 @@
 </section>
 <!------------Desktop Navbar End------------->
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
+<div #gmap class="map-div" id="divMap"></div>
 
 <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
-    <div class="col-md-12" style="margin-top: 10px;margin-bottom: 10px;    padding-right: 5px;">
+    <div class="col-md-12 driver-helper-box-iner">
         <label id="lblSelectedRoute" style="display:none;"></label>
         <div class="dth">
             <div class="table-bg">
@@ -99,7 +99,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-left" scope="col" style="text-align: left!important;">
+                                <th class="text-left text-left-heading" scope="col">
                                     <b>Routes</b>
                                 </th>
                             </tr>
@@ -112,8 +112,8 @@
                                     {{dt.routeName}} <br />
                                     <table class="table">
                                         <tbody>
-                                            <tr *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}"
-                                                style="cursor: pointer;"
+                                            <tr class="table-row" *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}"
+                                                
                                                 (click)="getRouteSelect(dt.routeKey,data.key);">
                                                 <td class="text-left">
                                                     {{data.startDate}} to {{data.endDate}} 
@@ -128,7 +128,7 @@
                 </div>
             </div>
         </div>
-        <div style="width:100%; padding-top: 10px;">
+        <div class="show-all">
             <input id="chkAll" type="checkbox" (change)="showAllRoute();"> Show All Route
           </div>
     </div>
