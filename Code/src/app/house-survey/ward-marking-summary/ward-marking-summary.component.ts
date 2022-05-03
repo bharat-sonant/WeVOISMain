@@ -39,14 +39,14 @@ export class WardMarkingSummaryComponent implements OnInit {
   getWards() {
     let wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
+    console.log(wardList);
     if (wardList.length > 0) {
       for (let i = 0; i < wardList.length; i++) {
         let wardNo = wardList[i]["zoneNo"];
         let url = this.cityName + "/13A3/house-marking/" + wardNo;
         this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
         if (i == 1) {
-          setTimeout(() => {
-            this.getMarkingDetail(wardNo, 1);
+          setTimeout(() => {            
             $("#tr1").addClass("active");
           }, 1000);
         }
@@ -89,6 +89,9 @@ export class WardMarkingSummaryComponent implements OnInit {
               this.wardProgressList[index]["cssClass"] = "marking-done";
             }
           }
+        }
+        if(wardNo=="1"){
+          this.getMarkingDetail(wardNo, 1);
         }
       });
     });
