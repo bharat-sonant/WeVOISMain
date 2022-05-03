@@ -1,29 +1,29 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-4" style="padding-left: 18px;">
+        <div class="col-md-2 no-gutters-iner">
 
         </div>
-        <div class="col-md-3" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
+        <div class="col-md-3 Surveyheading">
             Ward Survey Summary
         </div>
-        <div class="col-md-5 text-right total-house" style="padding-left: 18px;">
+        <div class="col-md-7 text-right total-house fix-home-outer">
             <div class="fix-home">
                 <div class="float-first">
-                    <i class="fas fa-home" style="color:red;"></i> <span class="house">
+                    <i class="fas fa-home home-icon"></i> <span class="house">
                         {{surveyData.totalMarkers}}</span><br>
                     <h6>Total Marker</h6>
                 </div>
-                <div class="float-second"  style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
+                <div class="float-second float-second2"  style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
                     <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
                     <h6>Surveyed Marker</h6>
                 </div>
-                <div class="float-third" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
-                    <i class="fas fa-house-damage" style="color:rgb(213 42 255);"></i> <span class="house">
+                <div class="float-third float-second2" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
+                    <i class="fas fa-house-damage icon-damage"></i> <span class="house">
                         {{surveyData.totalRevisit}}</span><br>
                     <h6>Revisit Request</h6>
                 </div>
-                <div class="float-fourth" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
-                    <i class="fas fa-house-damage" style="color:rgb(33 135 236);"></i> <span class="house">
+                <div class="float-fourth float-second2" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                    <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
                         {{surveyData.totalOldCards}}</span><br>
                     <h6>RFID not matched</h6>
                 </div>
@@ -34,49 +34,49 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 85vh!important">
-                <div class="card-body" style="height:85vh; padding: 0px 10px 0px 0px;">
+        <div class="col-md-5 main-content-iner">
+            <div class="card card-body-outer">
+                <div class="card-body card-iner" >
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table"
-                                        style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;margin-bottom: 0px!important">
+                                    <table class="table table-one-iner"
+                                        >
                                         <thead>
-                                            <th style="border-right:1px solid #dee2e6; width:20%;">Ward</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="table-heading1">Ward</th>
+                                            <th class="text-right table-heading2">
                                                 Markers</th>
 
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-right table-heading3">
                                                 Surveyed</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:15%;">
+                                            <th class="text-right table-heading4" >
                                                 Revisit</th>
-                                            <th class="text-right" style="border-right:1px solid #dee2e6; width:35%;">
+                                            <th class="text-right table-heading5">
                                                 RFID Not Matched</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
                                                 [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);"
                                                 style="cursor: pointer;">
-                                                <td style="border-right:1px solid #dee2e6">
+                                                <td class="table-data1">
                                                     {{data.wardNo}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data2">
                                                     {{data.markers}}</td>
 
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data3">
                                                     {{data.surveyed}}</td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                <td class="text-right table-data4">
                                                     {{data.revisit}} </td>
-                                                <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                <td class="text-right table-data5">
                                                     {{data.oldCard}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                style="padding-top: 20vh; display: none;">
+                            <div id="divMessage" class="col-md-12 pr-1 text-center divMessage"
+                                >
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -86,10 +86,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 85vh!important;overflow: hidden;">
+        <div class="col-md-7 card-outer">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
-                    <div class="row">
+                    <div class="row row2">
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
@@ -125,61 +125,61 @@
                         </div>
                         <div class="col text-center">
                             <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points" style="color: red;"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i class="fas fa-sync-alt" style="font-size: 13px; color: #0ba118;"></i></span> <br>
+                                <h3 class="Spelling-heading">
+                                    <span class="tbl-points"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i class="fas fa-sync-alt" style="font-size: 13px; color: #0ba118;"></i></span> <br>
                                     Spelling Check Remains
                                 </h3>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="padding: 3px 11px 15px 0px;">
+                <div class="card-body card-body2">
                     <div class="row">
 
                         <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
-                                            <table class="table"
-                                                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                        <div class="table-wrapper table-scroll table-outer">
+                                            <table class="table table2"
+                                                >
                                                 <thead>
-                                                    <th style="border-right:1px solid #dee2e6; width:10%;">Line</th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:10%;">Markers</th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">
+                                                    <th class="table-heading-same">Line</th>
+                                                    <th class="text-right table-heading-same2"
+                                                        >Markers</th>
+                                                    <th class="text-right table-heading-same3"
+                                                        >
                                                         Already Installed</th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:10%;">Surveyed
+                                                    <th class="text-right table-heading-same4"
+                                                        >Surveyed
                                                     </th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:10%;">Revisit
+                                                    <th class="text-right table-heading-same5"
+                                                        >Revisit
                                                     </th>
-                                                    <th class="text-right"
-                                                        style="border-right:1px solid #dee2e6; width:20%;">RFID Not Matched
+                                                    <th class="text-right table-heading-same6"
+                                                        >RFID Not Matched
                                                     </th>
-                                                    <th class="text-center"
-                                                        style="border-right:1px solid #dee2e6; width:10%;">#</th>
+                                                    <th class="text-center table-heading-same7"
+                                                        >#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineSurveyList; let i=index">
-                                                        <td style="border-right:1px solid #dee2e6">
+                                                        <td class="table-data-1">
                                                             {{data.lineNo}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data-2">
                                                             {{data.markers}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6">
+                                                        <td class="text-right table-data-3">
                                                             {{data.alreadyCard}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data-4">
                                                             {{data.survyed}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data-5">
                                                             {{data.revisit}}</td>
-                                                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-right table-data-6">
                                                             {{data.oldCard}}</td>
-                                                        <td class="text-center" style="border-right:1px solid #dee2e6;">
+                                                        <td class="text-center table-data-7">
 
-                                                            <i class="far fa-eye"
-                                                                style="font-size: 20px; cursor: pointer;"
+                                                            <i class="far fa-eye eye-icon"
+                                                                
                                                                 [hidden]="data.survyed==0"
                                                                 (click)="showLineDetail(contentLineSurveyed,data.wardNo,data.lineNo);"></i>
                                                         </td>
@@ -188,8 +188,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center divMessage"
+                                        >
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -206,23 +206,23 @@
 
 <!--Survey Line Start-->
 <ng-template #contentLineSurveyed>
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="close-grey-imgbox">
 
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
+    <div class="modal-body divStatus-outer">
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-2" *ngFor="let dt of surveyedDetailList">
-                    <div style="width:100%">
+                <div class="col-md-2 " *ngFor="let dt of surveyedDetailList">
+                    <div class="content-scroll-iner">
                         <a href="{{dt.imageUrl}}" target="_blank">
-                            <img [src]="dt.imageUrl" style="height:100%; width: 100%;" />
+                            <img [src]="dt.imageUrl" class="imageurl" />
                         </a>
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 style="width: 100%;"> {{dt.cardType}} </h3><br />
+                            <h3 class="f-left-heading"> {{dt.cardType}} </h3><br />
 
                             <h3><b> {{dt.cardNo}} </b></h3><br />
                             <h3> {{dt.name}} </h3><br />
@@ -239,25 +239,25 @@
 
 <!--Survey Line Start-->
 <ng-template #contentDateWise>
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="img-close-box">
 
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body" style="margin-top:-20px; ">
-        <div id="tblSurvey" class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
-            <table class="table"
-                style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+    <div class="modal-body table-wrapper-outer">
+        <div id="tblSurvey" class="table-wrapper table-scroll modal-body-iner">
+            <table class="table table-scroll-iner"
+                >
                 <thead>
-                    <th style="border-right:1px solid #dee2e6; width:40%;">Date</th>
-                    <th class="text-right"
-                        style="border-right:1px solid #dee2e6; width:60%;"><span id="surveyType"></span></th>
+                    <th class="datetable">Date</th>
+                    <th class="text-right surveyTypetable"
+                        ><span id="surveyType"></span></th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let data of surveyDateList; let i=index">
-                        <td style="border-right:1px solid #dee2e6">
+                        <td class="datedata">
                             {{data.date}}</td>
-                        <td class="text-right" style="border-right:1px solid #dee2e6;">
+                        <td class="text-right datedata">
                             {{data.count}}</td>
                     </tr>
                 </tbody>
