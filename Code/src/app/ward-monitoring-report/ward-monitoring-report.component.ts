@@ -24,7 +24,6 @@ export class WardMonitoringReportComponent implements OnInit {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-   // this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.getWards();
     this.selectedCircle = "Circle1";
     this.toDayDate = this.commonService.setTodayDate();
@@ -201,7 +200,8 @@ export class WardMonitoringReportComponent implements OnInit {
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
       workerData => {
         if (workerData != null) {
-          driverId = workerData["driver"];
+          driverId = workerData["driver"].split(',')[0];
+          
           let workStartTimePath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectDate + '/' + driverId;
           let workStarts = this.db.object(workStartTimePath).valueChanges().subscribe(
             startData => {
