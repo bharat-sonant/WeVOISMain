@@ -131,7 +131,6 @@ export class EmployeeSalaryComponent implements OnInit {
           }
           this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
           this.allSalaryList = this.commonService.transformNumeric(salaryList, "empCode");
-          console.log(this.allSalaryList);
           this.getRoles();
           this.getSalary();
         }
@@ -153,13 +152,21 @@ export class EmployeeSalaryComponent implements OnInit {
     this.getHoldSalary();
     this.getAccountIssue();
     this.getSundaysInMonth(this.selectedMonth, this.selectedYear);
-    let dbPath = "Defaults/WorkingDayInMonth/" + this.selectedMonthName;
-    let workingDayInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        workingDayInstance.unsubscribe();
-        if (data != null) {
-          this.workingDayInMonth = Number(data);
+
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FWorkingDayInMonth.json?alt=media";
+    let workingDayInstance = this.httpService.get(path).subscribe(data => {
+      workingDayInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let monthName = keyArray[i];
+            if (monthName == this.selectedMonthName) {
+              this.workingDayInMonth = Number(data[monthName]);
+            }
+          }
         }
+
         let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName;
         let workInstance = this.db.object(dbPath).valueChanges().subscribe(
           data => {
@@ -231,7 +238,7 @@ export class EmployeeSalaryComponent implements OnInit {
           }
         );
       }
-    );
+    });
   }
 
   getUploadedSalary() {
@@ -359,6 +366,7 @@ export class EmployeeSalaryComponent implements OnInit {
             }
           }
           if (rewardDays > 0) {
+            console.log(rewardDays)
             let designation = this.allSalaryList[i]["designation"];
             if (rewardAmount == 0) {
               if (designation == "Driver") {

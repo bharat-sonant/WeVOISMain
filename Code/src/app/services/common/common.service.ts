@@ -755,13 +755,12 @@ export class CommonService {
     this.setFixedLoctions(newDb);
     this.setVehicle(newDb);
     this.setDustbin(newDb);
-   // this.setWardLines(newDb);
     this.setMarkerZone();
     this.setMarkingWards();
   }
 
   setDesignation() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FDesignations.json?alt=media";
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
     let Instance = this.httpService.get(path).subscribe(dataDate => {
       Instance.unsubscribe();
       let designationList = [];
@@ -1629,15 +1628,16 @@ export class CommonService {
     }
     return wardLines;
   }
-*/
+
 
   getDesignation() {
     return new Promise((resolve) => {
       let designationList = [];
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FDesignations.json?alt=media";
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
       let Instance = this.httpService.get(path).subscribe(dataDate => {
         Instance.unsubscribe();
         let list = JSON.parse(JSON.stringify(dataDate));
+        console.log(list)
         for (let i = 1; i < list.length; i++) {
           let designationId = i;
           let designation = list[i]["name"];
@@ -1647,7 +1647,7 @@ export class CommonService {
       });
     });
   }
-
+*/
 
 
   //#endregion

@@ -65,15 +65,9 @@ export class AccountDetailComponent implements OnInit {
     this.remarkJsonObject = null;
     $(this.ddlUser).val("active");
     $(this.ddlDesignation).val("all");
-    this.getLastUpdate();
-    this.getDesignation();
+    this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
+    this.getLastUpdate();  
     this.getAccountDetail();
-  }
-
-  getDesignation() {
-    this.commonService.getDesignation().then((destinationList: any) => {
-      this.designationUpdateList = JSON.parse(destinationList);
-    });
   }
 
   getLastUpdate() {
