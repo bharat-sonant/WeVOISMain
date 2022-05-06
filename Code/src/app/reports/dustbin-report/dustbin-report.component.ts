@@ -1292,8 +1292,10 @@ export class DustbinReportComponent implements OnInit {
             isBroken = isBroken + "Dustbin Disabled";
           }
           if (isBroken != "") { isBroken = "(" + isBroken + ")"; }
+          if(this.dustbinStorageList[i]["isDisabled"]!="yes"){
           this.dustbinList.push({ zoneNo: this.dustbinStorageList[i]["zone"], dustbin: this.dustbinStorageList[i]["dustbin"], address: this.dustbinStorageList[i]["address"], pickFrequency: this.dustbinStorageList[i]["pickFrequency"], isBroken: isBroken, isDisabled: this.dustbinStorageList[i]["isDisabled"] });
           this.dustbinStatus(this.dustbinStorageList[i]["dustbin"]);
+          }
         }
       }
       else {
@@ -1308,8 +1310,10 @@ export class DustbinReportComponent implements OnInit {
               isBroken = isBroken + "Dustbin Disabled";
             }
             if (isBroken != "") { isBroken = "(" + isBroken + ")"; }
+            if(this.dustbinStorageList[i]["isDisabled"]!="yes"){
             this.dustbinList.push({ zoneNo: this.dustbinStorageList[i]["zone"], dustbin: this.dustbinStorageList[i]["dustbin"], address: this.dustbinStorageList[i]["address"], pickFrequency: this.dustbinStorageList[i]["pickFrequency"], isBroken: isBroken, isDisabled: this.dustbinStorageList[i]["isDisabled"] })
             this.dustbinStatus(this.dustbinStorageList[i]["dustbin"]);
+            }
           }
         }
       }

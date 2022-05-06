@@ -1,14 +1,12 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-5" style="padding-left: 10px;    margin-top: -8px;">
-            <select class="caret-select" id="ddlYear" (change)="changeSelection();" style="width: 150px; height:36px"
-                [(ngModel)]="selectedYear">
+            <select class="caret-select" id="ddlYear" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedYear">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList"
                     ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlMonth" (change)="changeSelection();" style="width: 150px; height:36px"
-                [(ngModel)]="selectedMonth">
+            <select class="caret-select" id="ddlMonth" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedMonth">
                 <option value="0">Month</option>
                 <option value="01">January</option>
                 <option value="02">February</option>
@@ -23,19 +21,16 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 150px; height:36px"
-                [(ngModel)]="selectedZone" ngSelected="zoneList.zoneNo == selectedZone?'selected':''">
+            <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedZone" ngSelected="zoneList.zoneNo == selectedZone?'selected':''">
                 <option value="0">All Zone</option>
                 <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zone}}</option>
             </select>
         </div>
-        <div class="col-md-3 text-center"
-            style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+        <div class="col-md-3 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Dustbin Details
         </div>
         <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
-            <button id="btnSave" class="btn btn-success add-btn btn-xs" style="font-weight: normal; letter-spacing: 0px;" 
-            (click)="openModel(contentPlan,'addPlan','','0','00');">Add
+            <button id="btnSave" class="btn btn-success add-btn btn-xs" style="font-weight: normal; letter-spacing: 0px;" (click)="openModel(contentPlan,'addPlan','','0','00');">Add
                 Plan <span><i class="fas fa-plus"></i></span></button>
         </div>
         <div class="col-md-1">
@@ -53,12 +48,10 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class=" thFixed"
-                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 310px!important;">
+                                        <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 310px!important;">
                                             <div style="width: 180px!important;">Dustbin</div>
                                         </th>
-                                        <th scope="col" class="text-left thFixed2 "
-                                            style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                        <th scope="col" class="text-left thFixed2 " style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
                                             Freq</th>
                                         <th scope="col" class="text-center">01</th>
                                         <th scope="col" class="text-center">02</th>
@@ -94,11 +87,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let dt of dustbinList">
+                                    <tr *ngFor="let dt of dustbinList;let i=index">
                                         <td class=" thFixed" style=" border-right:none;">
-                                            {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
-                                        <td class="text-center thFixed2"
-                                            style="vertical-align: top; font-weight: bold; ">{{dt.pickFrequency}}</td>
+                                            <b> {{i+1}}.</b>&nbsp; {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
+                                        <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold; ">{{dt.pickFrequency}}</td>
                                         <td class="tdStyle">
                                             <div [innerHTML]="dt.day1" class="rowWidth"></div><br />
                                             <label id="lbl-{{dt.dustbin}}-day1"></label>
@@ -422,8 +414,7 @@
 
 
 <!---------Add Plan Accordion Start-------->
-<a role="button" class="plan-btn" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-    aria-expanded="true" aria-controls="collapseOne">
+<a role="button" class="plan-btn" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
     PLANS <i class="fas fa-angle-down" style="padding-left: 5px;"></i>
 </a>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
@@ -441,15 +432,9 @@
                         <td style="width: 90px!important;">{{plan.date}}</td>
                         <td style="width: 30px!important;"><span style="color:blue">{{plan.dustbinAssigned}}</span>/{{plan.maxDustbin}}</td>
                         <td style="width: 90px!important;">
-                            <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0"
-                                (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>&nbsp;&nbsp;
-                            <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');"
-                                title="Edit Plan"
-                                style="cursor:pointer !important; font-size: 10px;color: royalblue;"></i>&nbsp;&nbsp;
-                            <i class="far fa-trash-alt"
-                                (click)="openModel(contentPlanConfirm,'deletePlanConfirmation',plan,'','','');"
-                                title="Remove Plan" [hidden]="plan.isAssigned!='false'"
-                                style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                            <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0" (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>&nbsp;&nbsp;
+                            <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');" title="Edit Plan" style="cursor:pointer !important; font-size: 10px;color: royalblue;"></i>&nbsp;&nbsp;
+                            <i class="far fa-trash-alt" (click)="openModel(contentPlanConfirm,'deletePlanConfirmation',plan,'','','');" title="Remove Plan" [hidden]="plan.isAssigned!='false'" style="cursor:pointer !important; font-size: 10px;color: red;"></i>
                         </td>
                     </tr>
                 </table>
@@ -497,8 +482,7 @@
                     </span>
                 </div>
 
-                <input type="button" class="btn btn-success" value="Submit" (click)="savePlan();"
-                    style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
+                <input type="button" class="btn btn-success" value="Submit" (click)="savePlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
             </div>
         </div>
     </div>
@@ -519,7 +503,7 @@
             </div>
             <div class="modal-body">
                 <input id="dustbinId" type="hidden" value="0" />
-               <img src="../../../assets/img/calender-day.png"> &nbsp;
+                <img src="../../../assets/img/calender-day.png"> &nbsp;
                 <span id="planDate" style="font-weight: bold; font-size: 12px;"></span> <br>
                 <label style="margin-top: 18px;">Select Plan</label>
                 <div class="wrap-input-effects" required>
@@ -533,25 +517,22 @@
                         <i class="fas fa-book" aria-hidden="true"></i>
                     </span>
                 </div>
-                 <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
+                <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
                     <div style="float: left; width: 33.33%; text-align: center; font-size: 12px;margin-top: 5px;">
                         <input type="checkbox" id="chkHigh"><br/> Is High Priority
                     </div>
                     <div class="text-center" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;">
-                        <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span
-                            id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
+                        <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
                     </div>
                     <div class="text-center" style="width: 33.34%;float: left;font-size: 12px;  margin-top: 5px;">
-                        <img src="../../../assets/img/dustbin-report-check.png" style="padding-right: 6px;"> <span
-                            id="assignedDustbin" style="font-weight: bold;"> 0 </span> <br> Assigned Dustbin
+                        <img src="../../../assets/img/dustbin-report-check.png" style="padding-right: 6px;"> <span id="assignedDustbin" style="font-weight: bold;"> 0 </span> <br> Assigned Dustbin
                     </div>
 
                 </div>
 
-                <input type="button" class="btn btn-success" value="Save" (click)="saveDustbinPlan();"
-                    style="width: 100%; height: 45px; padding-top: 4px;" />
+                <input type="button" class="btn btn-success" value="Save" (click)="saveDustbinPlan();" style="width: 100%; height: 45px; padding-top: 4px;" />
 
-                 <!--   <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
+                <!--   <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
                         <div class="text-left" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;">
                             <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span
                                 id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
@@ -585,7 +566,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                
+
                 <div class="d-plans" style="height: 455px;overflow-y: scroll;">
                     <table class="table">
                         <thead>
@@ -597,15 +578,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let planDustbin of dustbinPlanDetailList; let i=index"
-                                style="border-top: 1px solid #dee2e6;">
+                            <tr *ngFor="let planDustbin of dustbinPlanDetailList; let i=index" style="border-top: 1px solid #dee2e6;">
                                 <td style="width: 40px; border-left: 1px solid #dee2e6;text-align: center;">{{i+1}}</td>
                                 <td>{{planDustbin.zone}}</td>
                                 <td>{{planDustbin.address}}</td>
                                 <td style="width: 40px;text-align: center;">
-                                    <i class="far fa-trash-alt" (click)="deletePlanDustbin(planDustbin.dustbin)"
-                                        title="Remove Dustbin"
-                                        style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                                    <i class="far fa-trash-alt" (click)="deletePlanDustbin(planDustbin.dustbin)" title="Remove Dustbin" style="cursor:pointer !important; font-size: 10px;color: red;"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -622,7 +600,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Are you sure to delete?</h5>                
+                <h5 class="modal-title">Are you sure to delete?</h5>
             </div>
             <div class="modal-body">
                 <input id="deletePlanId" type="hidden" value="0" />
@@ -654,7 +632,7 @@
             </div>
             <div class="modal-body">
                 <div id="divDustbin" style="display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>                   
+                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
                     <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                         <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                             <button class="btn btn-success " (click)="deleteDustbin();">
@@ -695,16 +673,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr id="tr{{i}}" *ngFor="let dt of dustbinMapList; let i=index"
-                                        class="selected-dustbin" (click)="getSelctedDustbin(i);"
-                                        style="border-top: 1px solid #dee2e6;">
+                                    <tr id="tr{{i}}" *ngFor="let dt of dustbinMapList; let i=index" class="selected-dustbin" (click)="getSelctedDustbin(i);" style="border-top: 1px solid #dee2e6;">
                                         <td style="width: 20px; border-left: 1px solid #dee2e6;">{{i+1}}</td>
                                         <td style="width: 20px; border-left: 1px solid #dee2e6;">{{dt.zone}}</td>
                                         <td style="border-right: 1px solid #dee2e6;">{{dt.address}}<span style="color:red;"> {{dt.isHighPriority}}</span></td>
                                         <td style="width: 40px;text-align: center;">
-                                            <i class="far fa-trash-alt" (click)="deletePlanDustbin(dt.dustbin)"
-                                                title="Remove Dustbin"
-                                                style="cursor:pointer !important; font-size: 10px;color: red;"></i>
+                                            <i class="far fa-trash-alt" (click)="deletePlanDustbin(dt.dustbin)" title="Remove Dustbin" style="cursor:pointer !important; font-size: 10px;color: red;"></i>
                                         </td>
                                     </tr>
                                 </tbody>
