@@ -14,8 +14,7 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table table-main"
-                                        >
+                                    <table class="table table-main">
                                         <thead>
                                             <th class="table-heading-sno">S.No.</th>
                                             <th class="table-heading-Name">Name</th>
@@ -24,14 +23,12 @@
                                                 Assigned</th>
                                             <th class="table-heading-Line">
                                                 Line No.</th>
-                                            <th class="table-heading-Show"  class="text-right">
-                                                <input id="chkAll" type="checkbox" (change)="showAll();" />
-                                                Show All
+                                            <th class="table-heading-Show" class="text-right">
+                                                <input id="chkAll" type="checkbox" (change)="showAll();" /> Show All
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of assignedList; let i=index"
-                                                 (click)="getServeyorDetail(data.userId,i);">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of assignedList; let i=index" (click)="getServeyorDetail(data.userId,i);">
                                                 <td class="table-data">{{i+1}}</td>
                                                 <td class="table-data">
                                                     {{data.name}}</td>
@@ -42,8 +39,7 @@
                                                 <td class="table-data">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
-                                                    <span class="Inactive-span" [hidden]="data.isActive==true"
-                                                        >Inactive</span>
+                                                    <span class="Inactive-span" [hidden]="data.isActive==true">Inactive</span>
                                                     <span [hidden]="data.isActive==false">
                                                         <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentAssign,data.userId,'update');"
@@ -60,8 +56,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="divMessage" id="divMessage" class="col-md-12 pr-1 text-center"
-                                >
+                            <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -79,41 +74,36 @@
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalDays}}</span> <br>
-                                    Working Day
+                                    <span class="tbl-points"> {{houseData.totalDays}}</span> <br> Working Day
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.average}}</span> <br>
-                                    Avg. Per Day
+                                    <span class="tbl-points"> {{houseData.average}}</span> <br> Avg. Per Day
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br>
-                                    Surveyed
+                                    <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br> Surveyed
                                 </h3>
                             </div>
                         </div>
-                        
+
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br>
-                                    Revisit
+                                    <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br> Revisit
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalRFID}}</span> <br>
-                                    RFID not matched
+                                    <span class="tbl-points"> {{houseData.totalRFID}}</span> <br> RFID not matched
                                 </h3>
                             </div>
                         </div>
@@ -127,42 +117,34 @@
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
                                         <div class="table-wrapper table-scroll table-main2">
-                                            <table class="table table2"
-                                                >
+                                            <table class="table table2">
                                                 <thead>
                                                     <th class="date-tableheading">Date</th>
-                                                    <th class="border-right Surveyed-tableheading"
-                                                        >Surveyed
+                                                    <th class="border-right Surveyed-tableheading">Surveyed
                                                     </th>
-                                                    <th class="border-right Revisit-tableheading"
-                                                        >Revisit</th>
-                                                    <th class="border-right RFID-tableheading"
-                                                        >RFID not
-                                                        matched</th>
+                                                    <th class="border-right Revisit-tableheading">Revisit</th>
+                                                    <th class="border-right RFID-tableheading">RFID not matched
+                                                    </th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
                                                         <td class="table-data2">
                                                             {{data.date}}</td>
-                                                            <td class="border-right table-data2"
-                                                                >
-                                                                <span [hidden]="data.surveyed!=null">-</span>
-                                                                {{data.surveyed}}</td>
-                                                                <td class="border-right table-data2"
-                                                                   >
-                                                                    <span [hidden]="data.revisit!=null">-</span>
-                                                                    {{data.revisit}}</td>
-                                                        <td class="border-right table-data2"
-                                                          >
-                                                            <span [hidden]="data.rfid!=null">-</span>
-                                                            {{data.rfid}}</td>
+                                                        <td class="border-right table-data2">
+                                                            <span [hidden]="data.surveyed!=null">-</span> {{data.surveyed}}
+                                                        </td>
+                                                        <td class="border-right table-data2">
+                                                            <span [hidden]="data.revisit!=null">-</span> {{data.revisit}}
+                                                        </td>
+                                                        <td class="border-right table-data2">
+                                                            <span [hidden]="data.rfid!=null">-</span> {{data.rfid}}
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="divMessage" id="divMessage" class="col-md-12 pr-1 text-center"
-                                        >
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -182,8 +164,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-header-title" id="exampleModalLongTitle">Are you
-                    sure you want to remove assignment ?</h5>
+                <h5 class="modal-title modal-header-title" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -231,15 +212,13 @@
                         <div class="checkbox-scroll">
                             <div class="row">
                                 <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
-                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
-                                    {{line.lineNo}}
+                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <input type="button" class="btn btn-success submit-btn saveAssignment-btn" value="SUBMIT"
-                    (click)="saveAssignment();" />
+                <input type="button" class="btn btn-success submit-btn saveAssignment-btn" value="SUBMIT" (click)="saveAssignment();" />
             </div>
         </div>
     </div>
