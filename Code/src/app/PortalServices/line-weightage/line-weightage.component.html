@@ -1,0 +1,80 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-4 no-gutters-iner">
+
+        </div>
+        <div class="col-md-4 Ward-Marking-heading">
+            Ward Line Weightage
+        </div>
+        <div class="col-md-4 text-right total-house fix-home-outer">
+
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 loaderClass-outer">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card custom-header-outer">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="wrap-input-effects" required>
+                                <select class="caret-select" id="ddlZone" style="width:100%" (change)="changeZoneSelection($event.target.value)">
+                                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                                  {{zone.zoneName}}
+                                </option>
+                              </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success" (click)="saveWeightage();" style="margin-top:-5px;">Save</button>
+                        </div>
+                        <div class="col-md-3 text-center">
+
+                        </div>
+                        <div class="col-md-3 text-center">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body card-body3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll table-outer">
+                                            <table class="table table-outer-iner">
+                                                <thead>
+                                                    <th class="table-data-line2">Line</th>
+                                                    <th class="table-data-Markers2">Weightage</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of lineList; let i=index">
+                                                        <td class="table-data2">
+                                                            {{data.lineNo}}</td>
+                                                        <td class="table-data2">
+                                                            <input type="number" id="txt{{data.lineNo}}" value="{{data.weightage}}" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="divmessage" id="divMessage" class="col-md-12 pr-1 text-center">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
