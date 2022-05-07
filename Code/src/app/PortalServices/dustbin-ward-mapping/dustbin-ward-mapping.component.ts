@@ -90,10 +90,6 @@ export class DustbinWardMappingComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
-    if (this.selectedDustbinList.length == 0) {
-      this.commonService.setAlertMessage("error", "Please select at least one dustbin !!!");
-      return;
-    }
     for (let i = 0; i < this.dustbinList.length; i++) {
       if (this.dustbinList[i]["zone"] == this.selectedZone) {
         this.dustbinList[i]["zone"] = "0";

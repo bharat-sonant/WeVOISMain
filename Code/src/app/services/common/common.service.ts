@@ -1902,5 +1902,29 @@ export class CommonService {
     });
   }
 
+  getWardLineWeightage(zoneNo: any, date: any) {
+    return new Promise((resolve) => {
+      let lineWeightageList = [];
+      this.getWardLine(zoneNo, date).then((linesData: any) => {
+        let wardLinesDataObj = JSON.parse(linesData);
+        let keyArray = Object.keys(wardLinesDataObj);
+        let totalLines = wardLinesDataObj["totalLines"];
+        this.getWardLineWeightageJson(zoneNo).then((jsonData: any) => {
+          if (jsonData != null) {
+            lineWeightageList = JSON.parse(JSON.stringify(jsonData));
+          }
+          else {
+            for (let i = 0; i < keyArray.length - 3; i++) {
+              let lineNo = Number(keyArray[i]);
+              lineWeightageList.push({ lineNo: lineNo, weightage: 1 });
+            }
+          }
+          lineWeightageList.push({ totalLines: totalLines });
+          resolve(lineWeightageList);
+        });
+      });
+    });
+  }
+
 
 }

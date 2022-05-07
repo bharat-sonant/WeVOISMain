@@ -19,7 +19,7 @@ export class LineWeightageComponent implements OnInit {
   lineList: any[];
   todayDate: any;
   totalLines: any;
-  divLoader="#divLoader";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -44,30 +44,15 @@ export class LineWeightageComponent implements OnInit {
     this.clearData();
     this.selectedZone = filterVal;
     if (this.selectedZone != "0") {
-$(this.divLoader).show();
-      this.getWardLines();
+      $(this.divLoader).show();
+      this.getLineWeightage();
     }
   }
 
-  getWardLines() {
-    this.commonService.getWardLine(this.selectedZone, this.todayDate).then((linesData: any) => {
-      this.getWardLineWeightage(JSON.parse(linesData));
-    });
-  }
-
-  getWardLineWeightage(wardLinesDataObj: any) {
-    let keyArray = Object.keys(wardLinesDataObj);
-    this.totalLines = wardLinesDataObj["totalLines"];
-    let weightage = (1 / this.totalLines) * 100;
-    this.commonService.getWardLineWeightageJson(this.selectedZone).then((jsonData: any) => {
-      if (jsonData != null) {
-        this.lineList=JSON.parse(JSON.stringify(jsonData));
-      }
-      else {
-        for (let i = 0; i < keyArray.length - 3; i++) {
-          let lineNo = Number(keyArray[i]);
-          this.lineList.push({ lineNo: lineNo, weightage: weightage });
-        }
+  getLineWeightage(){
+    this.commonService.getWardLineWeightage(this.selectedZone,this.todayDate).then((lineWeightageList: any) => {
+      for(let i=0;i<lineWeightageList.length-1;i++){
+        this.lineList.push({lineNo:lineWeightageList[i]["lineNo"],weightage:lineWeightageList[i]["weightage"]});
       }
       $(this.divLoader).hide();
     });

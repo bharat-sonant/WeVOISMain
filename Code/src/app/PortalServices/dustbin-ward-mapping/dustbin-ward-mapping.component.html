@@ -10,9 +10,7 @@
                     {{zone.zoneName}}
                 </option>
             </select>&nbsp;&nbsp;
-            <button class="btn btn-primary button" (click)="mapDustbinToWard();">
-                Map Dustbin to Ward
-            </button>
+
 
         </div>
         <div class="col-md-4 text-right total-house">
@@ -29,9 +27,14 @@
                     </span></span><br>
                 <h6>Total Dustbins</h6>
             </div>
+
+
         </div>
 
     </div>
+    <button class="btn btn-primary button" (click)="mapDustbinToWard();" style="z-index: 999;position: absolute;right: 20px;top: 75px;height: 41px;">
+        Save
+    </button>
 </section>
 
 <div #gmap class="gmap" id="divMap"></div>
