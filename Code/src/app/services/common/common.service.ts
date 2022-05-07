@@ -597,7 +597,7 @@ export class CommonService {
                 city: localStorage.getItem("cityName"),
                 empCode: data["empCode"]
               });
-              employeeList=this.transformNumeric(employeeList, "empCode");
+              employeeList = this.transformNumeric(employeeList, "empCode");
               localStorage.setItem("employeeList", JSON.stringify(employeeList));
               let list = JSON.parse(localStorage.getItem("employeeList"));
               let employeeData = list.find((item) => item.userName == employeeId);
@@ -1616,38 +1616,38 @@ export class CommonService {
       });
     });
   }
-/*
-  getWardLineCount(zoneNo: any) {
-    let wardLines = 0;
-    let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
-    if (wardLineCountList != null) {
-      let lineCount = wardLineCountList.find(item => item.wardNo == zoneNo);
-      if (lineCount != undefined) {
-        wardLines = Number(lineCount.lineCount);
-      }
-    }
-    return wardLines;
-  }
-
-
-  getDesignation() {
-    return new Promise((resolve) => {
-      let designationList = [];
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
-      let Instance = this.httpService.get(path).subscribe(dataDate => {
-        Instance.unsubscribe();
-        let list = JSON.parse(JSON.stringify(dataDate));
-        console.log(list)
-        for (let i = 1; i < list.length; i++) {
-          let designationId = i;
-          let designation = list[i]["name"];
-          designationList.push({ designationId: designationId, designation: designation });
+  /*
+    getWardLineCount(zoneNo: any) {
+      let wardLines = 0;
+      let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
+      if (wardLineCountList != null) {
+        let lineCount = wardLineCountList.find(item => item.wardNo == zoneNo);
+        if (lineCount != undefined) {
+          wardLines = Number(lineCount.lineCount);
         }
-        resolve(JSON.stringify(designationList));
+      }
+      return wardLines;
+    }
+  
+  
+    getDesignation() {
+      return new Promise((resolve) => {
+        let designationList = [];
+        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
+        let Instance = this.httpService.get(path).subscribe(dataDate => {
+          Instance.unsubscribe();
+          let list = JSON.parse(JSON.stringify(dataDate));
+          console.log(list)
+          for (let i = 1; i < list.length; i++) {
+            let designationId = i;
+            let designation = list[i]["name"];
+            designationList.push({ designationId: designationId, designation: designation });
+          }
+          resolve(JSON.stringify(designationList));
+        });
       });
-    });
-  }
-*/
+    }
+  */
 
 
   //#endregion
@@ -1844,7 +1844,7 @@ export class CommonService {
     let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path =  filePath + fileName;
+    const path = filePath + fileName;
 
     //const ref = this.storage.ref(path);
     const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
@@ -1866,28 +1866,40 @@ export class CommonService {
     const task = ref.put(blob);
   }
 
-  getCarePrefix(cityName:any){
-    let cardPrefix="SIKA"
-    if(cityName=="reengus"){     
-      cardPrefix="RENA"
+  getCarePrefix(cityName: any) {
+    let cardPrefix = "SIKA"
+    if (cityName == "reengus") {
+      cardPrefix = "RENA"
     }
-    else if(cityName=="kishangarh"){     
-      cardPrefix="KNGH"
+    else if (cityName == "kishangarh") {
+      cardPrefix = "KNGH"
     }
-    else if(cityName=="shahpura"){     
-      cardPrefix="SHAH"
+    else if (cityName == "shahpura") {
+      cardPrefix = "SHAH"
     }
-    else if(cityName=="niwai"){
-      cardPrefix="NIW"
+    else if (cityName == "niwai") {
+      cardPrefix = "NIW"
     }
-    else if(cityName=="jaisalmer"){     
-      cardPrefix="JAI"
+    else if (cityName == "jaisalmer") {
+      cardPrefix = "JAI"
     }
-    else if(cityName=="churu"){     
-      cardPrefix="CHU"
+    else if (cityName == "churu") {
+      cardPrefix = "CHU"
     }
 
     return cardPrefix;
+  }
+
+  getWardLineWeightageJson(zoneNo: any) {
+    return new Promise((resolve) => {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesWeightageJson%2F" + zoneNo + ".json?alt=media";
+      let wardLineWeightageInstance = this.httpService.get(path).subscribe(wardLineWeightageJsonData => {
+        wardLineWeightageInstance.unsubscribe();
+        resolve(wardLineWeightageJsonData);
+      }, error => {
+        resolve(null);
+      });
+    });
   }
 
 

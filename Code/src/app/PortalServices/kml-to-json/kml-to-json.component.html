@@ -1,11 +1,11 @@
 <div id="divLoader" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-  </div>
+</div>
 <div>
     <section class="header ">
         <div class="row no-gutters ">
             <div class="offset-3 col-6 heading text-center">
-                <b class="header-text"> Convert Penalty JSON </b>
+                <b class="header-text"> Convert Boundary KML to JSON </b>
             </div>
         </div>
     </section>
@@ -18,8 +18,7 @@
                             <div class="col-md-4">
                                 <label>Ward </label>
                                 <div class="wrap-input-effects" required>
-                                    <select class="caret-select" id="ddlZone" 
-                                   style="width:300px" >
+                                    <select class="caret-select" id="ddlZone" style="width:300px">
                                     <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
                                       {{zone.zoneName}}
                                     </option>
@@ -38,11 +37,9 @@
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12 pr-1">
                                 <div class="form-group">
-                                    <button id="btnSave" class="btn btn-success btn-xs"
-                                        (click)="saveData();">Convert to JSON</button>
-                                    
-                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
-                                        style="display: none;">
+                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">Convert to JSON</button>
+
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
                                 </div>
                             </div>
                         </div>

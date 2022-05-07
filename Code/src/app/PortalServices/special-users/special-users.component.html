@@ -4,8 +4,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
-            <span class="btn success addNew" (click)="openModel(contentUser,0);"  >Add New</span>
-            Special Users
+            <span class="btn success addNew" (click)="openModel(contentUser,0);">Add New</span> Special Users
         </div>
     </div>
 </section>
@@ -43,13 +42,12 @@
                                                     {{data.type}}
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="fas fa-user-edit" style="cursor: pointer; font-size: 20px;" (click)="openModel(contentUser,data.id);" ></i>
+                                                    <i class="fas fa-user-edit" style="cursor: pointer; font-size: 20px;" (click)="openModel(contentUser,data.id);"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -78,8 +76,7 @@
                         </div>
                     </div>
                 </div>-->
-                <div id="content" #content class="card-body"
-                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -88,8 +85,7 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -120,20 +116,18 @@
                 <div class="wrap-input-effects" required>
                     <select id="ddlType" class="input-green">
                         <option value="0">Select Type</option>
-                        <option value="superadmin">Super Admin</option>
-                        <option value="admin">Admin</option>
-                        <option value="accountadmin">Account Admin</option>
-                        <option value="cityadmin">City Admin</option>
-                        <option value="empapproveradmin">Employee Approve Admin</option>
-                        <option value="humanresources">Human Resources</option>
-                        <option value="siadmin">SI Admin</option>
-                        <option value="supportteam">Support Team</option>
-                        <option value="siadmin">SI Admin</option>
-                    </select>     
+                        <option value="SuperAdmin">Super Admin</option>
+                        <option value="Admin">Admin</option>
+                        <option value="AccountAdmin">Account Admin</option>
+                        <option value="CityAdmin">City Admin</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="SIAdmin">SI Admin</option>
+                        <option value="SupportTeam">Support Team</option>
+                    </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-user-alt" aria-hidden="true"></i>
-                    </span>              
+                    </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtUserName" class="input-green" placeholder="Name" />
@@ -149,8 +143,7 @@
                         <i class="fas fa-key" aria-hidden="true"></i>
                     </span>
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveUsers();" style="height: 45px;" />
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveUsers();" style="height: 45px;" />
             </div>
         </div>
     </div>

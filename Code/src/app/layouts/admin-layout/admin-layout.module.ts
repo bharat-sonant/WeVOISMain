@@ -110,6 +110,7 @@ import { EmployeesComponent } from '../../PortalServices/employees/employees.com
 import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
 import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
+import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
 
 @NgModule({
   imports: [
@@ -224,7 +225,8 @@ import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-m
     EmployeesComponent,
     SpecialUsersComponent,
     DustbinPlaningComponent,
-    DustbinWardMappingComponent
+    DustbinWardMappingComponent,
+    LineWeightageComponent
   ]
 })
 
