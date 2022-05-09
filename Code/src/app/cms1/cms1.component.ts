@@ -616,7 +616,7 @@ export class Cms1Component implements OnInit {
                   }
                 }
               }
-              console.log("Last Key : "+lastKey);
+              console.log("Last Key : " + lastKey);
               let dbPathLastKey = "WastebinMonitor/ImagesData/" + year + "/" + month + "/" + date + "/2/";
               this.db.object(dbPathLastKey).update({ lastKey: lastKey });
               console.log("count : " + count);
@@ -630,11 +630,11 @@ export class Cms1Component implements OnInit {
 
   }
 
-  
+
   arrayBuffer: any;
   first_sheet_name: any;
 
-  uploadDustbinData(){
+  uploadDustbinData() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -650,30 +650,175 @@ export class Cms1Component implements OnInit {
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       console.log(fileList);
-      let key=1;
-      const jsonObj={};
-      for(let i=0;i<fileList.length;i++){
-        let address=fileList[i]["Ward No"];
-        let lat=fileList[i]["Latitude"];
-        let lng=fileList[i]["Longitude"];
-        const data={
-          address:address,
-          lat:lat,
-          lng:lng,
-          isApproved:false,
-          pickFrequency:"1",
-          type:"Rectangular",
-          ward:"0",
-          zone:"A",
-          createdDate:"2022-04-19"
+      let key = 1;
+      const jsonObj = {};
+      for (let i = 0; i < fileList.length; i++) {
+        let address = fileList[i]["Ward No"];
+        let lat = fileList[i]["Latitude"];
+        let lng = fileList[i]["Longitude"];
+        const data = {
+          address: address,
+          lat: lat,
+          lng: lng,
+          isApproved: false,
+          pickFrequency: "1",
+          type: "Rectangular",
+          ward: "0",
+          zone: "A",
+          createdDate: "2022-04-19"
         }
-        jsonObj[key]=data;
+        jsonObj[key] = data;
         key++;
       }
       console.log(jsonObj);
       this.db.object("DustbinData/DustbinDetails").update(jsonObj);
-      
+
     }
   }
+
+  checkMarkerCount() {
+    let wardNo = "2_3";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let totalMarkerCount = 0;
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length - 1; i++) {
+            let lineNo = Number(keyArray[i]);
+            let lineObj = data[lineNo];
+            let lineArray = Object.keys(lineObj);
+            let markerCount = 0;
+            let lastMarkerKey = 0;
+            for (let j = 0; j < lineArray.length; j++) {
+              let markerNo = lineArray[j];
+              if (lineObj[markerNo]["latLng"] != undefined) {
+                lastMarkerKey = Number(markerNo);
+                totalMarkerCount++;
+                markerCount++;
+              }
+            }
+            console.log(lineNo + " ==> " + markerCount);
+            console.log("last Marker Key : " + lastMarkerKey);
+            dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/";
+            this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey, marksCount: markerCount });
+          }
+          console.log(totalMarkerCount);
+          dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "";
+          this.db.object(dbPath).update({ marked: totalMarkerCount });
+        }
+      }
+    );
+
+  }
+
+  exportCardNo() {
+    let houseList = [];
+    let dbPath = "Houses";
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      houseInstance.unsubscribe();
+      let keyArray = Object.keys(data);
+      for (let i = 0; i < keyArray.length; i++) {
+        let wardObj = data[keyArray[i]];
+        let wardArray = Object.keys(wardObj);
+        for (let j = 0; j < wardArray.length; j++) {
+          let lineObj = wardObj[wardArray[j]];
+          let cardArray = Object.keys(lineObj);
+          for (let k = 0; k < cardArray.length; k++) {
+            let cardNo = cardArray[k];
+            houseList.push({ cardNo: cardNo });
+            // console.log(cardNo);
+          }
+        }
+      }
+      if (houseList.length > 0) {
+        console.log(houseList);
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "cardNo";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < houseList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        /* generate workbook and add the worksheet */
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        /* save to file */
+        XLSX.writeFile(wb, "houses.xlsx");
+      }
+
+    });
+  }
+
+  updateMarkingData() {
+    let markerList = [];
+    let wardNo = "21_28";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        let keyArray = Object.keys(markerData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let markerObj = markerData[lineNo];
+          let markerArray = Object.keys(markerObj);
+          let markerCount = 0;
+          let lastMarkerKey = 0;
+          for (let j = 0; j < markerArray.length; j++) {
+            let index = markerArray[j];
+            if (markerObj[index]["cardNumber"] != null) {
+              markerCount++;
+              markerList.push({ lineNo: lineNo, cardNo: markerObj[index]["cardNumber"] });
+            }
+          }
+          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/";
+          // this.db.object(dbPath).update({surveyedCount: markerCount });
+        }
+        console.log(markerList);
+        // dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "";
+        // this.db.object(dbPath).update({ marked: markerList.length });
+      }
+    );
+  }
+
+  addHouse() {
+    let zoneNo = $("#txtZoneNo").val();
+    let lineNo = $("#txtLineNo").val();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+    let markingInstance = this.db.object(dbPath).valueChanges(
+      markerData => {
+        markingInstance.unsubscribe();
+        if (markerData != null) {
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (markerData[index]["latLng"] != null) {
+                if (markerData[index]["cardNumber"] == null) {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+  }
+
+
 
 }
