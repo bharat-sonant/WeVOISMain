@@ -653,7 +653,7 @@ export class WardWorkTrackingComponent {
 
   getTimerTime() {
     this.progressData.totalTimer = 0;
-    const timerTimeJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FLinewiseTimingDetailsInWard%2F" + this.selectedZone + ".json?alt=media";
+    const timerTimeJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FTimingForLines%2F" + this.selectedZone + ".json?alt=media";
     let timerTimeInstance = this.httpService.get(timerTimeJsonPath).subscribe(timerTimeData => {
       timerTimeInstance.unsubscribe();
       if (timerTimeData != null) {
@@ -752,7 +752,7 @@ export class WardWorkTrackingComponent {
         this.zoneLineList[i]["timerTime"] = timerTime;
         obj[lineNo] = { minimumTimeToCollectWaste: timerTime };
       }
-      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseTimingDetailsInWard/");
+      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/TimingForLines/");
       this.commonService.setAlertMessage("success", "Data saved successfully !!!");
     }
   }
