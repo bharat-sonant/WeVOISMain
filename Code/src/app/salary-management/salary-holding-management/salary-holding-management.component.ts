@@ -81,7 +81,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
           if (this.allEmployeeList[i]["status"] == "1") {
             let empId = this.allEmployeeList[i]["empId"];
             let name = this.allEmployeeList[i]["name"] + " (" + this.allEmployeeList[i]["empCode"] + ")";
-            this.employeeList.push({ empId: empId, name: name });
+            this.employeeList.push({ empId: empId, name: name,empCode:this.allEmployeeList[i]["empCode"] });
             this.employeeList = this.commonService.transformNumeric(this.employeeList, "empCode");
           }
         }
