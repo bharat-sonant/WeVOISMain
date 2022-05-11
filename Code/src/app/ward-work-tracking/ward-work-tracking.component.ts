@@ -43,6 +43,7 @@ export class WardWorkTrackingComponent {
   vehicleMarker: any;
   firebaseStoragePath: any;
   skipLineMarker: any;
+  routePolyline: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   parshadMarkerImageUrl = "../assets/img/sweet-home.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
@@ -74,6 +75,7 @@ export class WardWorkTrackingComponent {
   chkIsShowLineNo = "chkIsShowLineNo";
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
+  chkIsTrackRoute = "chkIsTrackRoute";
   chkIsAvailableForScancard = "chkIsAvailableForScancard";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
@@ -121,7 +123,7 @@ export class WardWorkTrackingComponent {
       this.getParshadList();
       this.isParshadShow = true;
     }
-    this.getLocalStorage();
+
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
@@ -136,6 +138,7 @@ export class WardWorkTrackingComponent {
       } else {
         this.selectedZone = "0";
       }
+      this.getLocalStorage();
     });
   }
 
@@ -530,9 +533,68 @@ export class WardWorkTrackingComponent {
     (<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingAllDustbinShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkerDetailShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingTrackRouteShow"));
     this.showHideWorkDetail();
     this.showHideWorkerDetail();
     this.showHideAllDustbin();
+    this.showHideTrackRoute();
+  }
+
+  showHideTrackRoute() {
+    this.hideSetting();
+    localStorage.setItem("wardWorkTrackingTrackRouteShow", (<HTMLInputElement>document.getElementById("chkIsTrackRoute")).checked.toString());
+    if ((<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked == false) {
+      if (this.routePolyline != null) {
+        this.routePolyline.setMap(null);
+      }
+    }
+    else {
+      if (this.routePolyline != null) {
+        this.routePolyline.setMap(this.map);
+      }
+      else {
+        this.getRoute();
+      }
+    }
+  }
+
+  getRoute() {
+    let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      routeData => {
+        routeInstance.unsubscribe();
+        if (routeData != null) {
+          let lineData = [];
+          let keyArray = Object.keys(routeData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let index = keyArray[i];
+              if (routeData[index]["lat-lng"] != null) {
+                let routeDateList = [];
+                let latLong: string = routeData[index]["lat-lng"];
+                routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+                for (let j = 0; j < routeDateList.length; j++) {
+                  let routePart = routeDateList[j].split(',');
+                  if (routePart.length == 2) {
+                    lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+                  }
+                }
+              }
+            }
+            if (lineData.length > 0) {
+              let line = new google.maps.Polyline({
+                path: lineData,
+                strokeColor: "blue",
+                strokeWeight: 2
+              });
+
+              this.routePolyline = line;
+              this.routePolyline.setMap(this.map);
+            }
+          }
+        }
+      }
+    );
   }
 
   setDate(filterVal: any, type: string) {
@@ -570,6 +632,9 @@ export class WardWorkTrackingComponent {
     }
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked == true) {
       this.getDustbins();
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked == true) {
+      this.getRoute();
     }
   }
 
@@ -952,6 +1017,10 @@ export class WardWorkTrackingComponent {
     if (this.wardEndMarker != null) {
       this.wardEndMarker.setMap(null);
     }
+    if (this.routePolyline != null) {
+      this.routePolyline.setMap(null)
+    }
+    this.routePolyline = null;
     this.wardLinesDataObj = null;
     this.progressData.completedLines = 0;
     this.progressData.coveredLength = "0";
