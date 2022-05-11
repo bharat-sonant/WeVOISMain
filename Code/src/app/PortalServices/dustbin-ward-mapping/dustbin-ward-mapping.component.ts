@@ -22,7 +22,11 @@ export class DustbinWardMappingComponent implements OnInit {
   cityName: any;
   wardBoundary: any;
   dustbinMarkerList: any[] = [];
+  polylines:any[]=[];
+  wardLineNoMarker:any[]=[];
+  todayDate:any;
 
+  invisibleImageUrl = "../assets/img/invisible-location.svg";
   defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
   defaultRectangularDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
   defaultRectangularPickedDustbinUrl = "../assets/img/Green-Rectangle-dustbin.png";
@@ -39,6 +43,7 @@ export class DustbinWardMappingComponent implements OnInit {
   }
 
   setDefault() {
+    this.todayDate=this.commonService.setTodayDate();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.setDefaultMap();
     this.setHeight();
@@ -66,10 +71,78 @@ export class DustbinWardMappingComponent implements OnInit {
     this.selectedZone = zone;
     this.clearAll();
     this.setWardBoundary();
+    this.getAllLinesFromJson();
     this.showZoneDustbinMarker();
   }
 
+  getAllLinesFromJson() {
+    this.commonService.getWardLine(this.selectedZone, this.todayDate).then((linesData: any) => {
+      let wardLinesDataObj = JSON.parse(linesData);
+      let keyArray = Object.keys(wardLinesDataObj);
+      for (let i = 0; i < keyArray.length - 3; i++) {
+        let lineNo = Number(keyArray[i]);
+        let points = wardLinesDataObj[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+          if(j==0){
+            this.setLineNoMarker(lineNo,points[j][0],points[j][1]);
+          }
+        }
+        this.plotLineOnMap(latLng, i);
+      }
+    }, error => {
+    });
+  }  
+
+  plotLineOnMap(latlng: any, index: any) {
+    let line = new google.maps.Polyline({
+      path: latlng,
+      strokeColor: this.commonService.getLineColor(null),
+      strokeWeight: 2,
+    });
+    this.polylines[index] = line;
+    this.polylines[index].setMap(this.map);
+  }
+  
+  setLineNoMarker(lineNo: any, lat: any, lng: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: this.invisibleImageUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(32, 40),
+        origin: new google.maps.Point(0, 0),
+      },
+      label: {
+        text: lineNo.toString(),
+        color: "#000",
+        fontSize: "13px",
+        fontWeight: "bold",
+      },
+    });
+    this.wardLineNoMarker.push({ marker });
+  }
+
   clearAll() {
+    if (this.wardLineNoMarker.length > 0) {
+      for (let i = 0; i < this.wardLineNoMarker.length; i++) {
+        if (this.wardLineNoMarker[i]["marker"] != null) {
+          this.wardLineNoMarker[i]["marker"].setMap(null);
+        }
+      }
+      this.wardLineNoMarker = [];
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
+      }
+      this.polylines = [];
+    }
     if (this.dustbinMarkerList.length > 0) {
       for (let i = 0; i < this.dustbinMarkerList.length; i++) {
         if (this.dustbinMarkerList[i]["marker"] != null) {
