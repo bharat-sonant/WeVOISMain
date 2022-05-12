@@ -1,6 +1,6 @@
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-3">
+    <div class="col-md-4">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -9,11 +9,11 @@
         </option>
       </select>
     </div>
-    <div class="col-md-3 ward-header-outer">
+    <div class="col-md-4 ward-header-outer">
       <h1 class="ward-header"> Marker Approval </h1>
     </div>
 
-    <div class="col-md-6 text-right total-house" id="houseCount">
+    <div class="col-md-4 text-right total-house" id="houseCount">
 
       <div class="fix-home">
         <div id="divLastUpdate" class="float-fourth fix-home-iner">
