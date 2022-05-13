@@ -1935,7 +1935,6 @@ export class CommonService {
                   lineWeightageList.push({ lineNo: list[i]["lineNo"], weightage: list[i]["weightage"] });
                 }
                 lineWeightageList.push({ totalLines: totalLines });
-                console.log(list);
                 resolve(lineWeightageList);
               }
             });

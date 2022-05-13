@@ -36,6 +36,7 @@ export class WardWorkTrackingComponent {
   parshadList: any[] = [];
   cardNotScanedList: any[] = [];
   skipLineList: any[] = [];
+  lineWeightageList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   wardStartMarker: any;
@@ -104,7 +105,8 @@ export class WardWorkTrackingComponent {
     totalHouses: 0,
     cardNotScanedImages: 0,
     scanedHouses: 0,
-    totalTimer: 0
+    totalTimer: 0,
+    percentage: 0
   };
 
   ngOnInit() {
@@ -134,7 +136,7 @@ export class WardWorkTrackingComponent {
       const id = this.actRoute.snapshot.paramMap.get("id");
       if (id != null) {
         this.selectedZone = id.trim();
-        this.getWardData();
+        this.getLineWeightage();
       } else {
         this.selectedZone = "0";
       }
@@ -608,7 +610,7 @@ export class WardWorkTrackingComponent {
     $(this.txtDate).val(this.selectedDate);
     this.getSelectedYearMonth();
     if (this.selectedZone != "0") {
-      this.getWardData();
+      this.getLineWeightage();
     }
   }
 
@@ -618,12 +620,10 @@ export class WardWorkTrackingComponent {
   }
 
   getWardData() {
-    this.resetData();
-    $(this.divLoader).show();
     let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
     element.href = this.cityName + "/route-tracking/" + this.selectedZone;
-    this.getEmployeeData();
     this.getCurrentLine();
+    this.getEmployeeData();
     this.getSummaryData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
@@ -998,7 +998,7 @@ export class WardWorkTrackingComponent {
       return;
     }
     this.selectedZone = filterVal;
-    this.getWardData();
+    this.getLineWeightage();
   }
 
   resetData() {
@@ -1041,6 +1041,7 @@ export class WardWorkTrackingComponent {
     this.progressData.totalHouses = 0;
     this.progressData.cardNotScanedImages = 0;
     this.progressData.scanedHouses = 0;
+    this.progressData.percentage=0;
     this.clearHouseFromMap();
     this.houseMarkerList = [];
     this.cardNotScanedList = [];
@@ -1126,7 +1127,7 @@ export class WardWorkTrackingComponent {
       this.wardLinesDataObj = JSON.parse(linesData);
       let keyArray = Object.keys(this.wardLinesDataObj);
       this.progressData.totalLines = this.wardLinesDataObj["totalLines"];
-      this.progressData.wardLength = (parseFloat(this.wardLinesDataObj["totalWardLength"]) / 1000).toFixed(2);;
+      this.progressData.wardLength = (parseFloat(this.wardLinesDataObj["totalWardLength"]) / 1000).toFixed(2);
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let points = this.wardLinesDataObj[lineNo]["points"];
@@ -1167,6 +1168,29 @@ export class WardWorkTrackingComponent {
       $(this.divLoader).hide();
     });
   }
+
+
+  getLineWeightage() {
+    this.resetData();
+    $(this.divLoader).show();
+    this.commonService.getWardLineWeightage(this.selectedZone, this.selectedDate).then((lineList: any) => {
+      this.lineWeightageList = lineList;
+      this.getWardData();
+    });
+  }
+
+  
+  getCurrentLine() {
+    if (this.selectedDate == this.toDayDate) {
+      let lastLineInstance = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
+        this.instancesList.push({ instances: lastLineInstance });
+        if (lastLine != null) {
+          this.progressData.currentLine = Number(lastLine) + 1;
+        }
+      });
+    }
+  }
+
 
   setWardStartMarker() {
     if (this.lines.length > 0) {
@@ -1226,7 +1250,16 @@ export class WardWorkTrackingComponent {
         if (lineDetail != undefined) {
           if (lineStatus == "LineCompleted") {
             if (lineDetail.color == "#60c2ff") {
-              this.progressData.completedLines = this.progressData.completedLines + 1;
+              let lineWeight = 1;
+              let lineWeightDetail = this.lineWeightageList.find(item => item.lineNo == lineNo);
+              if (lineWeightDetail != undefined) {
+                lineWeight = Number(lineWeightDetail.weightage);
+                this.progressData.percentage += (100 / Number(this.progressData.totalLines)) * lineWeight;
+              }
+              if (this.progressData.percentage > 100) {
+                this.progressData.percentage = 100;
+              }
+              this.progressData.completedLines = Number(((Number(this.progressData.percentage.toFixed(0)) * this.progressData.totalLines) / 100).toFixed(0));
             }
           }
           lineDetail.color = strokeColor;
@@ -1275,17 +1308,6 @@ export class WardWorkTrackingComponent {
         }
       }
     });
-  }
-
-  getCurrentLine() {
-    if (this.selectedDate == this.toDayDate) {
-      let lastLineInstance = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
-        this.instancesList.push({ instances: lastLineInstance });
-        if (lastLine != null) {
-          this.progressData.currentLine = Number(lastLine) + 1;
-        }
-      });
-    }
   }
 
   getEmployeeData() {
@@ -1501,4 +1523,5 @@ export class progressDetail {
   cardNotScanedImages: number;
   scanedHouses: number;
   totalTimer: number;
+  percentage: number;
 }
