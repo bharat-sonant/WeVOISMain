@@ -772,8 +772,8 @@ label{
   padding-right: 0px;
 }
 .card-outer{
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
 .table-one{
   overflow-x: scroll;
@@ -787,6 +787,24 @@ div#divMessage {
 .fix-home-outer{
   margin-left: auto;
 }
+.col-md-6.loaderClass-outer{
+  margin-top: 35px !important;
+}
+.card-header{
+  box-shadow: unset !important;
+}
+.responsive{
+  width: 50% !important;
+}
+.custom-header{
+  height: unset !important;
+}
+.card-body3{
+  margin-top: 0px !important;
+}
+.table-scroll{
+  height: unset !important;
+}
 } 
 
 @media only screen and (min-width:560px) and (max-width:821px){
@@ -799,6 +817,16 @@ div#divMessage {
  .fix-home-outer{
   margin-left: auto;
 }
+.responsive{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.fix-home-iner{
+  margin-left: 0px !important
+}
+.table-outer{
+  overflow-x: scroll !important;
+ }
 }
 @media only screen and (min-width:900px) and (max-width:921px){
   .Ward-Marking-heading{

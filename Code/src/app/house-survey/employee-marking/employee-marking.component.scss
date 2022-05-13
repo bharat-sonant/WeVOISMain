@@ -130,6 +130,10 @@
     min-height: calc(100vh - 123px);
     margin-top: -30px;
 }
+.scrollbar-on.main-panel{
+  max-height: unset !important;
+  height: unset !important;
+}
 .fa-caret-left{
   font-size: 28px;
   color: #2c2c2c;
@@ -653,7 +657,7 @@ color: #fff!important;
 }
 
 
-@media only screen and (min-width:270px) and (max-width:550px){
+@media only screen and (min-width:270px) and (max-width:576px){
   .Surveyor-box{
     display: none;
   }
@@ -680,6 +684,15 @@ color: #fff!important;
 }
 .custom-header-outer{
   height: unset !important;
+}
+.cards-main{
+  margin-top: 25px !important;
+}
+.table-heading-main{
+  width: 50% !important;
+}
+.main-panel{
+  background: none !important;
 }
 
 }
