@@ -383,7 +383,6 @@ export class RealtimeMonitoringComponent implements OnInit {
             }
             this.getWardDetail(zoneNo);
           });
-
         }
       }
 

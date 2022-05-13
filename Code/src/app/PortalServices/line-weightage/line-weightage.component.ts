@@ -49,10 +49,14 @@ export class LineWeightageComponent implements OnInit {
     }
   }
 
-  getLineWeightage(){
-    this.commonService.getWardLineWeightage(this.selectedZone,this.todayDate).then((lineWeightageList: any) => {
-      for(let i=0;i<lineWeightageList.length-1;i++){
-        this.lineList.push({lineNo:lineWeightageList[i]["lineNo"],weightage:lineWeightageList[i]["weightage"]});
+  getLineWeightage() {
+    $(this.divLoader).show();
+    this.commonService.getWardLineWeightage(this.selectedZone, this.todayDate).then((lineWeightageList: any) => {
+      console.log(lineWeightageList);
+      this.totalLines = lineWeightageList[lineWeightageList.length - 1]["totalLines"];
+      console.log(this.totalLines);
+      for (let i = 0; i < lineWeightageList.length - 1; i++) {
+        this.lineList.push({ lineNo: lineWeightageList[i]["lineNo"], weightage: lineWeightageList[i]["weightage"] });
       }
       $(this.divLoader).hide();
     });
@@ -77,10 +81,43 @@ export class LineWeightageComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please fill all lines weightage !!!");
       return;
     }
-    let filePath = "/WardLinesWeightageJson/";
-    let fileName = this.selectedZone + ".json";
-    this.commonService.saveJsonFile(this.lineList, fileName, filePath);
-    this.commonService.setAlertMessage("success", "Ward Lines Weightage update !!!");
+
+    let updateList = [];
+    for (let i = 0; i < this.lineList.length; i++) {
+      updateList.push({ lineNo: this.lineList[i]["lineNo"], weightage: this.lineList[i]["weightage"] });
+    }
+    updateList.push({ totalLines: this.totalLines });
+
+    let filePath = "/WardLineWeightageJson/" + this.selectedZone + "/";
+    let fileName = this.todayDate + ".json";
+    this.commonService.saveJsonFile(updateList, fileName, filePath);
+    this.updateLineWeightageUpdateJson();
+  }
+
+  updateLineWeightageUpdateJson() {
+    this.commonService.getWeightageUpdateHistoryJson(this.selectedZone).then((updateData: any) => {
+      let updateArray = [];
+      if (updateData == null) {
+        updateArray.push(this.todayDate);
+      }
+      else {
+        updateArray = JSON.parse(updateData);
+        let isDate = false;
+        for (let i = 0; i < updateArray.length; i++) {
+          if (updateArray[i] == this.todayDate) {
+            isDate = true;
+            i = updateArray.length;
+          }
+        }
+        if (isDate == false) {
+          updateArray.push(this.todayDate);
+        }
+      }
+      let filePath = "/WardLineWeightageJson/" + this.selectedZone + "/";
+      let fileName = "weightageUpdateHistoryJson.json";
+      this.commonService.saveJsonFile(updateArray, fileName, filePath);
+      this.commonService.setAlertMessage("success", "Ward Lines Weightage update !!!");
+    });
   }
 
   clearData() {

@@ -1890,18 +1890,6 @@ export class CommonService {
     return cardPrefix;
   }
 
-  getWardLineWeightageJson(zoneNo: any) {
-    return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesWeightageJson%2F" + zoneNo + ".json?alt=media";
-      let wardLineWeightageInstance = this.httpService.get(path).subscribe(wardLineWeightageJsonData => {
-        wardLineWeightageInstance.unsubscribe();
-        resolve(wardLineWeightageJsonData);
-      }, error => {
-        resolve(null);
-      });
-    });
-  }
-
   getWardLineWeightage(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       let lineWeightageList = [];
@@ -1909,19 +1897,64 @@ export class CommonService {
         let wardLinesDataObj = JSON.parse(linesData);
         let keyArray = Object.keys(wardLinesDataObj);
         let totalLines = wardLinesDataObj["totalLines"];
-        this.getWardLineWeightageJson(zoneNo).then((jsonData: any) => {
-          if (jsonData != null) {
-            lineWeightageList = JSON.parse(JSON.stringify(jsonData));
+        for (let i = 0; i < keyArray.length - 3; i++) {
+          let lineNo = Number(keyArray[i]);
+          lineWeightageList.push({ lineNo: lineNo, weightage: 1 });
+        }
+        lineWeightageList.push({ totalLines: totalLines });
+        let dat1 = new Date(date);
+        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
+        let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+          jsonInstance.unsubscribe();
+          if (dataDate == null) {
+            resolve(lineWeightageList);
           }
           else {
-            for (let i = 0; i < keyArray.length - 3; i++) {
-              let lineNo = Number(keyArray[i]);
-              lineWeightageList.push({ lineNo: lineNo, weightage: 1 });
+            let list = JSON.parse(JSON.stringify(dataDate));
+            let jsonDate = "";
+            if (list.length == 1) {
+              jsonDate = list[0].toString().trim();
             }
+            else {
+              for (let i = list.length - 1; i >= 0; i--) {
+                let dat2 = new Date(list[i]);
+                if (dat1 >= dat2) {
+                  jsonDate = list[i].toString().trim();
+                  i = -1;
+                }
+              }
+            }
+            const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+            let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+              wardLineInstance.unsubscribe();
+              if (data != null) {
+                lineWeightageList=[];
+                let list=JSON.parse(JSON.stringify(data));
+                let totalLines = list[list.length-1]["totalLines"];
+                for(let i=0;i<list.length-1;i++){
+                  lineWeightageList.push({ lineNo: list[i]["lineNo"], weightage: list[i]["weightage"] });
+                }
+                lineWeightageList.push({ totalLines: totalLines });
+                console.log(list);
+                resolve(lineWeightageList);
+              }
+            });
           }
-          lineWeightageList.push({ totalLines: totalLines });
+        }, error => {
           resolve(lineWeightageList);
         });
+      });
+    });
+  }
+
+  getWeightageUpdateHistoryJson(zoneNo: any) {
+    return new Promise((resolve) => {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        resolve(JSON.stringify(dataDate));
+      },error=>{
+        resolve(null);
       });
     });
   }

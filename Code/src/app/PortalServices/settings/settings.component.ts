@@ -24,7 +24,6 @@ export class SettingsComponent implements OnInit {
   txtLineEndPointRange = "#txtLineEndPointRange";
   txtCurrentLocationCaptureInterval = "#txtCurrentLocationCaptureInterval";
   txtMaxDistanceCanCover = "#txtMaxDistanceCanCover";
-  txtInternetCheckInterval = "#txtInternetCheckInterval";
   txtScreenOffVoiceMessage = "#txtScreenOffVoiceMessage";
   txtInternetCheckVoiceMessage = "#txtInternetCheckVoiceMessage";
   txtStartLineNote = "#txtStartLineNote";
@@ -35,8 +34,6 @@ export class SettingsComponent implements OnInit {
   txtHaltVoiceMessageMinimumTime = "#txtHaltVoiceMessageMinimumTime";
   txtLunchBreakMessage = "#txtLunchBreakMessage";
   txtLunchBreakMessageInterval = "#txtLunchBreakMessageInterval";
-  txtLunchBreakMessageMinimumTime = "#txtLunchBreakMessageMinimumTime";
-  txtReaderDeviceOfflineInterval = "#txtReaderDeviceOfflineInterval";
   txtReaderDeviceOfflineMessage = "#txtReaderDeviceOfflineMessage";
   txtScreenOffIntervalTime="#txtScreenOffIntervalTime";
   txtMicCapturingTime="#txtMicCapturingTime";
@@ -146,9 +143,6 @@ export class SettingsComponent implements OnInit {
         if (navigetorJsonData["maxDistanceCanCover"] != null) {
           $(this.txtMaxDistanceCanCover).val(navigetorJsonData["maxDistanceCanCover"]);
         }
-        if (navigetorJsonData["internetCheckInterval"] != null) {
-          $(this.txtInternetCheckInterval).val(navigetorJsonData["internetCheckInterval"]);
-        }
         if (navigetorJsonData["screenOffVoiceMessage"] != null) {
           $(this.txtScreenOffVoiceMessage).val(navigetorJsonData["screenOffVoiceMessage"]);
         }
@@ -178,12 +172,6 @@ export class SettingsComponent implements OnInit {
         }
         if (navigetorJsonData["lunchBreakMessageInterval"] != null) {
           $(this.txtLunchBreakMessageInterval).val(navigetorJsonData["lunchBreakMessageInterval"]);
-        }
-        if (navigetorJsonData["lunchBreakMessageMinimumTime"] != null) {
-          $(this.txtLunchBreakMessageMinimumTime).val(navigetorJsonData["lunchBreakMessageMinimumTime"]);
-        }
-        if (navigetorJsonData["readerDeviceOfflineInterval"] != null) {
-          $(this.txtReaderDeviceOfflineInterval).val(navigetorJsonData["readerDeviceOfflineInterval"]);
         }
         if (navigetorJsonData["readerDeviceOfflineMessage"] != null) {
           $(this.txtReaderDeviceOfflineMessage).val(navigetorJsonData["readerDeviceOfflineMessage"]);
@@ -223,9 +211,6 @@ export class SettingsComponent implements OnInit {
     if ($(this.txtMaxDistanceCanCover).val() != "") {
       this.navigatorJsonObject["maxDistanceCanCover"] = $(this.txtMaxDistanceCanCover).val();
     }
-    if ($(this.txtInternetCheckInterval).val() != "") {
-      this.navigatorJsonObject["internetCheckInterval"] = $(this.txtInternetCheckInterval).val();
-    }
     if ($(this.txtScreenOffVoiceMessage).val() != "") {
       this.navigatorJsonObject["screenOffVoiceMessage"] = $(this.txtScreenOffVoiceMessage).val();
     }
@@ -255,12 +240,6 @@ export class SettingsComponent implements OnInit {
     }
     if ($(this.txtLunchBreakMessageInterval).val() != "") {
       this.navigatorJsonObject["lunchBreakMessageInterval"] = $(this.txtLunchBreakMessageInterval).val();
-    }
-    if ($(this.txtLunchBreakMessageMinimumTime).val() != "") {
-      this.navigatorJsonObject["lunchBreakMessageMinimumTime"] = $(this.txtLunchBreakMessageMinimumTime).val();
-    }
-    if ($(this.txtReaderDeviceOfflineInterval).val() != "") {
-      this.navigatorJsonObject["readerDeviceOfflineInterval"] = $(this.txtReaderDeviceOfflineInterval).val();
     }
     if ($(this.txtReaderDeviceOfflineMessage).val() != "") {
       this.navigatorJsonObject["readerDeviceOfflineMessage"] = $(this.txtReaderDeviceOfflineMessage).val();
