@@ -93,8 +93,6 @@
 <div #gmap class="gmap" id="divMap"></div>
 <a id="routeTrackingLink" target="_blank" title="Show Route"> <img src="../../assets/img/route_tracking.svg" class="fa-expand-route" /> </a>
 
-
-
 <div id="divWorkerDetail" class="driver-helper-box" style="display: none;">
     <div class="row">
         <div class="col-md-12">
@@ -145,24 +143,14 @@
             </h3>
         </div>
         <div class="lines bg-4 route3">
-            <h3>{{progressData.totalLines}}
-                <p>Total Lines</p>
+            <h3>{{progressData.completedLines}}/{{progressData.totalLines}}
+                <p>Completed Lines</p>
             </h3>
 
         </div>
         <div class="lines2 bg-4 route4" (click)="showSkipLineDetail(contentSkipLines)">
             <h3>{{progressData.skippedLines}}
                 <p>Skipped Lines</p>
-            </h3>
-        </div>
-        <div class="lines bg-6 route5">
-            <h3>{{progressData.completedLines}}
-                <p>Completed Lines</p>
-            </h3>
-        </div>
-        <div class="lines2 bg-6">
-            <h3>{{progressData.currentLine}}
-                <p>Current Lines</p>
             </h3>
         </div>
     </div>
