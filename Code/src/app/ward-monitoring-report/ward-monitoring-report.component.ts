@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
 
@@ -12,272 +11,212 @@ export class WardMonitoringReportComponent implements OnInit {
 
   constructor(public fs: FirebaseService, private commonService: CommonService) { }
 
-  toDayDate: any;
-  selectDate: any;
-  currentMonthName: any; 
-  currentYear: any;
+  selectedDate: any;
+  selectedMonthName: any;
+  selectedYear: any;
   selectedCircle: any;
-  wardProgressList: any[] = [];
-  wardProgressListShow: any[] = [];
-  wardList: any[] = [];
-  db:any;
+  zoneProgressList: any[] = [];
+  zoneList: any[] = [];
+  db: any;
+  txtDate = "#txtDate";
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.getWards();
     this.selectedCircle = "Circle1";
-    this.toDayDate = this.commonService.setTodayDate();
-    this.selectDate = this.toDayDate;
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
-    this.currentYear = new Date(this.toDayDate).getFullYear();
-    $('#txtDate').val(this.toDayDate);
+    this.selectedDate = this.commonService.setTodayDate();
+    this.getSelectedYearMonth();
+    this.getCircleWards();
   }
 
-
-  getWards() {
-    this.wardList = [];
-    this.commonService.getCityWiseWard().then((wardList: any) => {
-      this.wardList = JSON.parse(wardList);
+  getCircleWards() {
+    this.zoneList = [];
+    this.commonService.getCityWiseWard().then((zoneList: any) => {
+      this.zoneList = JSON.parse(zoneList);
       this.selectedCircle = 'Circle1';
-      this.onSubmit();
+      this.getData();
     });
   }
 
   changeCircleSelection(filterVal: any) {
     this.selectedCircle = filterVal;
-    this.onSubmit();
+    this.getData();
   }
 
-  setNextDate() {
-    let currentDate = $('#txtDate').val();
-    let nextDate = this.commonService.getNextDate(currentDate, 1);
-    $('#txtDate').val(nextDate);
-    this.selectDate = nextDate;
-    this.onSubmit();
-  }
-  setPreviousDate() {
-    let currentDate = $('#txtDate').val();
-    let previousDate = this.commonService.getPreviousDate(currentDate, 1);
-    $('#txtDate').val(previousDate);
-    this.selectDate = previousDate;
-    this.onSubmit();
+  setDate(filterVal: any, type: string) {
+    if (type == "current") {
+      this.selectedDate = filterVal;
+    } else if (type == "next") {
+      this.selectedDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
+    } else if (type == "previous") {
+      this.selectedDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
+    }
+    this.getSelectedYearMonth();
+    this.getData();
   }
 
-  setDate() {
-    let currentDate = $('#txtDate').val();
-    this.selectDate = currentDate;
-    this.onSubmit();
+  getSelectedYearMonth() {
+    $(this.txtDate).val(this.selectedDate);
+    this.selectedYear = this.selectedDate.split("-")[0];
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
   }
 
-  onSubmit() {
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectDate).getMonth());
-    this.currentYear = new Date(this.selectDate).getFullYear();
-    this.wardProgressList = [];
-    if (this.wardList.length > 0) {
-      for (let i = 0; i < this.wardList.length; i++) {
-        if (this.wardList[i]["circle"] == this.selectedCircle) {
-          this.getZoneAllLines(this.wardList[i]["wardNo"]);
+  getData() {
+    this.zoneProgressList = [];
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        if (this.zoneList[i]["circle"] == this.selectedCircle) {
+          let zoneName = this.zoneList[i]["wardNo"];
+          if (zoneName.includes("mkt")) {
+            zoneName = zoneName.replace("mkt", "Market ");
+          }
+          this.zoneProgressList.push({ zoneNo: this.zoneList[i]["wardNo"], zoneName: zoneName, totalLines: 0, startTime: "", percent7: "", percent8: "", percent9: "", percent10: "", percent11: "", percent12: "", percent13: "", percent14: "", percent15: "", percent16: "", percent17: "", percent18: "", percent19: "", percent20: "", class: 'active', stopClass: '', lineWeightage: [] });
+          this.zoneProgressList = this.commonService.transformString(this.zoneProgressList, "wardNo");
+          this.getZoneAllLineWeightages(this.zoneList[i]["wardNo"]);
         }
       }
-
     }
   }
 
-  getZoneAllLines(wardNo: any) {
-    let wardLines = this.db.object('WardLines/' + wardNo).valueChanges().subscribe(
-      zoneLine => {
-        wardLines.unsubscribe();
-        this.getStartTime(wardNo, zoneLine);
-      });
+  getZoneAllLineWeightages(zoneNo: any) {
+    this.commonService.getWardLineWeightage(zoneNo, this.selectedDate).then((lineList: any) => {
+      let zoneDetail = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
+      if (zoneDetail != undefined) {
+        zoneDetail.lineWeightage = lineList;
+        this.getStartTime(zoneNo);
+      }
+    });
   }
 
-  getWorkProgress(zoneNo: any, totalLines: any, startTime: any) {
-    let d = new Date();
-    let time = d.toLocaleTimeString('en-US').split(':')[0] + "." + d.toLocaleTimeString('en-US').split(':')[1];
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectDate).getMonth());
-    this.currentYear = new Date(this.selectDate).getFullYear();
-    let workProgressPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectDate + '/LineStatus';
-    let workProgressDetails = this.db.list(workProgressPath).valueChanges().subscribe(
-      workerProgressData => {
-        if (workerProgressData.length > 0) {
-          let lineComplteList = [];
-          for (let i = 0; i < workerProgressData.length; i++) {
-            if (workerProgressData[i]["Status"] == "LineCompleted") {
-              if (workerProgressData[i]["end-time"] != null) {
-                let endtime = workerProgressData[i]["end-time"].split(':')[0] + "." + workerProgressData[i]["end-time"].split(':')[1];
-                lineComplteList.push({ time: parseFloat(endtime) });
-              }
-            }
-          }
-          let k = 0;
-          let lineCompleted = 0;
-          if (lineComplteList.length > 0) {
-            for (let wardIndex = 0; wardIndex < this.wardProgressList.length; wardIndex++) {
-              if (this.wardProgressList[wardIndex]["wardNo"] == zoneNo) {
-                k = wardIndex;
-                lineComplteList = this.commonService.transform(lineComplteList, "time");
-                let endtime = lineComplteList[lineComplteList.length - 1]["time"];
-                for (let i = 0; i < lineComplteList.length; i++) {
-                  lineCompleted = lineCompleted + 1;
-                  if (parseFloat(lineComplteList[i]["time"]) < 7) {
-                    this.wardProgressList[wardIndex]["percent7"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 8 && parseFloat(endtime) >= 7) {
-
-                    this.wardProgressList[wardIndex]["percent8"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 9 && parseFloat(endtime) >= 8) {
-                    this.wardProgressList[wardIndex]["percent9"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 10 && parseFloat(endtime) >= 9) {
-                    this.wardProgressList[wardIndex]["percent10"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 11 && parseFloat(endtime) >= 10) {
-                    this.wardProgressList[wardIndex]["percent11"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 12 && parseFloat(endtime) >= 11) {
-                    this.wardProgressList[wardIndex]["percent12"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 13 && parseFloat(endtime) >= 12) {
-                    this.wardProgressList[wardIndex]["percent13"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 14 && parseFloat(endtime) >= 13) {
-                    this.wardProgressList[wardIndex]["percent14"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 15 && parseFloat(endtime) >= 14) {
-                    this.wardProgressList[wardIndex]["percent15"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 16 && parseFloat(endtime) >= 15) {
-                    this.wardProgressList[wardIndex]["percent16"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 17 && parseFloat(endtime) >= 16) {
-                    this.wardProgressList[wardIndex]["percent17"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 18 && parseFloat(endtime) >= 17) {
-                    this.wardProgressList[wardIndex]["percent18"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 19 && parseFloat(endtime) >= 18) {
-                    this.wardProgressList[wardIndex]["percent19"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                  if (parseFloat(lineComplteList[i]["time"]) < 20 && parseFloat(endtime) >= 19) {
-                    this.wardProgressList[wardIndex]["percent20"] = ((lineCompleted * 100) / totalLines).toFixed(0);
-                  }
-                }
-              }
-              if (this.toDayDate == this.selectDate) {
-                let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + zoneNo + "/activityStatus").valueChanges().subscribe(
-                  data => {
-                    if (data == "completed") {
-                      let zoneDetails = this.wardProgressList.find(item => item.wardNo == zoneNo);
-                      if (zoneDetails != undefined) {
-                        zoneDetails.class = "completed";
-                      }
-                    }
-                    getRealTimeWardDetails.unsubscribe();
-                  });
-              }
-            }
-          }
-        }
-        workProgressDetails.unsubscribe();
-      });
-  }
-
-  getStartTime(zoneNo: any, totalLines: any) {
-    let wardName=zoneNo;
-    if(wardName.includes("mkt"))
-    {
-      wardName=wardName.replace("mkt","Market ");
-    }
-
-
-    this.wardProgressList.push({ wardNo: zoneNo, wardName:wardName, totalLines: totalLines, startTime: "", percent7: "", percent8: "", percent9: "", percent10: "", percent11: "", percent12: "", percent13: "", percent14: "", percent15: "", percent16: "", percent17: "", percent18: "", percent19: "", percent20: "", class: 'active', stopClass: '' });
-
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectDate).getMonth());
-    this.currentYear = new Date(this.selectDate).getFullYear();
-    let workDetailsPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectDate + '/WorkerDetails';
-    let driverId = 0;
-    let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
-      workerData => {
-        if (workerData != null) {
-          driverId = workerData["driver"].split(',')[0];
-          
-          let workStartTimePath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.selectDate + '/' + driverId;
-          let workStarts = this.db.object(workStartTimePath).valueChanges().subscribe(
-            startData => {
-              let startTime = "";
-              if (startData["task1"] != null) {
-                if (startData["task1"]["task"] == zoneNo) {
-                  if (startData["task1"]["in-out"] != null) {
-                    startTime = this.commonService.tConvert(Object.keys(startData["task1"]["in-out"])[0]);
-                    let removeSecond = startTime.split(' ');
-                    startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                  }
-                }
-              }
-              if (startTime == "") {
-                if (startData["task2"] != null) {
-                  if (startData["task2"]["task"] == zoneNo) {
-                    if (startData["task2"]["in-out"] != null) {
-                      startTime = Object.keys(startData["task2"]["in-out"])[0];
-                      startTime = this.commonService.tConvert(startTime);
-                      let removeSecond = startTime.split(' ');
-                      startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                    }
-                  }
-                }
-              }
-              if (startTime == "") {
-                if (startData["task3"] != null) {
-                  if (startData["task3"]["task"] == zoneNo) {
-                    if (startData["task3"]["in-out"] != null) {
-                      startTime = Object.keys(startData["task3"]["in-out"])[0];
-                      startTime = this.commonService.tConvert(startTime);
-                      let removeSecond = startTime.split(' ');
-                      startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                    }
-                  }
-                }
-              }
-              if (startTime == "") {
-                if (startData["task4"] != null) {
-                  if (startData["task4"]["task"] == zoneNo) {
-                    if (startData["task4"]["in-out"] != null) {
-                      startTime = Object.keys(startData["task4"]["in-out"])[0];
-                      startTime = this.commonService.tConvert(startTime);
-                      let removeSecond = startTime.split(' ');
-                      startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                    }
-                  }
-                }
-              }
-              if (startTime == "") {
-                if (startData["task5"] != null) {
-                  if (startData["task5"]["task"] == zoneNo) {
-                    if (startData["task5"]["in-out"] != null) {
-                      startTime = Object.keys(startData["task5"]["in-out"])[0];
-                      startTime = this.commonService.tConvert(startTime);
-                      let removeSecond = startTime.split(' ');
-                      startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
-                    }
-                  }
-                }
-              }
-              workStarts.unsubscribe();
-              let zoneDetails = this.wardProgressList.find(item => item.wardNo == zoneNo);
-              if (zoneDetails != undefined) {
-                zoneDetails.startTime = startTime;
-              }
-              this.getWorkProgress(zoneNo, totalLines, startTime);
-            });
-          workDetails.unsubscribe();
-        }
-        else {
-          let zoneDetails = this.wardProgressList.find(item => item.wardNo == zoneNo);
-          if (zoneDetails != undefined) {
+  getStartTime(zoneNo: any) {
+    let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/dutyInTime";
+    let dutyStartInstance = this.db.object(dbPath).valueChanges().subscribe(
+      dutyStartTime => {
+        dutyStartInstance.unsubscribe();
+        let zoneDetails = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
+        if (zoneDetails != undefined) {
+          if (dutyStartTime == null) {
             zoneDetails.class = "inactive";
           }
+          else {
+            let startTime = dutyStartTime.split(',')[0];
+            zoneDetails.startTime = startTime;
+            this.getWorkProgress(zoneNo);
+          }          
+        }
+      }
+    );
+  }
+
+  getWorkProgress(zoneNo: any) {
+    let workProgressPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.selectedYear + '/' + this.selectedMonthName + '/' + this.selectedDate + '/LineStatus';
+    let workProgressDetails = this.db.object(workProgressPath).valueChanges().subscribe(
+      workerProgressData => {
+        workProgressDetails.unsubscribe();
+        if (workerProgressData != null) {
+          let zoneDetail = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
+          if (zoneDetail != undefined) {
+            let lineWeightageList = zoneDetail.lineWeightage;
+            let totalLines = lineWeightageList[lineWeightageList.length - 1]["totalLines"];
+            let lineComplteList = [];
+            let keyArray = Object.keys(workerProgressData);
+            if (keyArray.length > 0) {
+              for (let index = 0; index < keyArray.length; index++) {
+                let lineNo = keyArray[index];
+                if (workerProgressData[lineNo]["end-time"] != null) {
+                  let lineWeightage = 1;
+                  let lineWeightageDetail = lineWeightageList.find(item => item.lineNo == lineNo);
+                  if (lineWeightageDetail != undefined) {
+                    lineWeightage = lineWeightageDetail.weightage;
+                  }
+                  let endtime = workerProgressData[lineNo]["end-time"].split(':')[0] + "." + workerProgressData[lineNo]["end-time"].split(':')[1];
+                  lineComplteList.push({ time: parseFloat(endtime), lineWeightage: lineWeightage, lineStatus: workerProgressData[lineNo]["Status"] });
+                }
+              }
+            }
+            this.getWorkPercentage(lineComplteList,totalLines,zoneDetail);
+          }
         }
       });
+  }
+  
+  getWorkPercentage(lineComplteList: any, totalLines: any, zoneDetail: any) {
+    let percentage = 0;
+    let skippedLines = 0;
+    let skippedPercentage = 0;
+    if (lineComplteList.length > 0) {
+      lineComplteList = this.commonService.transform(lineComplteList, "time");
+      let endtime = lineComplteList[lineComplteList.length - 1]["time"];
+      for (let i = 0; i < lineComplteList.length; i++) {
+        if (lineComplteList[i]["lineStatus"] == "LineCompleted") {
+          percentage += (100 / Number(totalLines)) * parseFloat(lineComplteList[i]["lineWeightage"]);
+        }
+        else {
+          skippedLines++;
+        }
+
+        if (skippedLines > 0) {
+          skippedPercentage = 100 - ((skippedLines / Number(totalLines)) * 100);
+          if (percentage > skippedPercentage) {
+            percentage = skippedPercentage;
+          }
+        }
+
+        if (percentage > 100) {
+          percentage = 100;
+        }
+
+        if (parseFloat(lineComplteList[i]["time"]) < 7) {
+          zoneDetail.percent7 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 8 && parseFloat(endtime) >= 7) {
+          zoneDetail.percent8 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 9 && parseFloat(endtime) >= 8) {
+          zoneDetail.percent9 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 10 && parseFloat(endtime) >= 9) {
+          zoneDetail.percent10 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 11 && parseFloat(endtime) >= 10) {
+          zoneDetail.percent11 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 12 && parseFloat(endtime) >= 11) {
+          zoneDetail.percent12 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 13 && parseFloat(endtime) >= 12) {
+          zoneDetail.percent13 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 14 && parseFloat(endtime) >= 13) {
+          zoneDetail.percent14 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 15 && parseFloat(endtime) >= 14) {
+          zoneDetail.percent15 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 16 && parseFloat(endtime) >= 15) {
+          zoneDetail.percent16 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 17 && parseFloat(endtime) >= 16) {
+          zoneDetail.percent17 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 18 && parseFloat(endtime) >= 17) {
+          zoneDetail.percent18 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 19 && parseFloat(endtime) >= 18) {
+          zoneDetail.percent19 = percentage.toFixed(0);
+        }
+        if (parseFloat(lineComplteList[i]["time"]) < 20 && parseFloat(endtime) >= 19) {
+          zoneDetail.percent20 = percentage.toFixed(0);
+        }
+      }
+      if (this.selectedDate == this.commonService.setTodayDate()) {
+        let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + zoneDetail.zoneNo + "/activityStatus").valueChanges().subscribe(
+          data => {
+            getRealTimeWardDetails.unsubscribe();
+            if (data == "completed") {
+              zoneDetail.class = "completed";
+            }
+          });
+      }
+    }
   }
 }
