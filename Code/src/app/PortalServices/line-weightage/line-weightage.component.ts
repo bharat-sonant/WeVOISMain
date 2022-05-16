@@ -19,6 +19,7 @@ export class LineWeightageComponent implements OnInit {
   lineList: any[];
   todayDate: any;
   totalLines: any;
+  totalWardLength:any;
   divLoader = "#divLoader";
 
   ngOnInit() {
@@ -52,9 +53,7 @@ export class LineWeightageComponent implements OnInit {
   getLineWeightage() {
     $(this.divLoader).show();
     this.commonService.getWardLineWeightage(this.selectedZone, this.todayDate).then((lineWeightageList: any) => {
-      console.log(lineWeightageList);
       this.totalLines = lineWeightageList[lineWeightageList.length - 1]["totalLines"];
-      console.log(this.totalLines);
       for (let i = 0; i < lineWeightageList.length - 1; i++) {
         this.lineList.push({ lineNo: lineWeightageList[i]["lineNo"], weightage: lineWeightageList[i]["weightage"] });
       }
@@ -86,7 +85,7 @@ export class LineWeightageComponent implements OnInit {
     for (let i = 0; i < this.lineList.length; i++) {
       updateList.push({ lineNo: this.lineList[i]["lineNo"], weightage: this.lineList[i]["weightage"] });
     }
-    updateList.push({ totalLines: this.totalLines });
+    updateList.push({ totalLines: this.totalLines });  
 
     let filePath = "/WardLineWeightageJson/" + this.selectedZone + "/";
     let fileName = this.todayDate + ".json";

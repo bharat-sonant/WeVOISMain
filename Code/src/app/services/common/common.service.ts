@@ -1896,12 +1896,11 @@ export class CommonService {
       this.getWardLine(zoneNo, date).then((linesData: any) => {
         let wardLinesDataObj = JSON.parse(linesData);
         let keyArray = Object.keys(wardLinesDataObj);
-        let totalLines = wardLinesDataObj["totalLines"];
         for (let i = 0; i < keyArray.length - 3; i++) {
           let lineNo = Number(keyArray[i]);
-          lineWeightageList.push({ lineNo: lineNo, weightage: 1 });
+          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"] });
         }
-        lineWeightageList.push({ totalLines: totalLines });
+        lineWeightageList.push({ totalLines: wardLinesDataObj["totalLines"] });
         let dat1 = new Date(date);
         const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
         let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
@@ -1928,13 +1927,14 @@ export class CommonService {
             let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
               wardLineInstance.unsubscribe();
               if (data != null) {
-                lineWeightageList=[];
-                let list=JSON.parse(JSON.stringify(data));
-                let totalLines = list[list.length-1]["totalLines"];
-                for(let i=0;i<list.length-1;i++){
-                  lineWeightageList.push({ lineNo: list[i]["lineNo"], weightage: list[i]["weightage"] });
+                let list = JSON.parse(JSON.stringify(data));
+                let totalLines = list[list.length - 1]["totalLines"];
+                for (let i = 0; i < list.length - 1; i++) {
+                  let lineDetail = lineWeightageList.find(item => item.lineNo == list[i]["lineNo"]);
+                  if (lineDetail != undefined) {
+                    lineDetail.weightage = list[i]["weightage"];
+                  }
                 }
-                lineWeightageList.push({ totalLines: totalLines });
                 resolve(lineWeightageList);
               }
             });
@@ -1952,7 +1952,7 @@ export class CommonService {
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         resolve(JSON.stringify(dataDate));
-      },error=>{
+      }, error => {
         resolve(null);
       });
     });
