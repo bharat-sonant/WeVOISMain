@@ -22,6 +22,7 @@ export class SpecialUsersComponent implements OnInit {
   txtUserName = "#txtUserName";
   txtPassword = "#txtPassword";
   userId = "#key";
+  deleteKey = "#deleteKey";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -43,7 +44,7 @@ export class SpecialUsersComponent implements OnInit {
             let id = keyArray[i];
             if (id != "lastKey") {
               this.userList.push({ id: id, password: userData[id]["password"], type: userData[id]["type"], username: userData[id]["username"] });
-              this.userList=this.commonService.transformNumeric(this.userList,"username");
+              this.userList = this.commonService.transformNumeric(this.userList, "username");
             }
           }
         }
@@ -55,28 +56,36 @@ export class SpecialUsersComponent implements OnInit {
     });
   }
 
-  openModel(content: any, id: any) {
+  openModel(content: any, id: any, type: any) {
     this.clearPopUp();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 335;
     let width = 400;
+    if (type == "delete") {
+      height = 160;
+    }
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     if (id != "0") {
-      $(this.userId).val(id);
-      let userDetail = this.userList.find((item) => item.id == id);
-      if (userDetail != undefined) {
-        $(this.txtUserName).val(userDetail.username);
-        $(this.txtPassword).val(userDetail.password);
-        $(this.ddlType).val(userDetail.type);
+      if (type == "delete") {
+        $(this.deleteKey).val(id);
+      }
+      else {
+        $(this.userId).val(id);
+        let userDetail = this.userList.find((item) => item.id == id);
+        if (userDetail != undefined) {
+          $(this.txtUserName).val(userDetail.username);
+          $(this.txtPassword).val(userDetail.password);
+          $(this.ddlType).val(userDetail.type);
+        }
       }
     }
   }
 
-  clearPopUp(){
+  clearPopUp() {
     $(this.txtUserName).val("");
     $(this.txtPassword).val("");
     $(this.ddlType).val("0");
@@ -84,6 +93,17 @@ export class SpecialUsersComponent implements OnInit {
 
   closeModel() {
     this.modalService.dismissAll();
+  }
+
+  deleteUser() {
+    if ($(this.deleteKey).val() != "0") {
+      let userId = Number($(this.deleteKey).val());
+      delete this.userJsonObject[userId];
+      let filePath = "/Settings/";
+      let fileName = "SpecialUsers.json";
+      this.commonService.saveJsonFile(this.userJsonObject, fileName, filePath);
+      this.updateUserList(userId,"delete");
+    }
   }
 
   saveUsers() {
@@ -94,6 +114,7 @@ export class SpecialUsersComponent implements OnInit {
     else {
       if ($(this.userId).val() == "0") {
         lastKey = Number(this.userJsonObject["lastKey"]) + 1;
+        this.userJsonObject["lastKey"] = lastKey;
       }
       else {
         lastKey = Number($(this.userId).val());
@@ -105,30 +126,35 @@ export class SpecialUsersComponent implements OnInit {
       username: $(this.txtUserName).val()
     }
     this.userJsonObject[lastKey] = data;
-    this.userJsonObject["lastKey"] = lastKey;
     let filePath = "/Settings/";
     let fileName = "SpecialUsers.json";
     this.commonService.saveJsonFile(this.userJsonObject, fileName, filePath);
-    this.updateUserList(lastKey);
+    this.updateUserList(lastKey, "");
   }
 
-  updateUserList(lastKey: any) {
-    if (this.userList.length == 0) {
-      this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
+  updateUserList(lastKey: any, type: any) {
+    if (type == "delete") {
+      this.userList=this.userList.filter(item=>item.id!=lastKey);
+      this.commonService.setAlertMessage("success", "User deleted successfully !!!");
     }
     else {
-      let userDetail = this.userList.find((item) => item.id == lastKey);
-      if (userDetail == undefined) {
+      if (this.userList.length == 0) {
         this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
-        this.userList=this.commonService.transformNumeric(this.userList,"username");
       }
       else {
-        userDetail.password = $(this.txtPassword).val();
-        userDetail.username = $(this.txtUserName).val();
-        userDetail.type = $(this.ddlType).val();
+        let userDetail = this.userList.find((item) => item.id == lastKey);
+        if (userDetail == undefined) {
+          this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
+          this.userList = this.commonService.transformNumeric(this.userList, "username");
+        }
+        else {
+          userDetail.password = $(this.txtPassword).val();
+          userDetail.username = $(this.txtUserName).val();
+          userDetail.type = $(this.ddlType).val();
+        }
       }
+      this.commonService.setAlertMessage("success", "Data saved successfully !!!");
     }    
-    this.commonService.setAlertMessage("success", "Data saved successfully !!!");
     this.closeModel();
   }
 }
