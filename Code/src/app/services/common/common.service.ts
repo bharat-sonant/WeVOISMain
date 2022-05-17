@@ -1898,7 +1898,7 @@ export class CommonService {
         let keyArray = Object.keys(wardLinesDataObj);
         for (let i = 0; i < keyArray.length - 3; i++) {
           let lineNo = Number(keyArray[i]);
-          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"],points:wardLinesDataObj[lineNo]["points"] });
+          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"], points: wardLinesDataObj[lineNo]["points"] });
         }
         lineWeightageList.push({ totalLines: wardLinesDataObj["totalLines"] });
         let dat1 = new Date(date);
@@ -1911,33 +1911,32 @@ export class CommonService {
           else {
             let list = JSON.parse(JSON.stringify(dataDate));
             let jsonDate = "";
-            if (list.length == 1) {
-              jsonDate = list[0].toString().trim();
+            for (let i = list.length - 1; i >= 0; i--) {
+              let dat2 = new Date(list[i]);
+              if (dat1 >= dat2) {
+                jsonDate = list[i].toString().trim();
+                i = -1;
+              }
+            }
+            if (jsonDate != "") {
+              const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+              let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+                wardLineInstance.unsubscribe();
+                if (data != null) {
+                  let list = JSON.parse(JSON.stringify(data));
+                  for (let i = 0; i < list.length - 1; i++) {
+                    let lineDetail = lineWeightageList.find(item => item.lineNo == list[i]["lineNo"]);
+                    if (lineDetail != undefined) {
+                      lineDetail.weightage = list[i]["weightage"];
+                    }
+                  }
+                  resolve(lineWeightageList);
+                }
+              });
             }
             else {
-              for (let i = list.length - 1; i >= 0; i--) {
-                let dat2 = new Date(list[i]);
-                if (dat1 >= dat2) {
-                  jsonDate = list[i].toString().trim();
-                  i = -1;
-                }
-              }
+              resolve(lineWeightageList);
             }
-            const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-            let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-              wardLineInstance.unsubscribe();
-              if (data != null) {
-                let list = JSON.parse(JSON.stringify(data));
-                let totalLines = list[list.length - 1]["totalLines"];
-                for (let i = 0; i < list.length - 1; i++) {
-                  let lineDetail = lineWeightageList.find(item => item.lineNo == list[i]["lineNo"]);
-                  if (lineDetail != undefined) {
-                    lineDetail.weightage = list[i]["weightage"];
-                  }
-                }
-                resolve(lineWeightageList);
-              }
-            });
           }
         }, error => {
           resolve(lineWeightageList);
