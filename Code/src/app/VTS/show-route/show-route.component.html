@@ -54,6 +54,7 @@
                         <h4 class="panel-title">
                         </h4>
                     </div>
+                    <div class="addclass" id="popup2">
                     <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel"
                         aria-labelledby="headingtwo">
                         <div class="panel-body">
@@ -72,11 +73,19 @@
                                                    >
                                                     >>
                                                 </button>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="display1" onclick="show()">
+                                                            <i class="bi bi-chevron-down"></i>
+                                                        </div>
+                                                    </div>
+                                                  </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -89,7 +98,7 @@
 <!------------Desktop Navbar End------------->
 
 <div #gmap class="map-div" id="divMap"></div>
-
+<div class="display" id="popup">
 <div id="divDriverDetail" class="driver-helper-box hide-on-mob">
     <div class="col-md-12 driver-helper-box-iner">
         <label id="lblSelectedRoute" style="display:none;"></label>
@@ -132,4 +141,5 @@
             <input id="chkAll" type="checkbox" (change)="showAllRoute();"> Show All Route
           </div>
     </div>
+</div>
 </div>

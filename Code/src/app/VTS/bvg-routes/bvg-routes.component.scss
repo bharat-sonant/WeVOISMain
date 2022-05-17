@@ -1460,11 +1460,47 @@
 .redio-input{
   float: right;
 }
+.arrow{
+  display: none;
+}
 
+@media only screen and (min-width:320px) and (max-width:576px){
+  .display{
+    display: none;
+  }
+  .addclass{
+    display: block;
+  }
+  .arrow{
+    margin-left: auto;
+    font-size: 20px;
+    margin-top: 10px;
+    display: block !important;
+  }
+  .driver-helper-box{
+    top: 120px !important;
+  }
+}
 
 @media only screen and (min-width:270px) and (max-width:320px){
   .header{
     display:block !important;
+    height: 135px !important;
+  }
+  .display{
+    display: none;
+  }
+  .addclass{
+    display: block;
+  }
+  .arrow{
+    margin-left: auto;
+    font-size: 20px;
+    margin-top: 10px;
+    display: block !important;
+  }
+  .driver-helper-box{
+    top: 135px !important;
   }
 }
 

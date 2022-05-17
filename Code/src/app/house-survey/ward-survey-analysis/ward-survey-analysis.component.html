@@ -12,17 +12,17 @@
         </option>
       </select>
     </div>
-    <div class="col-md-2" style="padding-top: 0px; padding-left: 10px;">
+    <div class="col-md-2 blanck-box">
 
     </div>
-    <div class="col-md-2" style="padding-top: 20px; padding-left: 30px;;">
+    <div class="col-md-2 blanck-box2">
 
     </div>
 
     <div id="houseCount" class="col-md-6 text-right total-house">
       <div class="fix-home">
-        <div class="float-first" style="margin-left: 10px;">
-          <i class="fas fa-home" style="color:red;"></i> <span class="house"> {{progressData.totalMarkers}}</span><br>
+        <div class="float-first fix-home-iner1">
+          <i class="fas fa-home home-icon"></i> <span class="house"> {{progressData.totalMarkers}}</span><br>
           <h6>Total Marker</h6>
         </div>
         <div class="float-second">
@@ -31,72 +31,86 @@
         </div>
         <div id="divRevisitCount" class="float-third"
           (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'RevisitAll')">
-          <i class="fas fa-house-damage" style="color:rgb(213 42 255);"></i> <span class="house">
+          <i class="fas fa-house-damage damage-icon"></i> <span class="house">
             {{progressData.totalRevisit}}</span><br>
           <h6>Revisit Request</h6>
         </div>
 
         <div class="float-fourth">
-          <i class="fas fa-house-damage" style="color: rgb(33 135 236);"></i> <span class="house">
+          <i class="fas fa-house-damage house-damage-icon"></i> <span class="house">
             {{progressData.totalOldCards}}</span><br>
           <h6>Old Cards</h6>
         </div>
+       
       </div>
+     
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+        <div class="display1" onclick="show()">
+            <i class="bi bi-chevron-down"></i>
+        </div>
     </div>
   </div>
 </section>
 
-<div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
-
+<div #gmap class="gmap" id="divMap"></div>
+<div class="display" id="popup">
 <div class="house-card-box">
-  <div id="divDetails" style="padding-bottom: 5px; background: #fff; border-radius: 5px;">
-    <div class="row" style="padding-top: 10px; text-align: center;">
-      <div class="col-md-12" style="margin-top: -10px;margin-bottom: 10px;    padding-right: 5px;">
+  <div class="house-card-box-iner" id="divDetails">
+    
+    <div class="row row-box">
+      <div class="col-md-12 row-box-iner">
         <div class="border-bottom">
-          <button (click)="getNextPrevious('pre');" class="btn-hvr"
-            style="background-color: #888;font-size: 12px; width:40px;  margin-right: 8px; padding: 10px 8px; color: #fff; border-radius: 5px; cursor: pointer; margin-left: 0px!important;">
+          <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn"
+            >
             << </button>
-              <input id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
-                style="width: 115px;border: 1px solid lightgray;border-radius: 5px; padding: 8px; text-align: center; font-weight: bold;"
+              <input class="arrow-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off"
+                
                 value="1" />
-              <button (click)="getNextPrevious('next');" class="btn-hvr"
-                style="background-color: #888;font-size: 12px; padding: 10px 8px; color: #fff;width:40px;  margin-left: 8px!important;margin-right: 10px!important; border-radius: 5px; cursor: pointer;">
+              <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2"
+                >
                 >>
               </button>
         </div>
       </div>
-      <div class="col-md-12 total-house" style="margin-top: -10px;">
+      <div class="col-md-12 total-house fix-home-outer">
         <div class="fix-home">
-          <div class="float-l" style="border-bottom:1px solid lightgray ;">
-            <i class="fas fa-home" style="color:red;"></i> <span class="house" style="color: #000;">
+          <div class="float-l fix-home-iner">
+            <i class="fas fa-home home-icon"></i> <span class="house home-icon-span">
               {{progressData.totalLineMarkers}}</span><br>
           </div>
-          <div id="divLineScannedCount" class="float-l" style="border-bottom:1px solid lightgray ;"
+          <div id="divLineScannedCount" class="float-l house-damage-icon-div"
             (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
-            <i class="fas fa-house-damage"></i> <span class="house" style="color: #000;">
+            <i class="fas fa-house-damage"></i> <span class="house house-damage-icon-span">
               {{progressData.totalLineSurveyed}}</span><br>
           </div>
         </div>
       </div>
 
-      <div class="col-md-12 total-house" style="margin-top: -10px;">
+      <div class="col-md-12 total-house fix-home-outer">
         <div class="fix-home">
 
           <div id="divLineRevisitCount" class="float-l"
             (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'RevisitLine')">
-            <i class="fas fa-house-damage" style="color:rgb(213 42 255);"></i> <span class="house" style="color: #000;">
+            <i class="fas fa-house-damage damage-icon"></i> <span class="house house-damage-icon-span">
               {{progressData.totalLineRevisit}}</span><br>
           </div>
           <div id="divLineOldCardCount" class="float-l"
             (click)="progressData.totalLineOldCard > 0 && openModel(contentLineOldCard,'OldCard')">
-            <i class="fas fa-house-damage" style="color: rgb(33 135 236);"></i> <span class="house"
-              style="color: #000;">
+            <i class="fas fa-house-damage damage-icon2"></i> <span class="house house-damage-icon-span"
+              >
               {{progressData.totalLineOldCard}}</span><br>
           </div>
         </div>
+       
       </div>
     </div>
+  
   </div>
+  </div>
+</div>
   <div id="divCardDetail" class="image-box" style="display: none;">
     <div id="divLoader" class="loaderClass">
       <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
@@ -147,7 +161,7 @@
   <!--Old Card Start-->
   <ng-template #contentLineOldCard>
 
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="grey-img-div">
 
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
@@ -155,19 +169,19 @@
     <div class="modal-body">
 
       <div id="divStatus" class="content-scroll">
-        <div class="row" style="margin:0px !important">
+        <div class="row divStatus-iner">
           <div class="col-md-2 box-style" *ngFor="let dt of oldCardList, let i=index">
-            <div style="width:100%">
+            <div class="box-style-iner">
               <a href="{{dt.imageURL}}" target="_blank">
-                <img [src]="dt.imageURL" style="height:100%; width: 100%;" />
+                <img [src]="dt.imageURL" class="imageurl-img"/>
               </a>
             </div>
             <div class="main-tag">
               <div class="f-left">
-                <h3 style="width: 100%;"> {{dt.name}} </h3><br />
-                <h3 id="spMobile{{i}}" style="width: 100%;"> {{dt.mobile}} </h3><br />
+                <h3 class="name-heading"> {{dt.name}} </h3><br />
+                <h3 class="mobile-heading" id="spMobile{{i}}"> {{dt.mobile}} </h3><br />
 
-                <h3 id="spCardNo{{i}}" style="font-weight: bold;"> {{dt.cardNo}} (RFID) </h3><br />
+                <h3 class="cardno-heading" id="spCardNo{{i}}"> {{dt.cardNo}} (RFID) </h3><br />
 
                 <h3> {{dt.surveyDate}} </h3><br />
                 <h3 class="h3caption"> SIKA </h3>
@@ -185,7 +199,7 @@
 
   <!--Surveyed Markers Start-->
   <ng-template #contentLineMarkers>
-    <div style="width: 100%;text-align: right;float: left;">
+    <div class="img-close-outer">
 
       <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
@@ -196,15 +210,15 @@
           <div class="col-md-2" *ngFor="let dt of scannedCardList">
             <div style="width:100%">
               <a href="{{dt.imageURL}}" target="_blank">
-                <img [src]="dt.imageURL" style="height:100%; width: 100%;" />
+                <img [src]="dt.imageURL" class="imageurl-img"/>
               </a>
             </div>
             <div class="main-tag">
               <div class="f-left">
-                <h3 style="width: 100%;"> {{dt.name}} </h3><br />
-                <h3 style="width: 100%;"> {{dt.mobile}} </h3><br />
+                <h3 class="name-heading"> {{dt.name}} </h3><br />
+                <h3 class="mobile-heading"> {{dt.mobile}} </h3><br />
 
-                <h3 style="font-weight: bold;"> {{dt.cardNo}} </h3><br />
+                <h3 class="cardno-heading"> {{dt.cardNo}} </h3><br />
 
                 <h3> {{dt.surveyDate}} </h3><br />
               </div>
@@ -224,75 +238,75 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
 
       <div class="modal-content">
-        <div id="divConfirm"
-          style="display: none; position: absolute;z-index: 99999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-          <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
+        <div id="divConfirm" class="modal-content-iner"
+          >
+          <h5 class="modal-title modal-content-iner-heading">Are you sure to delete?</h5>
           <input id="revisitIndex" type="hidden" value="0">
-          <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-            <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+          <div class="row confirm-btn-div-outer">
+            <div class="col-md-6 confirm-btn-div">
               <button class="btn btn-success " (click)="checkRevisit();">
                 Confirm</button>
             </div>
-            <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-              <button class="btn btn-danger " (click)="cancelRevisitDelete();" style="text-transform: uppercase;">
+            <div class="col-md-6 Cancel-btn-div">
+              <button class="btn btn-danger Cancel-btn" (click)="cancelRevisitDelete();">
                 Cancel</button>
             </div>
           </div>
         </div>
-        <div style="width: 100%;text-align: right;float: left;">
+        <div class="img-close-outer2">
           <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
         </div>
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-4" style="margin-top: -5px; padding-right: 5px; padding-left: 10px;">
+            <div class="col-md-4 scrollable-halt-outer">
               <div id="divSequence" class="scrollable-halt">
                 <div class="{{dt.activeClass}}" *ngFor="let dt of revisitSurveyList, let i=index"
                   (click)="getRevisitMarker(i);">
-                  <div [hidden]="dt.lines==0" class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                  <div [hidden]="dt.lines==0" class="work-stop-address line-detail">
                     <p><i class="fas fa-map-marker-alt"></i> Line {{dt.lineNo}}
 
                     </p>
                   </div>
-                  <div style="width: 70%; float: left;">
-                    <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
-                      <p><i class="fas fa-house-damage" style="color: green;"></i> {{dt.houseType}}
+                  <div class="work-stop-address-outer">
+                    <div class="work-stop-address house-icon-div">
+                      <p><i class="fas fa-house-damage house-icon1"></i> {{dt.houseType}}
                       </p>
                     </div>
-                    <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <div class="work-stop-address house-icon-div">
                       <p><i class="fas fa-user-tie"></i> {{dt.name}}</p>
                     </div>
-                    <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
-                      <p><i class="fas fa-registered" style="color: red;"></i> {{dt.reason}}</p>
+                    <div class="work-stop-address house-icon-div">
+                      <p><i class="fas fa-registered registered-icon"></i> {{dt.reason}}</p>
                     </div>
 
-                    <div class="work-stop-address" style="border-bottom: 1px solid lightgray;">
+                    <div class="work-stop-address house-icon-div">
                       <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}}
 
                       </p>
                     </div>
                     <div class="work-stop-address">
-                      <p><i class="fas fa-user-check" style="color: blue;"></i> {{dt.surveyorName}}
-                        <span style="float: right;border-right: 1px solid lightgray;">
-                          <i class="fas fa-arrow-circle-right"
-                            style="color: green; cursor: pointer; margin-right: 10px;font-size: 20px;"
+                      <p><i class="fas fa-user-check check-icon"></i> {{dt.surveyorName}}
+                        <span class="work-stop-address-span">
+                          <i class="fas fa-arrow-circle-right circle-right-icon"
+                            
                             (click)="getProcess(i);"></i>
-                          <i class="far fa-trash-alt" style="color: red; cursor: pointer;font-size: 20px;"
+                          <i class="far fa-trash-alt trash-icon"
                             (click)="confirmRevisitRequest(i);"></i>
                         </span>
                       </p>
                     </div>
                   </div>
-                  <div style="width: 30%; float: right; border-left: 1px solid lightgray;">
+                  <div class="image-div">
                     <a href="{{dt.imageURL}}" target="_blank">
-                      <img [src]="dt.imageURL" style="width: 100%;max-height: 155px;" />
+                      <img [src]="dt.imageURL" class="image-div-img"/>
                     </a>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-8 halt-map" style="margin-top: -5px; padding-left: 5px; padding-right: 10px;">
-              <div style="padding: 5px; border: 1px solid lightgray; border-radius: 5px;">
-                <div id="revisitMap" style="width:100%; "></div>
+            <div class="col-md-8 halt-map halt-map-2">
+              <div class="halt-map-iner">
+                <div class="halt-map-2-iner" id="revisitMap"></div>
               </div>
             </div>
           </div>

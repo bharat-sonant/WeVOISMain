@@ -957,9 +957,7 @@
     border-radius: 5px!important;
     box-shadow: 0 2px 5px 2px #dedede;
     }
-    .hide-on-mob{
-    display: none;
-    }
+    
     .hide-on-desk{
     display: block;
     }
@@ -1150,9 +1148,7 @@
     border-radius: 5px!important;
     box-shadow: 0 2px 5px 2px #dedede;
     }
-    .hide-on-mob{
-    display: none;
-    }
+    
     .hide-on-desk{
     display: block;
     }
@@ -1432,6 +1428,9 @@
   width:100%; 
   padding-top: 10px;
 }
+.display1{
+  display: none !important
+}
 
 
 
@@ -1451,6 +1450,27 @@
 div#houseCount{
   width: 100% !important;
 }
+.addclass{
+  display: block !important;
+}
+.display{
+  display: none !important;
+}
+.display1{
+  width: 20px !important;
+  color: #fff !important;
+  float: right;
+  font-size: 20px;
+  display: block !important;
+ }
+ .date-input{
+   width: 50% !important;
+ }
+ .driver-helper-box{
+   top: 200px !important;
+ }
+
+
 }
 @media (min-width: 599px) and (max-width: 1120px){
   .panel-collapse{
@@ -1466,7 +1486,27 @@ div#houseCount{
 @media (min-width: 270px) and (max-width: 576px){
   .panel-collapse{
     top: 110px !important; 
+    
 }
+.addclass{
+  display: block !important;
+}
+.display{
+  display: none !important;
+}
+.display1{
+  width: 20px !important;
+  color: #fff !important;
+  float: right;
+  font-size: 20px;
+  display: block !important;
+ }
+ .date-input{
+   width: 50% !important;
+ }
+ .driver-helper-box{
+   top: 200px !important;
+ }
 } 
 @media (min-width: 599px) and (max-width: 1120px){
   .driver-helper-box{
@@ -1475,4 +1515,5 @@ div#houseCount{
 }
 
 
-    
+
+  

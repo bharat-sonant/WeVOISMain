@@ -627,12 +627,15 @@ color: #fff;
 .cursor2{
   cursor:pointer;
 }
+.arrow{
+  display: none !important;
+}
 
 
 
 @media only screen and (min-width:280px) and (max-width:550px){
   .header{
-    height: 165px !important;
+    height: 55px !important;
    
 }
 #myBox{
@@ -677,6 +680,28 @@ padding-top: 25px;
 .left{
   margin-left: 0px !important;
 }
+.field-box{
+  width: unset !important;
+}
+.totalhalt h1{
+  margin-top: 18px !important;
+}
+.display{
+  display: none;
+  
+}
+.addclass{
+  display: block;
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  z-index: 1000;
+}
+.arrow{
+  margin-left: auto;
+  font-size: 20px;
+  margin-top: 10px;
+  display: block !important
+}
+
 }
 
 @media only screen and (min-width:255px) and (max-width:362px){
@@ -688,6 +713,26 @@ padding-top: 25px;
   .totalhalt{
     width: 250px;
     
+}
+.field-box{
+  width: unset !important;
+}
+.totalhalt h1{
+  margin-top: 18px !important;
+}
+.display{
+  display: none;
+}
+.addclass{
+  display: block;
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  z-index: 1000;
+}
+.arrow{
+  margin-left: auto;
+  font-size: 20px;
+  margin-top: 10px;
+  display: block !important;
 }
 }
 
@@ -706,6 +751,7 @@ padding-top: 25px;
   font-size: 12px !important;
   
 }
+
 
 }
 
@@ -729,8 +775,29 @@ padding-top: 25px;
    
   }
   .header{
-    height: 165px !important;
+    height: 55px !important;
 }
+.field-box{
+  width: unset !important;
+}
+.totalhalt h1{
+  margin-top: 18px !important;
+}
+.display{
+  display: none;
+}
+.addclass{
+  display: block;
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  z-index: 1000;
+}
+.arrow{
+  margin-left: auto;
+  font-size: 20px;
+  margin-top: 10px;
+  display: block !important;
+}
+
 }
 
 @media only screen and (min-width:270px) and (max-width:281px){
@@ -747,6 +814,26 @@ padding-top: 25px;
   width: 45px;
  
  
+}
+.field-box{
+  width: unset !important;
+}
+.totalhalt h1{
+  margin-top: 18px !important;
+}
+.display{
+  display: none;
+}
+.addclass{
+  display: block;
+  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+  z-index: 1000;
+}
+.arrow{
+  margin-left: auto;
+  font-size: 20px;
+  margin-top: 10px;
+  display: block !important;
 }
 
 }

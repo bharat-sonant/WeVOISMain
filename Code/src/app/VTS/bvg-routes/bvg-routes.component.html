@@ -17,13 +17,16 @@
             <input type="checkbox" id="chkShowLines" checked="checked" (change)="showHideLines()"> Show Lines &nbsp;
             <input type="checkbox" id="chkShowMarker" checked="checked" (change)="showHideMarkers()"> Show Markers
         </div>
+        <div class="arrow" onclick="show()">
+                <i class="bi bi-chevron-down"></i>
+            </div>
     </div>
 </section>
 <!------------Desktop Navbar End------------->
 
 <div #gmap class="div-map" id="divMap"></div>
-
-<div id="divDriverDetail" class="driver-helper-box hide-on-mob">
+<div class="display" id="popup">
+<div id="divDriverDetail" class="driver-helper-box">
     <div id="myBox">
         <div class="accordion">
             <div class="card">
@@ -57,4 +60,5 @@
         </div>
     </div>
   
+</div>
 </div>

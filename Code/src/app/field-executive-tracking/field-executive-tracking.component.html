@@ -11,6 +11,10 @@
             <button class="btn btn-primary left" (click)="setDate('','next');">
               >>
             </button>
+            <div class="arrow" onclick="show()">
+                <i class="bi bi-chevron-down"></i>
+            </div>
+            
       </div>
       <div class="col-md-6 main-header-txt">
         <h3 class="header-txt"> <b> Field Executive Tracking </b> </h3>
@@ -18,7 +22,7 @@
 
       <div class="col-md-3 txt-right">
       </div>
-
+<div class="display" id="popup">
       <div class="field-box">
         <div class="dutyin">
           <h1>{{executiveDetail.dutyOn}} <br>
@@ -46,7 +50,7 @@
           </h1>
         </div>
       </div>
-
+    </div>
     </div>
   </div>
 </section>
