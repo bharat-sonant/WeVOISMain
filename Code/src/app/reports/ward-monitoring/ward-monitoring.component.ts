@@ -226,26 +226,48 @@ export class WardMonitoringComponent {
   }
 
   getSummaryDetail() {
-    let workDetailsPath = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.selectedYear + '/' + this.selectedMonthName + '/' + this.selectedDate + '/WorkerDetails';
-    let workDetailInstance = this.db.object(workDetailsPath).valueChanges().subscribe(
-      workerData => {
-        workDetailInstance.unsubscribe();
-        if (workerData != null) {
-          this.reportData.driverName = workerData != null ? (workerData["driverName"]).toUpperCase() : "Not Assigned";
-          this.reportData.helperName = workerData != null ? (workerData["helperName"]).toUpperCase() : "Not Assigned";
-          this.reportData.vehicleNo = workerData != null ? workerData["vehicle"] : "Not Assigned";
-          this.reportData.zoneName = this.selectedZoneName;
-          this.reportData.reportDate = this.selectedDate;
-          this.drawChart();
-        } else {
-          this.reportData.driverName = "Not Assigned";
-          this.reportData.helperName = "Not Assigned";
-          this.reportData.vehicleNo = "Not Assigned";
-          this.reportData.zoneName = this.selectedZoneName;
-          this.reportData.reportDate = this.selectedDate;
-          this.drawChart();
+    let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
+    let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
+      workDetails.unsubscribe();
+      if (workerData != null) {
+        let driverList = workerData["driverName"].split(',');
+        let driverName = "";
+        for (let i = 0; i < driverList.length; i++) {
+          if (i == 0) {
+            driverName = driverList[i];
+          }
+          if (!driverName.includes(driverList[i])) {
+            driverName = driverName + "," + driverList[i];
+          }
         }
-      });
+        this.reportData.driverName = driverName != "" ? driverName : "Not Assigned";
+
+        let helperList = workerData["helperName"].split(',');
+        let helperName = "";
+        for (let i = 0; i < helperList.length; i++) {
+          if (i == 0) {
+            helperName = helperList[i];
+          }
+          if (!helperName.includes(helperList[i])) {
+            helperName = helperName + "," + helperList[i];
+          }
+        }
+        this.reportData.helperName = helperName != "" ? helperName : "Not Assigned";
+        this.reportData.vehicleNo = workerData != null ? workerData["vehicle"] : "Not Assigned";
+        this.reportData.zoneName = this.selectedZoneName;
+        this.reportData.reportDate = this.selectedDate;
+        this.drawChart();
+
+      } else {
+        this.reportData.driverName = "Not Assigned";
+        this.reportData.helperName = "Not Assigned";
+        this.reportData.vehicleNo = "Not Assigned";
+        this.reportData.zoneName = this.selectedZoneName;
+        this.reportData.reportDate = this.selectedDate;
+        this.drawChart();
+      }
+    });
+
   }
 
   drawChart() {
