@@ -33,7 +33,7 @@ export class WardMonitoringComponent {
   selectedMonthName: any;
   selectedYear: any;
   db: any;
-  wardLines: any;
+  wardTotalLines: any;
   cityName: any;
   txtDate = "#txtDate";
   divMap = "#divMap";
@@ -115,6 +115,7 @@ export class WardMonitoringComponent {
   }
 
   resetAllData() {
+    this.allLines=[];
     this.lineWeightageList = [];
     this.skipCount = 0;
     this.completeCount = 0;
@@ -155,9 +156,8 @@ export class WardMonitoringComponent {
         }
       }
       this.polylines = [];
-      let linePath = [];
       this.lineWeightageList = lineWeightageList;
-      this.wardLines = this.lineWeightageList[this.lineWeightageList.length - 1]["totalLines"];
+      this.wardTotalLines = this.lineWeightageList[this.lineWeightageList.length - 1]["totalLines"];
       for (let i = 0; i < this.lineWeightageList.length - 1; i++) {
         let lineNo = this.lineWeightageList[i]["lineNo"];
         let points = this.lineWeightageList[i]["points"];
@@ -165,9 +165,8 @@ export class WardMonitoringComponent {
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", lineWeightage: this.lineWeightageList[i]["weightage"] });
       }
-      this.allLines = linePath;
       this.plotLineOnMap();
     });
   }
@@ -186,19 +185,13 @@ export class WardMonitoringComponent {
           if (lineStatusData != null) {
             if (lineStatusData[index] != undefined) {
               if (lineStatusData[index]["Status"] != 'undefined') {
-                let lineDetail = this.lineWeightageList.find(item => item.lineNo == lineData.lineNo);
                 if (lineStatusData[index]["Status"] == "LineCompleted") {
                   lineColor = "#33ff33";
-                  if (lineDetail != undefined) {
-                    percentage += (100 / Number(this.wardLines)) * parseFloat(lineDetail.weightage);
-                  }
+                  percentage += (100 / Number(this.wardTotalLines)) * parseFloat(lineData.lineWeightage);
                 } else if (lineStatusData[index]["Status"] == "PartialLineCompleted") {
                   lineColor = "#ff9d00";
                   this.partailDoneCount++;
-                  if (lineDetail != undefined) {
-                    percentage += (100 / Number(this.wardLines)) * parseFloat(lineDetail.weightage);
-                  }
-
+                  percentage += (100 / Number(this.wardTotalLines)) * parseFloat(lineData.lineWeightage);
                 } else if (lineStatusData[index]["Status"] == "Skipped") {
                   lineColor = "red";
                   this.skipCount++
@@ -219,7 +212,7 @@ export class WardMonitoringComponent {
           this.totalLineCount++;
         }
         if (this.skipCount > 0) {
-          skippedPercentage = 100 - ((this.skipCount / Number(this.wardLines)) * 100);
+          skippedPercentage = 100 - ((this.skipCount / Number(this.wardTotalLines)) * 100);
           if (percentage > skippedPercentage) {
             percentage = skippedPercentage;
           }
@@ -227,7 +220,7 @@ export class WardMonitoringComponent {
         if (percentage > 100) {
           percentage = 100;
         }
-        this.completeCount = Number(((Number(percentage.toFixed(0)) * this.wardLines) / 100).toFixed(0));       
+        this.completeCount = Number(((Number(percentage.toFixed(0)) * this.wardTotalLines) / 100).toFixed(0));
         this.getSummaryDetail();
       });
   }
