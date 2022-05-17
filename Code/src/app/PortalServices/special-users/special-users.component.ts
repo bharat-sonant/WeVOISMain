@@ -102,23 +102,51 @@ export class SpecialUsersComponent implements OnInit {
       let filePath = "/Settings/";
       let fileName = "SpecialUsers.json";
       this.commonService.saveJsonFile(this.userJsonObject, fileName, filePath);
-      this.updateUserList(userId,"delete");
+      this.updateUserList(userId, "delete");
     }
   }
 
   saveUsers() {
+    let msg = "";
+    if ($(this.txtPassword).val() == "") {
+      msg = "Please enter password !!!";
+    }
+    if ($(this.txtUserName).val() == "") {
+      msg = "Please enter user name !!!";
+    }
+    if ($(this.ddlType).val() == "0") {
+      msg = "Please select user type !!!";
+    }
+    if (msg != "") {
+      this.commonService.setAlertMessage("error", msg);
+      return;
+    }
+
+    let isAdd = true;
     let lastKey = 1
     if (this.userJsonObject == null) {
       this.userJsonObject = {};
     }
     else {
       if ($(this.userId).val() == "0") {
+        let userDetail = this.userList.find(item => item.username == $(this.txtUserName).val());
+        if (userDetail != undefined) {
+          isAdd = false;
+        }
         lastKey = Number(this.userJsonObject["lastKey"]) + 1;
         this.userJsonObject["lastKey"] = lastKey;
       }
       else {
         lastKey = Number($(this.userId).val());
+        let userDetail = this.userList.find(item => item.username == $(this.txtUserName).val() && item.id != lastKey);
+        if (userDetail != undefined) {
+          isAdd = false;
+        }
       }
+    }
+    if (isAdd == false) {
+      this.commonService.setAlertMessage("error", "User name already exist !!!");
+      return;
     }
     const data = {
       password: $(this.txtPassword).val(),
@@ -134,7 +162,7 @@ export class SpecialUsersComponent implements OnInit {
 
   updateUserList(lastKey: any, type: any) {
     if (type == "delete") {
-      this.userList=this.userList.filter(item=>item.id!=lastKey);
+      this.userList = this.userList.filter(item => item.id != lastKey);
       this.commonService.setAlertMessage("success", "User deleted successfully !!!");
     }
     else {
@@ -154,7 +182,7 @@ export class SpecialUsersComponent implements OnInit {
         }
       }
       this.commonService.setAlertMessage("success", "Data saved successfully !!!");
-    }    
+    }
     this.closeModel();
   }
 }
