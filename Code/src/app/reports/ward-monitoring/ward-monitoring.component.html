@@ -2,27 +2,22 @@
     <div class="container search-bar" id="divSearch">
         <div class="row">
             <div class="col-md-7" style=" padding-left: 20px; padding-top: 4px;">
-                <button class="btn-hvr" (click)="setPreviousDate();"><span style="color: #fff;">
+                <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
                     << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value)"
-                  style="height: 45px; width: 35%; margin-right: 8px;" />
-                <button class="btn-hvr" (click)="setNextDate();"><span style="color: #fff;">>></span></button>
-                <select class="caret-select" id="ddlZone" style="width: 25%;"
-                (change)="changeZoneSelection($event.target.value)">
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" style="height: 45px; width: 150px; margin-right: 8px;" />
+                <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
+                <select class="caret-select" id="ddlZone" style="width: 25%;" (change)="changeZoneSelection($event.target.value)">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                   ngSelected="zone.zoneNo == selectedZone?'selected':'0'">
                   {{zone.zoneName}}
                 </option>
               </select>
-              </div>
+            </div>
             <div class="col-md-3 col-sm-12 searh-pad" style="display: none;">
                 <button type="submit" (click)="showReport();" class="btn  mrg-5">
                     Show Report</button>
             </div>
             <div class="col-md-3 searh-pad">
-                <button id="btnDownload" disabled="disabled" type="submit" (click)="downloadReport();" class="btn mrg-5"
-                    style="margin-left: 10px;display: none">
-                    Download Report</button>
             </div>
         </div>
     </div>
@@ -37,8 +32,7 @@
                         Collection Report
                         <span style="font-size: 10px;">( Ward wise )</span>
                     </div>
-                    <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar"
-                        style="width: 100%;height: 6px;margin-bottom:10px;" />
+                    <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar" style="width: 100%;height: 6px;margin-bottom:10px;" />
                 </div>
             </div>
             <div class="col-md-4 ">
@@ -51,7 +45,7 @@
                         <tr>
                             <td class="report-left-td">Date </td>
                             <td class="report-right-td">{{reportData.reportDate}}</td>
-                        </tr> 
+                        </tr>
                         <tr>
                             <td class="report-left-td">Vehicle No </td>
                             <td class="report-right-td">{{reportData.vehicleNo}}</td>
@@ -68,12 +62,11 @@
                 </div>
                 <div class="col-md-12">
                     <div id="divGraph" class="divChart" style="margin-top: 11px;">
-                        <div id="chartContainer"
-                            style="height: 320px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                        <div id="chartContainer" style="height: 320px; width: 100%; margin-left:auto;margin-right:auto;  ">
                         </div>
                         <div class="divPatch">
-                              <div class="divPatch1"> &nbsp;</div>
-                            <div class="divPatch2"> &nbsp; </div>  
+                            <div class="divPatch1"> &nbsp;</div>
+                            <div class="divPatch2"> &nbsp; </div>
                         </div>
                     </div>
                 </div>

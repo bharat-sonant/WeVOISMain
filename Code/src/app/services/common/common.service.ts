@@ -1898,7 +1898,7 @@ export class CommonService {
         let keyArray = Object.keys(wardLinesDataObj);
         for (let i = 0; i < keyArray.length - 3; i++) {
           let lineNo = Number(keyArray[i]);
-          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"] });
+          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"],points:wardLinesDataObj[lineNo]["points"] });
         }
         lineWeightageList.push({ totalLines: wardLinesDataObj["totalLines"] });
         let dat1 = new Date(date);

@@ -1191,9 +1191,11 @@ export class WardWorkTrackingComponent {
         }
       }
       this.progressData.skippedLines = skippedLines;
-      skippedPercentage = 100 - ((skippedLines / Number(this.progressData.totalLines)) * 100);
-      if (percentage > skippedPercentage) {
-        percentage = skippedPercentage;
+      if (skippedLines > 0) {
+        skippedPercentage = 100 - ((skippedLines / Number(this.progressData.totalLines)) * 100);
+        if (percentage > skippedPercentage) {
+          percentage = skippedPercentage;
+        }
       }
       if (percentage > 100) {
         percentage = 100;
