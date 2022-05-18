@@ -386,3 +386,78 @@
      }
  
  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ .btn-hvr-div{
+    padding-left: 20px; 
+    padding-top: 4px;
+ }
+ .arrow-span{
+    color: #fff;
+ }
+ .arrow-input{
+    height: 45px; 
+    width: 150px; 
+    margin-right: 8px;
+ }
+ .zone-select{
+    width: 25%;
+ }
+ .rpt-head-text-span{
+    font-size: 10px;
+ }
+ .strip-img{
+    width: 100%;
+    height: 6px;
+    margin-bottom:10px;
+ }
+
+.divGraph{
+    margin-top: 11px;
+}
+.divChart-iner{
+    height: 320px; 
+    width: 100%; 
+    margin-left:auto;
+    margin-right:auto;
+}
+.divMap{
+    margin-left:-17px;
+}
+.gmap{
+    width:100%;
+    height:100%;
+}
+
+
+@media only screen and (min-width:760px) and (max-width:830px){
+    .zone-select{
+        width: 35% !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

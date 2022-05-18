@@ -1,21 +1,22 @@
 <div id="divReportHeader" class="panel-header panel-header-sm report-header-bg">
     <div class="container search-bar" id="divSearch">
         <div class="row">
-            <div class="col-md-7" style=" padding-left: 20px; padding-top: 4px;">
-                <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
+            <div class="col-md-12 btn-hvr-div">
+                <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-span">
                     << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" style="height: 45px; width: 150px; margin-right: 8px;" />
-                <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
-                <select class="caret-select" id="ddlZone" style="width: 25%;" (change)="changeZoneSelection($event.target.value)">
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date" (change)="setDate($event.target.value,'current')"/>
+                <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span">>></span></button>
+                <select class="caret-select zone-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                   ngSelected="zone.zoneNo == selectedZone?'selected':'0'">
                   {{zone.zoneName}}
                 </option>
               </select>
+              
             </div>
             <div class="col-md-3 col-sm-12 searh-pad" style="display: none;">
                 <button type="submit" (click)="showReport();" class="btn  mrg-5">
-                    Show Report</button>
+                    Show Report</button> 
             </div>
             <div class="col-md-3 searh-pad">
             </div>
@@ -30,9 +31,9 @@
                 <div class="card-header ">
                     <div class="rpt-head-text">
                         Collection Report
-                        <span style="font-size: 10px;">( Ward wise )</span>
+                        <span class="rpt-head-text-span">( Ward wise )</span>
                     </div>
-                    <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar" style="width: 100%;height: 6px;margin-bottom:10px;" />
+                    <img src="../assets/img/head-strip.jpg" class="strip-img" alt="sikar nagar parishad" title="sikar"/>
                 </div>
             </div>
             <div class="col-md-4 ">
@@ -61,8 +62,8 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    <div id="divGraph" class="divChart" style="margin-top: 11px;">
-                        <div id="chartContainer" style="height: 320px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                    <div id="divGraph" class="divChart divGraph">
+                        <div id="chartContainer" class="divChart-iner">
                         </div>
                         <div class="divPatch">
                             <div class="divPatch1"> &nbsp;</div>
@@ -72,8 +73,8 @@
                 </div>
             </div>
             <div class="col-md-8 " id="divRptRight">
-                <div id="divMap" class="report-map" style="margin-left:-17px;">
-                    <div #gmap style="width:100%;height:100%;"></div>
+                <div id="divMap" class="report-map divMap">
+                    <div #gmap class="gmap" ></div>
                 </div>
             </div>
         </div>
