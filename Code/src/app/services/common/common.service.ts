@@ -719,37 +719,13 @@ export class CommonService {
     }
     return city;
   }
-
-  /*
-
-  getWardLines(newDb: any, wardNo: any) {
-    return new Promise((resolve) => {
-      let wardLineCount = newDb.object("WardLines/" + wardNo + "").valueChanges().subscribe((lineCount) => {
-        wardLineCount.unsubscribe();
-        if (lineCount != null) {
-          resolve(lineCount);
-        }
-      });
-    });
-  }
-
-  */
-  /*
   
-    getWardKML(newDb: any, wardNo: any) {
-      return new Promise((resolve) => {
-        let boundaryInstance = newDb.object("Defaults/KmlBoundary/" + wardNo).valueChanges().subscribe((wardPath) => {
-          boundaryInstance.unsubscibe();
-          resolve(wardPath);
-        });
-      });
-    }
-  */
 
   //#region  all local storage
 
   setLocalStorageData(newDb: any) {
     this.fsDb = newDb;
+    this.setWardForLineWeitage();
     this.setDesignation();
     this.setZones();
     this.setFixedLoctions(newDb);
@@ -933,62 +909,6 @@ export class CommonService {
     });
   }
 
-  /*
-
-  setWardKML(newDb: any) {
-    localStorage.setItem("wardKMList", null);
-    let dbPath = "Defaults/KmlBoundary/";
-    let wardKMLInstance = newDb.object(dbPath).valueChanges().subscribe(
-      data => {
-        wardKMLInstance.unsubscribe();
-        let wardKMLList = [];
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let wardNo = keyArray[i];
-              let kmlUrl = data[wardNo];
-              wardKMLList.push({ wardNo: wardNo, kmlUrl: kmlUrl });
-            }
-          }
-          localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
-        }
-        else {
-          localStorage.setItem("wardKMList", JSON.stringify(wardKMLList));
-        }
-      }
-    );
-  }
-
-  
-
-  setWardLines(newDb: any) {
-    let dbPath = "WardLines";
-    let wardLinesInstance = newDb.object(dbPath).valueChanges().subscribe(
-      data => {
-        wardLinesInstance.unsubscribe();
-        let wardLineCountList = [];
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let wardNo = keyArray[i];
-              let lineCount = data[wardNo];
-              wardLineCountList.push({ wardNo: wardNo, lineCount: lineCount });
-            }
-            localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
-          }
-          else {
-            localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
-          }
-        }
-        else {
-          localStorage.setItem("wardLineCountList", JSON.stringify(wardLineCountList));
-        }
-      }
-    );
-  }
-*/
   setMarkingWards() {
     let markingWards = [];
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
@@ -1237,20 +1157,7 @@ export class CommonService {
     }
   }
 
-  /*
-
-  setCityData() {
-    if (localStorage.getItem("isCityChange") == "yes") {
-      localStorage.setItem("isCityChange", "no");
-      setTimeout(() => {
-        window.location.href = window.location.href;
-      }, 1000);
-    }
-  }
-
-  */
-
-  getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
+    getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
     return new Promise((resolve) => {
       let polylines = [];
       let cityName = localStorage.getItem("cityName");
@@ -1316,91 +1223,6 @@ export class CommonService {
 
   //#region  local json
 
-  /*
-
-  getZones() {
-    return new Promise((resolve) => {
-      let zoneList = [];
-      let cityName = localStorage.getItem("cityName");
-      if (cityName == "jaipur-office") {
-        cityName = "jaipur"
-      }
-      this.httpService.get("../../assets/jsons/AvailableWard/" + cityName + ".json").subscribe(data => {
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 1; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (data[index] != null) {
-                if (!data[index].toString().includes("Test") && data[index] != "OfficeWork" && data[index] != "FixedWages" && data[index] != "BinLifting" && data[index] != "GarageWork" && data[index] != "Compactor" && data[index] != "SegregationWork" && data[index] != "GeelaKachra" && data[index] != "SecondHelper" && data[index] != "ThirdHelper") {
-                  if (data[index].toString().includes("mkt")) {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Market " + data[index].toString().replace("mkt", ""), });
-                  } else if (data[index].toString().includes("MarketRoute1")) {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Market 1" });
-                  } else if (data[index].toString().includes("MarketRoute2")) {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Market 2" });
-                  } else if (data[index].toString() == "WetWaste") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 1" });
-                  } else if (data[index].toString() == "WetWaste1") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 2" });
-                  } else if (data[index].toString() == "WetWaste2") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 3" });
-                  } else if (data[index].toString() == "WetWaste4") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 4" });
-                  } else if (data[index].toString() == "WetWaste5") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 5" });
-                  } else if (data[index].toString() == "WetWaste6") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "Wet 6" });
-                  } else if (data[index].toString() == "CompactorTracking1") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking1", });
-                  } else if (data[index].toString() == "CompactorTracking2") {
-                    zoneList.push({ zoneNo: data[index], zoneName: "CompactorTracking2", });
-                  } else {
-                    if (cityName == 'kishangarh' || data[index].toString() == "60") {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Ward 58_60" });
-                    }
-                    else {
-                      zoneList.push({ zoneNo: data[index], zoneName: "Ward " + data[index], });
-                    }
-                  }
-                }
-              }
-            }
-          }
-          resolve(JSON.stringify(zoneList));
-        }
-      });
-    });
-  }
-*/
-
-  /*
-  getWardTotalLength(wardNo: any) {
-    return new Promise((resolve) => {
-      let totalLength = 0;
-      let cityName = localStorage.getItem("cityName");
-      if (cityName == "jaipur-office") {
-        cityName = "jaipur"
-      }
-      this.httpService.get("../../assets/jsons/WardTotalLength/" + cityName + ".json").subscribe(data => {
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (data[index] != null) {
-                if (index == wardNo) {
-                  totalLength = Number(data[index]);
-                }
-              }
-            }
-          }
-          resolve(totalLength);
-        }
-      });
-    });
-  }
-  */
 
   getWardLineLength(wardNo: any) {
     return new Promise((resolve) => {
@@ -1550,37 +1372,6 @@ export class CommonService {
     });
   }
 
-  /*
-    setJaipurGreaterWardBoundary(map: any, boundaryPath: any) {
-      return new Promise((resolve) => {
-        const path = boundaryPath;
-        let boundaryInstance = this.httpService.get(path).subscribe(data => {
-          boundaryInstance.unsubscribe();
-          if (data != null) {
-            let strokeWeight = 8;
-            let points = data["points"];
-            if (points.length > 0) {
-              let bounds = new google.maps.LatLngBounds();
-              var latLng = [];
-              for (let j = 0; j < points.length; j++) {
-                latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-                bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-              }
-              let line = new google.maps.Polyline({
-                path: latLng,
-                strokeColor: "black",
-                strokeWeight: strokeWeight,
-              });
-              this.polylines[0] = line;
-              this.polylines[0].setMap(map);
-              map.fitBounds(bounds);
-              resolve(this.polylines);
-            }
-          }
-        });
-      });
-    }
-  */
 
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
@@ -1616,38 +1407,6 @@ export class CommonService {
       });
     });
   }
-  /*
-    getWardLineCount(zoneNo: any) {
-      let wardLines = 0;
-      let wardLineCountList = JSON.parse(localStorage.getItem("wardLineCountList"));
-      if (wardLineCountList != null) {
-        let lineCount = wardLineCountList.find(item => item.wardNo == zoneNo);
-        if (lineCount != undefined) {
-          wardLines = Number(lineCount.lineCount);
-        }
-      }
-      return wardLines;
-    }
-  
-  
-    getDesignation() {
-      return new Promise((resolve) => {
-        let designationList = [];
-        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
-        let Instance = this.httpService.get(path).subscribe(dataDate => {
-          Instance.unsubscribe();
-          let list = JSON.parse(JSON.stringify(dataDate));
-          console.log(list)
-          for (let i = 1; i < list.length; i++) {
-            let designationId = i;
-            let designation = list[i]["name"];
-            designationList.push({ designationId: designationId, designation: designation });
-          }
-          resolve(JSON.stringify(designationList));
-        });
-      });
-    }
-  */
 
 
   //#endregion
@@ -1892,56 +1651,77 @@ export class CommonService {
 
   getWardLineWeightage(zoneNo: any, date: any) {
     return new Promise((resolve) => {
-      let lineWeightageList = [];
+      let lineList = [];
       this.getWardLine(zoneNo, date).then((linesData: any) => {
         let wardLinesDataObj = JSON.parse(linesData);
         let keyArray = Object.keys(wardLinesDataObj);
         for (let i = 0; i < keyArray.length - 3; i++) {
           let lineNo = Number(keyArray[i]);
-          lineWeightageList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"], points: wardLinesDataObj[lineNo]["points"] });
+          lineList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"], points: wardLinesDataObj[lineNo]["points"] });
         }
-        lineWeightageList.push({ totalLines: wardLinesDataObj["totalLines"] });
-        let dat1 = new Date(date);
-        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
-        let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
-          jsonInstance.unsubscribe();
-          if (dataDate == null) {
-            resolve(lineWeightageList);
+        lineList.push({ totalLines: wardLinesDataObj["totalLines"] });
+        let wardList = JSON.parse(localStorage.getItem("wardForLineWeightage"));
+        if (wardList.length > 0) {
+          let detail = wardList.find(item => item.zoneNo == zoneNo);
+          if (detail != undefined) {
+            this.getWardLineWeightageList(lineList, date, zoneNo).then((wardLineWeightageList: any) => {
+              resolve(wardLineWeightageList);
+            });
           }
           else {
-            let list = JSON.parse(JSON.stringify(dataDate));
-            let jsonDate = "";
-            for (let i = list.length - 1; i >= 0; i--) {
-              let dat2 = new Date(list[i]);
-              if (dat1 >= dat2) {
-                jsonDate = list[i].toString().trim();
-                i = -1;
-              }
-            }
-            if (jsonDate != "") {
-              const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-              let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-                wardLineInstance.unsubscribe();
-                if (data != null) {
-                  let list = JSON.parse(JSON.stringify(data));
-                  for (let i = 0; i < list.length - 1; i++) {
-                    let lineDetail = lineWeightageList.find(item => item.lineNo == list[i]["lineNo"]);
-                    if (lineDetail != undefined) {
-                      lineDetail.weightage = list[i]["weightage"];
-                    }
-                  }
-                  resolve(lineWeightageList);
-                }
-              });
-            }
-            else {
-              resolve(lineWeightageList);
+            resolve(lineList);
+          }
+        }
+        else {
+          resolve(lineList);
+        }
+      });
+    });
+  }
+
+  getWardLineWeightageList(lineWeightageList: any, date: any, zoneNo: any) {
+    return new Promise((resolve) => {
+      let dat1 = new Date(date);
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        if (dataDate == null) {
+          resolve(lineWeightageList);
+        }
+        else {
+          let list = JSON.parse(JSON.stringify(dataDate));
+          let jsonDate = "";
+          for (let i = list.length - 1; i >= 0; i--) {
+            let dat2 = new Date(list[i]);
+            if (dat1 >= dat2) {
+              jsonDate = list[i].toString().trim();
+              i = -1;
             }
           }
-        }, error => {
-          resolve(lineWeightageList);
-        });
+          if (jsonDate != "") {
+            const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+            let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+              wardLineInstance.unsubscribe();
+              if (data != null) {
+                let list = JSON.parse(JSON.stringify(data));
+                for (let i = 0; i < list.length - 1; i++) {
+                  let lineDetail = lineWeightageList.find(item => item.lineNo == list[i]["lineNo"]);
+                  if (lineDetail != undefined) {
+                    lineDetail.weightage = list[i]["weightage"];
+                  }
+                }
+                resolve(lineWeightageList);
+              }
+            });
+          }
+          else {
+            resolve(lineWeightageList);
+          }
+        }
+      }, error => {
+        resolve(lineWeightageList);
       });
+
     });
   }
 
@@ -1954,6 +1734,28 @@ export class CommonService {
       }, error => {
         resolve(null);
       });
+    });
+  }
+
+  setWardForLineWeitage() {
+    let wardForWeightageList = [];
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
+    let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+      jsonInstance.unsubscribe();
+      if (dataDate == null) {
+        localStorage.setItem("wardForLineWeightage", JSON.stringify(wardForWeightageList));
+      }
+      else {
+        let list = JSON.parse(JSON.stringify(dataDate));
+        if (list.length > 0) {
+          for (let i = 0; i < list.length; i++) {
+            wardForWeightageList.push({ zoneNo: list[i].trim() });
+          }
+        }
+        localStorage.setItem("wardForLineWeightage", JSON.stringify(wardForWeightageList));
+      }
+    }, error => {
+      localStorage.setItem("wardForLineWeightage", JSON.stringify(wardForWeightageList));
     });
   }
 

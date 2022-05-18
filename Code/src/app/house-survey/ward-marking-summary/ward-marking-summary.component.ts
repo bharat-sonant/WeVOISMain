@@ -39,7 +39,6 @@ export class WardMarkingSummaryComponent implements OnInit {
   getWards() {
     let wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
-    console.log(wardList);
     if (wardList.length > 0) {
       for (let i = 0; i < wardList.length; i++) {
         let wardNo = wardList[i]["zoneNo"];

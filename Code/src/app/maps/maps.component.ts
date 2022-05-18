@@ -563,7 +563,6 @@ export class MapsComponent {
 
   getCoverdWardLength() {
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/LineStatus";
-    console.log(dbPath);
     let wardCoveredLengthInstance = this.db.object(dbPath).valueChanges().subscribe(
       lineStatusData => {
         wardCoveredLengthInstance.unsubscribe();
@@ -717,11 +716,11 @@ export class MapsComponent {
         } else {
           this.progressData.workPercentage = "0%";
         }
-       // if (workerData["wardCoveredDistance"] != null) {
-      //    this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
-      //  } else {
-      //    this.progressData.coveredLength = "0.00";
-      //  }
+        // if (workerData["wardCoveredDistance"] != null) {
+        //    this.progressData.coveredLength = (parseFloat(workerData["wardCoveredDistance"]) / 1000).toFixed(2);
+        //  } else {
+        //    this.progressData.coveredLength = "0.00";
+        //  }
       }
     });
   }

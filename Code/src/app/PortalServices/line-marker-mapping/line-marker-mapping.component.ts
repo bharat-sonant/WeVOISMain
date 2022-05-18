@@ -637,7 +637,7 @@ export class LineMarkerMappingComponent {
         // img.setAttribute('src', url);
       })
       .catch((error) => {
-        console.log(error);
+       // console.log(error);
         // Handle any errors
       });
 
