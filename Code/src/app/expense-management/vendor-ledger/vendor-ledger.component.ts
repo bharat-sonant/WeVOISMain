@@ -195,18 +195,6 @@ export class VendorLedgerComponent implements OnInit {
 
   checkUpdateVendorValidation() {
     let message = "yes";
-    if ($(this.txtIfsc).val() == "") {
-      message = "Please enter IFSC !!!";
-    }
-    if ($(this.txtBranch).val() == "") {
-      message = "Please enter bank branch !!!";
-    }
-    if ($(this.txtAccountNo).val() == "") {
-      message = "Please enter account number !!!";
-    }
-    if ($(this.txtBankName).val() == "") {
-      message = "Please enter bank name !!!";
-    }
     if ($(this.txtAddress).val() == "") {
       message = "Please enter address !!!";
     }
