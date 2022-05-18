@@ -27,16 +27,14 @@
                                   {{zone.zoneName}}
                                 </option>
                               </select>
+
                             </div>
                         </div>
                         <div class="col-md-3">
-
                             <button class="btn btn-success" (click)="saveWeightage();" style="margin-top:-5px;">Save</button>
                         </div>
-                        <div class="col-md-4">
-
-                        </div>
-                        <div class="col-md-2">
+                        <div class="col-md-6">
+                            <input id="chkAllow" type="checkbox" (change)="setZoneAllowed();"> Is Allow for Line weitage
                         </div>
                     </div>
                 </div>

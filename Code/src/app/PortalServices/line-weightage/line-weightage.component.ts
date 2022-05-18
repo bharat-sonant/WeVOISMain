@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
-import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-line-weightage',
@@ -11,7 +10,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class LineWeightageComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   selectedZone: any;
@@ -19,8 +18,10 @@ export class LineWeightageComponent implements OnInit {
   lineList: any[];
   todayDate: any;
   totalLines: any;
-  totalWardLength:any;
+  totalWardLength: any;
   divLoader = "#divLoader";
+  lineWeightageWards: any[] = [];
+  chkAllow = "chkAllow";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -33,7 +34,33 @@ export class LineWeightageComponent implements OnInit {
     this.selectedZone = "0";
     this.todayDate = this.commonService.setTodayDate();
     this.getZones();
+    this.getLineWeightageWards();
     this.clearData();
+  }
+
+  getLineWeightageWards() {
+    this.lineWeightageWards = JSON.parse(localStorage.getItem("wardForLineWeightage"));
+  }
+
+  setZoneAllowed() {
+    if ((<HTMLInputElement>document.getElementById(this.chkAllow)).checked == false) {
+      this.lineWeightageWards= this.lineWeightageWards.filter(item => item.zoneNo != this.selectedZone);
+    }
+    else {
+      this.lineWeightageWards.push({zoneNo:this.selectedZone});
+    }
+    localStorage.setItem("wardForLineWeightage", JSON.stringify(this.lineWeightageWards));
+    this.saveWardForLineWeightage();
+  }
+
+  saveWardForLineWeightage(){
+    let updateArray=[];
+    for(let i=0;i<this.lineWeightageWards.length;i++){
+      updateArray.push(this.lineWeightageWards[i]["zoneNo"]);
+    }
+    let filePath = "/WardLineWeightageJson/";
+    let fileName = "wardLineWeightageAllowed.json";
+    this.commonService.saveJsonFile(updateArray, fileName, filePath);
   }
 
   getZones() {
@@ -47,6 +74,11 @@ export class LineWeightageComponent implements OnInit {
     if (this.selectedZone != "0") {
       $(this.divLoader).show();
       this.getLineWeightage();
+      let wardDetail = this.lineWeightageWards.find(item => item.zoneNo == this.selectedZone);
+      if (wardDetail != undefined) {
+        (<HTMLInputElement>document.getElementById(this.chkAllow)).checked = true;
+      }
+
     }
   }
 
@@ -85,7 +117,7 @@ export class LineWeightageComponent implements OnInit {
     for (let i = 0; i < this.lineList.length; i++) {
       updateList.push({ lineNo: this.lineList[i]["lineNo"], weightage: this.lineList[i]["weightage"] });
     }
-    updateList.push({ totalLines: this.totalLines });  
+    updateList.push({ totalLines: this.totalLines });
 
     let filePath = "/WardLineWeightageJson/" + this.selectedZone + "/";
     let fileName = this.todayDate + ".json";
@@ -120,6 +152,7 @@ export class LineWeightageComponent implements OnInit {
   }
 
   clearData() {
+    (<HTMLInputElement>document.getElementById(this.chkAllow)).checked = false;
     this.lineList = [];
     this.totalLines = 0;
   }

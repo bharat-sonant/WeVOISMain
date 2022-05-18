@@ -373,16 +373,23 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.workerDetails.completedWard = completedWard.toString();
         this.workerDetails.totalWard = totalWard.toString();
         if (this.firstData == false) {
-          this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
-            let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
-            if (zoneDetails != undefined) {
-              zoneDetails.totalLines = Number(lineList[lineList.length - 1]["totalLines"]);
-              for (let i = 0; i < lineList.length - 1; i++) {
-                zoneDetails.lineWeight.push({ lineNo: lineList[i]["lineNo"], weightage: lineList[i]["weightage"], lineLength: lineList[i]["lineLength"], lineStatus: "", endTime: 0 });
+          let wardList = JSON.parse(localStorage.getItem("wardForLineWeightage"));
+          let wardDetail = wardList.find(item => item.zoneNo == zoneNo);
+          if (wardDetail != undefined) {
+            this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
+              let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+              if (zoneDetails != undefined) {
+                zoneDetails.totalLines = Number(lineList[lineList.length - 1]["totalLines"]);
+                for (let i = 0; i < lineList.length - 1; i++) {
+                  zoneDetails.lineWeight.push({ lineNo: lineList[i]["lineNo"], weightage: lineList[i]["weightage"], lineLength: lineList[i]["lineLength"], lineStatus: "", endTime: 0 });
+                }
               }
-            }
+              this.getWardDetail(zoneNo);
+            });
+          }
+          else {
             this.getWardDetail(zoneNo);
-          });
+          }
         }
       }
 
@@ -417,8 +424,20 @@ export class RealtimeMonitoringComponent implements OnInit {
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
           if (summaryData["workPercentage"] != null) {
-
-            this.getWorkPercentage(zoneNo);
+            if (zoneDetails.lineWeight.length > 0) {
+              this.getWorkPercentage(zoneNo);
+            }
+            else {
+              zoneDetails.workPer = summaryData["workPercentage"] + "%";
+              zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
+              if (summaryData["completedLines"] != null) {
+                zoneDetails.completedLines = summaryData["completedLines"];
+              }
+              if (summaryData["wardCoveredDistance"] != null) {
+                zoneDetails.wardKM = (parseFloat(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
+              }
+              this.getCurrentLine(zoneNo);
+            }
             if (zoneDetails.status == "completed")
               zoneDetails.borderClass = "completed-ward";
             else zoneDetails.borderClass = "progress-bar  progress-success";
@@ -523,6 +542,17 @@ export class RealtimeMonitoringComponent implements OnInit {
         }
       }
     });
+  }
+
+  getCurrentLine(zoneNo: any) {
+    if (zoneNo == this.selectedZone) {
+      let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
+        lastLineDone.unsubscribe();
+        if (lastLine != null) {
+          this.workerDetails.currentLine = (Number(lastLine) + 1).toString();
+        }
+      });
+    }
   }
 
   getWorkPercentage(zoneNo: any) {
@@ -782,6 +812,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getWardProgress();
     this.checkTodayWorkStatus();
     this.getVehicleStatus();
+    this.getCurrentLine(this.selectedZone);
   }
 
   getWardInTime() {
@@ -1860,6 +1891,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.clearAllOnMap();
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
+      this.workerDetails.totalLines = wardLines["totalLines"];
       var linePath = [];
       for (let i = 1; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
