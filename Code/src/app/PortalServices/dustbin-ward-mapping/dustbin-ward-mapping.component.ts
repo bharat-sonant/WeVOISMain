@@ -22,9 +22,9 @@ export class DustbinWardMappingComponent implements OnInit {
   cityName: any;
   wardBoundary: any;
   dustbinMarkerList: any[] = [];
-  polylines:any[]=[];
-  wardLineNoMarker:any[]=[];
-  todayDate:any;
+  polylines: any[] = [];
+  wardLineNoMarker: any[] = [];
+  todayDate: any;
 
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   defaultCircularDustbinUrl = "../assets/img/dustbin-circular-grey.png";
@@ -43,7 +43,7 @@ export class DustbinWardMappingComponent implements OnInit {
   }
 
   setDefault() {
-    this.todayDate=this.commonService.setTodayDate();
+    this.todayDate = this.commonService.setTodayDate();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.setDefaultMap();
     this.setHeight();
@@ -59,7 +59,7 @@ export class DustbinWardMappingComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let dustbin = keyArray[i];
-            dustbinMapList.push({ dustbin: dustbin, zone: mapData[dustbin]["zone"] });
+            dustbinMapList.push({ dustbin: dustbin, zone: mapData[dustbin]["zone"], lineNo: mapData[dustbin]["lineNo"] });
           }
         }
       }
@@ -85,15 +85,15 @@ export class DustbinWardMappingComponent implements OnInit {
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
-          if(j==0){
-            this.setLineNoMarker(lineNo,points[j][0],points[j][1]);
+          if (j == 0) {
+            this.setLineNoMarker(lineNo, points[j][0], points[j][1]);
           }
         }
         this.plotLineOnMap(latLng, i);
       }
     }, error => {
     });
-  }  
+  }
 
   plotLineOnMap(latlng: any, index: any) {
     let line = new google.maps.Polyline({
@@ -104,7 +104,7 @@ export class DustbinWardMappingComponent implements OnInit {
     this.polylines[index] = line;
     this.polylines[index].setMap(this.map);
   }
-  
+
   setLineNoMarker(lineNo: any, lat: any, lng: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -182,6 +182,9 @@ export class DustbinWardMappingComponent implements OnInit {
       let dustbinDetail = this.dustbinList.find(item => item.dustbin == this.selectedDustbinList[i]["dustbin"]);
       if (dustbinDetail != undefined) {
         dustbinDetail.zone = this.selectedZone;
+        let infoWindowText = "txtLine" + dustbinDetail.dustbin;
+        let lineNo = $("#" + infoWindowText).val();
+        dustbinDetail.lineNo = lineNo;
         if (dustbinDetail.type == "Rectangular") {
           dustbinDetail.markerUrl = this.defaultRectangularPickedDustbinUrl;
         }
@@ -192,8 +195,17 @@ export class DustbinWardMappingComponent implements OnInit {
     }
     const obj = {};
     for (let i = 0; i < this.dustbinList.length; i++) {
-      if (this.dustbinList[i]["zone"] != "0") {
-        obj[this.dustbinList[i]["dustbin"]] = { zone: this.dustbinList[i]["zone"] };
+      if (this.dustbinList[i]["zone"] != "0" && this.dustbinList[i]["lineNo"]!="") {
+        obj[this.dustbinList[i]["dustbin"]] = { zone: this.dustbinList[i]["zone"], lineNo: this.dustbinList[i]["lineNo"] };
+      }
+      else{
+        this.dustbinList[i]["zone"] = "0";
+        if (this.dustbinList[i]["type"] == "Rectangular") {
+          this.dustbinList[i]["markerUrl"] = this.defaultRectangularDustbinUrl;
+        }
+        else {
+          this.dustbinList[i]["markerUrl"] = this.defaultCircularDustbinUrl;
+        }
       }
     }
     this.dustbinSummary.assignedDustbin = this.dustbinList.filter(item => item.zone != "0").length;
@@ -225,10 +237,12 @@ export class DustbinWardMappingComponent implements OnInit {
         markerUrl = this.defaultRectangularDustbinUrl;
       }
       let zone = "0";
+      let lineNo = "";
       if (dustbinMapList.length > 0) {
         let dustbinWard = dustbinMapList.find(item => item.dustbin == this.allDustbinList[i]["dustbin"]);
         if (dustbinWard != undefined) {
           zone = dustbinWard.zone;
+          lineNo = dustbinWard.lineNo;
           if (this.allDustbinList[i]["type"] == "Rectangular") {
             markerUrl = this.defaultRectangularPickedDustbinUrl;
           }
@@ -237,7 +251,7 @@ export class DustbinWardMappingComponent implements OnInit {
           }
         }
       }
-      this.dustbinList.push({ dustbin: this.allDustbinList[i]["dustbin"], lat: this.allDustbinList[i]["lat"], lng: this.allDustbinList[i]["lng"], zone: zone, markerUrl: markerUrl, type: this.allDustbinList[i]["type"] });
+      this.dustbinList.push({ dustbin: this.allDustbinList[i]["dustbin"], lat: this.allDustbinList[i]["lat"], lng: this.allDustbinList[i]["lng"], zone: zone, lineNo: lineNo, markerUrl: markerUrl, type: this.allDustbinList[i]["type"] });
     }
     this.dustbinSummary.totalDustbin = this.dustbinList.length;
     this.dustbinSummary.assignedDustbin = this.dustbinList.filter(item => item.zone != "0").length;
@@ -248,7 +262,7 @@ export class DustbinWardMappingComponent implements OnInit {
     if (this.dustbinList.length > 0) {
       for (let i = 0; i < this.dustbinList.length; i++) {
         if (this.dustbinList[i]["zone"] == "0") {
-          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
+          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lineNo"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
         }
       }
     }
@@ -259,13 +273,13 @@ export class DustbinWardMappingComponent implements OnInit {
       for (let i = 0; i < this.dustbinList.length; i++) {
         if (this.dustbinList[i]["zone"] == this.selectedZone) {
           this.selectedDustbinList.push({ dustbin: this.dustbinList[i]["dustbin"] });
-          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
+          this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lineNo"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
         }
       }
     }
   }
 
-  setDustbinMarker(dustbin: any, lat: any, lng: any, markerUrl: any, type: any) {
+  setDustbinMarker(dustbin: any, lineNo: any, lat: any, lng: any, markerUrl: any, type: any) {
     let isSelected = false;
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -278,12 +292,31 @@ export class DustbinWardMappingComponent implements OnInit {
         labelOrigin: new google.maps.Point(15, 25)
       }
     });
+    let statusString = '<input id="txtLine' + dustbin + '" type="text" style="width:50px; border:none; text-align:center; background-color: #f6404d; color:#fff;" value="' + lineNo + '"/>';
+    var infowindow = new google.maps.InfoWindow({
+      content: statusString,
+    });
+    if (lineNo != "") {
+      infowindow.open(this.map, marker);
+      setTimeout(function () {
+        $('.gm-ui-hover-effect').css("display", "none");
+        $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
+        $('.gm-style-iw-d').css("overflow", "unset");
+      }, 300);
+    }
 
     marker.addListener("click", (e) => {
       if (this.selectedZone == "0") {
         this.commonService.setAlertMessage("error", "Please select zone !!!");
         return;
       }
+
+      infowindow.open(this.map, marker);
+      setTimeout(function () {
+        $('.gm-ui-hover-effect').css("display", "none");
+        $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
+        $('.gm-style-iw-d').css("overflow", "unset");
+      }, 300);
       let dustbinDetail = this.selectedDustbinList.find((item) => item.dustbin == dustbin);
       if (dustbinDetail == undefined) {
         this.selectedDustbinList.push({ dustbin: dustbin });
@@ -291,13 +324,18 @@ export class DustbinWardMappingComponent implements OnInit {
       } else {
         this.selectedDustbinList = this.selectedDustbinList.filter((item) => item.dustbin !== dustbin);
         isSelected = false;
+        infowindow.close();
+        let detail=this.dustbinList.find(item=>item.dustbin==dustbin);
+        if(detail!=undefined){
+          detail.lineNo="";
+        }
       }
-      this.setMarkerAsSelected(marker, isSelected, type);
+      this.setMarkerAsSelected(marker, isSelected, type, infowindow);
     });
     this.dustbinMarkerList.push({ marker });
   }
 
-  setMarkerAsSelected(marker: any, isSelected: boolean, type: any) {
+  setMarkerAsSelected(marker: any, isSelected: boolean, type: any, infowindow: any) {
     if (isSelected) {
       if (type == "Rectangular") {
         marker.icon.url = this.defaultRectangularPickedDustbinUrl;
@@ -305,6 +343,7 @@ export class DustbinWardMappingComponent implements OnInit {
       else {
         marker.icon.url = this.defaultCircularPickedDustbinUrl;
       }
+
     } else {
       if (type == "Rectangular") {
         marker.icon.url = this.defaultRectangularDustbinUrl;
