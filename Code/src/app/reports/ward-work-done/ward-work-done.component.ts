@@ -29,12 +29,12 @@ export class WardWorkDoneComponent implements OnInit {
     this.getWardForLineWeitage();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
-    this.getZones();
   }
   
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
+      this.getZones();
     });
   }
 

@@ -39,7 +39,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   firstData = false;
   wardLineStatusData: any[] = [];
   vehicleStstusList: any[];
-  wardForWeightageList:any[]=[];
+  wardForWeightageList: any[] = [];
 
   // Halt Time
   require: any;
@@ -182,7 +182,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   txtVehicle = "#txtVehicle";
 
   ngOnInit() {
-    this.getWardForLineWeitage();
+
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -218,14 +218,13 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
     this.setWorkNotStarted();
-    setTimeout(() => {
-      this.getWardsStatusWise();
-    }, 1000);
+    this.getWardForLineWeitage();
   }
-  
+
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
+      this.getWardsStatusWise();
     });
   }
 

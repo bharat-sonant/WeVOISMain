@@ -1660,21 +1660,9 @@ export class CommonService {
           lineList.push({ lineNo: lineNo, weightage: 1, lineLength: wardLinesDataObj[lineNo]["lineLength"], points: wardLinesDataObj[lineNo]["points"] });
         }
         lineList.push({ totalLines: wardLinesDataObj["totalLines"] });
-        let wardList = JSON.parse(localStorage.getItem("wardForLineWeightage"));
-        if (wardList.length > 0) {
-          let detail = wardList.find(item => item.zoneNo == zoneNo);
-          if (detail != undefined) {
-            this.getWardLineWeightageList(lineList, date, zoneNo).then((wardLineWeightageList: any) => {
-              resolve(wardLineWeightageList);
-            });
-          }
-          else {
-            resolve(lineList);
-          }
-        }
-        else {
-          resolve(lineList);
-        }
+        this.getWardLineWeightageList(lineList, date, zoneNo).then((wardLineWeightageList: any) => {
+          resolve(wardLineWeightageList);
+        });
       });
     });
   }
@@ -1751,6 +1739,8 @@ export class CommonService {
             }
           }
         }
+        resolve(wardForWeightageList);
+      },error=>{
         resolve(wardForWeightageList);
       });
     });

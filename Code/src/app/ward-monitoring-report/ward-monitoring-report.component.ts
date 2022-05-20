@@ -26,12 +26,13 @@ export class WardMonitoringReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     this.getWardForLineWeitage();
     this.getSelectedYearMonth();
-    this.getCircleWards();
+    
   }
   
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
+      this.getCircleWards();
     });
   }
 

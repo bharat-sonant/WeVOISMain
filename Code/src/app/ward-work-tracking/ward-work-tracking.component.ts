@@ -115,7 +115,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    this.getWardForLineWeitage();
+    
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai") {
       $(this.divParshadDetail).hide();
@@ -132,21 +132,22 @@ export class WardWorkTrackingComponent {
     this.getSelectedYearMonth();
     this.setHeight();
     this.setDefaultMap();
-    this.getZones().then(() => {
-      const id = this.actRoute.snapshot.paramMap.get("id");
-      if (id != null) {
-        this.selectedZone = id.trim();
-        this.getLineWeightage();
-      } else {
-        this.selectedZone = "0";
-      }
-      this.getLocalStorage();
-    });
+    this.getWardForLineWeitage();    
   }
 
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
+      this.getZones().then(() => {
+        const id = this.actRoute.snapshot.paramMap.get("id");
+        if (id != null) {
+          this.selectedZone = id.trim();
+          this.getLineWeightage();
+        } else {
+          this.selectedZone = "0";
+        }
+        this.getLocalStorage();
+      });
     });
   }
 
