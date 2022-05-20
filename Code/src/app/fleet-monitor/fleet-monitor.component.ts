@@ -1,15 +1,8 @@
 
 /// <reference types="@types/googlemaps" />
-
 import { Component, ViewChild } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { HttpClient } from '@angular/common/http';
-
-//services
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
-import { MapService } from '../services/map/map.service';
-import * as $ from "jquery";
 
 @Component({
   selector: 'app-fleet-monitor',
@@ -19,31 +12,18 @@ import * as $ from "jquery";
 
 export class FleetMonitorComponent {
 
+  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
   db: any;
-
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
-
-  public selectedZone: any;
   public bounds: any;
   zoneList: any[];
-  marker = new google.maps.Marker();
-  previousLat: any;
-  previousLng: any;
-  allLines: any[];
-  activeZone: any;
-  vehicleLocationFirstTime: any;
-  polylines = [];
   todayDate: any;
-  previousScannedCard: any[];
-  todayScannedCard: any[];
-  allCards: any[];
-  wardIndex: number;
+  wardForWeightageList: any[];
   currentMonthName: any;
   currentYear: any;
   cityName: any;
-  instancesList: any[];
   workerDetails: WorkderDetails =
     {
       vehicleNo: '',
@@ -57,28 +37,32 @@ export class FleetMonitorComponent {
     };
 
   ngOnInit() {
-    this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.cityName = localStorage.getItem('cityName');
+    this.setDefault();
+  }
+
+  setDefault() {
+    this.getWardForLineWeitage();
+    this.wardForWeightageList = [];
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.todayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1]) - 1);
     this.setHeight();
-    this.getZoneList();
+    this.getZones();
     this.setMap();
-    this.getWardWorkProgressDetails();
+  }
+
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
+    });
   }
 
   setHeight() {
     $('.navbar-toggler').show();
     $('#divMap').css("height", $(window).height() - 80);
-  }
-
-  getZoneList() {
-    this.zoneList = [];
-    this.zoneList = this.mapService.getlatestZones();
   }
 
   setMap() {
@@ -88,69 +72,150 @@ export class FleetMonitorComponent {
 
   getZones() {
     this.zoneList = [];
-    this.zoneList.push({ zoneNo: "0", zoneName: "-- Select Zone --" });
-    let allZones = this.mapService.getAllZones();
+    let allZones = JSON.parse(localStorage.getItem("latest-zones"));
     for (let index = 0; index < allZones.length; index++) {
       let dbPathLineCompleted = 'WasteCollectionInfo/' + allZones[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
-      let zonesData = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
-        data => {
-          if (data != null) {
-            this.zoneList.push({ zoneNo: allZones[index]["zoneNo"], zoneName: allZones[index]["zoneName"] });
+      let lineStatusInstance = this.db.object(dbPathLineCompleted).valueChanges().subscribe(
+        lineStatusData => {
+          lineStatusInstance.unsubscribe();
+          if (lineStatusData != null) {
+            this.zoneList.push({ zoneNo: allZones[index]["zoneNo"], zoneName: allZones[index]["zoneName"], totalLines: 0, lineWeightageList: [], lineStatusData: lineStatusData, driverName: "", driverMobile: "", helperName: "", vehicle: "", driverId: 0, helperId: 0,driverImageUrl:"",helperImageUrl:"" });
+            this.getWardWorkProgressDetails(allZones[index]["zoneNo"]);
           }
-          zonesData.unsubscribe();
         });
     }
   }
 
-  getWardWorkProgressDetails() {
-    for (let index = 1; index <= this.zoneList.length; index++) {
-      if (this.zoneList[index] != undefined) {
-        let wardNo = this.zoneList[index].zoneNo;
-        let totalLineData = this.db.object('WardLines/' + wardNo).valueChanges().subscribe(
-          totalLines => {
-            let workerDetailsdbPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails';
-            let workerDetails = this.db.list(workerDetailsdbPath).valueChanges().subscribe(
-              workerData => {
-                this.instancesList.push({ instances: workerDetails });
-                if (workerData.length > 0) {
-                  this.getLineStatus(wardNo, Number(totalLines));
-                  totalLineData.unsubscribe();
-                }
-              });
-
-          });
+  getWardWorkProgressDetails(zoneNo: any) {
+    this.bounds = new google.maps.LatLngBounds();
+    let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+    if (zoneDetail != undefined) {
+      let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
+      if (wardDetail != undefined) {
+        this.commonService.getWardLineWeightage(zoneNo, this.todayDate).then((lineWeightageList: any) => {
+          zoneDetail.totalLines = Number(lineWeightageList[lineWeightageList.length - 1]["totalLines"]);
+          zoneDetail.lineWeightageList = lineWeightageList;
+          this.getWorkerDetail(zoneNo, true);
+        });
       }
-
+      else {
+        this.commonService.getWardLine(zoneNo, this.todayDate).then((lineData: any) => {
+          let wardLines = JSON.parse(lineData);
+          zoneDetail.totalLines = Number(wardLines["totalLines"]);
+          this.getWorkerDetail(zoneNo, false);
+        });
+      }
     }
-
   }
 
-  getLineStatus(wardNo: string, totalLines: Number) {
-    let dbPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
-    let lineStatus = this.db.list(dbPath).valueChanges().subscribe(
-      lineStatusData => {
-        lineStatus.unsubscribe();
-        let completedCount = 0;
-        for (let index = 0; index < lineStatusData.length; index++) {
-          if (lineStatusData[index]["Status"] == "LineCompleted") {
+  getWorkerDetail(zoneNo: any, isWardLignWeightage: any) {
+    let workerDetailsdbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails';
+    let workerDetailsInstance = this.db.object(workerDetailsdbPath).valueChanges().subscribe(
+      workerData => {
+        workerDetailsInstance.unsubscribe();
+        if (workerData != null) {
+          let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+          if (zoneDetail != undefined) {
+            let vehicleList = workerData["vehicle"].split(',');
+            let driverIdList = workerData["driver"].split(',');
+            let helperIdList = workerData["helper"].split(',');
+            zoneDetail.vehicle = vehicleList[vehicleList.length - 1];
+            zoneDetail.driverId = driverIdList[driverIdList.length - 1];
+            zoneDetail.helperId = helperIdList[helperIdList.length - 1];
+            this.getDriverHelperDetail(zoneDetail, zoneDetail.driverId, "driver");
+            this.getDriverHelperDetail(zoneDetail, zoneDetail.helperId, "helper");
+            if (isWardLignWeightage == false) {
+              this.getLineStatus(zoneNo);
+            }
+            else {
+              this.getLineStatusForLineWeightage(zoneNo);
+            }
+          }
+        }
+      });
+  }
+  
+  getDriverHelperDetail(zoneDetail: any, empId: any, type: any) {
+    this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+      if (type == "driver") {
+        zoneDetail.driverName = (employee["name"]).toUpperCase();
+        zoneDetail.driverMobile = employee["mobile"];
+        zoneDetail.driverImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
+      }
+      else {
+        zoneDetail.helperName = (employee["name"]).toUpperCase();
+        zoneDetail.helperMobile = employee["mobile"];
+        zoneDetail.helperImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
+      }
+    });
+  }
+
+  getLineStatusForLineWeightage(zoneNo: string) {
+    let percentage = 0;
+    let skippedLines = 0;
+    let skippedPercentage = 0;
+    let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+    if (zoneDetail != undefined) {
+      let lineStatusData = zoneDetail.lineStatusData;
+      let lineWeightageList = zoneDetail.lineWeightageList;
+      let keyArray = Object.keys(lineStatusData);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
+            let lineWeight = 1;
+            let lineWeightDetail = lineWeightageList.find(item => item.lineNo == lineNo);
+            if (lineWeightDetail != undefined) {
+              lineWeight = Number(lineWeightDetail.weightage);
+              percentage += (100 / Number(zoneDetail.totalLines)) * lineWeight;
+            }
+          }
+          else if (lineStatusData[lineNo]["lineStatus"] == "Skipped") {
+            skippedLines++;
+          }
+        }
+      }
+      if (skippedLines > 0) {
+        skippedPercentage = 100 - ((skippedLines / Number(zoneDetail.totalLines)) * 100);
+        if (percentage > skippedPercentage) {
+          percentage = skippedPercentage;
+        }
+      }
+      if (percentage > 100) {
+        percentage = 100;
+      }
+      this.showVehicle(zoneNo, percentage.toFixed(0));
+    }
+  }
+
+  getLineStatus(zoneNo: string) {
+    let completedCount = 0;
+    let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+    if (zoneDetail != undefined) {
+      let lineStatusData = zoneDetail.lineStatusData;
+      let keyArray = Object.keys(lineStatusData);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
             completedCount++;
           }
         }
-        let workPercentage = Number((completedCount / Number(totalLines)) * 100).toFixed(0);
-        this.showVehicle(wardNo, workPercentage);
-      });
+      }
+      let workPercentage = Number((completedCount / Number(zoneDetail.totalLines)) * 100).toFixed(0);
+      this.showVehicle(zoneNo, workPercentage);
+    }
   }
 
-  showVehicle(wardNo: string, workPercentage: any) {
-    this.bounds = new google.maps.LatLngBounds();
-    let currentLocationPath = "CurrentLocationInfo/" + wardNo + "/latLng";
+  showVehicle(zoneNo: string, workPercentage: any) {
+    let currentLocationPath = "CurrentLocationInfo/" + zoneNo + "/latLng";
     let vehicleLocation = this.db.object(currentLocationPath).valueChanges().subscribe(
       locationData => {
         vehicleLocation.unsubscribe();
-        let cureentStatusDPath = 'RealTimeDetails/WardDetails/' + wardNo + '/activityStatus';
-        let currentDtatus = this.db.object(cureentStatusDPath).valueChanges().subscribe(
+        let cureentStatusDPath = 'RealTimeDetails/WardDetails/' + zoneNo + '/activityStatus';
+        let currentStatusInstance = this.db.object(cureentStatusDPath).valueChanges().subscribe(
           statusId => {
-            this.instancesList.push({ instances: currentDtatus });
+            currentStatusInstance.unsubscribe();
             let vehiclePath = '../assets/img/tipper-green.png';
             if (statusId == 'completed') {
               vehiclePath = '../assets/img/tipper-gray.png';
@@ -159,109 +224,76 @@ export class FleetMonitorComponent {
             }
 
             if (statusId != "completed") {
-              let driverIdPath = 'WasteCollectionInfo/' + wardNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails/driver';
-              let driver = this.db.object(driverIdPath).valueChanges().subscribe(
-                driverId => {
-                  this.instancesList.push({ instances: driver });
-                  let cardswapentriesPath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/' + driverId + '/card-swap-entries';
-                  let cardSwapEntries = this.db.list(cardswapentriesPath).valueChanges().subscribe(
-                    cardSwapEntriesData => {
-
-                      this.instancesList.push({ instances: cardSwapEntries });
-                      let cardEntiresArr = cardSwapEntriesData.toString().split(',');
-
-                      if (cardEntiresArr[cardEntiresArr.length - 1] == 'Out') {
-                        vehiclePath = '../assets/img/tipper-gray.png';
+              let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+              let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/" + zoneDetail.driverId;
+              let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
+                dailyWorkData => {
+                  dailyWorkInstance.unsubscribe();
+                  if (dailyWorkData != null) {
+                    for (let i = 5; i >= 1; i--) {
+                      if (dailyWorkData["task" + i] != null) {
+                        if (dailyWorkData["task" + i]["task"] == zoneNo) {
+                          let obj = dailyWorkData["task" + i]["in-out"];
+                          let valueArray = Object.values(obj);
+                          if (valueArray[valueArray.length - 1] == "Out") {
+                            vehiclePath = '../assets/img/tipper-gray.png';
+                          }
+                          i = 0;
+                        }
                       }
-                      let location = locationData.toString().split(",");
-                      this.marker = new google.maps.Marker({
-                        position: { lat: Number(location[0]), lng: Number(location[1]) },
-                        map: this.map,
-                        icon: vehiclePath,
-                      });
-                      this.bounds.extend({ lat: Number(location[0]), lng: Number(location[1]) });
-                      if (cardEntiresArr[cardEntiresArr.length - 1] == 'In') {
-                        let statusString = '<div style="width: 100px;background-color: white;float: left;">';
-                        statusString += '<div style="background:green;float: left;color:white;width: ' + workPercentage + '%;text-align:center;font-size:12px;"> ' + workPercentage + '%';
-                        statusString += '</div></div>';
-                        var infowindow = new google.maps.InfoWindow({
-                          content: statusString,
-                        });
-
-                        infowindow.open(this.map, this.marker);
-
-                        let wardString = '<div style="min-height: 35px;min-width: 35px;text-align: center;background: #fc6b03;color: white;'
-                        wardString += 'font-size: 14px;font-weight: bold;padding:2px">' + wardNo.replace("mkt", "Market ") + '</div>';
-                        var infowindow1 = new google.maps.InfoWindow({
-                          content: wardString,
-                        });
-
-                        infowindow1.open(this.map, this.marker);
-
-                        setTimeout(function () {
-                          $('.gm-ui-hover-effect').css("display", "none");
-                          $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
-                          $('.gm-style-iw-d').css("overflow", "unset");
-                          //$('.gm-style-iw-t::after').css("background", "green").css("z-index","-1");
-                          //vehicleLocation.unsubscribe();
-                        }, 300);
-
-                        let todayDate = this.todayDate;
-                        let currentYear = this.currentYear;
-                        let currentMonthName = this.currentMonthName;
-
-                        let dbPath = this.db
-                        let details = this.workerDetails;
-                        let commonService = this.commonService;
-
-                        this.marker.addListener('click', function () {
-                          let myFirebase = this.firebase;
-
-                          let workDetailsPath = 'WasteCollectionInfo/' + wardNo + '/' + currentYear + '/' + currentMonthName + '/' + todayDate + '/WorkerDetails';
-
-                          let workDetails = dbPath.object(workDetailsPath).valueChanges().subscribe(
-                            workerData => {
-                              workDetails.unsubscribe();
-                              details.vehicleNo = workerData["vehicle"];
-                              this.cityName = localStorage.getItem('cityName');
-                              details.wardMonitorUrl = "/" + this.cityName + "/ward-work-tracking/" + wardNo;
-                              // details.wardMonitorUrl = "maps/" + wardNo;
-                              $('#helperMsgD').hide();
-                              $('#helperMsgM').hide();
-                              $('#detailD').show();
-
-                              commonService.getEmplyeeDetailByEmployeeId(workerData["driver"]).then((employee) => {
-                                details.driverName = (employee["name"]).toUpperCase();
-                                details.driverMobile = employee["mobile"];
-                                details.driverImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                              });
-
-                              commonService.getEmplyeeDetailByEmployeeId(workerData["helper"]).then((employee) => {
-                                details.helperName = (employee["name"]).toUpperCase();
-                                details.helperMobile = employee["mobile"];
-                                details.helperImageUrl = employee["profilePhotoURL"] != null && employee["profilePhotoURL"] != "" ? (employee["profilePhotoURL"]) : "../../assets/img/internal-user.png";
-                                localStorage.setItem('employee', JSON.stringify(this.employeeDetail));
-                              });
-
-                            });
-                        });
-                        this.map.fitBounds(this.bounds);
-                      }
+                    }
+                    let location = locationData.toString().split(",");
+                    let marker = new google.maps.Marker({
+                      position: { lat: Number(location[0]), lng: Number(location[1]) },
+                      map: this.map,
+                      icon: vehiclePath,
                     });
-                });
+                    this.bounds.extend({ lat: Number(location[0]), lng: Number(location[1]) });
+                    let statusString = '<div style="width: 100px;background-color: white;float: left;">';
+                    statusString += '<div style="background:green;float: left;color:white;width: ' + workPercentage + '%;text-align:center;font-size:12px;"> ' + workPercentage + '%';
+                    statusString += '</div></div>';
+                    var infowindow = new google.maps.InfoWindow({
+                      content: statusString,
+                    });
+
+                    infowindow.open(this.map, marker);
+
+                    let wardString = '<div style="min-height: 35px;min-width: 35px;text-align: center;background: #fc6b03;color: white;'
+                    wardString += 'font-size: 14px;font-weight: bold;padding:2px">' + zoneNo.replace("mkt", "Market ") + '</div>';
+                    var infowindow1 = new google.maps.InfoWindow({
+                      content: wardString,
+                    });
+
+                    infowindow1.open(this.map, marker);
+
+                    setTimeout(function () {
+                      $('.gm-ui-hover-effect').css("display", "none");
+                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
+                      $('.gm-style-iw-d').css("overflow", "unset");
+                    }, 300);
+
+                    let details = this.workerDetails;
+                    marker.addListener('click', function () {
+                      details.wardMonitorUrl = "/" + this.cityName + "/ward-work-tracking/" + zoneNo;
+                      details.driverName = zoneDetail.driverName;
+                      details.helperName = zoneDetail.helperName;
+                      details.vehicleNo = zoneDetail.vehicle;
+                      details.driverImageUrl=zoneDetail.driverImageUrl;
+                      details.helperImageUrl=zoneDetail.helperImageUrl;
+                      details.driverMobile=zoneDetail.driverMobile;
+                      details.helperMobile=zoneDetail.helperMobile;
+                      $('#helperMsgD').hide();
+                      $('#helperMsgM').hide();
+                      $('#detailD').show();
+                    });
+                    this.map.fitBounds(this.bounds);
+                  }
+                }
+              );
             }
           });
       });
   }
-  ngOnDestroy() {
-    if (this.instancesList.length > 0) {
-      for (let i = 0; i < this.instancesList.length; i++) {
-        this.instancesList[i]["instances"].unsubscribe();
-      }
-    }
-  }
-
 }
 
 export class WorkderDetails {

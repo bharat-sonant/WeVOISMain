@@ -8,7 +8,6 @@ import { FirebaseService } from "../firebase.service";
   styleUrls: ['./ward-monitoring-report.component.scss']
 })
 export class WardMonitoringReportComponent implements OnInit {
-
   constructor(public fs: FirebaseService, private commonService: CommonService) { }
 
   selectedDate: any;
@@ -16,6 +15,7 @@ export class WardMonitoringReportComponent implements OnInit {
   selectedYear: any;
   selectedCircle: any;
   zoneProgressList: any[] = [];
+  wardForWeightageList:any[]=[];
   zoneList: any[] = [];
   db: any;
   txtDate = "#txtDate";
@@ -24,8 +24,15 @@ export class WardMonitoringReportComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.selectedCircle = "Circle1";
     this.selectedDate = this.commonService.setTodayDate();
+    this.getWardForLineWeitage();
     this.getSelectedYearMonth();
     this.getCircleWards();
+  }
+  
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
+    });
   }
 
   getCircleWards() {
@@ -71,23 +78,27 @@ export class WardMonitoringReportComponent implements OnInit {
           }
           this.zoneProgressList.push({ zoneNo: this.zoneList[i]["wardNo"], zoneName: zoneName, totalLines: 0, startTime: "", percent7: "", percent8: "", percent9: "", percent10: "", percent11: "", percent12: "", percent13: "", percent14: "", percent15: "", percent16: "", percent17: "", percent18: "", percent19: "", percent20: "", class: 'active', stopClass: '', lineWeightage: [] });
           this.zoneProgressList = this.commonService.transformString(this.zoneProgressList, "wardNo");
-          this.getZoneAllLineWeightages(this.zoneList[i]["wardNo"]);
+          this.getZoneAllLine(this.zoneList[i]["wardNo"]);
         }
       }
     }
   }
 
-  getZoneAllLineWeightages(zoneNo: any) {
+  getZoneAllLine(zoneNo: any) {
     this.commonService.getWardLineWeightage(zoneNo, this.selectedDate).then((lineList: any) => {
+      let totalLines = lineList[lineList.length - 1]["totalLines"];
       let zoneDetail = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
       if (zoneDetail != undefined) {
-        zoneDetail.lineWeightage = lineList;
-        this.getStartTime(zoneNo);
+        let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
+        if (wardDetail != undefined) {
+          zoneDetail.lineWeightage = lineList;
+        }
+        this.getStartTime(zoneNo, totalLines);
       }
     });
   }
 
-  getStartTime(zoneNo: any) {
+  getStartTime(zoneNo: any, totalLines: any) {
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/dutyInTime";
     let dutyStartInstance = this.db.object(dbPath).valueChanges().subscribe(
       dutyStartTime => {
@@ -100,14 +111,14 @@ export class WardMonitoringReportComponent implements OnInit {
           else {
             let startTime = dutyStartTime.split(',')[0];
             zoneDetails.startTime = startTime;
-            this.getWorkProgress(zoneNo);
-          }          
+            this.getWorkProgress(zoneNo, totalLines);
+          }
         }
       }
     );
   }
 
-  getWorkProgress(zoneNo: any) {
+  getWorkProgress(zoneNo: any, totalLines: any) {
     let workProgressPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.selectedYear + '/' + this.selectedMonthName + '/' + this.selectedDate + '/LineStatus';
     let workProgressDetails = this.db.object(workProgressPath).valueChanges().subscribe(
       workerProgressData => {
@@ -116,7 +127,6 @@ export class WardMonitoringReportComponent implements OnInit {
           let zoneDetail = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
           if (zoneDetail != undefined) {
             let lineWeightageList = zoneDetail.lineWeightage;
-            let totalLines = lineWeightageList[lineWeightageList.length - 1]["totalLines"];
             let lineComplteList = [];
             let keyArray = Object.keys(workerProgressData);
             if (keyArray.length > 0) {
@@ -132,14 +142,34 @@ export class WardMonitoringReportComponent implements OnInit {
                   lineComplteList.push({ time: parseFloat(endtime), lineWeightage: lineWeightage, lineStatus: workerProgressData[lineNo]["Status"] });
                 }
               }
+              if (lineWeightageList.length > 0) {
+                this.getWorkLineWeightagePercentage(lineComplteList, totalLines, zoneDetail);
+              }
+              else {
+                let lineCompleted = 0;
+                if (lineComplteList.length > 0) {
+                  let zoneDetails = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
+                  if (zoneDetails != undefined) {
+                    lineComplteList = this.commonService.transform(lineComplteList, "time");
+                    let endTime = lineComplteList[lineComplteList.length - 1]["time"];
+                    for (let i = 0; i < lineComplteList.length; i++) {
+                      if (lineComplteList[i]["lineStatus"] == "LineCompleted") {
+                        lineCompleted = lineCompleted + 1;
+                        let percentage = (lineCompleted * 100) / totalLines;
+                        this.getWardWorkPercentage(lineComplteList[i]["time"], zoneDetails, percentage, endTime);
+                      }
+                    }
+                    this.getWardStatus(zoneDetails);
+                  }
+                }
+              }
             }
-            this.getWorkPercentage(lineComplteList,totalLines,zoneDetail);
           }
         }
       });
   }
   
-  getWorkPercentage(lineComplteList: any, totalLines: any, zoneDetail: any) {
+  getWorkLineWeightagePercentage(lineComplteList: any, totalLines: any, zoneDetail: any) {
     let percentage = 0;
     let skippedLines = 0;
     let skippedPercentage = 0;
@@ -164,59 +194,66 @@ export class WardMonitoringReportComponent implements OnInit {
         if (percentage > 100) {
           percentage = 100;
         }
+        this.getWardWorkPercentage(lineComplteList[i]["time"], zoneDetail, percentage, endtime);
+      }
+      this.getWardStatus(zoneDetail);
+    }
+  } 
 
-        if (parseFloat(lineComplteList[i]["time"]) < 7) {
-          zoneDetail.percent7 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 8 && parseFloat(endtime) >= 7) {
-          zoneDetail.percent8 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 9 && parseFloat(endtime) >= 8) {
-          zoneDetail.percent9 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 10 && parseFloat(endtime) >= 9) {
-          zoneDetail.percent10 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 11 && parseFloat(endtime) >= 10) {
-          zoneDetail.percent11 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 12 && parseFloat(endtime) >= 11) {
-          zoneDetail.percent12 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 13 && parseFloat(endtime) >= 12) {
-          zoneDetail.percent13 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 14 && parseFloat(endtime) >= 13) {
-          zoneDetail.percent14 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 15 && parseFloat(endtime) >= 14) {
-          zoneDetail.percent15 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 16 && parseFloat(endtime) >= 15) {
-          zoneDetail.percent16 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 17 && parseFloat(endtime) >= 16) {
-          zoneDetail.percent17 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 18 && parseFloat(endtime) >= 17) {
-          zoneDetail.percent18 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 19 && parseFloat(endtime) >= 18) {
-          zoneDetail.percent19 = percentage.toFixed(0);
-        }
-        if (parseFloat(lineComplteList[i]["time"]) < 20 && parseFloat(endtime) >= 19) {
-          zoneDetail.percent20 = percentage.toFixed(0);
-        }
-      }
-      if (this.selectedDate == this.commonService.setTodayDate()) {
-        let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + zoneDetail.zoneNo + "/activityStatus").valueChanges().subscribe(
-          data => {
-            getRealTimeWardDetails.unsubscribe();
-            if (data == "completed") {
-              zoneDetail.class = "completed";
-            }
-          });
-      }
+  getWardWorkPercentage(time: any, zoneDetail: any, percentage: any, endTime: any) {
+    if (parseFloat(time) < 7) {
+      zoneDetail.percent7 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 8 && parseFloat(endTime) >= 7) {
+      zoneDetail.percent8 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 9 && parseFloat(endTime) >= 8) {
+      zoneDetail.percent9 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 10 && parseFloat(endTime) >= 9) {
+      zoneDetail.percent10 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 11 && parseFloat(endTime) >= 10) {
+      zoneDetail.percent11 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 12 && parseFloat(endTime) >= 11) {
+      zoneDetail.percent12 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 13 && parseFloat(endTime) >= 12) {
+      zoneDetail.percent13 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 14 && parseFloat(endTime) >= 13) {
+      zoneDetail.percent14 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 15 && parseFloat(endTime) >= 14) {
+      zoneDetail.percent15 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 16 && parseFloat(endTime) >= 15) {
+      zoneDetail.percent16 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 17 && parseFloat(endTime) >= 16) {
+      zoneDetail.percent17 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 18 && parseFloat(endTime) >= 17) {
+      zoneDetail.percent18 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 19 && parseFloat(endTime) >= 18) {
+      zoneDetail.percent19 = percentage.toFixed(0);
+    }
+    if (parseFloat(time) < 20 && parseFloat(endTime) >= 19) {
+      zoneDetail.percent20 = percentage.toFixed(0);
+    }
+  }
+
+  getWardStatus(zoneDetails: any) {
+    if (this.selectedDate == this.commonService.setTodayDate()) {
+      let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + zoneDetails.zoneNo + "/activityStatus").valueChanges().subscribe(
+        statusData => {
+          getRealTimeWardDetails.unsubscribe();
+          if (statusData == "completed") {
+            zoneDetails.class = "completed";
+          }
+        });
     }
   }
 }

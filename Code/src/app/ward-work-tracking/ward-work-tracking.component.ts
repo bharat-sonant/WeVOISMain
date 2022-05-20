@@ -37,6 +37,7 @@ export class WardWorkTrackingComponent {
   cardNotScanedList: any[] = [];
   skipLineList: any[] = [];
   lineWeightageList: any[] = [];
+  wardForWeightageList:any[]=[];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   wardStartMarker: any;
@@ -114,6 +115,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
+    this.getWardForLineWeitage();
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai") {
       $(this.divParshadDetail).hide();
@@ -139,6 +141,12 @@ export class WardWorkTrackingComponent {
         this.selectedZone = "0";
       }
       this.getLocalStorage();
+    });
+  }
+
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
     });
   }
 
@@ -622,6 +630,9 @@ export class WardWorkTrackingComponent {
     this.getEmployeeData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
+    if (this.lineWeightageList.length == 0) {
+      this.getWardCoveredLengthAndCompletedLinesFromSummary();
+    }
     if (this.cityName != "reengus" || this.cityName != "shahpura" || this.cityName != "niwai") {
       this.getParshadDetail();
     }
@@ -631,6 +642,23 @@ export class WardWorkTrackingComponent {
     if ((<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked == true) {
       this.getRoute();
     }
+  }
+
+  getWardCoveredLengthAndCompletedLinesFromSummary() {
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+    let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
+      summaryData => {
+        this.instancesList.push({ instances: summaryInstance });
+        if (summaryData != null) {
+          if (summaryData["completedLines"] != null) {
+            this.progressData.completedLines = summaryData["completedLines"];
+          }
+          if (summaryData["wardCoveredDistance"] != null) {
+            this.progressData.coveredLength = (Number(summaryData["wardCoveredDistance"])/1000).toFixed(2);
+          }
+        }
+      }
+    );
   }
 
   openModel(content: any, type: any) {
@@ -1038,6 +1066,7 @@ export class WardWorkTrackingComponent {
     this.clearHouseFromMap();
     this.houseMarkerList = [];
     this.cardNotScanedList = [];
+    this.lineWeightageList = [];
     $(this.divNotSacnned).hide();
     $(this.divScannedHouses).hide();
     $(this.divTotalHouse).hide();
@@ -1161,7 +1190,9 @@ export class WardWorkTrackingComponent {
       });
       this.polylines[index] = line;
       this.polylines[index].setMap(this.map);
-      this.getCompletedLinesAndCoveredLength();
+      if (this.lineWeightageList.length > 0) {
+        this.getCompletedLinesAndCoveredLength();
+      }
     });
   }
 
@@ -1220,10 +1251,16 @@ export class WardWorkTrackingComponent {
   getLineWeightage() {
     this.resetData();
     $(this.divLoader).show();
-    this.commonService.getWardLineWeightage(this.selectedZone, this.selectedDate).then((lineList: any) => {
-      this.lineWeightageList = lineList;
+    let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == this.selectedZone);
+    if (wardDetail != undefined) {
+      this.commonService.getWardLineWeightage(this.selectedZone, this.selectedDate).then((lineList: any) => {
+        this.lineWeightageList = lineList;
+        this.getWardData();
+      });
+    }
+    else {
       this.getWardData();
-    });
+    }
   }
 
   setWardStartMarker() {

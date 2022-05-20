@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { MapService } from "../services/map/map.service";
 import { HttpClient } from "@angular/common/http";

@@ -35,6 +35,7 @@ export class DownloadWardwiseReportComponent {
   marker = new google.maps.Marker();
   allLines: any[];
   lineWeightageList: any[];
+  wardForWeightageList:any[]=[];
   skipCount: number;
   completeCount: number;
   totalLineCount: number;
@@ -45,7 +46,7 @@ export class DownloadWardwiseReportComponent {
   partailDoneCount: number;
   reportImages: any[];
 
-  constructor(public fs: FirebaseService,  private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -64,8 +65,15 @@ export class DownloadWardwiseReportComponent {
     this.progress = 0;
     this.reportImages = [];
     this.selectedDate = this.commonService.setTodayDate();
+    this.getWardForLineWeitage();
     this.setSelectedYearMonth();
     this.getZoneList();
+  }
+  
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
+    });
   }
 
   setDate(filterVal: any, type: string) {
@@ -119,9 +127,9 @@ export class DownloadWardwiseReportComponent {
     this.selectedZoneName = "Ward " + this.selectedZone;
     this.polylines = [];
     this.allLines = [];
-    this.lineWeightageList=[];
+    this.lineWeightageList = [];
     this.setMap();
-    this.drawZoneAllLines();
+    this.getAllWardLines();
     this.showReportCreationProgress();
   }
 
@@ -142,32 +150,65 @@ export class DownloadWardwiseReportComponent {
     });
   }
 
-  drawZoneAllLines() {
-    this.commonService.getWardLineWeightage(this.selectedZone, this.selectedDate).then((lineWeightageList: any) => {
-      if (this.polylines.length > 0) {
-        for (let i = 0; i < this.polylines.length; i++) {
-          if (this.polylines[i] != null) {
-            this.polylines[i].setMap(null);
-          }
-        }
-      }
-      this.polylines = [];
-      this.lineWeightageList = lineWeightageList;
-      this.wardTotalLines = this.lineWeightageList[this.lineWeightageList.length - 1]["totalLines"];
-      for (let i = 0; i < this.lineWeightageList.length - 1; i++) {
-        let lineNo = this.lineWeightageList[i]["lineNo"];
-        let points = this.lineWeightageList[i]["points"];
+  getAllWardLines() {
+    let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == this.selectedZone);
+    if (wardDetail != undefined) {
+      this.commonService.getWardLineWeightage(this.selectedZone, this.selectedDate).then((lineWeightageList: any) => {
+        this.getAllLinesFromList(lineWeightageList);
+      });
+    }
+    else {
+      this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((lineData: any) => {
+        this.getAllLinesFromJson(lineData);
+      });
+    }
+  }
+
+  getAllLinesFromJson(data: any) {
+    let wardLines = JSON.parse(data);
+    let keyArray = Object.keys(wardLines);
+    this.wardTotalLines = wardLines["totalLines"];
+    let linePath = [];
+    for (let i = 0; i < keyArray.length - 1; i++) {
+      let lineNo = Number(keyArray[i]);
+      try {
+        let points = wardLines[lineNo]["points"];
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", lineWeightage: this.lineWeightageList[i]["weightage"] });
+        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
       }
-      this.drawRealTimePloylines();
-    });
+      catch { }
+    }
+    this.allLines = linePath;
+    this.drawRealTimePloylines(false);
   }
 
-  drawRealTimePloylines(){
+  getAllLinesFromList(lineWeightageList: any) {
+    this.lineWeightageList = lineWeightageList;
+    this.wardTotalLines = this.lineWeightageList[this.lineWeightageList.length - 1]["totalLines"];
+    for (let i = 0; i < this.lineWeightageList.length - 1; i++) {
+      let lineNo = this.lineWeightageList[i]["lineNo"];
+      let points = this.lineWeightageList[i]["points"];
+      var latLng = [];
+      for (let j = 0; j < points.length; j++) {
+        latLng.push({ lat: points[j][0], lng: points[j][1] });
+      }
+      this.allLines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", lineWeightage: this.lineWeightageList[i]["weightage"] });
+    }
+    this.drawRealTimePloylines(true);
+  }
+
+  drawRealTimePloylines(isLineWeghtageAllow: any) {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.polylines = [];
     let dbPath = 'WasteCollectionInfo/' + this.selectedZone + '/' + this.selectedYear + '/' + this.selectedMonthName + '/' + this.selectedDate + '/LineStatus';
     let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
       lineStatusData => {
@@ -183,6 +224,7 @@ export class DownloadWardwiseReportComponent {
               if (lineStatusData[index]["Status"] != 'undefined') {
                 if (lineStatusData[index]["Status"] == "LineCompleted") {
                   lineColor = "#33ff33";
+                  this.completeCount++
                   percentage += (100 / Number(this.wardTotalLines)) * parseFloat(lineData.lineWeightage);
                 } else if (lineStatusData[index]["Status"] == "PartialLineCompleted") {
                   lineColor = "#ff9d00";
@@ -207,16 +249,18 @@ export class DownloadWardwiseReportComponent {
           this.polylines[index].setMap(this.map);
           this.totalLineCount++;
         }
-        if (this.skipCount > 0) {
-          skippedPercentage = 100 - ((this.skipCount / Number(this.wardTotalLines)) * 100);
-          if (percentage > skippedPercentage) {
-            percentage = skippedPercentage;
+        if (isLineWeghtageAllow == true) {
+          if (this.skipCount > 0) {
+            skippedPercentage = 100 - ((this.skipCount / Number(this.wardTotalLines)) * 100);
+            if (percentage > skippedPercentage) {
+              percentage = skippedPercentage;
+            }
           }
+          if (percentage > 100) {
+            percentage = 100;
+          }
+          this.completeCount = Number(((Number(percentage.toFixed(0)) * this.wardTotalLines) / 100).toFixed(0));
         }
-        if (percentage > 100) {
-          percentage = 100;
-        }
-        this.completeCount = Number(((Number(percentage.toFixed(0)) * this.wardTotalLines) / 100).toFixed(0));
         this.getSummaryDetail();
       });
   }

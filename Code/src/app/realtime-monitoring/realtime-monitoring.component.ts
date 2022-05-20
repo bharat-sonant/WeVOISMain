@@ -39,6 +39,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   firstData = false;
   wardLineStatusData: any[] = [];
   vehicleStstusList: any[];
+  wardForWeightageList:any[]=[];
 
   // Halt Time
   require: any;
@@ -181,6 +182,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   txtVehicle = "#txtVehicle";
 
   ngOnInit() {
+    this.getWardForLineWeitage();
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -219,6 +221,12 @@ export class RealtimeMonitoringComponent implements OnInit {
     setTimeout(() => {
       this.getWardsStatusWise();
     }, 1000);
+  }
+  
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
+    });
   }
 
   clearAllOnMap() {
@@ -373,8 +381,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.workerDetails.completedWard = completedWard.toString();
         this.workerDetails.totalWard = totalWard.toString();
         if (this.firstData == false) {
-          let wardList = JSON.parse(localStorage.getItem("wardForLineWeightage"));
-          let wardDetail = wardList.find(item => item.zoneNo == zoneNo);
+          let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
           if (wardDetail != undefined) {
             this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
               let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
@@ -414,7 +421,6 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
     });
   }
-
 
   getWardDetail(zoneNo: any) {
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary";
@@ -798,6 +804,9 @@ export class RealtimeMonitoringComponent implements OnInit {
       else {
         this.workerDetails.tripCount = "0";
       }
+      if (zoneDetails.lineWeight.length == 0) {
+        this.getCurrentLine(this.selectedZone);
+      }
     }
     this.time = [];
     this.distance = [];
@@ -812,7 +821,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getWardProgress();
     this.checkTodayWorkStatus();
     this.getVehicleStatus();
-    this.getCurrentLine(this.selectedZone);
   }
 
   getWardInTime() {

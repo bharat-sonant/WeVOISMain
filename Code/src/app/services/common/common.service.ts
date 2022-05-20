@@ -711,7 +711,7 @@ export class CommonService {
 
   getFireStoreCity() {
     let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
-    if (city == "jaipur-office") {
+    if (city == "Jaipur-office") {
       city = "Jaipur";
     }
     else if (city == "Jaipur-greater") {
@@ -719,7 +719,7 @@ export class CommonService {
     }
     return city;
   }
-  
+
 
   //#region  all local storage
 
@@ -1157,7 +1157,7 @@ export class CommonService {
     }
   }
 
-    getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
+  getWardBoundary(zoneNo: any, zoneKML: any, strokeWeight: any) {
     return new Promise((resolve) => {
       let polylines = [];
       let cityName = localStorage.getItem("cityName");
@@ -1733,6 +1733,25 @@ export class CommonService {
         resolve(JSON.stringify(dataDate));
       }, error => {
         resolve(null);
+      });
+    });
+  }
+
+  getWardForLineWeitage() {
+    return new Promise((resolve) => {
+      let wardForWeightageList = [];
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        if (dataDate != null) {
+          let list = JSON.parse(JSON.stringify(dataDate));
+          if (list.length > 0) {
+            for (let i = 0; i < list.length; i++) {
+              wardForWeightageList.push({ zoneNo: list[i].trim() });
+            }
+          }
+        }
+        resolve(wardForWeightageList);
       });
     });
   }

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { HttpClient } from '@angular/common/http';
@@ -292,14 +291,10 @@ export class TimeDistanceComponent implements OnInit {
             this.getData(interval, this.time4, this.distance4, this.getFormattedDate(Number(this.days) - 1));
           }
 
-
         } else {
           this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
           this.graphOptions();
         }
-
-
-
         wardLineData.unsubscribe();
       });
   }

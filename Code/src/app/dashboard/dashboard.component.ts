@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
 import { interval } from 'rxjs';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
-import { MapService } from '../services/map/map.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -14,17 +12,16 @@ import { HttpClient } from '@angular/common/http';
 
 export class DashboardComponent implements OnInit {
 
-  zoneList: any[];
-  wards: any[];
-  workDone: any[];
-  graphData: any[];
-  wardCompletedCount: number;
-  allZones: any[];
-  assignedWards: any[];
+  zoneList: any[] = [];
+  wards: any[] = [];
+  workDone: any[] = [];
+  graphData: any[] = [];
+  assignedWards: any[] = [];
+  wardForWeightageList: any[] = [];
   todayDate: any;
   currentMonthName: any;
   currentYear: any;
-  instancesList: any[];
+  instancesList: any[] = [];
 
   public lineBigDashboardChartType;
   public gradientStroke;
@@ -41,28 +38,38 @@ export class DashboardComponent implements OnInit {
 
   dashboardData: dashboardSummary =
     {
-      wardCompleted: '0',
-      peopleAtWork: '0',
-      vehiclesOnDuty: '0',
-      wasteCollected: '0'
+      wardCompleted: 0,
+      peopleAtWork: 0,
+      vehiclesOnDuty: 0,
+      wasteCollected: 0
     };
 
-  constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
-    this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
-    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.todayDate = this.commonService.setTodayDate();//"2019-07-24";
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
+    this.setDefault();
+  }
+
+  setDefault() {
+    this.getWardForLineWeitage();
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.todayDate = this.commonService.setTodayDate();
+    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1]) - 1);
     this.currentYear = new Date().getFullYear();
-    this.allZones = this.mapService.getZones(this.todayDate);
+    this.getData();
+  }
+
+  getWardForLineWeitage() {
+    this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
+      this.wardForWeightageList = wardForWeightageList;
+    });
+  }
+
+  getData() {
     this.getAssignedWardList();
-    this.zoneList = this.mapService.getZones(this.todayDate);
-    this.wardCompletedCount = 0;
-    this.workDone = [];
-    this.wards = [];
     this.getCompletedWards();
     this.getActiveVehicles();
     this.drawWorkProgress();
@@ -72,13 +79,7 @@ export class DashboardComponent implements OnInit {
     else {
       this.getWardCollection();
     }
-    this.getWardWorkProgressData(this.todayDate);
-    let drawProgress = interval(60000).subscribe((val) => {
-      this.instancesList.push({ instances: drawProgress });
-      this.workDone = [];
-      this.wards = [];
-      this.getWardWorkProgressData(this.todayDate);
-    });
+    this.getWardLines();
   }
 
   getWardCollection() {
@@ -92,6 +93,43 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  getActiveVehicles() {
+    let vehicleData = this.db.list('Vehicles').valueChanges().subscribe(
+      data => {
+        this.instancesList.push({ instances: vehicleData });
+        let activeVehicleCount = 0;
+        for (let index = 0; index < data.length; index++) {
+          if (data[index]["status"] == "3") {
+            activeVehicleCount++;
+          }
+        }
+        this.dashboardData.vehiclesOnDuty = activeVehicleCount;
+        this.getpeopleAtWork();
+      });
+  }
+
+  getCompletedWards() {
+    for (let index = 0; index < this.zoneList.length; index++) {
+      let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + this.zoneList[index]["zoneNo"] + "").valueChanges().subscribe(
+        data => {
+          this.instancesList.push({ instances: getRealTimeWardDetails });
+          if (data != null) {
+            let status = data["activityStatus"];
+            if (status == "completed") {
+              this.dashboardData.wardCompleted += 1;
+            }
+          }
+        });
+    }
+  }
+
+  getpeopleAtWork() {
+    let peopleAtWork = this.db.object('RealTimeDetails/peopleOnWork').valueChanges().subscribe(
+      data => {
+        this.instancesList.push({ instances: peopleAtWork });
+        this.dashboardData.peopleAtWork = data.toString();
+      });
+  }
 
   getAssignedWardList() {
     let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate).valueChanges().subscribe(
@@ -102,7 +140,7 @@ export class DashboardComponent implements OnInit {
             let taskData = data[index]["task" + j];
             if (taskData == undefined) { break; }
             let task = taskData["task"];
-            let zoneData = this.allZones.find(item => item.zoneNo == task);
+            let zoneData = this.zoneList.find(item => item.zoneNo == task);
             if (zoneData != undefined) {
               let zoneDetails = this.assignedWards.find(item => item.zoneNo == task);
               if (zoneDetails == undefined) {
@@ -116,10 +154,136 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  getWardProgress() {
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+
+      }
+
+    }
+  }
+
+  getWardLines() {
+    this.graphData = [];
+    if (this.zoneList.length > 0) {
+      for (let i = 1; i < this.zoneList.length; i++) {
+        let zoneNo = this.zoneList[i]["zoneNo"];
+        let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+        if (zoneDetail != undefined) {
+          zoneDetail.index = i;
+          let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
+          if (wardDetail != undefined) {
+            this.commonService.getWardLineWeightage(zoneNo, this.todayDate).then((lineWeightageList: any) => {
+              zoneDetail.totalLines = Number(lineWeightageList[lineWeightageList.length - 1]["totalLines"]);
+              zoneDetail.lineWeightageList = lineWeightageList;
+              this.getWardWorkProgressData(zoneDetail);
+            });
+          }
+          else {
+            this.commonService.getWardLine(zoneNo, this.todayDate).then((lineData: any) => {
+              let wardLines = JSON.parse(lineData);
+              zoneDetail.totalLines = Number(wardLines["totalLines"]);
+              zoneDetail.lineWeightageList=[];
+              this.getWardWorkProgressData(zoneDetail);
+            });
+          }
+        }
+      }
+      setTimeout(() => {
+        this.getGraphData();
+        let setWardData = interval(500).subscribe((val) => {
+          this.getGraphData();
+        });
+      }, 6000);
+    }
+  }
+
+  getWardWorkProgressData(zoneDetail: any) {
+    let dbPath = 'WasteCollectionInfo/' + zoneDetail.zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
+    let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lineStatusData => {
+        let completedCount = 0;
+        this.instancesList.push({ instances: lineStatusInstance });
+        if (lineStatusData != null) {
+          let keyArray = Object.keys(lineStatusData);
+          if (keyArray.length > 0) {
+            let percentage = 0;
+            let skippedLines = 0;
+            let skippedPercentage = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
+                completedCount++;
+                let lineWeight = 1;
+                let lineWeightDetail = zoneDetail.lineWeightageList.find(item => item.lineNo == lineNo);
+                if (lineWeightDetail != undefined) {
+                  lineWeight = Number(lineWeightDetail.weightage);
+                  percentage += (100 / Number(zoneDetail.totalLines)) * lineWeight;
+                }
+              }
+            }
+
+            if (zoneDetail.lineWeightageList.length > 0) {
+              if (skippedLines > 0) {
+                skippedPercentage = 100 - ((skippedLines / Number(zoneDetail.totalLines)) * 100);
+                if (percentage > skippedPercentage) {
+                  percentage = skippedPercentage;
+                }
+              }
+              if (percentage > 100) {
+                percentage = 100;
+              }
+            }
+            else {
+              percentage = (completedCount / zoneDetail.totalLines) * 100;
+            }
+            let graphDataDetail = this.graphData.find(item => item.ward == zoneDetail.zoneNo);
+            if (graphDataDetail != undefined) {
+              graphDataDetail.work = Number(percentage).toFixed(1);
+            }
+            else {
+              this.graphData.push({ index: zoneDetail.index, ward: zoneDetail.zoneName.replace("Zone ", ""), work: Number(percentage).toFixed(1) });
+              this.graphData = this.commonService.transformNumeric(this.graphData, "ward");
+            }
+          }
+        }
+      }
+    );
+  }
+
+  getGraphData() {
+    let index = 0;
+    this.graphData = this.graphData.sort((a, b) => Number(b.index) < Number(a.index) ? 1 : -1);
+    for (let i = 0; i < this.graphData.length; i++) {
+      if (this.wards.length == 0) {
+        this.wards.push(this.graphData[i]["ward"]);
+        this.workDone.push(this.graphData[i]["work"]);
+      }
+      else {
+        let isWard = false;
+        for (let j = 0; j < this.wards.length; j++) {
+          if (this.wards[j] == this.graphData[i]["ward"]) {
+            isWard = true;
+            index = j;
+            j = this.wards.length;
+          }
+        }
+        if (isWard == false) {
+          this.wards.push(this.graphData[i]["ward"]);
+          this.workDone.push(this.graphData[i]["work"]);
+        }
+        else {
+          this.workDone[index] = this.graphData[i]["work"];
+        }
+      }
+    }
+    this.drawWorkProgress();
+  }
+
   setWorkNotStartedforWards() {
-    for (let index = 1; index < this.allZones.length; index++) {
-      let ZoneNo = this.allZones[index]["zoneNo"];
-      let isAssigned = this.assignedWards.find(item => item.zoneNo == this.allZones[index]["zoneNo"]);
+    for (let index = 1; index < this.zoneList.length; index++) {
+      let ZoneNo = this.zoneList[index]["zoneNo"];
+      let isAssigned = this.assignedWards.find(item => item.zoneNo == this.zoneList[index]["zoneNo"]);
       if (isAssigned == undefined) {
         let setWardStatus = this.db.object("RealTimeDetails/WardDetails/" + ZoneNo).valueChanges().subscribe(
           data => {
@@ -132,7 +296,7 @@ export class DashboardComponent implements OnInit {
           });
       }
       else {
-        let driverDetail = this.db.object("WasteCollectionInfo/" + this.allZones[index]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/WorkerDetails/driver").valueChanges().subscribe(
+        let driverDetail = this.db.object("WasteCollectionInfo/" + this.zoneList[index]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/WorkerDetails/driver").valueChanges().subscribe(
           driverdata => {
             if (driverdata != null) {
               let driverId = driverdata;
@@ -144,7 +308,7 @@ export class DashboardComponent implements OnInit {
                     let endTime = "";
                     for (let k = 10; k > 0; k--) {
                       if (startData["task" + k + ""] != null) {
-                        if (startData["task" + k + ""]["task"] == this.allZones[index]["zoneNo"]) {
+                        if (startData["task" + k + ""]["task"] == this.zoneList[index]["zoneNo"]) {
                           if (Object.keys(startData["task" + k + ""]["in-out"])[1] != null) {
                             endTime = this.commonService.tConvert(Object.keys(startData["task" + k + ""]["in-out"])[1]);
                             let removeSecond = endTime.split(' ');
@@ -155,7 +319,7 @@ export class DashboardComponent implements OnInit {
                       }
                     }
                     if (endTime != "") {
-                      this.db.object('RealTimeDetails/WardDetails/' + this.allZones[index]["zoneNo"]).update({
+                      this.db.object('RealTimeDetails/WardDetails/' + this.zoneList[index]["zoneNo"]).update({
                         activityStatus: 'completed',
                         isOnDuty: 'no'
                       });
@@ -169,94 +333,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  getActiveVehicles() {
-    let vehicleData = this.db.list('Vehicles').valueChanges().subscribe(
-      data => {
-        this.instancesList.push({ instances: vehicleData });
-        let activeVehicleCount = 0;
-        for (let index = 0; index < data.length; index++) {
-          if (data[index]["status"] == "3") {
-            activeVehicleCount++;
-          }
-        }
-        this.dashboardData.vehiclesOnDuty = activeVehicleCount.toString();
-        this.getpeopleAtWork();
-      });
-  }
-
-  getCompletedWards() {
-    for (let index = 1; index < this.zoneList.length; index++) {
-      // check duty status
-      let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + this.zoneList[index]["zoneNo"] + "").valueChanges().subscribe(
-        data => {
-          this.instancesList.push({ instances: getRealTimeWardDetails });
-
-          if (data != null) {
-            let status = data["activityStatus"];
-            if (status == "completed") {
-              this.wardCompletedCount++;
-            }
-          }
-        });
-    }
-  }
-
-  getpeopleAtWork() {
-    let peopleAtWork = this.db.object('RealTimeDetails/peopleOnWork').valueChanges().subscribe(
-      data => {
-        this.instancesList.push({ instances: peopleAtWork });
-        this.dashboardData.peopleAtWork = data.toString();
-        setTimeout(() => {
-          this.dashboardData.wardCompleted = this.wardCompletedCount.toString();
-        }, 2000);
-
-      });
-  }
-
-  getWardWorkProgressData(date: string) {
-    this.graphData = [];
-    for (let index = 1; index < this.zoneList.length; index++) {
-      let dbPath = 'WasteCollectionInfo/' + this.zoneList[index]["zoneNo"] + '/' + this.currentYear + '/' + this.currentMonthName + '/' + date + '/LineStatus'
-      let wardLineData = this.db.list(dbPath).valueChanges().subscribe(
-        data => {
-          let completedCount = 0;
-          // get total lines in the ward        
-          let wardLines = this.db.object('WardLines/' + this.zoneList[index]["zoneNo"]).valueChanges().subscribe(
-            zoneLine => {
-              this.instancesList.push({ instances: wardLines });
-              let totalLines = Number(zoneLine);
-              // total compelted lines
-              for (let index = 0; index < data.length; index++) {
-                if (data[index]["Status"] == "LineCompleted") {
-                  completedCount++;
-                }
-              }
-              let workPercentage = (completedCount / totalLines) * 100;
-              this.graphData.push(
-                {
-                  wardIndex: index,
-                  ward: this.zoneList[index]["zoneName"].replace("Ward ", ""),
-                  work: Number(workPercentage).toFixed(1)
-                });
-            });
-          wardLineData.unsubscribe();
-        });
-    }
-
-    let setWardData = interval(500).subscribe((val) => {
-      if ((this.zoneList.length - 1) == this.graphData.length) {
-        for (let index = 0; index < this.graphData.length; index++) {
-          let data = this.graphData.find(item => item.wardIndex == (index + 1));
-          if (Number(data["work"]) != 0) {
-            this.wards.push(data["ward"]);
-            this.workDone.push(data["work"]);
-          }
-        }
-        setWardData.unsubscribe();
-        this.drawWorkProgress();
-      }
-    });
-  }
 
   drawWorkProgress() {
     this.chartColor = "#FFFFFF";
@@ -369,8 +445,8 @@ export class DashboardComponent implements OnInit {
 }
 
 export class dashboardSummary {
-  wardCompleted: string;
-  peopleAtWork: string;
-  vehiclesOnDuty: string;
-  wasteCollected: string;
+  wardCompleted: number;
+  peopleAtWork: number;
+  vehiclesOnDuty: number;
+  wasteCollected: number;
 }

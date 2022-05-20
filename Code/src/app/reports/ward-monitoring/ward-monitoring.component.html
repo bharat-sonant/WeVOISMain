@@ -4,7 +4,7 @@
             <div class="col-md-12 btn-hvr-div">
                 <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-span">
                     << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date" (change)="setDate($event.target.value,'current')"/>
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date" (change)="setDate($event.target.value,'current')" />
                 <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span">>></span></button>
                 <select class="caret-select zone-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -12,11 +12,11 @@
                   {{zone.zoneName}}
                 </option>
               </select>
-              
+
             </div>
             <div class="col-md-3 col-sm-12 searh-pad" style="display: none;">
                 <button type="submit" (click)="showReport();" class="btn  mrg-5">
-                    Show Report</button> 
+                    Show Report</button>
             </div>
             <div class="col-md-3 searh-pad">
             </div>
@@ -33,7 +33,7 @@
                         Collection Report
                         <span class="rpt-head-text-span">( Ward wise )</span>
                     </div>
-                    <img src="../assets/img/head-strip.jpg" class="strip-img" alt="sikar nagar parishad" title="sikar"/>
+                    <img src="../assets/img/head-strip.jpg" class="strip-img" alt="sikar nagar parishad" title="sikar" />
                 </div>
             </div>
             <div class="col-md-4 ">
@@ -74,7 +74,7 @@
             </div>
             <div class="col-md-8 " id="divRptRight">
                 <div id="divMap" class="report-map divMap">
-                    <div #gmap class="gmap" ></div>
+                    <div #gmap class="gmap"></div>
                 </div>
             </div>
         </div>
