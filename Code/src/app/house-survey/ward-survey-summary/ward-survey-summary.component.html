@@ -1,28 +1,28 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-2 no-gutters-iner">
+        <div class="col-md-4 no-gutters-iner">
 
         </div>
-        <div class="col-md-3 Surveyheading">
+        <div class="col-md-4 Surveyheading">
             Ward Survey Summary
         </div>
-        <div class="col-md-7 text-right total-house fix-home-outer">
+        <div class="col-md-4 text-right total-house fix-home-outer">
             <div class="fix-home">
                 <div class="float-first">
                     <i class="fas fa-home home-icon"></i> <span class="house">
                         {{surveyData.totalMarkers}}</span><br>
                     <h6>Total Marker</h6>
                 </div>
-                <div class="float-second float-second2"  style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
+                <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
                     <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
                     <h6>Surveyed Marker</h6>
                 </div>
-                <div class="float-third float-second2" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
+                <div class="float-third float-second2" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
                     <i class="fas fa-house-damage icon-damage"></i> <span class="house">
                         {{surveyData.totalRevisit}}</span><br>
                     <h6>Revisit Request</h6>
                 </div>
-                <div class="float-fourth float-second2" style="cursor: pointer;" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
                     <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
                         {{surveyData.totalOldCards}}</span><br>
                     <h6>RFID not matched</h6>
@@ -56,9 +56,9 @@
                                                 RFID Not Matched</th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
+                                            <tr class="point" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
                                                 [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);"
-                                                style="cursor: pointer;">
+                                                >
                                                 <td class="table-data1">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data2">
@@ -126,7 +126,7 @@
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3 class="Spelling-heading">
-                                    <span class="tbl-points"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i class="fas fa-sync-alt" style="font-size: 13px; color: #0ba118;"></i></span> <br>
+                                    <span class="tbl-points"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i class="fas fa-sync-alt sync"></i></span> <br>
                                     Spelling Check Remains
                                 </h3>
                             </div>
