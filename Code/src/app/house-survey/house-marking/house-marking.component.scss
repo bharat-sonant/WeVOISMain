@@ -280,11 +280,11 @@ width: 50px;
 min-height: 100px;
 background-color: #ffffff;
 // box-shadow: 0 1px 5px 1px #80bd7b;
-position: absolute;
-right: 235px;
-top: 0px;
+position: fixed;
+right: 245px;
+top: 72px;
 border: 1px solid #80bd7b;
-z-index: -111;
+
 }
 .driver{
 padding: 5px;
@@ -522,7 +522,7 @@ background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
 position: absolute;
 right: -1px;
-top: 445px;
+top: 195px;
 border: 1px solid #80bd7b;
 
 }
@@ -534,9 +534,9 @@ min-height: 248px;
 border-radius: 5px;
 background-color: #ffffff;
 box-shadow: 0 1px 5px 1px #80bd7b;
-position: absolute;
-right: -1px;
-top: 197px;
+position: fixed;
+right: 15px;
+top: 265px;
 border: 1px solid #80bd7b;
 padding: 10px;
 }
@@ -1084,5 +1084,128 @@ padding-left: 5px!important;
     margin-left: 0px!important; 
     margin-bottom: 10px!important;
 }
+.arrow{
+    display: none !important;
+}
+
+
+
+@media only screen and (min-width:270px) and (max-width:576px){
+    .ward-header-outer{
+        display: none;
+    }
+    .house-card-box{
+        top: 135px !important;
+        right: 0px !important;
+    }
+    .assign-button{
+        top: 560px !important;
+        position: fixed;
+    }
+    .image-box{
+        top: 365px !important;
+        position: fixed;
+        right: 0px !important;
+    }
+    .markers-heading-main{
+        padding-left: 15px !important;
+    }
+    .approve-btn{
+       margin-left: 20px !important;
+    }
+    .driver-helper-box{
+        display: none !important;
+    }
+    .Already-heading-main{
+        padding-right: 15px;
+    }
+    .markera-allspan{
+        margin: 10px;
+    }
+    .header{
+        height: 130px;;
+    }
+    
+    .circle-icon-main{
+         margin-left: unset;
+         margin-top: 12px; 
+    }
+    .cardboard-icon-main{
+        margin-left: unset;
+        margin-top: 12px; 
+    }
+    .arrow{
+        display: block !important;
+    }
+    .display{
+        display: none;
+    
+    }
+    .addclass{
+        display: block;
+    }
+    .caret-select{
+        width: 50% !important;
+    }
+    
+    
+    
+}
+
+@media only screen and (min-width:270px) and (max-width:345px){
+    .header{
+        height: 160px;
+    }
+    .house-card-box{
+        top: 160px !important;
+    }
+    .image-box{
+        top: 390px !important;
+        position: fixed;
+    }
+    .assign-button{
+        top: 590px !important;
+    }
+    .arrow{
+        margin-top: 90px
+    }
+}
+@media only screen and (min-width:768px) and (max-width:1024px){
+    .assign-button{
+    top: 195px;
+   }
+   .image-box{
+       top: 270px !important;
+       position: fixed !important;
+   }
+   
+   .ward-header-outer{
+       display: none !important;
+   }
+   .extra-class{
+       min-width: 50% !important;
+   }
+   .no-gutters{
+       justify-content: space-between;
+   }
+   
+   .driver-helper-box{
+       top: 72px !important;
+       z-index: unset !important;
+       position: fixed !important;
+   }
+   
+   
+   
+}
+
+
+
+
+
+
+
+
+
 
 
