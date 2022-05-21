@@ -1,16 +1,20 @@
-body{
+body {
     color: $black-color;
     font-size: $font-size-base;
     font-family: $sans-serif-family;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+    background-color: #ebecf1;
 }
 
-.main{
+.main {
     position: relative;
     background: $white-color;
 }
+
+
 /* Animations */
+
 .nav-pills .nav-link,
 .navbar,
 .nav-tabs .nav-link,
@@ -20,42 +24,40 @@ body{
 .animation-transition-general,
 .tag,
 .tag [data-role="remove"],
-.animation-transition-general{
+.animation-transition-general {
     @include transition($general-transition-time, $transition-ease);
 }
 
 //transition for dropdown caret
 .dropdown-toggle:after,
 .bootstrap-switch-label:before,
-.caret{
+.caret {
     @include transition($fast-transition-time, $transition-ease);
 }
 
 .dropdown-toggle[aria-expanded="true"]:after,
 a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .card-collapse .card a[data-toggle="collapse"][aria-expanded="true"] i,
-.card-collapse .card a[data-toggle="collapse"].expanded i{
+.card-collapse .card a[data-toggle="collapse"].expanded i {
     @include rotate-180();
 }
 
-.button-bar{
+.button-bar {
     display: block;
     position: relative;
     width: 22px;
     height: 1px;
     border-radius: 1px;
     background: $white-bg;
-
-    & + .button-bar{
+    &+.button-bar {
         margin-top: 7px;
     }
-
-    &:nth-child(2){
+    &:nth-child(2) {
         width: 17px;
     }
 }
 
-.caret{
+.caret {
     display: inline-block;
     width: 0;
     height: 0;
@@ -67,9 +69,10 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     border-left: 4px solid transparent;
 }
 
-.pull-left{
-  float: left;
+.pull-left {
+    float: left;
 }
-.pull-right{
-  float: right;
+
+.pull-right {
+    float: right;
 }
