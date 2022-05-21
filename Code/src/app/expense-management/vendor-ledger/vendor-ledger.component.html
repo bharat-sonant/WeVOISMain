@@ -22,9 +22,7 @@
                         <div class="scrollable-halt">
                             <div class="halt-bg">
                                 <div class="work-stop-address work-stop-address2">
-                                    <i class="fas fa-user-edit"
-                                        style="cursor: pointer; color: green; position: absolute;z-index: 999;right: 25px;"
-                                        (click)="openModel(contentUpdateDetail)"></i>
+                                    <i class="fas fa-user-edit" style="cursor: pointer; color: green; position: absolute;z-index: 999;right: 25px;" (click)="openModel(contentUpdateDetail)"></i>
                                     <p><i class="fas fa-user"></i><b> {{vendorData.name}} </b></p>
                                 </div>
                                 <div class="work-stop-address work-stop-address2">
@@ -72,24 +70,19 @@
                                                 <form>
                                                     <div class="row">
                                                         <div class="col-md-12 pr-1">
-                                                            <div class="table-wrapper table-scroll"
-                                                                style="padding: 0px 0px 20px 0px;">
-                                                                <table class="table"
-                                                                    style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
+                                                            <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px;">
+                                                                <table class="table" style="border-bottom:1px solid #dee2e6;border-left:1px solid #dee2e6;">
                                                                     <thead>
-                                                                        <th class="text-left" 
-                                                                            style="border-right:1px solid #dee2e6;">
+                                                                        <th class="text-left" style="border-right:1px solid #dee2e6;">
                                                                             Date</th>
-                                                                        <th class="text-left"
-                                                                            style="border-right:1px solid #dee2e6; ">
+                                                                        <th class="text-left" style="border-right:1px solid #dee2e6; ">
                                                                             Bill No.</th>
-                                                                        <th class="text-right"
-                                                                            style="border-right:1px solid #dee2e6; ">
+                                                                        <th class="text-right" style="border-right:1px solid #dee2e6; ">
                                                                             Amount</th>
                                                                     </thead>
                                                                     <tbody>
                                                                         <tr *ngFor="let data of ledgerList;">
-                                                                            <td class="text-left" style="border-right:1px solid #dee2e6" >
+                                                                            <td class="text-left" style="border-right:1px solid #dee2e6">
                                                                                 {{data.date}}
                                                                             </td>
                                                                             <td class="text-left" style="border-right:1px solid #dee2e6">
@@ -101,8 +94,7 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                                            style="padding-top: 20vh; display: none;">
+                                                        <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
                                                             <div class="form-group">
                                                                 <h5>No data available</h5>
                                                             </div>
@@ -121,9 +113,11 @@
             </div>
             <!------------- Vendor Scroll List Start ---------->
             <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
+                <div class="col-md-12 text-left p-r ml-20" style="background-color: #fff; padding: 5px;">
+                    <input id="txtSearch" type="text" class="input-text" style="width: 100%!important;" placeholder="Search Vendor" (keyup)="searchVendor();">
+                </div>
                 <div class="scroll-list">
-                    <div class="ward-header list2" *ngFor="let dt of vendorList"
-                        (click)="getVendorDetail(dt.vendorId);">
+                    <div class="ward-header list2" *ngFor="let dt of vendorList" (click)="getVendorDetail(dt.vendorId);">
                         <div class="ward-details">
                             <h6>{{dt.name}}</h6>
                         </div>
@@ -177,8 +171,7 @@
                         <input id="txtIfsc" type="text" class="input-text">
                     </div>
                 </div>
-                <input id="btnRemark" type="button" class="btn btn-success" value="Submit"
-                    (click)="updateVendorDetail();" />
+                <input id="btnRemark" type="button" class="btn btn-success" value="Submit" (click)="updateVendorDetail();" />
             </div>
         </div>
     </div>

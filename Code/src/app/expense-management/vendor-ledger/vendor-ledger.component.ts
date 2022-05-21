@@ -14,6 +14,7 @@ export class VendorLedgerComponent implements OnInit {
   constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   cityName: any;
+  allVendorList: any[]=[];
   vendorList: any[] = [];
   yearList: any[] = [];
   allLedgerList: any[];
@@ -31,6 +32,7 @@ export class VendorLedgerComponent implements OnInit {
   txtAccountNo = "#txtAccountNo";
   txtBranch = "#txtBranch";
   txtIfsc = "#txtIfsc";
+  txtSearch = "#txtSearch";
 
   vendorData: vendorDetail = {
     name: "---",
@@ -75,14 +77,28 @@ export class VendorLedgerComponent implements OnInit {
           for (let i = 0; i < keyArray.length; i++) {
             let vendorId = keyArray[i];
             if (vendorId != "lastVendorId") {
-              this.vendorList.push({ vendorId: vendorId, name: vendorJsonData[vendorId]["name"], mobile: vendorJsonData[vendorId]["mobile"], address: vendorJsonData[vendorId]["address"], bankName: vendorJsonData[vendorId]["bankName"], accountNumber: vendorJsonData[vendorId]["accountNumber"], branch: vendorJsonData[vendorId]["branch"], ifsc: vendorJsonData[vendorId]["ifsc"] });
+              this.allVendorList.push({ vendorId: vendorId, name: vendorJsonData[vendorId]["name"].toUpperCase(), mobile: vendorJsonData[vendorId]["mobile"], address: vendorJsonData[vendorId]["address"], bankName: vendorJsonData[vendorId]["bankName"], accountNumber: vendorJsonData[vendorId]["accountNumber"], branch: vendorJsonData[vendorId]["branch"], ifsc: vendorJsonData[vendorId]["ifsc"] });
             }
           }
-          this.selectedVendorId = this.vendorList[0]["vendorId"];
-          this.getVendorDetail(this.selectedVendorId);
         }
+        this.allVendorList = this.commonService.transformNumeric(this.allVendorList, "name");
+        this.vendorList = this.allVendorList;
+        this.selectedVendorId = this.vendorList[0]["vendorId"];
+        this.getVendorDetail(this.selectedVendorId);
       }
     });
+  }
+
+  searchVendor() {
+    let name = $(this.txtSearch).val();
+    name = name.toString().toUpperCase();
+    let list = this.allVendorList.filter(item => item.name.includes(name));
+    if (list.length > 0) {
+      this.vendorList = list;
+    }
+    else {
+      this.vendorList = [];
+    }
   }
 
   getVendorDetail(vendorId: any) {
