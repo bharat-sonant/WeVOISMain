@@ -66,7 +66,6 @@ export class WardWorkTrackingComponent {
   wardStartUrl = "../assets/img/go-image.png";
   wardEndUrl = "../assets/img/end-image.png";
   txtDate = "#txtDate";
-  txtAllLineScancard = "#txtAllLineScancard";
   divLoader = "#divLoader";
   divSetting = "#divSetting";
   divParshadDetail = "#divParshadDetail";
@@ -78,7 +77,6 @@ export class WardWorkTrackingComponent {
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
   chkIsTrackRoute = "chkIsTrackRoute";
-  chkIsAvailableForScancard = "chkIsAvailableForScancard";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
@@ -702,12 +700,12 @@ export class WardWorkTrackingComponent {
   getZoneLineDetail() {
     this.zoneLineList = [];
     for (let i = 0; i < this.lines.length; i++) {
-      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0, scancardPercentage: 0 });
+      this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0, minimumCardToBeScanned: 0 });
       this.getLineActualCoveredTime(this.lines[i]["lineNo"]);
       if (i == this.lines.length - 1) {
         this.getTimerTime();
         this.getWardLineLengthAndHouses();
-        this.getScancardPercentage();
+        this.getMinimumCardToBeScanned();
       }
     }
   }
@@ -776,21 +774,19 @@ export class WardWorkTrackingComponent {
   }
 
 
-  getScancardPercentage() {
-    const scancardPercentageJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FLinewiseScancardPercentageInWard%2F" + this.selectedZone + ".json?alt=media";
-    let scancardPercentageInstance = this.httpService.get(scancardPercentageJsonPath).subscribe(scancardPercentageData => {
-      scancardPercentageInstance.unsubscribe();
-      if (scancardPercentageData != null) {
-        if (scancardPercentageData["isAvailable"] != null) {
-          (<HTMLInputElement>document.getElementById(this.chkIsAvailableForScancard)).checked = scancardPercentageData["isAvailable"];
-        }
-        let keyArray = Object.keys(scancardPercentageData);
+  getMinimumCardToBeScanned() {
+    const minimumCardToBeScannedJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FMinimumCardToBeScannedForLines%2F" + this.selectedZone + ".json?alt=media";
+    let minimumCardToBeScannedInstance = this.httpService.get(minimumCardToBeScannedJsonPath).subscribe(minimumCardToBeScannedData => {
+      minimumCardToBeScannedInstance.unsubscribe();
+      if (minimumCardToBeScannedData != null) {
+        
+        let keyArray = Object.keys(minimumCardToBeScannedData);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
             let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
             if (lineDetail != undefined) {
-              lineDetail.scancardPercentage = scancardPercentageData[lineNo]["scancardPercentage"];
+              lineDetail.minimumCardToBeScanned = minimumCardToBeScannedData[lineNo]["minimumCardToBeScanned"];
             }
           }
         }
@@ -798,37 +794,18 @@ export class WardWorkTrackingComponent {
     });
   }
 
-  updateLineScancardPercentage() {
+  updateLineMinimumCardToBeScanned() {
     if (this.zoneLineList != null) {
       const obj = {};
       for (let i = 0; i < this.zoneLineList.length; i++) {
         let lineNo = this.zoneLineList[i]["lineNo"];
-        let scancardPercentage = $('#txtScancardPercentage' + lineNo).val();
-        this.zoneLineList[i]["scancardPercentage"] = scancardPercentage;
-        obj[lineNo] = { scancardPercentage: scancardPercentage };
+        let minimumCardToBeScanned = $('#txtMinimumCardToBeScanned' + lineNo).val();
+        this.zoneLineList[i]["minimumCardToBeScanned"] = minimumCardToBeScanned;
+        obj[lineNo] = { minimumCardToBeScanned: minimumCardToBeScanned };
       }
-      if ((<HTMLInputElement>document.getElementById(this.chkIsAvailableForScancard)).checked == true) {
-        obj["isAvailable"] = true;
-      }
-      else {
-        obj["isAvailable"] = false;
-      }
-      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/LinewiseScancardPercentageInWard/");
+      this.commonService.saveJsonFile(obj, this.selectedZone + ".json", "/Settings/MinimumCardToBeScannedForLines/");
       this.commonService.setAlertMessage("success", "Data saved successfully !!!");
     }
-  }
-
-  updateAllLineScancardPercentage() {
-    if ($(this.txtAllLineScancard).val() == "0" || $(this.txtAllLineScancard).val() == "") {
-      this.commonService.setAlertMessage("error", "Please enter percentage !!!");
-      return;
-    }
-    if (this.zoneLineList != null) {
-      for (let i = 0; i < this.zoneLineList.length; i++) {
-        $('#txtScancardPercentage' + this.zoneLineList[i]["lineNo"]).val($(this.txtAllLineScancard).val());
-      }
-    }
-    this.updateLineScancardPercentage();
   }
 
   updateLineTimerTime() {

@@ -187,13 +187,9 @@
     <div class="main">
         <div class="row iner-main">
             <div class="col-md-8 iner-main2">
-                Scancard (%) for All Lines&nbsp;&nbsp; <input id="txtAllLineScancard" type="number" value="0" /> &nbsp;&nbsp;<i class="fas fa-save" (click)="updateAllLineScancardPercentage()"></i> &nbsp;&nbsp;&nbsp;
-                <span style="display:none">
-          <input id="chkIsAvailableForScancard" type="checkbox" (change)="updateLineScancardPercentage()">&nbsp;&nbsp; Is available for scancard 
-        </span>
+                <span style="margin-top: 10px; margin-right: 20px;"> Total timer <b> {{progressData.totalTimer}} min</b></span>
             </div>
             <div class="col-md-4 image-div">
-                <span style="margin-top: 10px; margin-right: 20px;"> Total timer <b> {{progressData.totalTimer}} min</b></span>
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
             </div>
         </div>
@@ -211,10 +207,10 @@
                                     <tr>
                                         <th scope="col" class="text-left">Line No </th>
                                         <th scope="col" class="text-right">Length (meter)</th>
-                                        <th scope="col" class="text-right">Timer time (min) &nbsp;&nbsp;<i class="fas fa-save icon" (click)="updateLineTimerTime()"></i></th>
-                                        <th scope="col" class="text-right">Actual covered time (min)</th>
+                                        <th scope="col" class="text-right">Minimum Time &nbsp;&nbsp;<i class="fas fa-save icon" (click)="updateLineTimerTime()"></i></th>
+                                        <th scope="col" class="text-right">Time Taken</th>
                                         <th scope="col" class="text-right">No of houses</th>
-                                        <th scope="col" class="text-right">Scan Card (%) &nbsp;&nbsp;<i class="fas fa-save icon2" (click)="updateLineScancardPercentage()"></i></th>
+                                        <th scope="col" class="text-right">Minimum Card to be Scan &nbsp;&nbsp;<i class="fas fa-save icon2" (click)="updateLineMinimumCardToBeScanned()"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -224,7 +220,7 @@
                                         <td class="text-right border-left"><input id="txtTimer{{dt.lineNo}}" type="number" value="{{dt.timerTime}}" class="td-input" (change)="getTotalTimer();" /> </td>
                                         <td class="text-right border-left">{{dt.actualCoveredTime}} </td>
                                         <td class="text-right border-left">{{dt.houseCount}} </td>
-                                        <td class="text-right border-left"><input id="txtScancardPercentage{{dt.lineNo}}" type="number" value="{{dt.scancardPercentage}}" class="td-input2" /> </td>
+                                        <td class="text-right border-left"><input id="txtMinimumCardToBeScanned{{dt.lineNo}}" type="number" value="{{dt.minimumCardToBeScanned}}" class="td-input2" /> </td>
                                     </tr>
                                 </tbody>
                             </table>
