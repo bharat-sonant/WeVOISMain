@@ -292,7 +292,7 @@ export class DustbinWardMappingComponent implements OnInit {
         labelOrigin: new google.maps.Point(15, 25)
       }
     });
-    let statusString = '<input id="txtLine' + dustbin + '" type="text" style="width:50px; border:none; text-align:center; background-color: #f6404d; color:#fff;" value="' + lineNo + '"/>';
+    let statusString = '<input id="txtLine' + dustbin + '" type="text" style="width:50px; border:none; text-align:center; background-color: #f6404d; color:#fff;position:absolute,z-index:999" value="' + lineNo + '"/>';
     var infowindow = new google.maps.InfoWindow({
       content: statusString,
     });
