@@ -137,14 +137,14 @@ export class WardWorkTrackingComponent {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
       this.getZones().then(() => {
+        this.getLocalStorage();
         const id = this.actRoute.snapshot.paramMap.get("id");
         if (id != null) {
           this.selectedZone = id.trim();
           this.getLineWeightage();
         } else {
           this.selectedZone = "0";
-        }
-        this.getLocalStorage();
+        }        
       });
     });
   }

@@ -44,18 +44,18 @@ export class LineWeightageComponent implements OnInit {
 
   setZoneAllowed() {
     if ((<HTMLInputElement>document.getElementById(this.chkAllow)).checked == false) {
-      this.lineWeightageWards= this.lineWeightageWards.filter(item => item.zoneNo != this.selectedZone);
+      this.lineWeightageWards = this.lineWeightageWards.filter(item => item.zoneNo != this.selectedZone);
     }
     else {
-      this.lineWeightageWards.push({zoneNo:this.selectedZone});
+      this.lineWeightageWards.push({ zoneNo: this.selectedZone });
     }
     localStorage.setItem("wardForLineWeightage", JSON.stringify(this.lineWeightageWards));
     this.saveWardForLineWeightage();
   }
 
-  saveWardForLineWeightage(){
-    let updateArray=[];
-    for(let i=0;i<this.lineWeightageWards.length;i++){
+  saveWardForLineWeightage() {
+    let updateArray = [];
+    for (let i = 0; i < this.lineWeightageWards.length; i++) {
       updateArray.push(this.lineWeightageWards[i]["zoneNo"]);
     }
     let filePath = "/WardLineWeightageJson/";
@@ -127,11 +127,13 @@ export class LineWeightageComponent implements OnInit {
 
   updateLineWeightageUpdateJson() {
     this.commonService.getWeightageUpdateHistoryJson(this.selectedZone).then((updateData: any) => {
+      let dateArray = [];
       let updateArray = [];
       if (updateData == null) {
         updateArray.push(this.todayDate);
       }
       else {
+
         updateArray = JSON.parse(updateData);
         let isDate = false;
         for (let i = 0; i < updateArray.length; i++) {
@@ -143,7 +145,18 @@ export class LineWeightageComponent implements OnInit {
         if (isDate == false) {
           updateArray.push(this.todayDate);
         }
+        for (let i = 0; i < updateArray.length; i++) {
+          let timeStamp = new Date(updateArray[i]).getTime();
+          dateArray.push({ date: updateArray[i], timeStamp: timeStamp });
+        }
+        dateArray = dateArray.sort((a, b) => b.timeStamp < a.timeStamp ? 1 : -1);
+        updateArray = [];
+        for (let i = 0; i < dateArray.length; i++) {
+          updateArray.push(dateArray[i]["date"]);
+        }
       }
+
+
       let filePath = "/WardLineWeightageJson/" + this.selectedZone + "/";
       let fileName = "weightageUpdateHistoryJson.json";
       this.commonService.saveJsonFile(updateArray, fileName, filePath);
