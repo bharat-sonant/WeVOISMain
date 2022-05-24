@@ -11,7 +11,7 @@
     border-radius: 5px;
     padding: 10px;
     border: none!important;
-    width: 97%;
+    width: 200px;
 }
 
 button {
@@ -1220,10 +1220,10 @@ button:focus {
 .display1 {
     display: none;
 }
-.imagrurl{
-    width:100% !important;
-}
 
+.imagrurl {
+    width: 100% !important;
+}
 
 @media(min-width:270px) and (max-width:576px) {
     .blanck-box2 {
@@ -1275,14 +1275,13 @@ button:focus {
         width: 230px;
         right: 15px !important;
     }
-    .caret-select{
+    .caret-select {
         width: 83% !important;
     }
 }
 
-
-@media(min-width:760px) and (max-width:1020px){
-    .caret-select{
+@media(min-width:760px) and (max-width:1020px) {
+    .caret-select {
         width: 100% !important;
     }
 }
