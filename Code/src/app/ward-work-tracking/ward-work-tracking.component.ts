@@ -654,6 +654,9 @@ export class WardWorkTrackingComponent {
           if (summaryData["completedLines"] != null) {
             this.progressData.completedLines = summaryData["completedLines"];
           }
+          if (summaryData["skippedLines"] != null) {
+            this.progressData.skippedLines = summaryData["skippedLines"];
+          }
           if (summaryData["wardCoveredDistance"] != null) {
             this.progressData.coveredLength = (Number(summaryData["wardCoveredDistance"])/1000).toFixed(2);
           }

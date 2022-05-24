@@ -49,7 +49,9 @@ export class WardMarkingSummaryComponent implements OnInit {
             $("#tr1").addClass("active");
           }, 1000);
         }
-        this.getWardSummary(i, wardNo);
+        if(wardNo!="0"){
+          this.getWardSummary(i, wardNo);
+        }
       }
     }
   }
