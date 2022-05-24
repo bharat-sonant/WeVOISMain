@@ -585,11 +585,9 @@ label{
 
 @media only screen and (min-width:285px) and (max-width:550px){
   .extra-class{
-    min-width: 90px !important;
+    min-width: 94px !important;
   }
-  .card-body2{
-    margin-top: 80px !important;
-  }
+  
   .custom-header-main{
     margin-top: 35px !important;
   }
@@ -599,9 +597,10 @@ label{
   .table-scroll{
     overflow-x: scroll;
   }
-  .no-gutters-iner{
-    display: none !important;
+  .custom-header{
+    height: unset !important;
   }
+  
 }
 @media only screen and (min-width:560px) and (max-width:830px){
   .table-one{
@@ -614,11 +613,9 @@ label{
 
 @media only screen and (min-width:250px) and (max-width:284px){
   .extra-class{
-    min-width: 90px !important;
+    min-width: 94px !important;
   }
-  .card-body2{
-    margin-top: 160px !important;
-  }
+  
   .custom-header-main{
     margin-top: 35px !important;
     padding-left: 0;
@@ -630,7 +627,10 @@ label{
     overflow-x: scroll;
   }
   .no-gutters-iner{
-    display: none !important;
+    font-size: 12px
+  }
+  .custom-header{
+    height: unset !important;
   }
 }
 
