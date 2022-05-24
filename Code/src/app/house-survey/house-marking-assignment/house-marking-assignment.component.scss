@@ -600,7 +600,9 @@ label{
   .custom-header{
     height: unset !important;
   }
-  
+  .table-heading h3{
+    margin-left: -36px !important;
+ }
 }
 @media only screen and (min-width:560px) and (max-width:830px){
   .table-one{
