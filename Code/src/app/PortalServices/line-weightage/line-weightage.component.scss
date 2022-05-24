@@ -823,13 +823,17 @@ label {
     margin-bottom: 10px!important;
 }
 
-@media only screen and (min-width:270px) and (max-width:550px) {
+    .form-group{
+        display: none !important;
+    }
+    
+
+
+@media only screen and (min-width:270px) and (max-width:576px) {
     .Ward-Marking-heading {
         display: none;
     }
-    .card-body3 {
-        margin-top: 270px;
-    }
+    
     .custom-header-outer {
         height: unset !important;
     }
@@ -853,9 +857,34 @@ label {
     .fix-home-outer {
         margin-left: auto;
     }
+    .zone-select{
+        width: 94% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .table-scroll{
+        height: 58vh !important;
+    }
+    .save-btn{
+        bottom: 20px !important;
+    }
+
+    
+    
+}
+@media only screen and (min-width:412px) and (max-width:420px){
+    .table-scroll{
+        height: 60vh !important;
+    }
+    .save-btn{
+        bottom: 55px !important;
+    }
+
 }
 
-@media only screen and (min-width:560px) and (max-width:821px) {
+@media only screen and (min-width:577px) and (max-width:821px) {
     .table-one {
         overflow-x: scroll;
     }
@@ -865,13 +894,135 @@ label {
     .fix-home-outer {
         margin-left: auto;
     }
+    .zone-select{
+        width: 91% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .save-btn{
+        bottom: 40px !important;
+    }
+    .table-scroll{
+        height: 45vh !important;
+         
+      }
+      .custom-header-outer{
+          height: unset !important;
+      }
 }
 
-@media only screen and (min-width:900px) and (max-width:921px) {
+
+@media only screen and (min-width:900px) and (max-width:921px){
     .Ward-Marking-heading {
         display: none;
     }
     .fix-home-outer {
         margin-left: auto;
     }
+    .custom-header{
+        height: unset !important;
+    }
+    .save-btn{
+        bottom: 100px !important;
+    }
+    .table-scroll{
+        height: 39vh !important;
+         
+      }
+      .zone-select{
+        width: 91% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header-outer{
+        height: unset !important;
+    }
+    .custom-header-outer{
+        height: unset !important;
+    }
+
 }
+@media only screen and (min-width:1020px) and (max-width:1400px){
+    .zone-select{
+        width: 40% !important;
+    }
+    .save-btn{
+        bottom: 85px !important;
+    }
+    .zone-select{
+        width: 94% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .table-scroll{
+        height: 67vh !important;
+         
+      }
+
+}
+
+
+
+
+
+
+
+
+
+
+.zone-select{
+    width:50%
+}
+.save-btn{
+    bottom: 68px;
+    z-index: 999;
+    position: absolute;
+    left: 45%;
+}
+.weightage-input{
+    text-align: right; 
+    width:100px
+}
+.loaderClass-outer{
+    margin: auto !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
