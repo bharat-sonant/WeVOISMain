@@ -268,7 +268,7 @@ export class FleetMonitorComponent {
 
                     setTimeout(function () {
                       $('.gm-ui-hover-effect').css("display", "none");
-                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
+                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index","99");
                       $('.gm-style-iw-d').css("overflow", "unset");
                     }, 300);
 

@@ -292,7 +292,7 @@ export class DustbinWardMappingComponent implements OnInit {
         labelOrigin: new google.maps.Point(15, 25)
       }
     });
-    let statusString = '<input id="txtLine' + dustbin + '" type="text" style="width:50px; border:none; text-align:center; background-color: #f6404d; color:#fff;position:absolute,z-index:999" value="' + lineNo + '"/>';
+    let statusString = '<input id="txtLine' + dustbin + '" type="text" style="width:30px; height:30px; font-weight:bold; border:none; text-align:center; background-color: #f6404d; color:#fff;position:absolute,z-index:999" value="' + lineNo + '"/>';
     var infowindow = new google.maps.InfoWindow({
       content: statusString,
     });
@@ -300,7 +300,7 @@ export class DustbinWardMappingComponent implements OnInit {
       infowindow.open(this.map, marker);
       setTimeout(function () {
         $('.gm-ui-hover-effect').css("display", "none");
-        $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px");
+        $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index","99").css("margin-top","6px");
         $('.gm-style-iw-d').css("overflow", "unset");
       }, 300);
     }
