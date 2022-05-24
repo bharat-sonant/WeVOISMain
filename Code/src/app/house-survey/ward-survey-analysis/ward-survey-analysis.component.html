@@ -3,7 +3,7 @@
 </div>
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-2">
+    <div class="col-md-4">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -12,9 +12,7 @@
         </option>
       </select>
     </div>
-    <div class="col-md-2 blanck-box">
-
-    </div>
+    
     <div class="col-md-2 blanck-box2">
 
     </div>
