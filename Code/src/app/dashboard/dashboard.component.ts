@@ -52,19 +52,20 @@ export class DashboardComponent implements OnInit {
     this.setDefault();
   }
 
-  setDefault() {
+  setDefault() {    
+    this.drawWorkProgress();
     this.getWardForLineWeitage();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.todayDate = this.commonService.setTodayDate();
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.todayDate.toString().split('-')[1]) - 1);
     this.currentYear = new Date().getFullYear();
-    this.getData();
   }
 
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
+      this.getData();
     });
   }
 
@@ -72,7 +73,6 @@ export class DashboardComponent implements OnInit {
     this.getAssignedWardList();
     this.getCompletedWards();
     this.getActiveVehicles();
-    this.drawWorkProgress();
     if (localStorage.getItem("userType") == "External User") {
       $('#divWasteCollected').hide();
     }
@@ -190,8 +190,8 @@ export class DashboardComponent implements OnInit {
         }
       }
       setTimeout(() => {
-        this.getGraphData();
         let setWardData = interval(500).subscribe((val) => {
+          this.instancesList.push({ instances: setWardData });
           this.getGraphData();
         });
       }, 6000);
@@ -204,6 +204,7 @@ export class DashboardComponent implements OnInit {
       lineStatusData => {
         let completedCount = 0;
         this.instancesList.push({ instances: lineStatusInstance });
+      
         if (lineStatusData != null) {
           let keyArray = Object.keys(lineStatusData);
           if (keyArray.length > 0) {
