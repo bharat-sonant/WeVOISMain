@@ -1220,13 +1220,17 @@ button:focus {
 .display1 {
     display: none;
 }
+.imagrurl{
+    width:100% !important;
+}
+
 
 @media(min-width:270px) and (max-width:576px) {
     .blanck-box2 {
         padding-top: 0px !important;
     }
     .header {
-        height: 195px !important;
+        height: unset !important;
     }
     .house-card-box {
         top: 200px !important;
@@ -1262,5 +1266,23 @@ button:focus {
         float: right;
         font-size: 20px;
         display: block;
+    }
+    .background-black {
+        position: absolute;
+        top: 80px;
+        z-index: 100;
+        background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+        width: 230px;
+        right: 15px !important;
+    }
+    .caret-select{
+        width: 83% !important;
+    }
+}
+
+
+@media(min-width:760px) and (max-width:1020px){
+    .caret-select{
+        width: 100% !important;
     }
 }

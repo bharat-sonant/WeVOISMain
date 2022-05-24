@@ -19,7 +19,8 @@
 
     </div>
 
-    <div id="houseCount" class="col-md-6 text-right total-house">
+    <div id="houseCount" class="col-md-6 text-right total-house background-black">
+        <div class="display" id="popup2">
       <div class="fix-home">
         <div class="float-first fix-home-iner1">
           <i class="fas fa-home home-icon"></i> <span class="house"> {{progressData.totalMarkers}}</span><br>
@@ -46,8 +47,9 @@
      
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
+  </div>
+  <div class="row w-100">
+    <div class="col-12 p-0">
         <div class="display1" onclick="show()">
             <i class="bi bi-chevron-down"></i>
         </div>
@@ -208,7 +210,7 @@
       <div id="divStatus" class="content-scroll">
         <div class="row">
           <div class="col-md-2" *ngFor="let dt of scannedCardList">
-            <div style="width:100%">
+            <div class="imagrurl">
               <a href="{{dt.imageURL}}" target="_blank">
                 <img [src]="dt.imageURL" class="imageurl-img"/>
               </a>
