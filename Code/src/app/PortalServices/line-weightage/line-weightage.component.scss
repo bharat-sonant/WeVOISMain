@@ -23,7 +23,7 @@
     margin-right: 10px!important;
     border-radius: 5px;
     padding: 10px;
-    width: 97%;
+    width: 35%;
     border: 1px solid lightgray!important;
     font-size: 12px;
 }
@@ -865,22 +865,25 @@ label {
         height: unset !important;
     }
     .table-scroll{
-        height: 58vh !important;
+        height: 60vh !important;
+    }
+    .card-body3{
+       height: 90vh !important;
     }
     .save-btn{
-        bottom: 20px !important;
+        margin: auto;
+        width: 80px;
     }
+    
 
     
     
 }
 @media only screen and (min-width:412px) and (max-width:420px){
     .table-scroll{
-        height: 60vh !important;
+        height: 49vh !important;
     }
-    .save-btn{
-        bottom: 55px !important;
-    }
+    
 
 }
 
@@ -901,16 +904,21 @@ label {
     .custom-header{
         height: unset !important;
     }
-    .save-btn{
-        bottom: 40px !important;
-    }
+    
     .table-scroll{
         height: 45vh !important;
          
       }
       .custom-header-outer{
-          height: unset !important;
+    height: unset !important;
       }
+      .card-body3{
+        height: 93vh !important;
+     }
+     .save-btn{
+        margin: auto;
+        width: 80px;
+    }
 }
 
 
@@ -924,9 +932,7 @@ label {
     .custom-header{
         height: unset !important;
     }
-    .save-btn{
-        bottom: 100px !important;
-    }
+    
     .table-scroll{
         height: 39vh !important;
          
@@ -941,27 +947,80 @@ label {
     .custom-header-outer{
         height: unset !important;
     }
+    .card-body3{
+        height: 93vh !important;
+     }
+     .save-btn{
+        margin: auto;
+        width: 80px;
+    }
 
 }
-@media only screen and (min-width:1020px) and (max-width:1400px){
+@media only screen and (min-width:1020px) and (max-width:1275px){
     .zone-select{
         width: 40% !important;
     }
-    .save-btn{
-        bottom: 85px !important;
-    }
+    
     .zone-select{
-        width: 94% !important;
+        width: 91% !important;
         margin-bottom: 15px !important;
     }
     .custom-header{
         height: unset !important;
     }
     .table-scroll{
-        height: 67vh !important;
+        height: 59vh !important;
          
       }
+      .card-body3{
+        height: 93vh !important;
+     }
+     .save-btn{
+        margin: auto;
+        width: 80px;
+    }
 
+}
+@media only screen and (min-width:1276px) and (max-width:1290px){
+    .zone-select{
+        width: 35% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .table-scroll{
+        height: 55vh !important;
+         
+      }
+      .card-body3{
+        height: 93vh !important;
+     }
+     .save-btn{
+        margin: auto;
+        width: 80px;
+    }
+
+}
+@media only screen and (min-width:1300px){
+    .zone-select{
+        width: 35% !important;
+        margin-bottom: 15px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .table-scroll{
+        height: 64vh !important;
+         
+      }
+      .card-body3{
+        height: 93vh !important;
+     }
+     .save-btn{
+        margin: auto;
+        width: 80px;
+    }
 }
 
 
@@ -974,13 +1033,12 @@ label {
 
 
 .zone-select{
-    width:50%
+    width:35%
 }
 .save-btn{
-    bottom: 68px;
+   
     z-index: 999;
-    position: absolute;
-    left: 45%;
+   
 }
 .weightage-input{
     text-align: right; 
