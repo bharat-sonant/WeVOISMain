@@ -72,7 +72,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
     );
-    element.href = this.cityName + "/3B/dustbin-report";
+    element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
     this.getPandingAnalysis();
