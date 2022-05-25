@@ -37,7 +37,7 @@ export class WardWorkTrackingComponent {
   cardNotScanedList: any[] = [];
   skipLineList: any[] = [];
   lineWeightageList: any[] = [];
-  wardForWeightageList:any[]=[];
+  wardForWeightageList: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   wardStartMarker: any;
@@ -113,7 +113,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    
+
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai") {
       $(this.divParshadDetail).hide();
@@ -130,7 +130,7 @@ export class WardWorkTrackingComponent {
     this.getSelectedYearMonth();
     this.setHeight();
     this.setDefaultMap();
-    this.getWardForLineWeitage();    
+    this.getWardForLineWeitage();
   }
 
   getWardForLineWeitage() {
@@ -144,7 +144,7 @@ export class WardWorkTrackingComponent {
           this.getLineWeightage();
         } else {
           this.selectedZone = "0";
-        }        
+        }
       });
     });
   }
@@ -354,10 +354,11 @@ export class WardWorkTrackingComponent {
             let cardNo = recentScanData["cardNo"];
             for (let i = 0; i < this.houseMarkerList.length; i++) {
               this.houseMarkerList[i]["marker"].setAnimation(null);
+              this.houseMarkerList[i]["isBounce"] = false;
             }
             let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
             if (houseDetail != undefined) {
-              houseDetail.marker.setAnimation(google.maps.Animation.BOUNCE);
+              houseDetail.isBounce = true;
               this.setScanedIcon(houseDetail, houseDetail.scanBy);
             }
             let scanTime = recentScanData["scanTime"];
@@ -443,6 +444,12 @@ export class WardWorkTrackingComponent {
       strokeWeight: 0,
       scaledSize: new google.maps.Size(16, 15),
     }
+    if (imgUrl == this.scanHouseUrl && houseDetail.isBounce == true) {
+      houseDetail.marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+    else {
+      houseDetail.marker.setAnimation(null);
+    }
     houseDetail.marker.setIcon(icon);
 
   }
@@ -464,7 +471,7 @@ export class WardWorkTrackingComponent {
         scaledSize: new google.maps.Size(16, 15),
       },
     });
-    this.houseMarkerList.push({ cardNo: cardNo, marker: marker, scanBy: -2 });
+    this.houseMarkerList.push({ cardNo: cardNo, marker: marker, scanBy: -2, isBounce: false });
   }
 
   clearHouseFromMap() {
@@ -653,7 +660,7 @@ export class WardWorkTrackingComponent {
             this.progressData.completedLines = summaryData["completedLines"];
           }
           if (summaryData["wardCoveredDistance"] != null) {
-            this.progressData.coveredLength = (Number(summaryData["wardCoveredDistance"])/1000).toFixed(2);
+            this.progressData.coveredLength = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
           }
         }
       }
@@ -779,7 +786,7 @@ export class WardWorkTrackingComponent {
     let minimumCardToBeScannedInstance = this.httpService.get(minimumCardToBeScannedJsonPath).subscribe(minimumCardToBeScannedData => {
       minimumCardToBeScannedInstance.unsubscribe();
       if (minimumCardToBeScannedData != null) {
-        
+
         let keyArray = Object.keys(minimumCardToBeScannedData);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
