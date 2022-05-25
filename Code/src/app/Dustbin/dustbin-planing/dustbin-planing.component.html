@@ -88,9 +88,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let dt of dustbinList">
+                                    <tr *ngFor="let dt of dustbinList;let i=index">
                                         <td class=" thFixed" style=" border-right:none;">
-                                            {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
+                                            <b> {{i+1}}.</b>&nbsp; {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
                                         <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold; ">{{dt.pickFrequency}}</td>
                                         <td class="tdStyle">
                                             <div style="width:100%" *ngFor="let days of dt.day1" [innerHTML]="days.status">

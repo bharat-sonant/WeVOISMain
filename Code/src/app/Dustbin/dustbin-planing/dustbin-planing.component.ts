@@ -208,6 +208,8 @@ export class DustbinPlaningComponent implements OnInit {
               if (planType == "ward") {
                 if (planObject[planId]["bins"] != "") {
                   assignedBinList = planObject[planId]["bins"].split(',');
+                }
+                if (planObject[planId]["completedBins"] != null) {
                   pickedBinList = planObject[planId]["completedBins"].split(',');
                 }
               }
@@ -215,6 +217,8 @@ export class DustbinPlaningComponent implements OnInit {
                 if (planObject[planId]["isAssigned"] != "false") {
                   if (planObject[planId]["bins"] != "") {
                     assignedBinList = planObject[planId]["bins"].split(',');
+                  }
+                  if (planObject[planId]["pickedDustbin"] != null) {
                     pickedBinList = planObject[planId]["pickedDustbin"].split(',');
                   }
                 }
