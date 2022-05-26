@@ -92,7 +92,31 @@
             <td>Line No</td>
             <td><input id="txtLineNo" type="text"></td>
         </tr>
+        <tr>
+            <td>New Line No</td>
+            <td><input id="txtNewLineNo" type="text"></td>
+        </tr>
     </table>
 </div>
 <br />
+<button (click)="moveMarker();" style="margin-left: 20px; margin-top: 10px;">Move marker to new line</button>
+<br />
+<br />
+<br />
+
+
 <button (click)="addHouse();" style="margin-left: 20px; margin-top: 10px;">Add Surveyed Data</button>
+
+
+
+<br />
+<br />
+
+
+<button (click)="addHouseToMarker();" style="margin-left: 20px; margin-top: 10px;">Add House to marker Data</button>
+
+<br />
+<br />
+
+
+<button (click)="checkFileUpdateDate();" style="margin-left: 20px; margin-top: 10px;">Check file update date</button>

@@ -12,9 +12,7 @@ export class DustbinService {
   plansRef: AngularFireList<any>;
   planRef: AngularFireObject<any>;
   db: any;
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) {
-
-  }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) {}
 
   getDustbinWardMappingJson() {
     return new Promise((resolve) => {

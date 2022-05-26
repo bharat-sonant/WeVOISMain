@@ -137,7 +137,9 @@ export class DustbinPlaningComponent implements OnInit {
           isBroken = isBroken + "Dustbin Disabled";
         }
         if (isBroken != "") { isBroken = "(" + isBroken + ")"; }
-        this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
+        if (list[i]["isDisabled"] != "yes") {
+          this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
+        }
       }
       if (this.dustbinList.length > 0) {
         this.getDustbinAllPlan();
@@ -332,6 +334,9 @@ export class DustbinPlaningComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.selectedZone = $(this.ddlZone).val();
     this.getDustbins();
+    setTimeout(() => {
+      this.removeAssignedPlan();
+    }, 2000);
   }
 
   //#endregion
