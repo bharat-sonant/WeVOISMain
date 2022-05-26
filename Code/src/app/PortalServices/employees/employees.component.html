@@ -17,8 +17,7 @@
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlDesignation"
-                                        (change)="filterData()">
+                                    <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
                                         <option value="all">
                                             All Roles
                                         </option>
@@ -55,16 +54,16 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}
+                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId);" title="Edit Entry"></i>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:green;" (click)="updateEmployee('2',data.empId)">Active</span>
-                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:red;" (click)="updateEmployee('1',data.empId)" >In-active</span>
+                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:green;" (click)="updateEmployeeStatus('2',data.empId)">Active</span>
+                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:red;" (click)="updateEmployeeStatus('1',data.empId)">In-active</span>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -78,33 +77,16 @@
         </div>
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <!--  <div class="card-header custom-header">
-                    <div class="row">
-                        <div class="col-md-6 text-left">
-                            <h5> <b> </b></h5>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> </span> <br>
-                                    Total Lines
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
-                <div id="content" #content class="card-body"
-                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
-                                        
+
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -118,3 +100,33 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #contentDesignation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Designation</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <input id="empID" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlDesignationUpdate" class="input-green">
+                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                            {{dt.designation}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
+                <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
+            </div>
+        </div>
+    </div>
+</ng-template>

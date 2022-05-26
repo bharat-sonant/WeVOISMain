@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFirestore } from "@angular/fire/firestore";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-employees',
@@ -11,13 +12,15 @@ import { AngularFirestore } from "@angular/fire/firestore";
 })
 export class EmployeesComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[] = [];
   allEmployeeList: any[] = [];
   employeeList: any[] = [];
   ddlDesignation = "#ddlDesignation";
+  ddlDesignationUpdate = "#ddlDesignationUpdate";
+  empID = "#empID";
   divLoader = "#divLoader";
 
   ngOnInit() {
@@ -47,6 +50,7 @@ export class EmployeesComponent implements OnInit {
         this.filterData();
       }
     }, error => {
+      $(this.divLoader).hide();
       this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
     });
   }
@@ -75,7 +79,7 @@ export class EmployeesComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  updateEmployee(status: any, empId: any) {
+  updateEmployeeStatus(status: any, empId: any) {
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.status = status;
@@ -85,15 +89,77 @@ export class EmployeesComponent implements OnInit {
       empDetail.status = status;
     }
     this.filterData();
-    this.updateInDatabase(empId,status);
+    this.updateStatusInDatabase(empId, status);
     let filePath = "/EmployeeAccount/";
     let fileName = "accountDetail.json";
     this.commonService.saveJsonFile(this.allEmployeeList, fileName, filePath);
-    this.commonService.setAlertMessage("success", "Employee updated successfully !!!");
+    this.commonService.setAlertMessage("success", "Employee status updated successfully !!!");
   }
 
-  updateInDatabase(empId: any, status: any) {
+  updateStatusInDatabase(empId: any, status: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
     this.db.object(dbPath).update({ status: status });
+  }
+
+  updateDesignation() {
+    let empId = $(this.empID).val();
+
+    let empDetail = this.allEmployeeList.find(item => item.empId == empId);
+    if (empDetail != undefined) {
+      empDetail.designation = $(this.ddlDesignationUpdate).val();
+    }
+    empDetail = this.employeeList.find(item => item.empId == empId);
+    if (empDetail != undefined) {
+      empDetail.designation = $(this.ddlDesignationUpdate).val();
+    }
+    this.filterData();
+    this.updateDesignationInDatabase(empId, $(this.ddlDesignationUpdate).val());
+    let filePath = "/EmployeeAccount/";
+    let fileName = "accountDetail.json";
+    this.commonService.saveJsonFile(this.allEmployeeList, fileName, filePath);
+    this.commonService.setAlertMessage("success", "Employee designation updated successfully !!!");
+  }
+
+  updateDesignationInDatabase(empId: any, designation: any) {
+    if (designation == "Helper") {
+      designation = "Service Excecutive ";
+    }
+    else if (designation == "Driver") {
+      designation = "Transportation Executive";
+    }
+    let designationId = 0;
+    let allDesignationList = JSON.parse(localStorage.getItem("designation"));
+    let detail = allDesignationList.find(item => item.designation == designation);
+    if (detail != undefined) {
+      designationId = detail.designationId;
+    }
+    let dbPath = "Employees/" + empId + "/GeneralDetails/";
+    this.db.object(dbPath).update({ designationId: designationId });
+    this.closeModel();
+  }
+
+
+  openModel(content: any, id: any) {
+    let userDetail = this.allEmployeeList.find((item) => item.empId == id);
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 190;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $(this.empID).val(id);
+    if (userDetail != undefined) {
+      if (userDetail.designation != null) {
+        setTimeout(() => {
+          $(this.ddlDesignationUpdate).val(userDetail.designation);
+        }, 100);
+      }
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
   }
 }

@@ -101,6 +101,7 @@ export class AccountDetailComponent implements OnInit {
         this.getAccountIssue();
       }
     }, error => {
+      $(this.divLoader).hide();
       this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
     });
   }
