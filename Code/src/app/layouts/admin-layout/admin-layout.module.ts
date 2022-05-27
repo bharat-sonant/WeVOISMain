@@ -112,6 +112,7 @@ import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-p
 import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
 import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
 import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
+import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.component';
 
 
 @NgModule({
@@ -229,7 +230,8 @@ import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dust
     DustbinPlaningComponent,
     DustbinWardMappingComponent,
     LineWeightageComponent,
-    DustbinManageComponent
+    DustbinManageComponent,
+    RoutesTrackingComponent
   ]
 })
 
