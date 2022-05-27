@@ -18,9 +18,9 @@ export class PortalServicesComponent implements OnInit {
   db: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
-    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getUserAccess();
   }
 
@@ -82,18 +82,11 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8W" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divWardLineWeightage").show();
         }
+        if (userAccessList[i]["pageId"] == "8X" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divDustbinManage").show();
+        }
       }
     }
-  }
-
-  showAlert() {
-    this.toastr.error("Updated Successfully !!!", "", {
-      timeOut: 2000,
-      enableHtml: true,
-      closeButton: true,
-      toastClass: "alert alert-info alert-with-icon",
-      positionClass: "toast-bottom-right",
-    });
   }
 
   goToPage(url: any) {

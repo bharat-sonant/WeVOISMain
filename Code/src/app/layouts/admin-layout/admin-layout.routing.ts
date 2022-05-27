@@ -104,6 +104,7 @@ import { SpecialUsersComponent } from '../../PortalServices/special-users/specia
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
 import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
 import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
+import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
 
 
 
@@ -227,6 +228,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'sikar/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'sikar/line-weightage', component: LineWeightageComponent },
+    { path: 'sikar/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -339,6 +341,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'sikar/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'sikar/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'sikar/:id/dustbin-manage', component: DustbinManageComponent },
 
 
     //jaipur-greater
@@ -451,6 +454,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaipur-greater/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaipur-greater/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur-greater/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -562,6 +566,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaipur-greater/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaipur-greater/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur-greater/:id/dustbin-manage', component: DustbinManageComponent },
     
 
     //reengus
@@ -675,6 +680,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'reengus/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'reengus/line-weightage', component: LineWeightageComponent },
+    { path: 'reengus/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -787,6 +793,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'reengus/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'reengus/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'reengus/:id/dustbin-manage', component: DustbinManageComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -899,6 +906,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'shahpura/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'shahpura/line-weightage', component: LineWeightageComponent },
+    { path: 'shahpura/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -1011,6 +1019,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'shahpura/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'shahpura/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'shahpura/:id/dustbin-manage', component: DustbinManageComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1123,6 +1132,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'test/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'test/line-weightage', component: LineWeightageComponent },
+    { path: 'test/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1235,6 +1245,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'test/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'test/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'test/:id/dustbin-manage', component: DustbinManageComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1347,6 +1358,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaipur-office/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaipur-office/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur-office/dustbin-manage', component: DustbinManageComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1458,6 +1470,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaipur-office/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaipur-office/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur-office/:id/dustbin-manage', component: DustbinManageComponent },
 
     
 
@@ -1572,6 +1585,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'kishangarh/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'kishangarh/line-weightage', component: LineWeightageComponent },
+    { path: 'kishangarh/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1684,6 +1698,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'kishangarh/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'kishangarh/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'kishangarh/:id/dustbin-manage', component: DustbinManageComponent },
 
 
 
@@ -1799,6 +1814,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'niwai/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'niwai/line-weightage', component: LineWeightageComponent },
+    { path: 'niwai/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1911,6 +1927,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'niwai/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'niwai/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'niwai/:id/dustbin-manage', component: DustbinManageComponent },
 
 
 
@@ -2025,6 +2042,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaisalmer/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaisalmer/line-weightage', component: LineWeightageComponent },
+    { path: 'jaisalmer/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2137,6 +2155,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'jaisalmer/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'jaisalmer/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'jaisalmer/:id/dustbin-manage', component: DustbinManageComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2249,6 +2268,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'churu/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'churu/line-weightage', component: LineWeightageComponent },
+    { path: 'churu/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2361,6 +2381,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'churu/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'churu/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'churu/:id/dustbin-manage', component: DustbinManageComponent },
 
 
 
@@ -2475,6 +2496,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'behror/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'behror/line-weightage', component: LineWeightageComponent },
+    { path: 'behror/dustbin-manage', component: DustbinManageComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2587,4 +2609,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/dustbin-planing', component: DustbinPlaningComponent },
     { path: 'behror/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
     { path: 'behror/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'behror/:id/dustbin-manage', component: DustbinManageComponent },
 ]; 

@@ -111,6 +111,8 @@ import { SpecialUsersComponent } from '../../PortalServices/special-users/specia
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
 import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
 import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
+import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
+
 
 @NgModule({
   imports: [
@@ -226,7 +228,8 @@ import { LineWeightageComponent } from '../../PortalServices/line-weightage/line
     SpecialUsersComponent,
     DustbinPlaningComponent,
     DustbinWardMappingComponent,
-    LineWeightageComponent
+    LineWeightageComponent,
+    DustbinManageComponent
   ]
 })
 
