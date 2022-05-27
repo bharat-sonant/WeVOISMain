@@ -36,6 +36,7 @@ export class DustbinManageComponent implements OnInit {
     this.zoneList = [];
     this.dustbinStorageList = [];
     this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+    console.log(this.dustbinStorageList);
     if (this.dustbinStorageList != null) {
       let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
       for (let i = 0; i < list.length; i++) {
@@ -47,7 +48,7 @@ export class DustbinManageComponent implements OnInit {
     }
   }
 
-  changeZoneSelection(filterVal:any) {
+  changeZoneSelection(filterVal: any) {
     this.selectedZone = filterVal;
     this.getDustbins();
   }
@@ -60,7 +61,7 @@ export class DustbinManageComponent implements OnInit {
         list = this.dustbinStorageList;
       }
       else {
-        list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone); 
+        list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone);
       }
       for (let i = 0; i < list.length; i++) {
         this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"] });
@@ -68,51 +69,57 @@ export class DustbinManageComponent implements OnInit {
     }
   }
 
-  updateDustbin() {
+  addUpdateDustbin() {
     if (this.isValidate() == false) {
       return;
     }
-    let dustbin = $(this.dustbinId).val();
-    if (dustbin != "") {
-      let dustbinDetail = this.dustbinList.find((item) => item.dustbin == dustbin);
-      if (dustbinDetail != undefined) {
-        let address = $(this.txtaddress).val();
-        let zone = $(this.ddlZoneUpdate).val();
-        let ward = $(this.txtWard).val();
-        let lat = $(this.txtLat).val();
-        let lng = $(this.txtLng).val();
-        let type = $(this.ddlDustbinType).val();
-        let isDisabled = $(this.ddlStatus).val();
-        let pickFrequency = $(this.txtFreq).val();
-        let disabledDate = null;
-        if (isDisabled == "yes") {
-          disabledDate = this.commonService.setTodayDate();
-        }
-
-        dustbinDetail.address = address;
-        dustbinDetail.zoneNo = zone;
-        dustbinDetail.ward = ward;
-        dustbinDetail.lat = lat;
-        dustbinDetail.lng = lng;
-        dustbinDetail.pickFrequency = pickFrequency;
-        dustbinDetail.type = type;
-        dustbinDetail.isDisabled = isDisabled;
-
-        const data = {
-          address: address,
-          zone: zone,
-          ward: ward,
-          lat: lat,
-          lng: lng,
-          type: type,
-          isDisabled: isDisabled,
-          pickFrequency: pickFrequency,
-          disabledDate: disabledDate
-        }
-        this.dustbinService.updateDustbinDetail(dustbin, data);
-        this.updateLocalStorageDustbin(dustbin, data);
-      }
+    let dustbinId = $(this.dustbinId).val();
+    let address = $(this.txtaddress).val();
+    let zone = $(this.ddlZoneUpdate).val();
+    let ward = $(this.txtWard).val();
+    let lat = $(this.txtLat).val();
+    let lng = $(this.txtLng).val();
+    let type = $(this.ddlDustbinType).val();
+    let isDisabled = $(this.ddlStatus).val();
+    let pickFrequency = $(this.txtFreq).val();
+    let disabledDate = null;
+    if (isDisabled == "yes") {
+      disabledDate = this.commonService.setTodayDate();
     }
+    const data = {
+      address: address,
+      zone: zone,
+      ward: ward,
+      lat: lat,
+      lng: lng,
+      type: type,
+      isDisabled: isDisabled,
+      pickFrequency: pickFrequency,
+      disabledDate: disabledDate,
+      createdDate: this.commonService.setTodayDate()
+    }
+    if (dustbinId == "0") {
+      this.addDustbin(data);
+    }
+    else {
+      this.updateDustbin(dustbinId, data);
+    }
+  }
+
+  addDustbin(data: any) {
+    let dustbin = Number(this.dustbinStorageList[this.dustbinStorageList.length - 1]["dustbin"]) + 1;
+    this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
+    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone });
+    localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    this.getDustbins();
+    this.commonService.setAlertMessage("success", "Dustbin detail added successfully !!!");
+  }
+
+  updateDustbin(dustbin: any, data: any) {
+    this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
+    this.updateLocalStorageDustbin(dustbin, data);
+    this.getDustbins();
+    this.commonService.setAlertMessage("success", "Dustbin detail updated successfully !!!");
   }
 
   isValidate() {
@@ -134,6 +141,10 @@ export class DustbinManageComponent implements OnInit {
       isValid = false;
       msg = "Please enter ward no. !!!";
     }
+    if ($(this.txtaddress).val() == "") {
+      isValid = false;
+      msg = "Please enter address !!!";
+    }
     if (isValid == false) {
       this.commonService.setAlertMessage("error", msg);
     }
@@ -153,21 +164,20 @@ export class DustbinManageComponent implements OnInit {
       dustbinStorageDetail.isDisabled = data.isDisabled;
     }
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
-    this.commonService.setAlertMessage("success", "Dustbin detail updated successfully !!!");
   }
 
-  openModel(content: any, id: any) {
-    let dustbinDetail = this.dustbinList.find((item) => item.dustbin == id);
-    if (dustbinDetail != undefined) {
-      this.modalService.open(content, { size: "lg" });
-      let windowHeight = $(window).height();
-      let height = 550;
-      let width = 400;
-      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-      $("div .modal-dialog-centered").css("margin-top", "26px");
-      $(this.dustbinId).val(id);
+  openModel(content: any, id: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 550;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $(this.dustbinId).val(id);
+    if (type == "update") {
+      let dustbinDetail = this.dustbinList.find((item) => item.dustbin == id);
       if (dustbinDetail != undefined) {
         setTimeout(() => {
           $(this.txtaddress).val(dustbinDetail.address);
@@ -180,6 +190,12 @@ export class DustbinManageComponent implements OnInit {
           $(this.ddlStatus).val(dustbinDetail.isDisabled);
         }, 100);
       }
+    }
+    else {
+      setTimeout(() => {
+        $(this.ddlStatus).val('no');
+        document.getElementById('txtaddress').removeAttribute('readonly');
+      }, 100);
     }
   }
 

@@ -14,10 +14,15 @@ export class DustbinService {
   db: any;
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
 
-  updateDustbinDetail(dustbinId: any, data: any) {
+  updateDustbinDetail(dustbinId: any, data: any, type: any) {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
-    this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, isDisabled: data.isDisabled, pickFrequency: data.pickFrequency, disabledDate: data.disabledDate });
+    if (type == "add") {
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, isDisabled: data.isDisabled, pickFrequency: data.pickFrequency, disabledDate: data.disabledDate, createdDate: data.createdDate });
+    }
+    else {
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, isDisabled: data.isDisabled, pickFrequency: data.pickFrequency, disabledDate: data.disabledDate });
+    }
   }
 
   getDustbinWardMappingJson() {

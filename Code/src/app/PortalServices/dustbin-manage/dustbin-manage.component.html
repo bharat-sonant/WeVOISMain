@@ -16,7 +16,7 @@
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <div class="wrap-input-effects" required>
                                 <select class="caret-select zone-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
                                     <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
@@ -25,6 +25,9 @@
                                 </select>
                             </div>
 
+                        </div>
+                        <div class="col-md-4">
+                            <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
                         </div>
                     </div>
                 </div>
@@ -54,7 +57,7 @@
                                                             {{data.pickFrequency}}
                                                         </td>
                                                         <td class="table-data2">
-                                                            <i class="far fa-edit edit-icon" (click)="openModel(contentDustbin,data.dustbin);" title="Edit Entry"></i>
+                                                            <i class="far fa-edit edit-icon" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -140,7 +143,7 @@
                         </select>
                     </div>
                 </div>
-                <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDustbin();" />
+                <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="addUpdateDustbin();" />
                 <input type="button" class="btn btn-success cancel-btn" value="CANCEL" (click)="closeModel();" />
             </div>
         </div>
