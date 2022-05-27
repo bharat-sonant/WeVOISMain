@@ -4,10 +4,10 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-8">
-            <button class="btn btn-primary " (click)="setDate('','previous');">
+            <button class="btn btn-primary display-class" (click)="setDate('','previous');">
         << </button>
             <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
-            <button class="btn btn-primary button" (click)="setDate('','next');">
+            <button class="btn btn-primary button display-class" (click)="setDate('','next');">
             >>
           </button>
             <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
@@ -16,7 +16,7 @@
               {{zone.zoneName}}
             </option>
           </select>&nbsp;&nbsp;
-            <input id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span id="showHouseLabel"> Show
+            <input class="checkbox-input" id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span class="checkbox-span" id="showHouseLabel"> Show
             Houses</span>
         </div>
         <div class="col-md-4 text-right total-house">

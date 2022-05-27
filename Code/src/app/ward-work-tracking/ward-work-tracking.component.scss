@@ -168,10 +168,25 @@
   border-radius: 5px;
   padding:10px; border:none!important;  width: 80%; margin-left:45px!important; }
   button{width: 80%;   border-radius: 5px; padding:9px; margin-top: 7px!important; border:none!important; margin-left:45px!important;  }
-  
+  .checkbox-input{
+    display: none !important;
+  }
+  .checkbox-span{
+    display: none !important;
+  }
+  .dustbin-details-box{
+    
+    right: 15px !important;
+    top: 350px !important;
+}
+.driver-helper-box{
+  top: 120px !important;
+}
+.line-details-box{
+    top: 244px !important;
   
   }
-  
+} 
   /** Small devices (tablets, 576px  to 767px upto) **/
   @media(min-width:576px) and (max-width:767px){
   
@@ -190,8 +205,18 @@
   .header{height:64px ; width: 100%;  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%); color:#fff;}
   .caret-select{margin-top: 10px!important;
   border-radius: 5px;
-  padding:10px; border:none!important;  width: 90%; margin-left:45px!important; }
+  padding:10px; border:none!important;  width: 30%; margin-left:5px!important; }
   button{width: 50%;   border-radius: 5px; padding:10px; margin-top: 10px!important; border:none!important; margin-left:-30!important;  }
+  .display-class{
+    display: none !important;
+  }
+  .date-input{
+margin-left: 40px !important
+  }
+  .panel-collapse{
+    top: 64px !important;
+  }
+  
   
   }
   
@@ -663,7 +688,7 @@
   }
   .panel-collapse{
   position: fixed;
-  top: 64px;
+  top: 110px;
   right: 0px;
   background: white;
   z-index: 11111111;
@@ -873,7 +898,7 @@ background: rgba(94,199,101,0.7)
 
 .dustbin-details-box{
 right: 305px;
-top: 80px !important;
+top: 80px;
 width: 135px !important;
 }
 .lines{
@@ -1106,6 +1131,35 @@ i.eye{
   .float-first2{
       margin-left: -106px !important;
 
+}
+.panel-collapse{
+  top: 64px !important;
+}
+}
+@media only screen and (max-width: 420px) and (min-width: 350px){
+  .caret-select{
+   width: 221px !important;
+    margin-left: 45px !important;
+  }
+  .float-third3{
+   margin-top: -45px !important;
+  }
+}
+@media only screen and (max-width: 300px) and (min-width: 270px){
+  .caret-select{
+   width: 160px !important;
+    margin-left: 45px !important;
+  }
+  .float-third3{
+   margin-top: -45px !important;
+  }
+}
+
+@media only screen and (max-width: 540px) and (min-width: 500px){
+  .caret-select{
+   
+    width: 33%;
+    margin-left: 5px !important;
 }
 }
 
