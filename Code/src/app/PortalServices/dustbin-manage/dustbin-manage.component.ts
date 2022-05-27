@@ -177,6 +177,7 @@ export class DustbinManageComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $(this.dustbinId).val(id);
     if (type == "update") {
+      $("#exampleModalLongTitle").html("Manage Dustbin");
       let dustbinDetail = this.dustbinList.find((item) => item.dustbin == id);
       if (dustbinDetail != undefined) {
         setTimeout(() => {
@@ -192,6 +193,7 @@ export class DustbinManageComponent implements OnInit {
       }
     }
     else {
+      $("#exampleModalLongTitle").html("Add Dustbin");
       setTimeout(() => {
         $(this.ddlStatus).val('no');
         document.getElementById('txtaddress').removeAttribute('readonly');
