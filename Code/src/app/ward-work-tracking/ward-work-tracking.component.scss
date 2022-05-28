@@ -186,6 +186,10 @@
     top: 244px !important;
   
   }
+  .panel-collapse{
+    top: 110px !important;
+  }
+  
 } 
   /** Small devices (tablets, 576px  to 767px upto) **/
   @media(min-width:576px) and (max-width:767px){
@@ -688,7 +692,7 @@ margin-left: 40px !important
   }
   .panel-collapse{
   position: fixed;
-  top: 110px;
+  top: 64px;
   right: 0px;
   background: white;
   z-index: 11111111;
@@ -1145,7 +1149,7 @@ i.eye{
    margin-top: -45px !important;
   }
 }
-@media only screen and (max-width: 300px) and (min-width: 270px){
+@media only screen and (max-width: 320px) and (min-width: 270px){
   .caret-select{
    width: 160px !important;
     margin-left: 45px !important;
