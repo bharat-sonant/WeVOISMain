@@ -27,6 +27,22 @@
                         <div class="col-md-4">
                             <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
                         </div>
+                        <div class="col-md-3">
+                            {{dustbinSummary.totalDustbin}}<br>
+                            <span>Total Dustbin</span>
+                        </div>
+                        <div class="col-md-3">
+                            {{dustbinSummary.wardDustbin}}<br>
+                            <span>Zone Dustbin</span>
+                        </div>
+                        <div class="col-md-3">
+                            {{dustbinSummary.disableDustbin}}<br>
+                            <span>Disabled Dustbin</span>
+                        </div>
+                        <div class="col-md-3">
+                            {{dustbinSummary.enableDustbin}}<br>
+                            <span>Enabled Dustbin</span>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body card-body3">
@@ -38,16 +54,12 @@
                                         <div class="table-wrapper table-scroll table-outer">
                                             <table class="table table-outer-iner">
                                                 <thead>
-                                                    <th class="table-data-line2">#</th>
                                                     <th class="table-data-line2">Address</th>
                                                     <th class="table-data-Markers2">Frequency</th>
                                                     <th class="table-data-Markers2">Action</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of dustbinList; let i=index">
-                                                        <td class="table-data2">
-                                                            {{i+1}}
-                                                        </td>
                                                         <td class="table-data2">
                                                             {{data.address}}</td>
                                                         <td class="table-data2">
