@@ -1,10 +1,8 @@
 <section class="header">
     <div class="row no-gutters">
-
         <div class="col-md-12 Ward-Marking-heading">
             Manage Dustbin
         </div>
-
     </div>
 </section>
 <div class="main-content">
@@ -34,7 +32,6 @@
                 <div class="card-body card-body3">
                     <div class="row">
                         <div class="col-md-12">
-
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
@@ -49,7 +46,7 @@
                                                 <tbody>
                                                     <tr *ngFor="let data of dustbinList; let i=index">
                                                         <td class="table-data2">
-                                                            {{i+1}} <i class="fas fa-circle" style="color:red" [hidden]="data.isDisabled!='yes'"></i>
+                                                            {{i+1}}
                                                         </td>
                                                         <td class="table-data2">
                                                             {{data.address}}</td>
@@ -57,7 +54,9 @@
                                                             {{data.pickFrequency}}
                                                         </td>
                                                         <td class="table-data2">
-                                                            <i class="far fa-edit edit-icon" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
+                                                            <i class="far fa-edit" style="cursor: pointer; font-size:18px" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
+                                                            <i class="fa-solid fa-check" style="cursor: pointer; font-size:18px; color:green; margin-left: 10px;" [hidden]="data.isDisabled=='yes'" (click)="updateDustbinStatus(data.dustbin,'yes');" title="Disable Dustbin"></i>
+                                                            <i class="fa-solid fa-xmark" style="cursor: pointer; font-size:18px; color:red; margin-left: 10px;" [hidden]="data.isDisabled=='no'" (click)="updateDustbinStatus(data.dustbin,'no');" title="Enable Dustbin"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>

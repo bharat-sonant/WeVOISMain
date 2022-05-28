@@ -36,7 +36,6 @@ export class DustbinManageComponent implements OnInit {
     this.zoneList = [];
     this.dustbinStorageList = [];
     this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
-    console.log(this.dustbinStorageList);
     if (this.dustbinStorageList != null) {
       let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
       for (let i = 0; i < list.length; i++) {
@@ -113,6 +112,7 @@ export class DustbinManageComponent implements OnInit {
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
     this.getDustbins();
     this.commonService.setAlertMessage("success", "Dustbin detail added successfully !!!");
+    this.closeModel();
   }
 
   updateDustbin(dustbin: any, data: any) {
@@ -120,6 +120,17 @@ export class DustbinManageComponent implements OnInit {
     this.updateLocalStorageDustbin(dustbin, data);
     this.getDustbins();
     this.commonService.setAlertMessage("success", "Dustbin detail updated successfully !!!");
+  }
+
+  updateDustbinStatus(dustbin: any, status: any) {
+    this.dustbinService.updateDustbinStatus(dustbin, status);
+    let detail = this.dustbinStorageList.find(item => item.dustbin == dustbin);
+    if (detail != undefined) {
+      detail.isDisabled = status;
+    }
+    localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    this.getDustbins();
+    this.commonService.setAlertMessage("susscee","Dustbin staus updated !!!");
   }
 
   isValidate() {
@@ -164,6 +175,7 @@ export class DustbinManageComponent implements OnInit {
       dustbinStorageDetail.isDisabled = data.isDisabled;
     }
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    this.closeModel();
   }
 
   openModel(content: any, id: any, type: any) {

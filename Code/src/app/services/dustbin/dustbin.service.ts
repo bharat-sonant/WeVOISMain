@@ -25,6 +25,16 @@ export class DustbinService {
     }
   }
 
+  updateDustbinStatus(dustbinId: any, status: any) {
+    let disabledDate = null;
+    if (status == "yes") {
+      disabledDate = this.commonService.setTodayDate();
+    }
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
+    this.db.object(dbPath).update({ isDisabled: status, disabledDate: disabledDate });
+  }
+
   getDustbinWardMappingJson() {
     return new Promise((resolve) => {
       const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingDustbinWard.json?alt=media";

@@ -1647,7 +1647,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.setStepSizeandMaxValue(Math.max.apply(null, this.maxDistance));
     this.graphOptions();
   }
-
   getData(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
     this.maxDistance = [];
     let lineCompleted = 0;
@@ -1754,8 +1753,27 @@ export class RealtimeMonitoringComponent implements OnInit {
         },
       },
       maintainAspectRatio: false,
-      tooltips: {        
-          enabled: false     
+      tooltips: {
+        backgroundColor: "#fff",
+        titleFontColor: "#333",
+        bodyFontColor: "#666",
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        title: "wow",
+        callbacks: {
+          title: function() {},
+          label: function (tooltipItem, data) {
+            return (
+              +Number(tooltipItem.yLabel) +
+              " meter covered" +
+              " & Line Completed :" +
+              data.labels[tooltipItem.index].split("~")[1]
+            );
+          },
+        },
       },
       legend: {
         position: "bottom",
@@ -1802,6 +1820,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       },
     };
   }
+
 
   // Google Map
 
