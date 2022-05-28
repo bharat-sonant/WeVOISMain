@@ -1,21 +1,21 @@
-<div id="divReportHeader" class="panel-header panel-header-sm report-header-bg" style="padding-bottom: 0px!important;">
+<div id="divReportHeader" class="panel-header panel-header-sm report-header-bg main-header">
     <div class="container search-bar" id="divSearch">
         <div class="row">
-            <div class="col-md-3 col-sm-12 searh-pad">
-                <button class="btn-hvr" (click)="setDate('','previous');"><span style="color: #fff;">
+            <div class="col-md-3 col-sm-12 searh-pad searh-pad1">
+                <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-btn-span">
                 << </span></button>
-                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" style="height: 45px; width: 150px; margin-right: 8px;" />
-                <button class="btn-hvr" (click)="setDate('','next');"><span style="color: #fff;">>></span></button>
+                <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date" (change)="setDate($event.target.value,'current')"/>
+                <button class="btn-hvr arrow-btn-span2" (click)="setDate('','next');"><span class="arrow-btn-span2">>></span></button>
 
             </div>
-            <div class="col-md-3 col-sm-12 searh-pad">
+            <div class="col-md-4 col-sm-12 searh-pad searh-pad2">
                 <select class="report-controls mrg-5" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
             <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
                 {{zone.zoneName}}
             </option>
         </select>
             </div>
-            <div class="col-md-3 searh-pad">
+            <div class="col-md-4 searh-pad searh-pad3">
                 <button id="btnDownloadReport" type="submit" class="btn mrg-5" (click)="prepareReport();"> Prepare
           Report</button>
             </div>
@@ -29,17 +29,17 @@
     <div class="progress-text">{{progressDisplayText}} : {{progress}} % </div>
 </div>
 
-<div style="height: 1500px">&nbsp;</div>
+<div class="blanck-div">&nbsp;</div>
 
 <div class="main-content report-content" id="divReport">
-    <div class="card" style="width:960px;">
+    <div class="card report-content-iner">
         <div class="row no-gutters">
             <div class="col-md-12">
                 <div class="card-header ">
                     <div class="rpt-head-text">
                         Collection Report
                     </div>
-                    <img src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar" style="width: 100%;height: 6px;margin-bottom:10px;" />
+                    <img class="strip-class" src="../assets/img/head-strip.jpg" alt="sikar nagar parishad" title="sikar"/>
                 </div>
             </div>
             <div class="col-md-4">
@@ -68,8 +68,8 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    <div class="divChart" style="margin-top: 11px;">
-                        <div id="chartContainer" style="height: 311px; width: 100%; margin-left:auto;margin-right:auto;  ">
+                    <div class="divChart divChart2">
+                        <div class="divChart-iner" id="chartContainer">
                         </div>
                         <div class="divPatch">
                             <div class="divPatch1"> &nbsp;</div>
@@ -78,12 +78,12 @@
                 </div>
             </div>
             <div class="col-md-8" id="divRptRight">
-                <div class="report-map" [style.height.px]="480" style="margin-left:-17px;">
-                    <div #gmap style="width:100%;height:100%;"></div>
+                <div class="report-map divRptRight" [style.height.px]="480">
+                    <div class="gmap-div" #gmap></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-12"><img src="../assets/img/head-strip.jpg" class="seperat" /></div>
+        <div class="col-md-12"><img src="../assets/img/head-strip.jpg" class="seperat"/></div>
     </div>
 </div>
 
@@ -91,15 +91,15 @@
     <div class="rpt-head-text-report">
         Collection Report
     </div>
-    <img src="../assets/img/head-strip.jpg" class="img-seperator" />
-    <div style="width:30%;float: left;">
+    <img src="../assets/img/head-strip.jpg" class="img-seperator seperator-image"/>
+    <div>
 
         <img id="infoImg" src="" />
-        <img id="chartImg" src="" style="margin-top:10px;" />
+        <img class="chartImg" id="chartImg" src="" />
     </div>
     <div class="div-rpt-map">
         <img id="mapImg" src="" />
     </div>
-    <img src="../assets/img/head-strip.jpg" class="img-seperator" style="margin-top:10px " />
+    <img src="../assets/img/head-strip.jpg" class="img-seperator head-strip-image"/>
 
 </div>
