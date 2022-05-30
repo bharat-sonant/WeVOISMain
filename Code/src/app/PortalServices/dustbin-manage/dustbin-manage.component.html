@@ -3,6 +3,11 @@
         <div class="col-md-12 Ward-Marking-heading">
             Manage Dustbin
         </div>
+            <div class="position-class">
+                <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
+            </div>
+        
+
     </div>
 </section>
 <div class="main-content">
@@ -14,7 +19,7 @@
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-4 input-class">
                             <div class="wrap-input-effects" required>
                                 <select class="caret-select zone-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
                                     <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
@@ -24,24 +29,22 @@
                             </div>
 
                         </div>
-                        <div class="col-md-4">
-                            <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
+                        
+                        <div class="col-md-2 extra-class">
+                          <span class="fw-bold"> {{dustbinSummary.totalDustbin}}<br></span> 
+                            <span>Total</span>
                         </div>
-                        <div class="col-md-3">
-                            {{dustbinSummary.totalDustbin}}<br>
-                            <span>Total Dustbin</span>
+                        <div class="col-md-2 extra-class">
+                            <span class="fw-bold">   {{dustbinSummary.wardDustbin}}<br></span> 
+                            <span>Zone </span>
                         </div>
-                        <div class="col-md-3">
-                            {{dustbinSummary.wardDustbin}}<br>
-                            <span>Zone Dustbin</span>
+                        <div class="col-md-2 extra-class extra-class2">
+                            <span class="fw-bold">  {{dustbinSummary.disableDustbin}}<br></span> 
+                            <span>Disabled</span>
                         </div>
-                        <div class="col-md-3">
-                            {{dustbinSummary.disableDustbin}}<br>
-                            <span>Disabled Dustbin</span>
-                        </div>
-                        <div class="col-md-3">
-                            {{dustbinSummary.enableDustbin}}<br>
-                            <span>Enabled Dustbin</span>
+                        <div class="col-md-2 extra-class">
+                            <span class="fw-bold">   {{dustbinSummary.enableDustbin}}<br></span> 
+                            <span>Enabled</span>
                         </div>
                     </div>
                 </div>
@@ -62,13 +65,13 @@
                                                     <tr *ngFor="let data of dustbinList; let i=index">
                                                         <td class="table-data2">
                                                             {{data.address}}</td>
-                                                        <td class="table-data2">
+                                                        <td class="table-data2 text-right">
                                                             {{data.pickFrequency}}
                                                         </td>
                                                         <td class="table-data2">
-                                                            <i class="far fa-edit" style="cursor: pointer; font-size:18px" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
-                                                            <i class="fa-solid fa-check" style="cursor: pointer; font-size:18px; color:green; margin-left: 10px;" [hidden]="data.isDisabled=='yes'" (click)="updateDustbinStatus(data.dustbin,'yes');" title="Disable Dustbin"></i>
-                                                            <i class="fa-solid fa-xmark" style="cursor: pointer; font-size:18px; color:red; margin-left: 10px;" [hidden]="data.isDisabled=='no'" (click)="updateDustbinStatus(data.dustbin,'no');" title="Enable Dustbin"></i>
+                                                            <i class="far fa-edit edit-icon" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
+                                                            <i class="fa-solid fa-check check-icon" [hidden]="data.isDisabled=='yes'" (click)="updateDustbinStatus(data.dustbin,'yes');" title="Disable Dustbin"></i>
+                                                            <i class="fa-solid fa-xmark xmark-icon" [hidden]="data.isDisabled=='no'" (click)="updateDustbinStatus(data.dustbin,'no');" title="Enable Dustbin"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -100,15 +103,15 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="text-align:center;">
+            <div class="modal-body modal-body2">
                 <input id="dustbinId" type="hidden" value="0" />
                 <div class="row">
                     <div class="col-md-12 wrap-input-effects" required>
-                        <label style="float:left">Address</label>
+                        <label class="flot">Address</label>
                         <input id="txtaddress" type="text" class="input-green" readonly />
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Zone</label>
+                        <label class="flot">Zone</label>
                         <select id="ddlZoneUpdate" class="input-green">
                             <option *ngFor="let dt of zoneList" value={{dt.zoneNo}}>
                                 {{dt.zone}}
@@ -116,23 +119,23 @@
                         </select>
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Ward</label>
+                        <label class="flot">Ward</label>
                         <input id="txtWard" type="text" class="input-green" />
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Latitude</label>
+                        <label class="flot">Latitude</label>
                         <input id="txtLat" type="text" class="input-green" />
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Longitude</label>
+                        <label class="flot">Longitude</label>
                         <input id="txtLng" type="text" class="input-green" />
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Pick Frequency</label>
+                        <label class="flot">Pick Frequency</label>
                         <input id="txtFreq" type="number" class="input-green" />
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Type</label>
+                        <label class="flot">Type</label>
                         <select id="ddlDustbinType" class="input-green">
                             <option value="Rectangular">
                                 Rectangular
@@ -143,7 +146,7 @@
                         </select>
                     </div>
                     <div class="col-md-6 wrap-input-effects" required>
-                        <label style="float:left">Status</label>
+                        <label class="flot">Status</label>
                         <select id="ddlStatus" class="input-green">
                             <option value="yes">
                                 Disabled
