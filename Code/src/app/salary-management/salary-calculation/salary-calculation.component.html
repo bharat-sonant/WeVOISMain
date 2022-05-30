@@ -1,6 +1,9 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-5" style="padding-left: 10px;">
+        <div class="col-md-4" style="padding-left: 10px;">
             <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" style="width: 150px;" [(ngModel)]="selectedYear">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList"
@@ -22,7 +25,13 @@
                 <option value="12">December</option>
             </select>
         </div>
-        <div class="col-md-7" style="margin-top: 10px;">Salary Calculation</div>
+        <div class="col-md-4" style="margin-top: 10px; text-align: center;">Salary Calculation</div>
+        <div class="col-md-4" style="margin-top: 0px;">
+            <span style="float: right; color:#fff; text-align: center; font-size: 10px; padding-right: 20px">
+            <i class="fa-solid fa-file-export" style="cursor:pointer; color:green;  font-size: 24px; " (click)="exportToExcel();"></i><br/>
+            Export to Excel
+           </span>
+        </div>
     </div>
 </section>
 <section class="halts" style="padding-left: 10px;">

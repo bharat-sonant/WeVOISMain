@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-salary-calculation',
@@ -11,6 +12,7 @@ import { HttpClient } from "@angular/common/http";
 export class SalaryCalculationComponent implements OnInit {
 
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  cityName: any;
   db: any;
   fireStoreCity: any;
   fireStoragePath: any;
@@ -22,19 +24,39 @@ export class SalaryCalculationComponent implements OnInit {
   salaryList: any[] = [];
   ddlMonth = "#ddlMonth";
   ddlYear = "#ddlYear";
+  wardWagesList: any[] = [];
+  divLoader = "#divLoader";
+  monthDays: any;
 
   ngOnInit() {
-    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
 
   setDefault() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.todayDate = this.commonService.setTodayDate();
     this.getYear();
+    this.getWardWagesList();
     this.getEmployee();
+  }
+
+  getWardWagesList() {
+    this.httpService.get("../../assets/jsons/WardWeges/" + this.cityName + ".json").subscribe(wardWageData => {
+      if (wardWageData != null) {
+        let keyArray = Object.keys(wardWageData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let ward = keyArray[i];
+            let wages = wardWageData[ward];
+            this.wardWagesList.push({ ward: ward, wages: wages });
+          }
+        }
+      }
+    });
   }
 
   getYear() {
@@ -55,7 +77,7 @@ export class SalaryCalculationComponent implements OnInit {
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
       let jsonData = JSON.stringify(data);
-      let list = JSON.parse(jsonData).filter(item => item.empType == 2);
+      let list = JSON.parse(jsonData).filter(item => item.empType == 2 && item.status == 1);
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
           this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
@@ -67,20 +89,21 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getSalary() {
+    $(this.divLoader).show();
     this.clearSalary();
-    let days = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+    this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
     if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
-      days = this.todayDate.split("-")[2];
+      this.monthDays = this.todayDate.split("-")[2];
     }
     if (this.salaryList.length > 0) {
-      for (let i = 1; i <= days; i++) {
+      for (let i = 1; i <= this.monthDays; i++) {
         let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-        this.getSalaryFromDailyWork(monthDate);
+        this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
       }
     }
   }
 
-  getSalaryFromDailyWork(monthDate: any) {
+  getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
     let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
       dailyWorkData => {
@@ -96,6 +119,7 @@ export class SalaryCalculationComponent implements OnInit {
                 let totalDaySalary = "totalDaySalary" + Number(monthDate.split('-')[2]);
                 let workDetail = [];
                 let totalWeges = 0;
+                let isFirstZone = false;
                 for (let j = 1; j < 10; j++) {
                   if (dailyWorkData[empId]["task" + j] != null) {
                     let ward = dailyWorkData[empId]["task" + j]["task"];
@@ -103,17 +127,38 @@ export class SalaryCalculationComponent implements OnInit {
                     let percentage = 0;
                     if (dailyWorkData[empId]["task" + j]["task-wages"] != null) {
                       wages = dailyWorkData[empId]["task" + j]["task-wages"];
+                    }
+                    if (dailyWorkData[empId]["task" + j]["work-percent"] != null) {
                       percentage = dailyWorkData[empId]["task" + j]["work-percent"];
-                      totalWeges += Number(dailyWorkData[empId]["task" + j]["task-wages"]);
+                    }
+                    if (new Date(monthDate) > new Date(this.getDate())) {
+                      let wageDetail = this.wardWagesList.find(item => item.ward == ward);
+                      if (wageDetail != undefined) {
+                        if (isFirstZone == true) {
+                          wages = 200;
+                        }
+                        else {
+                          wages = wageDetail.wages;
+                        }
+                        if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
+                          isFirstZone = true;
+                        }
+                      }
                     }
                     workDetail.push({ ward: ward, wages: wages, percentage: percentage });
                   }
+                }
+                for (let k = 0; k < workDetail.length; k++) {
+                  totalWeges += Number(workDetail[k]["wages"]);
                 }
                 salaryDetail[day] = workDetail;
                 salaryDetail[totalDaySalary] = totalWeges;
               }
             }
           }
+        }
+        if (index == days) {
+          $(this.divLoader).hide();
         }
       }
     );
@@ -135,7 +180,6 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   clearSalary() {
-    console.log("Aaaaa");
     for (let i = 1; i <= 31; i++) {
       for (let j = 0; j < this.salaryList.length; j++) {
         if (this.salaryList[j]["day" + i] != null) {
@@ -146,5 +190,69 @@ export class SalaryCalculationComponent implements OnInit {
         }
       }
     }
+  }
+
+  getDate() {
+    if (localStorage.getItem("cityName") == "reengus") {
+      return "2022-05-15";
+    }
+    else if (localStorage.getItem("cityName") == "sikar") {
+      return "2022-05-15";
+    }
+  }
+
+  exportToExcel() {
+    if (this.salaryList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Role";
+      htmlString += "</td>";
+      for (let i = 1; i <= this.monthDays; i++) {
+        htmlString += "<td>";
+        htmlString += (i < 10 ? '0' : '') + i;
+        htmlString += "</td>";
+      }
+      htmlString += "</tr>";
+      for (let i = 0; i < this.salaryList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.salaryList[i]["name"] + "(" + this.salaryList[i]["empCode"] + ")";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.salaryList[i]["designation"];
+        htmlString += "</td>";
+        for (let j = 1; j <= this.monthDays; j++) {
+          htmlString += "<td>";
+          let day = "day" + j;
+          if (this.salaryList[i]["totalDaySalary" + j] != undefined) {
+            let totalDaySalary = this.salaryList[i]["totalDaySalary" + j];
+            htmlString += totalDaySalary;
+          }
+          htmlString += "</td>";
+        }
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Calculated-Salary-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
+      this.exportExcel(htmlString, fileName);
+    }
+  }
+
+  exportExcel(htmlString: any, fileName: any) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(wb, fileName);
   }
 }
