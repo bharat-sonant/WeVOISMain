@@ -106,6 +106,8 @@ import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-m
 import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
 import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
 import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.component';
+import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
+
 
 
 
@@ -231,6 +233,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/line-weightage', component: LineWeightageComponent },
     { path: 'sikar/dustbin-manage', component: DustbinManageComponent },
     { path: 'sikar/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'sikar/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'sikar/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -345,6 +349,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/line-weightage', component: LineWeightageComponent },
     { path: 'sikar/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'sikar/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'sikar/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'sikar/:id/salary-calculation', component: SalaryCalculationComponent },
 
 
     //jaipur-greater
@@ -459,6 +465,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/line-weightage', component: LineWeightageComponent },
     { path: 'jaipur-greater/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaipur-greater/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur-greater/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur-greater/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -572,6 +580,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/line-weightage', component: LineWeightageComponent },
     { path: 'jaipur-greater/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaipur-greater/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur-greater/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur-greater/:id/salary-calculation', component: SalaryCalculationComponent },
     
 
     //reengus
@@ -687,6 +697,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/line-weightage', component: LineWeightageComponent },
     { path: 'reengus/dustbin-manage', component: DustbinManageComponent },
     { path: 'reengus/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'reengus/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'reengus/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -801,6 +813,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/line-weightage', component: LineWeightageComponent },
     { path: 'reengus/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'reengus/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'reengus/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'reengus/:id/salary-calculation', component: SalaryCalculationComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -915,6 +929,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/line-weightage', component: LineWeightageComponent },
     { path: 'shahpura/dustbin-manage', component: DustbinManageComponent },
     { path: 'shahpura/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'shahpura/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'shahpura/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -1029,6 +1045,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/line-weightage', component: LineWeightageComponent },
     { path: 'shahpura/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'shahpura/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'shahpura/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'shahpura/:id/salary-calculation', component: SalaryCalculationComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1143,6 +1161,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/line-weightage', component: LineWeightageComponent },
     { path: 'test/dustbin-manage', component: DustbinManageComponent },
     { path: 'test/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'test/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'test/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1257,6 +1277,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/line-weightage', component: LineWeightageComponent },
     { path: 'test/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'test/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'test/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'test/:id/salary-calculation', component: SalaryCalculationComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1371,6 +1393,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/line-weightage', component: LineWeightageComponent },
     { path: 'jaipur-office/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaipur-office/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur-office/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur-office/salary-calculation', component: SalaryCalculationComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1484,6 +1508,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/line-weightage', component: LineWeightageComponent },
     { path: 'jaipur-office/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaipur-office/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur-office/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur-office/:id/salary-calculation', component: SalaryCalculationComponent },
 
     
 
@@ -1600,6 +1626,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/line-weightage', component: LineWeightageComponent },
     { path: 'kishangarh/dustbin-manage', component: DustbinManageComponent },
     { path: 'kishangarh/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'kishangarh/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'kishangarh/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1714,6 +1742,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/line-weightage', component: LineWeightageComponent },
     { path: 'kishangarh/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'kishangarh/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'kishangarh/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'kishangarh/:id/salary-calculation', component: SalaryCalculationComponent },
 
 
 
@@ -1831,6 +1861,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/line-weightage', component: LineWeightageComponent },
     { path: 'niwai/dustbin-manage', component: DustbinManageComponent },
     { path: 'niwai/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'niwai/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'niwai/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1945,6 +1977,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/line-weightage', component: LineWeightageComponent },
     { path: 'niwai/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'niwai/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'niwai/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'niwai/:id/salary-calculation', component: SalaryCalculationComponent },
 
 
 
@@ -2061,6 +2095,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/line-weightage', component: LineWeightageComponent },
     { path: 'jaisalmer/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaisalmer/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaisalmer/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaisalmer/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2175,6 +2211,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/line-weightage', component: LineWeightageComponent },
     { path: 'jaisalmer/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'jaisalmer/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaisalmer/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaisalmer/:id/salary-calculation', component: SalaryCalculationComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2289,6 +2327,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/line-weightage', component: LineWeightageComponent },
     { path: 'churu/dustbin-manage', component: DustbinManageComponent },
     { path: 'churu/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'churu/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'churu/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2403,6 +2443,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/line-weightage', component: LineWeightageComponent },
     { path: 'churu/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'churu/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'churu/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'churu/:id/salary-calculation', component: SalaryCalculationComponent },
 
 
 
@@ -2519,6 +2561,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/line-weightage', component: LineWeightageComponent },
     { path: 'behror/dustbin-manage', component: DustbinManageComponent },
     { path: 'behror/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'behror/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'behror/salary-calculation', component: SalaryCalculationComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2633,4 +2677,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/line-weightage', component: LineWeightageComponent },
     { path: 'behror/:id/dustbin-manage', component: DustbinManageComponent },
     { path: 'behror/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'behror/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'behror/:id/salary-calculation', component: SalaryCalculationComponent },
 ]; 
