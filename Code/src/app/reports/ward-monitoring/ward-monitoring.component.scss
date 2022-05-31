@@ -443,11 +443,106 @@
     height:100%;
 }
 
+@media only screen and (min-width:282px) and (max-width:576px){
+    .search-bar{
+        width: 100%;
+        margin-top: -39px;
+        margin-left: 10px;
+    }
+    .zone-select{
+        width: 93%;
+        margin-left: 0 !important;
+    }
+    .report-header-bg{
+       height: 170px !important;
+    }
+    .divMap{
+        margin-left: 0px;
+    }
+    .report-content{
+       
+        margin-left: 0px !important;
+     
+    }
+}
+@media only screen and (min-width:269px) and (max-width:281px){
+    .search-bar{
+        width: 100%;
+        margin-top: -39px;
+        margin-left: 10px;
+    }
+    .zone-select{
+        width: 100%;
+        margin-left: 0 !important;
+    }
+    .report-header-bg{
+       height: 170px !important;
+    }
+    .divMap{
+        margin-left: 0px;
+    }
+    .arrow-input{
+        width: 130px !important;
+    }
+    .report-content{
+        margin-top: -45px !important;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
 
-@media only screen and (min-width:760px) and (max-width:830px){
+}
+@media only screen and (min-width:359px) and (max-width:374px){
+    .card-main{
+        margin-bottom: 20% !important
+    }
+}
+@media only screen and (min-width:375px) and (max-width:389px){
+    .card-main{
+        margin-bottom: 5% !important
+    }
+}
+@media only screen and (min-width:390px) and (max-width:411px){
+    .card-main{
+        margin-bottom: 50% !important
+    }
+}
+@media only screen and (min-width:412px) and (max-width:420px){
+    .card-main{
+        margin-bottom: 60% !important
+    }
+}
+@media only screen and (min-width:500px) and (max-width:576px){
+    .zone-select{
+        width: 43% !important;
+        margin-left: 10px !important
+    }
+    .report-header-bg{
+        height: 110px !important;
+    }
+}
+@media only screen and (min-width:760px) and (max-width:790px){
     .zone-select{
         width: 35% !important;
     }
+    .card-main{
+        margin-bottom: 48% !important
+    }
+
+}
+@media only screen and (min-width:791px) and (max-width:821px){
+    .zone-select{
+        width: 35% !important;
+    }
+    .card-main{
+        margin-bottom: 65% !important
+    }
+
+}
+@media only screen and (min-width:900px) and (max-width:1023px){
+    .card-main{
+        margin-bottom: 80% !important
+    }
+
 }
 
 
