@@ -80,7 +80,7 @@ export class SalaryCalculationComponent implements OnInit {
       let list = JSON.parse(jsonData).filter(item => item.empType == 2 && item.status == 1);
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
-          this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
+          this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], salary: 0 });
           this.salaryList = this.commonService.transformNumeric(this.salaryList, "empCode");
         }
         this.getSalary();
@@ -153,6 +153,7 @@ export class SalaryCalculationComponent implements OnInit {
                 }
                 salaryDetail[day] = workDetail;
                 salaryDetail[totalDaySalary] = totalWeges;
+                salaryDetail.salary += totalWeges;
               }
             }
           }
@@ -194,23 +195,36 @@ export class SalaryCalculationComponent implements OnInit {
 
   getDate() {
     if (localStorage.getItem("cityName") == "reengus") {
-      return "2022-05-15";
+      return "2022-05-21";
     }
     else if (localStorage.getItem("cityName") == "sikar") {
-      return "2022-05-15";
+      return "2022-05-08";
     }
   }
 
   exportToExcel() {
+    let list = [];
+    if (this.salaryList.length > 0) {
+      for(let i=0;i<this.salaryList.length;i++){
+        
+      }
+
+    }
     if (this.salaryList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
       htmlString += "<td>";
+      htmlString += "Employee Code";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Name";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Role";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Salary";
       htmlString += "</td>";
       for (let i = 1; i <= this.monthDays; i++) {
         htmlString += "<td>";
@@ -221,17 +235,30 @@ export class SalaryCalculationComponent implements OnInit {
       for (let i = 0; i < this.salaryList.length; i++) {
         htmlString += "<tr>";
         htmlString += "<td>";
-        htmlString += this.salaryList[i]["name"] + "(" + this.salaryList[i]["empCode"] + ")";
+        htmlString += this.salaryList[i]["empCode"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.salaryList[i]["name"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.salaryList[i]["designation"];
         htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.salaryList[i]["salary"];
+        htmlString += "</td>";
         for (let j = 1; j <= this.monthDays; j++) {
-          htmlString += "<td>";
-          let day = "day" + j;
+          htmlString += "<td >";
+          if (this.salaryList[i]["day" + j] != undefined) {
+            let taskList = this.salaryList[i]["day" + j];
+            if (taskList.length > 0) {
+              for (let k = 0; k < taskList.length; k++) {
+                htmlString +="<p>"+ taskList[k]["ward"] + " (" + taskList[k]["percentage"] + ") | " + taskList[k]["wages"] + "<br style='mso-data-placement:same-cell;' />";
+              }
+            }
+          }
           if (this.salaryList[i]["totalDaySalary" + j] != undefined) {
             let totalDaySalary = this.salaryList[i]["totalDaySalary" + j];
-            htmlString += totalDaySalary;
+            htmlString +="<p>"+  totalDaySalary + "</p>";
           }
           htmlString += "</td>";
         }

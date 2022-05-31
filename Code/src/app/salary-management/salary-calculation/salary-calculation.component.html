@@ -47,7 +47,7 @@
                                         <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
                                             Name</th>
                                         <th scope="col" class="text-left thFixed1" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
-                                            Role</th>
+                                            Salary</th>
                                         <th scope="col" class="text-center">01</th>
                                         <th scope="col" class="text-center">02</th>
                                         <th scope="col" class="text-center">03</th>
@@ -84,10 +84,11 @@
                                 <tbody>
                                     <tr *ngFor="let dt of salaryList">
                                         <td class=" thFixed" style="vertical-align: top;">
-                                            <div class="rowWidthWard">{{dt.name}}<b> ({{dt.empCode}})</b></div>
+                                            <div class="rowWidthWard">{{dt.name}}<b> ({{dt.empCode}})</b><br/> ({{dt.designation}})
+                                            </div>
                                         </td>
                                         <td class="text-left thFixed1" style="vertical-align: top; font-weight: bold;">
-                                            <div class="rowWidthTime">{{dt.designation}}
+                                            <div class="rowWidthTime">{{dt.salary}}
                                             </div>
                                         </td>
                                         <td class=" text-right" style="vertical-align: top;">
