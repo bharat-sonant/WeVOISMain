@@ -51,8 +51,9 @@ export class SalaryCalculationComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let ward = keyArray[i];
-            let wages = wardWageData[ward];
-            this.wardWagesList.push({ ward: ward, wages: wages });
+            let driver = wardWageData[ward]["driver"];
+            let helper = wardWageData[ward]["helper"];
+            this.wardWagesList.push({ ward: ward, driver: driver, helper: helper });
           }
         }
       }
@@ -138,7 +139,12 @@ export class SalaryCalculationComponent implements OnInit {
                           wages = 200;
                         }
                         else {
-                          wages = wageDetail.wages;
+                          if (salaryDetail.designation == "Driver") {
+                            wages = wageDetail.driver;
+                          }
+                          else {
+                            wages = wageDetail.helper;
+                          }
                         }
                         if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
                           isFirstZone = true;
@@ -205,13 +211,16 @@ export class SalaryCalculationComponent implements OnInit {
   exportToExcel() {
     let list = [];
     if (this.salaryList.length > 0) {
-      for(let i=0;i<this.salaryList.length;i++){
-        
+      for (let i = 0; i < this.salaryList.length; i++) {
+
+
       }
 
     }
     if (this.salaryList.length > 0) {
-      let htmlString = "";
+      let htmlString = "<!doctype html><html><head><style> br { mso-data-placement: same-cell; }</style> </head><body>";
+
+
       htmlString = "<table>";
       htmlString += "<tr>";
       htmlString += "<td>";
@@ -252,19 +261,21 @@ export class SalaryCalculationComponent implements OnInit {
             let taskList = this.salaryList[i]["day" + j];
             if (taskList.length > 0) {
               for (let k = 0; k < taskList.length; k++) {
-                htmlString +="<p>"+ taskList[k]["ward"] + " (" + taskList[k]["percentage"] + ") | " + taskList[k]["wages"] + "<br style='mso-data-placement:same-cell;' />";
+                htmlString += taskList[k]["ward"] + " (" + taskList[k]["percentage"] + ") | " + taskList[k]["wages"] + "<br/>";
               }
             }
           }
           if (this.salaryList[i]["totalDaySalary" + j] != undefined) {
             let totalDaySalary = this.salaryList[i]["totalDaySalary" + j];
-            htmlString +="<p>"+  totalDaySalary + "</p>";
+            htmlString += totalDaySalary;
           }
           htmlString += "</td>";
         }
         htmlString += "</tr>";
       }
       htmlString += "</table>";
+
+      htmlString += "</body></html>";
       let fileName = "Calculated-Salary-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
       this.exportExcel(htmlString, fileName);
     }
