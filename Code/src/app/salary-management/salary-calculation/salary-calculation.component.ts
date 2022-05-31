@@ -209,21 +209,50 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   exportToExcel() {
-    let list = [];
+    let exportList = [];
     if (this.salaryList.length > 0) {
       for (let i = 0; i < this.salaryList.length; i++) {
+        let list = [];
+        let length = 0;
+        for (let j = 1; j <= this.monthDays; j++) {
+          if (this.salaryList[i]["day" + j] != undefined) {
+            if (length < this.salaryList[i]["day" + j].length) {
+              length = this.salaryList[i]["day" + j].length;
+            }
+          }
+        }
+        for (let j = 0; j <= length; j++) {
+          list.push({ empId: this.salaryList[i]["empId"], day1: "", day2: "", day3: "", day4: "", day5: "", day6: "", day7: "", day8: "", day9: "", day10: "", day11: "", day12: "", day13: "", day14: "", day15: "", day16: "", day17: "", day18: "", day19: "", day20: "", day21: "", day22: "", day23: "", day24: "", day25: "", day26: "", day27: "", day28: "", day29: "", day30: "", day31: "" });
+        }
 
-
+        for (let k = 1; k <= this.monthDays; k++) {
+          if (this.salaryList[i]["day" + k] != undefined) {
+            let taskDetail = this.salaryList[i]["day" + k];
+            for (let j = 0; j <= length; j++) {
+              let dayData = "";
+              if (taskDetail[j] != null) {
+                dayData = taskDetail[j]["ward"] + "(" + taskDetail[j]["percentage"] + "%) | " + taskDetail[j]["wages"];
+                list[j]["day" + k] = dayData;
+              }
+              if (j == taskDetail.length) {
+                list[j]["day" + k] = this.salaryList[i]["totalDaySalary" + k];
+              }
+            }
+          }
+        }
+        for (let j = 0; j < list.length; j++) {
+          if (j == 0) {
+            exportList.push({ empId: list[j]["empId"], name: this.salaryList[i]["name"], empCode: this.salaryList[i]["empCode"], designation: this.salaryList[i]["designation"], salary: this.salaryList[i]["salary"], day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
+          }
+          else {
+            exportList.push({ empId: "", name: "", empCode: "", designation: "", salary: "", day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
+          }
+        }
       }
-
-    }
-    if (this.salaryList.length > 0) {
-      let htmlString = "<!doctype html><html><head><style> br { mso-data-placement: same-cell; }</style> </head><body>";
-
-
+      let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
-      htmlString += "<td>";
+      htmlString += "<td [style.font-weight]='bold'>";
       htmlString += "Employee Code";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -236,48 +265,40 @@ export class SalaryCalculationComponent implements OnInit {
       htmlString += "Salary";
       htmlString += "</td>";
       for (let i = 1; i <= this.monthDays; i++) {
-        htmlString += "<td>";
-        htmlString += (i < 10 ? '0' : '') + i;
+        htmlString += "<td >";
+        htmlString += "" + (i < 10 ? '0' : '') + i;
         htmlString += "</td>";
       }
       htmlString += "</tr>";
-      for (let i = 0; i < this.salaryList.length; i++) {
+      for (let i = 0; i < exportList.length; i++) {
         htmlString += "<tr>";
         htmlString += "<td>";
-        htmlString += this.salaryList[i]["empCode"];
+        htmlString += exportList[i]["empCode"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.salaryList[i]["name"];
+        htmlString += exportList[i]["name"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.salaryList[i]["designation"];
+        htmlString += exportList[i]["designation"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.salaryList[i]["salary"];
+        htmlString += exportList[i]["salary"];
         htmlString += "</td>";
         for (let j = 1; j <= this.monthDays; j++) {
-          htmlString += "<td >";
-          if (this.salaryList[i]["day" + j] != undefined) {
-            let taskList = this.salaryList[i]["day" + j];
-            if (taskList.length > 0) {
-              for (let k = 0; k < taskList.length; k++) {
-                htmlString += taskList[k]["ward"] + " (" + taskList[k]["percentage"] + ") | " + taskList[k]["wages"] + "<br/>";
-              }
-            }
-          }
-          if (this.salaryList[i]["totalDaySalary" + j] != undefined) {
-            let totalDaySalary = this.salaryList[i]["totalDaySalary" + j];
-            htmlString += totalDaySalary;
-          }
+          let day = "day" + j;
+          htmlString += "<td>";
+          htmlString += exportList[i][day];
           htmlString += "</td>";
         }
+
         htmlString += "</tr>";
+
+
       }
       htmlString += "</table>";
-
-      htmlString += "</body></html>";
       let fileName = "Calculated-Salary-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
       this.exportExcel(htmlString, fileName);
+
     }
   }
 

@@ -40,7 +40,7 @@
             <div class="col-md-12" style="padding-left: 5px;">
                 <div>
                     <div class="table-bg">
-                        <div class="tableFixHead">
+                        <div id="tblDownload" class="tableFixHead">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -95,308 +95,309 @@
                                             <div class="rowWidth">
                                                 <div style="width:100%" *ngFor="let days of dt.day1">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                                    <br ">
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary1}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day2">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day2 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary2}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day3">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day3 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary3}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day4">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day4 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary4}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day5">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day5 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary5}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day6">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day6 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary6}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day7">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day7 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary7}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day8">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day8 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary8}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day9">
-                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day9 ">
+                                                    {{days.ward}} ({{days.percentage}}%) | {{days.wages}}<br>
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary9}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day10">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day10 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary10}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day11">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day11 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary11}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day12">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day12 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary12}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day13">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day13 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary13}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day14">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day14 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary14}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day15">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day15 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary15}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day16">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day16 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary16}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day17">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day17 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary17}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day18">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day18 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary18}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day19">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day19 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary19}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day20">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day20 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary20}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day21">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day21 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary21}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day22">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day22 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary22}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day23">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day23 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary23}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day24">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day24 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary24}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day25">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day25 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary25}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day26">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day26 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary26}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day27">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day27 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary27}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day28">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day28 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary28}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day29">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day29 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary29}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day30">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day30 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary30}}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right" style="vertical-align: top;">
-                                            <div class="rowWidth">
-                                                <div style="width:100%" *ngFor="let days of dt.day31">
+                                        <td class="text-right " style="vertical-align: top; ">
+                                            <div class="rowWidth ">
+                                                <div style="width:100% " *ngFor="let days of dt.day31 ">
                                                     {{days.ward}} ({{days.percentage}}%) | {{days.wages}}
                                                 </div>
-                                                <div style="width:100%; text-align: right; font-weight: bold;">
+                                                <div style="width:100%; text-align: right; font-weight: bold; ">
                                                     {{dt.totalDaySalary31}}
                                                 </div>
                                             </div>
