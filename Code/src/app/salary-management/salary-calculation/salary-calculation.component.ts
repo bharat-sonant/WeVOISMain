@@ -82,7 +82,7 @@ export class SalaryCalculationComponent implements OnInit {
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
           this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], salary: 0 });
-          this.salaryList = this.salaryList.sort((a, b) =>Number(b.empId) < Number(a.empId) ? 1 : -1);
+          this.salaryList = this.salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
         }
         this.getSalary();
       }
@@ -287,7 +287,9 @@ export class SalaryCalculationComponent implements OnInit {
         for (let j = 1; j <= this.monthDays; j++) {
           let day = "day" + j;
           htmlString += "<td>";
-          htmlString += exportList[i][day];
+          if (exportList[i][day] != null) {
+            htmlString += exportList[i][day];
+          }
           htmlString += "</td>";
         }
         htmlString += "</tr>";
