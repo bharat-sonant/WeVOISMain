@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
+import { identifierModuleUrl } from '@angular/compiler';
 
 @Component({
   selector: 'app-salary-calculation',
@@ -27,6 +28,43 @@ export class SalaryCalculationComponent implements OnInit {
   wardWagesList: any[] = [];
   divLoader = "#divLoader";
   monthDays: any;
+
+
+  salarySummary: salarySummary =
+    {
+      salary: "0.00",
+      salary1: "0.00",
+      salary2: "0.00",
+      salary3: "0.00",
+      salary4: "0.00",
+      salary5: "0.00",
+      salary6: "0.00",
+      salary7: "0.00",
+      salary8: "0.00",
+      salary9: "0.00",
+      salary10: "0.00",
+      salary11: "0.00",
+      salary12: "0.00",
+      salary13: "0.00",
+      salary14: "0.00",
+      salary15: "0.00",
+      salary16: "0.00",
+      salary17: "0.00",
+      salary18: "0.00",
+      salary19: "0.00",
+      salary20: "0.00",
+      salary21: "0.00",
+      salary22: "0.00",
+      salary23: "0.00",
+      salary24: "0.00",
+      salary25: "0.00",
+      salary26: "0.00",
+      salary27: "0.00",
+      salary28: "0.00",
+      salary29: "0.00",
+      salary30: "0.00",
+      salary31: "0.00"
+    };
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -160,6 +198,8 @@ export class SalaryCalculationComponent implements OnInit {
                 salaryDetail[day] = workDetail;
                 salaryDetail[totalDaySalary] = totalWeges;
                 salaryDetail.salary += totalWeges;
+                this.salarySummary.salary = (Number(this.salarySummary.salary) + totalWeges).toFixed(2);
+                this.getTotalSalaryFooter(index, totalWeges);
               }
             }
           }
@@ -169,6 +209,103 @@ export class SalaryCalculationComponent implements OnInit {
         }
       }
     );
+  }
+
+  getTotalSalaryFooter(index: any, totalWeges: any) {
+    if (index == 1) {
+      this.salarySummary.salary1 = (Number(this.salarySummary.salary1) + totalWeges).toFixed(2);
+    }
+    if (index == 2) {
+      this.salarySummary.salary2 = (Number(this.salarySummary.salary2) + totalWeges).toFixed(2);
+    }
+    if (index == 3) {
+      this.salarySummary.salary3 = (Number(this.salarySummary.salary3) + totalWeges).toFixed(2);
+    }
+    if (index == 4) {
+      this.salarySummary.salary4 = (Number(this.salarySummary.salary4) + totalWeges).toFixed(2);
+    }
+    if (index == 5) {
+      this.salarySummary.salary5 = (Number(this.salarySummary.salary5) + totalWeges).toFixed(2);
+    }
+    if (index == 6) {
+      this.salarySummary.salary6 = (Number(this.salarySummary.salary6) + totalWeges).toFixed(2);
+    }
+    if (index == 7) {
+      this.salarySummary.salary7 = (Number(this.salarySummary.salary7) + totalWeges).toFixed(2);
+    }
+    if (index == 8) {
+      this.salarySummary.salary8 = (Number(this.salarySummary.salary8) + totalWeges).toFixed(2);
+    }
+    if (index == 9) {
+      this.salarySummary.salary9 = (Number(this.salarySummary.salary9) + totalWeges).toFixed(2);
+    }
+    if (index == 10) {
+      this.salarySummary.salary10 = (Number(this.salarySummary.salary10) + totalWeges).toFixed(2);
+    }
+    if (index == 11) {
+      this.salarySummary.salary11 = (Number(this.salarySummary.salary11) + totalWeges).toFixed(2);
+    }
+    if (index == 12) {
+      this.salarySummary.salary12 = (Number(this.salarySummary.salary12) + totalWeges).toFixed(2);
+    }
+    if (index == 13) {
+      this.salarySummary.salary13 = (Number(this.salarySummary.salary13) + totalWeges).toFixed(2);
+    }
+    if (index == 14) {
+      this.salarySummary.salary14 = (Number(this.salarySummary.salary14) + totalWeges).toFixed(2);
+    }
+    if (index == 15) {
+      this.salarySummary.salary15 = (Number(this.salarySummary.salary15) + totalWeges).toFixed(2);
+    }
+    if (index == 16) {
+      this.salarySummary.salary16 = (Number(this.salarySummary.salary16) + totalWeges).toFixed(2);
+    }
+    if (index == 17) {
+      this.salarySummary.salary17 = (Number(this.salarySummary.salary17) + totalWeges).toFixed(2);
+    }
+    if (index == 18) {
+      this.salarySummary.salary18 = (Number(this.salarySummary.salary18) + totalWeges).toFixed(2);
+    }
+    if (index == 19) {
+      this.salarySummary.salary19 = (Number(this.salarySummary.salary19) + totalWeges).toFixed(2);
+    }
+    if (index == 20) {
+      this.salarySummary.salary20 = (Number(this.salarySummary.salary20) + totalWeges).toFixed(2);
+    }
+    if (index == 21) {
+      this.salarySummary.salary21 = (Number(this.salarySummary.salary21) + totalWeges).toFixed(2);
+    }
+    if (index == 22) {
+      this.salarySummary.salary22 = (Number(this.salarySummary.salary22) + totalWeges).toFixed(2);
+    }
+    if (index == 23) {
+      this.salarySummary.salary23 = (Number(this.salarySummary.salary23) + totalWeges).toFixed(2);
+    }
+    if (index == 24) {
+      this.salarySummary.salary24 = (Number(this.salarySummary.salary24) + totalWeges).toFixed(2);
+    }
+    if (index == 25) {
+      this.salarySummary.salary25 = (Number(this.salarySummary.salary25) + totalWeges).toFixed(2);
+    }
+    if (index == 26) {
+      this.salarySummary.salary26 = (Number(this.salarySummary.salary26) + totalWeges).toFixed(2);
+    }
+    if (index == 27) {
+      this.salarySummary.salary27 = (Number(this.salarySummary.salary27) + totalWeges).toFixed(2);
+    }
+    if (index == 28) {
+      this.salarySummary.salary28 = (Number(this.salarySummary.salary28) + totalWeges).toFixed(2);
+    }
+    if (index == 29) {
+      this.salarySummary.salary29 = (Number(this.salarySummary.salary29) + totalWeges).toFixed(2);
+    }
+    if (index == 30) {
+      this.salarySummary.salary30 = (Number(this.salarySummary.salary30) + totalWeges).toFixed(2);
+    }
+    if (index == 31) {
+      this.salarySummary.salary31 = (Number(this.salarySummary.salary31) + totalWeges).toFixed(2);
+    }
+
   }
 
   changeYearSelection(filterVal: any) {
@@ -195,8 +332,41 @@ export class SalaryCalculationComponent implements OnInit {
         if (this.salaryList[j]["totalDaySalary" + i] != null) {
           this.salaryList[j]["totalDaySalary" + i] = null;
         }
+        this.salaryList[j]["salary"] = 0;
       }
     }
+    this.salarySummary.salary = "0.00";
+    this.salarySummary.salary1 = "0.00";
+    this.salarySummary.salary2 = "0.00";
+    this.salarySummary.salary3 = "0.00";
+    this.salarySummary.salary4 = "0.00";
+    this.salarySummary.salary5 = "0.00";
+    this.salarySummary.salary6 = "0.00";
+    this.salarySummary.salary7 = "0.00";
+    this.salarySummary.salary8 = "0.00";
+    this.salarySummary.salary9 = "0.00";
+    this.salarySummary.salary10 = "0.00";
+    this.salarySummary.salary11 = "0.00";
+    this.salarySummary.salary12 = "0.00";
+    this.salarySummary.salary13 = "0.00";
+    this.salarySummary.salary14 = "0.00";
+    this.salarySummary.salary15 = "0.00";
+    this.salarySummary.salary16 = "0.00";
+    this.salarySummary.salary17 = "0.00";
+    this.salarySummary.salary18 = "0.00";
+    this.salarySummary.salary19 = "0.00";
+    this.salarySummary.salary20 = "0.00";
+    this.salarySummary.salary21 = "0.00";
+    this.salarySummary.salary22 = "0.00";
+    this.salarySummary.salary23 = "0.00";
+    this.salarySummary.salary24 = "0.00";
+    this.salarySummary.salary25 = "0.00";
+    this.salarySummary.salary26 = "0.00";
+    this.salarySummary.salary27 = "0.00";
+    this.salarySummary.salary28 = "0.00";
+    this.salarySummary.salary29 = "0.00";
+    this.salarySummary.salary30 = "0.00";
+    this.salarySummary.salary31 = "0.00";
   }
 
   getDate() {
@@ -234,7 +404,7 @@ export class SalaryCalculationComponent implements OnInit {
                 dayData = taskDetail[j]["ward"] + "(" + taskDetail[j]["percentage"] + "%) | " + taskDetail[j]["wages"];
                 list[j]["day" + k] = dayData;
               }
-              if (j == taskDetail.length) {
+              if (j == length) {
                 list[j]["day" + k] = this.salaryList[i]["totalDaySalary" + k];
               }
             }
@@ -242,7 +412,10 @@ export class SalaryCalculationComponent implements OnInit {
         }
         for (let j = 0; j < list.length; j++) {
           if (j == 0) {
-            exportList.push({ empId: list[j]["empId"], name: this.salaryList[i]["name"], empCode: this.salaryList[i]["empCode"], designation: this.salaryList[i]["designation"], salary: this.salaryList[i]["salary"], day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
+            exportList.push({ empId: list[j]["empId"], name: this.salaryList[i]["name"], empCode: this.salaryList[i]["empCode"], designation: this.salaryList[i]["designation"], salary: "", day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
+          }
+          else if (j == list.length - 1) {
+            exportList.push({ empId: "", name: "", empCode: "", designation: "", salary: this.salaryList[i]["salary"], day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
           }
           else {
             exportList.push({ empId: "", name: "", empCode: "", designation: "", salary: "", day1: list[j]["day1"], day2: list[j]["day2"], day3: list[j]["day3"], day4: list[j]["day4"], day5: list[j]["day5"], day6: list[j]["day6"], day7: list[j]["day7"], day8: list[j]["day8"], day9: list[j]["day9"], day10: list[j]["day10"], day11: list[j]["day11"], day12: list[j]["day12"], day13: list[j]["day13"], day14: list[j]["day14"], day15: list[j]["day15"], day16: list[j]["day16"], day17: list[j]["day17"], day18: list[j]["day18"], day19: list[j]["day19"], day20: list[j]["day20"], day21: list[j]["day21"], day22: list[j]["day22"], day23: list[j]["day23"], day24: list[j]["day24"], day25: list[j]["day25"], day26: list[j]["day26"], day27: list[j]["day27"], day28: list[j]["day28"], day29: list[j]["day29"], day30: list[j]["day30"], day31: list[j]["day31"] });
@@ -294,6 +467,36 @@ export class SalaryCalculationComponent implements OnInit {
         }
         htmlString += "</tr>";
       }
+      // total on footer
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Total";
+      htmlString += "</td>";
+      let totalSalary = 0;
+      for (let i = 0; i < this.salaryList.length; i++) {
+        totalSalary += this.salaryList[i]["salary"];
+      }
+      htmlString += "<td>";
+      htmlString += totalSalary;
+      htmlString += "</td>";
+
+      for (let j = 1; j <= this.monthDays; j++) {
+        let daySalary = 0;
+        let totalDaySalary = "totalDaySalary" + j;
+        for (let i = 0; i < this.salaryList.length; i++) {
+          if (this.salaryList[i][totalDaySalary] != null) {
+            daySalary += this.salaryList[i][totalDaySalary];
+          }
+        }
+        htmlString += "<td>";
+        htmlString += daySalary;
+        htmlString += "</td>";
+      }
+      htmlString += "</tr>";
       htmlString += "</table>";
       let fileName = "Calculated-Salary-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
       this.exportExcel(htmlString, fileName);
@@ -312,4 +515,40 @@ export class SalaryCalculationComponent implements OnInit {
     /* save to file */
     XLSX.writeFile(wb, fileName);
   }
+}
+
+
+export class salarySummary {
+  salary: string;
+  salary1: string;
+  salary2: string;
+  salary3: string;
+  salary4: string;
+  salary5: string;
+  salary6: string;
+  salary7: string;
+  salary8: string;
+  salary9: string;
+  salary10: string;
+  salary11: string;
+  salary12: string;
+  salary13: string;
+  salary14: string;
+  salary15: string;
+  salary16: string;
+  salary17: string;
+  salary18: string;
+  salary19: string;
+  salary20: string;
+  salary21: string;
+  salary22: string;
+  salary23: string;
+  salary24: string;
+  salary25: string;
+  salary26: string;
+  salary27: string;
+  salary28: string;
+  salary29: string;
+  salary30: string;
+  salary31: string;
 }

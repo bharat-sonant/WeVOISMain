@@ -28,9 +28,10 @@
         <div class="col-md-4" style="margin-top: 10px; text-align: center;">Salary Calculation</div>
         <div class="col-md-4" style="margin-top: 0px;">
             <span style="float: right; color:#fff; text-align: center; font-size: 10px; padding-right: 20px">
-            <i class="fa-solid fa-file-export" style="cursor:pointer; color:green;  font-size: 24px; " (click)="exportToExcel();"></i><br/>
-            Export to Excel
-           </span>
+                <i class="fa-solid fa-file-export" style="cursor:pointer; color:green;  font-size: 24px; "
+                    (click)="exportToExcel();"></i><br />
+                Export to Excel
+            </span>
         </div>
     </div>
 </section>
@@ -84,7 +85,7 @@
                                 <tbody>
                                     <tr *ngFor="let dt of salaryList">
                                         <td class=" thFixed" style="vertical-align: top;">
-                                            <div class="rowWidthWard">{{dt.name}}<b> ({{dt.empCode}})</b><br/> ({{dt.designation}})
+                                            <div class="rowWidthWard">{{dt.name}}<b> ({{dt.empCode}})</b><br /> ({{dt.designation}})
                                             </div>
                                         </td>
                                         <td class="text-left thFixed1" style="vertical-align: top; font-weight: bold;">
@@ -404,6 +405,46 @@
                                         </td>
                                     </tr>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            Total</th>
+                                        <th scope="col" class="text-left thFixed1" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            {{salarySummary.salary}}
+                                        </th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary1}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary2}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary3}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary4}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary5}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary6}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary7}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary8}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary9}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary10}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary11}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary12}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary13}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary14}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary15}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary16}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary17}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary18}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary19}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary20}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary21}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary22}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary23}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary24}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary25}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary26}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary27}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary28}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary29}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary30}}</th>
+                                        <th scope="col" class="text-right">{{salarySummary.salary31}}</th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
