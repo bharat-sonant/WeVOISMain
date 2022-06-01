@@ -82,7 +82,7 @@ export class SalaryCalculationComponent implements OnInit {
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
           this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], salary: 0 });
-          this.salaryList = this.commonService.transformNumeric(this.salaryList, "empCode");
+          this.salaryList = this.salaryList.sort((a, b) =>Number(b.empId) < Number(a.empId) ? 1 : -1);
         }
         this.getSalary();
       }
