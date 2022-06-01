@@ -10,11 +10,11 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
@@ -28,7 +28,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3" style="padding-left:0px!important;">
+                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
+                                        <option value="all">
+                                            All Employee
+                                        </option>
+                                        <option selected value="active">
+                                            Active
+                                        </option>
+                                        <option value="inactive">
+                                            In-active
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-left" style="padding-right:0px!important;">
+                            <span style="float: right; margin-bottom: -10px;">
+                                <span>
+                                    <label class="main-label">
+
+                                        <span class="main-span">
+                                            <span> {{employeeDetail.lastUpdate}}</span> <br>Last update by {{employeeDetail.lastUpdateBy}}
+                            </span>
+                            <i class="fas fa-sync" style="color: green; font-size: 30px; cursor: pointer;margin-right: 20px " (click)="updateAccountJson();"></i></label>
+                            </span>
+                            </span>
                         </div>
                     </div>
                 </div>

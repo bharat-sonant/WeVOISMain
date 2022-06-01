@@ -130,7 +130,7 @@ export class EmployeeSalaryComponent implements OnInit {
             salaryList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: list[i]["status"], accountNo: accountNo, ifsc: ifsc, modifyBy: list[i]["modifyBy"], modifyDate: list[i]["modifyDate"], isLock: list[i]["isLock"], empType: list[i]["empType"], totalWages: totalWages, task: task, vehicle: "", fullDay: 0, totalAmount: 0, rewardAmount: 0, penaltyAmount: 0, finalAmount: 0, workingDays: 0, garageDuty: 0, orderBy: 0, uploadedSalary: 0, hold: 0, isShow: isShow, transfered: 0 });
           }
           this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
-          this.allSalaryList = this.commonService.transformNumeric(salaryList, "empCode");
+          this.allSalaryList = salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
           this.getRoles();
           this.getSalary();
         }

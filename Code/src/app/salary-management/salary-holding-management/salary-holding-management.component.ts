@@ -76,13 +76,13 @@ export class SalaryHoldingManagementComponent implements OnInit {
       employeeInstance.unsubscribe();
       if (data != null) {
         let jsonData = JSON.stringify(data);
-        this.allEmployeeList = JSON.parse(jsonData).filter(item=>item.empType=2);
+        this.allEmployeeList = JSON.parse(jsonData).filter(item => item.empType = 2);
         for (let i = 0; i < this.allEmployeeList.length; i++) {
           if (this.allEmployeeList[i]["status"] == "1") {
             let empId = this.allEmployeeList[i]["empId"];
             let name = this.allEmployeeList[i]["name"] + " (" + this.allEmployeeList[i]["empCode"] + ")";
-            this.employeeList.push({ empId: empId, name: name,empCode:this.allEmployeeList[i]["empCode"] });
-            this.employeeList = this.commonService.transformNumeric(this.employeeList, "empCode");
+            this.employeeList.push({ empId: empId, name: name, empCode: this.allEmployeeList[i]["empCode"] });
+            this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
           }
         }
         this.getHoldSalary();
@@ -299,11 +299,11 @@ export class SalaryHoldingManagementComponent implements OnInit {
       this.saveHoldData(id, empId, holdSaidBy, holdReason, holdDate);
     }
     else {
-      this.saveUnholdData(id,empId,holdSaidBy,holdReason,holdDate);
+      this.saveUnholdData(id, empId, holdSaidBy, holdReason, holdDate);
     }
   }
 
-  saveUnholdData(id:any,empId:any,unHoldSaidBy:any,unHoldReason:any,unHoldDate:any){
+  saveUnholdData(id: any, empId: any, unHoldSaidBy: any, unHoldReason: any, unHoldDate: any) {
     if (id != "0") {
       let detail = this.salaryHoldingList.find(item => item.empId == empId);
       if (detail != undefined) {

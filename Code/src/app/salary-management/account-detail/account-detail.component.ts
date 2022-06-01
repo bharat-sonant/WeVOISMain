@@ -95,8 +95,7 @@ export class AccountDetailComponent implements OnInit {
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData).filter(item=>item.empType==2);
-         
-        this.allAccountList = this.commonService.transformNumeric(list, "empCode");
+        this.allAccountList = list.sort((a, b) =>Number(b.empId) < Number(a.empId) ? 1 : -1);
         this.getRoles();
         this.getAccountIssue();
       }

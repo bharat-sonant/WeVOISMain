@@ -132,7 +132,7 @@ export class SalaryCalculationComponent implements OnInit {
                     if (dailyWorkData[empId]["task" + j]["work-percent"] != null) {
                       percentage = dailyWorkData[empId]["task" + j]["work-percent"];
                     }
-                    if (new Date(monthDate) > new Date(this.getDate())) {
+                    if (new Date(monthDate) >= new Date(this.getDate())) {
                       let wageDetail = this.wardWagesList.find(item => item.ward == ward);
                       if (wageDetail != undefined) {
                         if (isFirstZone == true) {

@@ -97,7 +97,7 @@ export class StaffAccountDetailComponent implements OnInit {
       if (data != null) {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData).filter(item => item.empType == 1);
-        this.allAccountList = this.commonService.transformNumeric(list, "empCode");
+        this.allAccountList = list.sort((a, b) =>Number(b.empId) < Number(a.empId) ? 1 : -1);
         this.getRoles();
         this.getAccountIssue();
       }
@@ -105,8 +105,6 @@ export class StaffAccountDetailComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
     });
   }
-
-
 
   getRoles() {
     let list = this.allAccountList.map(item => item.designation)
