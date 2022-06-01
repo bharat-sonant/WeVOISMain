@@ -25,7 +25,6 @@ export class DustbinManageComponent implements OnInit {
   txtLng = "#txtLng";
   txtFreq = "#txtFreq";
   ddlDustbinType = "#ddlDustbinType";
-  ddlStatus = "#ddlStatus";
 
   dustbinSummary: dustbinSummary = {
     totalDustbin: 0,
@@ -98,12 +97,8 @@ export class DustbinManageComponent implements OnInit {
     let lat = $(this.txtLat).val();
     let lng = $(this.txtLng).val();
     let type = $(this.ddlDustbinType).val();
-    let isDisabled = $(this.ddlStatus).val();
     let pickFrequency = $(this.txtFreq).val();
     let disabledDate = null;
-    if (isDisabled == "yes") {
-      disabledDate = this.commonService.setTodayDate();
-    }
     const data = {
       address: address,
       zone: zone,
@@ -111,9 +106,7 @@ export class DustbinManageComponent implements OnInit {
       lat: lat,
       lng: lng,
       type: type,
-      isDisabled: isDisabled,
       pickFrequency: pickFrequency,
-      disabledDate: disabledDate,
       createdDate: this.commonService.setTodayDate()
     }
     if (dustbinId == "0") {
@@ -200,7 +193,7 @@ export class DustbinManageComponent implements OnInit {
   openModel(content: any, id: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 550;
+    let height = 480;
     let width = 400;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -219,14 +212,12 @@ export class DustbinManageComponent implements OnInit {
           $(this.txtLng).val(dustbinDetail.lng);
           $(this.txtFreq).val(dustbinDetail.pickFrequency);
           $(this.ddlDustbinType).val(dustbinDetail.type);
-          $(this.ddlStatus).val(dustbinDetail.isDisabled);
         }, 100);
       }
     }
     else {
       $("#exampleModalLongTitle").html("Add Dustbin");
       setTimeout(() => {
-        $(this.ddlStatus).val('no');
         document.getElementById('txtaddress').removeAttribute('readonly');
       }, 100);
     }

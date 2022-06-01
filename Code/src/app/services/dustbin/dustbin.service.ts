@@ -18,10 +18,10 @@ export class DustbinService {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
     if (type == "add") {
-      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, isDisabled: data.isDisabled, pickFrequency: data.pickFrequency, disabledDate: data.disabledDate, createdDate: data.createdDate });
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency, createdDate: data.createdDate });
     }
     else {
-      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, isDisabled: data.isDisabled, pickFrequency: data.pickFrequency, disabledDate: data.disabledDate });
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency  });
     }
   }
 

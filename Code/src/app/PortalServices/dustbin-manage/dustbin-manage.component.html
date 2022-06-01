@@ -1,12 +1,13 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12 Ward-Marking-heading">
+        <div class="col-md-2">
+            <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
+        </div>
+        <div class="col-md-10 Ward-Marking-heading">
             Manage Dustbin
         </div>
-            <div class="position-class">
-                <input type="button" class="btn btn-success submit-btn" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
-            </div>
-        
+
+
 
     </div>
 </section>
@@ -29,21 +30,21 @@
                             </div>
 
                         </div>
-                        
+
                         <div class="col-md-2 extra-class">
-                          <span class="fw-bold"> {{dustbinSummary.totalDustbin}}<br></span> 
+                            <span class="fw-bold"> {{dustbinSummary.totalDustbin}}<br></span>
                             <span>Total</span>
                         </div>
                         <div class="col-md-2 extra-class">
-                            <span class="fw-bold">   {{dustbinSummary.wardDustbin}}<br></span> 
+                            <span class="fw-bold">   {{dustbinSummary.wardDustbin}}<br></span>
                             <span>Zone </span>
                         </div>
                         <div class="col-md-2 extra-class extra-class2">
-                            <span class="fw-bold">  {{dustbinSummary.disableDustbin}}<br></span> 
+                            <span class="fw-bold">  {{dustbinSummary.disableDustbin}}<br></span>
                             <span>Disabled</span>
                         </div>
                         <div class="col-md-2 extra-class">
-                            <span class="fw-bold">   {{dustbinSummary.enableDustbin}}<br></span> 
+                            <span class="fw-bold">   {{dustbinSummary.enableDustbin}}<br></span>
                             <span>Enabled</span>
                         </div>
                     </div>
@@ -142,17 +143,6 @@
                             </option>
                             <option value="Circular">
                                 Circular
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 wrap-input-effects" required>
-                        <label class="flot">Status</label>
-                        <select id="ddlStatus" class="input-green">
-                            <option value="yes">
-                                Disabled
-                            </option>
-                            <option value="no">
-                                Enabled
                             </option>
                         </select>
                     </div>

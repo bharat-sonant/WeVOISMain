@@ -85,7 +85,6 @@ button:focus {
 
 .card-header {
     background: #fff !important;
-    
     box-shadow: 0px 4px 4px #0e0e0e1a;
 }
 
@@ -397,6 +396,8 @@ textarea:focus-visible {
 
 .submit-btn {
     background: #0ba118!important;
+    margin-top: -10px;
+    margin-left: 20px;
 }
 
 .custom-header {
@@ -836,10 +837,10 @@ label {
     .Ward-Marking-heading {
         font-size: 13px !important;
     }
-    .card-body3{
+    .card-body3 {
         height: 56vh !important;
     }
-    .extra-class{
+    .extra-class {
         max-width: 50% !important;
     }
 }
@@ -868,7 +869,6 @@ label {
     .fix-home-outer {
         margin-left: auto;
     }
-   
     .custom-header {
         height: unset !important;
     }
@@ -883,14 +883,14 @@ label {
         width: 80px;
         margin-top: 10px !important;
     }
-    .Ward-Marking-heading{
+    .Ward-Marking-heading {
         display: none;
     }
-    .position-class{
-       margin-top: 0px !important;
-       margin-left: 30px !important;
+    .position-class {
+        margin-top: 0px !important;
+        margin-left: 30px !important;
     }
-    .extra-class{
+    .extra-class {
         max-width: 25%;
     }
 }
@@ -899,14 +899,14 @@ label {
     .card-body3 {
         height: 67vh !important;
     }
-    .Ward-Marking-heading{
+    .Ward-Marking-heading {
         display: none;
     }
-    .position-class{
-       margin-top: 0px !important;
-       margin-left: 30px !important;
+    .position-class {
+        margin-top: 0px !important;
+        margin-left: 30px !important;
     }
-    .table-scroll{
+    .table-scroll {
         height: 67vh !important;
     }
 }
@@ -915,12 +915,12 @@ label {
     .card-body3 {
         height: 75vh !important;
     }
-    .Ward-Marking-heading{
+    .Ward-Marking-heading {
         display: none;
     }
-    .position-class{
-       margin-top: 0px !important;
-       margin-left: 30px !important;
+    .position-class {
+        margin-top: 0px !important;
+        margin-left: 30px !important;
     }
 }
 
@@ -928,12 +928,12 @@ label {
     .card-body3 {
         height: 80vh !important;
     }
-    .Ward-Marking-heading{
+    .Ward-Marking-heading {
         display: none;
     }
-    .position-class{
-       margin-top: 0px !important;
-       margin-left: 30px !important;
+    .position-class {
+        margin-top: 0px !important;
+        margin-left: 30px !important;
     }
 }
 
@@ -944,7 +944,6 @@ label {
     .fix-home-outer {
         margin-left: auto;
     }
-   
     .custom-header {
         height: unset !important;
     }
@@ -965,19 +964,20 @@ label {
 }
 
 @media only screen and (min-width:539px) and (max-width:576px) {
-.input-class{
-    max-width: 36% !important
+    .input-class {
+        max-width: 36% !important
+    }
+    .extra-class {
+        max-width: 16% !important;
+    }
+    .card-body3 {
+        height: 70vh !important;
+    }
+    .table-scroll {
+        height: 70vh !important;
+    }
 }
-.extra-class{
-    max-width: 16% !important;
-}
-.card-body3{
-    height: 70vh !important;
-}
-.table-scroll{
-    height: 70vh !important;
-}
-}
+
 @media only screen and (min-width:767px) and (max-width:821px) {
     .table-one {
         overflow-x: scroll;
@@ -985,8 +985,6 @@ label {
     .fix-home-outer {
         margin-left: auto;
     }
-   
-    
     .custom-header {
         height: unset !important;
     }
@@ -1004,16 +1002,13 @@ label {
         width: 80px;
         margin-top: 20px !important;
     }
-    .loaderClass-outer{
-       
+    .loaderClass-outer {
         min-width: 60%;
     }
-    .position-class{
-       
+    .position-class {
         margin-top: -33px;
         margin-left: 30px;
     }
-    
 }
 
 @media only screen and (min-width:900px) and (max-width:921px) {
@@ -1026,7 +1021,6 @@ label {
     .table-scroll {
         height: 39vh !important;
     }
-  
     .custom-header-outer {
         height: unset !important;
     }
@@ -1041,19 +1035,16 @@ label {
         width: 80px;
         margin-top: 10px !important;
     }
-    .loaderClass-outer{
-       
+    .loaderClass-outer {
         min-width: 60%;
     }
-    .position-class{
-       
+    .position-class {
         margin-top: 0sspx;
         margin-left: 30px;
     }
 }
 
 @media only screen and (min-width:1020px) and (max-width:1275px) {
-    
     .custom-header {
         height: unset !important;
     }
@@ -1068,19 +1059,16 @@ label {
         width: 80px;
         margin-top: 10px !important;
     }
-    .loaderClass-outer{
-       
+    .loaderClass-outer {
         min-width: 60%;
     }
-    .position-class{
-       
+    .position-class {
         margin-top: 0x;
         margin-left: 10px;
     }
 }
 
 @media only screen and (min-width:1276px) and (max-width:1290px) {
-   
     .custom-header {
         height: unset !important;
     }
@@ -1098,8 +1086,6 @@ label {
 }
 
 @media only screen and (min-width:1300px) {
-    
-   
     .custom-header {
         height: unset !important;
     }
@@ -1116,8 +1102,6 @@ label {
     }
 }
 
-
-
 .save-btn {
     z-index: 999;
 }
@@ -1126,8 +1110,6 @@ label {
     text-align: right;
     width: 50px
 }
-
-
 
 .submit-btn {
     background: #0ba118!important;
@@ -1138,63 +1120,55 @@ label {
     margin-left: 10px;
 }
 
-.edit-icon{
-    cursor: pointer; 
-    font-size:18px
+.edit-icon {
+    cursor: pointer;
+    font-size: 18px
 }
-.check-icon{
-    cursor: pointer; 
-    font-size:18px; 
-    color:green; 
+
+.check-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: green;
     margin-left: 10px;
 }
-.xmark-icon{
-    cursor: pointer; 
-    font-size:18px; 
-    color:red; 
+
+.xmark-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: red;
     margin-left: 10px;
 }
-.flot{
-    float:left;
+
+.flot {
+    float: left;
 }
-.modal-body2{
-    text-align:center;
+
+.modal-body2 {
+    text-align: center;
 }
-.extra-class{
+
+.extra-class {
     padding: 10px 0px;
     border: 1px solid #dee2e6;
     text-align: center;
 }
-.submit-btn{
-   
-    margin: 0;
+
+.submit-btn {
     padding: 10px 15px;
     font-size: 12px;
+    margin-top: -8px;
+    margin-left: 20px;
 }
-.caret-select{
+
+.caret-select {
     margin-top: 0px !important;
 }
+
 .position-class {
     width: 130px;
     margin-top: -33px;
 }
+
 .zone-select {
     width: 127px !important
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
