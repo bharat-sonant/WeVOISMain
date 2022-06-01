@@ -290,15 +290,11 @@ export class SalaryCalculationComponent implements OnInit {
           htmlString += exportList[i][day];
           htmlString += "</td>";
         }
-
         htmlString += "</tr>";
-
-
       }
       htmlString += "</table>";
       let fileName = "Calculated-Salary-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
       this.exportExcel(htmlString, fileName);
-
     }
   }
 
