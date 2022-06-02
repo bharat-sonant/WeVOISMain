@@ -838,10 +838,13 @@ label {
         font-size: 13px !important;
     }
     .card-body3 {
-        height: 56vh !important;
+        height: 61vh !important;
     }
     .extra-class {
         max-width: 50% !important;
+    }
+    .table-scroll{
+        height: 63vh !important;
     }
 }
 
@@ -893,11 +896,16 @@ label {
     .extra-class {
         max-width: 25%;
     }
+    .submit-btn{
+        margin-left: 40px !important;
+        margin-top: -3px !important;
+    }
+    
 }
 
 @media only screen and (min-width:359px) and (max-width:389px) {
     .card-body3 {
-        height: 67vh !important;
+        height: 70vh !important;
     }
     .Ward-Marking-heading {
         display: none;
@@ -907,7 +915,7 @@ label {
         margin-left: 30px !important;
     }
     .table-scroll {
-        height: 67vh !important;
+        height: 72vh !important;
     }
 }
 
@@ -961,6 +969,10 @@ label {
         width: 80px;
         margin-top: 20px !important;
     }
+    .submit-btn{
+        margin-left: 40px !important;
+        margin-top: -3px !important;
+    }
 }
 
 @media only screen and (min-width:539px) and (max-width:576px) {
@@ -1008,6 +1020,10 @@ label {
     .position-class {
         margin-top: -33px;
         margin-left: 30px;
+    }
+    .submit-btn{
+        margin-left: 40px !important;
+        margin-top: -3px !important;
     }
 }
 
@@ -1111,9 +1127,7 @@ label {
     width: 50px
 }
 
-.submit-btn {
-    background: #0ba118!important;
-}
+
 
 .cancel-btn {
     background: red!important;
@@ -1158,6 +1172,7 @@ label {
     font-size: 12px;
     margin-top: -8px;
     margin-left: 20px;
+    background: #0ba118!important;
 }
 
 .caret-select {
