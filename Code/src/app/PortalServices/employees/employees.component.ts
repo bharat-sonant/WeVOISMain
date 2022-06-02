@@ -26,6 +26,7 @@ export class EmployeesComponent implements OnInit {
   ddlUser = "#ddlUser";
   empID = "#empID";
   divLoader = "#divLoader";
+  txtName="#txtName";
 
   employeeDetail: employeeDetail = {
     lastUpdate: "",
@@ -92,24 +93,26 @@ export class EmployeesComponent implements OnInit {
   }
 
 
-  filterData() {
-    let filterVal = $(this.ddlUser).val();
+  filterData() {    
+    let name = $(this.txtName).val();
+    name = name.toString().toUpperCase();
+    let status = $(this.ddlUser).val();
     let designationFilterVal = $(this.ddlDesignation).val();
-    this.showAccountDetail(filterVal, designationFilterVal);
+    this.showAccountDetail(status, designationFilterVal,name);
   }
 
-  showAccountDetail(status: any, designation: any) {
+  showAccountDetail(status: any, designation: any,name:any) {
     if (status == "all") {
       this.employeeList = this.allEmployeeList;
     }
     else if (status == "active") {
-      this.employeeList = this.allEmployeeList.filter(item => item.status == "1");
+      this.employeeList = this.allEmployeeList.filter(item => item.status == "1"  && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
     else {
-      this.employeeList = this.allEmployeeList.filter(item => item.status != "1");
+      this.employeeList = this.allEmployeeList.filter(item => item.status != "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
     if (designation != "all") {
-      this.employeeList = this.employeeList.filter(item => item.designation == designation);
+      this.employeeList = this.employeeList.filter(item => item.designation == designation && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
     $(this.divLoader).hide();
   }

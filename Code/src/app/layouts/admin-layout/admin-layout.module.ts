@@ -46,15 +46,6 @@ import { WorkAssignReportComponent } from '../../reports/work-assign-report/work
 import { PortalServicesComponent } from '../../PortalServices/portal-services/portal-services.component';
 import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-duty-data.component';
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
-import { InventoryComponent } from '../../Inventory/inventory/inventory.component';
-import { PetrolInventoryListComponent } from '../../Inventory/petrol-inventory-list/petrol-inventory-list.component';
-import { PetrolInventoryEntryComponent } from '../../Inventory/petrol-inventory-entry/petrol-inventory-entry.component';
-import { VehiclePetrolCostComponent } from '../../finance-report/vehicle-petrol-cost/vehicle-petrol-cost.component';
-import { MaintenanceInventoryListComponent } from '../../Inventory/maintenance-inventory-list/maintenance-inventory-list.component';
-import { MaintenanceInventoryEntryComponent } from '../../Inventory/maintenance-inventory-entry/maintenance-inventory-entry.component';
-import { VehicleMaintenanceCostComponent } from '../../finance-report/vehicle-maintenance-cost/vehicle-maintenance-cost.component';
-import { VehiclePetrolReportComponent } from '../../reports/vehicle-petrol-report/vehicle-petrol-report.component';
-import { VehiclePartReportComponent } from '../../reports/vehicle-part-report/vehicle-part-report.component';
 import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-report.component';
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
@@ -166,15 +157,6 @@ import { SalaryCalculationComponent } from '../../salary-management/salary-calcu
     PortalServicesComponent,
     WardDutyDataComponent,
     DustbinAnalysisComponent,
-    InventoryComponent,
-    PetrolInventoryListComponent,
-    PetrolInventoryEntryComponent,
-    VehiclePetrolCostComponent,
-    MaintenanceInventoryListComponent,
-    MaintenanceInventoryEntryComponent,
-    VehicleMaintenanceCostComponent,
-    VehiclePetrolReportComponent,
-    VehiclePartReportComponent,
     DustbinReportComponent,
     CmsComponent,
     Cms1Component,
