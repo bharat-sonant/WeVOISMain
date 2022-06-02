@@ -181,7 +181,7 @@ export class WardMonitoringComponent {
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA" });
+        linePath.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA",lineWeightage:1 });
       }
       catch { }
     }
@@ -224,17 +224,17 @@ export class WardMonitoringComponent {
           let lineData = this.allLines.find(item => item.lineNo == lineNo);
           let lineColor = "#87CEFA";
           if (lineStatusData != null) {
-            if (lineStatusData[index] != undefined) {
-              if (lineStatusData[index]["Status"] != 'undefined') {
-                if (lineStatusData[index]["Status"] == "LineCompleted") {
+            if (lineStatusData[lineNo] != undefined) {
+              if (lineStatusData[lineNo]["Status"] != 'undefined') {
+                if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
                   lineColor = "#33ff33";
                   this.completeCount++
                   percentage += (100 / Number(this.wardTotalLines)) * parseFloat(lineData.lineWeightage);
-                } else if (lineStatusData[index]["Status"] == "PartialLineCompleted") {
+                } else if (lineStatusData[lineNo]["Status"] == "PartialLineCompleted") {
                   lineColor = "#ff9d00";
                   this.partailDoneCount++;
                   percentage += (100 / Number(this.wardTotalLines)) * parseFloat(lineData.lineWeightage);
-                } else if (lineStatusData[index]["Status"] == "Skipped") {
+                } else if (lineStatusData[lineNo]["Status"] == "Skipped") {
                   lineColor = "red";
                   this.skipCount++
                 } else {

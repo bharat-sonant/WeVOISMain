@@ -843,7 +843,7 @@ label {
     .extra-class {
         max-width: 50% !important;
     }
-    .table-scroll{
+    .table-scroll {
         height: 63vh !important;
     }
 }
@@ -896,11 +896,10 @@ label {
     .extra-class {
         max-width: 25%;
     }
-    .submit-btn{
+    .submit-btn {
         margin-left: 40px !important;
         margin-top: -3px !important;
     }
-    
 }
 
 @media only screen and (min-width:359px) and (max-width:389px) {
@@ -969,7 +968,7 @@ label {
         width: 80px;
         margin-top: 20px !important;
     }
-    .submit-btn{
+    .submit-btn {
         margin-left: 40px !important;
         margin-top: -3px !important;
     }
@@ -1021,7 +1020,7 @@ label {
         margin-top: -33px;
         margin-left: 30px;
     }
-    .submit-btn{
+    .submit-btn {
         margin-left: 40px !important;
         margin-top: -3px !important;
     }
@@ -1127,8 +1126,6 @@ label {
     width: 50px
 }
 
-
-
 .cancel-btn {
     background: red!important;
     margin-left: 10px;
@@ -1170,7 +1167,15 @@ label {
 .submit-btn {
     padding: 10px 15px;
     font-size: 12px;
-    margin-top: -8px;
+    margin-top: 10px;
+    margin-left: 20px;
+    background: #0ba118!important;
+}
+
+.submit-btn-add {
+    padding: 10px 15px;
+    font-size: 12px;
+    margin-top: -4px;
     margin-left: 20px;
     background: #0ba118!important;
 }
@@ -1185,5 +1190,5 @@ label {
 }
 
 .zone-select {
-    width: 127px !important
+    width: 100% !important
 }

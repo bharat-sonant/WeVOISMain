@@ -366,7 +366,6 @@ export class EmployeeSalaryComponent implements OnInit {
             }
           }
           if (rewardDays > 0) {
-            console.log(rewardDays)
             let designation = this.allSalaryList[i]["designation"];
             if (rewardAmount == 0) {
               if (designation == "Driver") {
