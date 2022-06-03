@@ -42,7 +42,6 @@ export class DustbinManageComponent implements OnInit {
     this.zoneList = [];
     this.dustbinStorageList = [];
     this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
-    this.dustbinSummary.totalDustbin = this.dustbinStorageList.length;
     if (this.dustbinStorageList != null) {
       let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
       for (let i = 0; i < list.length; i++) {
@@ -80,6 +79,7 @@ export class DustbinManageComponent implements OnInit {
         }
         this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"] });
       }
+      this.dustbinSummary.totalDustbin = this.dustbinStorageList.length;
       this.dustbinSummary.wardDustbin = this.dustbinList.length;
       this.dustbinSummary.disableDustbin = disabledDustbin;
       this.dustbinSummary.enableDustbin = enableDustbin;
@@ -98,7 +98,6 @@ export class DustbinManageComponent implements OnInit {
     let lng = $(this.txtLng).val();
     let type = $(this.ddlDustbinType).val();
     let pickFrequency = $(this.txtFreq).val();
-    let disabledDate = null;
     const data = {
       address: address,
       zone: zone,
