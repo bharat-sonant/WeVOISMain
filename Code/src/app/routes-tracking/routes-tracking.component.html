@@ -90,7 +90,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let dt of monthDetailList" (click)="getMonthSelectedDetail(dt.day);" style="cursor:pointer;">
+                                    <tr *ngFor="let dt of monthDetailList" (click)="getMonthSelectedDetail(dt.monthDate);" style="cursor:pointer;">
                                         <td style="vertical-align: top; width: 50px;">{{dt.day}}</td>
                                         <td class="text-left"><span [hidden]="dt.driver==''">
                                                 {{dt.driver}}<br><b>{{dt.km}}</b> Km in <b>{{dt.hour}}

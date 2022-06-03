@@ -23,7 +23,6 @@ export class RoutesTrackingComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   selectedMonth: any;
-  preMonth:any;
   zoneKML: any;
   monthDetailList: any[];
   vehicleMarker: any;
@@ -61,12 +60,15 @@ export class RoutesTrackingComponent implements OnInit {
 
   getData() {
     this.clearMap();
-    this.setWardBoundary();
-    if (this.selectedDate == this.toDayDate) {
-      this.showVehicleCurrentLocation();
-    }
     if (this.selectedZone != "0") {
-      this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
+      this.setWardBoundary();
+      if (this.selectedDate == this.toDayDate) {
+        this.showVehicleCurrentLocation();
+        this.getLocationHistoryFromDatabase(this.selectedDate, "trackRoute");
+      }
+      else {
+        this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
+      }
     }
   }
 
@@ -74,10 +76,6 @@ export class RoutesTrackingComponent implements OnInit {
     if (this.vehicleMarker != undefined) {
       this.vehicleMarker.setMap(null);
     }
-    if (this.zoneKML != undefined) {
-      this.zoneKML[0]["line"].setMap(null);
-    }
-
     if (this.allMarkers.length > 0) {
       for (let i = 0; i < this.allMarkers.length; i++) {
         this.allMarkers[i]["marker"].setMap(null);
@@ -96,7 +94,40 @@ export class RoutesTrackingComponent implements OnInit {
     this.trackData.time = "0:00";
   }
 
+  getMonthSelectedDetail(monthDate: any) {
+    this.clearMap();
+    if (this.selectedZone != "0") {
+      if (this.selectedDate == this.toDayDate) {
+        this.showVehicleCurrentLocation();
+      }
+      let monthDetail = this.monthDetailList.find(item => item.monthDate == monthDate);
+      if (monthDetail != undefined) {
+        if (monthDetail.routePath != undefined) {
+          this.getMonthListData(monthDate, monthDetail.routePath, "trackRoute");
+        }
+        else {
+          this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
+        }
+      }
+      else {
+        this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
+      }
+    }
+  }
+
   drowRouteOnMap() {
+    if (this.allMarkers.length > 0) {
+      for (let i = 0; i < this.allMarkers.length; i++) {
+        this.allMarkers[i]["marker"].setMap(null);
+      }
+    }
+    this.allMarkers = [];
+    if (this.polylines != null) {
+      for (let j = 0; j < this.polylines.length; j++) {
+        this.polylines[j].setMap(null);
+      }
+    }
+    this.polylines = [];
     let lineData = [];
     var keyArray = Object.keys(this.routePath);
     for (let i = 0; i < keyArray.length - 2; i++) {
@@ -229,51 +260,66 @@ export class RoutesTrackingComponent implements OnInit {
     }
   }
 
+  getMonthListData(monthDate: any, routePath: any, type: any) {
+    let totalKM: number = 0;
+    let routeKeyArray = Object.keys(routePath);
+    let keyArray = [];
+    if (routeKeyArray.length > 0) {
+      if (this.isActualData == 0) {
+        keyArray = routeKeyArray;
+      }
+      else {
+        for (let i = 0; i < routeKeyArray.length; i++) {
+          if (!routeKeyArray[i].toString().includes('-')) {
+            keyArray.push(routeKeyArray[i]);
+          }
+        }
+      }
+    }
+    for (let i = 0; i < keyArray.length - 3; i++) {
+      let index = keyArray[i];
+      totalKM += parseFloat(routePath[index]["distance-in-meter"]);
+    }
+    let startTime = keyArray[0];
+    let endTime = keyArray[0];
+    if (keyArray.length > 1) {
+      endTime = keyArray[keyArray.length - 3];
+    }
+    let sTime = monthDate + " " + startTime;
+    let eTime = monthDate + " " + endTime;
+    let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+    let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
+    if (monthDetails != undefined) {
+      monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
+      monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+      monthDetails.routePath = routePath;
+    }
+    if (type == "trackRoute") {
+      this.routePath = routePath;
+      this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
+      this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
+      this.drowRouteOnMap();
+      if (this.selectedDate == monthDate) {
+        this.getMonthDetail(monthDetails, routePath, monthDate);
+      }
+    }
+    else {
+      this.getMonthDetail(monthDetails, routePath, monthDate);
+    }
+  }
+
   getLocationHistoryFromStorage(monthDate: any, type: any) {
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
     let locationHistoryInstance = this.httpService.get(path).subscribe(data => {
       locationHistoryInstance.unsubscribe();
       if (data != null) {
         let routePath = data["routePath"];
-        let totalKM: number = 0;
-        let routeKeyArray = Object.keys(routePath);
-        let keyArray = [];
-        if (routeKeyArray.length > 0) {
-          if (this.isActualData == 0) {
-            keyArray = routeKeyArray;
-          }
-          else {
-            for (let i = 0; i < routeKeyArray.length; i++) {
-              if (!routeKeyArray[i].toString().includes('-')) {
-                keyArray.push(routeKeyArray[i]);
-              }
-            }
-          }
-        }
-        for (let i = 0; i < keyArray.length - 3; i++) {
-          let index = keyArray[i];
-          totalKM += parseFloat(routePath[index]["distance-in-meter"]);
-        }
-        let startTime = keyArray[0];
-        let endTime = keyArray[0];
-        if (keyArray.length > 1) {
-          endTime = keyArray[keyArray.length - 3];
-        }
-        let sTime = monthDate + " " + startTime;
-        let eTime = monthDate + " " + endTime;
-        let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-        let monthDetails = this.monthDetailList.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+        let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
         if (monthDetails != undefined) {
-          monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-          monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
           monthDetails.driver = data["driver"];
           monthDetails.percentage = data["percentage"];
-        }
-        if (type == "trackRoute") {
-          this.routePath = routePath;
-          this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
-          this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
-          this.drowRouteOnMap();
+          monthDetails.routePath = routePath;
+          this.getMonthListData(monthDate, routePath, type);
         }
       }
     }, error => {
@@ -287,53 +333,7 @@ export class RoutesTrackingComponent implements OnInit {
       routePath => {
         locationHistoryInstance.unsubscribe();
         if (routePath != null) {
-          let totalKM: number = 0;
-          let routeKeyArray = Object.keys(routePath);
-          let keyArray = [];
-          if (routeKeyArray.length > 0) {
-            if (this.isActualData == 0) {
-              keyArray = routeKeyArray;
-            }
-            else {
-              for (let i = 0; i < routeKeyArray.length; i++) {
-                if (!routeKeyArray[i].toString().includes('-')) {
-                  keyArray.push(routeKeyArray[i]);
-                }
-              }
-            }
-          }
-
-          for (let i = 0; i < keyArray.length - 3; i++) {
-            let index = keyArray[i];
-            totalKM += parseFloat(routePath[index]["distance-in-meter"]);
-          }
-
-          let startTime = keyArray[0];
-          let endTime = keyArray[0];
-          if (keyArray.length > 1) {
-            endTime = keyArray[keyArray.length - 3];
-          }
-          let sTime = monthDate + " " + startTime;
-          let eTime = monthDate + " " + endTime;
-          let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-          let monthDetails = this.monthDetailList.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-          if (monthDetails != undefined) {
-            monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-            monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
-
-            if (type == "trackRoute") {
-              this.routePath = routePath;
-              this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
-              this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
-              this.drowRouteOnMap();
-              if (this.selectedDate == monthDate) {
-                this.getMonthDetail(monthDetails, routePath, monthDate);
-              }
-            }
-            else {
-              this.getMonthDetail(monthDetails, routePath, monthDate);
-            }
-          }
+          this.getMonthListData(monthDate, routePath, type);
         }
       }
     );
@@ -354,13 +354,13 @@ export class RoutesTrackingComponent implements OnInit {
             if (data != null) {
               monthDetails.percentage = data.toString();
             }
-            const obj = {
-              driver: monthDetails.driver,
-              percentage: monthDetails.percentage,
-              km: monthDetails.km,
-              routePath: routePath
-            };
             if (monthDate != this.toDayDate) {
+              const obj = {
+                driver: monthDetails.driver,
+                percentage: monthDetails.percentage,
+                km: monthDetails.km,
+                routePath: routePath
+              };
               let filePath = "/LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/";
               let fileName = monthDate + ".json";
               this.commonService.saveJsonFile(obj, fileName, filePath);
@@ -492,8 +492,14 @@ export class RoutesTrackingComponent implements OnInit {
     let monthDetail = this.monthDetailList.find(item => item.monthDate == this.selectedDate);
     if (monthDetail == undefined) {
       this.getMonthDetailList();
+      this.getMonthSelectedDetail(this.selectedDate);
+      if (this.selectedMonth == Number(this.toDayDate.split('-')[1])) {
+        this.getLocationHistoryFromDatabase(this.toDayDate, "monthList");
+      }
     }
-    this.getData();
+    else {
+      this.getMonthSelectedDetail(this.selectedDate);
+    }
   }
 
   setSelectedMonthYear() {
@@ -505,6 +511,9 @@ export class RoutesTrackingComponent implements OnInit {
 
   changeZoneSelection(filterVal: any) {
     this.selectedZone = filterVal;
+    if (this.zoneKML != undefined) {
+      this.zoneKML[0]["line"].setMap(null);
+    }
     this.getMonthDetailList();
     this.getData();
   }
