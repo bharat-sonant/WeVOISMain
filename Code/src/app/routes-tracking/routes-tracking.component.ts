@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-routes-tracking',
@@ -13,7 +14,7 @@ export class RoutesTrackingComponent implements OnInit {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient,private actRoute: ActivatedRoute) { }
 
   selectedZone: any;
   preSelectedZone: any;
@@ -55,7 +56,15 @@ export class RoutesTrackingComponent implements OnInit {
     this.setSelectedMonthYear();
     this.getZoneList();
     this.setMaps();
+    const id = this.actRoute.snapshot.paramMap.get('id');
+    if (id != null) {
+      this.selectedZone = id.trim();
+    }
+    else {
+      this.selectedZone = "1";
+    }
     this.getMonthDetailList();
+    this.getData();
   }
 
   getData() {
