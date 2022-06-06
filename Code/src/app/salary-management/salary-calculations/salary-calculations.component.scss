@@ -1,0 +1,355 @@
+.header {
+    height: 64px;
+    width: 100%;
+    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-top: 15px;
+}
+
+.custom-date-input {
+    height: 42px;
+}
+
+.caret-select {
+    margin-top: 0px!important;
+    margin-left: 10px!important;
+    border-radius: 5px;
+    padding: 10px;
+    border: none!important;
+    width: 97%;
+}
+
+.btn-hvr {
+    cursor: pointer;
+    width: 50px;
+    height: 43px;
+    background: #888!important;
+}
+
+.btn-hvr:hover {
+    background: #979797!important;
+}
+
+.inactive {
+    background-color: #fcb2c2;
+}
+
+.active {
+    background-color: rgb(255, 255, 255);
+}
+
+.completed {
+    background-color: #9ff39f;
+}
+
+.stopedWork {
+    background-color: red;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+
+/**************************Table Start***************************/
+
+.rowWidth {
+    width: 200px!important;
+    text-align: right;
+}
+
+.rowWidthTime {
+    width: 100px!important;
+    text-align: left;
+}
+
+.rowWidthWard {
+    width: 200px!important;
+    text-align: left;
+}
+
+.table-bg {
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+    border-radius: 5px;
+}
+
+.tableFixHead {
+    overflow-y: scroll;
+    height: 88vh;
+    position: relative;
+    border-radius: 5px;
+}
+
+.tableFixHead thead {
+    background-color: #f1f1f1;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1;
+    width: 200px;
+    z-index: 1;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+thead th {
+    padding: 5px 7px!important;
+    font-size: 14px;
+    color: rgb(56, 56, 56);
+    font-weight: bold;
+    z-index: 1;
+}
+
+.thFixed {
+    position: sticky;
+    left: 0px;
+    width: 100px;
+    z-index: 1;
+    background-color: #fff;
+    color: rgb(0, 0, 0);
+}
+
+.thFixed1 {
+    position: sticky;
+    left: 100px;
+    width: 100px;
+    z-index: 1;
+    background-color: #fff;
+    color: rgb(0, 0, 0);
+}
+
+.thFixed2 {
+    position: sticky;
+    left: 173px;
+    width: 100px;
+    z-index: 1;
+    background-color: #fff;
+    color: rgb(0, 0, 0);
+}
+
+.thFixed3 {
+    position: sticky;
+    left: 244px;
+    width: 100px;
+    z-index: 1;
+    background-color: #fff;
+    color: rgb(0, 0, 0);
+}
+
+table td {
+    padding: 5px 12px !important;
+    font-size: 12px;
+    width: 200px!important;
+    height: 50px!important;
+}
+
+.tdBorder {
+    border-right: 1px solid #dee2e6!important;
+}
+
+.img-close {
+    position: relative;
+    z-index: 10;
+    width: 25px;
+    cursor: pointer;
+}
+
+// .tableFixHead::-webkit-scrollbar{
+//   display: none; 
+//  }
+// .tableFixHeadDetail::-webkit-scrollbar{
+//   display: none; 
+//  }
+
+/**************************Table End***************************/
+
+
+/********** Custom Scroll Css ***********/
+
+ ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+
+/* Track */
+
+ ::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+
+/* Handle */
+
+ ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent;
+    -webkit-box-shadow: transparent;
+}
+
+ :hover::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+/* Track */
+
+ :hover::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+
+/* Handle */
+
+ :hover::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+
+/********** Custom Scroll Css End***********/
+
+
+/******** My Box Start**************************/
+
+#myBox {
+    position: absolute;
+    right: 20px;
+    top: 7px;
+    background-color: #fff;
+    border-left: 1px solid #0ba118;
+    width: 280px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+    z-index: 999;
+}
+
+#myBox .main-info {
+    padding: 7px 15px;
+}
+
+#myBox .card {
+    margin-bottom: -6px!important;
+    border-radius: 0px;
+}
+
+#myBox .card-header {
+    padding: 0px!important;
+}
+
+#myBox .card-body {
+    padding: 0px!important;
+}
+
+#myBox .info-bg {
+    background: #efefef;
+}
+
+#myBox .main-info:hover {
+    background: #e8e8e8;
+}
+
+#myBox .plan-header {
+    height: 50px;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 15px;
+    color: #fff;
+    background: #0ba118;
+    cursor: pointer;
+    box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
+}
+
+#myBox .plan-header:hover {
+    background: #19b426;
+}
+
+#myBox .main-info {
+    float: left;
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    ;
+    padding-bottom: 10px;
+}
+
+#myBox .icon-bg {
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    border: 1px solid rgba(211, 211, 211, 0.582);
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.185);
+}
+
+.main-info h1 {
+    float: right;
+    padding-top: 5px;
+    width: 70%;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    color: #333333;
+    margin: 0px!important;
+}
+
+// .main-info span{
+//   font-size: 14px;
+// }
+.main-info i {
+    font-size: 20px;
+    color: #0ba118;
+}
+
+.main-info .fa-stop {
+    color: #ff0000;
+}
+
+.main-info p {
+    font-size: 10px;
+    color: #333333;
+    margin: 0px!important;
+}
+
+
+/********My Box End************/
+
+.loaderClass {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: lightgray;
+    opacity: 0.5;
+}
+
+.imgLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+br {
+    mso-data-placement: same-cell;
+}

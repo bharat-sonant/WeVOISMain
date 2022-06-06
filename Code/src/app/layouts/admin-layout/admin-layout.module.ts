@@ -106,6 +106,8 @@ import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dust
 import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.component';
 import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
+import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
+
 
 
 @NgModule({
@@ -217,7 +219,8 @@ import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-
     DustbinManageComponent,
     RoutesTrackingComponent,
     SalaryCalculationComponent,
-    DailyFuelReportComponent
+    DailyFuelReportComponent,
+    SalaryCalculationsComponent
   ]
 })
 
