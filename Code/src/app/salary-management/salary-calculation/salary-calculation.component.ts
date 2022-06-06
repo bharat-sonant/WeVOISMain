@@ -22,9 +22,11 @@ export class SalaryCalculationComponent implements OnInit {
   selectedYear: any;
   yearList: any[] = [];
   zoneList: any[];
+  employeeList: any[] = [];
   salaryList: any[] = [];
   ddlMonth = "#ddlMonth";
   ddlYear = "#ddlYear";
+  ddlRoles = "#ddlRoles";
   wardWagesList: any[] = [];
   divLoader = "#divLoader";
   monthDays: any;
@@ -120,12 +122,24 @@ export class SalaryCalculationComponent implements OnInit {
       let list = JSON.parse(jsonData).filter(item => item.empType == 2 && item.status == 1);
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
-          this.salaryList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], salary: 0 });
-          this.salaryList = this.salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+          this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
+          this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
         }
+        this.salaryList=this.employeeList;
         this.getSalary();
       }
     });
+  }
+
+  getFilterEmployeeList(filterVal: any) {
+    if (filterVal == "0") {
+      this.salaryList = this.employeeList;
+    }
+    else {
+      this.salaryList = this.employeeList.filter(item => item.designation == filterVal);
+      this.salaryList = this.salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+    }
+    this.getSalary();
   }
 
   getSalary() {
@@ -206,9 +220,9 @@ export class SalaryCalculationComponent implements OnInit {
               }
             }
           }
-          if (index == days) {
-            $(this.divLoader).hide();
-          }
+        }
+        if (index == days) {
+          $(this.divLoader).hide();
         }
       }
     );

@@ -24,6 +24,11 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
+            <select class="caret-select" id="ddlRoles" (change)="getFilterEmployeeList($event.target.value)" style="width: 150px;">
+                <option value="0">All</option>
+                <option value="Driver">Driver</option>
+                <option value="Helper">Helper</option>
+            </select>
         </div>
         <div class="col-md-4" style="margin-top: 10px; text-align: center;">Salary Calculation</div>
         <div class="col-md-4" style="margin-top: 0px;">
