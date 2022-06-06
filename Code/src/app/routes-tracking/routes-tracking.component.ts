@@ -14,7 +14,7 @@ export class RoutesTrackingComponent implements OnInit {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient,private actRoute: ActivatedRoute) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private actRoute: ActivatedRoute) { }
 
   selectedZone: any;
   preSelectedZone: any;
@@ -30,11 +30,20 @@ export class RoutesTrackingComponent implements OnInit {
   fixdGeoLocations: any[];
   db: any;
   isActualData: any;
-  routePath: any[];
+  routePath: any;
+  routePathList: any[];
   allMarkers: any[] = [];
   polylines: any[] = [];
+  lineData: any[] = [];
+  endMarker: any;
 
   txtDate = "#txtDate";
+  ddlTime = "#ddlTime";
+
+  timeInterval: any;
+  isFirst: any;
+  endTime: any;
+  isLast: any;
 
   trackData: trackDetail =
     {
@@ -46,6 +55,132 @@ export class RoutesTrackingComponent implements OnInit {
 
   ngOnInit() {
     this.setDefault();
+  }
+
+  drowRouteData(type: any) {
+    if (this.routePathList.length > 0) {
+      this.timeInterval = parseInt($(this.ddlTime).val().toString());
+      if (this.timeInterval == 0) {
+        this.isFirst=true;
+        this.lineData = [];
+        this.endTime = this.routePathList.length - 1;
+      }
+      else {
+        if(this.isFirst==true){
+          this.endTime=null;
+          this.isFirst=false;
+        }
+        if (this.endTime != null) {
+          if (this.endTime <= this.routePathList.length - 1) {
+            if (type == "pre") {
+              if (this.timeInterval == 1) {
+                this.endTime = parseInt(this.endTime) - 1;
+              }
+              this.endTime = parseInt(this.endTime) - parseInt(this.timeInterval);
+              if (this.endTime < 0) {
+                this.endTime = 1;
+              }
+            }
+            else {
+              if (this.timeInterval == 1) {
+                this.endTime = parseInt(this.endTime) + 1;
+              }
+              this.endTime = parseInt(this.endTime) + parseInt(this.timeInterval) - 1;
+            }
+          }
+          else {
+            this.endTime = parseInt(this.timeInterval);
+            this.lineData = [];
+          }
+        }
+        else {
+          this.endTime = parseInt(this.timeInterval);
+          this.lineData = [];
+        }
+      }
+      if (this.endTime >= (this.routePathList.length - 1)) {
+        this.endTime = this.routePathList.length - 1;
+        this.isLast = true;
+      }
+      else {
+        this.isLast = false;
+      }
+      this.drowRouteDataTiming();
+    }
+    else {
+      $(this.ddlTime).val("0");
+    }
+  }
+
+  drowRouteDataTiming() {
+    let totalKM = 0;
+    for (let i = 0; i <= this.endTime; i++) {
+      totalKM += parseFloat(this.routePathList[i]["distanceinmeter"]);
+    }
+    this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
+    this.trackData.totalTime = this.commonService.getHrsFull((this.endTime + 1));
+    if (this.allMarkers.length > 0) {
+      for (let i = 0; i < this.allMarkers.length; i++) {
+        this.allMarkers[i]["marker"].setMap(null);
+      }
+    }
+    this.allMarkers = [];
+    if (this.polylines != null) {
+      for (let j = 0; j < this.polylines.length; j++) {
+        this.polylines[j].setMap(null);
+      }
+    }
+    this.polylines = [];
+    this.lineData = [];
+    for (let i = 0; i <= this.endTime; i++) {
+      if (this.lineData.length > 0) {
+        let lat = this.lineData[this.lineData.length - 1]["lat"];
+        let lng = this.lineData[this.lineData.length - 1]["lng"];
+        this.lineData = [];
+        this.lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+      }
+      let routeDateList = [];
+      let latLong: string = this.routePathList[i]["latlng"];
+      routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+      for (let j = 0; j < routeDateList.length; j++) {
+        let routePart = routeDateList[j].split(',');
+        if (routePart.length == 2) {
+          this.lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+        }
+      }
+      if (this.lineData.length > 0) {
+        let line = new google.maps.Polyline({
+          path: this.lineData,
+          strokeColor: this.commonService.getLineColor("LineCompleted"),
+          strokeWeight: 2
+        });
+
+        if (i == 0) {
+          let latLong: string = this.routePathList[0]["latlng"];
+          let routeDateListStart = latLong.substring(1, latLong.length - 1).split(')~(');
+          let routePartStart = routeDateListStart[0].split(',');
+          if (routePartStart.length == 2) {
+            let markerURL = this.getIcon("start");
+            var markerLabel = "";
+            let lat = routePartStart[0];
+            let lng = routePartStart[1];
+            let contentString = '<br/>Start Time : ' + this.routePathList[i]["time"];
+            this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+          }
+        }
+        if (i == this.endTime) {
+          this.trackData.time = this.routePathList[this.endTime]["time"];
+          let flowMarkerURL = this.getIcon("stopMarker");
+          var flowMarkerLabel = "";
+          let lat = this.lineData[this.lineData.length - 1]["lat"];
+          let lng = this.lineData[this.lineData.length - 1]["lng"];
+          let contentString = '<br/>Time : ' + this.routePathList[i]["time"];
+          this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
+        }
+        this.polylines[i] = line;
+        this.polylines[i].setMap(this.map);
+      }
+    }
   }
 
   setDefault() {
@@ -97,7 +232,7 @@ export class RoutesTrackingComponent implements OnInit {
       }
     }
     this.polylines = [];
-    this.routePath = [];
+    this.routePath = null;
     this.trackData.totalKM = 0;
     this.trackData.totalTime = "0 hr 0 min";
     this.trackData.time = "0:00";
@@ -105,6 +240,7 @@ export class RoutesTrackingComponent implements OnInit {
 
   getMonthSelectedDetail(monthDate: any) {
     this.clearMap();
+    $(this.txtDate).val(monthDate);
     if (this.selectedZone != "0") {
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
@@ -125,6 +261,9 @@ export class RoutesTrackingComponent implements OnInit {
   }
 
   drowRouteOnMap() {
+    $(this.ddlTime).val("0");
+    this.endTime = null;
+    this.routePathList = []
     if (this.allMarkers.length > 0) {
       for (let i = 0; i < this.allMarkers.length; i++) {
         this.allMarkers[i]["marker"].setMap(null);
@@ -137,80 +276,13 @@ export class RoutesTrackingComponent implements OnInit {
       }
     }
     this.polylines = [];
-    let lineData = [];
     var keyArray = Object.keys(this.routePath);
     for (let i = 0; i < keyArray.length - 2; i++) {
       let index = keyArray[i];
-      if (lineData.length > 0) {
-        let lat = lineData[lineData.length - 1]["lat"];
-        let lng = lineData[lineData.length - 1]["lng"];
-        lineData = [];
-        lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
-      }
+      this.routePathList.push({ distanceinmeter: this.routePath[index]["distance-in-meter"], latlng: this.routePath[index]["lat-lng"], time: index });
 
-      let routeDateList = [];
-      let latLong: string = this.routePath[index]["lat-lng"];
-      routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-
-      for (let j = 0; j < routeDateList.length; j++) {
-        let routePart = routeDateList[j].split(',');
-        if (routePart.length == 2) {
-          if (lineData.length > 0) {
-            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-          }
-          else {
-            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-          }
-        }
-      }
-      if (lineData != undefined) {
-        let line = new google.maps.Polyline({
-          path: lineData,
-          strokeColor: this.commonService.getLineColor("LineCompleted"),
-          strokeWeight: 2
-        });
-        if (i == 0) {
-          let lat = lineData[0]["lat"];
-          let lng = lineData[0]["lng"];
-          let markerURL = this.getIcon("start");
-          var markerLabel = "";
-          let contentString = 'Start time: ' + index;
-          this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-        }
-        if (this.selectedDate != this.toDayDate) {
-          if (i == keyArray.length - 3) {
-            let lat = lineData[lineData.length - 1]["lat"];
-            let lng = lineData[lineData.length - 1]["lng"];
-            let markerURL = this.getIcon("stop");
-            var markerLabel = "";
-            let contentString = 'End time: ' + index;
-            this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-          }
-        }
-        else {
-          if (i == keyArray.length - 3) {
-            let dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone;
-            let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
-              dutyData => {
-                vehicleDutyData.unsubscribe();
-                if (dutyData != null) {
-                  if (dutyData["isOnDuty"] != "yes") {
-                    let lat = lineData[lineData.length - 1]["lat"];
-                    let lng = lineData[lineData.length - 1]["lng"];
-                    let markerURL = this.getIcon("stop");
-                    var markerLabel = "";
-                    let contentString = 'End time: ' + index;
-                    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                  }
-                }
-              });
-          }
-        }
-        this.polylines[i] = line;
-        this.polylines[i].setMap(this.map);
-        this.trackData.time = index
-      }
     }
+    this.drowRouteData("current");
   }
 
   setMarker(lat: any, lng: any, markerLabel: any, markerURL: any, contentString: any, type: any) {
@@ -589,18 +661,9 @@ export class RoutesTrackingComponent implements OnInit {
 
   }
 
-  getRouteDataPreNext(type: any) {
-
-  }
-
   getReset() {
 
   }
-
-  getRouteData(type: any) {
-
-  }
-
 }
 
 export class trackDetail {

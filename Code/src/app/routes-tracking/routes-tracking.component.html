@@ -33,10 +33,10 @@
 
             <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route"><i id="playStop"
                     class="fab fa-youtube" style="font-size: 17px;"></i></button>
-            <button id="btnPre" class="btn-hvr" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
+            <button id="btnPre" class="btn-hvr" (click)="drowRouteData('pre');"><span style="color: #fff; ">
                     << </span></button>
             <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set" style="margin-right: 0px;"><i class="fas fa-sync" style="font-size: 17px;"></i></button>
-            <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">
+            <select class="caret-select" id="ddlTime" (change)="drowRouteData('current')" style="margin-right: 8px;">
                 <option value="0">All Time Route</option>
                 <option value="1">1 Minutes</option>
                 <option value="5">5 Minutes</option>
@@ -44,7 +44,7 @@
                 <option value="30">30 Minutes</option>
                 <option value="60">1 Hour</option>
             </select>
-            <button class="btn btn-primary" (click)="getRouteDataPreNext('next');">
+            <button class="btn btn-primary" (click)="drowRouteData('next');">
                 >>
             </button>
         </div>
