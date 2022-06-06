@@ -105,6 +105,7 @@ import { LineWeightageComponent } from '../../PortalServices/line-weightage/line
 import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
 import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.component';
 import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
+import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
 
 
 @NgModule({
@@ -215,7 +216,8 @@ import { SalaryCalculationComponent } from '../../salary-management/salary-calcu
     LineWeightageComponent,
     DustbinManageComponent,
     RoutesTrackingComponent,
-    SalaryCalculationComponent
+    SalaryCalculationComponent,
+    DailyFuelReportComponent
   ]
 })
 

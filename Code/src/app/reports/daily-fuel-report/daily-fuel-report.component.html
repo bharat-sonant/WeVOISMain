@@ -1,0 +1,152 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            Fuel Report [<span id="spDate"></span>]
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <input id="txtDate" class="filter-select filter-input" type="date" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
+
+                        </div>
+                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Sr. No.</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Vehicle Number</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Diesel Qty
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Ward No.
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                KM
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Driver Name
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.vehicle}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.diesel}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.zone}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.km}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.driver}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
+                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #contentDesignation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Designation</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <input id="empID" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlDesignationUpdate" class="input-green">
+                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                            {{dt.designation}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
+                <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
+            </div>
+        </div>
+    </div>
+</ng-template>

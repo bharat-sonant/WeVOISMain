@@ -130,16 +130,18 @@ export class SalaryCalculationComponent implements OnInit {
   getSalary() {
     $(this.divLoader).show();
     this.clearSalary();
-    this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-    if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
-      this.monthDays = this.todayDate.split("-")[2];
-    }
-    if (this.salaryList.length > 0) {
-      for (let i = 1; i <= this.monthDays; i++) {
-        let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-        this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
+    setTimeout(() => {
+      this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+      if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
+        this.monthDays = this.todayDate.split("-")[2];
       }
-    }
+      if (this.salaryList.length > 0) {
+        for (let i = 1; i <= this.monthDays; i++) {
+          let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+          this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
+        }
+      }
+    }, 2000);
   }
 
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {

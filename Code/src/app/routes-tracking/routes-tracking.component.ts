@@ -169,7 +169,7 @@ export class RoutesTrackingComponent implements OnInit {
           }
         }
         if (i == this.endTime) {
-          this.trackData.time = this.routePathList[this.endTime]["time"];
+          this.trackData.time = this.routePathList[this.endTime]["time"].split('-')[0];
           let flowMarkerURL = this.getIcon("stopMarker");
           var flowMarkerLabel = "";
           let lat = this.lineData[this.lineData.length - 1]["lat"];
