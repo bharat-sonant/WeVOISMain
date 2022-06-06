@@ -3,7 +3,6 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
-import { identifierModuleUrl } from '@angular/compiler';
 
 @Component({
   selector: 'app-salary-calculation',
@@ -22,6 +21,7 @@ export class SalaryCalculationComponent implements OnInit {
   selectedMonthName: any;
   selectedYear: any;
   yearList: any[] = [];
+  zoneList: any[];
   salaryList: any[] = [];
   ddlMonth = "#ddlMonth";
   ddlYear = "#ddlYear";
@@ -80,6 +80,7 @@ export class SalaryCalculationComponent implements OnInit {
     this.getYear();
     this.getWardWagesList();
     this.getEmployee();
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
   getWardWagesList() {
@@ -165,12 +166,8 @@ export class SalaryCalculationComponent implements OnInit {
                   if (dailyWorkData[empId]["task" + j] != null) {
                     let ward = dailyWorkData[empId]["task" + j]["task"];
                     let wages = 0;
-                    let percentage = 0;
                     if (dailyWorkData[empId]["task" + j]["task-wages"] != null) {
                       wages = dailyWorkData[empId]["task" + j]["task-wages"];
-                    }
-                    if (dailyWorkData[empId]["task" + j]["work-percent"] != null) {
-                      percentage = dailyWorkData[empId]["task" + j]["work-percent"];
                     }
                     if (new Date(monthDate) >= new Date(this.getDate())) {
                       let wageDetail = this.wardWagesList.find(item => item.ward == ward);
@@ -191,7 +188,11 @@ export class SalaryCalculationComponent implements OnInit {
                         }
                       }
                     }
-                    workDetail.push({ ward: ward, wages: wages, percentage: percentage });
+                    workDetail.push({ ward: ward, wages: wages, percentage: 0 });
+                    let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
+                    if (zoneDetail != undefined) {
+                      this.getWorkPercentage(empId, ward, monthDate);
+                    }
                   }
                 }
                 for (let k = 0; k < workDetail.length; k++) {
@@ -205,9 +206,32 @@ export class SalaryCalculationComponent implements OnInit {
               }
             }
           }
+          if (index == days) {
+            $(this.divLoader).hide();
+          }
         }
-        if (index == days) {
-          $(this.divLoader).hide();
+      }
+    );
+  }
+
+  getWorkPercentage(empId: any, ward: any, monthDate: any) {
+    let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
+    let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+      workPercentageData => {
+        workPercentageInstance.unsubscribe();
+        if (workPercentageData != null) {
+          let salaryDetail = this.salaryList.find(item => item.empId == empId);
+          if (salaryDetail != undefined) {
+            let day = "day" + Number(monthDate.split('-')[2]);
+            let workDetailList = salaryDetail[day];
+            if (workDetailList.length > 0) {
+              for (let i = 0; i < workDetailList.length; i++) {
+                if (workDetailList[i]["ward"] == ward) {
+                  workDetailList[i]["percentage"] = Number(workPercentageData);
+                }
+              }
+            }
+          }
         }
       }
     );
@@ -326,17 +350,6 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   clearSalary() {
-    for (let i = 1; i <= 31; i++) {
-      for (let j = 0; j < this.salaryList.length; j++) {
-        if (this.salaryList[j]["day" + i] != null) {
-          this.salaryList[j]["day" + i] = [];
-        }
-        if (this.salaryList[j]["totalDaySalary" + i] != null) {
-          this.salaryList[j]["totalDaySalary" + i] = null;
-        }
-        this.salaryList[j]["salary"] = 0;
-      }
-    }
     this.salarySummary.salary = "0.00";
     this.salarySummary.salary1 = "0.00";
     this.salarySummary.salary2 = "0.00";
@@ -369,6 +382,17 @@ export class SalaryCalculationComponent implements OnInit {
     this.salarySummary.salary29 = "0.00";
     this.salarySummary.salary30 = "0.00";
     this.salarySummary.salary31 = "0.00";
+    for (let i = 1; i <= 31; i++) {
+      for (let j = 0; j < this.salaryList.length; j++) {
+        if (this.salaryList[j]["day" + i] != null) {
+          this.salaryList[j]["day" + i] = [];
+        }
+        if (this.salaryList[j]["totalDaySalary" + i] != null) {
+          this.salaryList[j]["totalDaySalary" + i] = null;
+        }
+        this.salaryList[j]["salary"] = 0;
+      }
+    }
   }
 
   getDate() {
