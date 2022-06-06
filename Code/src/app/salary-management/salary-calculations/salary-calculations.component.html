@@ -4,12 +4,12 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-6" style="padding-left: 10px;">
-            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" style="width: 150px;" [(ngModel)]="selectedYear">
+            <select class="caret-select" id="ddlYear" style="width: 150px;" [(ngModel)]="selectedYear">
                 <option value="0">Year</option>
                 <option value={{yer.year}} *ngFor="let yer of yearList"
                     ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)" style="width: 150px;">
+            <select class="caret-select" id="ddlMonth" style="width: 150px;">
                 <option value="0">Month</option>
                 <option value="01">January</option>
                 <option value="02">February</option>
@@ -24,7 +24,7 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlRoles" (change)="getFilterEmployeeList($event.target.value)" style="width: 150px;">
+            <select class="caret-select" id="ddlRoles" style="width: 150px;">
                 <option value="0">All</option>
                 <option value="Driver">Driver</option>
                 <option value="Helper">Helper</option>
