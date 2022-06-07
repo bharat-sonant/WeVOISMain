@@ -4,7 +4,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
-            Fuel Report [<span id="spDate"></span>]
+            Daily Fuel Report [<span id="spDate"></span>]
         </div>
     </div>
 </section>
@@ -32,7 +32,11 @@
 
                         </div>
                         <div class="col-md-4 text-left" style="padding-right:0px!important;">
-
+                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
+                                <i class="fa-solid fa-file-export" style="cursor:pointer; color:green;  font-size: 24px; "
+                                    (click)="exportToExcel();"></i><br />
+                                Export to Excel
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +72,7 @@
                                                 <td class="text-left br-1">
                                                     {{data.vehicle}}
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-right br-1">
                                                     <div style="width:100% " *ngFor="let diesel of data.diesel ">
                                                         {{diesel.qty}}
                                                     </div>
