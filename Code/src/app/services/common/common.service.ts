@@ -7,6 +7,7 @@ import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import * as CryptoJS from 'crypto-js';
 import { AngularFireStorage } from "angularfire2/storage";
+import * as XLSX from 'xlsx';
 
 @Injectable({
   providedIn: "root",
@@ -1766,6 +1767,20 @@ export class CommonService {
     }, error => {
       localStorage.setItem("wardForLineWeightage", JSON.stringify(wardForWeightageList));
     });
+  }
+
+  
+  exportExcel(htmlString: any, fileName: any) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(wb, fileName);
   }
 
 

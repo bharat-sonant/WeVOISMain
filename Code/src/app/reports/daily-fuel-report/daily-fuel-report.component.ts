@@ -30,7 +30,7 @@ export class DailyFuelReportComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
-    $(this.spDate).html(this.selectedDate);
+    $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
     this.getSelectedYearMonthName();
     this.getVehicles();
   }
@@ -47,7 +47,7 @@ export class DailyFuelReportComponent implements OnInit {
   getData(filterVal: any) {
     this.clearList();
     this.selectedDate = filterVal;
-    $(this.spDate).html(this.selectedDate);
+    $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
     this.getSelectedYearMonthName();
     this.getDieselQty();
     this.getWardRunningDetail();
@@ -137,6 +137,81 @@ export class DailyFuelReportComponent implements OnInit {
       });
   }
 
-
-
+  exportToExcel() {
+    let exportList = [];
+    if (this.vehicleList.length > 0) {
+      for (let i = 0; i < this.vehicleList.length; i++) {
+        let list = [];
+        let vehicle = this.vehicleList[i]["vehicle"];
+        let diesel = this.vehicleList[i]["diesel"];
+        if (diesel.length > 0) {
+          for (let j = 0; j < diesel.length; j++) {
+            list.push({ vehicle: vehicle, dieselQty: diesel[j]["qty"], zone: "", km: "", driver: "" });
+          }
+        }
+        let wardDetailList = this.vehicleList[i]["wardList"];
+        if (wardDetailList.length > 0) {
+          for (let j = 0; j < wardDetailList.length; j++) {
+            if (list[j] != undefined) {
+              list[j]["zone"] = wardDetailList[j]["zone"];
+              list[j]["km"] = wardDetailList[j]["km"];
+              list[j]["driver"] = wardDetailList[j]["driver"];
+            }
+            else {
+              list.push({ vehicle: vehicle, dieselQty: "", zone: wardDetailList[j]["zone"], km: wardDetailList[j]["km"], driver: wardDetailList[j]["driver"] });
+            }
+          }
+        }
+        if (list.length > 0) {
+          for (let j = 0; j < list.length; j++) {
+            exportList.push({ vehicle: vehicle, dieselQty: list[j]["dieselQty"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
+          }
+        }
+      }
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Vehicle Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Diesel Quantity";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Ward No.";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "KM";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Driver Name";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      if (exportList.length > 0) {
+        for (let i = 0; i < exportList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["vehicle"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["dieselQty"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += exportList[i]["zone"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["km"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["driver"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "</table>";
+      console.log(htmlString);
+      let fileName =this.commonService.getFireStoreCity()+ "-Daily-Fuel-Report-" + this.selectedDate.split('-')[2] + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + "-" + this.selectedDate.split('-')[0] + ".xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
 }
