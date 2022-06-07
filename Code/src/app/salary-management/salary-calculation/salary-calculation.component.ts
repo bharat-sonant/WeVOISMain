@@ -76,7 +76,6 @@ export class SalaryCalculationComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.todayDate = this.commonService.setTodayDate();
     this.getYear();

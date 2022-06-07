@@ -17,7 +17,7 @@
                         <div class="col-md-3 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <input id="txtDate" class="filter-select filter-input" type="date" />
+                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="getData($event.target.value);" />
                                 </div>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                                                 Sr. No.</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Vehicle Number</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-right br-1" style="border:none!important;">
                                                 Diesel Qty
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -69,16 +69,25 @@
                                                     {{data.vehicle}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.diesel}}
+                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                        {{diesel.qty}}
+                                                    </div>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.zone}}
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                                        {{dt.zone}}
+                                                    </div>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.km}}
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                                        {{dt.km}}
+                                                    </div>
+
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.driver}}
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                                        {{dt.driver}}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>

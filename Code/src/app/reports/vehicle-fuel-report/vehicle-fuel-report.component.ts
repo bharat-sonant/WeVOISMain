@@ -323,7 +323,6 @@ export class VehicleFuelReportComponent implements OnInit {
     for (let i = stratDays; i <= days; i++) {
       let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
       let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
-
       let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         workData => {
           workDetailInstance.unsubscribe();
