@@ -145,13 +145,14 @@ export class SalaryCalculationsComponent implements OnInit {
 
                   this.setEmployeeSalary(employeeId + 1, lastemployeeId);
                 } else {
+                  setTimeout(() => {
                   let filePath = "/SalarySummary/" + this.selectedYear + "/";
                   let fileName = this.selectedMonthName + ".json";
                   this.commonService.saveJsonFile(this.jsonObject, fileName, filePath);
-                  setTimeout(() => {
+                 
                     this.getSalaryList();
 
-                  }, 200);
+                  }, 6000);
                 }
               });
           }
