@@ -314,14 +314,11 @@ export class EmployeesComponent implements OnInit {
         $(this.empStatus).val("1");
       }
     }
-
   }
 
   closeModel() {
     this.modalService.dismissAll();
   }
-
-
 }
 
 export class employeeDetail {

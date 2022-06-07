@@ -25,6 +25,7 @@ export class SalaryCalculationsComponent implements OnInit {
   yearList: any[] = [];
   fireStoragePath: any;
   activeEmployeeCount = 0;
+  jsonObject: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -58,6 +59,7 @@ export class SalaryCalculationsComponent implements OnInit {
     let dbPath = "Employees/lastEmpId";
     this.db.object(dbPath).valueChanges().subscribe(
       lastEmpId => {
+        this.jsonObject = {};
         this.setEmployeeSalary(101, Number(lastEmpId));
       }
     );
@@ -75,12 +77,26 @@ export class SalaryCalculationsComponent implements OnInit {
                 if (employeeId <= lastemployeeId && this.activeEmployeeCount == 1) {
 
                   // do your work, salary and general details set up section
-                  
+                  let designationList = JSON.parse(localStorage.getItem("designation"));
+                  let detail = designationList.find(item => item.designationId == empGeneralDetails["designationId"]);
+                  if (detail != undefined) {
+                    let designation = detail.designation;
+                    if (designation == "Transportation Executive") {
+                      designation = "Driver";
+                    }
+                    else if (designation == "Service Excecutive ") {
+                      designation = "Helper";
+                    }
+                    this.jsonObject[employeeId] = { name: empGeneralDetails["name"], empCode: empGeneralDetails["empCode"], designation: designation };
 
-
+                  }
                   // after set the salary we need to recall this function again for next employee.
+
                   this.setEmployeeSalary(employeeId + 1, lastemployeeId);
                 } else {
+                  let filePath = "/SalarySummary/" + this.selectedYear + "/";
+                  let fileName = this.selectedMonthName + ".json";
+                  this.commonService.saveJsonFile(this.jsonObject, fileName, filePath);
                   $(this.divLoader).hide();
                 }
               });
@@ -91,6 +107,4 @@ export class SalaryCalculationsComponent implements OnInit {
         }
       });
   }
-
-
 }
