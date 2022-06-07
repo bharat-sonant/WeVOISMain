@@ -25,8 +25,11 @@ export class EmployeesComponent implements OnInit {
   ddlDesignationUpdate = "#ddlDesignationUpdate";
   ddlUser = "#ddlUser";
   empID = "#empID";
+  empIDActive = "#empIDActive";
+  empStatus="#empStatus";
+  exampleModalLongTitleActive = "#exampleModalLongTitleActive";
   divLoader = "#divLoader";
-  txtName="#txtName";
+  txtName = "#txtName";
 
   employeeDetail: employeeDetail = {
     lastUpdate: "",
@@ -93,20 +96,20 @@ export class EmployeesComponent implements OnInit {
   }
 
 
-  filterData() {    
+  filterData() {
     let name = $(this.txtName).val();
     name = name.toString().toUpperCase();
     let status = $(this.ddlUser).val();
     let designationFilterVal = $(this.ddlDesignation).val();
-    this.showAccountDetail(status, designationFilterVal,name);
+    this.showAccountDetail(status, designationFilterVal, name);
   }
 
-  showAccountDetail(status: any, designation: any,name:any) {
+  showAccountDetail(status: any, designation: any, name: any) {
     if (status == "all") {
       this.employeeList = this.allEmployeeList;
     }
     else if (status == "active") {
-      this.employeeList = this.allEmployeeList.filter(item => item.status == "1"  && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
+      this.employeeList = this.allEmployeeList.filter(item => item.status == "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
     else {
       this.employeeList = this.allEmployeeList.filter(item => item.status != "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
@@ -117,7 +120,9 @@ export class EmployeesComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  updateEmployeeStatus(status: any, empId: any) {
+  updateEmployeeStatus() {
+    let empId=$(this.empIDActive).val();
+    let status=$(this.empStatus).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.status = status;
@@ -137,6 +142,7 @@ export class EmployeesComponent implements OnInit {
   updateStatusInDatabase(empId: any, status: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
     this.db.object(dbPath).update({ status: status });
+    this.closeModel();
   }
 
   updateDesignation() {
@@ -270,24 +276,45 @@ export class EmployeesComponent implements OnInit {
   }
 
 
-  openModel(content: any, id: any) {
+  openModel(content: any, id: any, type: any) {
     let userDetail = this.allEmployeeList.find((item) => item.empId == id);
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 190;
-    let width = 400;
+    let width = 420;
+    if (type == "designation") {
+      height = 190;
+    }
+    else {
+      height = 160;
+    }
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $(this.empID).val(id);
-    if (userDetail != undefined) {
-      if (userDetail.designation != null) {
-        setTimeout(() => {
-          $(this.ddlDesignationUpdate).val(userDetail.designation);
-        }, 100);
+    if (type == "designation") {
+      $(this.empID).val(id);
+      if (userDetail != undefined) {
+        if (userDetail.designation != null) {
+          setTimeout(() => {
+            $(this.ddlDesignationUpdate).val(userDetail.designation);
+          }, 100);
+        }
       }
     }
+    else {
+      $(this.empIDActive).val(id);
+      if (type == "active") {
+        $(this.exampleModalLongTitleActive).html("Do you want to in-active employee?");
+        $(this.empStatus).val("2");
+
+      }
+      else {
+        $(this.exampleModalLongTitleActive).html("Do you want to active employee?");
+        $(this.empStatus).val("1");
+      }
+    }
+
   }
 
   closeModel() {

@@ -84,11 +84,11 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}
-                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId);" title="Edit Entry"></i>
+                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:green;" (click)="updateEmployeeStatus('2',data.empId)">Active</span>
-                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:red;" (click)="updateEmployeeStatus('1',data.empId)">In-active</span>
+                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:green;" (click)="openModel(contentConfirmation,data.empId,'active')">Active</span>
+                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:red;" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -155,6 +155,25 @@
                     </span>
                 </div>
                 <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
+                <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitleActive"></h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <input id="empIDActive" type="hidden" value="0" />
+                <input id="empStatus" type="hidden" value="0" />
+                <input type="button" class="btn btn-success submit-btn" value="CONFIRM" (click)="updateEmployeeStatus();" />
                 <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
             </div>
         </div>
