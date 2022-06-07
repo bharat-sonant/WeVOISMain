@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { int } from 'css-line-break/dist/types/Trie';
 
 @Component({
   selector: 'app-salary-calculations',
@@ -16,13 +17,14 @@ export class SalaryCalculationsComponent implements OnInit {
   ddlMonth = "#ddlMonth";
   ddlYear = "#ddlYear";
   ddlRoles = "#ddlRoles";
-  divLoader="#divLoader";
+  divLoader = "#divLoader";
   todayDate: any;
   selectedMonth: any;
   selectedMonthName: any;
   selectedYear: any;
   yearList: any[] = [];
   fireStoragePath: any;
+  activeEmployeeCount = 0;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -51,36 +53,44 @@ export class SalaryCalculationsComponent implements OnInit {
   }
 
   calculate() {
+    this.activeEmployeeCount = 0;
     $(this.divLoader).show();
     let dbPath = "Employees/lastEmpId";
-    let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+    this.db.object(dbPath).valueChanges().subscribe(
       lastEmpId => {
-        lastEmpIdInstance.unsubscribe();
-        let count = Number(lastEmpId);
-        const obj = {};
-        for (let i = 101; i <= count; i++) {
-          let dbPath = "Employees/" + i + "/GeneralDetails";
-          let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
-            empData => {
-              employeeInstance.unsubscribe();
-              if (empData != null) {
-                if (empData["status"] == "1") {
-                  this.commonService.getEmplyeeDetailByEmployeeId(i.toString()).then((employee) => {
-                    let empId = i;
-                    obj[empId] = { name: empData["name"], empCode: empData["empCode"], designation: employee["designation"] };
-                  });
-                }
-                if (i == count) {
-                  $(this.divLoader).hide();
-                  let filePath = "/SalarySummary/" + this.selectedYear + "/";
-                  this.commonService.saveJsonFile(obj, this.selectedMonthName + ".json", filePath);
-                }
-              }              
-            }
-          );
-        }
+        this.setEmployeeSalary(101, Number(lastEmpId));
       }
     );
   }
+
+  setEmployeeSalary(employeeId: int, lastemployeeId: int) {
+    this.db.object("Employees/" + employeeId + "/GeneralDetails/status").valueChanges().subscribe(
+      empStatus => {
+        if (empStatus != null && empStatus == 1) {
+          if (empStatus == 1) {
+            this.db.object("Employees/" + employeeId + "/GeneralDetails").valueChanges().subscribe(
+              empGeneralDetails => {
+                console.log("empGeneralDetails :" + empGeneralDetails);
+                this.activeEmployeeCount++;
+                if (employeeId <= lastemployeeId && this.activeEmployeeCount == 1) {
+
+                  // do your work, salary and general details set up section
+                  
+
+
+                  // after set the salary we need to recall this function again for next employee.
+                  this.setEmployeeSalary(employeeId + 1, lastemployeeId);
+                } else {
+                  $(this.divLoader).hide();
+                }
+              });
+          }
+        }
+        else {
+          this.setEmployeeSalary(employeeId + 1, lastemployeeId);
+        }
+      });
+  }
+
 
 }
