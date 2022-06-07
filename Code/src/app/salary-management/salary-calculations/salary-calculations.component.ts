@@ -26,6 +26,7 @@ export class SalaryCalculationsComponent implements OnInit {
   fireStoragePath: any;
   activeEmployeeCount = 0;
   jsonObject: any;
+  salaryList:any[];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -97,7 +98,9 @@ export class SalaryCalculationsComponent implements OnInit {
                   let filePath = "/SalarySummary/" + this.selectedYear + "/";
                   let fileName = this.selectedMonthName + ".json";
                   this.commonService.saveJsonFile(this.jsonObject, fileName, filePath);
-                  $(this.divLoader).hide();
+                  setTimeout(() => {
+                    this.getSalaryList();
+                  }, 200);
                 }
               });
           }
@@ -106,5 +109,22 @@ export class SalaryCalculationsComponent implements OnInit {
           this.setEmployeeSalary(employeeId + 1, lastemployeeId);
         }
       });
+  }
+
+  getSalaryList(){
+    this.salaryList=[];
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F"+this.selectedYear+"%2F"+this.selectedMonthName+".json?alt=media";
+    let salaryeInstance = this.httpService.get(path).subscribe(data => {
+      salaryeInstance.unsubscribe();
+      if(data!=null){
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          let employeeId=keyArray[i];
+          this.salaryList.push({name:data[employeeId]["name"],empCode:data[employeeId]["empCode"],designation:data[employeeId]["designation"]});
+        }
+      }      
+      $(this.divLoader).hide();
+    });
+
   }
 }
