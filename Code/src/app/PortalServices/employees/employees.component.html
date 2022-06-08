@@ -13,52 +13,46 @@
         <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
-                    <div class="row align">
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
-                                        <option value="all">
-                                            All Roles
-                                        </option>
-                                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
-                                            {{dt.designation}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-md-4 text-left">
+                            <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
+                                <option value="all">
+                                    All Roles
+                                </option>
+                                <option *ngFor="let dt of designationList" value={{dt.designation}}>
+                                    {{dt.designation}}
+                                </option>
+                            </select>
                         </div>
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
-                                        <option value="all">
-                                            All Employee
-                                        </option>
-                                        <option selected value="active">
-                                            Active
-                                        </option>
-                                        <option value="inactive">
-                                            In-active
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
-                            <input id="txtName" class="filter-select filter-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
-                        </div>
-                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
-                            <span style="float: right; margin-bottom: -10px;">
-                                <span>
-                                    <label class="main-label">
 
-                                        <span class="main-span">
-                                            <span> {{employeeDetail.lastUpdate}}</span> <br>Last update by {{employeeDetail.lastUpdateBy}}
-                            </span>
-                            <i class="fas fa-sync" style="color: green; font-size: 30px; cursor: pointer;margin-right: 20px " (click)="updateAccountJson();"></i></label>
-                            </span>
-                            </span>
+                        <div class="col-md-4 text-left">
+
+                            <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
+                                <option value="all">
+                                    All Employee
+                                </option>
+                                <option selected value="active">
+                                    Active
+                                </option>
+                                <option value="inactive">
+                                    In-active
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 text-left" style="padding-right:30px!important">
+
+                            <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:10px; font-weight: bold; font-size: 12px;">
+                        <div class="col-md-4 text-left">
+                            Total : {{employeeCountSummary.total}}
+                        </div>
+                        <div class="col-md-4 text-left">
+                            Active : {{employeeCountSummary.active}}
+                        </div>
+                        <div class="col-md-4 text-left" style="padding-right:30px!important">
+                            In-active : {{employeeCountSummary.inActive}}
                         </div>
                     </div>
                 </div>
@@ -93,11 +87,6 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -165,7 +154,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitleActive"></h5>
+                <h5 class="modal-title" id="confirmTitle"></h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>
