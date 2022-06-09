@@ -27,6 +27,7 @@ export class RoutesTrackingComponent implements OnInit {
   zoneKML: any;
   monthDetailList: any[];
   vehicleMarker: any;
+  vehicleLocationInstance: any;
   fixdGeoLocations: any[];
   db: any;
   isActualData: any;
@@ -61,14 +62,14 @@ export class RoutesTrackingComponent implements OnInit {
     if (this.routePathList.length > 0) {
       this.timeInterval = parseInt($(this.ddlTime).val().toString());
       if (this.timeInterval == 0) {
-        this.isFirst=true;
+        this.isFirst = true;
         this.lineData = [];
         this.endTime = this.routePathList.length - 1;
       }
       else {
-        if(this.isFirst==true){
-          this.endTime=null;
-          this.isFirst=false;
+        if (this.isFirst == true) {
+          this.endTime = null;
+          this.isFirst = false;
         }
         if (this.endTime != null) {
           if (this.endTime <= this.routePathList.length - 1) {
@@ -114,6 +115,7 @@ export class RoutesTrackingComponent implements OnInit {
 
   drowRouteDataTiming() {
     let totalKM = 0;
+    this.trackData.time=this.routePathList[this.endTime]["time"].split('-')[0];
     for (let i = 0; i <= this.endTime; i++) {
       totalKM += parseFloat(this.routePathList[i]["distanceinmeter"]);
     }
@@ -156,31 +158,62 @@ export class RoutesTrackingComponent implements OnInit {
         });
 
         if (i == 0) {
-          let latLong: string = this.routePathList[0]["latlng"];
-          let routeDateListStart = latLong.substring(1, latLong.length - 1).split(')~(');
-          let routePartStart = routeDateListStart[0].split(',');
-          if (routePartStart.length == 2) {
-            let markerURL = this.getIcon("start");
-            var markerLabel = "";
-            let lat = routePartStart[0];
-            let lng = routePartStart[1];
-            let contentString = '<br/>Start Time : ' + this.routePathList[i]["time"];
-            this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-          }
+          this.getStartStopMarker("start");
         }
         if (i == this.endTime) {
-          this.trackData.time = this.routePathList[this.endTime]["time"].split('-')[0];
-          let flowMarkerURL = this.getIcon("stopMarker");
-          var flowMarkerLabel = "";
-          let lat = this.lineData[this.lineData.length - 1]["lat"];
-          let lng = this.lineData[this.lineData.length - 1]["lng"];
-          let contentString = '<br/>Time : ' + this.routePathList[i]["time"];
-          this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
+          this.getStartStopMarker("stop");
         }
         this.polylines[i] = line;
         this.polylines[i].setMap(this.map);
       }
     }
+  }
+
+  getStartStopMarker(type: any) {
+    if (type == "start") {
+      let latLong: string = this.routePathList[0]["latlng"];
+      let routeDateListStart = latLong.substring(1, latLong.length - 1).split(')~(');
+      let routePartStart = routeDateListStart[0].split(',');
+      if (routePartStart.length == 2) {
+        let markerURL = this.getIcon("start");
+        var markerLabel = "";
+        let lat = routePartStart[0];
+        let lng = routePartStart[1];
+        let contentString = '<br/>Start Time : ' + this.routePathList[0]["time"];
+        this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+      }
+    }
+    else {
+      let lat = this.lineData[this.lineData.length - 1]["lat"];
+      let lng = this.lineData[this.lineData.length - 1]["lng"];
+      var markerLabel = "";
+      let contentString = 'End time: ' + this.routePathList[this.routePathList.length - 1]["time"];
+      let markerType = "routeMarker";
+      let markerURL = this.getIcon("stopMarker");
+      if ($(this.ddlTime).val() == "0") {
+        markerURL = this.getIcon("stop");
+        markerType = "all";
+      }
+      if (this.selectedDate != this.toDayDate) {
+        this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+      }
+      else {
+        let dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone;
+        let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
+          dutyData => {
+            vehicleDutyData.unsubscribe();
+            if (dutyData != null) {
+              if (dutyData["isOnDuty"] != "yes") {
+                this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+              }
+              else if ($(this.ddlTime).val() != "0") {
+                this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+              }
+            }
+          });
+      }
+    }
+
   }
 
   setDefault() {
@@ -208,11 +241,8 @@ export class RoutesTrackingComponent implements OnInit {
       this.setWardBoundary();
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
-        this.getLocationHistoryFromDatabase(this.selectedDate, "trackRoute");
       }
-      else {
-        this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
-      }
+      this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
     }
   }
 
@@ -241,6 +271,7 @@ export class RoutesTrackingComponent implements OnInit {
   getMonthSelectedDetail(monthDate: any) {
     this.clearMap();
     $(this.txtDate).val(monthDate);
+    this.selectedDate = monthDate;
     if (this.selectedZone != "0") {
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
@@ -334,9 +365,7 @@ export class RoutesTrackingComponent implements OnInit {
         let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
         let day = monthDate.split("-")[2] + " " + monthShortName;
         this.monthDetailList.push({ wardNo: this.selectedZone, day: day, driver: '', km: '0', hour: '', percentage: '0', monthDate: monthDate });
-        if (monthDate != this.toDayDate) {
-          this.getLocationHistoryFromStorage(monthDate, "monthList");
-        }
+        this.getLocationHistoryFromStorage(monthDate, "monthList");
       }
     }
   }
@@ -426,7 +455,13 @@ export class RoutesTrackingComponent implements OnInit {
       driverData => {
         driverInstance.unsubscribe();
         if (driverData != null) {
-          monthDetails.driver = driverData;
+          let driverList = driverData.split(',');
+          for (let i = 0; i < driverList.length; i++) {
+            monthDetails.driver = driverList[i];
+            if (!monthDetails.driver.includes(driverList[i])) {
+              monthDetails.driver += "," + driverList[i];
+            }
+          }
         }
         let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
         let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
