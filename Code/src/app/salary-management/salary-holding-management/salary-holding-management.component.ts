@@ -369,12 +369,12 @@ export class SalaryHoldingManagementComponent implements OnInit {
     let filePath = "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
     let fileName = "unholdSalary.json";
     this.commonService.saveJsonFile(obj, fileName, filePath);
-    setTimeout(() => {
+    this.commonService.saveJsonFile(obj, fileName, filePath).then((response) => {
       this.getHoldSalary();
       this.getUnholdSalary();
       this.closeModel();
       this.commonService.setAlertMessage("success", "Un-hold salary added successfully !!!");
-    }, 300);
+    });
   }
 
   updateUnholdData(empId: any, obj: any) {
@@ -417,9 +417,9 @@ export class SalaryHoldingManagementComponent implements OnInit {
     let filePath = "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
     let fileName = "holdSalary.json";
     this.commonService.saveJsonFile(obj, fileName, filePath);
-    setTimeout(() => {
+    this.commonService.saveJsonFile(obj, fileName, filePath).then((response) => {
       this.getHoldSalary();
-    }, 300);
+    });
   }
 
   getHoldUnHold(type: any) {
