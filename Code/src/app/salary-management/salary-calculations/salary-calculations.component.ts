@@ -89,7 +89,7 @@ export class SalaryCalculationsComponent implements OnInit {
 
     if (designationId == "5" || designationId == "6") {
 
-      if (this.activeEmployeeCount <= 50) {
+      if (this.activeEmployeeCount <= 2) {
         this.activeEmployeeCount++;
         this.jsonObject[employeeId] = {
           name: this.employees[employeeId]["GeneralDetails"]["name"],
@@ -118,7 +118,7 @@ export class SalaryCalculationsComponent implements OnInit {
   }
 
 
-
+/*
   setEmployeeSalary(employeeId: int, lastemployeeId: int) {
 
     this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
@@ -140,7 +140,7 @@ export class SalaryCalculationsComponent implements OnInit {
                   console.log("Details => " + employeeId + " : " + empGeneralDetails["name"]);
                   // 5 => driver ||  => Helper
                   this.jsonObject[employeeId] = { name: empGeneralDetails["name"], empCode: empGeneralDetails["empCode"], designation: this.getDesignation(Number(empGeneralDetails["designationId"])), day1: [] };
-
+*/
                   // get Day 1 work Details
 
 
@@ -184,15 +184,15 @@ export class SalaryCalculationsComponent implements OnInit {
                                 this.jsonObject[employeeId][day] = workDetail;
                               }
                             }
+ 
                           }
                         }
                       });
                   
                 }*/
-                }
-                // after set the salary we need to recall this function again for next employee.
-
-                this.setEmployeeSalary(employeeId + 1, lastemployeeId);
+ 
+/*
+                       
               } else {
                 let filePath = "/SalarySummary/" + this.selectedYear + "/";
                 let fileName = this.selectedMonthName + ".json";
@@ -209,40 +209,35 @@ export class SalaryCalculationsComponent implements OnInit {
           this.setEmployeeSalary(employeeId + 1, lastemployeeId);
         }
       });
-  }
+      */
 
-  getDesignation(designationId: int) {
-    let designation = "";
-    if (designationId == 5) {
-      designation = "Driver";
-    } else if (designationId == 6) {
-      designation = "Helper";
-    }
-    return designation;
-  }
-
-  getSalaryList() {
-    this.salaryList = [];
-    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
-    let salaryInstance = this.httpService.get(path).subscribe(data => {
-      salaryInstance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        for (let i = 0; i < keyArray.length; i++) {
-          let employeeId = keyArray[i];
-          let detail = data[employeeId]["day1"];
-          let totalWeges = 0;
-          for (let i = 0; i < detail.length; i++) {
-            if (detail[i]["wages"] != null) {
-              totalWeges += Number(detail[i]["wages"]);
+      getSalaryList() {
+        this.salaryList = [];
+        const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
+        let salaryInstance = this.httpService.get(path).subscribe(data => {
+          salaryInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            for (let i = 0; i < keyArray.length; i++) {
+              let employeeId = keyArray[i];
+              let detail = data[employeeId]["day1"];
+              let totalWeges = 0;
+              for (let i = 0; i < detail.length; i++) {
+                if (detail[i]["wages"] != null) {
+                  totalWeges += Number(detail[i]["wages"]);
+                }
+              }
+    
+              this.salaryList.push({ employeeId: employeeId, name: data[employeeId]["name"], empCode: data[employeeId]["empCode"], designation: data[employeeId]["designation"], day1: data[employeeId]["day1"], totalDaySalary1: totalWeges });
             }
+            $(this.divLoader).hide();
           }
-
-          this.salaryList.push({ employeeId: employeeId, name: data[employeeId]["name"], empCode: data[employeeId]["empCode"], designation: data[employeeId]["designation"], day1: data[employeeId]["day1"], totalDaySalary1: totalWeges });
-        }
-        $(this.divLoader).hide();
+        });
+    
       }
-    });
-
   }
-}
+
+  
+
+ 
+ 
