@@ -118,7 +118,6 @@ export class PenaltyPortalServiceComponent implements OnInit {
           setTimeout(() => {
             this.createJSON(this.penaltyList);
           }, 18000);
-          //this.saveJsonFile(data);
         }
       }
     );
@@ -160,41 +159,14 @@ export class PenaltyPortalServiceComponent implements OnInit {
             }
           }
         }
-        this.saveJsonFile(objDate);
-
+        let filePath="/Penality/" + this.selectedYear + "/";
+        let fileName=this.selectedMonthName + ".json";
+        this.commonService.saveJsonFile(objDate,fileName,filePath);
       }
+      $('#divLoader').hide();
     }
     else {
       $('#divLoader').hide();
     }
   }
-
-
-  saveJsonFile(listArray: any) {
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + this.commonService.getFireStoreCity() + "/Penality/" + this.selectedYear + "/" + this.selectedMonthName + ".json";
-
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
-
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
-    this.commonService.setAlertMessage("success", "Data updated successfully !!!");
-    $('#divLoader').hide();
-  }
-
 }
