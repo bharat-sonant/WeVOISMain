@@ -14,7 +14,7 @@
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-4 text-left">
+                        <div class="col-md-3 text-left">
                             <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
                                 <option value="all">
                                     All Roles
@@ -25,7 +25,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4 text-left">
+                        <div class="col-md-3 text-left">
 
                             <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
                                 <option value="all">
@@ -39,20 +39,12 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-md-4 text-left" style="padding-right:30px!important">
+                        <div class="col-md-3 text-left">
 
                             <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
                         </div>
-                    </div>
-                    <div class="row" style="padding-top:10px; font-weight: bold; font-size: 12px;">
-                        <div class="col-md-4 text-left">
-                            Total : {{employeeCountSummary.total}}
-                        </div>
-                        <div class="col-md-4 text-left">
-                            Active : {{employeeCountSummary.active}}
-                        </div>
-                        <div class="col-md-4 text-left" style="padding-right:30px!important">
-                            In-active : {{employeeCountSummary.inActive}}
+                        <div class="col-md-3 text-center" style="padding-right:30px!important;font-weight: bold;font-size:16px; ">
+                            {{employeeCountSummary.active}}<br/><span style="font-size:12px; font-weight:normal ;">Active</span>
                         </div>
                     </div>
                 </div>

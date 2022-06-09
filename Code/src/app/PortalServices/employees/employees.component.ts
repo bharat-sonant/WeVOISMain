@@ -30,9 +30,7 @@ export class EmployeesComponent implements OnInit {
   txtName = "#txtName";
 
   employeeCountSummary: employeeCountSummary = {
-    total: 0,
-    active: 0,
-    inActive: 0
+    active: 0
   };
 
   ngOnInit() {
@@ -88,7 +86,7 @@ export class EmployeesComponent implements OnInit {
           this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
         }
         else {
-          this.getCountSummary();
+          this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
           this.getRoles();
           this.filterData();
         }
@@ -97,14 +95,12 @@ export class EmployeesComponent implements OnInit {
   }
 
   getCountSummary() {
-    this.employeeCountSummary.total = this.allEmployeeList.length;
     this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
-    this.employeeCountSummary.inActive = this.allEmployeeList.filter(item => item.status != "1").length;
   }
 
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
     if (jsonLastEmpId > lastEmpId) {
-      this.getCountSummary();
+      this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
       this.getRoles();
       this.filterData();
       this.saveJSONData();
@@ -202,7 +198,7 @@ export class EmployeesComponent implements OnInit {
       empDetail.status = status;
     }
     this.filterData();
-    this.getCountSummary();
+    this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
     this.updateStatusInDatabase(empId, status);
     this.saveJSONData();
     this.commonService.setAlertMessage("success", "Employee status updated successfully !!!");
@@ -294,8 +290,6 @@ export class EmployeesComponent implements OnInit {
 
 
 export class employeeCountSummary {
-  total: number;
-  active: number;
-  inActive: number
+  active: number
 }
 
