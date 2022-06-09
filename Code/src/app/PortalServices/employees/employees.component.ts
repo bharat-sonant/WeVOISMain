@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
-import { AngularFirestore } from "@angular/fire/firestore";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
@@ -12,29 +11,29 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class EmployeesComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[] = [];
   designationUpdateList: any[];
   allEmployeeList: any[] = [];
   employeeList: any[] = [];
-  employeeJsonList: any[];
   fireStorePath: any;
   ddlDesignation = "#ddlDesignation";
   ddlDesignationUpdate = "#ddlDesignationUpdate";
   ddlUser = "#ddlUser";
   empID = "#empID";
   empIDActive = "#empIDActive";
-  empStatus="#empStatus";
-  exampleModalLongTitleActive = "#exampleModalLongTitleActive";
+  empStatus = "#empStatus";
+  confirmTitle = "#confirmTitle";
   divLoader = "#divLoader";
   txtName = "#txtName";
 
-  employeeDetail: employeeDetail = {
-    lastUpdate: "",
-    lastUpdateBy: ""
-  }
+  employeeCountSummary: employeeCountSummary = {
+    total: 0,
+    active: 0,
+    inActive: 0
+  };
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -48,22 +47,7 @@ export class EmployeesComponent implements OnInit {
     $(this.ddlDesignation).val("all");
     $(this.ddlUser).val("active");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
-    this.getLastUpdate();
     this.getAccountDetail();
-  }
-
-  getLastUpdate() {
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
-    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
-      lastUpdateInstance.unsubscribe();
-      if (data != null) {
-        this.employeeDetail.lastUpdate = data["lastUpdate"];
-        let userData = this.commonService.getPortalUserDetailById(data["updateBy"]);
-        if (userData != undefined) {
-          this.employeeDetail.lastUpdateBy = userData["name"];
-        }
-      }
-    });
   }
 
   getAccountDetail() {
@@ -71,19 +55,110 @@ export class EmployeesComponent implements OnInit {
     this.allEmployeeList = [];
     this.designationList = [];
     this.employeeList = [];
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployees.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
       if (data != null) {
-        this.allEmployeeList = JSON.parse(JSON.stringify(data));
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let empId = keyArray[i];
+            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"] });
+          }
+        }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
-        this.getRoles();
-        this.filterData();
+        this.checkForNewEmployee();
       }
     }, error => {
-      $(this.divLoader).hide();
-      this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
+      this.checkForNewEmployee();
     });
+  }
+
+  checkForNewEmployee() {
+    let dbPath = "Employees/lastEmpId";
+    let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lastEmpIdData => {
+        lastEmpIdInstance.unsubscribe();
+        let lastEmpId = Number(lastEmpIdData);
+        let jsonLastEmpId = 100;
+        if (this.allEmployeeList.length > 0) {
+          jsonLastEmpId = Number(this.allEmployeeList[this.allEmployeeList.length - 1]["empId"]);
+        }
+        if (lastEmpId != jsonLastEmpId) {
+          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+        }
+        else {
+          this.getCountSummary();
+          this.getRoles();
+          this.filterData();
+        }
+      }
+    );
+  }
+
+  getCountSummary() {
+    this.employeeCountSummary.total = this.allEmployeeList.length;
+    this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
+    this.employeeCountSummary.inActive = this.allEmployeeList.filter(item => item.status != "1").length;
+  }
+
+  updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
+    if (jsonLastEmpId > lastEmpId) {
+      this.getCountSummary();
+      this.getRoles();
+      this.filterData();
+      this.saveJSONData();
+    }
+    else {
+      jsonLastEmpId++;
+      let dbPath = "Employees/" + jsonLastEmpId + "/GeneralDetails";
+      let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        employeeDetail => {
+          employeeDetailInstance.unsubscribe();
+          if (employeeDetail != null) {
+            let designation = "";
+            let empType = 1;
+            if (this.designationUpdateList.length > 0) {
+              let detail = this.designationUpdateList.find(item => item.designationId == employeeDetail["designationId"]);
+              if (detail != undefined) {
+                designation = detail.designation;
+                if (detail.designation == "Transportation Executive") {
+                  designation = "Driver";
+                  empType = 2;
+                }
+                else if (detail.designation == "Service Excecutive ") {
+                  designation = "Helper";
+                  empType = 2;
+                }
+                else {
+                  designation = detail.designation;
+                }
+              }
+            }
+            this.allEmployeeList.push({ empId: jsonLastEmpId.toString(), empCode: employeeDetail["empCode"], name: employeeDetail["name"], designationId: employeeDetail["designationId"], designation: designation, status: employeeDetail["status"], empType: empType });
+          }
+          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+        }
+      );
+    }
+  }
+
+  saveJSONData() {
+    let path = "/";
+    const obj = {};
+    for (let i = 0; i < this.allEmployeeList.length; i++) {
+      const data = {
+        designationId: this.allEmployeeList[i]["designationId"],
+        empCode: this.allEmployeeList[i]["empCode"],
+        name: this.allEmployeeList[i]["name"],
+        designation: this.allEmployeeList[i]["designation"],
+        status: this.allEmployeeList[i]["status"],
+        empType: this.allEmployeeList[i]["empType"]
+      }
+      obj[this.allEmployeeList[i]["empId"]] = { GeneralDetails: data };
+    }
+    this.commonService.saveJsonFile(obj, "Employees.json", path);
+    $(this.divLoader).hide();
   }
 
   getRoles() {
@@ -94,7 +169,6 @@ export class EmployeesComponent implements OnInit {
       this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
     }
   }
-
 
   filterData() {
     let name = $(this.txtName).val();
@@ -121,21 +195,16 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateEmployeeStatus() {
-    let empId=$(this.empIDActive).val();
-    let status=$(this.empStatus).val();
+    let empId = $(this.empIDActive).val();
+    let status = $(this.empStatus).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.status = status;
     }
-    empDetail = this.employeeList.find(item => item.empId == empId);
-    if (empDetail != undefined) {
-      empDetail.status = status;
-    }
     this.filterData();
+    this.getCountSummary();
     this.updateStatusInDatabase(empId, status);
-    let filePath = "/EmployeeAccount/";
-    let fileName = "accountDetail.json";
-    this.commonService.saveJsonFile(this.allEmployeeList, fileName, filePath);
+    this.saveJSONData();
     this.commonService.setAlertMessage("success", "Employee status updated successfully !!!");
   }
 
@@ -147,134 +216,36 @@ export class EmployeesComponent implements OnInit {
 
   updateDesignation() {
     let empId = $(this.empID).val();
-
+    let designation = $(this.ddlDesignationUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
-      empDetail.designation = $(this.ddlDesignationUpdate).val();
-    }
-    empDetail = this.employeeList.find(item => item.empId == empId);
-    if (empDetail != undefined) {
-      empDetail.designation = $(this.ddlDesignationUpdate).val();
+      empDetail.designation = designation;
+      let empType = 1;
+      if (designation == "Driver") {
+        designation = "Transportation Executive";
+        empType = 2;
+      }
+      else if (designation == "Helper") {
+        designation = "Service Excecutive ";
+        empType = 2;
+      }
+      let detail = this.designationUpdateList.find(item => item.designation == designation);
+      if (detail != undefined) {
+        empDetail.designationId = detail.designationId;
+        this.updateDesignationInDatabase(empId, detail.designationId);
+      }
     }
     this.filterData();
-    this.updateDesignationInDatabase(empId, $(this.ddlDesignationUpdate).val());
-    let filePath = "/EmployeeAccount/";
-    let fileName = "accountDetail.json";
-    this.commonService.saveJsonFile(this.allEmployeeList, fileName, filePath);
+    this.saveJSONData();
+    this.closeModel();
     this.commonService.setAlertMessage("success", "Employee designation updated successfully !!!");
   }
 
-  updateDesignationInDatabase(empId: any, designation: any) {
-    if (designation == "Helper") {
-      designation = "Service Excecutive ";
-    }
-    else if (designation == "Driver") {
-      designation = "Transportation Executive";
-    }
-    let designationId = 0;
-    let allDesignationList = JSON.parse(localStorage.getItem("designation"));
-    let detail = allDesignationList.find(item => item.designation == designation);
-    if (detail != undefined) {
-      designationId = detail.designationId;
-    }
+  updateDesignationInDatabase(empId: any, designationId: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ designationId: designationId });
+    this.db.object(dbPath).update({ designationId: designationId.toString() });
     this.closeModel();
   }
-
-  updateAccountJson() {
-    $(this.divLoader).show();
-    this.employeeJsonList = [];
-    let dbPath = "Employees";
-    let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        employeeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let empId = keyArray[i];
-              if (data[empId]["GeneralDetails"] != null) {
-                let status = data[empId]["GeneralDetails"]["status"];
-                let name = data[empId]["GeneralDetails"]["name"];
-                let empCode = data[empId]["GeneralDetails"]["empCode"];
-                let designationId = data[empId]["GeneralDetails"]["designationId"];
-                let email = data[empId]["GeneralDetails"]["email"];
-                let accountNo = "";
-                let ifsc = "";
-                let modifyBy = "";
-                let modifyDate = "";
-                let isLock = 0;
-
-                if (data[empId]["BankDetails"] != null) {
-                  if (data[empId]["BankDetails"]["AccountDetails"] != null) {
-                    if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
-                      accountNo = data[empId]["BankDetails"]["AccountDetails"]["accountNumber"];
-                    }
-                    if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
-                      ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
-                    }
-                  }
-                  if (data[empId]["BankDetails"]["isLock"] != null) {
-                    isLock = data[empId]["BankDetails"]["isLock"];
-                  }
-                }
-
-                if (data[empId]["updateSummary"] != null) {
-                  if (data[empId]["updateSummary"]["by"] != null) {
-                    modifyBy = data[empId]["updateSummary"]["by"];
-                  }
-                  if (data[empId]["updateSummary"]["date"] != null) {
-                    modifyDate = data[empId]["updateSummary"]["date"];
-                  }
-                }
-                let designation = "";
-                let empType = 1;
-                if (this.designationUpdateList.length > 0) {
-                  let detail = this.designationUpdateList.find(item => item.designationId == designationId);
-                  if (detail != undefined) {
-                    if (detail.designation == "Transportation Executive") {
-                      designation = "Driver";
-                      empType = 2;
-                    }
-                    else if (detail.designation == "Service Excecutive ") {
-                      designation = "Helper";
-                      empType = 2;
-                    }
-                    else {
-                      designation = detail.designation;
-                    }
-                  }
-                }
-                this.employeeJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType });
-              }
-            }
-            this.saveJSONData();
-            setTimeout(() => {
-              this.getAccountDetail();
-            }, 3000);
-
-          }
-        }
-      }
-    );
-  }
-
-  saveJSONData() {
-    let path = "/EmployeeAccount/";
-    this.commonService.saveJsonFile(this.employeeJsonList, "accountDetail.json", path);
-    let time = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTimeWithSecond();
-    this.employeeDetail.lastUpdate = time;
-    let userData = this.commonService.getPortalUserDetailById(localStorage.getItem("userID"));
-    if (userData != undefined) {
-      this.employeeDetail.lastUpdateBy = userData["name"];
-    }
-    const obj = { lastUpdate: time, updateBy: localStorage.getItem("userID") };
-    this.commonService.saveJsonFile(obj, "LastUpdate.json", path);
-    this.commonService.setAlertMessage("success", "Employee data updated successfully !!!");
-    $(this.divLoader).hide();
-  }
-
 
   openModel(content: any, id: any, type: any) {
     let userDetail = this.allEmployeeList.find((item) => item.empId == id);
@@ -305,12 +276,12 @@ export class EmployeesComponent implements OnInit {
     else {
       $(this.empIDActive).val(id);
       if (type == "active") {
-        $(this.exampleModalLongTitleActive).html("Do you want to in-active employee?");
+        $(this.confirmTitle).html("Do you want to in-active employee?");
         $(this.empStatus).val("2");
 
       }
       else {
-        $(this.exampleModalLongTitleActive).html("Do you want to active employee?");
+        $(this.confirmTitle).html("Do you want to active employee?");
         $(this.empStatus).val("1");
       }
     }
@@ -321,7 +292,10 @@ export class EmployeesComponent implements OnInit {
   }
 }
 
-export class employeeDetail {
-  lastUpdate: string;
-  lastUpdateBy: string;
+
+export class employeeCountSummary {
+  total: number;
+  active: number;
+  inActive: number
 }
+

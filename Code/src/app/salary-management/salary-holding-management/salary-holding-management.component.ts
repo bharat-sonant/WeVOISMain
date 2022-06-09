@@ -366,9 +366,9 @@ export class SalaryHoldingManagementComponent implements OnInit {
 
 
   saveUnhold(obj: any) {
-    let filePath = "" + this.fireStoreCity + "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+    let filePath = "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
     let fileName = "unholdSalary.json";
-    this.saveJsonFile(obj, fileName, filePath);
+    this.commonService.saveJsonFile(obj, fileName, filePath);
     setTimeout(() => {
       this.getHoldSalary();
       this.getUnholdSalary();
@@ -414,37 +414,12 @@ export class SalaryHoldingManagementComponent implements OnInit {
   }
 
   updateHoldJson(obj: any) {
-    let filePath = "" + this.fireStoreCity + "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+    let filePath = "/EmployeeHoldSalary/" + this.selectedYear + "/" + this.selectedMonthName + "/";
     let fileName = "holdSalary.json";
-    this.saveJsonFile(obj, fileName, filePath);
+    this.commonService.saveJsonFile(obj, fileName, filePath);
     setTimeout(() => {
       this.getHoldSalary();
     }, 300);
-  }
-
-  saveJsonFile(listArray: any, fileName: any, filePath: any) {
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + filePath + fileName;
-
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
-
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
   }
 
   getHoldUnHold(type: any) {

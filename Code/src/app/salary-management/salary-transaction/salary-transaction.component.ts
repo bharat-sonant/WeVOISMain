@@ -261,8 +261,8 @@ export class SalaryTransactionComponent implements OnInit {
     }
     obj[key] = data;
     obj["lastKey"] = key;
-    let filePath = "" + this.fireStoreCity + "/EmployeeSalaryTransaction/" + this.uploadYear + "/";
-    this.saveJsonFile(obj, "uploadHistory.json", filePath);
+    let filePath = "/EmployeeSalaryTransaction/" + this.uploadYear + "/";
+    this.commonService.saveJsonFile(obj, "uploadHistory.json", filePath);
 
     const path = "" + this.commonService.getFireStoreCity() + "/EmployeeSalaryTransaction/" + this.uploadYear + "/Files/" + fileName;
     this.storage.upload(path, excelFile);
@@ -481,34 +481,10 @@ export class SalaryTransactionComponent implements OnInit {
       }
       obj[date] = data;
     }
-    let filePath = "" + this.fireStoreCity + "/EmployeeSalaryTransaction/" + year + "/";
-    this.saveJsonFile(obj, empId + ".json", filePath);
+    let filePath = "/EmployeeSalaryTransaction/" + year + "/";
+    this.commonService.saveJsonFile(obj, empId + ".json", filePath);
   }
 
-  saveJsonFile(listArray: any, fileName: any, filePath: any) {
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + filePath + fileName;
-
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
-
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
-  }
 
   exportExcel(htmlString: any, fileName: any) {
     var parser = new DOMParser();

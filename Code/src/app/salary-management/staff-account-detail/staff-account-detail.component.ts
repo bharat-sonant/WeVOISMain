@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
-import { AngularFireStorage } from "angularfire2/storage";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AngularFirestore } from "@angular/fire/firestore";
 
 @Component({
   selector: 'app-staff-account-detail',
@@ -13,7 +11,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 })
 export class StaffAccountDetailComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor( private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[];
@@ -24,10 +22,8 @@ export class StaffAccountDetailComponent implements OnInit {
   ddlDesignation = "#ddlDesignation";
   preAccountNo = "#preAccountNo";
   preIFSC = "#preIFSC";
-  preSalary = "#preSalary";
   txtAccountNo = "#txtAccountNo";
   txtIFSC = "#txtIFSC";
-  txtSalary = "#txtSalary";
   txtRemarks = "#txtRemarks";
   key = "#key";
   divSolved = "#divSolved";
@@ -36,15 +32,12 @@ export class StaffAccountDetailComponent implements OnInit {
   fireStorePath: any;
   toDayDate: any;
   remarkJsonObject: any;
-  accountJsonList: any[];
   userId: any;
   public isLockUnlock: any;
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
-    date: "",
-    lastUpdate: "",
-    lastUpdateBy: ""
+    date: ""
   }
 
   ngOnInit() {
@@ -56,7 +49,7 @@ export class StaffAccountDetailComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
-    this.isLockUnlock = localStorage.getItem("isLock");
+    this.isLockUnlock = localStorage.getItem("isLock")
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
@@ -66,24 +59,9 @@ export class StaffAccountDetailComponent implements OnInit {
     this.accountList = [];
     this.remarkJsonObject = null;
     $(this.ddlUser).val("active");
-    $(this.ddlDesignation).val("all");    
+    $(this.ddlDesignation).val("all");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
-    this.getLastUpdate();
     this.getAccountDetail();
-  }
-
-  getLastUpdate() {
-    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FLastUpdate.json?alt=media";
-    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
-      lastUpdateInstance.unsubscribe();
-      if (data != null) {
-        this.remarkDetail.lastUpdate = data["lastUpdate"];
-        let userData = this.commonService.getPortalUserDetailById(data["updateBy"]);
-        if (userData != undefined) {
-          this.remarkDetail.lastUpdateBy = userData["name"];
-        }
-      }
-    });
   }
 
   getAccountDetail() {
@@ -95,19 +73,39 @@ export class StaffAccountDetailComponent implements OnInit {
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
       if (data != null) {
-        let jsonData = JSON.stringify(data);
-        let list = JSON.parse(jsonData).filter(item => item.empType == 1);
-        this.allAccountList = list.sort((a, b) =>Number(b.empId) < Number(a.empId) ? 1 : -1);
-        this.getRoles();
-        this.getAccountIssue();
+        let list = JSON.parse(JSON.stringify(data));
+        this.allAccountList = list.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+        this.checkForNewEmployee();
       }
     }, error => {
-      this.commonService.setAlertMessage("error", "Sorry! no record found !!!");
+      this.checkForNewEmployee();
     });
   }
 
+  checkForNewEmployee() {
+    let dbPath = "Employees/lastEmpId";
+    let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lastEmpIdData => {
+        lastEmpIdInstance.unsubscribe();
+        let lastEmpId = Number(lastEmpIdData);
+        let jsonLastEmpId = 100;
+        if (this.allAccountList.length > 0) {
+          jsonLastEmpId = Number(this.allAccountList[this.allAccountList.length - 1]["empId"]);
+        }
+        if (lastEmpId != jsonLastEmpId) {
+          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+        }
+        else {
+          this.getRoles();
+          this.getAccountIssue();
+        }
+      }
+    );
+  }
+
   getRoles() {
-    let list = this.allAccountList.map(item => item.designation)
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 1);
+    let list = driverHelperList.map(item => item.designation)
       .filter((value, index, self) => self.indexOf(value) === index);
     for (let i = 0; i < list.length; i++) {
       this.designationList.push({ designation: list[i] });
@@ -146,14 +144,15 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any) {
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 1);
     if (status == "all") {
-      this.accountList = this.allAccountList;
+      this.accountList = driverHelperList;
     }
     else if (status == "active") {
-      this.accountList = this.allAccountList.filter(item => item.status == "1");
+      this.accountList = driverHelperList.filter(item => item.status == "1");
     }
     else {
-      this.accountList = this.allAccountList.filter(item => item.status != "1");
+      this.accountList = driverHelperList.filter(item => item.status != "1");
     }
     if (designation != "all") {
       this.accountList = this.accountList.filter(item => item.designation == designation);
@@ -180,14 +179,14 @@ export class StaffAccountDetailComponent implements OnInit {
     if (detail != undefined) {
       detail.isLock = isLock;
     }
-    let path = "" + this.fireStoreCity + "/EmployeeAccount/";
-    this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
+    let path = "/EmployeeAccount/";
+    this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
   }
 
   openModel(content: any, id: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 300;
+    let height = 250;
     let width = 400;
     if (type == "remark") {
       height = 275;
@@ -206,10 +205,6 @@ export class StaffAccountDetailComponent implements OnInit {
           $(this.preIFSC).val(userDetail.ifsc);
           $(this.txtAccountNo).val(userDetail.accountNo);
           $(this.txtIFSC).val(userDetail.ifsc);
-          if (userDetail.salary != null) {            
-            $(this.preSalary).val(this.getDecrypted(userDetail.salary));
-            $(this.txtSalary).val(this.getDecrypted(userDetail.salary));
-          }
         }, 100);
       }
     }
@@ -246,11 +241,6 @@ export class StaffAccountDetailComponent implements OnInit {
       if (userDetail != undefined) {
         let accountNo = $(this.txtAccountNo).val();
         let ifsc = $(this.txtIFSC).val();
-        let salary = "";
-        if ($(this.txtSalary).val() != "") {
-          salary = this.commonService.setEncrypt('123456$#@$^@1ERF', $(this.txtSalary).val());
-        }
-        this.updateSalary(id, salary);
         this.updateBankDetail(id, accountNo, ifsc);
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
@@ -260,18 +250,13 @@ export class StaffAccountDetailComponent implements OnInit {
           let name = portalUserDetail.name;
           this.saveEmployeeModificationHistory(id, name, time);
           this.updateEmployeeSummary(id, name, time);
-          this.updateAccountListData(id, name, time, accountNo, ifsc, salary);
+          this.updateAccountListData(id, name, time, accountNo, ifsc);
         }
         $(this.key).val("0");
         this.commonService.setAlertMessage("success", "Acount Detail updated successfully !!!");
         this.closeModel();
       }
     }
-  }
-
-  updateSalary(id: any, salary: any) {
-    let dbPath = "Employees/" + id + "/GeneralDetails";
-    this.db.object(dbPath).update({ salary: salary });
   }
 
   updateBankDetail(id: any, accountNo: any, ifsc: any) {
@@ -288,13 +273,11 @@ export class StaffAccountDetailComponent implements OnInit {
     this.db.object(dbPath).update(data);
   }
 
-  updateAccountListData(id: any, name: any, time: any, accountNo: any, ifsc: any, salaryEncrypted: any) {
-    let salary = this.commonService.getEncrypt('123456$#@$^@1ERF', salaryEncrypted);
+  updateAccountListData(id: any, name: any, time: any, accountNo: any, ifsc: any) {
     let userDetail = this.accountList.find((item) => item.empId == id);
     if (userDetail != undefined) {
       userDetail.accountNo = accountNo;
       userDetail.ifsc = ifsc;
-      userDetail.salary = salary;
       userDetail.modifyBy = name;
       userDetail.modifyDate = time;
       let allUserDetail = this.allAccountList.find(item => item.empId == id);
@@ -303,19 +286,9 @@ export class StaffAccountDetailComponent implements OnInit {
         allUserDetail.ifsc = ifsc;
         allUserDetail.modifyBy = name;
         allUserDetail.modifyDate = time;
-        allUserDetail.salary = salaryEncrypted;
       }
-      let path = "" + this.fireStoreCity + "/EmployeeAccount/";
-      this.saveJsonFile(this.allAccountList, "accountDetail.json", path);
-    }
-  }
-
-  getDecrypted(salary: any) {
-    if (salary != null) {
-      return (this.commonService.getEncrypt('123456$#@$^@1ERF', salary));
-    }
-    else {
-      return salary;
+      let path = "/EmployeeAccount/";
+      this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
     }
   }
 
@@ -323,7 +296,7 @@ export class StaffAccountDetailComponent implements OnInit {
     let historyList = [];
     let accountNumber = $(this.preAccountNo).val();
     let ifsc = $(this.preIFSC).val();
-    let filePath = "" + this.fireStoreCity + "/EmployeeDetailModificationHistory/";
+    let filePath = "/EmployeeDetailModificationHistory/";
     const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeDetailModificationHistory%2F" + empId + ".json?alt=media";
     let instance = this.httpService.get(path).subscribe(data => {
       instance.unsubscribe();
@@ -331,11 +304,11 @@ export class StaffAccountDetailComponent implements OnInit {
         let jsonData = JSON.stringify(data);
         let list = JSON.parse(jsonData);
         list.push({ accountNumber: accountNumber, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate });
-        this.saveJsonFile(list, empId.toString() + ".json", filePath);
+        this.commonService.saveJsonFile(list, empId.toString() + ".json", filePath);
       }
     }, error => {
       historyList.push({ accountNumber: accountNumber, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate });
-      this.saveJsonFile(historyList, empId.toString() + ".json", filePath);
+      this.commonService.saveJsonFile(historyList, empId.toString() + ".json", filePath);
     });
   }
 
@@ -436,141 +409,101 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   saveRemarkHistory(id: any, obj: any) {
-    let filePath = "" + this.fireStoreCity + "/EmployeeAccountIssue/History/";
+    let filePath = "/EmployeeAccountIssue/History/";
     let fileName = id + ".json";
-    this.saveJsonFile(obj, fileName, filePath);
+    this.commonService.saveJsonFile(obj, fileName, filePath);
   }
 
   updateIssueJson(obj: any) {
-    let filePath = "" + this.fireStoreCity + "/EmployeeAccountIssue/";
+    let filePath = "/EmployeeAccountIssue/";
     let fileName = "Issue.json";
-    this.saveJsonFile(obj, fileName, filePath);
+    this.commonService.saveJsonFile(obj, fileName, filePath);
   }
 
   closeModel() {
     this.modalService.dismissAll();
   }
 
-  saveJsonFile(listArray: any, fileName: any, filePath: any) {
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = "" + filePath + fileName;
-
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage(this.fireStorePath).ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
-
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
-  }
-
   saveJSONData() {
-    let path = "" + this.fireStoreCity + "/EmployeeAccount/";
-    this.saveJsonFile(this.accountJsonList, "accountDetail.json", path);
-    let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
-    this.remarkDetail.lastUpdate = time;
-    let userData = this.commonService.getPortalUserDetailById(this.userId);
-    if (userData != undefined) {
-      this.remarkDetail.lastUpdateBy = userData["name"];
-    }
-    const obj = { lastUpdate: time, updateBy: this.userId };
-    this.saveJsonFile(obj, "LastUpdate.json", path);
-    this.commonService.setAlertMessage("success", "Account data updated successfully !!!");
+    let path = "/EmployeeAccount/";
+    this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
     $(this.divLoader).hide();
   }
 
-  updateAccountJson() {
-    $(this.divLoader).show();
-    this.accountJsonList = [];
-    let dbPath = "Employees";
-    let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        employeeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let empId = keyArray[i];
-              if (data[empId]["GeneralDetails"] != null) {
-                let status = data[empId]["GeneralDetails"]["status"];
-                let name = data[empId]["GeneralDetails"]["name"];
-                let empCode = data[empId]["GeneralDetails"]["empCode"];
-                let designationId = data[empId]["GeneralDetails"]["designationId"];
-                let email = data[empId]["GeneralDetails"]["email"];
-                let accountNo = "";
-                let ifsc = "";
-                let modifyBy = "";
-                let modifyDate = "";
-                let isLock = 0;
-                let salary=0;
-                if(data[empId]["GeneralDetails"]["salary"]!=null){
-                  salary=data[empId]["GeneralDetails"]["salary"];
-                }
+  updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
+    if (jsonLastEmpId > lastEmpId) {
+      this.getRoles();
+      this.filterData();
+      this.saveJSONData();
+    }
+    else {
+      jsonLastEmpId++;
+      let dbPath = "Employees/" + jsonLastEmpId;
+      let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        employeeDetail => {
+          employeeDetailInstance.unsubscribe();
+          if (employeeDetail != null) {
+            if (employeeDetail["GeneralDetails"] != null) {
+              let status = employeeDetail["GeneralDetails"]["status"];
+              let name = employeeDetail["GeneralDetails"]["name"];
+              let empCode = employeeDetail["GeneralDetails"]["empCode"];
+              let designationId = employeeDetail["GeneralDetails"]["designationId"];
+              let email = employeeDetail["GeneralDetails"]["email"];
+              let accountNo = "";
+              let ifsc = "";
+              let modifyBy = "";
+              let modifyDate = "";
+              let isLock = 0;
 
-                if (data[empId]["BankDetails"] != null) {
-                  if (data[empId]["BankDetails"]["AccountDetails"] != null) {
-                    if (data[empId]["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
-                      accountNo = data[empId]["BankDetails"]["AccountDetails"]["accountNumber"];
-                    }
-                    if (data[empId]["BankDetails"]["AccountDetails"]["ifsc"] != null) {
-                      ifsc = data[empId]["BankDetails"]["AccountDetails"]["ifsc"];
-                    }
+              if (employeeDetail["BankDetails"] != null) {
+                if (employeeDetail["BankDetails"]["AccountDetails"] != null) {
+                  if (employeeDetail["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
+                    accountNo = employeeDetail["BankDetails"]["AccountDetails"]["accountNumber"];
                   }
-                  if (data[empId]["BankDetails"]["isLock"] != null) {
-                    isLock = data[empId]["BankDetails"]["isLock"];
+                  if (employeeDetail["BankDetails"]["AccountDetails"]["ifsc"] != null) {
+                    ifsc = employeeDetail["BankDetails"]["AccountDetails"]["ifsc"];
                   }
                 }
-
-                if (data[empId]["updateSummary"] != null) {
-                  if (data[empId]["updateSummary"]["by"] != null) {
-                    modifyBy = data[empId]["updateSummary"]["by"];
-                  }
-                  if (data[empId]["updateSummary"]["date"] != null) {
-                    modifyDate = data[empId]["updateSummary"]["date"];
-                  }
+                if (employeeDetail["BankDetails"]["isLock"] != null) {
+                  isLock = employeeDetail["BankDetails"]["isLock"];
                 }
-                let designation = "";
-                let empType = 1;
-                if (this.designationUpdateList.length > 0) {
-                  let detail = this.designationUpdateList.find(item => item.designationId == designationId);
-                  if (detail != undefined) {
-                    if (detail.designation == "Transportation Executive") {
-                      designation = "Driver";
-                      empType = 2;
-                    }
-                    else if (detail.designation == "Service Excecutive ") {
-                      designation = "Helper";
-                      empType = 2;
-                    }
-                    else {
-                      designation = detail.designation;
-                    }
-                  }
-                }
-                this.accountJsonList.push({ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType,salary:salary });
               }
-            }
-            this.saveJSONData();
-            setTimeout(() => {
-              this.getAccountDetail();
-            }, 3000);
 
+              if (employeeDetail["updateSummary"] != null) {
+                if (employeeDetail["updateSummary"]["by"] != null) {
+                  modifyBy = employeeDetail["updateSummary"]["by"];
+                }
+                if (employeeDetail["updateSummary"]["date"] != null) {
+                  modifyDate = employeeDetail["updateSummary"]["date"];
+                }
+              }
+
+              let designation = "";
+              let empType = 1;
+
+              if (this.designationUpdateList.length > 0) {
+                let detail = this.designationUpdateList.find(item => item.designationId == designationId);
+                if (detail != undefined) {
+                  if (detail.designation == "Transportation Executive") {
+                    designation = "Driver";
+                    empType = 2;
+                  }
+                  else if (detail.designation == "Service Excecutive ") {
+                    designation = "Helper";
+                    empType = 2;
+                  }
+                  else {
+                    designation = detail.designation;
+                  }
+                }
+              }
+              this.allAccountList.push({ empId: jsonLastEmpId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType });
+            }
           }
+          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
         }
-      }
-    );
+      );
+    }
   }
 }
 
@@ -578,7 +511,5 @@ export class remarkDetail {
   date: string;
   by: string;
   remark: string;
-  lastUpdate: string;
-  lastUpdateBy: string;
 }
 

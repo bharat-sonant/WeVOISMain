@@ -25,7 +25,6 @@ export class TaskManagementMastersComponent implements OnInit {
   ngOnInit() {
     this.setActiveTab("Category");
     this.getMainTask();
-    console.log("test git");
   }
 
   setActiveTab(tab: any) {
