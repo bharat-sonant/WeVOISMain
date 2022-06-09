@@ -1575,29 +1575,35 @@ export class CommonService {
   }
 
   saveJsonFile(listArray: any, fileName: any, filePath: any) {
-    let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
-    var jsonFile = JSON.stringify(listArray);
-    var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
-    const path = this.getFireStoreCity() + filePath + fileName;
+    return new Promise((resolve) => {
 
-    //const ref = this.storage.ref(path);
-    const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
-    var byteString;
-    // write the bytes of the string to a typed array
+      let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+      var jsonFile = JSON.stringify(listArray);
+      var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
+      const path = this.getFireStoreCity() + filePath + fileName;
+  
+      //const ref = this.storage.ref(path);
+      const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
+      var byteString;
+      // write the bytes of the string to a typed array
+  
+      byteString = unescape(uri.split(",")[1]);
+      var mimeString = uri
+        .split(",")[0]
+        .split(":")[1]
+        .split(";")[0];
+  
+      var ia = new Uint8Array(byteString.length);
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+  
+      let blob = new Blob([ia], { type: mimeString });
+      const task = ref.put(blob);
+      resolve(task);
+    });
 
-    byteString = unescape(uri.split(",")[1]);
-    var mimeString = uri
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
-
-    var ia = new Uint8Array(byteString.length);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    let blob = new Blob([ia], { type: mimeString });
-    const task = ref.put(blob);
+   
   }
 
   saveCommonJsonFile(listArray: any, fileName: any, filePath: any) {
