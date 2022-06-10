@@ -34,22 +34,30 @@
                             </div>
 
                         </div>
+                        <div class="col-md-4 input-class">
+                            <div class="wrap-input-effects" required>
+                                <select class="caret-select zone-select" id="ddlStatus" (change)="changeStatusSelection($event.target.value)">
+                                    <option value="all">
+                                        All Dustbin
+                                    </option>
+                                    <option selected value="enabled">
+                                        Enabled
+                                    </option>
+                                    <option value="disabled">
+                                        Disabled
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
 
                         <div class="col-md-2 extra-class">
                             <span class="fw-bold"> {{dustbinSummary.totalDustbin}}<br></span>
                             <span>Total</span>
                         </div>
                         <div class="col-md-2 extra-class">
-                            <span class="fw-bold">   {{dustbinSummary.wardDustbin}}<br></span>
+                            <span class="fw-bold"> {{dustbinSummary.wardDustbin}}<br></span>
                             <span>Zone </span>
-                        </div>
-                        <div class="col-md-2 extra-class extra-class2">
-                            <span class="fw-bold">  {{dustbinSummary.disableDustbin}}<br></span>
-                            <span>Disabled</span>
-                        </div>
-                        <div class="col-md-2 extra-class">
-                            <span class="fw-bold">   {{dustbinSummary.enableDustbin}}<br></span>
-                            <span>Enabled</span>
                         </div>
                     </div>
                 </div>
@@ -63,6 +71,8 @@
                                             <table class="table table-outer-iner">
                                                 <thead>
                                                     <th class="table-data-line2">Address</th>
+                                                    <th class="table-data-Markers2">Type</th>
+                                                    <th class="table-data-Markers2">Lat-Lng</th>
                                                     <th class="table-data-Markers2">Frequency</th>
                                                     <th class="table-data-Markers2">Action</th>
                                                 </thead>
@@ -70,6 +80,12 @@
                                                     <tr *ngFor="let data of dustbinList; let i=index">
                                                         <td class="table-data2">
                                                             {{data.address}}</td>
+                                                        <td class="table-data2">
+                                                            {{data.type}}
+                                                        </td>
+                                                        <td class="table-data2">
+                                                            {{data.lat}}-{{data.lng}}
+                                                        </td>
                                                         <td class="table-data2 text-right">
                                                             {{data.pickFrequency}}
                                                         </td>
