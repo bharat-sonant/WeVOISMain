@@ -605,6 +605,7 @@ export class CommonService {
               resolve(employeeData);
             }
           }
+          
         });
       } else {
         resolve(employeeData);
