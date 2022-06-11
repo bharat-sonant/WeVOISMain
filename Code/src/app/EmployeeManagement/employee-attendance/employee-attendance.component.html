@@ -1,1 +1,109 @@
-<p>employee-attendance works!</p>
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            Employees Attendance
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-3 text-left">
+                            <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value);">
+                        </div>
+
+                        <div class="col-md-3 text-left">
+                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData($event.target.value)">
+                                <option value="0">
+                                    All
+                                </option>
+                                <option value="08:15">
+                                    After 8:15
+                                </option>
+                                <option value="08:30">
+                                    After 8:30
+                                </option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-3 text-left">
+
+                        </div>
+                        <div class="col-md-3 text-center" style="padding-right:30px!important;font-weight: bold;font-size:16px; ">
+                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
+                                <i class="fa-solid fa-file-export"
+                                    style="cursor:pointer; color:green;  font-size: 24px; "
+                                    (click)="exportToExcel();"></i><br />
+                                Export to Excel
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                In Time</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Out Time
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{data.name}} <b>[{{data.empCode}}]</b>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.inTime}}
+
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.outTime}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
+                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
