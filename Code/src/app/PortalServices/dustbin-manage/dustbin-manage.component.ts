@@ -13,6 +13,7 @@ export class DustbinManageComponent implements OnInit {
 
   constructor(private dustbinService: DustbinService, private commonService: CommonService, private modalService: NgbModal) { }
   selectedZone: any;
+  selectedStatus: any;
   zoneList: any[] = [];
   dustbinStorageList: any[] = [];
   dustbinList: any[] = [];
@@ -44,11 +45,13 @@ export class DustbinManageComponent implements OnInit {
     this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
     if (this.dustbinStorageList != null) {
       let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
+      this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
       for (let i = 0; i < list.length; i++) {
         this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
       }
       this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
       this.selectedZone = this.zoneList[0]["zoneNo"];
+      this.selectedStatus = "enabled";
       this.getDustbins();
     }
   }
@@ -58,31 +61,26 @@ export class DustbinManageComponent implements OnInit {
     this.getDustbins();
   }
 
+  changeStatusSelection(filterVal: any) {
+    this.selectedStatus = filterVal;
+    this.getDustbins();
+  }
+
   getDustbins() {
     this.dustbinList = [];
     let list = [];
-    let disabledDustbin = 0;
-    let enableDustbin = 0;
     if (this.dustbinStorageList.length > 0) {
-      if (this.selectedZone == "0") {
-        list = this.dustbinStorageList;
+      list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone);
+      this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
+      if (this.selectedStatus == "enabled") {
+        list = list.filter(item => item.isDisabled != "yes");
       }
-      else {
-        list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone);
+      else if (this.selectedStatus == "disabled") {
+        list = list.filter(item => item.isDisabled == "yes");
       }
       for (let i = 0; i < list.length; i++) {
-        if (list[i]["isDisabled"] == "yes") {
-          disabledDustbin++;
-        }
-        else {
-          enableDustbin++;
-        }
         this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"] });
       }
-      this.dustbinSummary.totalDustbin = this.dustbinStorageList.length;
-      this.dustbinSummary.wardDustbin = this.dustbinList.length;
-      this.dustbinSummary.disableDustbin = disabledDustbin;
-      this.dustbinSummary.enableDustbin = enableDustbin;
     }
   }
 

@@ -142,18 +142,18 @@ export class LineMarkerMappingComponent {
       let lineNo = 0;
       for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
-       
-          let points = wardLines[lineNo]["points"];
-          var latLng = [];
-          for (let j = 0; j < points.length; j++) {
-            latLng.push({ lat: points[j][0], lng: points[j][1] });
-          }
-          this.lines.push({
-            lineNo: lineNo,
-            latlng: latLng,
-            color: "#87CEFA",
-          });
-          this.plotLineOnMap(lineNo, latLng,i, this.selectedZone);
+
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
       }
       this.getMarkedHouses(this.lineNo);
     });
@@ -257,7 +257,8 @@ export class LineMarkerMappingComponent {
     });
     this.houseMarker.push({ markerNo: index, marker: marker });
     marker.addListener("click", (e) => {
-      let lineData = this.selectedCardDetails.find((item) => item.cardNo == index);
+      console.log("aaa")
+      let lineData = this.selectedCardDetails.find((item) => item.markerNo == index);
       if (lineData == undefined) {
         this.selectedCardDetails.push({
           lineNo: this.lineNo,
@@ -476,11 +477,12 @@ export class LineMarkerMappingComponent {
     let newMarksRfIdInstance = this.db.object(dbPath).valueChanges().subscribe(
       marksCount => {
         newMarksRfIdInstance.unsubscribe();
+        let counts = rfIdNotFound;
         if (marksCount != null) {
-          marksCount = Number(marksCount) + rfIdNotFound;
+          counts = Number(marksCount) + counts;
         }
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ lineRfidNotFoundCount: marksCount });
+        this.db.object(dbPath).update({ lineRfidNotFoundCount: counts });
       }
     );
 
@@ -501,11 +503,12 @@ export class LineMarkerMappingComponent {
     let newMarksRevisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       marksCount => {
         newMarksRevisitInstance.unsubscribe();
+        let counts = revisitCount;
         if (marksCount != null) {
-          marksCount = Number(marksCount) + revisitCount;
+          counts = Number(marksCount) + counts;
         }
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ lineRevisitCount: marksCount });
+        this.db.object(dbPath).update({ lineRevisitCount: counts });
       }
     );
 
@@ -526,11 +529,12 @@ export class LineMarkerMappingComponent {
     let newMarksSurveyedInstance = this.db.object(dbPath).valueChanges().subscribe(
       marksCount => {
         newMarksSurveyedInstance.unsubscribe();
+        let counts = surveyedCount;
         if (marksCount != null) {
-          marksCount = Number(marksCount) + surveyedCount;
+          counts = Number(marksCount) + surveyedCount;
         }
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ surveyedCount: marksCount });
+        this.db.object(dbPath).update({ surveyedCount: counts });
       }
     );
 
@@ -637,7 +641,7 @@ export class LineMarkerMappingComponent {
         // img.setAttribute('src', url);
       })
       .catch((error) => {
-       // console.log(error);
+        // console.log(error);
         // Handle any errors
       });
 

@@ -27,6 +27,7 @@ export class RoutesTrackingComponent implements OnInit {
   zoneKML: any;
   monthDetailList: any[];
   vehicleMarker: any;
+  vehicleLocationInstance: any;
   fixdGeoLocations: any[];
   db: any;
   isActualData: any;
@@ -45,6 +46,18 @@ export class RoutesTrackingComponent implements OnInit {
   endTime: any;
   isLast: any;
 
+  isReset: any;
+  isStart: any;
+  btnPre = "#btnPre";
+  btnReset = "#btnReset";
+  playStop = "#playStop";
+  ddlSpeed = "#ddlSpeed";
+  speed: any;
+  skip: any;
+  lineIndex:any;
+  routeMarker:any[]=[];
+  timerHandle:any[]=[];
+
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -61,14 +74,14 @@ export class RoutesTrackingComponent implements OnInit {
     if (this.routePathList.length > 0) {
       this.timeInterval = parseInt($(this.ddlTime).val().toString());
       if (this.timeInterval == 0) {
-        this.isFirst=true;
+        this.isFirst = true;
         this.lineData = [];
         this.endTime = this.routePathList.length - 1;
       }
       else {
-        if(this.isFirst==true){
-          this.endTime=null;
-          this.isFirst=false;
+        if (this.isFirst == true) {
+          this.endTime = null;
+          this.isFirst = false;
         }
         if (this.endTime != null) {
           if (this.endTime <= this.routePathList.length - 1) {
@@ -114,6 +127,7 @@ export class RoutesTrackingComponent implements OnInit {
 
   drowRouteDataTiming() {
     let totalKM = 0;
+    this.trackData.time = this.routePathList[this.endTime]["time"].split('-')[0];
     for (let i = 0; i <= this.endTime; i++) {
       totalKM += parseFloat(this.routePathList[i]["distanceinmeter"]);
     }
@@ -156,34 +170,111 @@ export class RoutesTrackingComponent implements OnInit {
         });
 
         if (i == 0) {
-          let latLong: string = this.routePathList[0]["latlng"];
-          let routeDateListStart = latLong.substring(1, latLong.length - 1).split(')~(');
-          let routePartStart = routeDateListStart[0].split(',');
-          if (routePartStart.length == 2) {
-            let markerURL = this.getIcon("start");
-            var markerLabel = "";
-            let lat = routePartStart[0];
-            let lng = routePartStart[1];
-            let contentString = '<br/>Start Time : ' + this.routePathList[i]["time"];
-            this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-          }
+          this.getStartStopMarker("start");
         }
         if (i == this.endTime) {
-          this.trackData.time = this.routePathList[this.endTime]["time"].split('-')[0];
-          let flowMarkerURL = this.getIcon("stopMarker");
-          var flowMarkerLabel = "";
-          let lat = this.lineData[this.lineData.length - 1]["lat"];
-          let lng = this.lineData[this.lineData.length - 1]["lng"];
-          let contentString = '<br/>Time : ' + this.routePathList[i]["time"];
-          this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
+          this.getStartStopMarker("stop");
         }
         this.polylines[i] = line;
         this.polylines[i].setMap(this.map);
+      }  
+    }
+    this.setVehicleMoving();
+  }
+
+  setVehicleMoving(){
+    if (this.isStart == true) {
+      if (this.lineIndex == 0) {
+        if (this.routeMarker.length > 0) {
+          if (this.isReset == true) {
+            this.lineIndex = 0;
+            if (this.routeMarker[0] == null) {
+              this.createMarker();
+            }
+            else {
+              this.routeMarker[0]["marker"].setMap(null);
+              this.routeMarker = [];
+              this.createMarker();
+            }
+          }
+          else {
+            this.routeMarker[0]["marker"] = this.lineData[0];
+          }
+        }
+        else {
+          this.createMarker();
+        }
       }
+      else if (this.isReset == true) {
+        this.isReset = false;
+        this.lineIndex = 0;
+        if (this.routeMarker[0] == null) {
+          this.createMarker();
+        }
+        else {
+          this.routeMarker[0]["marker"].setMap(null);
+          this.routeMarker = [];
+          this.createMarker();
+        }
+      }
+      this.animate(this.lineIndex);
     }
   }
 
+
+  getStartStopMarker(type: any) {
+    if (type == "start") {
+      let latLong: string = this.routePathList[0]["latlng"];
+      let routeDateListStart = latLong.substring(1, latLong.length - 1).split(')~(');
+      let routePartStart = routeDateListStart[0].split(',');
+      if (routePartStart.length == 2) {
+        let markerURL = this.getIcon("start");
+        var markerLabel = "";
+        let lat = routePartStart[0];
+        let lng = routePartStart[1];
+        let contentString = '<br/>Start Time : ' + this.routePathList[0]["time"];
+        this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+      }
+    }
+    else {
+      let lat = this.lineData[this.lineData.length - 1]["lat"];
+      let lng = this.lineData[this.lineData.length - 1]["lng"];
+      var markerLabel = "";
+      let contentString = 'End time: ' + this.routePathList[this.routePathList.length - 1]["time"];
+      let markerType = "routeMarker";
+      let markerURL = this.getIcon("stopMarker");
+      if ($(this.ddlTime).val() == "0") {
+        markerURL = this.getIcon("stop");
+        markerType = "all";
+      }
+      if (this.selectedDate != this.toDayDate) {
+        this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+      }
+      else {
+        let dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone;
+        let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
+          dutyData => {
+            vehicleDutyData.unsubscribe();
+            if (dutyData != null) {
+              if (dutyData["isOnDuty"] != "yes") {
+                this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+              }
+              else if ($(this.ddlTime).val() != "0") {
+                this.setMarker(lat, lng, markerLabel, markerURL, contentString, markerType);
+              }
+            }
+          });
+      }
+    }
+
+  }
+
   setDefault() {
+    $(this.btnReset).hide();
+    this.isStart=false;    
+    this.lineIndex=0;
+    this.isReset = true;
+    this.setSpeed($(this.ddlSpeed).val());
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
     this.toDayDate = this.commonService.setTodayDate();
@@ -208,11 +299,8 @@ export class RoutesTrackingComponent implements OnInit {
       this.setWardBoundary();
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
-        this.getLocationHistoryFromDatabase(this.selectedDate, "trackRoute");
       }
-      else {
-        this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
-      }
+      this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
     }
   }
 
@@ -241,6 +329,7 @@ export class RoutesTrackingComponent implements OnInit {
   getMonthSelectedDetail(monthDate: any) {
     this.clearMap();
     $(this.txtDate).val(monthDate);
+    this.selectedDate = monthDate;
     if (this.selectedZone != "0") {
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
@@ -320,6 +409,14 @@ export class RoutesTrackingComponent implements OnInit {
     if (type == "all" || type == "routeMarker") {
       this.allMarkers.push({ marker });
     }
+    else if (type == "route") {
+      if (this.routeMarker.length > 0) {
+        this.routeMarker[0]["matker"] = marker;
+      }
+      else {
+        this.routeMarker.push({ marker });
+      }
+    }
   }
 
   getMonthDetailList() {
@@ -334,9 +431,7 @@ export class RoutesTrackingComponent implements OnInit {
         let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
         let day = monthDate.split("-")[2] + " " + monthShortName;
         this.monthDetailList.push({ wardNo: this.selectedZone, day: day, driver: '', km: '0', hour: '', percentage: '0', monthDate: monthDate });
-        if (monthDate != this.toDayDate) {
-          this.getLocationHistoryFromStorage(monthDate, "monthList");
-        }
+        this.getLocationHistoryFromStorage(monthDate, "monthList");
       }
     }
   }
@@ -426,7 +521,13 @@ export class RoutesTrackingComponent implements OnInit {
       driverData => {
         driverInstance.unsubscribe();
         if (driverData != null) {
-          monthDetails.driver = driverData;
+          let driverList = driverData.split(',');
+          for (let i = 0; i < driverList.length; i++) {
+            monthDetails.driver = driverList[i];
+            if (!monthDetails.driver.includes(driverList[i])) {
+              monthDetails.driver += "," + driverList[i];
+            }
+          }
         }
         let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
         let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -653,16 +754,121 @@ export class RoutesTrackingComponent implements OnInit {
     });
   }
 
-  setSpeed(speed: any) {
 
+  setSpeed(speed: any) {
+    if (speed == 1) {
+      this.speed = 20;
+      this.skip = 1;
+    }
+    else if (speed == 2) {
+      this.speed = 15;
+      this.skip = 1;
+    }
+    else if (speed == 3) {
+      this.speed = 10;
+      this.skip = 2;
+    }
+    else if (speed == 4) {
+      this.speed = 20;
+      this.skip = 5;
+    }
+    else if (speed == 5) {
+      this.speed = 15;
+      this.skip = 4;
+    }
+    else if (speed == 10) {
+      this.speed = 15;
+      this.skip = 10;
+    }
   }
 
   getPlayStop() {
+    if (this.isStart == false) {
+      let options = {
+        // max zoom
+        zoom: 16,
+      };
+      this.map.setOptions(options);
+      this.isStart = true;
+      $(this.playStop).removeClass("fab fa-youtube");
+      $(this.playStop).addClass("fas fa-stop-circle");
 
+      $(this.btnPre).hide();
+      $(this.btnReset).show();
+      this.setSpeed(Number($(this.ddlSpeed).val()));
+      this.timeInterval = Number($(this.ddlTime).val());
+      if (this.timeInterval == 0) {
+        this.endTime = this.routePathList.length - 1;
+      }
+      else {
+        this.endTime = this.endTime;
+      }
+      this.drowRouteDataTiming();
+    }    
+    else {
+      $(this.playStop).removeClass("fas fa-stop-circle");
+      $(this.playStop).addClass("fab fa-youtube");
+      $(this.btnPre).show();
+      $(this.btnReset).hide();
+      this.isStart = false;
+    }
   }
 
   getReset() {
+    this.isReset = true;
+    this.isStart = false;
+    $(this.playStop).removeClass("fas fa-stop-circle");
+    $(this.playStop).addClass("fab fa-youtube");
+    $(this.btnPre).show();
+    $(this.btnReset).hide();
 
+  }
+
+  createMarker() {
+    let lat = this.lineData[this.lineIndex]["lat"];
+    let lng = this.lineData[this.lineIndex]["lng"]
+    let markerURL = this.getIcon("carMarker");
+    var markerLabel = "";
+    let contentString = '';
+    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "route");
+  }
+
+  animate(index: any) {
+    if (this.timerHandle[this.lineIndex - this.skip]) {
+      clearTimeout(this.timerHandle[this.lineIndex - this.skip]);
+    }
+    if (this.routeMarker[0] == null) {
+      this.createMarker();
+    }
+    this.routeMarker[0]["marker"].setPosition(this.lineData[this.lineIndex]);
+    this.map.setCenter(this.lineData[this.lineIndex]);
+
+    if (this.isStart == true) {
+      if (this.lineIndex < this.lineData.length) {
+        this.timerHandle[this.lineIndex] = setTimeout(() => {
+          this.lineIndex = this.lineIndex + this.skip;
+          this.animate(this.lineIndex);
+          if (this.lineData.length > 0) {
+            if (this.lineData[this.lineIndex] != null) {
+              this.trackData.time = this.lineData[this.lineIndex]["time"];
+            }
+          }
+        }, this.speed);
+      }
+      else {
+        if (this.isLast == false) {
+          this.drowRouteData("next");
+          this.animate(this.lineIndex);
+        }
+        else {
+          this.routeMarker[0]["marker"].setPosition(this.lineData[this.lineIndex - this.skip]);
+          this.map.setCenter(this.lineData[this.lineIndex - this.skip]);
+          this.isStart = false;
+          $('#playStop').removeClass("fas fa-stop-circle");
+          $('#playStop').addClass("fab fa-youtube");
+        }
+      }
+    }
   }
 }
 
