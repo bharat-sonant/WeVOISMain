@@ -78,10 +78,12 @@ export class SalaryCalculationsComponent implements OnInit {
     let employeeId = this.employeeIds[index];
     console.log(Number(employeeId));
     let designationId = this.employees[employeeId]["GeneralDetails"]["designationId"];
-    if (designationId == "5" || designationId == "6") {
+    let status = this.employees[employeeId]["GeneralDetails"]["status"]
+    if (status == "1" && (designationId == "5" || designationId == "6")) {
       let lastEmpId = this.employeeIds[this.employeeIds.length - 1];
       if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 2) {
         this.activeEmployeeCount++;
+
         this.jsonObject[employeeId] = {
           name: this.employees[employeeId]["GeneralDetails"]["name"],
           empCode: this.employees[employeeId]["GeneralDetails"]["empCode"],
@@ -89,10 +91,8 @@ export class SalaryCalculationsComponent implements OnInit {
           day1: []
         };
 
-
         index++
         this.setEmployeeData(index);
-
 
       }
       else {
@@ -101,10 +101,7 @@ export class SalaryCalculationsComponent implements OnInit {
         this.commonService.saveJsonFile(this.jsonObject, fileName, filePath).then((response) => {
           this.getSalaryList();
         });
-
       }
-
-
     } else {
       index++;
       this.setEmployeeData(index);
@@ -119,24 +116,8 @@ export class SalaryCalculationsComponent implements OnInit {
   
       if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
         this.monthDays = this.todayDate.split("-")[2];
-      }
-  
-      this.db.object("Employees/" + employeeId + "/GeneralDetails/status").valueChanges().subscribe(
-        empStatus => {
-          if (empStatus != null && empStatus == 1) {
-            this.db.object("Employees/" + employeeId + "/GeneralDetails").valueChanges().subscribe(
-              empGeneralDetails => {
-                //if (employeeId <= lastemployeeId && this.activeEmployeeCount <= 30) {
-                if (employeeId <= lastemployeeId) {
-  
-                  if (empGeneralDetails["designationId"] == "5" || empGeneralDetails["designationId"] == "6") {
-                    this.activeEmployeeCount++;
-                    console.log("Details => " + employeeId + " : " + empGeneralDetails["name"]);
-                    // 5 => driver ||  => Helper
-                    this.jsonObject[employeeId] = { name: empGeneralDetails["name"], empCode: empGeneralDetails["empCode"], designation: this.getDesignation(Number(empGeneralDetails["designationId"])), day1: [] };
+      } 
   */
-  // get Day 1 work Details
-
 
   /*
   for (let i = 1; i <= 1; i++) {
