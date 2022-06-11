@@ -239,10 +239,12 @@ export class HouseMarkingComponent {
                 let status = "";
                 let statusClass = "";
                 let isRevisit = "0";
+                let cardNumber="";
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }
                 if (data[index]["cardNumber"] != null) {
+                  cardNumber=data[index]["cardNumber"];
                   status = "Surveyed";
                 }
                 if (data[index]["revisitKey"] != null) {
@@ -272,7 +274,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit,cardNumber:cardNumber });
                   }
                 });
                 let alreadyCard = "";
@@ -364,7 +366,7 @@ export class HouseMarkingComponent {
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"] });
+                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"],cardNumber:this.markerList[i]["cardNumber"] });
               }
             }
             this.markerList = newMarkerList;

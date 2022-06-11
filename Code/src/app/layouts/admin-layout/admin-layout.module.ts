@@ -107,6 +107,7 @@ import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.c
 import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
+import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 
 
 
@@ -220,7 +221,8 @@ import { SalaryCalculationsComponent } from '../../salary-management/salary-calc
     RoutesTrackingComponent,
     SalaryCalculationComponent,
     DailyFuelReportComponent,
-    SalaryCalculationsComponent
+    SalaryCalculationsComponent,
+    EmployeeAttendanceComponent
   ]
 })
 
