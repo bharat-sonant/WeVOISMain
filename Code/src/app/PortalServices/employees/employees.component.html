@@ -3,18 +3,18 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers no-gutters-iner">
             Employees
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+        <div class="col-md-5 card-outer">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-3 text-left">
+                        <div class="col-md-3 text-left roles-input">
                             <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
                                 <option value="all">
                                     All Roles
@@ -25,7 +25,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3 text-left">
+                        <div class="col-md-3 text-left employ-input">
 
                             <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
                                 <option value="all">
@@ -39,12 +39,12 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-md-3 text-left">
+                        <div class="col-md-3 text-left code-input">
 
                             <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
                         </div>
-                        <div class="col-md-3 text-center" style="padding-right:30px!important;font-weight: bold;font-size:16px; ">
-                            {{employeeCountSummary.active}}<br/><span style="font-size:12px; font-weight:normal ;">Active</span>
+                        <div class="col-md-3 text-center text-input-iner active-input">
+                            {{employeeCountSummary.active}}<br/><span class="text-input-iner-span">Active</span>
                         </div>
                     </div>
                 </div>
@@ -55,11 +55,11 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 border-none">
                                                 Name</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 border-none">
                                                 Role</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 border-none">
                                                 Action
                                             </th>
                                         </thead>
@@ -73,8 +73,8 @@
                                                     <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <span [hidden]="data.status!=1" style="cursor: pointer; color:green;" (click)="openModel(contentConfirmation,data.empId,'active')">Active</span>
-                                                    <span [hidden]="data.status==1" style="cursor: pointer; color:red;" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
+                                                    <span [hidden]="data.status!=1" class="green-span" (click)="openModel(contentConfirmation,data.empId,'active')">Active</span>
+                                                    <span [hidden]="data.status==1" class="red-span" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -86,9 +86,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+        <div class="col-md-6 card-outer2">
+            <div class="card card-body-outer">
+                <div id="content" #content class="card-body content-main">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -97,7 +97,7 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -122,7 +122,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="text-align:center;">
+            <div class="modal-body empID-outer">
                 <input id="empID" type="hidden" value="0" />
                 <div class="wrap-input-effects" required>
                     <select id="ddlDesignationUpdate" class="input-green">
@@ -151,7 +151,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="text-align:center;">
+            <div class="modal-body empIDActive-outer">
                 <input id="empIDActive" type="hidden" value="0" />
                 <input id="empStatus" type="hidden" value="0" />
                 <input type="button" class="btn btn-success submit-btn" value="CONFIRM" (click)="updateEmployeeStatus();" />
