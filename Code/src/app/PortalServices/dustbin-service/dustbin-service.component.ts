@@ -116,7 +116,7 @@ export class DustbinServiceComponent implements OnInit {
       return;
     }
     for (let i = 0; i < this.dustbinStorageList.length; i++) {
-      if (this.dustbinStorageList[i]["zone"] == this.selectedZone) {
+      if (this.dustbinStorageList[i]["zone"] == this.selectedZone && this.dustbinStorageList[i]["isDisabled"]!="yes") {
         this.dustbinList.push({ dustbin: this.dustbinStorageList[i]["dustbin"], address: this.dustbinStorageList[i]["address"] });
       }
     }

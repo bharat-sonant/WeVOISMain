@@ -100,8 +100,7 @@ import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.c
 import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
-
-
+import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -219,6 +218,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/salary-calculation', component: SalaryCalculationComponent },
     { path: 'sikar/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'sikar/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'sikar/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -326,6 +326,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'sikar/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'sikar/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'sikar/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
 
     //jaipur-greater
@@ -433,6 +434,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaipur-greater/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaipur-greater/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur-greater/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -539,6 +541,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaipur-greater/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaipur-greater/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur-greater/:id/employee-attendance', component: EmployeeAttendanceComponent },
     
 
     //reengus
@@ -647,6 +650,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/salary-calculation', component: SalaryCalculationComponent },
     { path: 'reengus/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'reengus/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'reengus/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
@@ -754,6 +758,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'reengus/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'reengus/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'reengus/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -861,6 +866,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/salary-calculation', component: SalaryCalculationComponent },
     { path: 'shahpura/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'shahpura/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'shahpura/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -968,6 +974,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'shahpura/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'shahpura/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'shahpura/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1075,6 +1082,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/salary-calculation', component: SalaryCalculationComponent },
     { path: 'test/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'test/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'test/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1182,6 +1190,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'test/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'test/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'test/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1289,6 +1298,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaipur-office/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaipur-office/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur-office/employee-attendance', component: EmployeeAttendanceComponent },
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id1/maps', component: MapsComponent },
@@ -1395,6 +1405,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaipur-office/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaipur-office/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur-office/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
     
 
@@ -1504,6 +1515,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/salary-calculation', component: SalaryCalculationComponent },
     { path: 'kishangarh/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'kishangarh/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'kishangarh/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1611,6 +1623,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'kishangarh/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'kishangarh/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'kishangarh/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
 
 
@@ -1721,6 +1734,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/salary-calculation', component: SalaryCalculationComponent },
     { path: 'niwai/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'niwai/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'niwai/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1828,6 +1842,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'niwai/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'niwai/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'niwai/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
 
 
@@ -1937,6 +1952,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaisalmer/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaisalmer/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaisalmer/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2044,6 +2060,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'jaisalmer/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'jaisalmer/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaisalmer/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -2151,6 +2168,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/salary-calculation', component: SalaryCalculationComponent },
     { path: 'churu/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'churu/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'churu/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'churu/:id/home', component: HomeComponent },
@@ -2258,6 +2276,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'churu/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'churu/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'churu/:id/employee-attendance', component: EmployeeAttendanceComponent },
 
 
 
@@ -2367,6 +2386,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/salary-calculation', component: SalaryCalculationComponent },
     { path: 'behror/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'behror/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'behror/employee-attendance', component: EmployeeAttendanceComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2474,4 +2494,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/salary-calculation', component: SalaryCalculationComponent },
     { path: 'behror/:id/daily-fuel-report', component: DailyFuelReportComponent },
     { path: 'behror/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'behror/:id/employee-attendance', component: EmployeeAttendanceComponent },
 ]; 

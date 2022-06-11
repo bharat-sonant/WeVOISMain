@@ -341,9 +341,7 @@ export class LineCardMappingComponent {
         });
         isSelected = true;
       } else {
-        this.selectedCardDetails = this.selectedCardDetails.filter(
-          (item) => item !== lineData
-        );
+        this.selectedCardDetails = this.selectedCardDetails.filter((item) => item !== lineData);
         isSelected = false;
       }
       this.setMarkerAsSelected(marker, isSelected);

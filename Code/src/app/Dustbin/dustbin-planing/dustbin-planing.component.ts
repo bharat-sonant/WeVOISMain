@@ -157,7 +157,7 @@ export class DustbinPlaningComponent implements OnInit {
     if (this.selectedZone != "0") {
       setTimeout(() => {
         $(this.divLoader).hide();
-      }, 12000);
+      }, 18000);
     }
   }
 
