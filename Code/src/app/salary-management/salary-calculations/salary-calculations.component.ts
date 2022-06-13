@@ -60,6 +60,8 @@ export class SalaryCalculationsComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
   }
 
+
+
   calculate() {
     $(this.divLoader).show();
     this.activeEmployeeCount = 0;
@@ -81,16 +83,50 @@ export class SalaryCalculationsComponent implements OnInit {
     let status = this.employees[employeeId]["GeneralDetails"]["status"]
     if (status == "1" && (designationId == "5" || designationId == "6")) {
       let lastEmpId = this.employeeIds[this.employeeIds.length - 1];
-      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 2) {
+      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 150) {
         this.activeEmployeeCount++;
 
         this.jsonObject[employeeId] = {
           name: this.employees[employeeId]["GeneralDetails"]["name"],
           empCode: this.employees[employeeId]["GeneralDetails"]["empCode"],
           designation: this.employees[employeeId]["GeneralDetails"]["designation"],
-          day1: []
+          day1: [],
+          day2: [],
+          day3: [],
+          day4: []
         };
 
+
+        this.jsonObject[employeeId]["day1"].push({
+          ward: "1",
+          wages: 100,
+          percentage: 50
+        });
+
+        this.jsonObject[employeeId]["day1"].push({
+          ward: "2",
+          wages: 50,
+          percentage: 20
+        });
+
+        this.jsonObject[employeeId]["day2"].push({
+          ward: "2",
+          wages: 20,
+          percentage: 2
+        });
+
+        this.jsonObject[employeeId]["day3"].push({
+          ward: "2",
+          wages: 50,
+          percentage: 2
+        });
+
+        this.jsonObject[employeeId]["day4"].push({
+          ward: "2",
+          wages: 20,
+          percentage: 2
+        });
+ 
         index++
         this.setEmployeeData(index);
 
@@ -116,7 +152,7 @@ export class SalaryCalculationsComponent implements OnInit {
   
       if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
         this.monthDays = this.todayDate.split("-")[2];
-      } 
+      }
   */
 
   /*
@@ -187,6 +223,7 @@ export class SalaryCalculationsComponent implements OnInit {
         */
 
   getSalaryList() {
+    $(this.divLoader).show();
     this.salaryList = [];
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let salaryInstance = this.httpService.get(path).subscribe(data => {
@@ -195,15 +232,52 @@ export class SalaryCalculationsComponent implements OnInit {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let employeeId = keyArray[i];
-          let detail = data[employeeId]["day1"];
-          let totalWeges = 0;
-          for (let i = 0; i < detail.length; i++) {
-            if (detail[i]["wages"] != null) {
-              totalWeges += Number(detail[i]["wages"]);
+          let detail1 = data[employeeId]["day1"];
+          let totalWeges1 = 0;
+          for (let i = 0; i < detail1.length; i++) {
+            if (detail1[i]["wages"] != null) {
+              totalWeges1 += Number(detail1[i]["wages"]);
             }
           }
 
-          this.salaryList.push({ employeeId: employeeId, name: data[employeeId]["name"], empCode: data[employeeId]["empCode"], designation: data[employeeId]["designation"], day1: data[employeeId]["day1"], totalDaySalary1: totalWeges });
+          let detail2 = data[employeeId]["day2"];
+          let totalWeges2 = 0;
+          for (let i = 0; i < detail2.length; i++) {
+            if (detail2[i]["wages"] != null) {
+              totalWeges2 += Number(detail2[i]["wages"]);
+            }
+          }
+
+          let detail3 = data[employeeId]["day3"];
+          let totalWeges3 = 0;
+          for (let i = 0; i < detail3.length; i++) {
+            if (detail3[i]["wages"] != null) {
+              totalWeges3 += Number(detail3[i]["wages"]);
+            }
+          }
+
+          let detail4 = data[employeeId]["day4"];
+          let totalWeges4 = 0;
+          for (let i = 0; i < detail4.length; i++) {
+            if (detail4[i]["wages"] != null) {
+              totalWeges4 += Number(detail4[i]["wages"]);
+            }
+          }
+
+          this.salaryList.push({ 
+            employeeId: employeeId, 
+            name: data[employeeId]["name"], 
+            empCode: data[employeeId]["empCode"], 
+            designation: data[employeeId]["designation"], 
+            day1: data[employeeId]["day1"], 
+            day2: data[employeeId]["day2"], 
+            day3: data[employeeId]["day3"], 
+            day4: data[employeeId]["day4"], 
+            totalDaySalary1: totalWeges1 ,
+            totalDaySalary2: totalWeges2,
+            totalDaySalary3: totalWeges3,
+            totalDaySalary4: totalWeges4
+          });
         }
         $(this.divLoader).hide();
       }

@@ -263,7 +263,7 @@ export class DustbinWardMappingComponent implements OnInit {
       for (let i = 0; i < this.dustbinList.length; i++) {
         if (this.dustbinList[i]["zone"] == "0") {
           this.setDustbinMarker(this.dustbinList[i]["dustbin"], this.dustbinList[i]["lineNo"], this.dustbinList[i]["lat"], this.dustbinList[i]["lng"], this.dustbinList[i]["markerUrl"], this.dustbinList[i]["type"]);
-        }
+        } 
       }
     }
   }
