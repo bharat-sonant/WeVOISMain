@@ -14,12 +14,17 @@
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-3 text-left">
-                            <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value);">
+                        <div class="col-md-4 text-left">
+                            <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
+                                << </button>
+                            <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value,'current')">
+                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                >>
+                              </button>
                         </div>
 
-                        <div class="col-md-3 text-left">
-                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData($event.target.value)">
+                        <div class="col-md-2 text-left">
+                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData()">
                                 <option value="0">
                                     All
                                 </option>
@@ -32,7 +37,8 @@
                             </select>
 
                         </div>
-                        <div class="col-md-3 text-left">
+                        <div class="col-md-3 text-left check-fieldExecutive">
+                            <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"> &nbsp;Field Executive
 
                         </div>
                         <div class="col-md-3 text-center" style="padding-right:30px!important;font-weight: bold;font-size:16px; ">

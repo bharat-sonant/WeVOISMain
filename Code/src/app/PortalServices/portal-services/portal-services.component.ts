@@ -58,9 +58,6 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8O" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divKMLtoJSON").show();
         }
-        if (userAccessList[i]["pageId"] == "8P" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divDustbinService").show();
-        }
         if (userAccessList[i]["pageId"] == "8Q" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divWorkPercentage").show();
         }
@@ -70,20 +67,11 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8S" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divSettings").show();
         }
-        if (userAccessList[i]["pageId"] == "8T" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divEmployee").show();
-        }
-        if (userAccessList[i]["pageId"] == "8U" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divSpecialUsers").show();
-        }
         if (userAccessList[i]["pageId"] == "8V" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divDustbinWardMapping").show();
         }
         if (userAccessList[i]["pageId"] == "8W" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divWardLineWeightage").show();
-        }
-        if (userAccessList[i]["pageId"] == "8X" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divDustbinManage").show();
         }
       }
     }
