@@ -16,7 +16,7 @@ import { HouseSearchComponent } from '../../housesearch/housesearch.component';
 import { SignupComponent } from '../../signup/signup.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
-import { LineCardMappingComponent } from '../../line-card-mapping/line-card-mapping.component';
+import { LineCardMappingComponent } from '../../house-survey/line-card-mapping/line-card-mapping.component';
 import { TimeDistanceComponent } from '../../reports/time-distance/time-distance.component';
 import { RealtimeMonitoringComponent } from '../../realtime-monitoring/realtime-monitoring.component';
 import { DustbinMonitoringComponent } from '../../dustbin-monitoring/dustbin-monitoring.component';
@@ -55,7 +55,7 @@ import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summa
 import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
-import { LineMarkerMappingComponent } from '../../PortalServices/line-marker-mapping/line-marker-mapping.component';
+import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mapping/line-marker-mapping.component';
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
