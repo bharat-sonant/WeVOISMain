@@ -605,7 +605,7 @@ export class CommonService {
               resolve(employeeData);
             }
           }
-          
+
         });
       } else {
         resolve(employeeData);
@@ -744,9 +744,12 @@ export class CommonService {
       let designationList = [];
       let list = JSON.parse(JSON.stringify(dataDate));
       for (let i = 1; i < list.length; i++) {
-        let designationId = i;
-        let designation = list[i]["name"];
-        designationList.push({ designationId: designationId, designation: designation });
+        if (list[i] != null) {
+          let designationId = i;
+          let designation = list[i]["name"];
+          designationList.push({ designationId: designationId, designation: designation });
+          designationList = this.transformNumeric(designationList, "designation");
+        }
       }
       localStorage.setItem("designation", JSON.stringify(designationList));
     });
@@ -1582,29 +1585,29 @@ export class CommonService {
       var jsonFile = JSON.stringify(listArray);
       var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
       const path = this.getFireStoreCity() + filePath + fileName;
-  
+
       //const ref = this.storage.ref(path);
       const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
       var byteString;
       // write the bytes of the string to a typed array
-  
+
       byteString = unescape(uri.split(",")[1]);
       var mimeString = uri
         .split(",")[0]
         .split(":")[1]
         .split(";")[0];
-  
+
       var ia = new Uint8Array(byteString.length);
       for (var i = 0; i < byteString.length; i++) {
         ia[i] = byteString.charCodeAt(i);
       }
-  
+
       let blob = new Blob([ia], { type: mimeString });
       const task = ref.put(blob);
       resolve(task);
     });
 
-   
+
   }
 
   saveCommonJsonFile(listArray: any, fileName: any, filePath: any) {
@@ -1748,7 +1751,7 @@ export class CommonService {
           }
         }
         resolve(wardForWeightageList);
-      },error=>{
+      }, error => {
         resolve(wardForWeightageList);
       });
     });
@@ -1776,7 +1779,7 @@ export class CommonService {
     });
   }
 
-  
+
   exportExcel(htmlString: any, fileName: any) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(htmlString, 'text/html');

@@ -21,8 +21,10 @@ export class EmployeeAttendanceComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   selectedDate: any;
+  toDayDate: any;
   txtDate = "#txtDate";
-  ddlTime="#ddlTime";
+  ddlTime = "#ddlTime";
+  chkFieldExecutive = "chkFieldExecutive";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -32,7 +34,8 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.selectedDate = this.commonService.setTodayDate();
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
     this.getSelectedYearMonthName();
     this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
@@ -74,6 +77,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.attendanceList = [];
     for (let i = 0; i < this.allEmployeeList.length; i++) {
       let empId = this.allEmployeeList[i]["empId"];
+      let designationId = this.allEmployeeList[i]["designationId"];
       let dbPath = "Attendance/" + empId + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
       let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
         attendanceData => {
@@ -95,33 +99,54 @@ export class EmployeeAttendanceComponent implements OnInit {
                   outTime = attendanceData["outDetails"]["time"];
                 }
               }
-              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, inTime: inTime, outTime: outTime, inTimestemp });
-              this.attendanceList.push({ empId: empId, name: detail.name, empCode: detail.empCode, inTime: inTime, outTime: outTime, inTimestemp });
+              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, inTimestemp });
             }
           }
           if (i == this.allEmployeeList.length - 1) {
-            $(this.divLoader).hide();
+            setTimeout(() => {
+              this.filterData();
+              $(this.divLoader).hide();              
+            }, 2000);
           }
         }
       );
     }
   }
 
-  setDate(filterVal: any) {
+  setDate(filterVal: any, type: string) {
+    if (type == 'current') {
+      this.selectedDate = filterVal;
+    } else if (type == 'next') {
+      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
+      if (new Date(nextDate) > new Date(this.toDayDate)) {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!")
+        $(this.txtDate).val(this.toDayDate);
+        this.selectedDate = this.toDayDate;
+        return;
+      }
+      this.selectedDate = nextDate;
+    } else if (type == 'previous') {
+      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
+      this.selectedDate = previousDate;
+    }
+    $(this.txtDate).val(this.selectedDate);
     $(this.divLoader).show();
-    this.selectedDate = filterVal;
     this.getSelectedYearMonthName();
     this.getAttendance();
   }
 
-  filterData(filterVal:any) {
+  filterData() {
     this.attendanceList = [];
+    let filterVal = $(this.ddlTime).val();
     if (filterVal == "0") {
       this.attendanceList = this.employeeList;
     }
     else {
       let filterTimestemp = new Date(this.selectedDate + " " + filterVal).getTime();
       this.attendanceList = this.employeeList.filter(item => item.inTimestemp >= filterTimestemp);
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkFieldExecutive)).checked == false) {
+      this.attendanceList = this.attendanceList.filter(item => item.designationId != "25");
     }
   }
 

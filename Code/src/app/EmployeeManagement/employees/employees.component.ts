@@ -158,8 +158,8 @@ export class EmployeesComponent implements OnInit {
   }
 
   getRoles() {
-    let list = this.allEmployeeList.map(item => item.designation)
-      .filter((value, index, self) => self.indexOf(value) === index);
+    this.designationList = [];
+    let list = this.allEmployeeList.map(item => item.designation).filter((value, index, self) => self.indexOf(value) === index);
     for (let i = 0; i < list.length; i++) {
       this.designationList.push({ designation: list[i] });
       this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
@@ -212,25 +212,28 @@ export class EmployeesComponent implements OnInit {
 
   updateDesignation() {
     let empId = $(this.empID).val();
-    let designation = $(this.ddlDesignationUpdate).val();
+    let designationId = $(this.ddlDesignationUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
-      empDetail.designation = designation;
+      empDetail.designationId = designationId;
       let empType = 1;
-      if (designation == "Driver") {
-        designation = "Transportation Executive";
+      if (designationId == "5") {
+        empDetail.designation = "Driver";
         empType = 2;
       }
-      else if (designation == "Helper") {
-        designation = "Service Excecutive ";
+      else if (designationId == "6") {
+        empDetail.designation = "Helper";
         empType = 2;
       }
-      let detail = this.designationUpdateList.find(item => item.designation == designation);
-      if (detail != undefined) {
-        empDetail.designationId = detail.designationId;
-        this.updateDesignationInDatabase(empId, detail.designationId);
+      else {
+        let detail = this.designationUpdateList.find(item => item.designationId == designationId);
+        if (detail != undefined) {
+          empDetail.designation = detail.designation;
+        }
       }
+      this.updateDesignationInDatabase(empId, designationId);
     }
+    this.getRoles();
     this.filterData();
     this.saveJSONData();
     this.closeModel();
@@ -264,7 +267,7 @@ export class EmployeesComponent implements OnInit {
       if (userDetail != undefined) {
         if (userDetail.designation != null) {
           setTimeout(() => {
-            $(this.ddlDesignationUpdate).val(userDetail.designation);
+            $(this.ddlDesignationUpdate).val(userDetail.designationId);
           }, 100);
         }
       }

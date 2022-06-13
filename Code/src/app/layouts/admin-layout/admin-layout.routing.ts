@@ -81,7 +81,7 @@ import { SalaryHoldingManagementComponent } from '../../salary-management/salary
 import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
 import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
-import { DustbinServiceComponent } from '../../PortalServices/dustbin-service/dustbin-service.component';
+import { DustbinServiceComponent } from '../../Dustbin/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
@@ -90,12 +90,12 @@ import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-lin
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
-import { EmployeesComponent } from '../../PortalServices/employees/employees.component';
-import { SpecialUsersComponent } from '../../PortalServices/special-users/special-users.component';
+import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
+import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
 import { DustbinWardMappingComponent } from '../../PortalServices/dustbin-ward-mapping/dustbin-ward-mapping.component';
 import { LineWeightageComponent } from '../../PortalServices/line-weightage/line-weightage.component';
-import { DustbinManageComponent } from '../../PortalServices/dustbin-manage/dustbin-manage.component';
+import { DustbinManageComponent } from '../../Dustbin/dustbin-manage/dustbin-manage.component';
 import { RoutesTrackingComponent } from '../../routes-tracking/routes-tracking.component';
 import { SalaryCalculationComponent } from '../../salary-management/salary-calculation/salary-calculation.component';
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';

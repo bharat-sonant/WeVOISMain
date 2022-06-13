@@ -656,13 +656,15 @@ button:focus-visible {
     background-color: #ffffff;
     // box-shadow: 0 1px 5px 1px #80bd7b;
     box-shadow: 0 1px 5px 1px #0000005e;
-    position: absolute;
-    right: -1px;
-    top: 150px;
+    position: fixed;
+    right: 15px;
+    top: 110px;
     border: 1px solid #80bd7b;
     justify-content: center;
     align-items: center;
     padding-left: 10px;
+    transition: 0.3s;
+    z-index: 100;
 }
 
 .house-card-box {
@@ -1225,6 +1227,32 @@ button:focus {
     width: 100% !important;
 }
 
+.margintop{
+    width: 230px;
+    min-height: 50px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 5px 1px #0000005e;
+    position: fixed;
+    right: 15px;
+    top: 367px;
+    border: 1px solid #80bd7b;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    transition: 0.3s;
+
+    
+   
+}
+#popup2{
+    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+    height: 115px !important;
+}
+
+
+
+
 @media(min-width:270px) and (max-width:576px) {
     .blanck-box2 {
         padding-top: 0px !important;
@@ -1233,7 +1261,7 @@ button:focus {
         height: unset !important;
     }
     .house-card-box {
-        top: 200px !important;
+        top: 226px !important;
     }
     .float-first {
         width: 50% !important;
@@ -1255,29 +1283,36 @@ button:focus {
         justify-content: flex-end;
     }
     .addclass {
-        display: block;
+       opacity: 1 !important;
+       transition: 0.7s;
     }
     .display {
-        display: none !important;
+        opacity: 0 !important;
+        transition: 0.7s
     }
-    .display1 {
-        width: 20px !important;
+    .display1{
+        width: 55px !important;
+        height: 55px;
         color: #fff !important;
         float: right;
         font-size: 20px;
         display: block;
+        padding: 10px;
+        text-align: end;
+        z-index: 1111;
     }
     .background-black {
-        position: absolute;
-        top: 80px;
+        position: fixed;
+        top: 106px;
         z-index: 100;
-        background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+       
         width: 230px;
         right: 15px !important;
     }
     .caret-select {
         width: 83% !important;
     }
+    
 }
 
 @media(min-width:760px) and (max-width:1020px) {
@@ -1285,3 +1320,9 @@ button:focus {
         width: 100% !important;
     }
 }
+@media(min-width:577px){
+    .image-box{
+        top: 220px !important;
+    }
+}
+

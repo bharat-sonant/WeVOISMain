@@ -102,6 +102,10 @@
     font-size: 12px;
 }
 
+.check-fieldExecutive {
+    padding-top: 25px;
+}
+
 .filter-select {
     margin-top: 10px;
     margin-right: 2px !important;
@@ -1272,6 +1276,36 @@ input {
     font-weight: bold;
 }
 
+.btn-hvr:hover {
+    background: #726f6f!important;
+}
+
+.arrow-btn {
+    background-color: #888;
+    border-color: #888;
+    font-size: 12px;
+    width: 35px;
+    margin-right: 8px;
+    padding: 8px 8px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 9px !important;
+}
+
+.arrow-btn2 {
+    background-color: #888;
+    border-color: #888;
+    font-size: 12px;
+    padding: 8px 8px;
+    color: #fff;
+    width: 35px;
+    margin-left: 8px!important;
+    margin-right: 10px!important;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .filter-input {
     font-size: 12px;
     margin-top: 8px;
@@ -1289,7 +1323,7 @@ input {
     font-size: 12px;
     margin-top: 8px;
     border-radius: 2px;
-    width: 100%;
+    width: 100px;
     border: 1px solid lightgray!important;
     height: 38px;
 }
