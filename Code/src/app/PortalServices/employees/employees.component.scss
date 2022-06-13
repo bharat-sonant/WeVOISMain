@@ -754,6 +754,7 @@ textarea:focus-visible {
     height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
+    overflow-x: scroll
 }
 
 .table-scroll {
@@ -1230,7 +1231,7 @@ label {
 .table-line {
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
-    margin-bottom: 25px!important;
+    margin-bottom: 45px!important;
 }
 
 .br-1 {
@@ -1278,7 +1279,7 @@ input {
     border-radius: 2px;
     width: 100%;
     border: 1px solid lightgray!important;
-    height: 38px;
+    height: 50px;
 }
 
 .filter-input:hover {
@@ -1291,7 +1292,7 @@ input {
     border-radius: 2px;
     width: 100%;
     border: 1px solid lightgray!important;
-    height: 38px;
+    height: 50px;
 }
 
 .text-input:hover {
@@ -1356,9 +1357,7 @@ input {
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+    
     .main-content {
         margin-top: 10px!important;
     }
@@ -1411,7 +1410,7 @@ input {
         margin-top: 10px;
     }
     .custom-header {
-        height: 250px;
+        height: 215px;
     }
     .main-heading {
         text-align: center;
@@ -1425,7 +1424,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid transparent!important;
+       
     }
     .mob-40 {
         padding-left: 40px;
@@ -1459,7 +1458,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+      
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1476,15 +1475,31 @@ input {
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width:321px) and (max-width: 576px) {
+    .card-body{
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
-    .main-content {
-        margin-top: 10px!important;
-    }
+   .roles-input{
+       max-width: 56%;
+   }
+   .employ-input{
+       max-width: 44%;
+       margin-left: -15px;
+   }
+   .code-input{
+    max-width: 56%;
+   }
+   .active-input{
+     max-width: 38%;
+     margin-left: 0px;
+     margin-top: 8px !important;
+     border: 1px solid lightgray !important;
+   }
+   
     .navbar a {
         color: #FFFFFF;
         font-weight: bold;
@@ -1533,9 +1548,7 @@ input {
     .mb-home {
         margin-top: 10px;
     }
-    .custom-header {
-        height: 200px;
-    }
+    
     .main-heading {
         text-align: center;
         padding-right: 30px;
@@ -1548,7 +1561,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid transparent!important;
+        
     }
     .mob-40 {
         padding-left: 40px;
@@ -1578,7 +1591,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+      
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1590,6 +1603,10 @@ input {
         /* Remove scrollbar space */
         background: transparent;
         /* Optional: just make scrollbar invisible */
+    }
+    
+    .filter-input{
+        margin-top: 0px !important;
     }
 }
 
@@ -1633,7 +1650,7 @@ input {
     .main-headers {
         text-align: center;
         margin-top: 6px;
-        font-size: 10px;
+        font-size: 18px;
     }
     .main-content {
         background: #f1f1f1!important;
@@ -1853,3 +1870,317 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+.active-input{
+    border: 1px solid lightgray !important;
+}
+
+
+
+
+
+
+
+
+
+
+.no-gutters-iner{
+    text-align: center;
+}
+.card-outer{
+    padding-left: 0px;
+    padding-right:7px;
+}
+.custom-header-outer{
+    margin-top:-6px;  
+    height: 88vh!important
+}
+.text-input-iner{
+    padding-right:15px !important;
+    font-weight: bold;
+    font-size:16px;
+}
+.text-input-iner-span{
+    font-size:12px; 
+    font-weight:normal ;
+}
+.border-none{
+    border:none!important;
+}
+.green-span{
+    cursor: pointer; 
+    color:green;
+}
+.red-span{
+    cursor: pointer; 
+    color:red;
+}
+.card-outer2{
+    padding-left: 7px;
+    padding-right:0px;
+}
+.card-body-outer{
+    margin-top:-6px; 
+    height: 88vh!important;
+    overflow: hidden; 
+    display: none;
+}
+.content-main{
+    padding: 3px 11px 15px 0px; 
+    font-size: 10px!important;
+}
+.form-group-outer{
+    padding-top: 20vh; 
+    display: none;
+}
+.empID-outer{
+    text-align:center;
+}
+.empIDActive-outer{
+    text-align:center;
+}
+
+
+@media (min-width:270px) and (max-width: 282px){
+    .table-one{
+        height: calc(55vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+        margin-top: -35px !important;
+    }
+    .text-input-iner{
+    margin-top: 5px !important
+}
+    .col-md-3{
+        padding-right: 25px !important;
+    }
+    .card-body{
+       
+        margin-top: 10px;
+    }
+    .custom-header{
+         height:unset !important
+    }
+    .active-input{
+        width: 84% !important;
+        margin-left: 15px !important; 
+        margin-top: 8px !important;
+        
+    }
+}
+@media (min-width:359px) and (max-width: 380px){
+    .table-one{
+        height: calc(68vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .active-input{
+        max-width: 35% !important; 
+        
+    }
+}
+@media (min-width:381px) and (max-width: 399px){
+    .table-one{
+        height: calc(58vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .active-input{
+        max-width: 36% !important; 
+        
+    }
+}
+@media (min-width:400px) and (max-width: 420px){
+    .table-one{
+        height: calc(56vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .active-input{
+        max-width: 36% !important; 
+        
+    }
+}
+@media (min-width:500px) and (max-width: 545px){
+    
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .active-input{
+        max-width: 38%;
+        
+    }
+    .table-one{
+        height: calc(72vh);
+      
+    }
+}
+@media (min-width:770px) and (max-width: 821px){
+    .table-one{
+        height: calc(43vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .roles-input{
+        min-width: 50% !important;
+    }
+    .employ-input{
+        min-width: 40% !important;
+    }
+    .code-input{
+     min-width: 50% !important;
+    }
+    .active-input{
+        min-width: 37% !important;
+        margin-top: 8px;
+        margin-left: 10px;
+    }
+    .card-outer{
+       
+        min-width: 350px;
+    }
+    .col-md-3{
+        padding-right: 0;
+        padding-left: 10px !important
+    }
+}
+
+@media (min-width:600px) and (max-width: 769px){
+    .table-one{
+        height: calc(50vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .roles-input{
+        min-width: 50% !important;
+    }
+    .employ-input{
+        min-width: 40% !important;
+    }
+    .code-input{
+     min-width: 50% !important;
+    }
+    .active-input{
+        min-width: 37% !important;
+        margin-top: 8px;
+        margin-left: 10px;
+    }
+    .card-outer{
+       
+        min-width: 350px;
+    }
+    .col-md-3{
+        padding-right: 0;
+        padding-left: 10px !important
+    }
+
+}
+@media (min-width:900px) and (max-width: 915px){
+    .table-one{
+        height: calc(38vh);
+      
+    }
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .roles-input{
+        min-width: 50% !important;
+    }
+    .employ-input{
+        min-width: 40% !important;
+    }
+    .code-input{
+     min-width: 50% !important;
+    }
+    .active-input{
+        min-width: 37% !important;
+        margin-top: 8px;
+        margin-left: 10px;
+    }
+    .col-md-3{
+        padding-right: 0;
+        padding-left: 10px !important
+    }
+    
+}
+
+@media (min-width:1000px) and (max-width: 1025px){
+    .main-content{
+        padding-bottom: 0px !important;
+    }
+    .roles-input{
+        min-width: 50% !important;
+    }
+    .employ-input{
+        min-width: 40% !important;
+    }
+    .code-input{
+     min-width: 50% !important;
+    }
+    .active-input{
+        min-width: 37% !important;
+        margin-top: 8px;
+        margin-left: 10px;
+    }
+    .col-md-3{
+        padding-right: 0;
+        padding-left: 10px !important
+    }
+    .main-headers{
+       
+        font-size: 20px;
+    }
+}
+@media (min-width:1275px) and (max-width: 1300px){
+    .card-outer{
+      min-width: 650px !important
+    }
+    .table-one{
+        height: calc(70vh);
+      
+    }
+   
+    .active-input{
+      
+        margin-top: 8px;
+        height: 50px;
+        max-width: 21% !important;
+        margin-left: 8px
+      
+    }
+    .col-md-3{
+        padding-left: 8px;
+        padding-right: 0px 
+    }
+}
+
+@media (min-width:1301px){
+    .active-input{
+      
+        margin-top: 8px;
+        height: 50px;
+        max-width: 21% !important;
+        margin-left: 8px
+      
+    }
+    .col-md-3{
+        padding-left: 8px;
+        padding-right: 0px 
+    }
+}
+
+
+
+
+
