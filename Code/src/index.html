@@ -31,12 +31,17 @@
 <script>
   let show=()=>{
     let a = document.getElementById('popup').attributes[1].value;
+     let c= document.getElementById('divCardDetail').attributes[1].value;
+    
    
    if(a=='display'){
       let a = document.getElementById('popup').attributes[1].value='addclass';
+      let c= document.getElementById('divCardDetail').attributes[1].value='margintop';
      }
     else{
       let a = document.getElementById('popup').attributes[1].value='display';
+      let c= document.getElementById('divCardDetail').attributes[1].value='image-box';
+
      
     }
 
@@ -45,6 +50,7 @@
    
    if(a=='display'){
       let b = document.getElementById('popup2').attributes[1].value='addclass';
+     
      }
     else{
       let b = document.getElementById('popup2').attributes[1].value='display';
