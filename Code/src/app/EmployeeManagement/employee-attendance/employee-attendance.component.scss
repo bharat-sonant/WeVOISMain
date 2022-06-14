@@ -1290,7 +1290,7 @@ input {
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 9px !important;
+    margin-left: 4px !important;
 }
 
 .arrow-btn2 {
@@ -1459,7 +1459,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid transparent!important;
+        border: 1px solid lightgray !important;
     }
     .mob-40 {
         padding-left: 40px;
@@ -1493,7 +1493,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+       
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1510,14 +1510,44 @@ input {
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width:321px) and (max-width: 576px) {
+    .date-box{
+        max-width: 60%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        max-width: 40% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 60% !important;
+        text-align: center !important;
+      
+    }
+    
+    .export-main{
+        max-width: 40% !important;
+        margin-top: 7px !important;
+    }
+    .export-span{
+       float: unset !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .check-fieldExecutive{
+        padding-top: 37px;
+    }
+    
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+   
     .main-content {
-        margin-top: 10px!important;
+        margin-top: -35px!important;
     }
     .navbar a {
         color: #FFFFFF;
@@ -1582,7 +1612,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid transparent!important;
+        border: 1px solid lightgray !important;
     }
     .mob-40 {
         padding-left: 40px;
@@ -1592,7 +1622,13 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-        padding-bottom: 100px!important;
+        
+    }
+    .main-headers{
+       
+        margin-top: 0px;
+        font-size: 15px;
+      
     }
     .mob-10 {
         margin-top: 10px!important;
@@ -1612,7 +1648,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+      
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1625,10 +1661,12 @@ input {
         background: transparent;
         /* Optional: just make scrollbar invisible */
     }
+
 }
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) and (max-width: 991.98px) {
+   
     .pad-mob-b-10 {
         margin-bottom: 10px!important;
     }
@@ -1685,6 +1723,7 @@ input {
     .ipad-pl-40 {
         padding-left: 40px!important
     }
+
 }
 
 // Large devices (desktops, 992px and up)
@@ -1887,3 +1926,357 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.Employees-heading{
+    text-align: center;
+}
+.card-outer{
+    padding-left: 0px;
+    padding-right:7px;
+}
+.custom-header-outer{
+    margin-top:-6px;  
+    height: 88vh!important
+}
+.export-main{
+    padding-right:30px!important;
+    font-weight: bold;
+    font-size:16px;
+}
+.export-span{
+    float: right; 
+    text-align: center; 
+    font-size: 10px; 
+  
+}
+.export-icon{
+    cursor:pointer; 
+    color:green;  
+    font-size: 24px;
+}
+.table-heading1{
+    border:none!important;
+}
+.table-heading2{
+    border:none!important;
+}
+.table-heading3{
+    border:none!important;
+}
+.card-main{
+    padding-left: 7px;
+    padding-right:0px;
+}
+.card-body-outer{
+    margin-top:-6px; 
+    height: 88vh!important;
+    overflow: hidden; 
+    display: none;
+}
+.card-body2{
+    padding: 3px 11px 15px 0px; 
+    font-size: 10px!important;
+}
+.form-group-outer{
+    padding-top: 20vh; 
+    display: none;
+}
+.date-box{
+    min-width: 34%;
+    padding-right: 0px;
+    padding-left: 0px  ;
+   
+}
+.all-box{
+    padding-left: 0px ;
+    min-width: 22% ;
+}
+.field-box{
+    padding-left: 0 ;
+    max-width: 21% ;
+    padding-right: 0px ;
+}
+
+.export-main{
+    max-width: 22% ;
+    margin-top: 7px;
+}
+
+
+
+
+
+
+@media (max-width:320px){
+    .main-headers{
+        text-align: center;
+        margin-top: 5px;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+    .date-box{
+        max-width: 100%;
+      
+       
+       
+    }
+    .all-box{
+      
+        max-width: 100% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 60% !important;
+        text-align: center !important;
+     
+      
+    }
+    
+    .export-main{
+        max-width: 40% !important;
+        margin-top: 17px !important;
+    }
+    .filter-input{
+      
+        width: 95%;
+        border: 1px solid lightgray !important;
+       margin-left: 6px;
+    }
+    .header{
+        display: block !important
+    }
+    .main-content{
+        margin-top: -35px !important;
+        padding-bottom: 0px !important
+    }
+    .export-span-iner{
+        display: none !important;
+    }
+    .text-input{
+        width: 145px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    
+}
+
+
+@media (min-width:321px) and (max-width: 576px) {
+    .date-box{
+        max-width: 60%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        max-width: 39% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 60% !important;
+        text-align: center !important;
+      
+    }
+    
+    .export-main{
+        max-width: 40% !important;
+        margin-top: 7px !important;
+    }
+    .export-span{
+       float: unset !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .check-fieldExecutive{
+        padding-top: 37px;
+    }
+    
+   
+    .main-content {
+        margin-top: -35px!important;
+    }
+
+}
+
+@media (min-width: 350px) and (max-width: 375px){
+    .table-one{
+        height: calc(65vh);
+       
+    }
+}
+@media (min-width: 385px) and (max-width: 395px){
+    .table-one{
+        height: calc(57vh);
+       
+    }
+}
+@media (min-width: 400px) and (max-width: 420px){
+    .table-one{
+        height: calc(54vh);
+       
+    }
+}
+@media (min-width:539px) and (max-width: 576px){
+    .date-box{
+        max-width: 50%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        max-width: 50% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 50% !important;
+        text-align: center !important;
+      
+    }
+    .filter-input{
+        width:80% !important;
+    }
+    
+    .export-main{
+        max-width: 50% !important;
+        margin-top: 10px !important;
+        padding-right: 0px !important;
+    }
+    .export-span{
+       float: unset !important;
+    }
+    .table-one{
+        height: calc(68vh);
+       
+    }
+}
+
+
+@media (min-width: 766px) and (max-width: 991.98px) {
+    .date-box{
+        min-width: 60%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        min-width: 39% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 60% !important;
+        text-align: center !important;
+      
+    }
+    
+    .export-main{
+        min-width: 40% !important;
+        margin-top: 7px !important;
+    }
+    .export-span{
+       float: unset !important;
+    }
+    .check-fieldExecutive{
+        padding-top: 37px;
+    }
+    .card-outer{
+        min-width: 330px !important
+    }
+    .main-headers{
+      
+        font-size: 18px; 
+        margin-top: 0;
+    }
+
+}
+@media (min-width: 765px) and (max-width: 770px){
+    .table-one{
+        height: calc(52vh);
+       
+    }
+}
+@media (min-width: 819px) and (max-width:910px){
+    .table-one{
+        height: calc(45vh);
+       
+    }
+}
+
+@media (min-width: 911px) and (max-width:1020px){
+    .table-one{
+        height: calc(37vh);
+       
+    }
+}
+@media (min-width: 992px) and (max-width: 1300px){
+    .date-box{
+        min-width: 55%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        min-width: 40% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 55% !important;
+        text-align: center !important;
+
+      
+    }
+    .export-span{
+       
+        text-align: center;
+        font-size: 10px;
+        float: unset;
+    }
+    
+    .export-main{
+        min-width: 40% !important;
+        margin-top: 15px !important;
+    }
+    .check-fieldExecutive{
+        padding-top: 43px;
+    }
+    .main-content{
+       
+        padding-bottom: 0px !important
+    }
+    .main-headers{
+       
+        font-size: 18px;
+    }
+    
+}
+
+@media (min-width: 1270px){
+    .table-one{
+        height: calc(60vh);
+       
+    }
+}
+
