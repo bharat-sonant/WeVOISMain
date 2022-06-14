@@ -27,18 +27,12 @@ export class PortalServicesComponent implements OnInit {
   getUserAccess() {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
-      for (let i = 0; i < userAccessList.length; i++) {
-        if (userAccessList[i]["pageId"] == "8A" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divLineCard").show();
-        }
+      for (let i = 0; i < userAccessList.length; i++) {        
         if (userAccessList[i]["pageId"] == "8D" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divTaskMasters").show();
         }
         if (userAccessList[i]["pageId"] == "8E" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divMapReview").show();
-        }
-        if (userAccessList[i]["pageId"] == "8F" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divLineMarker").show();
         }
         if (userAccessList[i]["pageId"] == "8G" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divVTSRoute").show();

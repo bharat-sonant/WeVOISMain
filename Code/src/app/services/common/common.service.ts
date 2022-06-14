@@ -166,8 +166,8 @@ export class CommonService {
     else if (cityName == "jaisalmer") {
       latLng.push({ lat: 26.9183907, lng: 70.9052773 });
     }
-    else if (cityName == "churu") {
-      latLng.push({ lat: 28.2928367, lng: 74.9664406 });
+    else if (cityName == "salasar") {
+      latLng.push({ lat: 27.7186438, lng: 74.7206506 });
     }
     else if (cityName == "behror") {
       latLng.push({ lat: 27.8952227, lng: 76.28591559 });
@@ -1606,8 +1606,6 @@ export class CommonService {
       const task = ref.put(blob);
       resolve(task);
     });
-
-
   }
 
   saveCommonJsonFile(listArray: any, fileName: any, filePath: any) {
@@ -1648,13 +1646,13 @@ export class CommonService {
       cardPrefix = "SHAH"
     }
     else if (cityName == "niwai") {
-      cardPrefix = "NIW"
+      cardPrefix = "NIWA"
     }
     else if (cityName == "jaisalmer") {
-      cardPrefix = "JAI"
+      cardPrefix = "JAIS"
     }
-    else if (cityName == "churu") {
-      cardPrefix = "CHU"
+    else if (cityName == "salasar") {
+      cardPrefix = "SALA"
     }
 
     return cardPrefix;

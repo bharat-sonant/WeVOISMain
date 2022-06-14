@@ -124,17 +124,17 @@ export class FirebaseService {
       databaseName="dtdjaisalmer";
       databaseURL= "https://dtdjaisalmer.firebaseio.com";
     }
-    else if (city == 'churu') {
+    else if (city == 'salasar') {
       this.fireBase = {
         apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
         authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdchuru.firebaseio.com",
+        databaseURL: "https://dtdsalasar.firebaseio.com",
         projectId: "dtdnavigator",
         storageBucket: "dtdnavigator.appspot.com",
         messagingSenderId: "381118272786",
       };
-      databaseName="dtdchuru";
-      databaseURL= "https://dtdchuru.firebaseio.com";
+      databaseName="dtdsalasar";
+      databaseURL= "https://dtdsalasar.firebaseio.com";
     }
     else if (city == 'behror') {
       this.fireBase = {

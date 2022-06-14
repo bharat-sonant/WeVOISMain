@@ -1,43 +1,42 @@
 <div class="logo">
-  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
-    <div class="logo-img">
-      <img src="./assets/img/wevois-logo-white.png" style="display: none;" />
-    </div>
-  </a><br>
-  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml" style="display: none;">
+    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
+        <div class="logo-img">
+            <img src="./assets/img/wevois-logo-white.png" style="display: none;" />
+        </div>
+    </a><br>
+    <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml" style="display: none;">
     WeVOIS
   </a>
 </div>
 
 <!------Shubham 1 Style Start---------->
 <div class="sidebar-wrapper">
-  <ul class="nav">
-    <div id="liCity" class="seprater" style="display: none;">
-      <li (click)="openCityModel(contentCity)" style="cursor: pointer;">
-        <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px;">
-        <p style="margin-top: -27px; margin-left: 45px; color: #fff; text-transform: uppercase; font-size: 12px;"><span
-            id="cityName">Sikar</span> <i class="fas fa-caret-down"></i></p>
-      </li>
-    </div>
-    <li routerLinkActive="active" *ngFor="let usr of accessList">
-      <a [routerLink]="[usr.url]" (click)="getPage(usr.url)">
-        <i class="{{usr.img}}"></i>
-        <p>{{usr.name}}</p>
-      </a>
-    </li>
-    <li>
-      <a [routerLink]="[userDetail.changePasswordLink]">
-        <i class="now-ui-icons users_single-02"></i>
-        <p>Change Password</p>
-      </a>
-    </li>
-    <li>
-      <a href="/logout">
-        <i class="fas fa-sign-out-alt"></i>
-        <p>Log Out</p>
-      </a>
-    </li>
-  </ul>
+    <ul class="nav">
+        <div id="liCity" class="seprater" style="display: none;">
+            <li (click)="openCityModel(contentCity)" style="cursor: pointer;">
+                <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px;">
+                <p style="margin-top: -27px; margin-left: 45px; color: #fff; text-transform: uppercase; font-size: 12px;"><span id="cityName">Sikar</span> <i class="fas fa-caret-down"></i></p>
+            </li>
+        </div>
+        <li routerLinkActive="active" *ngFor="let usr of accessList">
+            <a [routerLink]="[usr.url]" (click)="getPage(usr.url)">
+                <i class="{{usr.img}}"></i>
+                <p>{{usr.name}}</p>
+            </a>
+        </li>
+        <li>
+            <a [routerLink]="[userDetail.changePasswordLink]">
+                <i class="now-ui-icons users_single-02"></i>
+                <p>Change Password</p>
+            </a>
+        </li>
+        <li>
+            <a href="/logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <p>Log Out</p>
+            </a>
+        </li>
+    </ul>
 </div>
 <!------Shubham 1 Style End---------->
 
@@ -112,124 +111,106 @@
 
 <!--Login city  Start-->
 <ng-template #contentCity>
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <section class="login">
-          <div class="container login-container">
-            <div class="row">
-              <div class="col-md-2 login-header back">
-              </div>
-              <div class="col-md-8 login-header text-center">
-                <p style="padding-top: 5px; cursor: pointer;" (click)="changeCity('test');"><span class="welcome-text"
-                    id="popUpCityName">Sikar</span></p>
-              </div>
-              <div class="col-md-2 back login-header close-icon">
-                <button type="button" class="close" (click)="closeMapModel();">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <section class="login">
+                    <div class="container login-container">
+                        <div class="row">
+                            <div class="col-md-2 login-header back">
+                            </div>
+                            <div class="col-md-8 login-header text-center">
+                                <p style="padding-top: 5px; cursor: pointer;" (click)="changeCity('test');"><span class="welcome-text" id="popUpCityName">Sikar</span></p>
+                            </div>
+                            <div class="col-md-2 back login-header close-icon">
+                                <button type="button" class="close" (click)="closeMapModel();">
                   <span aria-hidden="true">&times;</span>
                 </button>
-              </div>
+                            </div>
+                        </div>
+
+                        <div class="login-body" style="margin-top: 50px;">
+                            <div class="row" style="display: flex; justify-content: center;">
+                                <div id="behrorBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('behror');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Behror
+                                    </p>
+                                </div>
+                                <div id="jaipurGreaterBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-greater');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Greater
+                                    </p>
+                                </div>
+                                <div id="jaisalmerBox" style="display:none;" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaisalmer');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaisalmer
+                                    </p>
+                                </div>
+                                <div id="kishangarhBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('kishangarh');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Kishangarh
+                                    </p>
+                                </div>
+                                <div id="niwaiBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('niwai');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Niwai
+                                    </p>
+                                </div>
+                                <div id="reengusBox" class="login-box" style="margin-bottom: 0px!important;margin-left: -30px;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('reengus');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
+                                    </p>
+                                </div>
+                                <div id="salasarBox" class="login-box" style="cursor: pointer;  margin-right: 30px;  display: none;" (click)="changeCity('salasar');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Salasar Balaji
+                                    </p>
+                                </div>
+                                <div id="sikarBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('sikar');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
+                                    </p>
+                                </div>
+                                <div id="shahpuraBox" class="login-box Shahpura-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('shahpura');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Shahpura
+                                    </p>
+                                </div>
+                                <div class="ram" id="jaipurOfficeBox" style="margin-bottom: 0px!important;cursor: pointer;margin-top: 0px;margin-right: 30spx;  display: none; " (click)="changeCity('jaipur-office');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Office
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </section>
             </div>
-
-            <div class="login-body" style="margin-top: 50px;">
-              <div class="row" style="display: flex; justify-content: center;">
-                <div id="behrorBox" class="login-box active-box"
-                  style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('behror');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Behror
-                  </p>
-                </div>
-                <div id="churuBox" class="login-box"
-                  style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('churu');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Churu
-                  </p>
-                </div>
-                <div id="jaipurGreaterBox" style="display:none;" class="login-box"
-                  style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('jaipur-greater');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Greater
-                  </p>
-                </div>
-                <div id="jaisalmerBox" class="login-box"
-                  style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('jaisalmer');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaisalmer
-                  </p>
-                </div>
-                <div id="kishangarhBox" class="login-box"
-                  style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('kishangarh');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Kishangarh
-                  </p>
-                </div>
-                <div id="niwaiBox" class="login-box"
-                  style="margin-bottom: 0px!important;margin-left: -30px;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('niwai');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Niwai
-                  </p>
-                </div>
-                <div id="reengusBox" class="login-box" style="cursor: pointer;  margin-right: 30px;  display: none;"
-                  (click)="changeCity('reengus');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
-                  </p>
-                </div>
-                <div id="sikarBox" class="login-box active-box"
-                  style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('sikar');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
-                  </p>
-                </div>
-                <div id="shahpuraBox" class="login-box Shahpura-box"
-                  style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;"
-                  (click)="changeCity('shahpura');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Shahpura
-                  </p>
-                </div>
-                <div class="ram" id="jaipurOfficeBox"
-                  style="margin-bottom: 0px!important;cursor: pointer;margin-top: 0px;margin-right: 30spx;  display: none; "
-                  (click)="changeCity('jaipur-office');">
-                  <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Office
-                  </p>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-        </section>
-      </div>
+        </div>
     </div>
-  </div>
 </ng-template>
 <!--city Status End-->
 
 <!--No internet start-->
 <ng-template #contentInternetCheck>
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Internet Status</h5>
-        <button type="button" class="close" (click)="closeMapModel();">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Internet Status</h5>
+                <button type="button" class="close" (click)="closeMapModel();">
           <span aria-hidden="true">&times;</span>
         </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div id="divMessage" class="col-md-12" style="text-align: center; font-size: 16px;">
-            Sorry No Internet Available. Please check internet !!!!
-          </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="divMessage" class="col-md-12" style="text-align: center; font-size: 16px;">
+                        Sorry No Internet Available. Please check internet !!!!
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </ng-template>
 <!--No internet end-->

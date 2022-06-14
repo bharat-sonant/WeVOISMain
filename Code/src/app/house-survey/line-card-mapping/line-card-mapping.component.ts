@@ -2,11 +2,11 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { FirebaseService } from "../firebase.service";
+import { FirebaseService } from "../../firebase.service";
 
 //services
-import { CommonService } from "../services/common/common.service";
-import { MapService } from "../services/map/map.service";
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
