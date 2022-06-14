@@ -32,7 +32,7 @@ export class RoutesTrackingComponent implements OnInit {
   db: any;
   isActualData: any;
   routePath: any;
-  routePathList: any[];
+  routePathList: any[] = [];
   allMarkers: any[] = [];
   polylines: any[] = [];
   lineData: any[] = [];
@@ -48,6 +48,7 @@ export class RoutesTrackingComponent implements OnInit {
 
   isReset: any;
   isStart: any;
+  isShowRouteVehicle: any;
   btnPre = "#btnPre";
   btnReset = "#btnReset";
   playStop = "#playStop";
@@ -192,6 +193,15 @@ export class RoutesTrackingComponent implements OnInit {
         }
       }
     }
+    if (this.isStart == false) {
+      if (this.routeMarker[0] != null) {
+        this.lineIndex = this.lineDataList.length - 5;
+        if (this.routeMarker[0]["marker"] != null) {
+          this.routeMarker[0]["marker"].setPosition(this.lineDataList[this.lineIndex]);
+          this.map.setCenter(this.lineDataList[this.lineIndex]);
+        }
+      }
+    }
     this.setVehicleMoving();
   }
 
@@ -246,6 +256,7 @@ export class RoutesTrackingComponent implements OnInit {
     this.lineIndex = 0;
     this.isStart = false;
     this.isReset = true;
+    this.isShowRouteVehicle = false;
     this.setSpeed($(this.ddlSpeed).val());
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
@@ -529,46 +540,48 @@ export class RoutesTrackingComponent implements OnInit {
     let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
       vehicleData => {
         vehicleInstance.unsubscribe();
-        let vehicle = vehicleData;
-        let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
-        let currentLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
-          currentLocationData => {
-            currentLocationInstance.unsubscribe();
-            if (currentLocationData != null) {
-              dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
-              let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
-                statusData => {
-                  statusInstance.unsubscribe();
-                  let statusId = statusData.toString();
-                  let vehicleIcon = '';
-                  if (vehicle.includes("TRACTOR")) {
-                    vehicleIcon = this.getIcon("activeTractor");
-                    if (statusId == 'completed') {
-                      vehicleIcon = this.getIcon("deActiveTractor");
-                    } else if (statusId == 'stopped') {
-                      vehicleIcon = this.getIcon("stopTractor");
+        if (vehicleData != null) {
+          let vehicle = vehicleData;
+          let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
+          let currentLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
+            currentLocationData => {
+              currentLocationInstance.unsubscribe();
+              if (currentLocationData != null) {
+                dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
+                let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  statusData => {
+                    statusInstance.unsubscribe();
+                    let statusId = statusData.toString();
+                    let vehicleIcon = '';
+                    if (vehicle.includes("TRACTOR")) {
+                      vehicleIcon = this.getIcon("activeTractor");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveTractor");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopTractor");
+                      }
                     }
-                  }
-                  else {
-                    vehicleIcon = this.getIcon("activeVehicle");
-                    if (statusId == 'completed') {
-                      vehicleIcon = this.getIcon("deActiveVehicle");
-                    } else if (statusId == 'stopped') {
-                      vehicleIcon = this.getIcon("stopVehicle");
+                    else {
+                      vehicleIcon = this.getIcon("activeVehicle");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveVehicle");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopVehicle");
+                      }
                     }
-                  }
-                  let location = currentLocationData.toString().split(",");
-                  let lat = Number(location[0]);
-                  let lng = Number(location[1]);
-                  this.vehicleMarker = new google.maps.Marker({
-                    position: { lat: Number(lat), lng: Number(lng) },
-                    map: this.map,
-                    icon: vehicleIcon,
+                    let location = currentLocationData.toString().split(",");
+                    let lat = Number(location[0]);
+                    let lng = Number(location[1]);
+                    this.vehicleMarker = new google.maps.Marker({
+                      position: { lat: Number(lat), lng: Number(lng) },
+                      map: this.map,
+                      icon: vehicleIcon,
+                    });
                   });
-                });
+              }
             }
-          }
-        );
+          );
+        }
       }
     );
   }
@@ -773,6 +786,7 @@ export class RoutesTrackingComponent implements OnInit {
       else {
         this.endTime = this.endTime;
       }
+      this.isShowRouteVehicle = true;
       this.drowRouteDataTiming();
     }
     else {
@@ -787,10 +801,12 @@ export class RoutesTrackingComponent implements OnInit {
   getReset() {
     this.isReset = true;
     this.isStart = false;
+    this.isShowRouteVehicle = false;
     $(this.playStop).removeClass("fas fa-stop-circle");
     $(this.playStop).addClass("fab fa-youtube");
     $(this.btnPre).show();
     $(this.btnReset).hide();
+    $(this.ddlTime).val("0");
     this.lineDataList = [];
     this.lineIndex = 0;
     this.timeInterval = 0;
@@ -798,8 +814,12 @@ export class RoutesTrackingComponent implements OnInit {
       this.routeMarker[0]["marker"].setMap(null);
     }
     this.routeMarker = [];
+    if (this.routePathList.length > 0) {
+      this.endTime = this.routePathList.length - 1;
+      this.drowRouteData('current');
+    }
   }
-  
+
   setVehicleMoving() {
     if (this.isStart == true) {
       if (this.lineIndex == 0) {
@@ -837,12 +857,6 @@ export class RoutesTrackingComponent implements OnInit {
       }
       this.animate();
     }
-    else {
-      if (this.routeMarker[0] != null) {
-        this.routeMarker[0]["marker"].setMap(null);
-        this.routeMarker = [];
-      }
-    }
   }
 
   createMarker() {
@@ -857,6 +871,10 @@ export class RoutesTrackingComponent implements OnInit {
   animate() {
     if (this.timerHandle[this.lineIndex - this.skip]) {
       clearTimeout(this.timerHandle[this.lineIndex - this.skip]);
+    }
+    if (this.isShowRouteVehicle == false) {
+      this.routeMarker[0]["marker"].setMap(null);
+      return;
     }
     if (this.routeMarker[0] == null) {
       this.createMarker();
