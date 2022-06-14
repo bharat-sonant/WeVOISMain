@@ -96,6 +96,13 @@ export class SalaryCalculationsComponent implements OnInit {
           day4: []
         };
 
+        // day1 data collection
+
+        this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+
+        console.log("monthDays :" +this.monthDays );
+
+
 
         this.jsonObject[employeeId]["day1"].push({
           ward: "1",
