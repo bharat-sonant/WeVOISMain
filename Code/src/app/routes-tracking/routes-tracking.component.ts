@@ -17,7 +17,6 @@ export class RoutesTrackingComponent implements OnInit {
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private actRoute: ActivatedRoute) { }
 
   selectedZone: any;
-  preSelectedZone: any;
   zoneList: any[];
   toDayDate: any;
   selectedDate: any;
@@ -27,7 +26,6 @@ export class RoutesTrackingComponent implements OnInit {
   zoneKML: any;
   monthDetailList: any[];
   vehicleMarker: any;
-  vehicleLocationInstance: any;
   fixdGeoLocations: any[];
   db: any;
   isActualData: any;
@@ -255,7 +253,7 @@ export class RoutesTrackingComponent implements OnInit {
     $(this.btnReset).hide();
     this.lineIndex = 0;
     this.isStart = false;
-    this.isReset = true;
+    this.isReset = false;
     this.isShowRouteVehicle = false;
     this.setSpeed($(this.ddlSpeed).val());
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -312,6 +310,7 @@ export class RoutesTrackingComponent implements OnInit {
   getMonthSelectedDetail(monthDate: any) {
     this.clearMap();
     this.getReset();
+    this.isReset = false;
     $(this.txtDate).val(monthDate);
     this.selectedDate = monthDate;
     if (this.selectedZone != "0") {
@@ -591,7 +590,6 @@ export class RoutesTrackingComponent implements OnInit {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.zoneList[0]["zoneName"] = "--Select Zone--";
     this.selectedZone = "0";
-    this.preSelectedZone = "0";
   }
 
   setMaps() {
@@ -655,6 +653,7 @@ export class RoutesTrackingComponent implements OnInit {
       this.selectedDate = previousDate;
     }
     this.getReset();
+    this.isReset = false;
     this.setSelectedMonthYear();
     let monthDetail = this.monthDetailList.find(item => item.monthDate == this.selectedDate);
     if (monthDetail == undefined) {
@@ -681,7 +680,8 @@ export class RoutesTrackingComponent implements OnInit {
     if (this.zoneKML != undefined) {
       this.zoneKML[0]["line"].setMap(null);
     }
-    this.getReset();
+    this.getReset();    
+    this.isReset = false;
     this.getMonthDetailList();
     this.getData();
   }
