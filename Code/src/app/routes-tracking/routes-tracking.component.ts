@@ -35,15 +35,12 @@ export class RoutesTrackingComponent implements OnInit {
   polylines: any[] = [];
   lineData: any[] = [];
   endMarker: any;
-
   txtDate = "#txtDate";
   ddlTime = "#ddlTime";
-
   timeInterval: any;
   isFirst: any;
   endTime: any;
   isLast: any;
-
   isReset: any;
   isStart: any;
   isShowRouteVehicle: any;
@@ -168,7 +165,6 @@ export class RoutesTrackingComponent implements OnInit {
           strokeColor: this.commonService.getLineColor("LineCompleted"),
           strokeWeight: 2
         });
-
         if (i == 0) {
           this.getStartStopMarker("start");
         }
@@ -281,7 +277,6 @@ export class RoutesTrackingComponent implements OnInit {
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
       }
-      this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
     }
   }
 
@@ -294,14 +289,15 @@ export class RoutesTrackingComponent implements OnInit {
         this.allMarkers[i]["marker"].setMap(null);
       }
     }
-    this.allMarkers = [];
     if (this.polylines != null) {
       for (let j = 0; j < this.polylines.length; j++) {
         this.polylines[j].setMap(null);
       }
-    }
-    this.polylines = [];
+      this.polylines = [];
+    }    
+    this.allMarkers = [];
     this.routePath = null;
+    this.routePathList=[];
     this.trackData.totalKM = 0;
     this.trackData.totalTime = "0 hr 0 min";
     this.trackData.time = "0:00";
@@ -452,18 +448,13 @@ export class RoutesTrackingComponent implements OnInit {
       monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
       monthDetails.routePath = routePath;
     }
-    if (type == "trackRoute") {
+    if (this.selectedDate == monthDate) {
       this.routePath = routePath;
       this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
       this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
       this.drowRouteOnMap();
-      if (this.selectedDate == monthDate) {
-        this.getMonthDetail(monthDetails, routePath, monthDate);
-      }
-    }
-    else {
-      this.getMonthDetail(monthDetails, routePath, monthDate);
-    }
+    }    
+    this.getMonthDetail(monthDetails, routePath, monthDate);
   }
 
   getLocationHistoryFromStorage(monthDate: any, type: any) {
@@ -680,7 +671,7 @@ export class RoutesTrackingComponent implements OnInit {
     if (this.zoneKML != undefined) {
       this.zoneKML[0]["line"].setMap(null);
     }
-    this.getReset();    
+    this.getReset();
     this.isReset = false;
     this.getMonthDetailList();
     this.getData();
@@ -769,7 +760,6 @@ export class RoutesTrackingComponent implements OnInit {
   getPlayStop() {
     if (this.isStart == false) {
       let options = {
-        // max zoom
         zoom: 16,
       };
       this.map.setOptions(options);
