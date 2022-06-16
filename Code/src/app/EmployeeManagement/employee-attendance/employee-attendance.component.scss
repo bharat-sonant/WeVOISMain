@@ -755,7 +755,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: calc(87vh - 80px);
+    height: calc(80vh);
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -1509,7 +1509,7 @@ input {
 }
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width:321px) and (max-width: 576px) {
+@media (min-width:361px) and (max-width: 576px) {
     .date-box{
         max-width: 60%;
         text-align: center !important;
@@ -1555,6 +1555,7 @@ input {
         font-size: 12px;
         margin-left: 20px;
         margin-top: -5px;
+        display: none
     }
     .navbar .navbar-toggler {
         float: right;
@@ -1663,6 +1664,7 @@ input {
     }
 
 }
+
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) and (max-width: 991.98px) {
@@ -1960,6 +1962,7 @@ input {
     float: right; 
     text-align: center; 
     font-size: 10px; 
+    margin-left: 3px !important;
   
 }
 .export-icon{
@@ -2011,7 +2014,7 @@ input {
 }
 
 .export-main{
-    max-width: 22% ;
+    max-width: 22%;
     margin-top: 7px;
 }
 
@@ -2020,63 +2023,7 @@ input {
 
 
 
-@media (max-width:320px){
-    .main-headers{
-        text-align: center;
-        margin-top: 5px;
-        font-size: 12px;
-        letter-spacing: 1px;
-    }
-    .date-box{
-        max-width: 100%;
-      
-       
-       
-    }
-    .all-box{
-      
-        max-width: 100% !important;
-        text-align: center !important;
-    }
-    .field-box{
-       
-        min-width: 60% !important;
-        text-align: center !important;
-     
-      
-    }
-    
-    .export-main{
-        max-width: 40% !important;
-        margin-top: 17px !important;
-    }
-    .filter-input{
-      
-        width: 95%;
-        border: 1px solid lightgray !important;
-       margin-left: 6px;
-    }
-    .header{
-        display: block !important
-    }
-    .main-content{
-        margin-top: -35px !important;
-        padding-bottom: 0px !important
-    }
-    .export-span-iner{
-        display: none !important;
-    }
-    .text-input{
-        width: 145px !important;
-    }
-    .custom-header{
-        height: unset !important;
-    }
-    
-}
-
-
-@media (min-width:321px) and (max-width: 576px) {
+@media (min-width:361px) and (max-width: 576px) {
     .date-box{
         max-width: 60%;
         text-align: center !important;
@@ -2116,24 +2063,115 @@ input {
 
 }
 
+
 @media (min-width: 350px) and (max-width: 375px){
     .table-one{
-        height: calc(65vh);
+        height: calc(70vh);
        
     }
 }
 @media (min-width: 385px) and (max-width: 395px){
     .table-one{
-        height: calc(57vh);
+        height: calc(70vh);
        
     }
 }
 @media (min-width: 400px) and (max-width: 420px){
     .table-one{
-        height: calc(54vh);
+        height: calc(70vh);
        
     }
 }
+@media (min-width:425px) and (max-width: 540px){
+    .date-box{
+        max-width: 50%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        max-width: 50% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 50% !important;
+        text-align: center !important;
+      
+    }
+    .export-main{
+        max-width: 50% !important;
+        margin-top: 10px !important;
+        padding-right: 0px !important;
+    }
+    .filter-input{
+        width:80% !important;
+    }
+
+}
+
+
+@media (max-width:361px){
+    .main-headers{
+        text-align: center;
+        margin-top: 5px;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+    .date-box{
+        max-width: 100%;
+        text-align: left !important;
+      
+       
+       
+    }
+    .all-box{
+      
+        max-width: 100% !important;
+      
+    }
+    .field-box{
+       
+        min-width: 60% !important;
+        padding-left: 10px !important;
+       
+     
+      
+    }
+    
+    .export-main{
+        max-width: 40% !important;
+        margin-top: 15px !important;
+    }
+    .filter-input{
+      
+        width: 95%;
+        border: 1px solid lightgray !important;
+       margin-left: 6px;
+    }
+    .header{
+        display: block !important
+    }
+    .main-content{
+        margin-top: -35px !important;
+        padding-bottom: 0px !important
+    }
+    .export-span-iner{
+        display: none !important;
+    }
+    .text-input{
+       width: 58% !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .fieldExecutive{
+        padding-top: 23px !important;
+    }
+    
+}
+
 @media (min-width:539px) and (max-width: 576px){
     .date-box{
         max-width: 50%;
@@ -2165,13 +2203,13 @@ input {
        float: unset !important;
     }
     .table-one{
-        height: calc(68vh);
+        height: calc(70vh);
        
     }
 }
 
 
-@media (min-width: 766px) and (max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 991.98px) {
     .date-box{
         min-width: 60%;
         text-align: center !important;
@@ -2212,24 +2250,24 @@ input {
 }
 @media (min-width: 765px) and (max-width: 770px){
     .table-one{
-        height: calc(52vh);
+        height: calc(70vh);
        
     }
 }
-@media (min-width: 819px) and (max-width:910px){
+@media (min-width: 700px) and (max-width:910px){
     .table-one{
-        height: calc(45vh);
+        height: calc(70vh);
        
     }
 }
 
-@media (min-width: 911px) and (max-width:1020px){
+@media (min-width: 911px) and (max-width:1300px){
     .table-one{
-        height: calc(37vh);
+        height: calc(70vh);
        
     }
 }
-@media (min-width: 992px) and (max-width: 1300px){
+@media (min-width: 992px) and (max-width: 1400px){
     .date-box{
         min-width: 55%;
         text-align: center !important;
@@ -2272,11 +2310,120 @@ input {
     }
     
 }
-
-@media (min-width: 1270px){
+@media (min-width: 1020px) and (max-width: 1025px){
     .table-one{
-        height: calc(60vh);
+        height: calc(70vh) !important;
        
+    }
+}
+
+@media (min-width: 1270px) and (max-width:1300px){
+    .table-one{
+        height: calc(70vh);
+       
+    }
+    
+}
+@media (min-width: 696px) and (max-width: 766px){
+    .date-box{
+        max-width: 0% !important;
+        min-width: 30%;
+    }
+    .all-box{
+        max-width: 27% !important;
+    }
+    
+}
+@media (min-width: 766px) and (max-width: 767px){
+    .date-box{
+        max-width: 0% !important;
+        min-width: 30%;
+    }
+    .all-box{
+        max-width: 27% !important;
+    }
+    
+}
+
+@media (min-width: 620px) and (max-width: 696px){
+    .date-box{
+        max-width: 0% !important;
+        min-width: 202px !important;
+    }
+    .all-box{
+        max-width: 22% !important;
+     
+    }
+    
+}
+@media (min-width: 603px) and (max-width: 620px){
+    .date-box{
+        max-width: 0% !important;
+        min-width: 202px !important;
+    }
+    .all-box{
+        max-width: 125px !important;
+    }
+    .field-box{
+        max-width: 126px !important;
+    }
+    .export-main{
+        max-width: 125px;
+        margin-top: 7px;
+    }
+    
+}
+@media (min-width: 576px) and (max-width: 603px){
+    .date-box{
+        max-width: 50%;
+        text-align: center !important;
+       
+       
+    }
+    .all-box{
+      
+        max-width: 50% !important;
+        text-align: center !important;
+    }
+    .field-box{
+       
+        min-width: 50% !important;
+        text-align: center !important;
+      
+    }
+    .filter-input{
+        width:80% !important;
+    }
+    
+    .export-main{
+        max-width: 50% !important;
+        margin-top: 10px !important;
+        padding-right: 0px !important;
+    }
+    .export-span{
+       float: unset !important;
+    }
+    
+}
+@media (min-width: 1400px){
+    .date-box{
+        min-width: 37%;
+       
+    }
+    .all-box{
+       min-width: 18%;
+    }
+    .field-box{
+      
+        max-width: 24%;
+      
+    }
+    .export-main{
+        max-width: 18%;
+        
+    }
+    .col-md-3{
+        padding-right: 4px !important
     }
 }
 
