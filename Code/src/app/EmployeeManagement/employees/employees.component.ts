@@ -28,6 +28,7 @@ export class EmployeesComponent implements OnInit {
   confirmTitle = "#confirmTitle";
   divLoader = "#divLoader";
   txtName = "#txtName";
+  accountList: any[] = [];
 
   employeeCountSummary: employeeCountSummary = {
     active: 0
@@ -45,10 +46,20 @@ export class EmployeesComponent implements OnInit {
     $(this.ddlDesignation).val("all");
     $(this.ddlUser).val("active");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
-    this.getAccountDetail();
+    this.getEmployeeAccountDetail();
+    this.getEmployees();
   }
 
-  getAccountDetail() {
+  getEmployeeAccountDetail() {
+    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+    let employeeInstance = this.httpService.get(path).subscribe(data => {
+      employeeInstance.unsubscribe();
+      let jsonData = JSON.stringify(data);
+      this.accountList = JSON.parse(jsonData);
+    });
+  }
+
+  getEmployees() {
     $(this.divLoader).show();
     this.allEmployeeList = [];
     this.designationList = [];
@@ -197,11 +208,21 @@ export class EmployeesComponent implements OnInit {
     if (empDetail != undefined) {
       empDetail.status = status;
     }
+    let accountDetail = this.accountList.find(item => item.empId == empId);
+    if (accountDetail != undefined) {
+      accountDetail.status = status;
+      this.saveAccountJSONData();
+    }
     this.filterData();
     this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
     this.updateStatusInDatabase(empId, status);
     this.saveJSONData();
     this.commonService.setAlertMessage("success", "Employee status updated successfully !!!");
+  }
+
+  saveAccountJSONData() {
+    let path = "/EmployeeAccount/";
+    this.commonService.saveJsonFile(this.accountList, "accountDetail.json", path);
   }
 
   updateStatusInDatabase(empId: any, status: any) {
@@ -219,17 +240,26 @@ export class EmployeesComponent implements OnInit {
       let empType = 1;
       if (designationId == "5") {
         empDetail.designation = "Driver";
+        empDetail.empType = 2;
         empType = 2;
       }
       else if (designationId == "6") {
         empDetail.designation = "Helper";
+        empDetail.empType = 2;
         empType = 2;
       }
       else {
         let detail = this.designationUpdateList.find(item => item.designationId == designationId);
         if (detail != undefined) {
           empDetail.designation = detail.designation;
+          empDetail.empType = 1;
         }
+      }
+      let accountDetail = this.accountList.find(item => item.empId == empId);
+      if (accountDetail != undefined) {
+        accountDetail.designation = empDetail.designation;
+        accountDetail.empType = empType;
+        this.saveAccountJSONData();
       }
       this.updateDesignationInDatabase(empId, designationId);
     }
