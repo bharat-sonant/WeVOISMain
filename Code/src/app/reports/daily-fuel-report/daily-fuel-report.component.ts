@@ -18,9 +18,10 @@ export class DailyFuelReportComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   selectedDate: any;
-  toDayDate:any;
+  toDayDate: any;
   txtDate = "#txtDate";
   spDate = "#spDate";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -31,7 +32,7 @@ export class DailyFuelReportComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
-    this.selectedDate=this.toDayDate;
+    this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
     $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
     this.getSelectedYearMonthName();
@@ -48,27 +49,19 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == 'current') {
-      this.selectedDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-      if (new Date(nextDate) > new Date(this.toDayDate)) {
-        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!")
-        $(this.txtDate).val(this.toDayDate);
-        this.selectedDate = this.toDayDate;
-        return;
-      }
-      this.selectedDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
-      this.selectedDate = previousDate;
+    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
+    $(this.txtDate).val(newDate);
+    $(this.spDate).html(newDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(newDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
+    if (newDate != this.selectedDate) {
+      this.selectedDate = newDate;
+      this.clearList();
+      this.getSelectedYearMonthName();
+      this.getDieselQty();
+      this.getDailyWorkDetail();
     }
-    $(this.txtDate).val(this.selectedDate);
-    $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
-    this.clearList();
-    this.getSelectedYearMonthName();
-    this.getDieselQty();
-    this.getDailyWorkDetail();
+    else{
+      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+    }
   }
 
   getVehicles() {
@@ -108,6 +101,11 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   getDailyWorkDetail() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 3000);
+
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
     let workDetailInstance = this.httpService.get(path).subscribe(workData => {
       workDetailInstance.unsubscribe();

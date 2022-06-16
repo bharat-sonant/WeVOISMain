@@ -1,6 +1,3 @@
-<div id="divLoader" class="loaderClass">
-    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers Employees-heading">
@@ -11,6 +8,9 @@
 <div class="main-content">
     <div class="row">
         <div class="col-md-5 card-outer">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
@@ -35,7 +35,7 @@
                                     After 8:30
                                 </option>
                             </select>
-                      </div>
+                        </div>
                         <div class="col-md-3 text-left check-fieldExecutive field-box">
                             <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"> &nbsp;Field Executive
                         </div>
@@ -44,7 +44,7 @@
                                 <i class="fa-solid fa-file-export export-icon"
                                 
                                     (click)="exportToExcel();"></i><br />
-                          <span class="export-span-iner">Export to Excel</span> 
+                          <span class="export-span-iner">Export to Excel</span>
                             </span>
                         </div>
                     </div>
