@@ -77,13 +77,7 @@ export class UserAccessComponent implements OnInit {
             isCheck = "checked";
           }
           let secondLevel = [];
-          this.accessList.push({
-            sno: sno,
-            pageID: index,
-            name: name,
-            ischeck: isCheck,
-            secondLevel: secondLevel,
-          });
+          this.accessList.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, secondLevel: secondLevel, });
           let secondData = pageList.filter((e) => e.parentId === index);
           if (secondData.length > 0) {
             for (let j = 0; j < secondData.length; j++) {
@@ -99,13 +93,7 @@ export class UserAccessComponent implements OnInit {
               }
               let thirdLevel = [];
 
-              secondLevel.push({
-                sno: sno,
-                pageID: index,
-                name: name,
-                ischeck: isCheck,
-                thirdLevel: thirdLevel,
-              });
+              secondLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, thirdLevel: thirdLevel, });
               let thirdData = pageList.filter((e) => e.parentId === index);
               if (thirdData.length > 0) {
                 for (let k = 0; k < thirdData.length; k++) {
@@ -117,12 +105,7 @@ export class UserAccessComponent implements OnInit {
                   if (pageAccess != undefined) {
                     isCheck = "checked";
                   }
-                  thirdLevel.push({
-                    sno: sno,
-                    pageID: index,
-                    name: name,
-                    ischeck: isCheck,
-                  });
+                  thirdLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, });
                 }
                 secondLevel[secondLevel.length - 1]["thirdLevel"] = thirdLevel;
               }
@@ -131,6 +114,7 @@ export class UserAccessComponent implements OnInit {
             this.accessList[this.accessList.length - 1]["secondLevel"] = secondLevel;
           }
         }
+        console.log(this.accessList);
       }
     });
   }
@@ -141,7 +125,6 @@ export class UserAccessComponent implements OnInit {
       let pageID = this.accessList[i]["pageID"];
       let elmID = "chk" + pageID;
       let element = <HTMLInputElement>document.getElementById(elmID);
-      let isChecked = element.checked;
       if (element.checked == true) {
         if (accessPages != "") {
           accessPages = accessPages + ", ";
@@ -203,71 +186,46 @@ export class UserAccessComponent implements OnInit {
     this.router.navigate(["/" + this.cityName + "/11/users"]);
   }
 
-  setAccess(pageID: any, type: any) {
-    let elementID = "chk" + pageID;
-    let element = <HTMLInputElement>document.getElementById(elementID);
-    let isCheck = "";
-    if (element.checked == true) {
-      isCheck = "checked";
-    }
-
-    for (let i = 0; i < this.accessList.length; i++) {
-      if (this.accessList[i]["pageID"] == pageID) {
-        if (this.accessList[i]["secondLevel"].length > 0) {
-          let secondList = this.accessList[i]["secondLevel"];
-          for (let j = 0; j < secondList.length; j++) {
-            elementID = "chk" + secondList[j]["pageID"];
-            element = <HTMLInputElement>document.getElementById(elementID);
-            if (isCheck == "") {
-              element.checked = false;
-            } else {
-              element.checked = true;
-            }
-
-            if (secondList[j]["thirdLevel"].length > 0) {
-              let thirdList = secondList[j]["thirdLevel"];
-              for (let k = 0; k < thirdList.length; k++) {
-                elementID = "chk" + thirdList[k]["pageID"];
-                element = <HTMLInputElement>document.getElementById(elementID);
-                if (isCheck == "") {
-                  element.checked = false;
-                } else {
-                  element.checked = true;
-                }
-              }
+  setAccess(mainPageId: any, secondPageId: any) {
+    let pageDetail = this.accessList.find(item => item.pageID == mainPageId);
+    if (pageDetail != undefined) {
+      let isMainChecked = false;
+      let isSecondChecked = false;
+      let secondList = pageDetail.secondLevel;
+      let secondPageDetail = secondList.find(item => item.pageID == secondPageId);
+      if (secondPageDetail != undefined) {
+        let thirdList = secondPageDetail.thirdLevel;
+        if (thirdList.length > 0) {
+          for (let j = 0; j < thirdList.length; j++) {
+            if ((<HTMLInputElement>document.getElementById("chk" + thirdList[j]["pageID"])).checked == true) {
+              isSecondChecked = true;
+              isMainChecked = true;
             }
           }
-        }
-      } else {
-        if (this.accessList[i]["secondLevel"].length > 0) {
-          let secondList = this.accessList[i]["secondLevel"];
-          for (let j = 0; j < secondList.length; j++) {
-            if (pageID == secondList[j]["pageID"]) {
-              elementID = "chk" + secondList[j]["pageID"];
-              element = <HTMLInputElement>document.getElementById(elementID);
-              if (isCheck == "") {
-                element.checked = false;
-              } else {
-                element.checked = true;
-              }
-
-              if (secondList[j]["thirdLevel"].length > 0) {
-                let thirdList = secondList[j]["thirdLevel"];
-                for (let k = 0; k < thirdList.length; k++) {
-                  elementID = "chk" + thirdList[k]["pageID"];
-                  element = <HTMLInputElement>(
-                    document.getElementById(elementID)
-                  );
-                  if (isCheck == "") {
-                    element.checked = false;
-                  } else {
-                    element.checked = true;
-                  }
-                }
-              }
-            }
+          if (isSecondChecked == true) {
+            (<HTMLInputElement>document.getElementById("chk" + secondPageId)).checked = true;
+          }
+          else {
+            (<HTMLInputElement>document.getElementById("chk" + secondPageId)).checked = false;
           }
         }
+      }
+      else if ((<HTMLInputElement>document.getElementById("chk" + mainPageId)).checked == true) {
+        isMainChecked = true;
+      }
+      if (isMainChecked == false) {
+        for (let j = 0; j < secondList.length; j++) {
+          if ((<HTMLInputElement>document.getElementById("chk" + secondList[j]["pageID"])).checked == true) {
+            isMainChecked = true;
+          }
+        }
+      }
+
+      if (isMainChecked == true) {
+        (<HTMLInputElement>document.getElementById("chk" + mainPageId)).checked = true;
+      }
+      else {
+        (<HTMLInputElement>document.getElementById("chk" + mainPageId)).checked = false;
       }
     }
   }
