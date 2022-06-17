@@ -9,7 +9,7 @@
                 <option value={{yer.year}} *ngFor="let yer of yearList"
                     ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlMonth" style="width: 150px;">
+            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)" style="width: 150px;">
                 <option value="0">Month</option>
                 <option value="01">January</option>
                 <option value="02">February</option>

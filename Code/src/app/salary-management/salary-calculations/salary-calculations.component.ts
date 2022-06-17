@@ -26,11 +26,15 @@ export class SalaryCalculationsComponent implements OnInit {
   fireStoragePath: any;
   activeEmployeeCount = 0;
   jsonObject: any;
+  dailyWorkDetail: any;
+  datesInSelectedMonth: any;
   salaryList: any[];
   monthDays: any;
   zoneList: any[];
   employeeIds: any[];
   employees: any;
+  maxTaskCount = 10;
+  wardWagesList: any[];
   storagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity();
 
   ngOnInit() {
@@ -44,7 +48,26 @@ export class SalaryCalculationsComponent implements OnInit {
     this.todayDate = this.commonService.setTodayDate();
     this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.getWardWagesList();
     this.getYear();
+
+  }
+
+  getWardWagesList() {
+    this.wardWagesList = [];
+    this.httpService.get("../../assets/jsons/WardWeges/" + this.cityName + ".json").subscribe(wardWageData => {
+      if (wardWageData != null) {
+        let keyArray = Object.keys(wardWageData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let ward = keyArray[i];
+            let driver = wardWageData[ward]["driver"];
+            let helper = wardWageData[ward]["helper"];
+            this.wardWagesList.push({ ward: ward, driver: driver, helper: helper });
+          }
+        }
+      }
+    });
   }
 
   getYear() {
@@ -53,87 +76,123 @@ export class SalaryCalculationsComponent implements OnInit {
     for (let i = year - 2; i <= year; i++) {
       this.yearList.push({ year: i });
     }
-    this.selectedMonth = Number(this.todayDate.split('-')[1]);
+
     this.selectedYear = this.todayDate.split('-')[0];
-    $(this.ddlMonth).val(this.todayDate.split('-')[1]);
     $(this.ddlYear).val(this.selectedYear);
-    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    /*
+    this.selectedMonth = Number(this.todayDate.split('-')[1]);    
+    $(this.ddlMonth).val(this.todayDate.split('-')[1]);    
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);*/
   }
 
+  changeMonthSelection(filterVal: any) {
+    this.selectedMonth = Number(filterVal);
+    if (this.selectedMonth != 0) {
+      this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    }
+  }
+
+  getDailyWorkDetailForSelectedMonth() {
+
+  }
 
 
   calculate() {
     $(this.divLoader).show();
     this.activeEmployeeCount = 0;
     this.jsonObject = {};
-    this.httpService.get(this.storagePath + "%2FEmployees.json?alt=media").subscribe(data => {
-      if (data != null) {
-        this.employeeIds = Object.keys(data);
-        console.log("Length :- " + this.employeeIds.length);
-        this.employees = data;
-        this.setEmployeeData(0);
-      }
-    });
+    if (this.selectedMonth != undefined) {
+
+      this.httpService.get(this.storagePath + "%2FEmployees.json?alt=media").subscribe(data => {
+        if (data != null) {
+          this.employeeIds = Object.keys(data);
+          this.employees = data;
+          this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+          let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName;
+          let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(dailyWorkDetailData => {
+            dailyWorkInstance.unsubscribe();
+            this.dailyWorkDetail = dailyWorkDetailData;
+            this.datesInSelectedMonth = Object.keys(this.dailyWorkDetail);
+            this.setEmployeeData(0);
+          });
+        }
+      });
+    }
+    else {
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("error", "Please select Month");
+    }
   }
 
   setEmployeeData(index: int) {
     let employeeId = this.employeeIds[index];
-    console.log(Number(employeeId));
+
     let designationId = this.employees[employeeId]["GeneralDetails"]["designationId"];
     let status = this.employees[employeeId]["GeneralDetails"]["status"]
     if (status == "1" && (designationId == "5" || designationId == "6")) {
       let lastEmpId = this.employeeIds[this.employeeIds.length - 1];
-      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 150) {
+      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 4) {
         this.activeEmployeeCount++;
 
         this.jsonObject[employeeId] = {
           name: this.employees[employeeId]["GeneralDetails"]["name"],
           empCode: this.employees[employeeId]["GeneralDetails"]["empCode"],
-          designation: this.employees[employeeId]["GeneralDetails"]["designation"],
-          day1: [],
-          day2: [],
-          day3: [],
-          day4: []
+          designation: this.employees[employeeId]["GeneralDetails"]["designation"]
         };
 
-        // day1 data collection
 
-        this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+        //for (let index = 0; index < this.datesInSelectedMonth.length; index++) {
+        for (let index = 0; index < 3; index++) {
+          let date = this.datesInSelectedMonth[index]
+          let employeeAssignments = this.dailyWorkDetail[date][employeeId];
+          if (employeeAssignments != undefined) {
 
-        console.log("monthDays :" +this.monthDays );
+            let assignedTaskCount = 1;
+            while (assignedTaskCount < this.maxTaskCount) {
 
+              let task = this.dailyWorkDetail[date][employeeId]["task" + assignedTaskCount];
+              if (task != undefined) {
+                let taskName = task["task"];
+                let wages = task["task-wages"];
 
+                if (new Date(date) >= new Date(this.salaryCalculationChangedDate())) {
+                  let wageDetail = this.wardWagesList.find(item => item.ward == taskName);
+                  if (wageDetail != undefined) {
+                    console.log("wageDetail:" + wageDetail);
 
-        this.jsonObject[employeeId]["day1"].push({
-          ward: "1",
-          wages: 100,
-          percentage: 50
-        });
+                    /*
+                    if (isFirstZone == true) {
+                      wages = 200;
+                    }
+                    else {
+                      if (salaryDetail.designation == "Driver") {
+                        wages = wageDetail.driver;
+                      }
+                      else {
+                        wages = wageDetail.helper;
+                      }
+                    }
+                    if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
+                      isFirstZone = true;
+                    }
+                    */
+                  }
+                }
 
-        this.jsonObject[employeeId]["day1"].push({
-          ward: "2",
-          wages: 50,
-          percentage: 20
-        });
+                this.jsonObject[employeeId]["day" + (index + 1)] = [];
+                this.jsonObject[employeeId]["day" + (index + 1)].push({
+                  ward: taskName,
+                  wages: wages,
+                  percentage: 0
+                });
+                assignedTaskCount++;
+              } else {
+                break;
+              }
+            }
+          }
+        }
 
-        this.jsonObject[employeeId]["day2"].push({
-          ward: "2",
-          wages: 20,
-          percentage: 2
-        });
-
-        this.jsonObject[employeeId]["day3"].push({
-          ward: "2",
-          wages: 50,
-          percentage: 2
-        });
-
-        this.jsonObject[employeeId]["day4"].push({
-          ward: "2",
-          wages: 20,
-          percentage: 2
-        });
- 
         index++
         this.setEmployeeData(index);
 
@@ -151,6 +210,14 @@ export class SalaryCalculationsComponent implements OnInit {
     }
   }
 
+  salaryCalculationChangedDate() {
+    if (localStorage.getItem("cityName") == "reengus") {
+      return "2022-05-21";
+    }
+    else if (localStorage.getItem("cityName") == "sikar") {
+      return "2022-05-08";
+    }
+  }
 
   /*
     setEmployeeSalary(employeeId: int, lastemployeeId: int) {
@@ -209,87 +276,53 @@ export class SalaryCalculationsComponent implements OnInit {
   
 }*/
 
-  /*
-                         
-                } else {
-                  let filePath = "/SalarySummary/" + this.selectedYear + "/";
-                  let fileName = this.selectedMonthName + ".json";
-                  this.commonService.saveJsonFile(this.jsonObject, fileName, filePath);
-                  setTimeout(() => {
-                    this.getSalaryList();
-  
-                  }, 200);
-                }
-              });
-  
-          }
-          else {
-            this.setEmployeeSalary(employeeId + 1, lastemployeeId);
-          }
-        });
-        */
-
   getSalaryList() {
+
     $(this.divLoader).show();
+
     this.salaryList = [];
+
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let salaryInstance = this.httpService.get(path).subscribe(data => {
       salaryInstance.unsubscribe();
+      console.log("json data:" + data);
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let employeeId = keyArray[i];
-          let detail1 = data[employeeId]["day1"];
-          let totalWeges1 = 0;
-          for (let i = 0; i < detail1.length; i++) {
-            if (detail1[i]["wages"] != null) {
-              totalWeges1 += Number(detail1[i]["wages"]);
-            }
-          }
 
-          let detail2 = data[employeeId]["day2"];
-          let totalWeges2 = 0;
-          for (let i = 0; i < detail2.length; i++) {
-            if (detail2[i]["wages"] != null) {
-              totalWeges2 += Number(detail2[i]["wages"]);
-            }
-          }
-
-          let detail3 = data[employeeId]["day3"];
-          let totalWeges3 = 0;
-          for (let i = 0; i < detail3.length; i++) {
-            if (detail3[i]["wages"] != null) {
-              totalWeges3 += Number(detail3[i]["wages"]);
-            }
-          }
-
-          let detail4 = data[employeeId]["day4"];
-          let totalWeges4 = 0;
-          for (let i = 0; i < detail4.length; i++) {
-            if (detail4[i]["wages"] != null) {
-              totalWeges4 += Number(detail4[i]["wages"]);
-            }
-          }
-
-          this.salaryList.push({ 
-            employeeId: employeeId, 
-            name: data[employeeId]["name"], 
-            empCode: data[employeeId]["empCode"], 
-            designation: data[employeeId]["designation"], 
-            day1: data[employeeId]["day1"], 
-            day2: data[employeeId]["day2"], 
-            day3: data[employeeId]["day3"], 
-            day4: data[employeeId]["day4"], 
-            totalDaySalary1: totalWeges1 ,
-            totalDaySalary2: totalWeges2,
-            totalDaySalary3: totalWeges3,
-            totalDaySalary4: totalWeges4
+          this.salaryList.push({
+            employeeId: employeeId,
+            name: data[employeeId]["name"],
+            empCode: data[employeeId]["empCode"],
+            designation: data[employeeId]["designation"]
           });
+
+          for (let dateIndex = 0; dateIndex < 32; dateIndex++) {
+            let dayNumber = dateIndex + 1;
+            if (data[employeeId]["day" + dayNumber] != undefined) {
+
+              this.salaryList[i]["day" + dayNumber] = [];
+              this.salaryList[i]["totalDaySalary" + dayNumber] = [];
+
+              let dayData = data[employeeId]["day" + dayNumber];
+              let totalWages = 0;
+              for (let i = 0; i < dayData.length; i++) {
+                if (dayData[i]["wages"] != null) {
+                  totalWages += Number(dayData[i]["wages"]);
+                }
+              }
+
+              this.salaryList[i]["day" + dayNumber] = dayData;
+              this.salaryList[i]["totalDaySalary" + dayNumber] = totalWages;
+            } else {
+              break;
+            }
+          }
         }
         $(this.divLoader).hide();
       }
     });
-
   }
 }
 
