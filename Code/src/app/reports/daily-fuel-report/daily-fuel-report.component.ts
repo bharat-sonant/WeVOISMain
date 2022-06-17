@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-daily-fuel-report',
@@ -9,7 +10,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class DailyFuelReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   vehicleList: any[] = [];
@@ -17,8 +18,10 @@ export class DailyFuelReportComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   selectedDate: any;
+  toDayDate: any;
   txtDate = "#txtDate";
   spDate = "#spDate";
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -28,7 +31,8 @@ export class DailyFuelReportComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.selectedDate = this.commonService.setTodayDate();
+    this.toDayDate = this.commonService.setTodayDate();
+    this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
     $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
     this.getSelectedYearMonthName();
@@ -44,13 +48,20 @@ export class DailyFuelReportComponent implements OnInit {
     }
   }
 
-  getData(filterVal: any) {
-    this.clearList();
-    this.selectedDate = filterVal;
-    $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
-    this.getSelectedYearMonthName();
-    this.getDieselQty();
-    this.getWardRunningDetail();
+  setDate(filterVal: any, type: string) {
+    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
+    $(this.txtDate).val(newDate);
+    $(this.spDate).html(newDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(newDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
+    if (newDate != this.selectedDate) {
+      this.selectedDate = newDate;
+      this.clearList();
+      this.getSelectedYearMonthName();
+      this.getDieselQty();
+      this.getDailyWorkDetail();
+    }
+    else{
+      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+    }
   }
 
   getVehicles() {
@@ -59,7 +70,7 @@ export class DailyFuelReportComponent implements OnInit {
       this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], diesel: [], wardList: [] });
     }
     this.getDieselQty();
-    this.getWardRunningDetail();
+    this.getDailyWorkDetail();
   }
 
   getSelectedYearMonthName() {
@@ -89,52 +100,72 @@ export class DailyFuelReportComponent implements OnInit {
     );
   }
 
-  getWardRunningDetail() {
-    let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
-      workData => {
-        workDetailInstance.unsubscribe();
-        if (workData != null) {
-          let keyArray = Object.keys(workData);
-          if (keyArray.length > 0) {
-            for (let j = 0; j < keyArray.length; j++) {
-              let empId = keyArray[j];
-              this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                if (employee["designation"] == "Transportation Executive") {
-                  let name = employee["name"];
-                  for (let k = 1; k <= 5; k++) {
-                    if (workData[empId]["task" + k] != null) {
-                      let zone = workData[empId]["task" + k]["task"];
-                      let vehicle = workData[empId]["task" + k]["vehicle"];
-                      if (vehicle != "NotApplicable") {
-                        let dbLocationPath = "LocationHistory/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
-                        if (zone.includes("BinLifting")) {
-                          dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
-                        }
-                        let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-                          locationData => {
-                            locationInstance.unsubscribe();
-                            let distance = "0";
-                            if (locationData != null) {
-                              distance = (Number(locationData) / 1000).toFixed(3);
-                            }
-                            let detail = this.vehicleList.find(item => item.vehicle == vehicle);
-                            if (detail != undefined) {
-                              let wardListDetail = detail.wardList.find(item => item.zone == zone);
-                              if (wardListDetail == undefined) {
-                                detail.wardList.push({ zone: zone, km: distance, driver: name });
-                              }
-                            }
-                          });
-                      }
-                    }
+  getDailyWorkDetail() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 3000);
+
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
+    let workDetailInstance = this.httpService.get(path).subscribe(workData => {
+      workDetailInstance.unsubscribe();
+      if (workData != null) {
+        this.getWardRunningDetail(workData);
+      }
+    }, error => {
+      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        workData => {
+          workDetailInstance.unsubscribe();
+          if (workData != null) {
+            if (this.selectedDate != this.commonService.setTodayDate()) {
+              this.commonService.saveJsonFile(workData, this.selectedDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/");
+            }
+            this.getWardRunningDetail(workData);
+          }
+        });
+    });
+  }
+
+  getWardRunningDetail(workData: any) {
+    let keyArray = Object.keys(workData);
+    if (keyArray.length > 0) {
+      for (let j = 0; j < keyArray.length; j++) {
+        let empId = keyArray[j];
+        this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+          if (employee["designation"] == "Transportation Executive") {
+            let name = employee["name"];
+            for (let k = 1; k <= 5; k++) {
+              if (workData[empId]["task" + k] != null) {
+                let zone = workData[empId]["task" + k]["task"];
+                let vehicle = workData[empId]["task" + k]["vehicle"];
+                if (vehicle != "NotApplicable") {
+                  let dbLocationPath = "LocationHistory/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+                  if (zone.includes("BinLifting")) {
+                    dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
                   }
+                  let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
+                    locationData => {
+                      locationInstance.unsubscribe();
+                      let distance = "0";
+                      if (locationData != null) {
+                        distance = (Number(locationData) / 1000).toFixed(3);
+                      }
+                      let detail = this.vehicleList.find(item => item.vehicle == vehicle);
+                      if (detail != undefined) {
+                        let wardListDetail = detail.wardList.find(item => item.zone == zone);
+                        if (wardListDetail == undefined) {
+                          detail.wardList.push({ zone: zone, km: distance, driver: name });
+                        }
+                      }
+                    });
                 }
-              });
+              }
             }
           }
-        }
-      });
+        });
+      }
+    }
   }
 
   exportToExcel() {
@@ -209,8 +240,7 @@ export class DailyFuelReportComponent implements OnInit {
         }
       }
       htmlString += "</table>";
-      console.log(htmlString);
-      let fileName =this.commonService.getFireStoreCity()+ "-Daily-Fuel-Report-" + this.selectedDate.split('-')[2] + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + "-" + this.selectedDate.split('-')[0] + ".xlsx";
+      let fileName = this.commonService.getFireStoreCity() + "-Daily-Fuel-Report-" + this.selectedDate.split('-')[2] + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + "-" + this.selectedDate.split('-')[0] + ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

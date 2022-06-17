@@ -751,7 +751,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: calc(87vh - 80px);
+    height: calc(70vh);
     overflow: hidden;
     overflow-y: scroll;
     overflow-x: scroll
@@ -1434,7 +1434,7 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-        padding-bottom: 100px!important;
+        padding-bottom: 0px!important;
     }
     .mob-10 {
         margin-top: 10px!important;
@@ -1654,7 +1654,7 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-        padding-bottom: 100px!important;
+        padding-bottom: 0px!important;
     }
     .pad-pr-0 {
         padding-right: 0px!important;
@@ -1693,7 +1693,7 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-        padding-bottom: 100px!important;
+        padding-bottom: 0px!important;
     }
     .pad-mob-b-10 {
         margin-bottom: 10px!important;
@@ -1940,7 +1940,7 @@ input {
 }
 
 
-@media (min-width:270px) and (max-width: 282px){
+@media (min-width:270px) and (max-width: 320px){
     .table-one{
         height: calc(55vh);
       
@@ -1971,7 +1971,7 @@ input {
 }
 @media (min-width:359px) and (max-width: 380px){
     .table-one{
-        height: calc(68vh);
+        height: calc(70vh);
       
     }
     .main-content{
@@ -1984,7 +1984,7 @@ input {
 }
 @media (min-width:381px) and (max-width: 399px){
     .table-one{
-        height: calc(58vh);
+        height: calc(70vh);
       
     }
     .main-content{
@@ -1997,7 +1997,7 @@ input {
 }
 @media (min-width:400px) and (max-width: 420px){
     .table-one{
-        height: calc(56vh);
+        height: calc(70vh);
       
     }
     .main-content{
@@ -2018,13 +2018,49 @@ input {
         
     }
     .table-one{
-        height: calc(72vh);
+        height: calc(70vh);
       
     }
 }
-@media (min-width:770px) and (max-width: 821px){
+@media (min-width:576px) and (max-width: 768px){
+    .active-input{
+      
+        margin-top: 8px;
+        height: 50px;
+        max-width: 21% !important;
+        margin-left: 8px
+      
+    }
+    .roles-input{
+        padding-left: 4px !important
+    }
+    .col-md-3{
+        padding-left: 8px;
+        padding-right: 0px 
+    }
+    
+    .roles-input{
+        max-width: 20% !important;
+            }
+    .employ-input{
+        max-width: 20% !important;
+            }
+    .code-input{
+        max-width: 28% !important;
+            }
+    .active-input{
+        max-width: 25% !important;
+        margin-top: 8px;
+        margin-left: 10px;
+            }
+            .table-one{
+                height: calc(80vh);
+              
+            }
+}
+@media (min-width:768px) and (max-width: 821px){
     .table-one{
-        height: calc(43vh);
+        height: calc(70vh);
       
     }
     .main-content{
@@ -2054,41 +2090,41 @@ input {
     }
 }
 
-@media (min-width:600px) and (max-width: 769px){
-    .table-one{
-        height: calc(50vh);
+// @media (min-width:600px) and (max-width: 769px){
+//     .table-one{
+//         height: calc(50vh);
       
-    }
-    .main-content{
-        padding-bottom: 0px !important;
-    }
-    .roles-input{
-        min-width: 50% !important;
-    }
-    .employ-input{
-        min-width: 40% !important;
-    }
-    .code-input{
-     min-width: 50% !important;
-    }
-    .active-input{
-        min-width: 37% !important;
-        margin-top: 8px;
-        margin-left: 10px;
-    }
-    .card-outer{
+//     }
+//     .main-content{
+//         padding-bottom: 0px !important;
+//     }
+//     .roles-input{
+//         min-width: 50% !important;
+//     }
+//     .employ-input{
+//         min-width: 40% !important;
+//     }
+//     .code-input{
+//      min-width: 50% !important;
+//     }
+//     .active-input{
+//         min-width: 37% !important;
+//         margin-top: 8px;
+//         margin-left: 10px;
+//     }
+//     .card-outer{
        
-        min-width: 350px;
-    }
-    .col-md-3{
-        padding-right: 0;
-        padding-left: 10px !important
-    }
+//         min-width: 350px;
+//     }
+//     .col-md-3{
+//         padding-right: 0;
+//         padding-left: 10px !important
+//     }
 
-}
-@media (min-width:900px) and (max-width: 915px){
+// }
+@media (min-width:821px) and (max-width: 1000px){
     .table-one{
-        height: calc(38vh);
+        height: calc(70vh);
       
     }
     .main-content{
@@ -2115,7 +2151,7 @@ input {
     
 }
 
-@media (min-width:1000px) and (max-width: 1025px){
+@media (min-width:1000px) and (max-width: 1250px){
     .main-content{
         padding-bottom: 0px !important;
     }
@@ -2142,42 +2178,55 @@ input {
         font-size: 20px;
     }
 }
-@media (min-width:1275px) and (max-width: 1300px){
+// @media (min-width:1275px) and (max-width: 1300px){
+//     .card-outer{
+//       min-width: 650px !important
+//     }
+//     .table-one{
+//         height: calc(70vh);
+      
+//     }
+   
+//     .active-input{
+      
+//         margin-top: 8px;
+//         height: 50px;
+//         max-width: 21% !important;
+//         margin-left: 8px
+      
+//     }
+//     .col-md-3{
+//         padding-left: 8px;
+//         padding-right: 0px 
+//     }
+// }
+
+@media (min-width:1250px){
+    .active-input{
+      
+        margin-top: 8px;
+        height: 50px;
+        max-width: 21% !important;
+        margin-left: 8px
+      
+    }
+    .roles-input{
+        padding-left: 4px !important
+    }
+    .col-md-3{
+        padding-left: 8px;
+        padding-right: 0px 
+    }
     .card-outer{
-      min-width: 650px !important
+       min-width:625px !important;
+        
     }
     .table-one{
-        height: calc(70vh);
+        height: calc(80vh);
       
     }
-   
-    .active-input{
-      
-        margin-top: 8px;
-        height: 50px;
-        max-width: 21% !important;
-        margin-left: 8px
-      
-    }
-    .col-md-3{
-        padding-left: 8px;
-        padding-right: 0px 
-    }
-}
 
-@media (min-width:1301px){
-    .active-input{
-      
-        margin-top: 8px;
-        height: 50px;
-        max-width: 21% !important;
-        margin-left: 8px
-      
-    }
-    .col-md-3{
-        padding-left: 8px;
-        padding-right: 0px 
-    }
+    
 }
 
 

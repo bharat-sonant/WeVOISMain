@@ -15,7 +15,7 @@ export class WardMonitoringReportComponent implements OnInit {
   selectedYear: any;
   selectedCircle: any;
   zoneProgressList: any[] = [];
-  wardForWeightageList:any[]=[];
+  wardForWeightageList: any[] = [];
   zoneList: any[] = [];
   db: any;
   txtDate = "#txtDate";
@@ -26,9 +26,9 @@ export class WardMonitoringReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     this.getWardForLineWeitage();
     this.getSelectedYearMonth();
-    
+
   }
-  
+
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
@@ -51,15 +51,16 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      this.selectedDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-    } else if (type == "previous") {
-      this.selectedDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
+    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
+    $(this.txtDate).val(newDate);
+    if (newDate != this.selectedDate) {
+      this.selectedDate = newDate;
+      this.getSelectedYearMonth();
+      this.getData();
     }
-    this.getSelectedYearMonth();
-    this.getData();
+    else {
+      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+    }
   }
 
   getSelectedYearMonth() {
@@ -169,7 +170,7 @@ export class WardMonitoringReportComponent implements OnInit {
         }
       });
   }
-  
+
   getWorkLineWeightagePercentage(lineComplteList: any, totalLines: any, zoneDetail: any) {
     let percentage = 0;
     let skippedLines = 0;
@@ -199,7 +200,7 @@ export class WardMonitoringReportComponent implements OnInit {
       }
       this.getWardStatus(zoneDetail);
     }
-  } 
+  }
 
   getWardWorkPercentage(time: any, zoneDetail: any, percentage: any, endTime: any) {
     if (parseFloat(time) < 7) {

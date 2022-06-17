@@ -17,7 +17,6 @@ export class RoutesTrackingComponent implements OnInit {
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private actRoute: ActivatedRoute) { }
 
   selectedZone: any;
-  preSelectedZone: any;
   zoneList: any[];
   toDayDate: any;
   selectedDate: any;
@@ -27,27 +26,24 @@ export class RoutesTrackingComponent implements OnInit {
   zoneKML: any;
   monthDetailList: any[];
   vehicleMarker: any;
-  vehicleLocationInstance: any;
   fixdGeoLocations: any[];
   db: any;
   isActualData: any;
   routePath: any;
-  routePathList: any[];
+  routePathList: any[] = [];
   allMarkers: any[] = [];
   polylines: any[] = [];
   lineData: any[] = [];
   endMarker: any;
-
   txtDate = "#txtDate";
   ddlTime = "#ddlTime";
-
   timeInterval: any;
   isFirst: any;
   endTime: any;
   isLast: any;
-
   isReset: any;
   isStart: any;
+  isShowRouteVehicle: any;
   btnPre = "#btnPre";
   btnReset = "#btnReset";
   playStop = "#playStop";
@@ -169,7 +165,6 @@ export class RoutesTrackingComponent implements OnInit {
           strokeColor: this.commonService.getLineColor("LineCompleted"),
           strokeWeight: 2
         });
-
         if (i == 0) {
           this.getStartStopMarker("start");
         }
@@ -189,6 +184,15 @@ export class RoutesTrackingComponent implements OnInit {
         let routePart = routeDateList[j].split(',');
         if (routePart.length == 2) {
           this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), time: this.routePathList[i]["time"].split('-')[0] });
+        }
+      }
+    }
+    if (this.isStart == false) {
+      if (this.routeMarker[0] != null) {
+        this.lineIndex = this.lineDataList.length - 5;
+        if (this.routeMarker[0]["marker"] != null) {
+          this.routeMarker[0]["marker"].setPosition(this.lineDataList[this.lineIndex]);
+          this.map.setCenter(this.lineDataList[this.lineIndex]);
         }
       }
     }
@@ -245,7 +249,8 @@ export class RoutesTrackingComponent implements OnInit {
     $(this.btnReset).hide();
     this.lineIndex = 0;
     this.isStart = false;
-    this.isReset = true;
+    this.isReset = false;
+    this.isShowRouteVehicle = false;
     this.setSpeed($(this.ddlSpeed).val());
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
@@ -272,7 +277,6 @@ export class RoutesTrackingComponent implements OnInit {
       if (this.selectedDate == this.toDayDate) {
         this.showVehicleCurrentLocation();
       }
-      this.getLocationHistoryFromStorage(this.selectedDate, "trackRoute");
     }
   }
 
@@ -285,14 +289,15 @@ export class RoutesTrackingComponent implements OnInit {
         this.allMarkers[i]["marker"].setMap(null);
       }
     }
-    this.allMarkers = [];
     if (this.polylines != null) {
       for (let j = 0; j < this.polylines.length; j++) {
         this.polylines[j].setMap(null);
       }
-    }
-    this.polylines = [];
+      this.polylines = [];
+    }    
+    this.allMarkers = [];
     this.routePath = null;
+    this.routePathList=[];
     this.trackData.totalKM = 0;
     this.trackData.totalTime = "0 hr 0 min";
     this.trackData.time = "0:00";
@@ -301,6 +306,7 @@ export class RoutesTrackingComponent implements OnInit {
   getMonthSelectedDetail(monthDate: any) {
     this.clearMap();
     this.getReset();
+    this.isReset = false;
     $(this.txtDate).val(monthDate);
     this.selectedDate = monthDate;
     if (this.selectedZone != "0") {
@@ -442,18 +448,13 @@ export class RoutesTrackingComponent implements OnInit {
       monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
       monthDetails.routePath = routePath;
     }
-    if (type == "trackRoute") {
+    if (this.selectedDate == monthDate) {
       this.routePath = routePath;
       this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
       this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
       this.drowRouteOnMap();
-      if (this.selectedDate == monthDate) {
-        this.getMonthDetail(monthDetails, routePath, monthDate);
-      }
-    }
-    else {
-      this.getMonthDetail(monthDetails, routePath, monthDate);
-    }
+    }    
+    this.getMonthDetail(monthDetails, routePath, monthDate);
   }
 
   getLocationHistoryFromStorage(monthDate: any, type: any) {
@@ -529,46 +530,48 @@ export class RoutesTrackingComponent implements OnInit {
     let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
       vehicleData => {
         vehicleInstance.unsubscribe();
-        let vehicle = vehicleData;
-        let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
-        let currentLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
-          currentLocationData => {
-            currentLocationInstance.unsubscribe();
-            if (currentLocationData != null) {
-              dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
-              let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
-                statusData => {
-                  statusInstance.unsubscribe();
-                  let statusId = statusData.toString();
-                  let vehicleIcon = '';
-                  if (vehicle.includes("TRACTOR")) {
-                    vehicleIcon = this.getIcon("activeTractor");
-                    if (statusId == 'completed') {
-                      vehicleIcon = this.getIcon("deActiveTractor");
-                    } else if (statusId == 'stopped') {
-                      vehicleIcon = this.getIcon("stopTractor");
+        if (vehicleData != null) {
+          let vehicle = vehicleData;
+          let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
+          let currentLocationInstance = this.db.object(dbPath).valueChanges().subscribe(
+            currentLocationData => {
+              currentLocationInstance.unsubscribe();
+              if (currentLocationData != null) {
+                dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
+                let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  statusData => {
+                    statusInstance.unsubscribe();
+                    let statusId = statusData.toString();
+                    let vehicleIcon = '';
+                    if (vehicle.includes("TRACTOR")) {
+                      vehicleIcon = this.getIcon("activeTractor");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveTractor");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopTractor");
+                      }
                     }
-                  }
-                  else {
-                    vehicleIcon = this.getIcon("activeVehicle");
-                    if (statusId == 'completed') {
-                      vehicleIcon = this.getIcon("deActiveVehicle");
-                    } else if (statusId == 'stopped') {
-                      vehicleIcon = this.getIcon("stopVehicle");
+                    else {
+                      vehicleIcon = this.getIcon("activeVehicle");
+                      if (statusId == 'completed') {
+                        vehicleIcon = this.getIcon("deActiveVehicle");
+                      } else if (statusId == 'stopped') {
+                        vehicleIcon = this.getIcon("stopVehicle");
+                      }
                     }
-                  }
-                  let location = currentLocationData.toString().split(",");
-                  let lat = Number(location[0]);
-                  let lng = Number(location[1]);
-                  this.vehicleMarker = new google.maps.Marker({
-                    position: { lat: Number(lat), lng: Number(lng) },
-                    map: this.map,
-                    icon: vehicleIcon,
+                    let location = currentLocationData.toString().split(",");
+                    let lat = Number(location[0]);
+                    let lng = Number(location[1]);
+                    this.vehicleMarker = new google.maps.Marker({
+                      position: { lat: Number(lat), lng: Number(lng) },
+                      map: this.map,
+                      icon: vehicleIcon,
+                    });
                   });
-                });
+              }
             }
-          }
-        );
+          );
+        }
       }
     );
   }
@@ -578,7 +581,6 @@ export class RoutesTrackingComponent implements OnInit {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.zoneList[0]["zoneName"] = "--Select Zone--";
     this.selectedZone = "0";
-    this.preSelectedZone = "0";
   }
 
   setMaps() {
@@ -642,6 +644,7 @@ export class RoutesTrackingComponent implements OnInit {
       this.selectedDate = previousDate;
     }
     this.getReset();
+    this.isReset = false;
     this.setSelectedMonthYear();
     let monthDetail = this.monthDetailList.find(item => item.monthDate == this.selectedDate);
     if (monthDetail == undefined) {
@@ -669,6 +672,7 @@ export class RoutesTrackingComponent implements OnInit {
       this.zoneKML[0]["line"].setMap(null);
     }
     this.getReset();
+    this.isReset = false;
     this.getMonthDetailList();
     this.getData();
   }
@@ -756,7 +760,6 @@ export class RoutesTrackingComponent implements OnInit {
   getPlayStop() {
     if (this.isStart == false) {
       let options = {
-        // max zoom
         zoom: 16,
       };
       this.map.setOptions(options);
@@ -773,6 +776,7 @@ export class RoutesTrackingComponent implements OnInit {
       else {
         this.endTime = this.endTime;
       }
+      this.isShowRouteVehicle = true;
       this.drowRouteDataTiming();
     }
     else {
@@ -787,10 +791,12 @@ export class RoutesTrackingComponent implements OnInit {
   getReset() {
     this.isReset = true;
     this.isStart = false;
+    this.isShowRouteVehicle = false;
     $(this.playStop).removeClass("fas fa-stop-circle");
     $(this.playStop).addClass("fab fa-youtube");
     $(this.btnPre).show();
     $(this.btnReset).hide();
+    $(this.ddlTime).val("0");
     this.lineDataList = [];
     this.lineIndex = 0;
     this.timeInterval = 0;
@@ -798,8 +804,12 @@ export class RoutesTrackingComponent implements OnInit {
       this.routeMarker[0]["marker"].setMap(null);
     }
     this.routeMarker = [];
+    if (this.routePathList.length > 0) {
+      this.endTime = this.routePathList.length - 1;
+      this.drowRouteData('current');
+    }
   }
-  
+
   setVehicleMoving() {
     if (this.isStart == true) {
       if (this.lineIndex == 0) {
@@ -837,12 +847,6 @@ export class RoutesTrackingComponent implements OnInit {
       }
       this.animate();
     }
-    else {
-      if (this.routeMarker[0] != null) {
-        this.routeMarker[0]["marker"].setMap(null);
-        this.routeMarker = [];
-      }
-    }
   }
 
   createMarker() {
@@ -857,6 +861,10 @@ export class RoutesTrackingComponent implements OnInit {
   animate() {
     if (this.timerHandle[this.lineIndex - this.skip]) {
       clearTimeout(this.timerHandle[this.lineIndex - this.skip]);
+    }
+    if (this.isShowRouteVehicle == false) {
+      this.routeMarker[0]["marker"].setMap(null);
+      return;
     }
     if (this.routeMarker[0] == null) {
       this.createMarker();

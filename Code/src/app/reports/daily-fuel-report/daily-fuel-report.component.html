@@ -1,6 +1,3 @@
-<div id="divLoader" class="loaderClass">
-    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
@@ -11,25 +8,30 @@
 <div class="main-content">
     <div class="row">
         <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="getData($event.target.value);" />
+                                    <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
+                                        << </button>
+                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value,'current');" />
+                                    <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                        >>
+                                      </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
 
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
-
                         </div>
                         <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">

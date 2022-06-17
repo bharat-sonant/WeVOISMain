@@ -1791,5 +1791,20 @@ export class CommonService {
     XLSX.writeFile(wb, fileName);
   }
 
-
+  setDate(selectedDate: any, filterVal: any, type: string) {
+    let newDate = "";
+    if (type == 'current') {
+        newDate = filterVal;
+    } else if (type == 'next') {
+      let nextDate = this.getNextDate(selectedDate, 1);
+        newDate = nextDate;
+    } else if (type == 'previous') {
+      let previousDate = this.getPreviousDate(selectedDate, 1);
+      newDate = previousDate;
+    }
+    if (new Date(newDate) > new Date(this.setTodayDate())) {
+      newDate = selectedDate;
+    }
+    return newDate;
+  }
 }

@@ -1,20 +1,20 @@
-<div id="divLoader" class="loaderClass">
-    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-</div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers Employees-heading">
             Employees Attendance
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+        <div class="col-md-5 card-outer">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-4 text-left">
+                        <div class="col-md-4 text-left date-box">
                             <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                 << </button>
                             <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value,'current')">
@@ -23,7 +23,7 @@
                               </button>
                         </div>
 
-                        <div class="col-md-2 text-left">
+                        <div class="col-md-2 text-left all-box">
                             <select id="ddlTime" class="filter-select filter-input" (change)="filterData()">
                                 <option value="0">
                                     All
@@ -35,18 +35,16 @@
                                     After 8:30
                                 </option>
                             </select>
-
                         </div>
-                        <div class="col-md-3 text-left check-fieldExecutive">
+                        <div class="col-md-3 text-left check-fieldExecutive field-box">
                             <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"> &nbsp;Field Executive
-
                         </div>
-                        <div class="col-md-3 text-center" style="padding-right:30px!important;font-weight: bold;font-size:16px; ">
-                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
-                                <i class="fa-solid fa-file-export"
-                                    style="cursor:pointer; color:green;  font-size: 24px; "
+                        <div class="col-md-3 text-center export-main">
+                            <span class="export-span">
+                                <i class="fa-solid fa-file-export export-icon"
+                                
                                     (click)="exportToExcel();"></i><br />
-                                Export to Excel
+                          <span class="export-span-iner">Export to Excel</span>
                             </span>
                         </div>
                     </div>
@@ -58,11 +56,11 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading1">
                                                 Name</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading1">
                                                 In Time</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading1">
                                                 Out Time
                                             </th>
                                         </thead>
@@ -88,9 +86,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+        <div class="col-md-6 card-main">
+            <div class="card card-body-outer">
+                <div id="content" #content class="card-body card-body2">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -99,7 +97,7 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>

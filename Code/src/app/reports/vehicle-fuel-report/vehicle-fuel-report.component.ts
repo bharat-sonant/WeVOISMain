@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
-import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-vehicle-fuel-report',
@@ -11,7 +10,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class VehicleFuelReportComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
