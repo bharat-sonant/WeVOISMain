@@ -143,10 +143,11 @@ export class SalaryCalculationsComponent implements OnInit {
 
         //for (let index = 0; index < this.datesInSelectedMonth.length; index++) {
         for (let index = 0; index < 3; index++) {
-          let date = this.datesInSelectedMonth[index]
+          let date = this.datesInSelectedMonth[index];
           let employeeAssignments = this.dailyWorkDetail[date][employeeId];
           if (employeeAssignments != undefined) {
 
+            this.jsonObject[employeeId]["day" + (index + 1)] = [];
             let assignedTaskCount = 1;
             while (assignedTaskCount < this.maxTaskCount) {
 
@@ -158,7 +159,14 @@ export class SalaryCalculationsComponent implements OnInit {
                 if (new Date(date) >= new Date(this.salaryCalculationChangedDate())) {
                   let wageDetail = this.wardWagesList.find(item => item.ward == taskName);
                   if (wageDetail != undefined) {
+
                     console.log("wageDetail:" + wageDetail);
+
+                    if (assignedTaskCount > 1) {
+                      wages = 200;
+                    } else {
+                      wages = designationId == "5" ? wageDetail.driver : wageDetail.helper;
+                    }
 
                     /*
                     if (isFirstZone == true) {
@@ -168,7 +176,7 @@ export class SalaryCalculationsComponent implements OnInit {
                       if (salaryDetail.designation == "Driver") {
                         wages = wageDetail.driver;
                       }
-                      else {
+                      else { 
                         wages = wageDetail.helper;
                       }
                     }
@@ -179,7 +187,7 @@ export class SalaryCalculationsComponent implements OnInit {
                   }
                 }
 
-                this.jsonObject[employeeId]["day" + (index + 1)] = [];
+                
                 this.jsonObject[employeeId]["day" + (index + 1)].push({
                   ward: taskName,
                   wages: wages,
