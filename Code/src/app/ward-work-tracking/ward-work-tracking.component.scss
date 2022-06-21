@@ -162,33 +162,44 @@
   display:block;}
   
   /** Extra Small devices (landscape phones, 575px upto) **/
-  @media (max-width: 575px) {
+  @media (max-width: 490px) {
   .header{height:110px ; width: 100%;  background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%); color:#fff;}
   .caret-select{margin-top: 11px!important;
   border-radius: 5px;
-  padding:10px; border:none!important;  width: 80%; margin-left:45px!important; }
-  button{width: 80%;   border-radius: 5px; padding:9px; margin-top: 7px!important; border:none!important; margin-left:45px!important;  }
+  padding:10px; border:none!important;  margin-left:45px!important; }
+  button{width: 80%;   border-radius: 5px; padding:9px; margin-top: 7px!important; border:nonse!important; margin-left:40px!important;  }
   .checkbox-input{
     display: none !important;
   }
   .checkbox-span{
     display: none !important;
   }
-  .dustbin-details-box{
-    
-    right: 15px !important;
-    top: 350px !important;
-}
+  
 .driver-helper-box{
   top: 120px !important;
 }
-.line-details-box{
-    top: 244px !important;
-  
-  }
+
   .panel-collapse{
     top: 110px !important;
   }
+  
+   .driver-helper-box{
+    width: 280px !important;
+}
+.line-details-box{
+  top: 305px !important;
+}
+.dustbin-details-box{
+  right: 15px !important;
+  top: 412px !important;
+}
+.caret-select{
+  width: 160px !important;
+   margin-left: 45px !important;
+ }
+ .float-third3{
+  margin-top: -45px !important;
+ }
   
 } 
   /** Small devices (tablets, 576px  to 767px upto) **/
@@ -198,7 +209,7 @@
   .caret-select{margin-top: 11px!important;
   border-radius: 5px;
   padding:10px; border:none!important;  width: 80%; margin-left:45px!important; }
-  button{width: 80%;   border-radius: 5px; padding:9px; margin-top: 7px!important; border:none!important; margin-left:45px!important;  }
+  button{width: 80%;   border-radius: 5px; padding:9px; margin-top: 7px!important; border:none!important; margin-left:40px!important;  }
   
   }
   
@@ -1125,6 +1136,10 @@ i.eye{
   width: 280px !important;
  
 }
+.timer-class{
+  margin-top: 10px; 
+  margin-right: 20px;
+}
 
 
 
@@ -1140,15 +1155,124 @@ i.eye{
   top: 64px !important;
 }
 }
-@media only screen and (max-width: 420px) and (min-width: 350px){
-  .caret-select{
-   width: 221px !important;
-    margin-left: 45px !important;
+@media only screen and (max-width: 1023px) and (min-width: 768px){
+  .checkbox-input{
+    display: none !important;
   }
-  .float-third3{
-   margin-top: -45px !important;
+  .checkbox-span{
+    display: none !important;
   }
+  
 }
+@media only screen and (max-width: 767px) and (min-width: 635px){
+  .caret-select{
+  
+     margin-left: 10px !important;
+     height: 36px !important;
+     width: 140px !important;
+   }
+   
+  button{
+    margin-left: 40px !important;
+  }
+  .inputs-main{
+    max-width: 86% !important;
+  }
+  .total-house{
+    max-width: 13% !important;
+  }
+  .header{
+    height: unset !important;
+  }
+  .checkbox-input{
+    display: none !important;
+  }
+  .checkbox-span{
+    display: none !important;
+  }
+  
+  
+ }
+ @media only screen and (max-width: 635px) and (min-width: 576px){
+  .caret-select{
+  
+     margin-left: 10px !important;
+     height: 36px !important;
+     width: 140px !important;
+   }
+   .checkbox-input{
+    display: none !important;
+  }
+  .checkbox-span{
+    display: none !important;
+  }
+  button{
+    margin-left: 40px !important;
+  }
+  .inputs-main{
+    max-width: 86% !important;
+  }
+  .total-house{
+    max-width: 13% !important;
+  }
+  .header{
+    height: unset !important;
+  }
+  
+  
+ }
+@media only screen and (max-width: 576px) and (min-width: 490px){
+  .caret-select{
+  
+     margin-left: 10px !important;
+     height: 36px !important;
+     width: 140px !important;
+   }
+   .checkbox-input{
+    display: none !important;
+  }
+  .checkbox-span{
+    display: none !important;
+  }
+  button{
+    margin-left: 40px !important;
+  }
+  .inputs-main{
+    max-width: 86% !important;
+  }
+  .total-house{
+    max-width: 13% !important;
+  }
+  
+  
+ }
+
+
+
+ @media only screen and (max-width: 490px) and (min-width: 413px){    
+  .caret-select{
+    width: 135px !important;
+     margin-left: 10px !important;
+   }
+   .float-third3{
+    margin-top: 3px !important;
+   }
+   .checkbox-input{
+    display: none !important;
+  }
+  .checkbox-span{
+    display: none !important;
+  }
+   
+}
+ @media only screen and (max-width: 413px) and (min-width: 320px){
+  .caret-select{
+    width: 220px !important;
+     margin-left: 45px !important;
+   }
+}
+
+
 @media only screen and (max-width: 320px) and (min-width: 270px){
   .caret-select{
    width: 160px !important;
@@ -1157,15 +1281,17 @@ i.eye{
   .float-third3{
    margin-top: -45px !important;
   }
+  .driver-helper-box{
+    right: 15px !important;
+  }
+  .line-details-box{
+    right: 15 !important;
+  }
+  .dustbin-details-box{
+    right: 15 !important;
+  }
 }
 
-@media only screen and (max-width: 540px) and (min-width: 500px){
-  .caret-select{
-   
-    width: 33%;
-    margin-left: 5px !important;
-}
-}
 
 .fa-expand-route{
   cursor: pointer;
