@@ -3,7 +3,7 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-8">
+        <div class="col-md-8 inputs-main">
             <button class="btn btn-primary display-class" (click)="setDate('','previous');">
         << </button>
             <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
@@ -187,7 +187,7 @@
     <div class="main">
         <div class="row iner-main">
             <div class="col-md-8 iner-main2">
-                <span style="margin-top: 10px; margin-right: 20px;"> Total timer <b> {{progressData.totalTimer}} min</b></span>
+                <span class="timer-class"> Total timer <b> {{progressData.totalTimer}} min</b></span>
             </div>
             <div class="col-md-4 image-div">
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
