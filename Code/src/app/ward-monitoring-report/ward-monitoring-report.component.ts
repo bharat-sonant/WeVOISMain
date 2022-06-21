@@ -51,16 +51,17 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
-    $(this.txtDate).val(newDate);
-    if (newDate != this.selectedDate) {
-      this.selectedDate = newDate;
-      this.getSelectedYearMonth();
-      this.getData();
-    }
-    else {
-      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
-    }
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.getSelectedYearMonth();
+        this.getData();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   getSelectedYearMonth() {

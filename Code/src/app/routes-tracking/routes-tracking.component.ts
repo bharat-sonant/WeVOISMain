@@ -294,10 +294,10 @@ export class RoutesTrackingComponent implements OnInit {
         this.polylines[j].setMap(null);
       }
       this.polylines = [];
-    }    
+    }
     this.allMarkers = [];
     this.routePath = null;
-    this.routePathList=[];
+    this.routePathList = [];
     this.trackData.totalKM = 0;
     this.trackData.totalTime = "0 hr 0 min";
     this.trackData.time = "0:00";
@@ -453,7 +453,7 @@ export class RoutesTrackingComponent implements OnInit {
       this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(1));
       this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
       this.drowRouteOnMap();
-    }    
+    }
     this.getMonthDetail(monthDetails, routePath, monthDate);
   }
 
@@ -628,35 +628,29 @@ export class RoutesTrackingComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == 'current') {
-      this.selectedDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-      if (new Date(nextDate) > new Date(this.toDayDate)) {
-        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!")
-        $(this.txtDate).val(this.toDayDate);
-        this.selectedDate = this.toDayDate;
-        return;
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.getReset();
+        this.isReset = false;
+        this.setSelectedMonthYear();
+        let monthDetail = this.monthDetailList.find(item => item.monthDate == this.selectedDate);
+        if (monthDetail == undefined) {
+          this.getMonthDetailList();
+          this.getMonthSelectedDetail(this.selectedDate);
+          if (this.selectedMonth == Number(this.toDayDate.split('-')[1])) {
+            this.getLocationHistoryFromDatabase(this.toDayDate, "monthList");
+          }
+        }
+        else {
+          this.getMonthSelectedDetail(this.selectedDate);
+        }
       }
-      this.selectedDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
-      this.selectedDate = previousDate;
-    }
-    this.getReset();
-    this.isReset = false;
-    this.setSelectedMonthYear();
-    let monthDetail = this.monthDetailList.find(item => item.monthDate == this.selectedDate);
-    if (monthDetail == undefined) {
-      this.getMonthDetailList();
-      this.getMonthSelectedDetail(this.selectedDate);
-      if (this.selectedMonth == Number(this.toDayDate.split('-')[1])) {
-        this.getLocationHistoryFromDatabase(this.toDayDate, "monthList");
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
       }
-    }
-    else {
-      this.getMonthSelectedDetail(this.selectedDate);
-    }
+    });
   }
 
   setSelectedMonthYear() {

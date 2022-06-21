@@ -76,21 +76,16 @@ export class BvgRoutesComponent implements OnInit {
 
   setDate(filterVal: any, type: string) {
     this.clearAll();
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.commonService.setTodayDate())) {
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $("#txtDate").val(this.selectedDate);
-    this.getRouteVehicles();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $("#txtDate").val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.getRouteVehicles();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
 

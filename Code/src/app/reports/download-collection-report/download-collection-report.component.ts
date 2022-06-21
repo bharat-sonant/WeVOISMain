@@ -77,14 +77,16 @@ export class DownloadCollectionReportComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      this.selectedDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-    } else if (type == "previous") {
-      this.selectedDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
-    }
-    this.setSelectedYearMonth();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.setSelectedYearMonth();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
 

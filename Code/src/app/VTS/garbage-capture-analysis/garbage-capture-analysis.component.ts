@@ -298,26 +298,20 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
-      this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $(this.txtDate).val(this.selectedDate);
-    $(this.txtDateNav).val(this.selectedDate);
-    this.resetProgressData();
-    this.setMonthYear();
-    this.getCapturedImages();
-    this.getTotals();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      $(this.txtDateNav).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.resetProgressData();
+        this.setMonthYear();
+        this.getCapturedImages();
+        this.getTotals();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   getTotals() {

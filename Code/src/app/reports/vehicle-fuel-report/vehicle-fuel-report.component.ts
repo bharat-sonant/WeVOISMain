@@ -24,8 +24,8 @@ export class VehicleFuelReportComponent implements OnInit {
   vehicleFuelList: any[];
   trackList: any[];
   vehicleTrackList: any[];
-  ddlYear="#ddlYear";
-  ddlMonth="#ddlMonth";
+  ddlYear = "#ddlYear";
+  ddlMonth = "#ddlMonth";
   fuelDetail: fuelDetail = {
     totalAmount: "0.00",
     totalQuantity: "0.00",
@@ -34,6 +34,7 @@ export class VehicleFuelReportComponent implements OnInit {
     totalDistance: "0.0 KM",
     vehicleName: "---"
   }
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -314,60 +315,32 @@ export class VehicleFuelReportComponent implements OnInit {
     $('#divLoader').show();
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     let days = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-    this.getVehicleRunning(1, days);
+    this.getDailyWorkDetail(1, days);
   }
 
-  getVehicleRunning(stratDays: any, days: any) {
+  getDailyWorkDetail(stratDays: any, days: any) {
     let workDetailList = [];
     for (let i = stratDays; i <= days; i++) {
       let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
-      let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
-        workData => {
-          workDetailInstance.unsubscribe();
-          if (workData != null) {
-            let keyArray = Object.keys(workData);
-            if (keyArray.length > 0) {
-              for (let j = 0; j < keyArray.length; j++) {
-                let empId = keyArray[j];
-                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                  if (employee["designation"] == "Transportation Executive") {
-                    for (let k = 1; k <= 5; k++) {
-                      if (workData[empId]["task" + k] != null) {
-                        let ward = workData[empId]["task" + k]["task"];
-                        let vehicle = workData[empId]["task" + k]["vehicle"];
-                        if (vehicle != "NotApplicable") {
-                          let dbLocationPath = "LocationHistory/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
-                          if (ward.includes("BinLifting")) {
-                            dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
-                          }
-                          let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-                            locationData => {
-                              locationInstance.unsubscribe();
-                              let distance = 0;
-                              if (locationData != null) {
-                                distance = locationData;
-                              }
-                              let preDetail = workDetailList.find(item => item.date == monthDate && item.ward == ward);
-                              if (preDetail == undefined) {
-                                let orderBy = new Date(monthDate).getTime();
-                                this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
-                                  let name = employee["name"];
-                                  workDetailList.push({ date: monthDate, vehicle: vehicle, ward: ward, distance: distance, empId: empId, orderBy: orderBy, name: name });
-                                });
-                              }
-                            }
-                          );
-                        }
-                      }
-                    }
-                  }
-                });
-              }
-            }
-          }
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
+      let workDetailInstance = this.httpService.get(path).subscribe(workData => {
+        workDetailInstance.unsubscribe();
+        if (workData != null) {
+          this.getWardRunningDetail(workData, monthDate, workDetailList);
         }
-      );
+      }, error => {
+        let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
+        workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+          workData => {
+            workDetailInstance.unsubscribe();
+            if (workData != null) {
+              if (monthDate != this.commonService.setTodayDate()) {
+                this.commonService.saveJsonFile(workData, monthDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/");
+              }
+              this.getWardRunningDetail(workData, monthDate, workDetailList);
+            }
+          });
+      });
     }
     setTimeout(() => {
       this.createJSON(workDetailList, days);
@@ -376,6 +349,49 @@ export class VehicleFuelReportComponent implements OnInit {
     }, 24000);
   }
 
+  getWardRunningDetail(workData: any, monthDate: any, workDetailList: any) {
+    if (workData != null) {
+      let keyArray = Object.keys(workData);
+      if (keyArray.length > 0) {
+        for (let j = 0; j < keyArray.length; j++) {
+          let empId = keyArray[j];
+          this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+            if (employee["designation"] == "Transportation Executive") {
+              for (let k = 1; k <= 5; k++) {
+                if (workData[empId]["task" + k] != null) {
+                  let ward = workData[empId]["task" + k]["task"];
+                  let vehicle = workData[empId]["task" + k]["vehicle"];
+                  if (vehicle != "NotApplicable") {
+                    let dbLocationPath = "LocationHistory/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                    if (ward.includes("BinLifting")) {
+                      dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                    }
+                    let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
+                      locationData => {
+                        locationInstance.unsubscribe();
+                        let distance = 0;
+                        if (locationData != null) {
+                          distance = locationData;
+                        }
+                        let preDetail = workDetailList.find(item => item.date == monthDate && item.ward == ward);
+                        if (preDetail == undefined) {
+                          let orderBy = new Date(monthDate).getTime();
+                          this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+                            let name = employee["name"];
+                            workDetailList.push({ date: monthDate, vehicle: vehicle, ward: ward, distance: distance, empId: empId, orderBy: orderBy, name: name });
+                          });
+                        }
+                      }
+                    );
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+  }
 
   createJSON(workDetailList: any, days: any) {
     if (workDetailList.length > 0) {
@@ -412,7 +428,7 @@ export class VehicleFuelReportComponent implements OnInit {
               aa[j] = objDate[date];
             }
             let filePath = "/VehicleWardKM/" + this.selectedYear + "/" + this.selectedMonthName + "/";
-            this.commonService.saveJsonFile(objDate, vehicle+".json", filePath);
+            this.commonService.saveJsonFile(objDate, vehicle + ".json", filePath);
           }
         }
       }

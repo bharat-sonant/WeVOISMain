@@ -152,32 +152,31 @@ export class DustbinMonitoringComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == 'current') {
-      this.selectedDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.commonService.getNextDate($('#txtDate').val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.commonService.getPreviousDate($('#txtDate').val(), 1);
-      this.selectedDate = previousDate;
-    }
-    $('#txtDate').val(this.selectedDate);
-    this.dustbinShow = [];
-    if (this.vehicleMarkers.length > 0) {
-      for (let i = 0; i < this.vehicleMarkers.length; i++) {
-        this.vehicleMarkers[i]["marker"].setMap(null);
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $('#txtDate').val(newDate.toString());
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.dustbinShow = [];
+        if (this.vehicleMarkers.length > 0) {
+          for (let i = 0; i < this.vehicleMarkers.length; i++) {
+            this.vehicleMarkers[i]["marker"].setMap(null);
+          }
+          this.vehicleMarkers = [];
+        }
+        if (this.vehicleMarkers1.length > 0) {
+          for (let i = 0; i < this.vehicleMarkers1.length; i++) {
+            this.vehicleMarkers1[i]["marker"].setMap(null);
+          }
+          this.vehicleMarkers1 = [];
+        }
+        this.currentYear = this.selectedDate.split('-')[0];
+        this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        this.findDustbins();
       }
-      this.vehicleMarkers = [];
-    }
-    if (this.vehicleMarkers1.length > 0) {
-      for (let i = 0; i < this.vehicleMarkers1.length; i++) {
-        this.vehicleMarkers1[i]["marker"].setMap(null);
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
       }
-      this.vehicleMarkers1 = [];
-    }
-    this.currentYear = this.selectedDate.split('-')[0];
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.findDustbins();
+    });
   }
 
   changeZoneSelection(filterVal: any) {

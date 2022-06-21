@@ -80,24 +80,18 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-
-    if (new Date(this.selectedDate.toString()) <= new Date(this.commonService.setTodayDate())) {
-      $("#txtDate").val(this.selectedDate);
-      this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-      this.currentYear = this.selectedDate.split("-")[0];
-      this.getAssignedPlans();
-    } else {
-      this.commonService.setAlertMessage("error", "Selected date is greater then today date.");
-    }
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $("#txtDate").val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+        this.currentYear = this.selectedDate.split("-")[0];
+        this.getAssignedPlans();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   refreshData() {
@@ -662,7 +656,7 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   saveDustbinAnalysis() {
-    
+
     if (this.binDetail.canDoAnalysis == "yes") {
       this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), });
       this.updatePendingAnalysis();

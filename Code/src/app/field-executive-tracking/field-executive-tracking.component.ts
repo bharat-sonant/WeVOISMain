@@ -496,7 +496,7 @@ export class FieldExecutiveTrackingComponent {
     if (endTime != "") {
       contentString += "End Time : " + endTime + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>";
     }
-    else{
+    else {
       contentString += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>";
     }
     contentString += address;
@@ -509,26 +509,21 @@ export class FieldExecutiveTrackingComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.commonService.setTodayDate())) {
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $("#txtDate").val(this.selectedDate);
-    this.selectedYear = this.selectedDate.split('-')[0];
-    this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.getDutyOnOff();
-    this.executiveId = 0;
-    this.setMaps();
-    this.resetDetail();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $("#txtDate").val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.selectedYear = this.selectedDate.split('-')[0];
+        this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        this.getDutyOnOff();
+        this.executiveId = 0;
+        this.setMaps();
+        this.resetDetail();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   setHeight() {

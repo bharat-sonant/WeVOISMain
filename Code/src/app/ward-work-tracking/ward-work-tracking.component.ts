@@ -610,18 +610,19 @@ export class WardWorkTrackingComponent {
   }
 
   setDate(filterVal: any, type: string) {
-    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
-    $(this.txtDate).val(newDate);
-    if (newDate != this.selectedDate) {
-      this.selectedDate = newDate;
-      this.getSelectedYearMonth();
-      if (this.selectedZone != "0") {
-        this.getLineWeightage();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.getSelectedYearMonth();
+        if (this.selectedZone != "0") {
+          this.getLineWeightage();
+        }
       }
-    }
-    else {
-      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
-    }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   getSelectedYearMonth() {
