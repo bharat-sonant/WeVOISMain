@@ -187,6 +187,10 @@
 		"driver": 600,
 		"helper": 500
 	},
+	"55-Wet": {
+		"driver": 600,
+		"helper": 500
+	},
 	"55A": {
 		"driver": 300,
 		"helper": 240
