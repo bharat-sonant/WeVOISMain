@@ -1,11 +1,8 @@
-import { createOfflineCompileUrlResolver, getUrlScheme, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { data } from 'jquery';
-import { parse } from 'querystring';
 import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FirebaseService } from "../../firebase.service";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-month-salary-report',
@@ -14,7 +11,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class MonthSalaryReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -355,68 +352,84 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getOtherWagesData(monthName: any, monthDate: any, j: any) {
-    let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/" + monthDate;
-    let otherWagesInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        otherWagesInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          let d = "day" + parseFloat(monthDate.split("-")[2]);
-          let type = "type" + parseFloat(monthDate.split("-")[2]);
-          let detail = "day" + parseFloat(monthDate.split("-")[2]) + "Detail";
-          for (let k = 0; k < keyArray.length; k++) {
-            let index = keyArray[k];
-            for (let i = 0; i < 5; i++) {
-              let task = "task" + i;
-              if (data[index][task] != null) {
-                let wardNo = data[index][task]["task"];
-                if (wardNo.includes("BinLifting")) {
-                  wardNo = "BinLifting";
-                }
-                // if (wardNo == "BinLifting") {
-                if (data[index][task]["task-wages"] != null) {
-                  let wardDetails = this.wardDataList.find(item => item.wardNo == wardNo);
-                  if (wardDetails != undefined) {
-                    let taskWages = Number(data[index][task]["task-wages"]);
-                    if (taskWages < 0) {
-                      taskWages = 0;
-                    }
-                    let wages = taskWages;
-                    if (wardDetails[d] != null) {
-                      taskWages = Number(wardDetails[d]) + taskWages;
-                    }
-                    wardDetails[d] = taskWages.toFixed(2);
-                    if (wardDetails.cost == undefined) {
-                      wardDetails.cost = wages;
-                    }
-                    else {
-                      wardDetails.cost = Number(wardDetails.cost) + wages;
-                    }
-                    if (wardDetails[detail] == null) {
-                      wardDetails[detail] = j + '-' + wardNo + '-' + index + '-' + task + '-' + wages;
-                    }
-                    else {
-                      wardDetails[detail] = wardDetails[detail] + "," + j + '-' + wardNo + '-' + index + '-' + task + '-' + wages;
-                    }
-                    wardDetails[type] = "1";
-                    this.costData.salary = (parseFloat(this.costData.salary) + Number(wages)).toFixed(2);
-                    this.costData.totalCost = (parseFloat(this.costData.totalCost) + Number(wages)).toFixed(2);
-                    this.getSum(d, wages, "S");
-                    if (this.toDayDate != monthDate) {
-                      let savePath = "OtherWages/" + this.selectedYear + "/" + monthName + "/" + monthDate + "/" + wardNo + "";
-                      this.db.object(savePath).update({
-                        "totalWages": taskWages,
-                        "detailURL": wardDetails[detail]
-                      });
-                    }
-                  }
-                }
-                //  }
+    console.log(monthName)
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + monthName + "%2F" + monthDate + ".json?alt=media";
+    let workDetailInstance = this.httpService.get(path).subscribe(workData => {
+      workDetailInstance.unsubscribe();
+      if (workData != null) {
+        this.getOtherWagesDetail(workData,monthDate,monthName,j);
+      }
+    }, error => {
+      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/" + monthDate;
+      workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        workData => {
+          workDetailInstance.unsubscribe();
+          if (workData != null) {
+            if (monthDate != this.commonService.setTodayDate()) {
+              this.commonService.saveJsonFile(workData, monthDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/");
+            }
+            this.getOtherWagesDetail(workData,monthDate,monthName,j);
+          }
+        });
+    });
+  }
+
+  getOtherWagesDetail(data: any, monthDate: any, monthName: any,j:any) {
+    let keyArray = Object.keys(data);
+    let d = "day" + parseFloat(monthDate.split("-")[2]);
+    let type = "type" + parseFloat(monthDate.split("-")[2]);
+    let detail = "day" + parseFloat(monthDate.split("-")[2]) + "Detail";
+    for (let k = 0; k < keyArray.length; k++) {
+      let index = keyArray[k];
+      for (let i = 0; i < 5; i++) {
+        let task = "task" + i;
+        if (data[index][task] != null) {
+          let wardNo = data[index][task]["task"];
+          if (wardNo.includes("BinLifting")) {
+            wardNo = "BinLifting";
+          }
+          // if (wardNo == "BinLifting") {
+          if (data[index][task]["task-wages"] != null) {
+            let wardDetails = this.wardDataList.find(item => item.wardNo == wardNo);
+            if (wardDetails != undefined) {
+              let taskWages = Number(data[index][task]["task-wages"]);
+              if (taskWages < 0) {
+                taskWages = 0;
+              }
+              let wages = taskWages;
+              if (wardDetails[d] != null) {
+                taskWages = Number(wardDetails[d]) + taskWages;
+              }
+              wardDetails[d] = taskWages.toFixed(2);
+              if (wardDetails.cost == undefined) {
+                wardDetails.cost = wages;
+              }
+              else {
+                wardDetails.cost = Number(wardDetails.cost) + wages;
+              }
+              if (wardDetails[detail] == null) {
+                wardDetails[detail] = j + '-' + wardNo + '-' + index + '-' + task + '-' + wages;
+              }
+              else {
+                wardDetails[detail] = wardDetails[detail] + "," + j + '-' + wardNo + '-' + index + '-' + task + '-' + wages;
+              }
+              wardDetails[type] = "1";
+              this.costData.salary = (parseFloat(this.costData.salary) + Number(wages)).toFixed(2);
+              this.costData.totalCost = (parseFloat(this.costData.totalCost) + Number(wages)).toFixed(2);
+              this.getSum(d, wages, "S");
+              if (this.toDayDate != monthDate) {
+                let savePath = "OtherWages/" + this.selectedYear + "/" + monthName + "/" + monthDate + "/" + wardNo + "";
+                this.db.object(savePath).update({
+                  "totalWages": taskWages,
+                  "detailURL": wardDetails[detail]
+                });
               }
             }
           }
+          //  }
         }
-      });
+      }
+    }
   }
 
   showHide(type: any) {
