@@ -6,7 +6,6 @@ import { AdminLayoutRoutes } from './admin-layout.routing';
 import { IndexComponent } from '../../index/index.component';
 import { PortalAccessComponent } from '../../portal-access/portal-access.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { MapsComponent } from '../../maps/maps.component';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { ChartsModule } from 'ng2-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -125,7 +124,6 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
     IndexComponent,
     PortalAccessComponent,
     DashboardComponent,
-    MapsComponent,
     NotificationsComponent,
     WardMonitoringComponent,
     SkipLineComponent,

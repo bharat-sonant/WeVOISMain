@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { IndexComponent } from '../../index/index.component';
 import { PortalAccessComponent } from '../../portal-access/portal-access.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { MapsComponent } from '../../maps/maps.component';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { WardMonitoringComponent } from '../../reports/ward-monitoring/ward-monitoring.component';
 import { SkipLineComponent } from '../../reports/skip-line/skip-line.component';
@@ -118,8 +117,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/home', component: HomeComponent },
     { path: 'sikar/account-detail', component: AccountDetailComponent },
     { path: 'sikar/change-password', component: ChangePasswordComponent },
-    { path: 'sikar/maps', component: MapsComponent },
-    { path: 'sikar/maps/:id', component: MapsComponent },
     { path: 'sikar/dashboard', component: DashboardComponent },
     { path: 'sikar/notifications', component: NotificationsComponent },
     { path: 'sikar/ward-report', component: WardMonitoringComponent },
@@ -224,8 +221,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
-    { path: 'sikar/:id1/maps/:id', component: MapsComponent },
-    { path: 'sikar/:id1/maps', component: MapsComponent },
     { path: 'sikar/:id/dashboard', component: DashboardComponent },
     { path: 'sikar/:id/notifications', component: NotificationsComponent },
     { path: 'sikar/:id/ward-report', component: WardMonitoringComponent },
@@ -334,8 +329,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
-    { path: 'jaipur-greater/maps', component: MapsComponent },
-    { path: 'jaipur-greater/maps/:id', component: MapsComponent },
     { path: 'jaipur-greater/dashboard', component: DashboardComponent },
     { path: 'jaipur-greater/notifications', component: NotificationsComponent },
     { path: 'jaipur-greater/ward-report', component: WardMonitoringComponent },
@@ -442,8 +435,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
-    { path: 'jaipur-greater/:id1/maps', component: MapsComponent },
-    { path: 'jaipur-greater/:id1/maps/:id', component: MapsComponent },
     { path: 'jaipur-greater/:id/dashboard', component: DashboardComponent },
     { path: 'jaipur-greater/:id/notifications', component: NotificationsComponent },
     { path: 'jaipur-greater/:id/ward-report', component: WardMonitoringComponent },
@@ -551,8 +542,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
-    { path: 'reengus/maps', component: MapsComponent },
-    { path: 'reengus/maps/:id', component: MapsComponent },
     { path: 'reengus/dashboard', component: DashboardComponent },
     { path: 'reengus/notifications', component: NotificationsComponent },
     { path: 'reengus/ward-report', component: WardMonitoringComponent },
@@ -662,8 +651,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'reengus/:id/home', component: HomeComponent },
-    { path: 'reengus/:id1/maps', component: MapsComponent },
-    { path: 'reengus/:id1/maps/:id', component: MapsComponent },
     { path: 'reengus/:id/dashboard', component: DashboardComponent },
     { path: 'reengus/:id/notifications', component: NotificationsComponent },
     { path: 'reengus/:id/ward-report', component: WardMonitoringComponent },
@@ -773,8 +760,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
-    { path: 'shahpura/maps', component: MapsComponent },
-    { path: 'shahpura/maps/:id', component: MapsComponent },
     { path: 'shahpura/dashboard', component: DashboardComponent },
     { path: 'shahpura/notifications', component: NotificationsComponent },
     { path: 'shahpura/ward-report', component: WardMonitoringComponent },
@@ -882,8 +867,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
-    { path: 'shahpura/:id1/maps', component: MapsComponent },
-    { path: 'shahpura/:id1/maps/:id', component: MapsComponent },
     { path: 'shahpura/:id/dashboard', component: DashboardComponent },
     { path: 'shahpura/:id/notifications', component: NotificationsComponent },
     { path: 'shahpura/:id/ward-report', component: WardMonitoringComponent },
@@ -991,8 +974,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //test
     { path: 'test/home', component: HomeComponent },
-    { path: 'test/maps', component: MapsComponent },
-    { path: 'test/maps/:id', component: MapsComponent },
     { path: 'test/dashboard', component: DashboardComponent },
     { path: 'test/notifications', component: NotificationsComponent },
     { path: 'test/ward-report', component: WardMonitoringComponent },
@@ -1100,8 +1081,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'test/:id/home', component: HomeComponent },
-    { path: 'test/:id1/maps', component: MapsComponent },
-    { path: 'test/:id1/maps/:id', component: MapsComponent },
     { path: 'test/:id/dashboard', component: DashboardComponent },
     { path: 'test/:id/notifications', component: NotificationsComponent },
     { path: 'test/:id/ward-report', component: WardMonitoringComponent },
@@ -1209,8 +1188,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
-    { path: 'jaipur-office/maps', component: MapsComponent },
-    { path: 'jaipur-office/maps/:id', component: MapsComponent },
     { path: 'jaipur-office/dashboard', component: DashboardComponent },
     { path: 'jaipur-office/notifications', component: NotificationsComponent },
     { path: 'jaipur-office/ward-report', component: WardMonitoringComponent },
@@ -1318,8 +1295,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
-    { path: 'jaipur-office/:id1/maps', component: MapsComponent },
-    { path: 'jaipur-office/:id1/maps/:id', component: MapsComponent },
     { path: 'jaipur-office/:id/dashboard', component: DashboardComponent },
     { path: 'jaipur-office/:id/notifications', component: NotificationsComponent },
     { path: 'jaipur-office/:id/ward-report', component: WardMonitoringComponent },
@@ -1429,8 +1404,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
-    { path: 'kishangarh/maps', component: MapsComponent },
-    { path: 'kishangarh/maps/:id', component: MapsComponent },
     { path: 'kishangarh/dashboard', component: DashboardComponent },
     { path: 'kishangarh/notifications', component: NotificationsComponent },
     { path: 'kishangarh/ward-report', component: WardMonitoringComponent },
@@ -1538,8 +1511,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
-    { path: 'kishangarh/:id1/maps', component: MapsComponent },
-    { path: 'kishangarh/:id1/maps/:id', component: MapsComponent },
     { path: 'kishangarh/:id/dashboard', component: DashboardComponent },
     { path: 'kishangarh/:id/notifications', component: NotificationsComponent },
     { path: 'kishangarh/:id/ward-report', component: WardMonitoringComponent },
@@ -1650,8 +1621,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
-    { path: 'niwai/maps', component: MapsComponent },
-    { path: 'niwai/maps/:id', component: MapsComponent },
     { path: 'niwai/dashboard', component: DashboardComponent },
     { path: 'niwai/notifications', component: NotificationsComponent },
     { path: 'niwai/ward-report', component: WardMonitoringComponent },
@@ -1759,8 +1728,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
-    { path: 'niwai/:id1/maps', component: MapsComponent },
-    { path: 'niwai/:id1/maps/:id', component: MapsComponent },
     { path: 'niwai/:id/dashboard', component: DashboardComponent },
     { path: 'niwai/:id/notifications', component: NotificationsComponent },
     { path: 'niwai/:id/ward-report', component: WardMonitoringComponent },
@@ -1870,8 +1837,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
-    { path: 'jaisalmer/maps', component: MapsComponent },
-    { path: 'jaisalmer/maps/:id', component: MapsComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
     { path: 'jaisalmer/notifications', component: NotificationsComponent },
     { path: 'jaisalmer/ward-report', component: WardMonitoringComponent },
@@ -1979,8 +1944,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
-    { path: 'jaisalmer/:id1/maps', component: MapsComponent },
-    { path: 'jaisalmer/:id1/maps/:id', component: MapsComponent },
     { path: 'jaisalmer/:id/dashboard', component: DashboardComponent },
     { path: 'jaisalmer/:id/notifications', component: NotificationsComponent },
     { path: 'jaisalmer/:id/ward-report', component: WardMonitoringComponent },
@@ -2088,8 +2051,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
-    { path: 'salasar/maps', component: MapsComponent },
-    { path: 'salasar/maps/:id', component: MapsComponent },
     { path: 'salasar/dashboard', component: DashboardComponent },
     { path: 'salasar/notifications', component: NotificationsComponent },
     { path: 'salasar/ward-report', component: WardMonitoringComponent },
@@ -2197,8 +2158,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'salasar/:id/home', component: HomeComponent },
-    { path: 'salasar/:id1/maps', component: MapsComponent },
-    { path: 'salasar/:id1/maps/:id', component: MapsComponent },
     { path: 'salasar/:id/dashboard', component: DashboardComponent },
     { path: 'salasar/:id/notifications', component: NotificationsComponent },
     { path: 'salasar/:id/ward-report', component: WardMonitoringComponent },
@@ -2308,8 +2267,6 @@ export const AdminLayoutRoutes: Routes = [
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
-    { path: 'behror/maps', component: MapsComponent },
-    { path: 'behror/maps/:id', component: MapsComponent },
     { path: 'behror/dashboard', component: DashboardComponent },
     { path: 'behror/notifications', component: NotificationsComponent },
     { path: 'behror/ward-report', component: WardMonitoringComponent },
@@ -2417,8 +2374,6 @@ export const AdminLayoutRoutes: Routes = [
 
     
     { path: 'behror/:id/home', component: HomeComponent },
-    { path: 'behror/:id1/maps', component: MapsComponent },
-    { path: 'behror/:id1/maps/:id', component: MapsComponent },
     { path: 'behror/:id/dashboard', component: DashboardComponent },
     { path: 'behror/:id/notifications', component: NotificationsComponent },
     { path: 'behror/:id/ward-report', component: WardMonitoringComponent },

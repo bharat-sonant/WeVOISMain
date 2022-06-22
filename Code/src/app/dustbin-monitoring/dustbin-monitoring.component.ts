@@ -1,6 +1,5 @@
 /// <reference types="@types/googlemaps" />
 import { Component, ViewChild } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr'; // Alert message using NGX toastr
 //services
