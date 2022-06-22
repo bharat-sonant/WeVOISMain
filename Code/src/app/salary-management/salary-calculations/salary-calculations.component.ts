@@ -35,9 +35,11 @@ export class SalaryCalculationsComponent implements OnInit {
   employees: any;
   maxTaskCount = 10;
   wardWagesList: any[];
+  counter = 0;
   storagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity();
 
   ngOnInit() {
+
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
@@ -92,14 +94,14 @@ export class SalaryCalculationsComponent implements OnInit {
     }
   }
 
-  getDailyWorkDetailForSelectedMonth() {
 
-  }
 
 
   calculate() {
     $(this.divLoader).show();
     this.activeEmployeeCount = 0;
+    this.counter = 0;
+    this.db.object("DailyWorkDetail/2022/May/2022-05-02/137/task1/").update({ "work-percent": "43-A" });
     this.jsonObject = {};
     if (this.selectedMonth != undefined) {
 
@@ -131,7 +133,7 @@ export class SalaryCalculationsComponent implements OnInit {
     let status = this.employees[employeeId]["GeneralDetails"]["status"]
     if (status == "1" && (designationId == "5" || designationId == "6")) {
       let lastEmpId = this.employeeIds[this.employeeIds.length - 1];
-      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 4) {
+      if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount <= 6) {
         this.activeEmployeeCount++;
 
         this.jsonObject[employeeId] = {
@@ -142,62 +144,72 @@ export class SalaryCalculationsComponent implements OnInit {
 
 
         //for (let index = 0; index < this.datesInSelectedMonth.length; index++) {
-        for (let index = 0; index < 3; index++) {
+        for (let index = 0; index < 10; index++) {
           let date = this.datesInSelectedMonth[index];
           let employeeAssignments = this.dailyWorkDetail[date][employeeId];
           if (employeeAssignments != undefined) {
 
             this.jsonObject[employeeId]["day" + (index + 1)] = [];
             let assignedTaskCount = 1;
+
             while (assignedTaskCount < this.maxTaskCount) {
 
               let task = this.dailyWorkDetail[date][employeeId]["task" + assignedTaskCount];
               if (task != undefined) {
                 let taskName = task["task"];
                 let wages = task["task-wages"];
+                let percentage = task["work-percent"];
 
                 if (new Date(date) >= new Date(this.salaryCalculationChangedDate())) {
                   let wageDetail = this.wardWagesList.find(item => item.ward == taskName);
                   if (wageDetail != undefined) {
-
-                    console.log("wageDetail:" + wageDetail);
-
                     if (assignedTaskCount > 1) {
                       wages = 200;
                     } else {
                       wages = designationId == "5" ? wageDetail.driver : wageDetail.helper;
                     }
-
-                    /*
-                    if (isFirstZone == true) {
-                      wages = 200;
-                    }
-                    else {
-                      if (salaryDetail.designation == "Driver") {
-                        wages = wageDetail.driver;
-                      }
-                      else { 
-                        wages = wageDetail.helper;
-                      }
-                    }
-                    if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
-                      isFirstZone = true;
-                    }
-                    */
                   }
                 }
 
-                
+
+                let workPercentage = "( 0% )";
+                if (taskName.toLowerCase().indexOf("compactor") > -1 || taskName.toLowerCase().indexOf("binlifting") > -1 || taskName.toLowerCase().indexOf("garage") > -1 || taskName.toLowerCase().indexOf("wet") > -1) {
+                  workPercentage = "";
+                } else {
+                  workPercentage = "( " + percentage + "% )";
+
+                }
+
                 this.jsonObject[employeeId]["day" + (index + 1)].push({
                   ward: taskName,
                   wages: wages,
-                  percentage: 0
+                  percentage: workPercentage
                 });
+
+
+
                 assignedTaskCount++;
               } else {
                 break;
               }
             }
+
+            /*
+            console.log("assignedTaskCount :" + assignedTaskCount);
+            console.log("date :" + date);
+            console.log("employee :" + this.employees[employeeId]["GeneralDetails"]["name"]);
+            */
+
+            if (assignedTaskCount > 2) {
+              console.log("date :" + date);
+              console.log("employee :" + this.employees[employeeId]["GeneralDetails"]["name"]);
+              //DailyWorkDetail~2F2022~2FMay~2F2022-05-02~2F137
+              
+              //console.log("task :" + taskName);
+              //this.counter++;
+              this.counter++;
+            }
+
           }
         }
 
@@ -226,16 +238,6 @@ export class SalaryCalculationsComponent implements OnInit {
       return "2022-05-08";
     }
   }
-
-  /*
-    setEmployeeSalary(employeeId: int, lastemployeeId: int) {
-  
-      this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-  
-      if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
-        this.monthDays = this.todayDate.split("-")[2];
-      }
-  */
 
   /*
   for (let i = 1; i <= 1; i++) {
@@ -286,6 +288,7 @@ export class SalaryCalculationsComponent implements OnInit {
 
   getSalaryList() {
 
+    console.log("Counter :" + this.counter);
     $(this.divLoader).show();
 
     this.salaryList = [];
@@ -293,7 +296,7 @@ export class SalaryCalculationsComponent implements OnInit {
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let salaryInstance = this.httpService.get(path).subscribe(data => {
       salaryInstance.unsubscribe();
-      console.log("json data:" + data);
+
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
