@@ -163,9 +163,17 @@
 		"driver": 500,
 		"helper": 400
 	},
+	"49": {
+		"driver": 300,
+		"helper": 240
+	},
 	"50": {
 		"driver": 500,
 		"helper": 400
+	},
+	"51": {
+		"driver": 300,
+		"helper": 240
 	},
 	"52": {
 		"driver": 500,
@@ -178,6 +186,26 @@
 	"55": {
 		"driver": 600,
 		"helper": 500
+	},
+	"55-Wet": {
+		"driver": 600,
+		"helper": 500
+	},
+	"55A": {
+		"driver": 300,
+		"helper": 240
+	},
+	"55A-Wet": {
+		"driver": 300,
+		"helper": 240
+	},
+	"55B": {
+		"driver": 300,
+		"helper": 240
+	},
+	"55B-Wet": {
+		"driver": 300,
+		"helper": 240
 	},
 	"56A": {
 		"driver": 500,

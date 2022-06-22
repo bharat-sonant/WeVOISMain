@@ -310,7 +310,7 @@ export class VtsAnalysisComponent implements OnInit {
 
   setWardBoundary() {
     if (this.selectedWard != "0") {
-      this.commonService.getJaipurGreaterWardBoundary(this.boundaryPath  + this.selectedWard + ".json?alt=media",this.wardBoundary,8).then((data: any) => {
+      this.commonService.getJaipurGreaterWardBoundary(this.boundaryPath + this.selectedWard + ".json?alt=media", this.wardBoundary, 8).then((data: any) => {
         if (this.wardBoundary != undefined) {
           this.wardBoundary[0]["line"].setMap(null);
         }
@@ -583,25 +583,19 @@ export class VtsAnalysisComponent implements OnInit {
   //#region   Top  Left Filter
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
-      this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $(this.txtDate).val(this.selectedDate);
-    $(this.txtDateNav).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.currentYear = this.selectedDate.split("-")[0];
-    this.changeWardSelection(this.selectedWard);
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      $(this.txtDateNav).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        this.currentYear = this.selectedDate.split("-")[0];
+        this.changeWardSelection(this.selectedWard);
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   changeZoneSelection(filterVal: any) {

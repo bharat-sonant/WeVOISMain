@@ -58,24 +58,23 @@ export class FeDailyWorkReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($("#txtDate").val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($("#txtDate").val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
-      this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $(this.txtDate).val(this.selectedDate);
-    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.selectedYear = this.selectedDate.split("-")[0];
-    this.getDailyWorkList();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
+          this.selectedDate = this.toDayDate;
+          this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
+          return;
+        }
+        this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        this.selectedYear = this.selectedDate.split("-")[0];
+        this.getDailyWorkList();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   fillExecitives() {

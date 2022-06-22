@@ -105,7 +105,7 @@ export class EmployeeAttendanceComponent implements OnInit {
           if (i == this.allEmployeeList.length - 1) {
             setTimeout(() => {
               this.filterData();
-              $(this.divLoader).hide();              
+              $(this.divLoader).hide();
             }, 2000);
           }
         }
@@ -114,17 +114,18 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
-    $(this.txtDate).val(newDate);
-    if (newDate != this.selectedDate) {
-      this.selectedDate = newDate;
-      $(this.divLoader).show();
-      this.getSelectedYearMonthName();
-      this.getAttendance();
-    }
-    else{
-      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
-    }
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        $(this.divLoader).show();
+        this.getSelectedYearMonthName();
+        this.getAttendance();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   filterData() {

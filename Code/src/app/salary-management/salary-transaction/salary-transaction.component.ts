@@ -1,4 +1,3 @@
-import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
@@ -32,7 +31,9 @@ export class SalaryTransactionComponent implements OnInit {
   uploadYear: any;
   uploadJsonObj: any;
   salaryDetail: salaryDetail = {
-    name: "---"
+    name: "---",
+    uploadedSalary: "0.00",
+    transferredSalary: "0.00"
   }
   ddlYear = "#ddlYear";
   fileUpload = "#fileUpload";
@@ -71,7 +72,6 @@ export class SalaryTransactionComponent implements OnInit {
   }
 
   getSalaryTranscation(empId: any, name: any, empCode: any) {
-
     $(this.divLoader).show();
     this.clearData();
     let year = $(this.ddlYear).val();
@@ -80,6 +80,7 @@ export class SalaryTransactionComponent implements OnInit {
       return;
     }
     if (empId != "0") {
+      this.getUploadedSalary(empId);
       this.salaryDetail.name = name + " (" + empCode + ")";
       const path = this.fireStoragePath + this.fireStoreCity + "%2FEmployeeSalaryTransaction%2F" + this.selectedYear + "%2F" + empId + ".json?alt=media";
       let transferredInstance = this.httpService.get(path).subscribe(data => {
@@ -93,6 +94,9 @@ export class SalaryTransactionComponent implements OnInit {
               let monthName = empTransactionObj[index]["month"];
               let detail = this.transactionList.find(item => item.month == monthName);
               if (detail != undefined) {
+                if (empTransactionObj[index]["amount"] != null) {
+                  this.salaryDetail.transferredSalary = (Number(this.salaryDetail.transferredSalary) + Number(empTransactionObj[index]["amount"])).toFixed(2);
+                }
                 detail.list.push({ amount: empTransactionObj[index]["amount"], transationDate: empTransactionObj[index]["transationDate"], utrNo: empTransactionObj[index]["utrNo"], remarks: empTransactionObj[index]["remarks"] });
               }
             }
@@ -105,12 +109,33 @@ export class SalaryTransactionComponent implements OnInit {
     }
   }
 
+  getUploadedSalary(empId: any) {
+    for (let i = 1; i <= 12; i++) {
+      let monthName = this.commonService.getCurrentMonthName(i - 1);
+      this.dbFireStore.doc(this.fireStoreCity + "/EmployeeUpdatedSalary/" + this.selectedYear + "/" + monthName + "/data/" + empId + "").get().subscribe(
+        (doc) => {
+          let detail = this.transactionList.find(item => item.month == monthName);
+          if (detail != undefined) {
+            if (doc.data() != null) {
+              detail.uploadedSalary = doc.data()["uploadedSalary"].toFixed(2);
+              this.salaryDetail.uploadedSalary = (Number(this.salaryDetail.uploadedSalary) + Number(detail.uploadedSalary)).toFixed(2);
+            }
+            else {
+              detail.uploadedSalary = "0.00";
+            }
+          }
+        });
+    }
+  }
+
   changeYear() {
     this.clearData();
   }
 
   clearData() {
     this.salaryDetail.name = "---";
+    this.salaryDetail.uploadedSalary = "0.00";
+    this.salaryDetail.transferredSalary = "0.00";
     for (let i = 0; i < this.transactionList.length; i++) {
       this.transactionList[i]["list"] = [];
     }
@@ -510,4 +535,6 @@ export class SalaryTransactionComponent implements OnInit {
 
 export class salaryDetail {
   name: string;
+  uploadedSalary: string;
+  transferredSalary: string;
 }

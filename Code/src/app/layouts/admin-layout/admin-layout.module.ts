@@ -108,6 +108,7 @@ import { SalaryCalculationComponent } from '../../salary-management/salary-calcu
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
+import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 
 
 
@@ -222,7 +223,8 @@ import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-a
     SalaryCalculationComponent,
     DailyFuelReportComponent,
     SalaryCalculationsComponent,
-    EmployeeAttendanceComponent
+    EmployeeAttendanceComponent,
+    DailyWorkDetailComponent
   ]
 })
 

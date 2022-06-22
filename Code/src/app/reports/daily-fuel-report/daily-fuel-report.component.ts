@@ -49,19 +49,19 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
-    let newDate = this.commonService.setDate(this.selectedDate, filterVal, type);
-    $(this.txtDate).val(newDate);
-    $(this.spDate).html(newDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(newDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
-    if (newDate != this.selectedDate) {
-      this.selectedDate = newDate;
-      this.clearList();
-      this.getSelectedYearMonthName();
-      this.getDieselQty();
-      this.getDailyWorkDetail();
-    }
-    else{
-      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
-    }
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.clearList();
+        this.getSelectedYearMonthName();
+        this.getDieselQty();
+        this.getDailyWorkDetail();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   getVehicles() {

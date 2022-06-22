@@ -26,7 +26,7 @@ export class HaltsComponent {
   marker = new google.maps.Marker();
   haltInfo: any[];
   minHalt: number;
-  zoneKML:any;
+  zoneKML: any;
   public bounds: any;
   currentMonth: any;
   currentYear: any;
@@ -419,7 +419,7 @@ export class HaltsComponent {
   }
 
   setWardBoundary(wardNo: string) {
-    this.commonService.getWardBoundary(wardNo, this.zoneKML,2).then((data: any) => {
+    this.commonService.getWardBoundary(wardNo, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -433,26 +433,19 @@ export class HaltsComponent {
     });
   }
 
-  setDate(filterVal: any,type:any) {
-    if (type == 'current') {
-      this.selectedDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.commonService.getNextDate($('#txtDate').val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.commonService.getPreviousDate($('#txtDate').val(), 1);
-      this.selectedDate = previousDate;
-    }
-    $('#txtDate').val(this.selectedDate);
-    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
-      this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      this.selectedDate = this.toDayDate;
-      $('#txtDate').val(this.selectedDate);
-    }
-    this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = this.selectedDate.split("-")[0];
-    this.getHaltList();
+  setDate(filterVal: any, type: any) {
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $('#txtDate').val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.currentMonth = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+        this.currentYear = this.selectedDate.split("-")[0];
+        this.getHaltList();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   showHaltSummary() {

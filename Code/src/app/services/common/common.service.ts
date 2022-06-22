@@ -1792,6 +1792,7 @@ export class CommonService {
   }
 
   setDate(selectedDate: any, filterVal: any, type: string) {
+    return new Promise((resolve) => {
     let newDate = "";
     if (type == 'current') {
         newDate = filterVal;
@@ -1805,6 +1806,7 @@ export class CommonService {
     if (new Date(newDate) > new Date(this.setTodayDate())) {
       newDate = selectedDate;
     }
-    return newDate;
+    resolve(newDate);
+  });
   }
 }

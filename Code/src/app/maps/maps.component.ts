@@ -345,35 +345,27 @@ export class MapsComponent {
     if (this.cardInstance != null) {
       this.cardInstance.unsubscribe();
     }
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      let nextDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-      this.selectedDate = nextDate;
-    } else if (type == "previous") {
-      let previousDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
-      this.selectedDate = previousDate;
-    }
-    if (new Date(this.selectedDate) > new Date(this.toDayDate)) {
-      this.selectedDate = this.toDayDate;
-      this.commonService.setAlertMessage("error", "Please select current or previos date!!!");
-      return;
-    }
-    $(this.txtDate).val(this.selectedDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(
-      new Date(this.selectedDate).getMonth()
-    );
-    this.currentYear = this.selectedDate.split("-")[0];
-    this.selectedZone = this.activeZone;
-    this.setDateFilterDefault();
-    if (this.selectedDate == this.toDayDate) {
-      this.showVehicleMovement();
-    } else {
-      this.marker.setMap(null);
-    }
-    this.getAllLinesFromJson();
-    this.getProgressDetail();
-    this.getEmployeeData();
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        this.currentYear = this.selectedDate.split("-")[0];
+        this.selectedZone = this.activeZone;
+        this.setDateFilterDefault();
+        if (this.selectedDate == this.toDayDate) {
+          this.showVehicleMovement();
+        } else {
+          this.marker.setMap(null);
+        }
+        this.getAllLinesFromJson();
+        this.getProgressDetail();
+        this.getEmployeeData();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
   changeZoneSelection(filterVal: any) {
