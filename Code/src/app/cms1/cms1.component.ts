@@ -729,6 +729,121 @@ export class Cms1Component implements OnInit {
 
   }
 
+  exportMarkers() {
+    let houseTypeList = [];
+    let dbPath = "Defaults/FinalHousesType/";
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
+      if (data != null) {
+        let houseKeyArray = Object.keys(data);
+        for (let i = 0; i < houseKeyArray.length; i++) {
+          let id = houseKeyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          houseTypeList.push({ id: id, houseType: houseType });
+        }
+
+        let markerList = [];
+        let dbPath = "EntityMarkingData/MarkedHouses/1";
+        let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            markerInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let markerObject = data[lineNo];
+
+                let markerKeyList = Object.keys(markerObject);
+
+                if (markerKeyList.length > 0) {
+                  for (let j = 0; j < markerKeyList.length; j++) {
+                    let markerId = markerKeyList[j];
+                    if (markerObject[markerId]["latLng"] != null) {
+                      let houseType = "";
+                      let detail = houseTypeList.find(item => item.id == markerObject[markerId]["houseType"]);
+                      if (detail != undefined) {
+                        houseType = detail.houseType;
+                      }
+                      markerList.push({ lineNo: lineNo, date: markerObject[markerId]["date"], houseType: houseType, latLng: markerObject[markerId]["latLng"], image: markerObject[markerId]["image"], userId: markerObject[markerId]["userId"], alreadyInstalled: markerObject[markerId]["alreadyInstalled"] });
+                    }
+                  }
+                }
+              }
+              console.log(markerList);
+              let htmlString = "";
+              htmlString = "<table>";
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += "Line No.";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Date";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "house Type";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "lat Lng";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Image";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "User Id";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Already Installed";
+              htmlString += "</td>";
+              htmlString += "</tr>";
+              for (let i = 0; i < markerList.length; i++) {
+                htmlString += "<tr>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["lineNo"];
+                htmlString += "</td>";
+                htmlString += "<td t='s'>";
+                htmlString += markerList[i]["date"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["houseType"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["latLng"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["image"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["userId"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += markerList[i]["alreadyInstalled"];
+                htmlString += "</td>";
+                htmlString += "</tr>";
+              }
+              htmlString += "<table>";
+              var parser = new DOMParser();
+              var doc = parser.parseFromString(htmlString, 'text/html');
+              const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+              /* generate workbook and add the worksheet */
+              const wb: XLSX.WorkBook = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+              /* save to file */
+              XLSX.writeFile(wb, "Salasar-Markers.xlsx");
+            }
+          }
+
+        );
+
+
+      }
+
+
+    });
+
+  }
+
   exportCardNo() {
     let houseList = [];
     let dbPath = "Houses";
@@ -1097,5 +1212,5 @@ export class Cms1Component implements OnInit {
     });
   }
 
-  
+
 }

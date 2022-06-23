@@ -100,6 +100,7 @@ import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
+import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -112,7 +113,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'portal-access', component: PortalAccessComponent },
     { path: 'logout', component: LogoutComponent },
     
-    //sikar
+    //jaipur
     { path: 'sikar/home', component: HomeComponent },
     { path: 'sikar/account-detail', component: AccountDetailComponent },
     { path: 'sikar/change-password', component: ChangePasswordComponent },
@@ -216,6 +217,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'sikar/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'sikar/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'sikar/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -322,6 +324,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'sikar/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'sikar/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'sikar/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
     //jaipur-greater
@@ -428,6 +431,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaipur-greater/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-greater/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur-greater/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -533,6 +537,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaipur-greater/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-greater/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur-greater/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
     
 
     //reengus
@@ -640,6 +645,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'reengus/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'reengus/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'reengus/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
 
@@ -748,6 +754,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'reengus/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'reengus/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'reengus/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
 
@@ -856,6 +863,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'shahpura/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'shahpura/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'shahpura/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -962,6 +970,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'shahpura/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'shahpura/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'shahpura/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1068,6 +1077,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'test/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'test/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'test/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1174,6 +1184,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'test/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'test/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'test/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1280,6 +1291,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaipur-office/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-office/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur-office/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
@@ -1386,6 +1398,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaipur-office/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-office/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur-office/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
 
@@ -1494,6 +1507,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'kishangarh/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'kishangarh/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'kishangarh/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1600,6 +1614,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'kishangarh/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'kishangarh/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'kishangarh/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
 
@@ -1709,6 +1724,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'niwai/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'niwai/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'niwai/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1815,6 +1831,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'niwai/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'niwai/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'niwai/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
 
@@ -1923,6 +1940,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaisalmer/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaisalmer/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaisalmer/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2029,6 +2047,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'jaisalmer/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaisalmer/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaisalmer/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2135,6 +2154,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'salasar/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'salasar/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'salasar/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'salasar/:id/home', component: HomeComponent },
@@ -2241,6 +2261,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'salasar/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'salasar/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'salasar/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
 
 
@@ -2349,6 +2370,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'behror/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'behror/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'behror/dustbins-monitoring', component: DustbinsMonitoringComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2455,4 +2477,218 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: 'behror/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'behror/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'behror/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+
+
+    //jaipur
+    { path: 'jaipur/home', component: HomeComponent },
+    { path: 'jaipur/account-detail', component: AccountDetailComponent },
+    { path: 'jaipur/change-password', component: ChangePasswordComponent },
+    { path: 'jaipur/dashboard', component: DashboardComponent },
+    { path: 'jaipur/notifications', component: NotificationsComponent },
+    { path: 'jaipur/ward-report', component: WardMonitoringComponent },
+    { path: 'jaipur/skip-lines', component: SkipLineComponent },
+    { path: 'jaipur/halts', component: HaltsComponent },
+    { path: 'jaipur/login', component: LoginComponent },
+    { path: 'jaipur/logout', component: LogoutComponent },
+    { path: 'jaipur/hsfrm', component: HouseEntryFormComponent },
+    { path: 'jaipur/download-report', component: DownloadCollectionReportComponent },
+    { path: 'jaipur/housesearch', component: HouseSearchComponent },
+    { path: 'jaipur/fleet-monitor', component: FleetMonitorComponent },
+    { path: 'jaipur/line-statistics', component: LineStatisticsComponent },
+    { path: 'jaipur/line-card-mapping', component: LineCardMappingComponent },
+    { path: 'jaipur/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: 'jaipur/time-distance', component: TimeDistanceComponent },
+    { path: 'jaipur/realtime-monitoring', component: RealtimeMonitoringComponent },
+    { path: 'jaipur/dustbin-monitoring', component: DustbinMonitoringComponent },
+    { path: 'jaipur/download-ward-reports', component: DownloadWardwiseReportComponent },
+    { path: 'jaipur/users', component: UserListComponent },
+    { path: 'jaipur/useradd/:id', component: UserAddComponent },
+    { path: 'jaipur/useradd', component: UserAddComponent },
+    { path: 'jaipur/useracess/:id', component: UserAccessComponent },
+    { path: 'jaipur/halt-report', component: HaltReportComponent },
+    { path: 'jaipur/route-tracking/:id', component: RouteTrackingComponent },
+    { path: 'jaipur/halt-summary', component: HaltSummaryComponent },
+    { path: 'jaipur/salary-summary', component: SalarySummaryComponent },
+    { path: 'jaipur/ward-monitoring-report', component: WardMonitoringReportComponent },
+    { path: 'jaipur/finance', component: FinanceComponent },
+    { path: 'jaipur/ward-reach-cost', component: WardReachCostComponent },
+    { path: 'jaipur/month-salary-report', component: MonthSalaryReportComponent },
+    { path: 'jaipur/reports', component: ReportsComponent },
+    { path: 'jaipur/remark-report', component: RemarkReportComponent },
+    { path: 'jaipur/work-assign-report', component: WorkAssignReportComponent },
+    { path: 'jaipur/portal-services', component: PortalServicesComponent },
+    { path: 'jaipur/ward-duty-data', component: WardDutyDataComponent },
+    { path: 'jaipur/dustbin-analysis', component: DustbinAnalysisComponent },
+    { path: 'jaipur/dustbin-report', component: DustbinReportComponent },
+    { path: 'jaipur/cms/:id', component: CmsComponent },
+    { path: 'jaipur/cms1', component: Cms1Component },
+    { path: 'jaipur/vehicle-report', component: VehicleReportComponent },
+    { path: 'jaipur/multiple-maps', component: MultipleMapsComponent },
+    { path: 'jaipur/task-manager', component: TaskManagerComponent },
+    { path: 'jaipur/ward-trip-analysis', component: WardTripAnalysisComponent },
+    { path: 'jaipur/house-marking', component: HouseMarkingComponent },
+    { path: 'jaipur/house-marking/:id1', component: HouseMarkingComponent },
+    { path: 'jaipur/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'jaipur/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: 'jaipur/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'jaipur/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'jaipur/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'jaipur/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'jaipur/map-card-review', component: MapCardReviewComponent },
+    { path: 'jaipur/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: 'jaipur/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'jaipur/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'jaipur/vehicle-assigned', component: VehicleAssignedComponent },
+    { path: 'jaipur/log-book', component: LogBookComponent },
+    { path: 'jaipur/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'jaipur/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
+    { path: 'jaipur/vts-report', component: VtsReportComponent },
+    { path: 'jaipur/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'jaipur/vts-route', component: VtsRouteComponent },
+    { path: 'jaipur/create-routes', component: CreateRoutesComponent },
+    { path: 'jaipur/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'jaipur/bvg-routes', component: BvgRoutesComponent },
+    { path: 'jaipur/vts-analysis', component: VtsAnalysisComponent },
+    { path: 'jaipur/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'jaipur/field-executive-tracking', component: FieldExecutiveTrackingComponent },
+    { path: 'jaipur/show-route', component: ShowRouteComponent },
+    { path: 'jaipur/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'jaipur/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'jaipur/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'jaipur/employee-salary', component: EmployeeSalaryComponent },
+    { path: 'jaipur/salary-holding-management', component: SalaryHoldingManagementComponent },
+    { path: 'jaipur/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'jaipur/kml-to-json', component: KmlToJsonComponent },
+    { path: 'jaipur/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'jaipur/dustbin-service', component: DustbinServiceComponent },
+    { path: 'jaipur/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur/ward-work-tracking/:id', component: WardWorkTrackingComponent },
+    { path: 'jaipur/staff-account-detail', component: StaffAccountDetailComponent },
+    { path: 'jaipur/cash-management', component: CashManagementComponent },
+    { path: 'jaipur/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur/ward-work-done', component: WardWorkDoneComponent },
+    { path: 'jaipur/settings', component: SettingsComponent },
+    { path: 'jaipur/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur/employees', component: EmployeesComponent },
+    { path: 'jaipur/special-users', component: SpecialUsersComponent },
+    { path: 'jaipur/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur/dustbin-ward-mapping', component: DustbinWardMappingComponent },
+    { path: 'jaipur/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur/dustbin-manage', component: DustbinManageComponent },
+    { path: 'jaipur/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur/salary-calculation', component: SalaryCalculationComponent },
+    { path: 'jaipur/daily-fuel-report', component: DailyFuelReportComponent },
+    { path: 'jaipur/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur/employee-attendance', component: EmployeeAttendanceComponent },
+    { path: 'jaipur/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur/dustbins-monitoring', component: DustbinsMonitoringComponent },
+
+    { path: 'jaipur/:id/home', component: HomeComponent },
+    { path: 'jaipur/:id/dashboard', component: DashboardComponent },
+    { path: 'jaipur/:id/notifications', component: NotificationsComponent },
+    { path: 'jaipur/:id/ward-report', component: WardMonitoringComponent },
+    { path: 'jaipur/:id/skip-lines', component: SkipLineComponent },
+    { path: 'jaipur/:id/halts', component: HaltsComponent },
+    { path: 'jaipur/:id/login', component: LoginComponent },
+    { path: 'jaipur/:id/logout', component: LogoutComponent },
+    { path: 'jaipur/:id/hsfrm', component: HouseEntryFormComponent },
+    { path: 'jaipur/:id/download-report', component: DownloadCollectionReportComponent },
+    { path: 'jaipur/:id/housesearch', component: HouseSearchComponent },
+    { path: 'jaipur/:id/fleet-monitor', component: FleetMonitorComponent },
+    { path: 'jaipur/:id/line-statistics', component: LineStatisticsComponent },
+    { path: 'jaipur/:id/line-card-mapping', component: LineCardMappingComponent },
+    { path: 'jaipur/:id/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: 'jaipur/:id/time-distance', component: TimeDistanceComponent },
+    { path: 'jaipur/:id/realtime-monitoring', component: RealtimeMonitoringComponent },
+    { path: 'jaipur/:id/dustbin-monitoring', component: DustbinMonitoringComponent },
+    { path: 'jaipur/:id/download-ward-reports', component: DownloadWardwiseReportComponent },
+    { path: 'jaipur/:id/users', component: UserListComponent },
+    { path: 'jaipur/:id/useradd/:id', component: UserAddComponent },
+    { path: 'jaipur/:id/useradd', component: UserAddComponent },
+    { path: 'jaipur/:id/useracess/:id', component: UserAccessComponent },
+    { path: 'jaipur/:id/halt-report', component: HaltReportComponent },
+    { path: 'jaipur/:id/route-tracking/:id', component: RouteTrackingComponent },
+    { path: 'jaipur/:id/halt-summary', component: HaltSummaryComponent },
+    { path: 'jaipur/:id/salary-summary', component: SalarySummaryComponent },
+    { path: 'jaipur/:id/ward-monitoring-report', component: WardMonitoringReportComponent },
+    { path: 'jaipur/:id/finance', component: FinanceComponent },
+    { path: 'jaipur/:id/ward-reach-cost', component: WardReachCostComponent },
+    { path: 'jaipur/:id/month-salary-report', component: MonthSalaryReportComponent },
+    { path: 'jaipur/:id/reports', component: ReportsComponent },
+    { path: 'jaipur/:id/remark-report', component: RemarkReportComponent },
+    { path: 'jaipur/:id/work-assign-report', component: WorkAssignReportComponent },
+    { path: 'jaipur/:id/portal-services', component: PortalServicesComponent },
+    { path: 'jaipur/:id/ward-duty-data', component: WardDutyDataComponent },
+    { path: 'jaipur/:id/dustbin-analysis', component: DustbinAnalysisComponent },
+    { path: 'jaipur/:id/dustbin-report', component: DustbinReportComponent },
+    { path: 'jaipur/:id/cms/:id', component: CmsComponent },
+    { path: 'jaipur/:id/cms1', component: Cms1Component },
+    { path: 'jaipur/:id/vehicle-report', component: VehicleReportComponent },
+    { path: 'jaipur/:id/multiple-maps', component: MultipleMapsComponent },
+    { path: 'jaipur/:id/task-manager', component: TaskManagerComponent },
+    { path: 'jaipur/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
+    { path: 'jaipur/:id/house-marking', component: HouseMarkingComponent },
+    { path: 'jaipur/:id/house-marking/:id1', component: HouseMarkingComponent },
+    { path: 'jaipur/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'jaipur/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: 'jaipur/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'jaipur/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'jaipur/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'jaipur/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'jaipur/:id/map-card-review', component: MapCardReviewComponent },
+    { path: 'jaipur/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: 'jaipur/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'jaipur/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'jaipur/:id/vehicle-assigned', component: VehicleAssignedComponent },
+    { path: 'jaipur/:id/log-book', component: LogBookComponent },
+    { path: 'jaipur/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'jaipur/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
+    { path: 'jaipur/:id/vts-report', component: VtsReportComponent },
+    { path: 'jaipur/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'jaipur/:id/change-password', component: ChangePasswordComponent },
+    { path: 'jaipur/:id/vts-route', component: VtsRouteComponent },
+    { path: 'jaipur/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'jaipur/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'jaipur/:id/bvg-routes', component: BvgRoutesComponent },
+    { path: 'jaipur/:id/vts-analysis', component: VtsAnalysisComponent },
+    { path: 'jaipur/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'jaipur/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
+    { path: 'jaipur/:id/show-route', component: ShowRouteComponent },
+    { path: 'jaipur:id//field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'jaipur/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'jaipur/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'jaipur/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'jaipur/:id/account-detail', component: AccountDetailComponent },
+    { path: 'jaipur/:id/employee-salary', component: EmployeeSalaryComponent },
+    { path: 'jaipur/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
+    { path: 'jaipur/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'jaipur/:id/kml-to-json', component: KmlToJsonComponent },
+    { path: 'jaipur/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'jaipur/:id/dustbin-service', component: DustbinServiceComponent },
+    { path: 'jaipur/:id1/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'jaipur/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
+    { path: 'jaipur/:id/staff-account-detail', component: StaffAccountDetailComponent },
+    { path: 'jaipur/:id/cash-management', component: CashManagementComponent },
+    { path: 'jaipur/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'jaipur/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'jaipur/:id/ward-work-done', component: WardWorkDoneComponent },
+    { path: 'jaipur/:id/settings', component: SettingsComponent },
+    { path: 'jaipur/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'jaipur/:id/employees', component: EmployeesComponent },
+    { path: 'jaipur/:id/special-users', component: SpecialUsersComponent },
+    { path: 'jaipur/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'jaipur/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
+    { path: 'jaipur/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'jaipur/:id/dustbin-manage', component: DustbinManageComponent },
+    { path: 'jaipur/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'jaipur/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'jaipur/:id/salary-calculation', component: SalaryCalculationComponent },
+    { path: 'jaipur/:id/daily-fuel-report', component: DailyFuelReportComponent },
+    { path: 'jaipur/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'jaipur/:id/employee-attendance', component: EmployeeAttendanceComponent },
+    { path: 'jaipur/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'jaipur/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
 ]; 

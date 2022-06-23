@@ -107,6 +107,7 @@ import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
+import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 
 
 
@@ -220,7 +221,8 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
     DailyFuelReportComponent,
     SalaryCalculationsComponent,
     EmployeeAttendanceComponent,
-    DailyWorkDetailComponent
+    DailyWorkDetailComponent,
+    DustbinsMonitoringComponent
   ]
 })
 

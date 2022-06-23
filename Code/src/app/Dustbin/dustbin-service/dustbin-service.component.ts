@@ -116,7 +116,7 @@ export class DustbinServiceComponent implements OnInit {
       return;
     }
     for (let i = 0; i < this.dustbinStorageList.length; i++) {
-      if (this.dustbinStorageList[i]["zone"] == this.selectedZone && this.dustbinStorageList[i]["isDisabled"]!="yes") {
+      if (this.dustbinStorageList[i]["zone"] == this.selectedZone && this.dustbinStorageList[i]["isDisabled"] != "yes") {
         this.dustbinList.push({ dustbin: this.dustbinStorageList[i]["dustbin"], address: this.dustbinStorageList[i]["address"] });
       }
     }
@@ -282,6 +282,19 @@ export class DustbinServiceComponent implements OnInit {
     let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + key;
     this.db.object(dbPath).update(data);
 
+    let JsonObj = {};
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + date + ".json?alt=media";
+    let dustbinPlanHistoryInstance = this.httpService.get(path).subscribe(planHistoryData => {
+      dustbinPlanHistoryInstance.unsubscribe();
+      JsonObj = planHistoryData;
+      JsonObj[key] = data;
+      this.commonService.saveJsonFile(JsonObj, date + ".json", "/DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/")
+    }, error => {
+      JsonObj[key] = data;
+      this.commonService.saveJsonFile(JsonObj, date + ".json", "/DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/")
+    });
+
+
     const data1 = {
       driver: driverId,
       planId: key,
@@ -319,11 +332,11 @@ export class DustbinServiceComponent implements OnInit {
       }
 
       dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + dustbinId + "/" + key;
-      
+
       this.db.object(dbPath).update(data2);
     }
-    
-    this.commonService.setAlertMessage("Success","Data saved successfully!!!");
+
+    this.commonService.setAlertMessage("Success", "Data saved successfully!!!");
   }
 
   randomString(length) {
