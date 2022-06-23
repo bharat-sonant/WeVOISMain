@@ -436,7 +436,7 @@
     margin-right:auto;
 }
 .divMap{
-    margin-left:-17px;
+    margin-left:0px;
 }
 .gmap{
     width:100%;
@@ -450,7 +450,7 @@
         margin-left: 10px;
     }
     .zone-select{
-        width: 93%;
+        width: 260px;
         margin-left: 0 !important;
     }
     .report-header-bg{
@@ -464,12 +464,20 @@
         margin-left: 0px !important;
      
     }
+    .btn-hvr-div{
+        padding-left: 35px; 
+        padding-top: 4px;
+     }
 }
-@media only screen and (min-width:269px) and (max-width:281px){
+@media only screen and (min-width:269px) and (max-width:313px){
     .search-bar{
         width: 100%;
         margin-top: -39px;
         margin-left: 10px;
+    }
+    .btn-hvr-div{
+        padding-left: 15px;
+        padding-top: 4px;
     }
     .zone-select{
         width: 100%;
@@ -482,12 +490,16 @@
         margin-left: 0px;
     }
     .arrow-input{
-        width: 130px !important;
+        width: 125px !important;
     }
     .report-content{
         margin-top: -45px !important;
         margin-left: 0px;
         margin-right: 0px;
+    }
+    .zone-select{
+        width: 240px;
+       
     }
 
 }
@@ -511,22 +523,30 @@
         margin-bottom: 60% !important
     }
 }
-@media only screen and (min-width:500px) and (max-width:576px){
+@media only screen and (min-width:475px) and (max-width:576px){
     .zone-select{
-        width: 43% !important;
+        width: 33% !important;
         margin-left: 10px !important
     }
     .report-header-bg{
         height: 110px !important;
     }
 }
-@media only screen and (min-width:760px) and (max-width:790px){
+@media only screen and (min-width:576px) and (max-width:790px){
     .zone-select{
         width: 35% !important;
     }
     .card-main{
         margin-bottom: 48% !important
     }
+    .search-bar{
+        width: 100%;
+       
+    }
+    .btn-hvr-div{
+        padding-left: 35px; 
+        padding-top: 4px;
+     }
 
 }
 @media only screen and (min-width:791px) and (max-width:821px){
