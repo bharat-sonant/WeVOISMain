@@ -672,7 +672,7 @@ export class SidebarComponent implements OnInit {
     this.closeMapModel();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 150;
+    let height = 200;
     let width = 465;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -689,7 +689,7 @@ export class SidebarComponent implements OnInit {
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 400;
+    let height = 500;
     let width = 1000;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
