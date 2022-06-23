@@ -21,7 +21,7 @@ export class DustbinService {
       this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency, createdDate: data.createdDate });
     }
     else {
-      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency  });
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency });
     }
   }
 
@@ -57,6 +57,26 @@ export class DustbinService {
           resolve(planHistoryData);
         }
       );
+    });
+  }
+
+  getDustbinPickingPlanHistoryDateWise(year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + year + "%2F" + monthName + "%2F" + date + ".json?alt=media";
+      let dustbinPlanHistoryInstance = this.httpService.get(path).subscribe(planHistoryData => {
+        dustbinPlanHistoryInstance.unsubscribe();
+        resolve(planHistoryData);
+      }, error => {
+        this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+        let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
+        let dustbinPlanHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(
+          planHistoryData => {
+            dustbinPlanHistoryInstance.unsubscribe();
+            this.commonService.saveJsonFile(planHistoryData, date + ".json", "/DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/")
+            resolve(planHistoryData);
+          }
+        );
+      });
     });
   }
 

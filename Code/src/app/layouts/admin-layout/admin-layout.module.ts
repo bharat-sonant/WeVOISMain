@@ -6,7 +6,6 @@ import { AdminLayoutRoutes } from './admin-layout.routing';
 import { IndexComponent } from '../../index/index.component';
 import { PortalAccessComponent } from '../../portal-access/portal-access.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { MapsComponent } from '../../maps/maps.component';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { ChartsModule } from 'ng2-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +18,6 @@ import { LogoutComponent } from '../../logout/logout.component';
 import { HouseEntryFormComponent } from '../../house-entry-form/house-entry-form.component';
 import { DownloadCollectionReportComponent } from '../../reports/download-collection-report/download-collection-report.component';
 import { HouseSearchComponent } from '../../housesearch/housesearch.component';
-import { SignupComponent } from '../../signup/signup.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
 import { LineCardMappingComponent } from '../../house-survey/line-card-mapping/line-card-mapping.component';
@@ -109,6 +107,7 @@ import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
+import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 
 
 
@@ -125,7 +124,6 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
     IndexComponent,
     PortalAccessComponent,
     DashboardComponent,
-    MapsComponent,
     NotificationsComponent,
     WardMonitoringComponent,
     SkipLineComponent,
@@ -135,7 +133,6 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
     HouseEntryFormComponent,
     DownloadCollectionReportComponent,
     HouseSearchComponent,
-    SignupComponent,
     FleetMonitorComponent,
     LineStatisticsComponent,
     LineCardMappingComponent,
@@ -224,7 +221,8 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
     DailyFuelReportComponent,
     SalaryCalculationsComponent,
     EmployeeAttendanceComponent,
-    DailyWorkDetailComponent
+    DailyWorkDetailComponent,
+    DustbinsMonitoringComponent
   ]
 })
 

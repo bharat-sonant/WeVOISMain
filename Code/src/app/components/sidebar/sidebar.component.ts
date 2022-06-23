@@ -672,7 +672,7 @@ export class SidebarComponent implements OnInit {
     this.closeMapModel();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 150;
+    let height = 200;
     let width = 465;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -689,7 +689,7 @@ export class SidebarComponent implements OnInit {
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 400;
+    let height = 500;
     let width = 1000;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -706,6 +706,10 @@ export class SidebarComponent implements OnInit {
     let classNameJaipurOffice = elementJaipurOffice.className;
     let elementJaipurGreater = <HTMLElement>document.getElementById("jaipurGreaterBox");
     let classNameJaipurGreater = elementJaipurGreater.className;
+    
+    let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
+    let classNameJaipur = elementJaipur.className;
+
     let elementKishangarh = <HTMLElement>document.getElementById("kishangarhBox");
     let classNameKishangarh = elementKishangarh.className;
     let elementNiwai = <HTMLElement>document.getElementById("niwaiBox");
@@ -722,6 +726,7 @@ export class SidebarComponent implements OnInit {
     $("#shahpuraBox").removeClass(classNameShahpura);
     $("#jaipurOfficeBox").removeClass(classNameJaipurOffice);
     $("#jaipurGreaterBox").removeClass(classNameJaipurGreater);
+    $("#jaipurBox").removeClass(classNameJaipur);
     $("#kishangarhBox").removeClass(classNameKishangarh);
     $("#niwaiBox").removeClass(classNameNiwai);
     $("#jaisalmerBox").removeClass(classNameJaisalmer);
@@ -739,6 +744,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "reengus") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box active-box");
@@ -750,6 +756,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "shahpura") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -761,6 +768,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "jaipur-office") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -772,6 +780,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "test") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -783,6 +792,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "jaipur-greater") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -794,6 +804,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "kishangarh") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -805,6 +816,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "niwai") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -816,6 +828,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "jaisalmer") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -827,6 +840,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box active-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "salasar") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -838,6 +852,7 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box active-box");
       $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box");
     } else if (this.cityName == "behror") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
@@ -849,6 +864,19 @@ export class SidebarComponent implements OnInit {
       $("#jaisalmerBox").addClass("login-box");
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box active-box");
+      $("#jaipurBox").addClass("login-box");
+    } else if (this.cityName == "jaipur") {
+      $("#sikarBox").addClass("login-box");
+      $("#reengusBox").addClass("login-box");
+      $("#shahpuraBox").addClass("login-box");
+      $("#jaipurOfficeBox").addClass("login-box");
+      $("#jaipurGreaterBox").addClass("login-box");
+      $("#kishangarhBox").addClass("login-box");
+      $("#niwaiBox").addClass("login-box");
+      $("#jaisalmerBox").addClass("login-box");
+      $("#salasarBox").addClass("login-box");
+      $("#behrorBox").addClass("login-box");
+      $("#jaipurBox").addClass("login-box active-box");
     }
 
     for (let i = 0; i < this.accessCity.length; i++) {
@@ -872,6 +900,8 @@ export class SidebarComponent implements OnInit {
         $("#salasarBox").show();
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur") {
+        $("#jaipurBox").show();
       }
     }
   }

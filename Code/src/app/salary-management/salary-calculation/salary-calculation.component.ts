@@ -124,7 +124,7 @@ export class SalaryCalculationComponent implements OnInit {
           this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
           this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
         }
-        this.salaryList=this.employeeList;
+        this.salaryList = this.employeeList;
         this.getSalary();
       }
     });
@@ -159,6 +159,7 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
+    
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
     let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
       dailyWorkData => {
@@ -204,7 +205,7 @@ export class SalaryCalculationComponent implements OnInit {
                     workDetail.push({ ward: ward, wages: wages, percentage: 0 });
                     let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
                     if (zoneDetail != undefined) {
-                      this.getWorkPercentage(empId, ward, monthDate);
+                      this.getWorkPercentage(empId, ward, monthDate, index, days);
                     }
                   }
                 }
@@ -220,14 +221,14 @@ export class SalaryCalculationComponent implements OnInit {
             }
           }
         }
-        if (index == days) {
-          $(this.divLoader).hide();
-        }
+        // if (index == days) {
+        //   $(this.divLoader).hide();
+        // }
       }
     );
   }
 
-  getWorkPercentage(empId: any, ward: any, monthDate: any) {
+  getWorkPercentage(empId: any, ward: any, monthDate: any, index: any, days: any) {
     let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
     let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
       workPercentageData => {
@@ -245,6 +246,9 @@ export class SalaryCalculationComponent implements OnInit {
               }
             }
           }
+        }
+        if (index == days) {
+          $(this.divLoader).hide();
         }
       }
     );

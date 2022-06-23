@@ -148,6 +148,9 @@ export class CommonService {
     else if (cityName == "jaipur-office") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "jaipur") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     else if (cityName == "sikar") {
       latLng.push({ lat: 27.616270, lng: 75.152443 });
     }
@@ -718,6 +721,9 @@ export class CommonService {
     }
     else if (city == "Jaipur-greater") {
       city = "Jaipur-Greater";
+    }
+    else if (city == "Jaipur") {
+      city = "Jaipurd2d";
     }
     return city;
   }
