@@ -723,7 +723,7 @@ export class CommonService {
       city = "Jaipur-Greater";
     }
     else if (city == "Jaipur") {
-      city = "Jaipurd2d";
+      city = "JaipurD2D";
     }
     return city;
   }
