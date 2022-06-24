@@ -690,7 +690,7 @@ export class SidebarComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 500;
-    let width = 1000;
+    let width = 800;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");

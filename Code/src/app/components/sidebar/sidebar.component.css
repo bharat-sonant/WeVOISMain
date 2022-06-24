@@ -168,7 +168,7 @@ color: #fff!important;
 .login-container{
 /* width: 600px; */
 height: 400px;
-width: 1000px;
+
 background-color: #fff;
 border-radius: 10px;
 position: absolute;
@@ -391,7 +391,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 
-@media (min-width:840px){
+@media (min-width:500px){
     .login-body{
       height: unset !important;
       margin-top: 0px !important;
@@ -411,13 +411,28 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
    }
    .modal-content {
     max-width: 100% !important;
+    background: none !important;
   }
   .login-container{
     top: 40% !important;
   }
+  .modal.show .modal-dialog {
+    transform: none;
+    background: none !important;
+}
+.modal-dialog.modal-dialog-centered.main {
+    background: none !important;
+}
 
    
   }
+
+
+
+
+
+
+
 
 
 
