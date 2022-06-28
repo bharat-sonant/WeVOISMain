@@ -201,7 +201,7 @@ font-size: 18px;
 display: flex;
 justify-content: center;
 align-items: center;
-height: 230px;
+
 
 }
 .welcome-text{
@@ -411,7 +411,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
    }
    .modal-content {
     max-width: 100% !important;
-    background: none !important;
+    background: none;
   }
   .login-container{
     top: 40% !important;
@@ -425,6 +425,84 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
    
+  }
+@media (min-width:576px) and (max-width:767px){
+    .login-container{
+        min-width: 100% !important;
+    }
+    
+     .modal-dialog {
+       max-width: 100% !important;
+       margin-top: 0px !important;
+    }
+    .close-icon{
+        border: none;
+    }
+    .blanck{
+        display: none;
+    }
+    .close-icon button{
+        margin-top: -80px !important;
+    }
+    
+}
+
+  @media (min-width:411px) and (max-width:576px){
+    .login-container{
+       top: 108% !important;
+       height: unset !important;
+    }
+    .modal-dialog {
+       margin: 0 !important;
+     }
+     .login-body{
+       
+        margin: 0 !important;
+    }
+    .blanck{
+        display: none;
+    }
+    .close-icon{
+        border: none;
+    }
+    .close-icon button{
+        margin-top: -80px !important;
+    }
+    .modal.show .modal-dialog{
+        margin: auto !important;
+    }
+  }
+  @media (min-width:270px) and (max-width:411px){
+    .login-container{
+       top: 172% !important;
+       height: unset !important;
+    }
+    .modal-dialog {
+       margin: 0 !important;
+     }
+     .login-body{
+       
+        margin: 0 !important;
+    }
+    .blanck{
+        display: none;
+    }
+    .close-icon{
+        border: none;
+    }
+    .close-icon button{
+        margin-top: -80px !important;
+    }
+    .modal-dialog{
+        margin: auto !important;
+    }
+  }
+
+  @media (min-width:412px) and (max-width:413px){
+    .login-container{
+        top: 100% !important;
+        height: unset !important;
+     }
   }
 
 

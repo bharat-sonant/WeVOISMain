@@ -675,7 +675,7 @@ export class SidebarComponent implements OnInit {
     let height = 200;
     let width = 465;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top",);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     if (type == "Yes") {
@@ -690,9 +690,27 @@ export class SidebarComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 500;
-    let width = 800;
+    let width = 767;
+
+    let windowwidth = $(window).width();
+    if (windowwidth<=576 && windowwidth>=410) {
+      width = 400;
+     
+    }else if(windowwidth<=767 && windowwidth>=577) {
+      width = 575;
+     
+    }else if(windowwidth<=413 && windowwidth>=270) {
+      width = 265;
+     
+    }
+
+
+
+
+
+
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $("#popUpCityName").html(this.cityName);
@@ -706,7 +724,7 @@ export class SidebarComponent implements OnInit {
     let classNameJaipurOffice = elementJaipurOffice.className;
     let elementJaipurGreater = <HTMLElement>document.getElementById("jaipurGreaterBox");
     let classNameJaipurGreater = elementJaipurGreater.className;
-    
+
     let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
     let classNameJaipur = elementJaipur.className;
 
