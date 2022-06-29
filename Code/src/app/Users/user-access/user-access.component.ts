@@ -114,7 +114,6 @@ export class UserAccessComponent implements OnInit {
             this.accessList[this.accessList.length - 1]["secondLevel"] = secondLevel;
           }
         }
-        console.log(this.accessList);
       }
     });
   }

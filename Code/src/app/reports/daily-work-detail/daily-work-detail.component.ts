@@ -113,8 +113,13 @@ export class DailyWorkDetailComponent implements OnInit {
         if (assignedData != null) {
           let driverId = assignedData["driver"];
           let helperId = assignedData["helper"];
+
           this.getBinliftingData(driverId, planKey, "driver");
           this.getBinliftingData(helperId, planKey, "helper");
+          if (assignedData["secondHelper"] != null) {
+            let secondHelperId = assignedData["secondHelper"];
+            this.getBinliftingData(secondHelperId, planKey, "secondHelper");
+          }
         }
       }
     );
@@ -165,8 +170,11 @@ export class DailyWorkDetailComponent implements OnInit {
             }
           );
         }
-        else {
+        else if (type == "helper") {
           detail.helper = name + "(" + empId + ")";
+        }
+        else {
+          detail.secondHelper = name + "(" + empId + ")";
         }
       }
     });
@@ -246,6 +254,23 @@ export class DailyWorkDetailComponent implements OnInit {
               }
             }
           }
+          let secondHelper = "";
+          if (workerData["secondHelper"] != null) {
+            let secondHelperList = workerData["secondHelperName"].split(',');
+            let secondHelperIdList = workerData["secondHelper"].split(',');            
+            for (let j = 0; j < secondHelperIdList.length; j++) {
+              if (secondHelperList[j] != null) {
+                if (secondHelper == "") {
+                  secondHelper = secondHelperList[j] + " (" + secondHelperIdList[j] + ")";
+                }
+                else {
+                  if (!secondHelper.includes(secondHelperList[j])) {
+                    secondHelper += ", " + secondHelperList[j] + " (" + secondHelperIdList[j] + ")";
+                  }
+                }
+              }
+            }
+          }
           let vehicle = "";
           if (workerData["vehicle"] != null) {
             let vehicleList = workerData["vehicle"].split(',');
@@ -266,6 +291,7 @@ export class DailyWorkDetailComponent implements OnInit {
           if (detail != undefined) {
             detail.driver = driver;
             detail.helper = helper;
+            detail.secondHelper = secondHelper;
             detail.vehicle = vehicle;
           }
         }
@@ -294,6 +320,9 @@ export class DailyWorkDetailComponent implements OnInit {
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += "Helper";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Second Helper";
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += "Trip/Bins";
@@ -334,6 +363,11 @@ export class DailyWorkDetailComponent implements OnInit {
         htmlString += "<td>";
         if (this.dailyWorkList[i]["helper"] != null) {
           htmlString += this.dailyWorkList[i]["helper"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.dailyWorkList[i]["secondHelper"] != null) {
+          htmlString += this.dailyWorkList[i]["secondHelper"];
         }
         htmlString += "</td>";
         htmlString += "<td>";

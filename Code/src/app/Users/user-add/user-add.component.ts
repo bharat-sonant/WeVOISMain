@@ -82,6 +82,11 @@ export class UserAddComponent implements OnInit {
             (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
           }
         }
+        if(doc.data()["isAdmin"]!=undefined){
+          if (doc.data()["isAdmin"] == 1) {
+            (<HTMLInputElement>(document.getElementById("isAdmin"))).checked = true;
+          }
+        }
       });
     } else {
       this.userRecord = [];
@@ -179,6 +184,7 @@ export class UserAddComponent implements OnInit {
     let isTaskManager: any = 0;
     let isActual:any=0;
     let isLock:any=0;
+    let isAdmin:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -203,6 +209,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isActual = 1;
     element = <HTMLInputElement>document.getElementById("isLock");
     if (element.checked == true) isLock = 1;
+    element = <HTMLInputElement>document.getElementById("isAdmin");
+    if (element.checked == true) isAdmin = 1;
 
     const dish = {
       userId: userId,
@@ -223,7 +231,8 @@ export class UserAddComponent implements OnInit {
       isTaskManager: isTaskManager,
       haltDisableAccess: haltDisableAccess,
       isActual:isActual,
-      isLock:isLock
+      isLock:isLock,
+      isAdmin:isAdmin
     };
 
     if (id != null) {
