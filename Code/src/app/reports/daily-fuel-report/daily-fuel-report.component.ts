@@ -20,8 +20,13 @@ export class DailyFuelReportComponent implements OnInit {
   selectedDate: any;
   toDayDate: any;
   txtDate = "#txtDate";
-  spDate = "#spDate";
   divLoader = "#divLoader";
+
+  fuelDetail: fuelDetail = {
+    date: "",
+    totalFuel: "0.00",
+    totalKm: "0.000"
+  }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -34,12 +39,14 @@ export class DailyFuelReportComponent implements OnInit {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
-    $(this.spDate).html(this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]);
+    this.fuelDetail.date = this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0];
     this.getSelectedYearMonthName();
     this.getVehicles();
   }
 
   clearList() {
+    this.fuelDetail.totalFuel = "0.00";
+    this.fuelDetail.totalKm = "0.000";
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         this.vehicleList[i]["diesel"] = [];
@@ -80,6 +87,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   getDieselQty() {
+    let totalFuel = 0;
     let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let dieselInstance = this.db.list(dbPath).valueChanges().subscribe(
       dieselData => {
@@ -91,10 +99,12 @@ export class DailyFuelReportComponent implements OnInit {
               if (detail != undefined) {
                 if (dieselData[i]["quantity"] != null) {
                   detail.diesel.push({ qty: dieselData[i]["quantity"] });
+                  totalFuel += Number(dieselData[i]["quantity"]);
                 }
               }
             }
           }
+          this.fuelDetail.totalFuel = totalFuel.toFixed(2);
         }
       }
     );
@@ -150,6 +160,7 @@ export class DailyFuelReportComponent implements OnInit {
                       let distance = "0";
                       if (locationData != null) {
                         distance = (Number(locationData) / 1000).toFixed(3);
+                        this.fuelDetail.totalKm = (Number(this.fuelDetail.totalKm) +Number(distance)).toFixed(3);
                       }
                       let detail = this.vehicleList.find(item => item.vehicle == vehicle);
                       if (detail != undefined) {
@@ -244,4 +255,11 @@ export class DailyFuelReportComponent implements OnInit {
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
+}
+
+
+export class fuelDetail {
+  date: string;
+  totalFuel: string;
+  totalKm: string;
 }

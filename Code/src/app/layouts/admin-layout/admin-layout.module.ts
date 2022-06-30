@@ -108,6 +108,7 @@ import { SalaryCalculationsComponent } from '../../salary-management/salary-calc
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
+import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 
 
 
@@ -222,7 +223,8 @@ import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/d
     SalaryCalculationsComponent,
     EmployeeAttendanceComponent,
     DailyWorkDetailComponent,
-    DustbinsMonitoringComponent
+    DustbinsMonitoringComponent,
+    SupportQueryComponent
   ]
 })
 

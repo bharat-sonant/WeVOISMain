@@ -101,6 +101,7 @@ import { SalaryCalculationsComponent } from '../../salary-management/salary-calc
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
+import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -218,6 +219,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'sikar/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'sikar/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'sikar/support-query', component: SupportQueryComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -325,6 +327,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'sikar/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'sikar/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'sikar/:id/support-query', component: SupportQueryComponent },
 
 
     //jaipur-greater
@@ -432,6 +435,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-greater/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur-greater/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur-greater/support-query', component: SupportQueryComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -538,6 +542,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-greater/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur-greater/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur-greater/:id/support-query', component: SupportQueryComponent },
     
 
     //reengus
@@ -646,6 +651,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'reengus/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'reengus/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'reengus/support-query', component: SupportQueryComponent },
 
 
 
@@ -755,6 +761,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'reengus/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'reengus/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'reengus/:id/support-query', component: SupportQueryComponent },
 
 
 
@@ -864,6 +871,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'shahpura/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'shahpura/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'shahpura/support-query', component: SupportQueryComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -971,6 +979,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'shahpura/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'shahpura/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'shahpura/:id/support-query', component: SupportQueryComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1078,6 +1087,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'test/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'test/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'test/support-query', component: SupportQueryComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1185,6 +1195,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'test/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'test/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'test/:id/support-query', component: SupportQueryComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1292,6 +1303,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-office/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur-office/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur-office/support-query', component: SupportQueryComponent },
 
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
@@ -1399,6 +1411,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur-office/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur-office/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur-office/:id/support-query', component: SupportQueryComponent },
 
     
 
@@ -1508,6 +1521,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'kishangarh/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'kishangarh/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'kishangarh/support-query', component: SupportQueryComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1615,6 +1629,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'kishangarh/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'kishangarh/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'kishangarh/:id/support-query', component: SupportQueryComponent },
 
 
 
@@ -1725,6 +1740,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'niwai/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'niwai/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'niwai/support-query', component: SupportQueryComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1832,6 +1848,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'niwai/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'niwai/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'niwai/:id/support-query', component: SupportQueryComponent },
 
 
 
@@ -1941,6 +1958,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaisalmer/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaisalmer/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaisalmer/support-query', component: SupportQueryComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2048,6 +2066,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaisalmer/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaisalmer/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaisalmer/:id/support-query', component: SupportQueryComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2155,6 +2174,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'salasar/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'salasar/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'salasar/support-query', component: SupportQueryComponent },
 
     
     { path: 'salasar/:id/home', component: HomeComponent },
@@ -2262,6 +2282,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'salasar/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'salasar/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'salasar/:id/support-query', component: SupportQueryComponent },
 
 
 
@@ -2371,6 +2392,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'behror/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'behror/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'behror/support-query', component: SupportQueryComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2478,6 +2500,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'behror/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'behror/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'behror/:id/support-query', component: SupportQueryComponent },
 
 
     //jaipur
@@ -2585,6 +2608,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur/support-query', component: SupportQueryComponent },
+
 
     { path: 'jaipur/:id/home', component: HomeComponent },
     { path: 'jaipur/:id/dashboard', component: DashboardComponent },
@@ -2691,4 +2716,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: 'jaipur/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: 'jaipur/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'jaipur/:id/support-query', component: SupportQueryComponent },
 ]; 
