@@ -94,7 +94,12 @@ export class SidebarComponent implements OnInit {
     if (this.accessCity.length > 1) {
       $("#liCity").show();
     }
-    $("#cityName").html(this.cityName);
+    if (this.cityName == "jaipur") {
+      $("#cityName").html("Jaipur D2D");
+    }
+    else {
+      $("#cityName").html(this.cityName);
+    }
     let element = <HTMLImageElement>document.getElementById("cityImage");
     element.src = this.getCityIcon(this.cityName);
 
@@ -691,46 +696,46 @@ export class SidebarComponent implements OnInit {
     let windowHeight = $(window).height();
     let height = 500;
     let width = 767;
-  
-    
-    
+
+
+
     let windowwidth = $(window).width();
-    
-    if(windowwidth>=1350) {
+
+    if (windowwidth >= 1350) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top","5%");
-      
-     }else if(windowwidth<=1349 && windowwidth>=1201) {
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+
+    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top","50px");
-      
-     }else if(windowwidth<=1200 && windowwidth>=1025) {
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top","50px");
-      
-     }else if(windowwidth<=1024 && windowwidth>=768) {
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 1024 && windowwidth >= 768) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top","50px");
-      
-     }else if(windowwidth<=767 && windowwidth>=577) {
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 767 && windowwidth >= 577) {
       width = 575;
-      
-     
-    }else if(windowwidth<=576 && windowwidth>=410) {
+
+
+    } else if (windowwidth <= 576 && windowwidth >= 410) {
       width = 400;
-     
-    }else if(windowwidth<=413 && windowwidth>=270) {
+
+    } else if (windowwidth <= 413 && windowwidth >= 270) {
       width = 265;
-     
+
     }
 
 
-    
+
 
 
 
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    
+
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
