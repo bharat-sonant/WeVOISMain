@@ -221,9 +221,9 @@ export class SalaryCalculationComponent implements OnInit {
             }
           }
         }
-        // if (index == days) {
-        //   $(this.divLoader).hide();
-        // }
+         if (index == days) {
+           $(this.divLoader).hide();
+         }
       }
     );
   }
@@ -248,7 +248,7 @@ export class SalaryCalculationComponent implements OnInit {
           }
         }
         if (index == days) {
-          $(this.divLoader).hide();
+         // $(this.divLoader).hide();
         }
       }
     );

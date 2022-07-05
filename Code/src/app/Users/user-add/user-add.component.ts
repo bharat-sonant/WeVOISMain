@@ -264,7 +264,7 @@ export class UserAddComponent implements OnInit {
     let mobileValue = $("#mobile").val();
     if (mobileValue.toString().length != 10) {
       if (this.validateEmail($("#email").val()) == false) {
-        this.commonService.setAlertMessage("error", "Please Enter Valid Mobile N0. !!!");
+        this.commonService.setAlertMessage("error", "Please Enter Valid Mobile No. !!!");
         return;
       }
     }
