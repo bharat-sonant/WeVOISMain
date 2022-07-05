@@ -730,16 +730,17 @@ export class SidebarComponent implements OnInit {
     }
 
 
-
-
-
-
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
 
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $("#popUpCityName").html(this.cityName);
+    if (this.cityName == "jaipur") {
+      $("#popUpCityName").html("jaipur D2D");
+    }
+    else {
+      $("#popUpCityName").html(this.cityName);
+    }
     let elementSikar = <HTMLElement>document.getElementById("sikarBox");
     let classNameSikar = elementSikar.className;
     let elementReengus = <HTMLElement>document.getElementById("reengusBox");
