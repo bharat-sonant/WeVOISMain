@@ -136,7 +136,8 @@ export class SalaryCalculationsComponent implements OnInit {
       let status = this.employees[employeeId]["GeneralDetails"]["status"]
       if (status == "1" && (designationId == "5" || designationId == "6")) {
         let lastEmpId = this.employeeIds[this.employeeIds.length - 1];
-        if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount < 10) {
+        //if (Number(employeeId) <= Number(lastEmpId) && this.activeEmployeeCount < 100) {
+        if (Number(employeeId) <= Number(lastEmpId)) {
           this.activeEmployeeCount++;
 
           this.jsonObject[employeeId] = {
@@ -172,9 +173,7 @@ export class SalaryCalculationsComponent implements OnInit {
                       }
                     }
                   }
-                  /*
-                                  console.log("Date:" + date + " | Emnployee :" + employeeId);
-                                  $(this.divLoader).hide();*/
+                 
                   let workPercentage = "( 0% )";
                   if (taskName.toLowerCase().indexOf("compactor") > -1 || taskName.toLowerCase().indexOf("binlifting") > -1 || taskName.toLowerCase().indexOf("garage") > -1 || taskName.toLowerCase().indexOf("wet") > -1) {
                     workPercentage = "";
@@ -195,10 +194,11 @@ export class SalaryCalculationsComponent implements OnInit {
                 }
               }
 
-              /*
-                          if (assignedTaskCount > 2) {
-                            this.updateWorkPercentage(date, employeeId);
-                          }*/
+              /* donot remove this code, Please
+              if (assignedTaskCount > 2) {
+                  this.updateWorkPercentage(date, employeeId);
+               }*/
+              
 
             }
           }
@@ -206,19 +206,19 @@ export class SalaryCalculationsComponent implements OnInit {
           index++
           this.setEmployeeData(index);
 
-        }
-        else {
-          let filePath = "/SalarySummary/" + this.selectedYear + "/";
-          let fileName = this.selectedMonthName + ".json";
-          this.commonService.saveJsonFile(this.jsonObject, fileName, filePath).then((response) => {
-            this.getSalaryList();
-          });
-        }
+        }       
       } else {
         index++;
         this.setEmployeeData(index);
       }
 
+    }
+    else {
+      let filePath = "/SalarySummary/" + this.selectedYear + "/";
+      let fileName = this.selectedMonthName + ".json";
+      this.commonService.saveJsonFile(this.jsonObject, fileName, filePath).then((response) => {
+        this.getSalaryList();
+      });
     }
   }
 
@@ -252,9 +252,9 @@ export class SalaryCalculationsComponent implements OnInit {
       let WasteCollectionInfo = this.db.object(dbPath).valueChanges().subscribe(data => {
         WasteCollectionInfo.unsubscribe();
         let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + employeeId + "/task" + taskCount + "/";
-        //console.log("updatePAth:" + dbPath);
+        
         this.db.object(dbPath).update({ "work-percent": data });
-        //console.log("employeeId :" + employeeId + " | date :" + date + " | taskName:" + taskName + " | workPercentage:" + data);
+        
       });
       resolve(true);
     });
@@ -268,65 +268,14 @@ export class SalaryCalculationsComponent implements OnInit {
       return "2022-05-08";
     }
   }
-
-  /*
-  for (let i = 1; i <= 1; i++) {
-
-    let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-    let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/" + employeeId;
-    let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
-      dailyWorkData => {
-        dailyWorkInstance.unsubscribe();
-        if (dailyWorkData != null) {
-          let day = "day" + Number(monthDate.split('-')[2]);
-          let workDetail = [];
-          for (let j = 1; j <= 5; j++) {
-            if (dailyWorkData["task" + j] != null) {
-              let ward = dailyWorkData["task" + j]["task"];
-              let wages = 0;
-              if (dailyWorkData["task" + j]["task-wages"] != null) {
-                wages = dailyWorkData["task" + j]["task-wages"];
-              }
-
-              workDetail.push({ ward: ward, wages: wages, percentage: 0 });
-              let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
-              if (zoneDetail != undefined) {
-                let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
-                let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  workPercentageData => {
-                    workPercentageInstance.unsubscribe();
-                    if (workPercentageData != null) {
-                      for (let i = 0; i < workDetail.length; i++) {
-                        if (workDetail[i]["ward"] == ward) {
-                          workDetail[i]["percentage"] = Number(workPercentageData);
-                        }
-                      }
-                    }
-                    this.jsonObject[employeeId][day] = workDetail;
-                  });
-              }
-              else {
-                this.jsonObject[employeeId][day] = workDetail;
-              }
-            }
  
-          }
-        }
-      });
-  
-}*/
 
   getSalaryList() {
-
-
     $(this.divLoader).show();
-
     this.salaryList = [];
-
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSalarySummary%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let salaryInstance = this.httpService.get(path).subscribe(data => {
       salaryInstance.unsubscribe();
-
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
