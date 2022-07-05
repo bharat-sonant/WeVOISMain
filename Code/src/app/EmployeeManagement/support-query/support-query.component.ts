@@ -12,10 +12,13 @@ export class SupportQueryComponent implements OnInit {
   constructor(private commonService: CommonService, public httpService: HttpClient) { }
   toDayDate: any;
   divLoader = "#divLoader";
+  allComplaintList: any[];
   complaintList: any[];
   yearList: any[];
   selectedYear: any;
   ddlYear = "#ddlYear";
+  ddlCity = "#ddlCity";
+  ddlCategory = "#ddlCategory";
   fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
 
   ngOnInit() {
@@ -36,6 +39,9 @@ export class SupportQueryComponent implements OnInit {
 
   getComplaintList() {
     $(this.divLoader).show();
+    $(this.ddlCity).val("0");
+    $(this.ddlCategory).val("0");
+    this.allComplaintList = [];
     this.complaintList = [];
     const path = this.fireStoragePath + "Common%2FComplaints%2F" + this.selectedYear + ".json?alt=media";
     let complaintInstance = this.httpService.get(path).subscribe(data => {
@@ -49,14 +55,25 @@ export class SupportQueryComponent implements OnInit {
             if (data[id]["empId"] != "") {
               name = name + " (" + data[id]["empId"] + ")";
             }
-            this.complaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"] });
+            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"] });
           }
         }
+        this.filterData();
       }
       $(this.divLoader).hide();
     }, error => {
       $(this.divLoader).hide();
     });
+  }
+
+  filterData() {
+    this.complaintList=this.allComplaintList;
+    if ($(this.ddlCity).val() != "0") {
+      this.complaintList = this.allComplaintList.filter(item => item.city == $(this.ddlCity).val());
+    }
+    if ($(this.ddlCategory).val() != "0") {
+      this.complaintList = this.complaintList.filter(item => item.category == $(this.ddlCategory).val());
+    }
   }
 
   changeYearSelection(filterVal: any) {

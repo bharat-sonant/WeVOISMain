@@ -28,6 +28,41 @@
     <div class="row main-row">
         <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
             <div class="card" style="margin-top:-6px;  height: 87vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="margin-left: 0px!important;">
+                                    <select id="ddlCity" class="filter-select filter-input" (change)="filterData()">
+                                        <option value="0">
+                                            All Cities
+                                        </option>
+                                        <option value="Behror">Behror</option>
+                                        <option value="Jaipur Greater">Jaipur Greater</option>
+                                        <option value="Jaisalmer">Jaisalmer</option>
+                                        <option value="Kishangarh">Kishangarh</option>
+                                        <option value="Niwai">Niwai</option>
+                                        <option value="Salasar Balaji">Salasar Balaji</option>
+                                        <option value="Shahpura">Shahpura</option>
+                                        <option value="Sikar">Sikar</option>
+                                        <option value="Reengus">Reengus</option>
+                                    </select>
+
+                                    <select id="ddlCategory" class="filter-select filter-input" (change)="filterData()">
+                                        <option value="0">
+                                            All Categories
+                                        </option>
+                                        <option value="Salary">Salary</option>
+                                        <option value="General">General</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px!important;">
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form>
                         <div class="row">
