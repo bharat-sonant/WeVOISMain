@@ -55,7 +55,11 @@ export class SupportQueryComponent implements OnInit {
             if (data[id]["empId"] != "") {
               name = name + " (" + data[id]["empId"] + ")";
             }
-            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"] });
+            let timeStamps = new Date(data[id]["date"]).getTime();
+            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps });
+            this.allComplaintList = this.allComplaintList.sort((a, b) =>
+              b.timeStamps > a.timeStamps ? 1 : -1
+            );
           }
         }
         this.filterData();
@@ -67,7 +71,7 @@ export class SupportQueryComponent implements OnInit {
   }
 
   filterData() {
-    this.complaintList=this.allComplaintList;
+    this.complaintList = this.allComplaintList;
     if ($(this.ddlCity).val() != "0") {
       this.complaintList = this.allComplaintList.filter(item => item.city == $(this.ddlCity).val());
     }
