@@ -213,7 +213,7 @@ tbody {
 /* Track */
 
  ::-webkit-scrollbar-track {
-    -webkit-box-shadow: transparent;
+    box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
 }
@@ -225,7 +225,7 @@ tbody {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
-    -webkit-box-shadow: transparent;
+    box-shadow: transparent;
 }
 
  :hover::-webkit-scrollbar {
@@ -236,7 +236,7 @@ tbody {
 /* Track */
 
  :hover::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
 }
@@ -248,7 +248,7 @@ tbody {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -895,6 +895,7 @@ label {
     }
     .extra-class {
         max-width: 25%;
+        margin-left: 15px !important;
     }
     .submit-btn-add {
         margin-left: 40px !important;
@@ -945,6 +946,14 @@ label {
 }
 
 @media only screen and (min-width:577px) and (max-width:766px) {
+    .input-class{
+        max-width: 25%;
+    }
+    .extra-class{
+        padding: 5px 0px !important;
+       max-width: 23%;
+       margin-left: 8px;
+    }
     .table-one {
         overflow-x: scroll;
     }
@@ -972,15 +981,14 @@ label {
         margin-left: 40px !important;
         margin-top: -3px !important;
     }
+    .Ward-Marking-heading{
+        display: none;
+    }
 }
 
 @media only screen and (min-width:539px) and (max-width:576px) {
-    .input-class {
-        max-width: 36% !important
-    }
-    .extra-class {
-        max-width: 16% !important;
-    }
+    
+    
     .card-body3 {
         height: 70vh !important;
     }
@@ -989,7 +997,7 @@ label {
     }
 }
 
-@media only screen and (min-width:767px) and (max-width:821px) {
+@media only screen and (min-width:767px) and (max-width:900px) {
     .table-one {
         overflow-x: scroll;
     }
@@ -1026,7 +1034,7 @@ label {
     }
 }
 
-@media only screen and (min-width:900px) and (max-width:921px) {
+@media only screen and (min-width:900px) and (max-width:1020px) {
     .fix-home-outer {
         margin-left: auto;
     }
