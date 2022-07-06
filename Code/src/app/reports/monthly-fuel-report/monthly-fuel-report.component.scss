@@ -13,6 +13,36 @@
     z-index: 1;
 }
 
+.btn-hvr:hover {
+    background: #726f6f!important;
+}
+
+.arrow-btn {
+    background-color: #888;
+    border-color: #888;
+    font-size: 12px;
+    width: 35px;
+    margin-right: 8px;
+    padding: 8px 8px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 4px !important;
+}
+
+.arrow-btn2 {
+    background-color: #888;
+    border-color: #888;
+    font-size: 12px;
+    padding: 8px 8px;
+    color: #fff;
+    width: 35px;
+    margin-left: 8px!important;
+    margin-right: 10px!important;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .btn-primary {
     font-weight: 400;
     line-height: 1.35em;
@@ -145,6 +175,13 @@
     cursor: cell;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+}
+
+.edit-icon {
+    cursor: pointer !important;
+    font-size: 14px;
+    color: royalblue;
+    float: right;
 }
 
 select:focus {
@@ -392,6 +429,18 @@ tbody {
     margin-bottom: 10px;
 }
 
+.input-remark {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666666;
+    display: block;
+    width: 100%;
+    background: #fff;
+    border-radius: 2px;
+    padding: 0 12px 0 12px;
+    border: 1px solid lightgray;
+}
+
 .input-green {
     font-size: 12px;
     line-height: 1.5;
@@ -401,7 +450,7 @@ tbody {
     background: #fff;
     height: 40px;
     border-radius: 2px;
-    padding: 0 12px 0 12px;
+    padding: 0 12px 0 45px;
     border: 1px solid lightgray;
 }
 
@@ -525,6 +574,11 @@ textarea:focus-visible {
     background: #0ba118!important;
 }
 
+.cancel-btn {
+    background: red!important;
+    margin-top: 0px;
+}
+
 .custom-header {
     background-color: #ffffff!important;
 }
@@ -610,7 +664,7 @@ textarea:focus-visible {
 }
 
 .btn-success {
-    margin-left: 0px;
+    margin-left: 10px;
     margin-right: 10px;
     margin-top: 0px;
     background-color: #0ba118;
@@ -727,7 +781,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: 79vh;
+    height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -1176,7 +1230,7 @@ label {
 }
 
 .main-headers {
-    text-align: left;
+    text-align: center;
     margin-top: -2px;
     font-size: 20px;
     letter-spacing: 1px;
@@ -1252,7 +1306,7 @@ input {
     font-size: 12px;
     margin-top: 8px;
     border-radius: 2px;
-    width: 200px!important;
+    width: 120px;
     border: 1px solid lightgray!important;
     margin-left: 10px;
     height: 38px;
@@ -1799,27 +1853,21 @@ input {
     white-space: nowrap!important;
 }
 
-.user-button {
-    padding: 7px 10px 10px 0px !important;
-    background-color: rgb(38, 167, 6);
-    border-radius: 4px;
-    color: #ffffff;
-    border: 1px solid rgb(87, 86, 86);
-    cursor: cell;
-    margin-top: 0px;
-    height: 33px!important;
-    font-size: 12px;
+.main-label {
+    padding: 7px 10px;
+    align-items: center;
+    display: flex;
 }
 
-.user-button:hover {
-    background-color: #16c03b;
+.main-span {
+    float: left;
+    margin-right: 15px;
+    text-align: right;
+    padding: 0 10px;
+    border-right: solid 1px;
 }
 
-.user-button .icon {
-    background: #fff;
-    padding: 8px 10px 8px 10px !important;
-    transition: 0.5s;
-    cursor: cell;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+.main-span span {
+    font-weight: bolder;
+    font-size: 17px;
 }

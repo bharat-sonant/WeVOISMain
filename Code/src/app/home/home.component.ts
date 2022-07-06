@@ -53,6 +53,9 @@ export class HomeComponent implements OnInit {
     if (city == "Jaipur-greater") {
       city = "Jaipur Greater";
     }
+    if(city=="Jaipur"){
+      city="Jaipur D2D";
+    }
     return city;
   }
 
