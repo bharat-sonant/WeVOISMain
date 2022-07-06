@@ -126,7 +126,7 @@ export class MonthlyFuelReportComponent implements OnInit {
           this.getDailyWorkDetail((day + 1));
         }
         else {
-          $(this.divLoader).hide();
+          this.saveMonthlyFuelReportJson();
         }
       }
 
@@ -150,7 +150,7 @@ export class MonthlyFuelReportComponent implements OnInit {
               this.getDailyWorkDetail((day + 1));
             }
             else {
-              $(this.divLoader).hide();
+              this.saveMonthlyFuelReportJson();
             }
           }
         });
