@@ -109,6 +109,7 @@ import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-a
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
+import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 
 
 
@@ -224,7 +225,8 @@ import { SupportQueryComponent } from '../../EmployeeManagement/support-query/su
     EmployeeAttendanceComponent,
     DailyWorkDetailComponent,
     DustbinsMonitoringComponent,
-    SupportQueryComponent
+    SupportQueryComponent,
+    MonthlyFuelReportComponent
   ]
 })
 
