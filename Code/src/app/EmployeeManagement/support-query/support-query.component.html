@@ -38,7 +38,7 @@
                                             All Cities
                                         </option>
                                         <option value="Behror">Behror</option>
-                                        <option value="Jaipur Greater">Jaipur Greater</option>
+                                        <option value="Jaipur">Jaipur</option>
                                         <option value="Jaisalmer">Jaisalmer</option>
                                         <option value="Kishangarh">Kishangarh</option>
                                         <option value="Niwai">Niwai</option>
@@ -54,6 +54,15 @@
                                         </option>
                                         <option value="Salary">Salary</option>
                                         <option value="General">General</option>
+                                    </select>
+
+                                    <select id="ddlStatus" class="filter-select filter-input" (change)="filterData()">
+                                        <option value="0">
+                                            Query Status
+                                        </option>
+                                        <option value="pending">Pending</option>
+                                        <option value="assigned">Assigned</option>
+                                        <option value="resolved">Resolved</option>
                                     </select>
                                 </div>
 
@@ -79,6 +88,8 @@
                                                 Category</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Description</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Query Status</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of complaintList; let i=index">
@@ -93,6 +104,8 @@
                                                     {{data.category}}</td>
                                                 <td class="text-left br-1">
                                                     {{data.description}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.status}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
