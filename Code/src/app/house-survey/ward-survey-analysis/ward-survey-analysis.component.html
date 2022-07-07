@@ -3,7 +3,7 @@
 </div>
 <section class="header">
   <div class="row no-gutters">
-    <div class="col-md-4">
+    <div class="col-md-4 no-gutters-iner">
       <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
         [(ngModel)]="selectedZone">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
@@ -13,11 +13,9 @@
       </select>
     </div>
     
-    <div class="col-md-2 blanck-box2">
+   
 
-    </div>
-
-    <div id="houseCount" class="col-md-6 text-right total-house background-black">
+    <div id="houseCount" class="col-md-8 text-right total-house background-black">
         <div class="display" id="popup2">
       <div class="fix-home">
         <div class="float-first fix-home-iner1">

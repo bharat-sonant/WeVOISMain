@@ -19,6 +19,7 @@ export class SupportQueryComponent implements OnInit {
   ddlYear = "#ddlYear";
   ddlCity = "#ddlCity";
   ddlCategory = "#ddlCategory";
+  ddlStatus="#ddlStatus";
   fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
 
   ngOnInit() {
@@ -56,7 +57,7 @@ export class SupportQueryComponent implements OnInit {
               name = name + " (" + data[id]["empId"] + ")";
             }
             let timeStamps = new Date(data[id]["date"]).getTime();
-            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps });
+            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps,status:data[id]["status"] });
             this.allComplaintList = this.allComplaintList.sort((a, b) =>
               b.timeStamps > a.timeStamps ? 1 : -1
             );
@@ -77,6 +78,9 @@ export class SupportQueryComponent implements OnInit {
     }
     if ($(this.ddlCategory).val() != "0") {
       this.complaintList = this.complaintList.filter(item => item.category == $(this.ddlCategory).val());
+    }
+    if ($(this.ddlStatus).val() != "0") {
+      this.complaintList = this.complaintList.filter(item => item.status == $(this.ddlStatus).val());
     }
   }
 

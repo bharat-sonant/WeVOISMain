@@ -246,9 +246,9 @@ button {
 
 /** Small devices (tablets, 576px  to 767px upto) **/
 
-@media(min-width:576px) and (max-width:767px) {
+@media(min-width:577px) and (max-width:767px) {
     .header {
-        height: 110px;
+      
         width: 100%;
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
@@ -258,8 +258,8 @@ button {
         border-radius: 5px;
         padding: 10px;
         border: none!important;
-        width: 80%;
-        margin-left: 45px!important;
+        width: 100%;
+        margin-left: 0 !important;
     }
     button {
         width: 80%;
@@ -268,6 +268,13 @@ button {
         margin-top: 7px!important;
         border: none!important;
         margin-left: 45px!important;
+    }
+    .no-gutters-iner{
+        max-width: 24%;
+        margin-left: 40px;
+    }
+    .background-black{
+        max-width: 69%;
     }
 }
 
@@ -590,7 +597,7 @@ button:focus-visible {
     padding-bottom: 10px;
 }
 
-.para-text {}
+
 
 .text-bg {
     background: #e7e7e7;
@@ -877,7 +884,7 @@ button:focus {
 /* Track */
 
  ::-webkit-scrollbar-track {
-    -webkit-box-shadow: transparent;
+    box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
 }
@@ -889,7 +896,7 @@ button:focus {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
-    -webkit-box-shadow: transparent;
+    box-shadow: transparent;
 }
 
  :hover::-webkit-scrollbar {
@@ -900,7 +907,7 @@ button:focus {
 /* Track */
 
  :hover::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
 }
@@ -912,7 +919,7 @@ button:focus {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -1245,15 +1252,16 @@ button:focus {
     
    
 }
-#popup2{
-    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
-    height: 115px !important;
-}
+
 
 
 
 
 @media(min-width:270px) and (max-width:576px) {
+    #popup2{
+        background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+        height: 115px !important;
+    }
     .blanck-box2 {
         padding-top: 0px !important;
     }
@@ -1311,11 +1319,15 @@ button:focus {
     }
     .caret-select {
         width: 83% !important;
+        margin-left: 40px !important;
     }
     
 }
+@media(min-width:577px) and (max-width:767px){
 
-@media(min-width:760px) and (max-width:1020px) {
+}
+
+@media(min-width:768px) and (max-width:1020px) {
     .caret-select {
         width: 100% !important;
     }
