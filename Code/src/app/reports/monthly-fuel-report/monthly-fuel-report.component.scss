@@ -632,6 +632,7 @@ textarea:focus-visible {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 10px !important;
 }
 
 .main-heading h3 {
@@ -1871,3 +1872,158 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.no-gutters-iner{
+    text-align: center;
+}
+.loaderClass-outer{
+    padding-left: 0px;
+    padding-right:7px;
+    min-width: 53% !important;
+}
+.custom-header-outer{
+    margin-top:-6px;  
+    height: 88vh!important
+}
+.align-iner{
+    padding-right:0px!important;
+}
+.select-div{
+    padding-left: 20px!important;
+}
+.year-select{
+    width: 130px;
+}
+.month-select{
+    width: 130px;
+}
+.total-fuel-main{
+    padding-right:0px!important;
+    border: solid 1px  lightgray !important;
+}
+.total-km-main{
+    padding-right:0px!important;
+    border: solid 1px  lightgray !important;
+}
+.total-ammount-main{
+    padding-right:0px!important;
+    border: solid 1px  lightgray !important;
+}
+.export-main{
+    padding-right:0px!important;
+}
+.total-km-outer{
+    padding-left: 20px!important;
+}
+.tatal-km-span{
+    font-size: 10px;
+}
+.total-ammount-outer{
+    padding-left: 20px!important;
+}
+.total-ammount-span{
+    font-size: 10px;
+}
+.export-span{
+    float: right; 
+    text-align: center; 
+    font-size: 10px; 
+    padding-right: 20px
+}
+.export-icon{
+    cursor:pointer; 
+    color:green;  
+    font-size: 24px;
+}
+.border-none{
+    border:none!important;
+}
+.form-group-outer{
+    padding-top: 20vh; 
+    display: none;
+}
+.card-outer{
+    padding-left: 7px;
+    padding-right:0px;
+}
+.card-body-outer{
+    margin-top:-6px; 
+    height: 88vh!important;
+    overflow: hidden; 
+    display: none;
+}
+.card-iner{
+    padding: 3px 11px 15px 0px; 
+    font-size: 10px!important;
+}
+.form-group-outer2{
+    padding-top: 20vh; 
+    display: none;
+}
+.fuel-span{
+    font-size: 10px;
+}
+.total-fuel-outer{
+    margin-left: 0 !important;
+}
+
+
+
+
+
+
+@media (min-width:768px) and (max-width:1200px){
+    
+    .align-iner{
+     
+        min-width: 100% !important;
+    }
+    .year-select{
+        width: 43% !important;
+    }
+    .month-select{
+        width: 43% !important;
+    }
+    .detail-box{
+        min-width: 95% !important;
+        margin-top: 15px !important;
+    }
+    .export-span{
+        float: unset !important;
+        padding: 0 !important;
+    }
+    .export-main{
+        text-align: center !important;
+    }
+    .main-headers{
+       
+        font-size: 16px !important;
+    }
+}
+
+@media (min-width:1201px) and (max-width:1450px){
+    .year-select{
+        width: 45% !important;
+    }
+    .month-select{
+        width: 45% !important;
+    }
+}
+
+
