@@ -28,7 +28,8 @@ export class MonthlyFuelReportComponent implements OnInit {
 
   fuelDetail: fuelDetail = {
     totalFuel: "0.00",
-    totalKm: "0.000"
+    totalKm: "0.000",
+    totalAmount: "0.00"
   }
 
   ngOnInit() {
@@ -52,6 +53,7 @@ export class MonthlyFuelReportComponent implements OnInit {
     this.isFileSaved = false;
     this.fuelDetail.totalFuel = "0.00";
     this.fuelDetail.totalKm = "0.000";
+    this.fuelDetail.totalAmount = "0.00";
     this.vehicleList = [];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
@@ -64,7 +66,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   getVehicles() {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", meter: 0 });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: 0, avg: "" });
     }
     this.getFuelData();
   }
@@ -77,6 +79,7 @@ export class MonthlyFuelReportComponent implements OnInit {
         this.vehicleList = JSON.parse(JSON.stringify(fuelData));
         this.fuelDetail.totalFuel = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.qty), 0).toFixed(2);
         this.fuelDetail.totalKm = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.km), 0).toFixed(3);
+        this.fuelDetail.totalAmount = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.amount), 0).toFixed(1);
         $(this.divLoader).hide();
       }
     }, error => {
@@ -100,6 +103,7 @@ export class MonthlyFuelReportComponent implements OnInit {
               if (detail != undefined) {
                 if (dieselData[i]["quantity"] != null) {
                   detail.qty = (Number(detail.qty) + Number(dieselData[i]["quantity"])).toFixed(2);
+                  detail.amount = (Number(detail.amount) + Number(dieselData[i]["amount"])).toFixed(2);
                 }
               }
             }
@@ -184,6 +188,9 @@ export class MonthlyFuelReportComponent implements OnInit {
                         let detail = this.vehicleList.find(item => item.vehicle == vehicle);
                         if (detail != undefined) {
                           detail.km = (Number(detail.km) + Number(distance)).toFixed(3);
+                          if (detail.qty != "0.00") {
+                            detail.avg = (Number(detail.km) / Number(detail.qty)).toFixed(2);
+                          }
                         }
                         if (this.monthDays == Number(monthDate.split('-')[2])) {
                           this.saveMonthlyFuelReportJson();
@@ -214,6 +221,7 @@ export class MonthlyFuelReportComponent implements OnInit {
       }
       this.fuelDetail.totalFuel = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.qty), 0).toFixed(2);
       this.fuelDetail.totalKm = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.km), 0).toFixed(3);
+      this.fuelDetail.totalAmount = this.vehicleList.reduce((accumulator, current) => accumulator + Number(current.amount), 0).toFixed(2);
       $(this.divLoader).hide();
     }, 6000);
   }
@@ -276,4 +284,5 @@ export class MonthlyFuelReportComponent implements OnInit {
 export class fuelDetail {
   totalFuel: string;
   totalKm: string;
+  totalAmount: string;
 }
