@@ -14,27 +14,27 @@ export class PortalAccessComponent implements OnInit {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.cityList.push({ city: "sikar", name: "Sikar" });
-    this.cityList.push({ city: "reengus", name: "Reengus" });
-    this.cityList.push({ city: "shahpura", name: "Shahpura" });
-    this.cityList.push({ city: "test", name: "Test" });
-    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office" });
-    this.cityList.push({ city: "jaipur", name: "Jaipur" });
-    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater" });
-    this.cityList.push({ city: "kishangarh", name: "Kishangarh" });
-    this.cityList.push({ city: "niwai", name: "Niwai" });
-    this.cityList.push({ city: "jaisalmer", name: "Jaisalmer" });
-    this.cityList.push({ city: "churu", name: "Churu" });
-    this.cityList.push({ city: "behror", name: "Behror" });
-    this.cityList.push({ city: "salasar", name: "Salasar Balaji" });
+    this.cityList.push({ city: "sikar", name: "Sikar", storagePath:"Sikar" });
+    this.cityList.push({ city: "reengus", name: "Reengus", storagePath:"Reengus" });
+    this.cityList.push({ city: "shahpura", name: "Shahpura", storagePath:"Shahpura" });
+    this.cityList.push({ city: "test", name: "Test", storagePath:"Test" });
+    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office", storagePath:"Jaipur" });
+    this.cityList.push({ city: "jaipur", name: "Jaipur", storagePath:"JaipurD2D" });
+    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater", storagePath:"Jaipur-Greater" });
+    this.cityList.push({ city: "kishangarh", name: "Kishangarh", storagePath:"Kishangarh" });
+    this.cityList.push({ city: "niwai", name: "Niwai", storagePath:"Niwai" });
+    this.cityList.push({ city: "jaisalmer", name: "Jaisalmer", storagePath:"Jaisalmer" });
+    this.cityList.push({ city: "churu", name: "Churu", storagePath:"Churu" });
+    this.cityList.push({ city: "behror", name: "Behror", storagePath:"Behror" });
+    this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath:"Salasar" });
     
-    this.cityList.push({ city: "jaipur-jagatpura", name: "Jaipur Jagatpura" });
-    this.cityList.push({ city: "jaipur-jhotwara", name: "Jaipur Jhotwara" });
-    this.cityList.push({ city: "jaipur-malviyanagar", name: "Jaipur Malviyanagar" });
-    this.cityList.push({ city: "jaipur-mansarovar", name: "Jaipur Mansarovar" });
-    this.cityList.push({ city: "jaipur-murlipura", name: "Jaipur Murlipura" });
-    this.cityList.push({ city: "jaipur-sanganer", name: "Jaipur Sanganer" });
-    this.cityList.push({ city: "jaipur-vidhyadhar", name: "Jaipur Vidhyadhar" });
+    this.cityList.push({ city: "jaipur-jagatpura", name: "Jagatpura", storagePath:"Jaipur-Jagatpura" });
+    this.cityList.push({ city: "jaipur-jhotwara", name: "Jhotwara", storagePath:"Jaipur-Jhotwara" });
+    this.cityList.push({ city: "jaipur-malviyanagar", name: "Malviyanagar", storagePath:"Jaipur-Malviyanagar" });
+    this.cityList.push({ city: "jaipur-mansarovar", name: "Mansarovar", storagePath:"Jaipur-Mansarovar" });
+    this.cityList.push({ city: "jaipur-murlipura", name: "Murlipura", storagePath:"Jaipur-Murlipura" });
+    this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath:"Jaipur-Sanganer" });
+    this.cityList.push({ city: "jaipur-vidhyadhar", name: "Vidhyadhar", storagePath:"Jaipur-Vidhyadhar" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 

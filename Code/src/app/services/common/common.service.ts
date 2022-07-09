@@ -185,6 +185,27 @@ export class CommonService {
     else if (cityName == "behror") {
       latLng.push({ lat: 27.8952227, lng: 76.28591559 });
     }
+    else if (cityName == "jaipur-jagatpura") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-jhotwara") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-malviyanagar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-mansarovar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-murlipura") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-sanganer") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-vidhyadhar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     return latLng;
   }
 
@@ -725,26 +746,14 @@ export class CommonService {
   }
 
   getFireStoreCity() {
+    let storageCityName = "";
     let cityName = localStorage.getItem("cityName");
-    if (cityName == "jaipur") {
-      cityName = "JaipurD2D";
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    let detail = cityList.find(item => item.city == cityName);
+    if (detail != undefined) {
+      storageCityName = detail.storagePath;
     }
-    else if (cityName == "jaipur-office") {
-      cityName = "Jaipur";
-    }
-    else {
-      let cityList = JSON.parse(localStorage.getItem("cityList"));
-      let detail = cityList.find(item => item.city == cityName);
-      if (detail != undefined) {
-        if (detail.name.toString().includes(" ")) {
-          cityName = detail.name.split(" ")[0] + "-" + detail.name.split(" ")[1];
-        }
-        else {
-          cityName = detail.cityName;
-        }
-      }
-    }
-    return cityName;
+    return storageCityName;
   }
 
 
@@ -999,9 +1008,11 @@ export class CommonService {
     let cityName = localStorage.getItem("cityName");
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
     const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    console.log(path);
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
       availableWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
+      console.log(list);
       if (list.length > 0) {
         for (let index = 0; index < list.length; index++) {
           if (list[index] != null) {
