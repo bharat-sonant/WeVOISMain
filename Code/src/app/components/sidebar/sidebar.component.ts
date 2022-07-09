@@ -98,7 +98,7 @@ export class SidebarComponent implements OnInit {
       $("#cityName").html("Jaipur D2D");
     }
     else {
-      $("#cityName").html(this.cityName);
+      $("#cityName").html(this.commonService.getCityName(this.cityName));
     }
     let element = <HTMLImageElement>document.getElementById("cityImage");
     element.src = this.getCityIcon(this.cityName);
@@ -741,44 +741,20 @@ export class SidebarComponent implements OnInit {
       $("#popUpCityName").html("jaipur D2D");
     }
     else {
-      $("#popUpCityName").html(this.cityName);
+      $("#popUpCityName").html(this.commonService.getCityName(this.cityName));
     }
-    let elementSikar = <HTMLElement>document.getElementById("sikarBox");
-    let classNameSikar = elementSikar.className;
-    let elementReengus = <HTMLElement>document.getElementById("reengusBox");
-    let classNameReengus = elementReengus.className;
-    let elementShahpura = <HTMLElement>document.getElementById("shahpuraBox");
-    let classNameShahpura = elementShahpura.className;
-    let elementJaipurOffice = <HTMLElement>document.getElementById("jaipurOfficeBox");
-    let classNameJaipurOffice = elementJaipurOffice.className;
-    let elementJaipurGreater = <HTMLElement>document.getElementById("jaipurGreaterBox");
-    let classNameJaipurGreater = elementJaipurGreater.className;
 
-    let elementJaipur = <HTMLElement>document.getElementById("jaipurBox");
-    let classNameJaipur = elementJaipur.className;
-
-    let elementKishangarh = <HTMLElement>document.getElementById("kishangarhBox");
-    let classNameKishangarh = elementKishangarh.className;
-    let elementNiwai = <HTMLElement>document.getElementById("niwaiBox");
-    let classNameNiwai = elementNiwai.className;
-    let elementJaisalmer = <HTMLElement>document.getElementById("jaisalmerBox");
-    let classNameJaisalmer = elementJaisalmer.className;
-    let elementSalasar = <HTMLElement>document.getElementById("salasarBox");
-    let classNameSalasar = elementSalasar.className;
-    let elementBehror = <HTMLElement>document.getElementById("behrorBox");
-    let classNameBehror = elementBehror.className;
-
-    $("#sikarBox").removeClass(classNameSikar);
-    $("#reengusBox").removeClass(classNameReengus);
-    $("#shahpuraBox").removeClass(classNameShahpura);
-    $("#jaipurOfficeBox").removeClass(classNameJaipurOffice);
-    $("#jaipurGreaterBox").removeClass(classNameJaipurGreater);
-    $("#jaipurBox").removeClass(classNameJaipur);
-    $("#kishangarhBox").removeClass(classNameKishangarh);
-    $("#niwaiBox").removeClass(classNameNiwai);
-    $("#jaisalmerBox").removeClass(classNameJaisalmer);
-    $("#salasarBox").removeClass(classNameSalasar);
-    $("#behrorBox").removeClass(classNameBehror);
+    $("#sikarBox").removeClass((<HTMLElement>document.getElementById("sikarBox")).className);
+    $("#reengusBox").removeClass((<HTMLElement>document.getElementById("reengusBox")).className);
+    $("#shahpuraBox").removeClass((<HTMLElement>document.getElementById("shahpuraBox")).className);
+    $("#jaipurOfficeBox").removeClass((<HTMLElement>document.getElementById("jaipurOfficeBox")).className);
+    $("#jaipurGreaterBox").removeClass((<HTMLElement>document.getElementById("jaipurGreaterBox")).className);
+    $("#jaipurBox").removeClass((<HTMLElement>document.getElementById("jaipurBox")).className);
+    $("#kishangarhBox").removeClass((<HTMLElement>document.getElementById("kishangarhBox")).className);
+    $("#niwaiBox").removeClass((<HTMLElement>document.getElementById("niwaiBox")).className);
+    $("#jaisalmerBox").removeClass((<HTMLElement>document.getElementById("jaisalmerBox")).className);
+    $("#salasarBox").removeClass((<HTMLElement>document.getElementById("salasarBox")).className);
+    $("#behrorBox").removeClass((<HTMLElement>document.getElementById("behrorBox")).className);
 
     if (this.cityName == "sikar") {
       $("#sikarBox").addClass("login-box active-box");
@@ -912,7 +888,7 @@ export class SidebarComponent implements OnInit {
       $("#salasarBox").addClass("login-box");
       $("#behrorBox").addClass("login-box active-box");
       $("#jaipurBox").addClass("login-box");
-    } else if (this.cityName == "jaipur") {
+    } else {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#shahpuraBox").addClass("login-box");
@@ -947,10 +923,157 @@ export class SidebarComponent implements OnInit {
         $("#salasarBox").show();
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
-      } else if (this.accessCity[i]["city"] == "jaipur") {
+      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar"){
         $("#jaipurBox").show();
       }
     }
+  }
+
+  
+  openSecondCityModel(content: any) {
+    this.closeMapModel();
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 500;
+    let width = 767;
+
+    let windowwidth = $(window).width();
+
+    if (windowwidth >= 1350) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+
+    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 1024 && windowwidth >= 768) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+
+    } else if (windowwidth <= 767 && windowwidth >= 577) {
+      width = 575;
+
+
+    } else if (windowwidth <= 576 && windowwidth >= 410) {
+      width = 400;
+
+    } else if (windowwidth <= 413 && windowwidth >= 270) {
+      width = 265;
+
+    }
+
+
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    
+    $("#jaipurJagatpuraBox").removeClass((<HTMLElement>document.getElementById("jaipurJagatpuraBox")).className);
+    $("#jaipurJhotwaraBox").removeClass((<HTMLElement>document.getElementById("jaipurJhotwaraBox")).className);
+    $("#jaipurMalviyanagarBox").removeClass((<HTMLElement>document.getElementById("jaipurMalviyanagarBox")).className);
+    $("#jaipurMansarovarBox").removeClass((<HTMLElement>document.getElementById("jaipurMansarovarBox")).className);
+    $("#jaipurMurlipuraBox").removeClass((<HTMLElement>document.getElementById("jaipurMurlipuraBox")).className);
+    $("#jaipurSanganerBox").removeClass((<HTMLElement>document.getElementById("jaipurSanganerBox")).className);
+    $("#jaipurVidhyadharBox").removeClass((<HTMLElement>document.getElementById("jaipurVidhyadharBox")).className);
+
+    if (this.cityName == "jaipur-jagatpura") {
+      $("#jaipurJagatpuraBox").addClass("login-box active-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-jhotwara") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box active-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-malviyanagar") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box active-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-mansarovar") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box active-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-murlipura") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box active-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-sanganer") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box active-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else if (this.cityName == "jaipur-vidhyadhar") {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box active-box");
+      $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
+    } else {
+      $("#jaipurJagatpuraBox").addClass("login-box");
+      $("#jaipurJhotwaraBox").addClass("login-box");
+      $("#jaipurMalviyanagarBox").addClass("login-box");
+      $("#jaipurMansarovarBox").addClass("login-box");
+      $("#jaipurMurlipuraBox").addClass("login-box");
+      $("#jaipurSanganerBox").addClass("login-box");
+      $("#jaipurVidhyadharBox").addClass("login-box");
+      $("#secondCityHeader").html("Jaipur D2D");
+    }
+
+    for (let i = 0; i < this.accessCity.length; i++) {
+      if (this.accessCity[i]["city"] == "jaipur-jagatpura") {
+        $("#jaipurJagatpuraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-jhotwara") {
+        $("#jaipurJhotwaraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-malviyanagar") {
+        $("#jaipurMalviyanagarBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-mansarovar") {
+        $("#jaipurMansarovarBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-murlipura") {
+        $("#jaipurMurlipuraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-sanganer") {
+        $("#jaipurSanganerBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
+        $("#jaipurVidhyadharBox").show();
+      }      
+    }
+   
   }
 
   closeMapModel() {

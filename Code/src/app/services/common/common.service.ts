@@ -31,6 +31,16 @@ export class CommonService {
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
+  getCityName(city: any) {
+    let cityName = city;
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    let detail = cityList.find(item => item.city == city);
+    if (detail != undefined) {
+      cityName = detail.name;
+    }
+    return cityName;
+  }
+
   getDateWithDate(d: any) {
     let month = d.getMonth() + 1;
     let day = d.getDate();
@@ -715,17 +725,26 @@ export class CommonService {
   }
 
   getFireStoreCity() {
-    let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
-    if (city == "Jaipur-office") {
-      city = "Jaipur";
+    let cityName = localStorage.getItem("cityName");
+    if (cityName == "jaipur") {
+      cityName = "JaipurD2D";
     }
-    else if (city == "Jaipur-greater") {
-      city = "Jaipur-Greater";
+    else if (cityName == "jaipur-office") {
+      cityName = "Jaipur";
     }
-    else if (city == "Jaipur") {
-      city = "JaipurD2D";
+    else {
+      let cityList = JSON.parse(localStorage.getItem("cityList"));
+      let detail = cityList.find(item => item.city == cityName);
+      if (detail != undefined) {
+        if (detail.name.toString().includes(" ")) {
+          cityName = detail.name.split(" ")[0] + "-" + detail.name.split(" ")[1];
+        }
+        else {
+          cityName = detail.cityName;
+        }
+      }
     }
-    return city;
+    return cityName;
   }
 
 
@@ -1799,20 +1818,20 @@ export class CommonService {
 
   setDate(selectedDate: any, filterVal: any, type: string) {
     return new Promise((resolve) => {
-    let newDate = "";
-    if (type == 'current') {
+      let newDate = "";
+      if (type == 'current') {
         newDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.getNextDate(selectedDate, 1);
+      } else if (type == 'next') {
+        let nextDate = this.getNextDate(selectedDate, 1);
         newDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.getPreviousDate(selectedDate, 1);
-      newDate = previousDate;
-    }
-    if (new Date(newDate) > new Date(this.setTodayDate())) {
-      newDate = selectedDate;
-    }
-    resolve(newDate);
-  });
+      } else if (type == 'previous') {
+        let previousDate = this.getPreviousDate(selectedDate, 1);
+        newDate = previousDate;
+      }
+      if (new Date(newDate) > new Date(this.setTodayDate())) {
+        newDate = selectedDate;
+      }
+      resolve(newDate);
+    });
   }
 }
