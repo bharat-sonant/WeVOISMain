@@ -32,6 +32,7 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
   @ViewChild("contentInternetCheck", null) contentInternetCheck: any;
+  @ViewChild('contentSecondCity', null) contentSecondCity: any;
   userid: any;
   isShow: any;
   accessList: any[];
@@ -923,13 +924,16 @@ export class SidebarComponent implements OnInit {
         $("#salasarBox").show();
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
-      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar"){
+      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
+        if (this.cityName == "jaipur-jagatpura" || this.cityName == "jaipur-jhotwara" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-mansarovar" || this.cityName == "jaipur-murlipura" || this.cityName == "jaipur-sanganer" || this.cityName == "jaipur-vidhyadhar") {
+          this.openSecondCityModel(this.contentSecondCity);
+        }
       }
     }
   }
 
-  
+
   openSecondCityModel(content: any) {
     this.closeMapModel();
     this.modalService.open(content, { size: "lg" });
@@ -973,7 +977,7 @@ export class SidebarComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    
+
     $("#jaipurJagatpuraBox").removeClass((<HTMLElement>document.getElementById("jaipurJagatpuraBox")).className);
     $("#jaipurJhotwaraBox").removeClass((<HTMLElement>document.getElementById("jaipurJhotwaraBox")).className);
     $("#jaipurMalviyanagarBox").removeClass((<HTMLElement>document.getElementById("jaipurMalviyanagarBox")).className);
@@ -1071,9 +1075,9 @@ export class SidebarComponent implements OnInit {
         $("#jaipurSanganerBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurVidhyadharBox").show();
-      }      
+      }
     }
-   
+
   }
 
   closeMapModel() {
