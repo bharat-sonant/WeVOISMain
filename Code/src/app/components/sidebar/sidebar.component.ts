@@ -925,7 +925,7 @@ export class SidebarComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
-        $("#jaipurBox").show();
+       // $("#jaipurBox").show();
         if (this.cityName == "jaipur-jagatpura" || this.cityName == "jaipur-jhotwara" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-mansarovar" || this.cityName == "jaipur-murlipura" || this.cityName == "jaipur-sanganer" || this.cityName == "jaipur-vidhyadhar") {
           this.openSecondCityModel(this.contentSecondCity);
         }
