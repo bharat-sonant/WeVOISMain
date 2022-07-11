@@ -4926,33 +4926,146 @@ p{
 
 .row2{
   background-color: #fff;
-  padding-top: 30px;
+  
 }
 .login-body{
   height: unset !important;
 }
 @media (min-width:576px) and (max-width: 768px){
   .login-container{
-   max-width: 90% !important;
+   max-width: 100% !important;
+  }
+  .close-icon2{
+    display: unset !important;
+  }
+  .close2{
+    margin-top: -35px;
+    margin-right: -20px;
+  }
+}
+@media (min-width:769px) and (max-width: 839px){
+  .login-container{
+    max-width: 100% !important;
+   }
+   .login-header2{
+    padding: 0px !important;
+  }
+  .blanck2{
+    display: none;
   }
 }
 @media (min-width:270px) and (max-width: 576px){
   .login-container{
     width: 100% !important;
   }
-}
-
-@media (min-width:840px){
-  .login-container{
-   max-width:760px !important;
+  .modal-content2-outer{
+    margin: 0px !important;
+  }
+  .blanck2{
+    display: none;
+  }
+  .close-icon2{
+    display: unset !important;
+  }
+  .close2{
+    margin-top: -60px;
+    margin-right: -20px;
+  }
+  .login-container2{
+    top: 45% !important;
   }
 }
 
+@media (min-width:840px){
+  .login-container2{
+   max-width: 100% !important;
+  }
+  .close2{
+    margin-top: -60px !important;
+    margin-left: 50px !important;
+    }
+    
+}
 
 
 
 
 
 
+
+
+.outer-span{
+  position: absolute; 
+  top:5px; 
+  right: 0px; 
+  cursor: pointer;
+}
+.curser-pointer{
+  cursor: pointer;
+}
+.margin{
+  margin-right: 5px !important;
+}
+.jaipur-p{
+  padding-top: 5px;
+}
+.login-body-iner{
+  display: flex; 
+  justify-content: center;
+}
+.jaipur-box{
+  cursor: pointer; 
+
+}
+.jaipur-icon{
+  margin-right: 5px !important;
+}
+.jhotwara-box{
+  margin-bottom: 0px!important;
+  cursor: pointer; 
+  
+}
+.Malviyanagar-box{
+  margin-bottom: 0px!important;
+  cursor: pointer; 
+ 
+}
+.Mansarovar-box{
+  margin-bottom: 0px!important;
+  cursor: pointer; 
+ 
+}
+.Murlipura-box{
+  margin-bottom: 0px!important;
+  cursor: pointer; 
+ 
+}
+.Sanganer-box{
+  margin-bottom: 0px!important;
+  cursor: pointer; 
+  
+}
+.Vidhyadhar-box{
+  margin-bottom: 0px!important;
+
+  cursor: pointer; 
+ 
+}
+.city-icon{
+  margin-right: 5px !important;
+}
+.extra-margin{
+  margin: 15px !important;
+}
+.modal-body2{
+  padding: 0 !important;
+}
+.login2{
+  height: unset !important;
+  background: none !important;
+}
+.login-header2{
+  padding: 0px !important;
+}
 
 

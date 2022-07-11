@@ -160,6 +160,90 @@ export class FirebaseService {
       databaseName="jaipurd2d";
       databaseURL= "https://jaipurd2d.firebaseio.com";
     }
+    else if (city == 'jaipur-jagatpura') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-jagatpura.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-jagatpura";
+      databaseURL= "https://jaipur-jagatpura.firebaseio.com";
+    }
+    else if (city == 'jaipur-jhotwara') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-jhotwara.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-jhotwara";
+      databaseURL= "https://jaipur-jhotwara.firebaseio.com";
+    }
+    else if (city == 'jaipur-malviyanagar') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-malviyanagar.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-malviyanagar";
+      databaseURL= "https://jaipur-malviyanagar.firebaseio.com";
+    }
+    else if (city == 'jaipur-mansarovar') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-mansarovar.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-mansarovar";
+      databaseURL= "https://jaipur-mansarovar.firebaseio.com";
+    }
+    else if (city == 'jaipur-murlipura') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-murlipura.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-murlipura";
+      databaseURL= "https://jaipur-murlipura.firebaseio.com";
+    }
+    else if (city == 'jaipur-sanganer') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-sanganer.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-sanganer";
+      databaseURL= "https://jaipur-sanganer.firebaseio.com";
+    }
+    else if (city == 'jaipur-vidhyadhar') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-vidhyadhar.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName="jaipur-vidhyadhar";
+      databaseURL= "https://jaipur-vidhyadhar.firebaseio.com";
+    }
     
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

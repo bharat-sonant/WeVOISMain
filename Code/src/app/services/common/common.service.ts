@@ -31,6 +31,16 @@ export class CommonService {
     return (d.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
   }
 
+  getCityName(city: any) {
+    let cityName = city;
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    let detail = cityList.find(item => item.city == city);
+    if (detail != undefined) {
+      cityName = detail.name;
+    }
+    return cityName;
+  }
+
   getDateWithDate(d: any) {
     let month = d.getMonth() + 1;
     let day = d.getDate();
@@ -174,6 +184,27 @@ export class CommonService {
     }
     else if (cityName == "behror") {
       latLng.push({ lat: 27.8952227, lng: 76.28591559 });
+    }
+    else if (cityName == "jaipur-jagatpura") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-jhotwara") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-malviyanagar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-mansarovar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-murlipura") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-sanganer") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "jaipur-vidhyadhar") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
     return latLng;
   }
@@ -715,17 +746,14 @@ export class CommonService {
   }
 
   getFireStoreCity() {
-    let city = localStorage.getItem("cityName").charAt(0).toUpperCase() + localStorage.getItem("cityName").slice(1);
-    if (city == "Jaipur-office") {
-      city = "Jaipur";
+    let storageCityName = "";
+    let cityName = localStorage.getItem("cityName");
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    let detail = cityList.find(item => item.city == cityName);
+    if (detail != undefined) {
+      storageCityName = detail.storagePath;
     }
-    else if (city == "Jaipur-greater") {
-      city = "Jaipur-Greater";
-    }
-    else if (city == "Jaipur") {
-      city = "JaipurD2D";
-    }
-    return city;
+    return storageCityName;
   }
 
 
@@ -980,9 +1008,11 @@ export class CommonService {
     let cityName = localStorage.getItem("cityName");
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
     const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    console.log(path);
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
       availableWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
+      console.log(list);
       if (list.length > 0) {
         for (let index = 0; index < list.length; index++) {
           if (list[index] != null) {
@@ -1799,20 +1829,20 @@ export class CommonService {
 
   setDate(selectedDate: any, filterVal: any, type: string) {
     return new Promise((resolve) => {
-    let newDate = "";
-    if (type == 'current') {
+      let newDate = "";
+      if (type == 'current') {
         newDate = filterVal;
-    } else if (type == 'next') {
-      let nextDate = this.getNextDate(selectedDate, 1);
+      } else if (type == 'next') {
+        let nextDate = this.getNextDate(selectedDate, 1);
         newDate = nextDate;
-    } else if (type == 'previous') {
-      let previousDate = this.getPreviousDate(selectedDate, 1);
-      newDate = previousDate;
-    }
-    if (new Date(newDate) > new Date(this.setTodayDate())) {
-      newDate = selectedDate;
-    }
-    resolve(newDate);
-  });
+      } else if (type == 'previous') {
+        let previousDate = this.getPreviousDate(selectedDate, 1);
+        newDate = previousDate;
+      }
+      if (new Date(newDate) > new Date(this.setTodayDate())) {
+        newDate = selectedDate;
+      }
+      resolve(newDate);
+    });
   }
 }

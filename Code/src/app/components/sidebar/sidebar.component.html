@@ -136,7 +136,7 @@
                                         <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Behror
                                     </p>
                                 </div>
-                                <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur');">
+                                <div id="jaipurBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="openSecondCityModel(contentSecondCity);">
                                     <p>
                                         <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur D2D
                                     </p>
@@ -184,6 +184,75 @@
                                 <div class="ram" id="jaipurOfficeBox" style="margin-bottom: 0px!important;cursor: pointer;margin-top: 0px;margin-right: 30spx;  display: none; " (click)="changeCity('jaipur-office');">
                                     <p>
                                         <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Office
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--city Status End-->
+
+<!--Login city  Start-->
+<ng-template #contentSecondCity>
+    <div class="modal-dialog modal-dialog-centered main" role="document">
+        <div class="modal-content modal-content2">
+            <div class="modal-body">
+                <section class="login">
+                    <div class="container login-container">
+                        <div class="row">
+                            <div class="col-md-2 login-header back blanck">
+                            </div>
+                            <div class="col-md-8 login-header text-center">
+                                <p style="padding-top: 5px;"><span id="secondCityHeader" class="welcome-text">Jaipur D2D</span></p>
+                            </div>
+                            <div class="col-md-2 back login-header close-icon">
+                                <button type="button" class="close" (click)="closeMapModel();">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="login-body" style="margin-top: 50px;">
+                            <div class="row row2" style="display: flex; justify-content: center;">
+                                <div id="jaipurJagatpuraBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('jaipur-jagatpura');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jagatpura
+                                    </p>
+                                </div>
+                                <div id="jaipurJhotwaraBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-jhotwara');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jhotwara
+                                    </p>
+                                </div>
+                                <div id="jaipurMalviyanagarBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-malviyanagar');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Malviyanagar
+                                    </p>
+                                </div>
+                                <div id="jaipurMansarovarBox" style="display:none;" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-mansarovar');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Mansarovar
+                                    </p>
+                                </div>
+                                <div id="jaipurMurlipuraBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-murlipura');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Murlipura
+                                    </p>
+                                </div>
+                                <div id="jaipurSanganerBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-sanganer');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sanganer
+                                    </p>
+                                </div>
+                                <div id="jaipurVidhyadharBox" class="login-box" style="margin-bottom: 0px!important;margin-left: -30px;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-vidhyadhar');">
+                                    <p>
+                                        <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Vidhyadhar
                                     </p>
                                 </div>
                             </div>
