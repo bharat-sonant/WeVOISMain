@@ -785,6 +785,7 @@ textarea:focus-visible {
     height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 .table-scroll {
@@ -1375,9 +1376,7 @@ input {
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+   
     .main-content {
         margin-top: 10px!important;
     }
@@ -1415,7 +1414,8 @@ input {
         padding-left: 8px!important;
     }
     .caret-select {
-        width: 100%!important;
+        width: 95%!important;
+        margin-top: 5px !important;
     }
     .pr-25 {
         padding-right: 25px;
@@ -1429,9 +1429,7 @@ input {
     .mb-home {
         margin-top: 10px;
     }
-    .custom-header {
-        height: 250px;
-    }
+    
     .main-heading {
         text-align: center;
         padding-right: 30px;
@@ -1478,7 +1476,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+      
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1491,16 +1489,40 @@ input {
         background: transparent;
         /* Optional: just make scrollbar invisible */
     }
+    .total-km-main{
+        max-width: 45%;
+        margin-right: 5px;
+        
+     }
+     .total-ammount-main{
+         max-width: 45%;
+         margin-top: 5px !important;
+     }
+     .total-fuel-main{
+        max-width: 45%;
+        margin-right: 5px;
+       
+     }
+     .detail-box{
+       
+        margin-top: 15px !important;
+        margin-left: 20px !important;
+    }
+    .export-main{
+        max-width: 45%;
+        margin-top: 10px !important;
+     }
+     .main-headers{
+        font-size: 15px !important;
+     }
 }
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width:321px) and (max-width: 576px) {
+@media (min-width:450px) and (max-width: 576px) {
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+    
     .main-content {
         margin-top: 10px!important;
     }
@@ -1552,9 +1574,7 @@ input {
     .mb-home {
         margin-top: 10px;
     }
-    .custom-header {
-        height: 200px;
-    }
+    
     .main-heading {
         text-align: center;
         padding-right: 30px;
@@ -1597,7 +1617,7 @@ input {
         margin-top: -5px;
     }
     table {
-        display: block;
+     
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1609,6 +1629,84 @@ input {
         /* Remove scrollbar space */
         background: transparent;
         /* Optional: just make scrollbar invisible */
+    }
+    .caret-select{
+        width: 46% !important;
+    }
+    .total-fuel-main{
+       max-width: 24%;
+       margin-right: 5px;
+      
+    }
+    .total-km-main{
+       max-width: 24%;
+       margin-right: 5px;
+       
+    }
+    .total-ammount-main{
+        max-width: 24%;
+    }
+    .export-main{
+       max-width: 24%;
+    }
+    .detail-box{
+       
+        margin-top: 15px !important;
+        margin-left: 20px !important;
+    }
+}
+@media (min-width:320px) and (max-width: 451px){
+    .export-main{
+        max-width: 96%;
+        margin-top: 10px !important;
+     }
+     .total-km-main{
+        max-width: 30%;
+        margin-right: 5px;
+        
+     }
+     .total-ammount-main{
+         max-width: 30%;
+        
+     }
+     .total-fuel-main{
+        max-width: 30%;
+        margin-right: 5px;
+       
+     }
+     .detail-box{
+       
+        margin-top: 15px !important;
+        margin-left: 20px !important;
+    }
+    .caret-select{
+        width: 46% !important;
+    }
+}
+@media (min-width:577px) and (max-width: 767px){
+    .caret-select{
+        width: 46% !important;
+    }
+    .total-fuel-main{
+       max-width: 24%;
+       margin-right: 5px;
+      
+    }
+    .total-km-main{
+       max-width: 24%;
+       margin-right: 5px;
+       
+    }
+    .total-ammount-main{
+        max-width: 24%;
+    }
+    .export-main{
+       max-width: 24%;
+    }
+    .detail-box{
+       
+        margin-top: 15px !important;
+        margin-left: 20px !important;
     }
 }
 
@@ -1914,15 +2012,15 @@ input {
     width: 130px;
 }
 .total-fuel-main{
-    padding-right:0px!important;
+   
     border: solid 1px  lightgray !important;
 }
 .total-km-main{
-    padding-right:0px!important;
+    
     border: solid 1px  lightgray !important;
 }
 .total-ammount-main{
-    padding-right:0px!important;
+   
     border: solid 1px  lightgray !important;
 }
 .export-main{
