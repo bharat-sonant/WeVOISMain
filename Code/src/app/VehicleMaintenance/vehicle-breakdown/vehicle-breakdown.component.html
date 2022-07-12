@@ -11,22 +11,22 @@
 
 <div class="main-content">
     <div class="row main-row">
-        <div class="col-md-6 col-lg-6 col-xl-6 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+        <div class="col-md-6 col-lg-6 col-xl-6 pl-0 pr-6 pad-mob-b-10 pad-pr-0 main-row-iner">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
-            <div class="card" style="margin-top:-6px;  height: 87vh!important">
+            <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="margin-left: 0px!important;">
-                                    <select class="caret-select" id="ddlYear" (change)="getSelectedData()" style="width: 150px;" [(ngModel)]="selectedYear">
+                        <div class="col-md-12 text-left align-iner">
+                            <div class="row align-iner2">
+                                <div class="col-md-12 text-left p-r ml-20 caret-select caret-select-div">
+                                    <select class="caret-select select-main" id="ddlYear" (change)="getSelectedData()" [(ngModel)]="selectedYear">
                                         <option value="0">Year</option>
                                         <option value={{yer.year}} *ngFor="let yer of yearList"
                                             ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
                                     </select>
-                                    <select class="caret-select" id="ddlMonth" (change)="getSelectedData()" style="width: 150px;">
+                                    <select class="caret-select select-main2" id="ddlMonth" (change)="getSelectedData()">
                                         <option value="0">Month</option>
                                         <option value="01">January</option>
                                         <option value="02">February</option>
@@ -41,13 +41,13 @@
                                         <option value="11">November</option>
                                         <option value="12">December</option>
                                     </select>
-                                    <button type="button" class="user-button" style="cursor: cell; float:right; margin-right:20px;" (click)="openModel(contentBreakDown,0);">
+                                    <button type="button" class="user-button add-btn" (click)="openModel(contentBreakDown,0);">
                                         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
                                             &nbsp; ADD NEW</span></button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3" style="padding-left:0px!important;">
+                        <div class="col-md-3 blanck-box">
                         </div>
                     </div>
                 </div>
@@ -58,19 +58,19 @@
                                 <div id="divHoldList" class="table-wrapper table-one">
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
-                                            <th class="br-1 td-1" style="border:none!important;">Date</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="br-1 td-1 table-heading">Date</th>
+                                            <th class="text-left br-1 table-heading">
                                                 Vehicle</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading ward-table-heading">
                                                 Can Run in Ward</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading">
                                                 Description</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1 table-heading">
                                                 Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of breakdownList; let i=index">
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                <td class="td-1 table-data">
                                                     {{data.date}}
                                                 </td>
                                                 <td class="text-left br-1">
@@ -80,12 +80,12 @@
                                                 <td class="text-left br-1">
                                                     {{data.description}}</td>
                                                 <td class="text-center br-1">
-                                                    <i class="fas fa-edit" style="cursor: pointer;" [hidden]="data.holdBy!=data.userID" (click)="openModel(contentBreakDown,data.id);"></i>
+                                                    <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID" (click)="openModel(contentBreakDown,data.id);"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessageHold" class="col-md-12 pr-1 text-center" [hidden]="breakdownList.length>0" style="padding-top: 20vh;">
+                                    <div id="divMessageHold" class="col-md-12 pr-1 text-center form-group-outer" [hidden]="breakdownList.length>0">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -131,7 +131,7 @@
                     <input type="checkbox" id="chkCanRun">&nbsp;&nbsp;
                     <label>Can run in ward</label>
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveBreakdown();" style="height: 45px;" />
+                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" (click)="saveBreakdown();" />
             </div>
         </div>
     </div>

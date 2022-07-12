@@ -523,6 +523,8 @@ textarea:focus-visible {
 
 .submit-btn {
     background: #0ba118!important;
+    width: 100%;
+    height: 45px;
 }
 
 .custom-header {
@@ -1320,9 +1322,7 @@ input {
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+    
     .main-content {
         margin-top: 10px!important;
     }
@@ -1443,9 +1443,7 @@ input {
     .navbar-expand-lg {
         display: block;
     }
-    .header {
-        display: none;
-    }
+    
     .main-content {
         margin-top: 10px!important;
     }
@@ -1484,6 +1482,7 @@ input {
     }
     .caret-select {
         width: 100%!important;
+        margin-left: 0 !important;
     }
     .pr-25 {
         padding-right: 25px;
@@ -1555,10 +1554,17 @@ input {
         background: transparent;
         /* Optional: just make scrollbar invisible */
     }
+    .align-iner2{
+        width: 100% !important;
+    }
 }
 
 // Medium devices (tablets, 768px and up)
-@media (min-width: 768px) and (max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 1024px) {
+    
+    .main-row-iner {
+        min-width: 445px !important;
+    }
     .pad-mob-b-10 {
         margin-bottom: 10px!important;
     }
@@ -1579,12 +1585,12 @@ input {
         margin-top: -5px !important;
         margin-right: 10px !important;
         border-radius: 5px;
-        padding: 10px;
+        padding: 12px;
         width: 97%;
         border: 1px solid lightgray !important;
         font-size: 10px;
         width: 120px!important;
-        height: 35px;
+       
     }
     .float-first {
         width: 55px;
@@ -1597,7 +1603,7 @@ input {
     .main-headers {
         text-align: center;
         margin-top: 6px;
-        font-size: 10px;
+        font-size: 18px;
     }
     .main-content {
         background: #f1f1f1!important;
@@ -1615,10 +1621,17 @@ input {
     .ipad-pl-40 {
         padding-left: 40px!important
     }
+    .caret-select-div{
+        margin-left: 0px !important;
+    }
+    .align{
+        width: 100% !important;
+    }
 }
 
 // Large devices (desktops, 992px and up)
-@media (min-width: 992px) and (max-width: 1199.98px) {
+
+@media (min-width: 1025px) and (max-width: 1400px) {
     .date-input {
         height: 36px;
         width: 128px;
@@ -1653,6 +1666,18 @@ input {
     }
     .pad-pl-20 {
         padding-left: 20px!important;
+    }
+    .align{
+        width: 100% !important;
+    }
+    .caret-select-div{
+        margin-left: 0px !important;
+    }
+    .main-row-iner {
+        min-width: 485px !important;
+    }
+    .main-headers{
+        font-size: 18px !important;
     }
 }
 
@@ -1823,3 +1848,138 @@ input {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
 }
+
+
+
+
+
+
+
+
+
+
+
+.main-row-iner{
+    padding-right:10px;
+}
+.custom-header-outer{
+    margin-top:-6px;  
+    height: 87vh!important
+}
+.align-iner{
+    padding-right:0px!important;
+}
+.caret-select-main{
+    margin-left: 0px!important;
+}
+.select-main{
+    width: 150px;
+}
+.select-main2{
+    width: 150px;
+}
+.add-btn{
+    cursor: cell; 
+    float:right; 
+    margin-right:20px;
+}
+.blanck-box{
+    padding-left:0px!important;
+}
+.table-heading{
+    border:none!important;
+}
+.table-data{
+    width:12%; 
+    border-right:1px solid #dee2e6
+}
+.edit-icon{
+    cursor: pointer;
+}
+.form-group-outer{
+    padding-top: 20vh;
+}
+.ward-table-heading{
+    min-width: 150px !important;
+}
+
+
+
+@media (min-width:420px) and (max-width:766px){
+    .align-iner2 {
+        width: 100% !important;
+    }
+    .caret-select-div{
+        margin-left: 0px !important;
+    }
+    .select-main{
+        width: 30% !important;
+    }
+    .select-main2{
+        width: 30% !important;
+        margin-left: 10px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    .main-content{
+        margin-top: -35px !important;
+    }
+}
+
+@media (min-width:321px) and (max-width:419px){
+    .select-main{
+       max-width: 48% !important;
+    }
+    .select-main2{
+        width: 48% !important;
+        margin-left: 10px !important;
+    }
+    .add-btn{
+        cursor: cell;
+        float: right;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
+    .custom-header{
+        height: unset;
+    }
+    .main-content{
+        margin-top: -35px !important;
+    }
+    .main-headers{
+        font-size: 12px !important;
+    }
+}
+
+@media (min-width:270px) and (max-width:320px){
+    .caret-select{
+        width: 100% !important;
+        margin-left: 0px !important;
+    }
+    .custom-header{
+        height: unset !important;
+    }
+    
+    .align-iner2 {
+        width: 100% !important;
+    }
+    .select-main2{
+        margin: 8px 0px !important;
+    }
+    .add-btn{
+        cursor: cell;
+        float: right;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
+    .main-headers{
+        font-size: 16px !important;
+    }
+    .main-content{
+        margin-top: -35px !important;
+    }
+    
+}
+
+
