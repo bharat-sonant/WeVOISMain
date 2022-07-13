@@ -256,6 +256,42 @@ export class FirebaseService {
       databaseName = "jaipur-vidhyadhar";
       databaseURL = "https://jaipur-vidhyadhar.firebaseio.com";
     }
+    else if (city == 'churu') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdchuru.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdchuru";
+      databaseURL = "https://dtdchuru.firebaseio.com";
+    }
+    else if (city == 'bhiwadi') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdbhiwadi.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdbhiwadi";
+      databaseURL = "https://dtdbhiwadi.firebaseio.com";
+    }
+    else if (city == 'chhapar') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdchhapar.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdchhapar";
+      databaseURL = "https://dtdchhapar.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

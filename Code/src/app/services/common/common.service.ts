@@ -206,6 +206,15 @@ export class CommonService {
     else if (cityName == "jaipur-vidhyadhar") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "bhiwadi") {
+      latLng.push({ lat: 28.205247, lng: 76.838164 });
+    }
+    else if (cityName == "chhapar") {
+      latLng.push({ lat: 27.817035, lng: 74.436620 });
+    }
+    else if (cityName == "churu") {
+      latLng.push({ lat: 25.885411, lng: 74.958944 });
+    }
     return latLng;
   }
 

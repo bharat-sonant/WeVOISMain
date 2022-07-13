@@ -207,13 +207,13 @@ export class HouseMarkingComponent {
       let lineNo = 0;
       for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
-          let points = wardLines[lineNo]["points"];
-          var latLng = [];
-          for (let j = 0; j < points.length; j++) {
-            latLng.push({ lat: points[j][0], lng: points[j][1] });
-          }
-          this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
-          this.plotLineOnMap(lineNo, latLng,i, this.selectedZone);
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
+        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
       }
       this.getMarkedHouses(this.lineNo);
     });
@@ -239,12 +239,12 @@ export class HouseMarkingComponent {
                 let status = "";
                 let statusClass = "";
                 let isRevisit = "0";
-                let cardNumber="";
+                let cardNumber = "";
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }
                 if (data[index]["cardNumber"] != null) {
-                  cardNumber=data[index]["cardNumber"];
+                  cardNumber = data[index]["cardNumber"];
                   status = "Surveyed";
                 }
                 if (data[index]["revisitKey"] != null) {
@@ -261,6 +261,7 @@ export class HouseMarkingComponent {
 
                 let city = this.commonService.getFireStoreCity();
 
+
                 let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
                 let type = data[index]["houseType"];
                 let alreadyInstalled = "नहीं";
@@ -274,7 +275,11 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit,cardNumber:cardNumber });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber });
+                    if (city == "Jaipur-Malviyanagar") {
+                      this.getImageURL(city, imageName, index);
+
+                    }
                   }
                 });
                 let alreadyCard = "";
@@ -297,6 +302,34 @@ export class HouseMarkingComponent {
         }
       }
     });
+  }
+
+  getImageURL(city: any, imageName: any, index: any) {
+    if (imageName == index + ".jpg") {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        //let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+
+      }, error => {
+        let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+
+        let detail = this.markerList.find(item => item.index == index);
+        if (detail != undefined) {
+          detail.imageUrl = imageUrl;
+        }
+      });
+    }
+    else {
+      let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+
+      let detail = this.markerList.find(item => item.index == index);
+      if (detail != undefined) {
+        detail.imageUrl = imageUrl;
+      }
+
+    }
+
   }
 
   showLineDetail(content: any) {
@@ -366,7 +399,7 @@ export class HouseMarkingComponent {
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"],cardNumber:this.markerList[i]["cardNumber"] });
+                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"] });
               }
             }
             this.markerList = newMarkerList;
@@ -694,7 +727,7 @@ export class HouseMarkingComponent {
     let firstLine = this.lines.find(
       (item) => item.lineNo == Number(this.previousLine)
     );
-    this.polylines[Number(this.previousLine)-1].setMap(null);
+    this.polylines[Number(this.previousLine) - 1].setMap(null);
     let line = new google.maps.Polyline({
       path: firstLine.latlng,
       strokeColor: this.commonService.getLineColor(""),
