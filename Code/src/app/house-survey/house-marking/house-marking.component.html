@@ -2,11 +2,11 @@
     <div class="row no-gutters">
         <div class="col-md-4">
             <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
-        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-          ngSelected="zone.zoneNo == selectedZone?'selected':''">
-          {{zone.zoneName}}
-        </option>
-      </select>
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>
         </div>
         <div class="col-md-4 ward-header-outer">
             <h1 class="ward-header"> Marker Approval </h1>
@@ -17,17 +17,17 @@
             <div class="fix-home">
                 <div id="divLastUpdate" class="float-fourth fix-home-iner">
                     <i class="far fa-clock"></i><span class="house"><span class="clock-span">
-            {{markerData.lastScanTime}}</span></span><br>
+                            {{markerData.lastScanTime}}</span></span><br>
                     <h6>Last Marked At</h6>
                 </div>
                 <div class="float-first cardboard-icon-main">
                     <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="cardboard-span">
-              {{markerData.alreadyCardCount}}</span></span><br>
+                            {{markerData.alreadyCardCount}}</span></span><br>
                     <h6>Already Card Count</h6>
                 </div>
                 <div class="float-second circle-icon-main">
                     <i class="fas fa-check-circle"></i> <span class="house"><span class="circle-span">
-              {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
+                            {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
                     <h6>Approved Lines</h6>
                 </div>
                 <div class="float-third">
@@ -53,17 +53,18 @@
             <div class="row house-card-box-iner2">
                 <div class="col-md-12 arrow-btn-div">
                     <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
-          << </button>
+                        << </button>
                     <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
                     <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
-              >>
-            </button>
+                                >>
+                            </button>
                 </div>
                 <div class="col-md-12 text-left ml-10 markera-all">
                     <span class="markera-allspan">
-          <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show All
-          Markers</span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);">
-          <i class="fas fa-eye"></i> View Detail</span>
+                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
+                        All
+                        Markers</span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);">
+                        <i class="fas fa-eye"></i> View Detail</span>
                 </div>
 
                 <div class="col-md-6 markers markers-heading-main">
@@ -92,7 +93,8 @@
                 </div>
 
                 <div class="col-md-12 pl-5 pr-46">
-                    <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve Line</button>
+                    <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
+                        Line</button>
                 </div>
             </div>
         </div>
@@ -116,9 +118,10 @@
                     </a>
                 </div>
             </div>
-            <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this ward
-    <span><i class="far fa-hand-point-right"></i></span>
-  </button>
+            <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
+                ward
+                <span><i class="far fa-hand-point-right"></i></span>
+            </button>
         </div>
     </div>
 </div>
@@ -222,6 +225,28 @@
 
     </div>
     <div class="modal-body divStatus">
+        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+            <input type="hidden" id="houseIndex" value="0">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-12">
+                    <select id="ddlHouseType" class="caret-select-vehicle">
+                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
+                            {{dt.houseType}}
+                        </option>
+                    </select>
+
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="updateHouseType();" style="width: 100px;">
+                        Save</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
+                        Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerList">
@@ -232,20 +257,24 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} </h3><br />
+                            <h3 class="f-left-heading"> {{dt.type}} <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index);"></i></h3><br />
                             <p>Already Card <span class="f-right"> :</span></p>
                             <h3> {{dt.alreadyInstalled}} </h3><br />
                             <span [hidden]="dt.status==''">
-                  <p>Status <span class="f-right"> :</span></p>
-                            <h3><span class="{{dt.statusClass}}"> {{dt.status}} <b>({{dt.cardNumber}})</b></span></h3>
+                                <p>Status <span class="f-right"> :</span></p>
+                            <h3><span class="{{dt.statusClass}}"> {{dt.status}} <b>({{dt.cardNumber}})</b></span>
+                            </h3>
                             </span>
                         </div>
                     </div>
 
-                    <button class="btn btn-success Reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);" [hidden]="dt.status!=''"><i class="fas fa-times"></i> Reject</button>&nbsp;
-                    <button class="btn btn-danger Delete-btn" [hidden]="dt.status==''" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.status!=''"><i class="fas fa-times"></i> Delete</button>
+                    <button class="btn btn-success Reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);" [hidden]="dt.status!=''"><i class="fas fa-times"></i>
+                        Reject</button>&nbsp;
+                    <button class="btn btn-danger Delete-btn" [hidden]="dt.status==''" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.status!=''"><i
+                            class="fas fa-times"></i> Delete</button>
 
-                    <button class="btn btn-danger Delete-btn-2" [hidden]="dt.isRevisit=='0'" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.isRevisit=='0'"><i class="fas fa-times"></i> Delete</button>
+                    <button class="btn btn-danger Delete-btn-2" [hidden]="dt.isRevisit=='0'" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.isRevisit=='0'"><i
+                            class="fas fa-times"></i> Delete</button>
 
                 </div>
             </div>
