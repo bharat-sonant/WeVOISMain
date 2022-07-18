@@ -1,7 +1,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
-           
+
         </div>
         <div class="col-md-4 Ward-Marking-heading">
             Ward Marking Summary
@@ -30,8 +30,7 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table table-one-iner"
-                                        >
+                                    <table class="table table-one-iner">
                                         <thead>
                                             <th class="ward-table-heading">Ward</th>
                                             <th class="text-right Markers-table-heading">
@@ -44,8 +43,7 @@
                                                 Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                 (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0">
                                                 <td class="table-data">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data">
@@ -62,8 +60,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center no-available"
-                                >
+                            <div id="divMessage" class="col-md-12 pr-1 text-center no-available">
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -76,39 +73,35 @@
         <div class="col-md-6 loaderClass-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-              </div>
+            </div>
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-3 text-center responsive">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalLines}}</span> <br>
-                                    Lines
+                                    <span class="tbl-points"> {{markerData.totalLines}}</span> <br> Lines
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 text-center responsive">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.wardApprovedLines}}</span> <br>
-                                    Approved Lines
+                                    <span class="tbl-points"> {{markerData.wardApprovedLines}}</span> <br> Approved Lines
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 text-center responsive">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.wardMarkers}}</span> <br>
-                                    Markers
+                                    <span class="tbl-points"> {{markerData.wardMarkers}}</span> <br> Markers
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 text-center responsive">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.wardInstalled}}</span> <br>
-                                    Already Installed
+                                    <span class="tbl-points"> {{markerData.wardInstalled}}</span> <br> Already Installed
                                 </h3>
                             </div>
                         </div>
@@ -122,22 +115,16 @@
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
                                         <div class="table-wrapper table-scroll table-outer">
-                                            <table class="table table-outer-iner"
-                                                >
+                                            <table class="table table-outer-iner">
                                                 <thead>
                                                     <th class="table-data-line2">Line</th>
-                                                    <th class="text-right table-data-Markers2"
-                                                        >Markers</th>
-                                                    <th class="text-right table-data-Already2"
-                                                        >Already
-                                                        Installed
+                                                    <th class="text-right table-data-Markers2">Markers</th>
+                                                    <th class="text-right table-data-Already2">Already Installed
                                                     </th>
-                                                    <th class="text-center table-data-Approved2"
-                                                        >Approved
+                                                    <th class="text-center table-data-Approved2">Approved
                                                     </th>
 
-                                                    <th class="text-center table-data-hesh"
-                                                        >#</th>
+                                                    <th class="text-center table-data-hesh">#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
@@ -150,27 +137,21 @@
                                                         <td class="text-center table-data2">
                                                             <span [hidden]="data.markers==0">
                                                                 <i class="fas fa-check check-icon"
-                                                                    
                                                                     [hidden]="data.isApproved==false"></i>
                                                                 <i class="fas fa-times times-icon"
-                                                                    
                                                                     [hidden]="data.isApproved==true"></i>
                                                             </span>
                                                         </td>
                                                         <td class="text-center table-data2">
 
-                                                            <i class="far fa-eye eye-icon"
-                                                                
-                                                                [hidden]="data.markers==0"
-                                                                (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
+                                                            <i class="far fa-eye eye-icon" [hidden]="data.markers==0" (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="divmessage" id="divMessage" class="col-md-12 pr-1 text-center"
-                                        >
+                                    <div class="divmessage" id="divMessage" class="col-md-12 pr-1 text-center">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -181,47 +162,64 @@
                     </div>
                 </div>
             </div>
-         </div>
+        </div>
     </div>
-</div> 
+</div>
 
 
 <!--Vehicle Status Start-->
 <ng-template #contentLineMarkers>
     <div class="img-close-outer">
-
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
     </div>
     <div class="modal-body content-scroll-outer">
+        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+            <input type="hidden" id="houseWardNo" value="0">
+            <input type="hidden" id="houseLineNo" value="0">
+            <input type="hidden" id="houseIndex" value="0">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-12">
+                    <select id="ddlHouseType" class="caret-select-vehicle">
+                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
+                        {{dt.houseType}}
+                      </option>
+                    </select>
+
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="updateHouseType();">
+                        Save</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;"> Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerDetailList">
                     <div class="dt-img-outer">
                         <a href="{{dt.imageUrl}}" target="_blank">
-                            <img class="dt-img" [src]="dt.imageUrl"/>
+                            <img class="dt-img" [src]="dt.imageUrl" />
                         </a>
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading" > {{dt.type}} </h3><br />
-                            <p>Already Card <span class="f-right"> :</span></p>
+                            <div style="width:100%!important ;">
+                                <h3 class="f-left-heading"> {{dt.type}} <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"></i></h3>
+                            </div><br />
+                            <p style="float: left;">Already Card <span class="f-right"> :</span></p>
                             <h3> {{dt.alreadyInstalled}} </h3><br />
                             <span [hidden]="dt.status==''">
                                 <p>Status <span class="f-right"> :</span></p>
-                                <h3> {{dt.status}} </h3>
+                            <h3> {{dt.status}} </h3>
                             </span>
                         </div>
                     </div>
 
-                    <button class="btn-cancel reject-btn" [hidden]="dt.status==''"
-                        (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);"
-                        
-                        [hidden]="dt.status!=''">Reject</button>&nbsp;
-                    <button class="btn-cancel delete-btn" [hidden]="dt.status==''"
-                        (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);"
-                        
-                        [hidden]="dt.status!=''">Delete</button>
+                    <button class="btn-cancel reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);" [hidden]="dt.status!=''">Reject</button>&nbsp;
+                    <button class="btn-cancel delete-btn" [hidden]="dt.status==''" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);" [hidden]="dt.status!=''">Delete</button>
 
                 </div>
             </div>

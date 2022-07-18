@@ -68,6 +68,8 @@ export class DailyWorkDetailComponent implements OnInit {
         this.dailyWorkList.push({ zoneNo: zoneNo, zoneName: this.zoneList[i]["zoneName"] });
         this.getWorkerDetail(zoneNo);
         this.getSummaryDetail(zoneNo);
+        let dbPath = "LocationHistory/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+        this.getTotalRunning(zoneNo, dbPath);
       }
     }
     if (this.selectedDate == this.commonService.setTodayDate()) {
@@ -75,6 +77,22 @@ export class DailyWorkDetailComponent implements OnInit {
     }
     let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     this.getBinLiftingDetail(dbPath);
+  }
+
+  getTotalRunning(zoneNo: any, dbPath: any) {
+    let totalRunningInstance = this.db.object(dbPath).valueChanges().subscribe(
+      runningData => {
+        totalRunningInstance.unsubscribe();
+        let runKm = "0.000";
+        if (runningData != null) {
+          runKm = (Number(runningData) / 1000).toFixed(3);
+          let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+          if (detail != undefined) {
+            detail.runKm = runKm;
+          }
+        }
+      }
+    );
   }
 
   getBinLiftingDetail(dbPath: any) {
@@ -113,6 +131,9 @@ export class DailyWorkDetailComponent implements OnInit {
         if (assignedData != null) {
           let driverId = assignedData["driver"];
           let helperId = assignedData["helper"];
+          let vehicle = assignedData["vehicle"];
+          let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+          this.getTotalRunning(planKey, dbPath);
 
           this.getBinliftingData(driverId, planKey, "driver");
           this.getBinliftingData(helperId, planKey, "helper");
@@ -190,6 +211,7 @@ export class DailyWorkDetailComponent implements OnInit {
           let endTime = "";
           let trips = "0";
           let workPercentage = "";
+          let wardRunKm = "0.000";
           if (summaryData["dutyOutTime"] != null) {
             endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
           }
@@ -199,12 +221,16 @@ export class DailyWorkDetailComponent implements OnInit {
           if (summaryData["workPercentage"] != null) {
             workPercentage = summaryData["workPercentage"] + "%";
           }
+          if (summaryData["wardCoveredDistance"] != null) {
+            wardRunKm = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(3);
+          }
 
           let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
           if (detail != undefined) {
             detail.startTime = startTime;
             detail.endTime = endTime;
             detail.trips = trips;
+            detail.wardRunKm = wardRunKm;
             detail.workPercentage = workPercentage;
             let sTime = new Date(this.selectedDate + " " + startTime);
             let eTime = new Date();
@@ -257,7 +283,7 @@ export class DailyWorkDetailComponent implements OnInit {
           let secondHelper = "";
           if (workerData["secondHelper"] != null) {
             let secondHelperList = workerData["secondHelperName"].split(',');
-            let secondHelperIdList = workerData["secondHelper"].split(',');            
+            let secondHelperIdList = workerData["secondHelper"].split(',');
             for (let j = 0; j < secondHelperIdList.length; j++) {
               if (secondHelperList[j] != null) {
                 if (secondHelper == "") {
@@ -299,6 +325,7 @@ export class DailyWorkDetailComponent implements OnInit {
     );
   }
 
+
   exportToExcel() {
     let htmlString = "";
     htmlString = "<table>";
@@ -332,6 +359,12 @@ export class DailyWorkDetailComponent implements OnInit {
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += "Work Percentage";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Run KM";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Zone Run KM";
     htmlString += "</td>";
     htmlString += "</tr>";
     if (this.dailyWorkList.length > 0) {
@@ -383,6 +416,16 @@ export class DailyWorkDetailComponent implements OnInit {
         htmlString += "<td t='s'>";
         if (this.dailyWorkList[i]["workPercentage"] != null) {
           htmlString += this.dailyWorkList[i]["workPercentage"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.dailyWorkList[i]["runKm"] != null) {
+          htmlString += this.dailyWorkList[i]["runKm"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.dailyWorkList[i]["wardRunKm"] != null) {
+          htmlString += this.dailyWorkList[i]["wardRunKm"];
         }
         htmlString += "</td>";
         htmlString += "</tr>";

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-ward-marking-summary",
@@ -9,10 +10,11 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./ward-marking-summary.component.scss"],
 })
 export class WardMarkingSummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
   selectedCircle: any;
   wardProgressList: any[] = [];
   wardProgressListShow: any[] = [];
+  houseTypeList: any[] = [];
   cityName: any;
   db: any;
   isFirst = true;
@@ -28,12 +30,36 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
+  divHouseType="#divHouseType";
+  ddlHouseType = "#ddlHouseType";
+  houseWardNo = "#houseWardNo";
+  houseLineNo = "#houseLineNo";
+  houseIndex = "#houseIndex";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getHouseType();
     this.getWards();
+  }
+
+  getHouseType() {
+    let dbPath = "Defaults/FinalHousesType";
+    let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseTypeInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let id = keyArray[i];
+            let houseType = data[id]["name"].toString().split("(")[0];
+            this.houseTypeList.push({ id: id, houseType: houseType });
+          }
+        }
+      }
+    );
+
   }
 
   getWards() {
@@ -45,11 +71,11 @@ export class WardMarkingSummaryComponent implements OnInit {
         let url = this.cityName + "/13A3/house-marking/" + wardNo;
         this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
         if (i == 1) {
-          setTimeout(() => {            
+          setTimeout(() => {
             $("#tr1").addClass("active");
           }, 1000);
         }
-        if(wardNo!="0"){
+        if (wardNo != "0") {
           this.getWardSummary(i, wardNo);
         }
       }
@@ -91,7 +117,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             }
           }
         }
-        if(wardNo=="1"){
+        if (wardNo == "1") {
           this.getMarkingDetail(wardNo, 1);
         }
       });
@@ -497,14 +523,92 @@ export class WardMarkingSummaryComponent implements OnInit {
                     status: status,
                     userId: userId,
                     date: date,
+                    houseTypeId: type
                   });
                 }
+                 if (city == "Jaipur-Malviyanagar") {
+                    this.getImageURL(city, imageName, index,wardNo,lineNo);
+
+                 }
               });
             }
           }
         }
       }
     });
+  }
+
+
+  getImageURL(city: any, imageName: any, index: any, zone: any, lineNo: any) {
+    if (imageName == index + ".jpg") {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "";
+      let fuelInstance = this.httpService.get(path).subscribe(data => {
+        fuelInstance.unsubscribe();
+        //let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+
+      }, error => {
+        let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+
+        let detail = this.markerDetailList.find(item => item.index == index);
+        if (detail != undefined) {
+          detail.imageUrl = imageUrl;
+        }
+      });
+    }
+    else {
+      let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+
+      let detail = this.markerDetailList.find(item => item.index == index);
+      if (detail != undefined) {
+        detail.imageUrl = imageUrl;
+      }
+
+    }
+
+  }
+
+  setHouseType(wardNo: any, lineNo: any, index: any) {
+    $(this.divHouseType).show();
+    $(this.houseWardNo).val(wardNo);
+    $(this.houseLineNo).val(lineNo);
+    $(this.houseIndex).val(index);
+    let detail = this.markerDetailList.find(item => item.index == index);
+    if (detail != undefined) {
+      let houseTypeId = detail.houseTypeId;
+      $(this.ddlHouseType).val(houseTypeId);
+    }
+  }
+
+  updateHouseType() {
+    let wardNo = $(this.houseWardNo).val();
+    let lineNo = $(this.houseLineNo).val();
+    let index = $(this.houseIndex).val();
+    let houseTypeId = $(this.ddlHouseType).val();
+    let detail = this.markerDetailList.find(item => item.index == index);
+    if (detail != undefined) {
+      detail.houseTypeId = houseTypeId;
+      let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
+      if (houseTypeDetail != undefined) {
+        detail.type = houseTypeDetail.houseType;
+      }
+      let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + index;
+      this.db.object(dbPath).update({ houseType: houseTypeId });
+    }
+    
+    $(this.houseWardNo).val("0");
+    $(this.houseLineNo).val("0");
+    $(this.houseIndex).val("0");
+    $(this.divHouseType).hide();
+    this.commonService.setAlertMessage("success","Saved successfully !!!");
+
+  }
+
+  cancelHouseType(){
+    
+    $(this.houseWardNo).val("0");
+    $(this.houseLineNo).val("0");
+    $(this.houseIndex).val("0");
+    $(this.divHouseType).hide();
   }
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
