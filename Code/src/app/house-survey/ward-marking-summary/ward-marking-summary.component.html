@@ -1,3 +1,6 @@
+<div id="divLoaderMain" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
@@ -8,6 +11,7 @@
         </div>
         <div class="col-md-4 text-right total-house fix-home-outer">
             <div class="fix-home">
+
                 <div class="float-first fix-home-iner">
                     <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="fix-home-span">
                             {{markerData.totalAlreadyCard}}</span></span><br>
@@ -16,6 +20,10 @@
                 <div class="float-third">
                     <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
                     <h6>Total Marker</h6>
+                </div>
+                <div class="float-first fix-home-iner">
+                    <i class="fa-solid fa-download" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
+                    <h6>Export House Types</h6>
                 </div>
             </div>
         </div>
@@ -239,7 +247,9 @@
 
 <!--House Type  Start-->
 <ng-template #contentHouseType>
+
     <div class="img-close-outer">
+        <i class="fa-solid fa-download" style="z-index: 999; position:absolute ;top: 2px;right: 40px;font-size: 20px;" (click)="exportHouseTypeList('0');"></i>
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
     </div>
     <div class="modal-body content-scroll-outer">
