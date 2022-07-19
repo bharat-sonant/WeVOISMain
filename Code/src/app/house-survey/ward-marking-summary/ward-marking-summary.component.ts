@@ -75,10 +75,11 @@ export class WardMarkingSummaryComponent implements OnInit {
         if (i == 1) {
           setTimeout(() => {
             $("#tr1").addClass("active");
-          }, 1000);
+            this.getMarkingDetail(wardNo, 1);
+          }, 3000);
+          
         }
         if (wardNo != "0") {
-          this.selectedZone = wardNo;
           this.getWardSummary(i, wardNo);
         }
       }
@@ -119,9 +120,6 @@ export class WardMarkingSummaryComponent implements OnInit {
               this.wardProgressList[index]["cssClass"] = "marking-done";
             }
           }
-        }
-        if (wardNo == "1") {
-          this.getMarkingDetail(wardNo, 1);
         }
       });
     });
@@ -575,7 +573,6 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   cancelHouseType() {
-
     $(this.houseWardNo).val("0");
     $(this.houseLineNo).val("0");
     $(this.houseIndex).val("0");
@@ -597,31 +594,44 @@ export class WardMarkingSummaryComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", marginTop);
     $("#divHouseStatus").css("height", divHeight);
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
-    let markerInstance=this.db.object(dbPath).valueChanges().subscribe(
-      markerData=>{
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
         markerInstance.unsubscribe();
-        if(markerData==null){
+        if (markerData == null) {
           this.closeModel();
         }
-        else{
-          let keyArray=Object.keys(markerData);
-          for(let i=0;i<keyArray.length;i++){
-            let lineNo=keyArray[i];
-            let lineData=markerData[lineNo];
-            console.log(lineData);
-            let markerKeyArray=Object.keys(lineData);
-            for(let j=0;j<markerKeyArray.length;j++){
-              let markerNo=markerKeyArray[j];
+        else {
+          let keyArray = Object.keys(markerData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineData = markerData[lineNo];
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+              if (lineData[markerNo]["houseType"] != null) {
+                let houseTypeId = lineData[markerNo]["houseType"];
+                let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                if (detail != undefined) {
+                  let houseType = detail.houseType;
+                  if (this.zoneHouseTypeList.length == 0) {
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                  }
+                  else {
+                    let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                    if (listDetail != undefined) {
+                      listDetail.counts = listDetail.counts + 1;
+                    }
+                    else {
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     );
-
-
-
-
-
   }
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
