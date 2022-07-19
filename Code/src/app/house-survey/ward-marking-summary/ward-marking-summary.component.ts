@@ -12,9 +12,11 @@ import { HttpClient } from "@angular/common/http";
 export class WardMarkingSummaryComponent implements OnInit {
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
   selectedCircle: any;
+  selectedZone: any;
   wardProgressList: any[] = [];
   wardProgressListShow: any[] = [];
   houseTypeList: any[] = [];
+  zoneHouseTypeList: any[];
   cityName: any;
   db: any;
   isFirst = true;
@@ -30,7 +32,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0
   };
-  divHouseType="#divHouseType";
+  divHouseType = "#divHouseType";
   ddlHouseType = "#ddlHouseType";
   houseWardNo = "#houseWardNo";
   houseLineNo = "#houseLineNo";
@@ -76,6 +78,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           }, 1000);
         }
         if (wardNo != "0") {
+          this.selectedZone = wardNo;
           this.getWardSummary(i, wardNo);
         }
       }
@@ -141,6 +144,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getMarkingDetail(wardNo: any, listIndex: any) {
+    this.selectedZone = wardNo;
     $('#divLoader').show();
     setTimeout(() => {
       $('#divLoader').hide();
@@ -526,45 +530,12 @@ export class WardMarkingSummaryComponent implements OnInit {
                     houseTypeId: type
                   });
                 }
-                 if (city == "Jaipur-Malviyanagar") {
-                    this.getImageURL(city, imageName, index,wardNo,lineNo);
-
-                 }
               });
             }
           }
         }
       }
     });
-  }
-
-
-  getImageURL(city: any, imageName: any, index: any, zone: any, lineNo: any) {
-    if (imageName == index + ".jpg") {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "";
-      let fuelInstance = this.httpService.get(path).subscribe(data => {
-        fuelInstance.unsubscribe();
-        //let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-
-      }, error => {
-        let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-
-        let detail = this.markerDetailList.find(item => item.index == index);
-        if (detail != undefined) {
-          detail.imageUrl = imageUrl;
-        }
-      });
-    }
-    else {
-      let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + zone + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-
-      let detail = this.markerDetailList.find(item => item.index == index);
-      if (detail != undefined) {
-        detail.imageUrl = imageUrl;
-      }
-
-    }
-
   }
 
   setHouseType(wardNo: any, lineNo: any, index: any) {
@@ -594,21 +565,63 @@ export class WardMarkingSummaryComponent implements OnInit {
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + index;
       this.db.object(dbPath).update({ houseType: houseTypeId });
     }
-    
+
     $(this.houseWardNo).val("0");
     $(this.houseLineNo).val("0");
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
-    this.commonService.setAlertMessage("success","Saved successfully !!!");
+    this.commonService.setAlertMessage("success", "Saved successfully !!!");
 
   }
 
-  cancelHouseType(){
-    
+  cancelHouseType() {
+
     $(this.houseWardNo).val("0");
     $(this.houseLineNo).val("0");
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
+  }
+
+
+  getZoneHouseTypeList(content: any) {
+    this.zoneHouseTypeList = [];
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 870;
+    let width = 400;
+    height = (windowHeight * 90) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 50 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divHouseStatus").css("height", divHeight);
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markerInstance=this.db.object(dbPath).valueChanges().subscribe(
+      markerData=>{
+        markerInstance.unsubscribe();
+        if(markerData==null){
+          this.closeModel();
+        }
+        else{
+          let keyArray=Object.keys(markerData);
+          for(let i=0;i<keyArray.length;i++){
+            let lineNo=keyArray[i];
+            let lineData=markerData[lineNo];
+            console.log(lineData);
+            let markerKeyArray=Object.keys(lineData);
+            for(let j=0;j<markerKeyArray.length;j++){
+              let markerNo=markerKeyArray[j];
+            }
+          }
+        }
+      }
+    );
+
+
+
+
+
   }
 
   showLineDetail(content: any, wardNo: any, lineNo: any) {
