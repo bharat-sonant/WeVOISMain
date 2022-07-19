@@ -35,13 +35,13 @@ export class HouseMarkingComponent {
   houseMarker: any[] = [];
   markerList: any[];
   toDayDate: any;
-  
-  houseTypeList:any[]=[];
-  divHouseType="#divHouseType";
-  houseWardNo="#houseWardNo";
-  houseLineNo="#houseLineNo";
-  houseIndex="#houseIndex";
-  ddlHouseType="#ddlHouseType";
+
+  houseTypeList: any[] = [];
+  divHouseType = "#divHouseType";
+  houseWardNo = "#houseWardNo";
+  houseLineNo = "#houseLineNo";
+  houseIndex = "#houseIndex";
+  ddlHouseType = "#ddlHouseType";
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -66,7 +66,7 @@ export class HouseMarkingComponent {
     this.getZones();
   }
 
-  
+
   getHouseType() {
     let dbPath = "Defaults/FinalHousesType";
     let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -302,11 +302,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber,houseTypeId:type });
-                    if (city == "Jaipur-Malviyanagar") {
-                      this.getImageURL(city, imageName, index);
-
-                    }
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type });
                   }
                 });
                 let alreadyCard = "";
@@ -330,7 +326,7 @@ export class HouseMarkingComponent {
       }
     });
   }
-  
+
   setHouseType(index: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -354,46 +350,18 @@ export class HouseMarkingComponent {
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + index;
       this.db.object(dbPath).update({ houseType: houseTypeId });
     }
-    
+
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
-    this.commonService.setAlertMessage("success","Saved successfully !!!");
+    this.commonService.setAlertMessage("success", "Saved successfully !!!");
 
   }
 
-  cancelHouseType(){
+  cancelHouseType() {
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
   }
 
-
-  getImageURL(city: any, imageName: any, index: any) {
-    if (imageName == index + ".jpg") {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "";
-      let fuelInstance = this.httpService.get(path).subscribe(data => {
-        fuelInstance.unsubscribe();
-        //let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-
-      }, error => {
-        let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-
-        let detail = this.markerList.find(item => item.index == index);
-        if (detail != undefined) {
-          detail.imageUrl = imageUrl;
-        }
-      });
-    }
-    else {
-      let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/JaipurD2D%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-
-      let detail = this.markerList.find(item => item.index == index);
-      if (detail != undefined) {
-        detail.imageUrl = imageUrl;
-      }
-
-    }
-
-  }
 
   showLineDetail(content: any) {
     if (this.markerList.length > 0) {
