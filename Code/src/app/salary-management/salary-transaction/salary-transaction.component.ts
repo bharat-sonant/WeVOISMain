@@ -44,6 +44,7 @@ export class SalaryTransactionComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
+    console.log(this.cityName);
   }
 
   setDefault() {
@@ -360,10 +361,13 @@ export class SalaryTransactionComponent implements OnInit {
               if (detail != undefined) {
                 if (detail.name.trim() == name.trim()) {
                   if (transationDate != null) {
+                    if (transationDate.toString().includes('-')) {
+                      transationDate = transationDate.toString().split('-')[0] + "/" + transationDate.toString().split('-')[1] + "/" + transationDate.toString().split('-')[2];
+                    }
                     let checkDate = transationDate.toString().split('/');
                     if (checkDate.length == 1) {
                       transationDate = this.getExcelDatetoDate(transationDate);
-                      transationDate = transationDate.split('-')[1] + "/" + transationDate.split('-')[2] + "/" + transationDate.split('-')[0];
+                      transationDate = transationDate.split('-')[2] + "/" + transationDate.split('-')[1] + "/" + transationDate.split('-')[0];
                     }
                     let year = transationDate.split('/')[2];
                     transationList.push({ empId: detail.empId, transationDate: transationDate, name: name, accountNo: accountNo, ifsc: ifsc, transactionType: transactionType, debitAccountNo: debitAccountNo, amount: amount, currency: currency, emailId: emailId, utrNo: utrNo, remarks: remarks, year: year });
