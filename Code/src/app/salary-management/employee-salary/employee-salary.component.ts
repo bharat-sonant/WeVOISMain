@@ -278,12 +278,13 @@ export class EmployeeSalaryComponent implements OnInit {
           transferredInstance.unsubscribe();
           if (data != null) {
             let empTransactionObj = JSON.parse(JSON.stringify(data));
-            let keyArray = Object.keys(empTransactionObj);
+            let transactionObj = empTransactionObj[this.selectedMonthName];
+            let keyArray = Object.keys(transactionObj);
             let transferredAmount = 0;
             for (let j = 0; j < keyArray.length; j++) {
-              let date = keyArray[j];
-              if (empTransactionObj[date]["month"] == this.selectedMonthName) {
-                transferredAmount += Number(empTransactionObj[date]["amount"]);
+              let utrNumber = keyArray[j];
+              if (transactionObj[utrNumber]["amount"] != null) {
+                transferredAmount += Number(transactionObj[utrNumber]["amount"]);
               }
             }
             this.updateSalaryList(empId, transferredAmount, "transfered");
@@ -837,11 +838,11 @@ export class EmployeeSalaryComponent implements OnInit {
             }
           }
           if (i == checkArray.length - 1) {
-            let filePath="/EmployeeAccount/";
-            this.commonService.saveJsonFile(this.allSalaryList, "accountDetail.json",filePath);
+            let filePath = "/EmployeeAccount/";
+            this.commonService.saveJsonFile(this.allSalaryList, "accountDetail.json", filePath);
             let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
             const obj = { lastUpdate: time };
-            this.commonService.saveJsonFile(obj, "LastUpdate.json",filePath);
+            this.commonService.saveJsonFile(obj, "LastUpdate.json", filePath);
             this.downloadNEFTSalary();
           }
         }
