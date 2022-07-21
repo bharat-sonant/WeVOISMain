@@ -41,7 +41,7 @@
                                         <option value="11">November</option>
                                         <option value="12">December</option>
                                     </select>
-                                    <button type="button" class="user-button add-btn" (click)="openModel(contentBreakDown,0);">
+                                    <button type="button" class="user-button add-btn" (click)="openModel(contentBreakDown,0,'entry');">
                                         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
                                             &nbsp; ADD NEW</span></button>
                                 </div>
@@ -80,7 +80,9 @@
                                                 <td class="text-left br-1">
                                                     {{data.description}}</td>
                                                 <td class="text-center br-1">
-                                                    <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID" (click)="openModel(contentBreakDown,data.id);"></i>
+                                                    <i class="fa-solid fa-p" style="color: red; cursor: pointer;" [hidden]="data.status=='Resolved'" (click)="openModel(contentBreakDownResolved,data.id,'pending');"></i>
+                                                    <i class="fa-solid fa-r" style="color:green;cursor: pointer;" [hidden]="data.status=='Pending'" (click)="openModel(contentBreakDownResolved,data.id,'resolved');"></i>
+                                                    <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID || data.status=='Resolved'" (click)="openModel(contentBreakDown,data.id,'entry');" style="margin-left: 20px;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -100,7 +102,7 @@
     </div>
 </div>
 
-<!--employee  Start-->
+<!--Breakdown Entry  Start-->
 <ng-template #contentBreakDown>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -136,4 +138,39 @@
         </div>
     </div>
 </ng-template>
-<!--employee End-->
+<!--Breakdown Entry End-->
+
+
+<!--Breakdown Resolved  Start-->
+<ng-template #contentBreakDownResolved>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Resolved Entry</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="resolvedId" type="hidden" value="0" />
+                <div class="wrap-input-effects" required style="font-weight: bold;">
+                    <label id="lblVehicleNo">Vehicle : </label>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <label>Date</label>
+                    <input type="date" id="txtResolvedDate" class="input-green" />
+                </div>
+                <div class="wrap-input-effects" required>
+                    <label>Description</label>
+                    <textarea id="txtResolvedDescription" rows="8"></textarea>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="checkbox" id="chkResolvedCanRun">&nbsp;&nbsp;
+                    <label>Can run in ward</label>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" (click)="saveResolvedBreakdown();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Breakdown Resolved End-->

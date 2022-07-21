@@ -90,14 +90,20 @@ export class SalaryTransactionComponent implements OnInit {
           let keyArray = Object.keys(empTransactionObj);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              let monthName = empTransactionObj[index]["month"];
+              let monthName = keyArray[i];
               let detail = this.transactionList.find(item => item.month == monthName);
               if (detail != undefined) {
-                if (empTransactionObj[index]["amount"] != null) {
-                  this.salaryDetail.transferredSalary = (Number(this.salaryDetail.transferredSalary) + Number(empTransactionObj[index]["amount"])).toFixed(2);
+                let detailObj = empTransactionObj[monthName];
+                let indexArray = Object.keys(detailObj);
+                if (indexArray.length > 0) {
+                  for (let j = 0; j < indexArray.length; j++) {
+                    let index = indexArray[j];
+                    if (detailObj[index]["amount"] != null) {
+                      this.salaryDetail.transferredSalary = (Number(this.salaryDetail.transferredSalary) + Number(detailObj[index]["amount"])).toFixed(2);
+                    }
+                    detail.list.push({ amount: detailObj[index]["amount"], transationDate: detailObj[index]["transationDate"], utrNo: detailObj[index]["utrNo"], remarks: detailObj[index]["remarks"] });
+                  }
                 }
-                detail.list.push({ amount: empTransactionObj[index]["amount"], transationDate: empTransactionObj[index]["transationDate"], utrNo: empTransactionObj[index]["utrNo"], remarks: empTransactionObj[index]["remarks"] });
               }
             }
           }
@@ -310,7 +316,7 @@ export class SalaryTransactionComponent implements OnInit {
         $(this.divLoader).hide();
         return;
       }
-      if (fileList[0]["Amount"] == undefined) {
+      if (fileList[0]["UTR Number"] == undefined) {
         this.commonService.setAlertMessage("error", "Please check UTR Number column in excel !!!");
         $(this.fileUpload).val("");
         $(this.divLoader).hide();
@@ -360,10 +366,13 @@ export class SalaryTransactionComponent implements OnInit {
               if (detail != undefined) {
                 if (detail.name.trim() == name.trim()) {
                   if (transationDate != null) {
+                    if (transationDate.toString().includes('-')) {
+                      transationDate = transationDate.toString().split('-')[0] + "/" + transationDate.toString().split('-')[1] + "/" + transationDate.toString().split('-')[2];
+                    }
                     let checkDate = transationDate.toString().split('/');
                     if (checkDate.length == 1) {
                       transationDate = this.getExcelDatetoDate(transationDate);
-                      transationDate = transationDate.split('-')[1] + "/" + transationDate.split('-')[2] + "/" + transationDate.split('-')[0];
+                      transationDate = transationDate.split('-')[2] + "/" + transationDate.split('-')[1] + "/" + transationDate.split('-')[0];
                     }
                     let year = transationDate.split('/')[2];
                     transationList.push({ empId: detail.empId, transationDate: transationDate, name: name, accountNo: accountNo, ifsc: ifsc, transactionType: transactionType, debitAccountNo: debitAccountNo, amount: amount, currency: currency, emailId: emailId, utrNo: utrNo, remarks: remarks, year: year });
@@ -487,6 +496,7 @@ export class SalaryTransactionComponent implements OnInit {
       }
       let date = year + "-" + month + "-" + day;
       let monthName = this.commonService.getCurrentMonthName(Number(month) - 1);
+      let utrNo = list[i]["utrNo"];
       const data = {
         name: list[i]["name"],
         accountNo: list[i]["accountNo"],
@@ -504,7 +514,12 @@ export class SalaryTransactionComponent implements OnInit {
         year: year,
         month: monthName
       }
-      obj[date] = data;
+      let obj1 = {};
+      if (obj[monthName] != null) {
+        obj1 = obj[monthName];
+      }
+      obj1[utrNo] = data;
+      obj[monthName] = obj1;
     }
     let filePath = "/EmployeeSalaryTransaction/" + year + "/";
     this.commonService.saveJsonFile(obj, empId + ".json", filePath);
