@@ -32,6 +32,11 @@ export class VehicleBreakdownComponent implements OnInit {
   chkCanRun = "chkCanRun";
   txtDescription = "#txtDescription";
   divLoader = "#divLoader";
+  resolvedId = "#resolvedId";
+  txtResolvedDate = "#txtResolvedDate";
+  txtResolvedDescription = "#txtResolvedDescription";
+  chkResolvedCanRun = "chkResolvedCanRun";
+  lblVehicleNo = "#lblVehicleNo";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -71,7 +76,19 @@ export class VehicleBreakdownComponent implements OnInit {
             let id = keyArray[i];
             if (id != "lastKey") {
               let timeStamps = new Date(vehicleBreakdownData[id]["date"]).getTime();
-              this.breakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps });
+              let canRunInWardResolved = "No";
+              let resolvedDate = "";
+              let resolvedDescription = "";
+              if(vehicleBreakdownData[id]["canRunInWardResolved"]!=null){
+                canRunInWardResolved=vehicleBreakdownData[id]["canRunInWardResolved"];
+              }
+              if(vehicleBreakdownData[id]["resolvedDate"]!=null){
+                resolvedDate=vehicleBreakdownData[id]["resolvedDate"];
+              }
+              if(vehicleBreakdownData[id]["resolvedDescription"]!=null){
+                resolvedDescription=vehicleBreakdownData[id]["resolvedDescription"];
+              }
+              this.breakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps, status: vehicleBreakdownData[id]["status"],canRunInWardResolved:canRunInWardResolved,resolvedDate:resolvedDate,resolvedDescription:resolvedDescription });
               this.breakdownList = this.breakdownList.sort((a, b) =>
                 b.timeStamps > a.timeStamps ? 1 : -1
               );
@@ -137,7 +154,8 @@ export class VehicleBreakdownComponent implements OnInit {
       canRunInWard: canRunInWard,
       description: description,
       createdBy: localStorage.getItem("userID"),
-      creationDate: this.toDayDate
+      creationDate: this.toDayDate,
+      status: 'Pending'
     }
     let jsonData = {};
     let lastKey = 1;
@@ -166,6 +184,42 @@ export class VehicleBreakdownComponent implements OnInit {
     });
   }
 
+  saveResolvedBreakdown() {
+    let id = $(this.resolvedId).val();
+    let date = $(this.txtResolvedDate).val();
+    let description = $(this.txtResolvedDescription).val();
+    let canRunInWard = "No";
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please enter date !!!");
+      return;
+    }
+    if (description == "") {
+      this.commonService.setAlertMessage("error", "Please enter description !!!");
+      return;
+    }
+    $(this.divLoader).show();
+    if ((<HTMLInputElement>document.getElementById(this.chkResolvedCanRun)).checked == true) {
+      canRunInWard = "Yes";
+    }
+    let jsonData = {};
+    let lastKey = Number(id);
+    let year = date.toString().split('-')[0];
+    let monthName = this.commonService.getCurrentMonthName(Number(date.toString().split('-')[1]) - 1);
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleBreakdown%2F" + year + "%2F" + monthName + ".json?alt=media";
+    let vehicleBreakdownInstance = this.httpService.get(path).subscribe(vehicleBreakdownData => {
+      vehicleBreakdownInstance.unsubscribe();
+      if (vehicleBreakdownData != null) {
+        jsonData = vehicleBreakdownData;
+        lastKey = Number(id);
+        jsonData[lastKey.toString()]["status"] = "Resolved";
+        jsonData[lastKey.toString()]["canRunInWardResolved"] = canRunInWard;
+        jsonData[lastKey.toString()]["resolvedDate"] = date;
+        jsonData[lastKey.toString()]["resolvedDescription"] = description;
+        this.saveData(jsonData, year, monthName);
+      }
+    });
+  }
+
   saveData(jsonData: any, year: any, monthName: any) {
     this.commonService.saveJsonFile(jsonData, monthName + ".json", "/VehicleBreakdown/" + year + "/");
     if (this.selectedYear == year && this.selectedMonthName == monthName) {
@@ -173,14 +227,14 @@ export class VehicleBreakdownComponent implements OnInit {
         this.getBreakdownList();
       }, 600);
     }
-    else{
+    else {
       $(this.divLoader).hide();
     }
-    this.commonService.setAlertMessage("success","Data saved successfully !!!");
+    this.commonService.setAlertMessage("success", "Data saved successfully !!!");
     this.closeModel();
   }
 
-  openModel(content: any, id: any) {
+  openModel(content: any, id: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 550;
@@ -190,19 +244,38 @@ export class VehicleBreakdownComponent implements OnInit {
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $(this.breakdownId).val(id);
+    $(this.resolvedId).val(id);
     if (id != "0") {
       setTimeout(() => {
         let detail = this.breakdownList.find(item => item.id == id);
         if (detail != undefined) {
-          if (detail.canRunInWard == "Yes") {
-            (<HTMLInputElement>document.getElementById(this.chkCanRun)).checked = true;
+          if (type == "entry") {
+            if (detail.canRunInWard == "Yes") {
+              (<HTMLInputElement>document.getElementById(this.chkCanRun)).checked = true;
+            }
+            else {
+              (<HTMLInputElement>document.getElementById(this.chkCanRun)).checked = false;
+            }
+            $(this.txtDate).val(detail.date);
+            $(this.ddlVehicle).val(detail.vehicle);
+            $(this.txtDescription).val(detail.description);
           }
-          else {
-            (<HTMLInputElement>document.getElementById(this.chkCanRun)).checked = false;
+          else if (type == "pending") {
+            $(this.txtResolvedDate).val(this.toDayDate);
+            $(this.lblVehicleNo).html("Vehicle No. " + detail.vehicle);
           }
-          $(this.txtDate).val(detail.date);
-          $(this.ddlVehicle).val(detail.vehicle);
-          $(this.txtDescription).val(detail.description);
+          else if (type == "resolved") {
+            if (detail.canRunInWardResolved == "Yes") {
+              (<HTMLInputElement>document.getElementById(this.chkResolvedCanRun)).checked = true;
+            }
+            else {
+              (<HTMLInputElement>document.getElementById(this.chkResolvedCanRun)).checked = false;
+            }
+            $(this.txtResolvedDate).val(detail.resolvedDate);
+            $(this.txtResolvedDescription).val(detail.resolvedDescription);
+            console.log(detail)
+            $(this.lblVehicleNo).html("Vehicle : " + detail.vehicle);
+          }
         }
       }, 300);
     }
@@ -213,6 +286,7 @@ export class VehicleBreakdownComponent implements OnInit {
 
   closeModel() {
     $(this.breakdownId).val("0");
+    $(this.resolvedId).val("0");
     this.modalService.dismissAll();
   }
 
