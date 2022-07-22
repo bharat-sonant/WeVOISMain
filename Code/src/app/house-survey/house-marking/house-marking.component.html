@@ -258,23 +258,24 @@
                     <div class="main-tag">
                         <div class="f-left">
                             <h3 class="f-left-heading"> {{dt.type}} <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index);"></i></h3><br />
-                            <p>Already Card <span class="f-right"> :</span></p>
-                            <h3> {{dt.alreadyInstalled}} </h3><br />
                             <span [hidden]="dt.status==''">
-                                <p>Status <span class="f-right"> :</span></p>
-                            <h3><span class="{{dt.statusClass}}"> {{dt.status}} <b>({{dt.cardNumber}})</b></span>
-                            </h3>
+                                <h3>Status :  <span class="{{dt.statusClass}}"> {{dt.status}} <b [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
                         </div>
                     </div>
-
-                    <button class="btn btn-success Reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.index);" [hidden]="dt.status!=''"><i class="fas fa-times"></i>
-                        Reject</button>&nbsp;
-                    <button class="btn btn-danger Delete-btn" [hidden]="dt.status==''" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.status!=''"><i
-                            class="fas fa-times"></i> Delete</button>
-
-                    <button class="btn btn-danger Delete-btn-2" [hidden]="dt.isRevisit=='0'" (click)="removeMarker(dt.index,dt.alreadyInstalled);" [hidden]="dt.isRevisit=='0'"><i
-                            class="fas fa-times"></i> Delete</button>
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.index);">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
+                        </span>
+                        <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index);">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="removeMarker(dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0'" (click)="removeMarker(dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                    </div>
 
                 </div>
             </div>

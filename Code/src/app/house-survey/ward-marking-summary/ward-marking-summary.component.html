@@ -197,8 +197,8 @@
                 <div class="col-md-12">
                     <select id="ddlHouseType" class="caret-select-vehicle">
                         <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
-                        {{dt.houseType}}
-                      </option>
+                            {{dt.houseType}}
+                        </option>
                     </select>
 
                 </div>
@@ -207,7 +207,8 @@
                         Save</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;"> Cancel</button>
+                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;">
+                        Cancel</button>
                 </div>
             </div>
         </div>
@@ -224,19 +225,19 @@
                             <div style="width:100%!important ;">
                                 <h3 class="f-left-heading"> {{dt.type}} <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"></i></h3>
                             </div><br />
-                            <span [hidden]="dt.status=='' || dt.status=='Re-marked'">
-                            <h3> Status : {{dt.status}} </h3>
+                            <span [hidden]="dt.status==''">
+                                <h3> Status : {{dt.status}}&nbsp; </h3>
                             </span>
                         </div>
                     </div>
-                    <div style="text-align: center;" [hidden]="dt.status!='' && dt.status!='Re-marked'">
-                        <span style="cursor: pointer;" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
-                        <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove 
-                    </span>&nbsp;|&nbsp; <span style="cursor: pointer;" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
-                        <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject 
-                    </span> &nbsp;|&nbsp;<span style="cursor: pointer;" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
-                        <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
-</span>
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
                     </div>
                 </div>
             </div>
@@ -249,7 +250,9 @@
 <!--House Type  Start-->
 <ng-template #contentHouseType>
     <div class="modal-header">
-        <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;"><i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export Entity Type</span> </h5>
+        <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;">
+            <i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export Entity
+                Type</span> </h5>
         <button type="button" class="close" (click)="closeModel();" style="border: none;">
             <span aria-hidden="true">&times;</span>
         </button>

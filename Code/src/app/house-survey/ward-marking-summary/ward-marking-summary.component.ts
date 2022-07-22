@@ -335,8 +335,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
+      markerDatails.isApprove = "0";
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Reject" });
+      this.db.object(dbPath).update({ status: "Reject",isApprove:"0" });
       this.updateCount(wardNo, date, userId, "reject");
       this.commonService.setAlertMessage("success", "Marker rejected successfuly !!!");
     }
@@ -345,9 +346,9 @@ export class WardMarkingSummaryComponent implements OnInit {
   approveMarkerStatus(wardNo: any, lineNo: any, markerNo: any){
     let markerDatails = this.markerDetailList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
-      markerDatails.status = "Approved";
+      markerDatails.isApprove = "1";
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Approved" });
+      this.db.object(dbPath).update({ isApprove: "1" });
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
     }
   }
@@ -505,6 +506,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let userId = data[index]["userId"];
               let date = data[index]["date"].split(" ")[0];
               let status = "";
+              let isApprove="0";
               if (data[index]["cardNumber"] != null) {
                 status = "Surveyed";
               }
@@ -515,6 +517,10 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (data[index]["status"] != null) {
                 status = data[index]["status"];
               }
+              if (data[index]["isApprove"] != null) {
+                isApprove = data[index]["isApprove"];
+              }
+
               let city = this.commonService.getFireStoreCity();
 
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
@@ -535,7 +541,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                     status: status,
                     userId: userId,
                     date: date,
-                    houseTypeId: type
+                    houseTypeId: type,
+                    isApprove:isApprove
                   });
                 }
               });
