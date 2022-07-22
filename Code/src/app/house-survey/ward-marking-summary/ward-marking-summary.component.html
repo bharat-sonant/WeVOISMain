@@ -22,8 +22,8 @@
                     <h6>Total Marker</h6>
                 </div>
                 <div class="float-first fix-home-iner">
-                    <i class="fa-solid fa-download" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
-                    <h6>Export House Types</h6>
+                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
+                    <h6>Export Entity Types</h6>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                         <div class="col-md-2 text-center responsive">
                             <div class="table-heading" style="cursor: pointer;" (click)="getZoneHouseTypeList(contentHouseType);">
                                 <h3>
-                                    <span class="tbl-points"> <i class="fa-solid fa-table-list"></i></span> <br> House Types
+                                    <span class="tbl-points"> <i class="fa-solid fa-table-list"></i></span> <br> Entity Types
                                 </h3>
                             </div>
                         </div>
@@ -224,21 +224,22 @@
                             <div style="width:100%!important ;">
                                 <h3 class="f-left-heading"> {{dt.type}} <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"></i></h3>
                             </div><br />
-                            <p style="float: left;">Already Card <span class="f-right"> :</span></p>
-                            <h3> {{dt.alreadyInstalled}} </h3><br />
-                            <span [hidden]="dt.status==''">
-                                <p>Status <span class="f-right"> :</span></p>
-                            <h3> {{dt.status}} </h3>
+                            <span [hidden]="dt.status=='' || dt.status=='Re-marked'">
+                            <h3> Status : {{dt.status}} </h3>
                             </span>
                         </div>
                     </div>
-
-                    <button class="btn-cancel reject-btn" [hidden]="dt.status==''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);" [hidden]="dt.status!=''">Reject</button>&nbsp;
-                    <button class="btn-cancel delete-btn" [hidden]="dt.status==''" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);" [hidden]="dt.status!=''">Delete</button>
-
+                    <div style="text-align: center;" [hidden]="dt.status!='' && dt.status!='Re-marked'">
+                        <span style="cursor: pointer;" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
+                        <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove 
+                    </span>&nbsp;|&nbsp; <span style="cursor: pointer;" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
+                        <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject 
+                    </span> &nbsp;|&nbsp;<span style="cursor: pointer;" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
+                        <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+</span>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </ng-template>
@@ -247,26 +248,27 @@
 
 <!--House Type  Start-->
 <ng-template #contentHouseType>
-
-    <div class="img-close-outer">
-        <i class="fa-solid fa-download" style="z-index: 999; position:absolute ;top: 2px;right: 40px;font-size: 20px;" (click)="exportHouseTypeList('0');"></i>
-        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+    <div class="modal-header">
+        <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;"><i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export Entity Type</span> </h5>
+        <button type="button" class="close" (click)="closeModel();" style="border: none;">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-    <div class="modal-body content-scroll-outer">
+    <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
         <div id="divHouseStatus" class="content-scroll">
             <div class="row">
                 <div class="table-wrapper table-one">
                     <table class="table table-one-iner">
                         <thead>
-                            <th class="ward-table-heading">House Type</th>
-                            <th class="text-right Markers-table-heading">
+                            <th class="ward-table-heading" style="width:75%">Entity Type</th>
+                            <th class="text-right Markers-table-heading" style="width:25%">
                                 Counts</th>
                         </thead>
                         <tbody>
                             <tr class="table-row" id="tr{{i}}" *ngFor="let data of zoneHouseTypeList; let i=index">
-                                <td class="table-data">
+                                <td class="table-data" style="width:75%">
                                     {{data.houseType}}</td>
-                                <td class="text-right table-data">
+                                <td class="text-right table-data" style="width:25%">
                                     {{data.counts}}</td>
                             </tr>
                         </tbody>
