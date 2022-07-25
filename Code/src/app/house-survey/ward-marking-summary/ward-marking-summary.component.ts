@@ -335,10 +335,21 @@ export class WardMarkingSummaryComponent implements OnInit {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
+      markerDatails.isApprove = "0";
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Reject", });
+      this.db.object(dbPath).update({ status: "Reject",isApprove:"0" });
       this.updateCount(wardNo, date, userId, "reject");
-      this.commonService.setAlertMessage("success", "Marker rejected succfuly !!!");
+      this.commonService.setAlertMessage("success", "Marker rejected successfuly !!!");
+    }
+  }
+
+  approveMarkerStatus(wardNo: any, lineNo: any, markerNo: any){
+    let markerDatails = this.markerDetailList.find((item) => item.index == markerNo);
+    if (markerDatails != undefined) {
+      markerDatails.isApprove = "1";
+      let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+      this.db.object(dbPath).update({ isApprove: "1" });
+      this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
     }
   }
 
@@ -495,6 +506,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let userId = data[index]["userId"];
               let date = data[index]["date"].split(" ")[0];
               let status = "";
+              let isApprove="0";
               if (data[index]["cardNumber"] != null) {
                 status = "Surveyed";
               }
@@ -505,6 +517,10 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (data[index]["status"] != null) {
                 status = data[index]["status"];
               }
+              if (data[index]["isApprove"] != null) {
+                isApprove = data[index]["isApprove"];
+              }
+
               let city = this.commonService.getFireStoreCity();
 
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
@@ -525,7 +541,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                     status: status,
                     userId: userId,
                     date: date,
-                    houseTypeId: type
+                    houseTypeId: type,
+                    isApprove:isApprove
                   });
                 }
               });
@@ -586,9 +603,9 @@ export class WardMarkingSummaryComponent implements OnInit {
     let windowHeight = $(window).height();
     let height = 870;
     let width = 400;
-    height = (windowHeight * 90) / 100;
+    height = (windowHeight * 70) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 50 + "px";
+    let divHeight = height - 75 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
@@ -661,7 +678,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString = "<table>";
       htmlString += "<tr>";
       htmlString += "<td>";
-      htmlString += "Zone";
+      htmlString += "Entity Type";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Counts";
@@ -678,9 +695,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName = this.commonService.getFireStoreCity() + "-Ward-" + this.selectedZone + "-HouseTypes.xlsx";
+      let fileName = "Ward-" + this.selectedZone + "-EntityTypes.xlsx";
       if(type=="1"){
-        fileName = this.commonService.getFireStoreCity() + "-All-Ward-HouseTypes.xlsx";
+        fileName = "All-Ward-EntityTypes.xlsx";
       }
       this.commonService.exportExcel(htmlString, fileName);
       $('#divLoaderMain').hide();

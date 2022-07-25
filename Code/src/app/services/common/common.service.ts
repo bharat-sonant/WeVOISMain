@@ -1081,6 +1081,8 @@ export class CommonService {
         let haltDisableAccess = 0;
         let isActual = 0;
         let isLock = 0;
+        let isAdmin=0;
+        let isManager=0;
         if (doc.data()["haltDisableAccess"] != undefined) {
           haltDisableAccess = doc.data()["haltDisableAccess"];
         }
@@ -1089,6 +1091,12 @@ export class CommonService {
         }
         if (doc.data()["isLock"] != undefined) {
           isLock = doc.data()["isLock"];
+        }
+        if (doc.data()["isAdmin"] != undefined) {
+          isAdmin = doc.data()["isAdmin"];
+        }
+        if (doc.data()["isManager"] != undefined) {
+          isManager = doc.data()["isManager"];
         }
         if (doc.data()["isDelete"] == "0") {
           userList.push({
@@ -1100,8 +1108,7 @@ export class CommonService {
             userType: doc.data()["userType"],
             expiryDate: doc.data()["expiryDate"],
             notificationHalt: doc.data()["notificationHalt"],
-            notificationMobileDataOff:
-              doc.data()["notificationMobileDataOff"],
+            notificationMobileDataOff: doc.data()["notificationMobileDataOff"],
             notificationSkippedLines: doc.data()["notificationSkippedLines"],
             notificationPickDustbins: doc.data()["notificationPickDustbins"],
             notificationGeoSurfing: doc.data()["notificationGeoSurfing"],
@@ -1109,7 +1116,9 @@ export class CommonService {
             isTaskManager: doc.data()["isTaskManager"],
             haltDisableAccess: haltDisableAccess,
             isActual: isActual,
-            isLock: isLock
+            isLock: isLock,
+            isAdmin:isAdmin,
+            isManager:isManager
           });
         }
       });

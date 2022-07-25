@@ -267,6 +267,10 @@ export class HouseMarkingComponent {
                 let statusClass = "";
                 let isRevisit = "0";
                 let cardNumber = "";
+                let isApprove = "0";
+                if (data[index]["isApprove"] != null) {
+                  isApprove = data[index]["isApprove"];
+                }
                 if (data[index]["status"] != null) {
                   status = data[index]["status"];
                 }
@@ -302,7 +306,7 @@ export class HouseMarkingComponent {
                   houseInstance1.unsubscribe();
                   if (data != null) {
                     let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type });
+                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove });
                   }
                 });
                 let alreadyCard = "";
@@ -365,6 +369,7 @@ export class HouseMarkingComponent {
 
   showLineDetail(content: any) {
     if (this.markerList.length > 0) {
+      console.log(this.markerList);
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let windowWidth = $(window).width();
@@ -612,10 +617,21 @@ export class HouseMarkingComponent {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
+      markerDatails.isApprove = "0";
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Reject", });
+      this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
       this.updateCount(date, userId, "reject");
       this.commonService.setAlertMessage("success", "Marker rejected successfully !!!");
+    }
+  }
+
+  approveMarkerStatus(markerNo: any) {
+    let markerDatails = this.markerList.find((item) => item.index == markerNo);
+    if (markerDatails != undefined) {
+      markerDatails.isApprove = "1";
+      let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
+      this.db.object(dbPath).update({ isApprove: "1" });
+      this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
     }
   }
 
@@ -840,9 +856,21 @@ export class HouseMarkingComponent {
   }
 
   saveData() {
+    let isApprove = true;
     let element = <HTMLInputElement>document.getElementById("chkAll");
     if (element.checked == true) {
       this.commonService.setAlertMessage("error", "Please remove check from show all markers for approve this line!!!");
+      return;
+    }
+    for (let i = 0; i < this.markerList.length; i++) {
+      if (this.markerList[i]["isApprove"] == "0") {
+        i = this.markerList.length;
+        isApprove = false;
+      }
+    }
+
+    if (isApprove == false) {
+      this.commonService.setAlertMessage("error", "Please approve all markers for approve this line!!!");
       return;
     }
 
