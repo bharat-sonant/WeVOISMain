@@ -1,3 +1,6 @@
+<div id="divLoaderMain" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
@@ -7,31 +10,36 @@
             Ward Survey Summary
         </div>
 
-       
+
         <div class="col-md-4 text-right total-house fix-home-outer">
-                <div class="display" id="popup">
-            <div class="fix-home">
-                <div class="float-first">
-                    <i class="fas fa-home home-icon"></i> <span class="house">
-                        {{surveyData.totalMarkers}}</span><br>
-                    <h6>Total Marker</h6>
-                </div>
-                <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
-                    <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
-                    <h6>Surveyed Marker</h6>
-                </div>
-                <div class="float-third float-second2" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
-                    <i class="fas fa-house-damage icon-damage"></i> <span class="house">
-                        {{surveyData.totalRevisit}}</span><br>
-                    <h6>Revisit Request</h6>
-                </div>
-                <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
-                    <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
-                        {{surveyData.totalOldCards}}</span><br>
-                    <h6>RFID not matched</h6>
+            <div class="display" id="popup">
+                <div class="fix-home">
+                    <div class="float-first">
+                        <i class="fas fa-home home-icon"></i> <span class="house">
+                            {{surveyData.totalMarkers}}</span><br>
+                        <h6>Total Marker</h6>
+                    </div>
+                    <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
+                        <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
+                        <h6>Surveyed Marker</h6>
+                    </div>
+                    <div class="float-third float-second2" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
+                        <i class="fas fa-house-damage icon-damage"></i> <span class="house">
+                            {{surveyData.totalRevisit}}</span><br>
+                        <h6>Revisit Request</h6>
+                    </div>
+                    <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{surveyData.totalOldCards}}</span><br>
+                        <h6>RFID not matched</h6>
+                    </div>
+
+                    <div class="float-first fix-home-iner" style="padding-top: 5px;">
+                        <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
+                        <h6>Export Entity Types</h6>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
         <div class="arrow" onclick="show()">
             <i class="bi bi-chevron-down"></i>
@@ -42,13 +50,12 @@
     <div class="row">
         <div class="col-md-5 main-content-iner">
             <div class="card card-body-outer">
-                <div class="card-body card-iner" >
+                <div class="card-body card-iner">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table table-one-iner"
-                                        >
+                                    <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-heading1">Ward</th>
                                             <th class="text-right table-heading2">
@@ -56,15 +63,13 @@
 
                                             <th class="text-right table-heading3">
                                                 Surveyed</th>
-                                            <th class="text-right table-heading4" >
+                                            <th class="text-right table-heading4">
                                                 Revisit</th>
                                             <th class="text-right table-heading5">
                                                 RFID Not Matched</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="point" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index"
-                                                [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);"
-                                                >
+                                            <tr class="point" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);">
                                                 <td class="table-data1">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data2">
@@ -81,8 +86,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage" class="col-md-12 pr-1 text-center divMessage"
-                                >
+                            <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -99,41 +103,37 @@
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{surveyData.totalLines}}</span> <br>
-                                    Lines
+                                    <span class="tbl-points"> {{surveyData.totalLines}}</span> <br> Lines
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br>
-                                    Surveyed
+                                    <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br> Surveyed
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{surveyData.wardRevisit}}</span> <br>
-                                    Revisit
+                                    <span class="tbl-points"> {{surveyData.wardRevisit}}</span> <br> Revisit
                                 </h3>
                             </div>
                         </div>
 
                         <div class="col text-center">
                             <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{surveyData.wardOldCards}}</span> <br>
-                                    RFID Not Matched
+                                <h3 class="Spelling-heading">
+                                    <span class="tbl-points"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i
+                                            class="fas fa-sync-alt sync"></i></span> <br> Spelling Check Remains
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center">
-                            <div class="table-heading">
-                                <h3 class="Spelling-heading">
-                                    <span class="tbl-points"> {{surveyData.wardNameNotCorrect}}</span> <span class="refresh-btn" (click)="getNameNotCorrect();"><i class="fas fa-sync-alt sync"></i></span> <br>
-                                    Spelling Check Remains
+                            <div class="table-heading" style="cursor: pointer;" (click)="getZoneHouseTypeList(contentHouseType);">
+                                <h3>
+                                    <span class="tbl-points"> <i class="fa-solid fa-table-list"></i></span> <br> Entity Types
                                 </h3>
                             </div>
                         </div>
@@ -147,26 +147,19 @@
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
                                         <div class="table-wrapper table-scroll table-outer">
-                                            <table class="table table2"
-                                                >
+                                            <table class="table table2">
                                                 <thead>
                                                     <th class="table-heading-same">Line</th>
-                                                    <th class="text-right table-heading-same2"
-                                                        >Markers</th>
-                                                    <th class="text-right table-heading-same3"
-                                                        >
+                                                    <th class="text-right table-heading-same2">Markers</th>
+                                                    <th class="text-right table-heading-same3">
                                                         Already Installed</th>
-                                                    <th class="text-right table-heading-same4"
-                                                        >Surveyed
+                                                    <th class="text-right table-heading-same4">Surveyed
                                                     </th>
-                                                    <th class="text-right table-heading-same5"
-                                                        >Revisit
+                                                    <th class="text-right table-heading-same5">Revisit
                                                     </th>
-                                                    <th class="text-right table-heading-same6"
-                                                        >RFID Not Matched
+                                                    <th class="text-right table-heading-same6">RFID Not Matched
                                                     </th>
-                                                    <th class="text-center table-heading-same7"
-                                                        >#</th>
+                                                    <th class="text-center table-heading-same7">#</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineSurveyList; let i=index">
@@ -184,18 +177,14 @@
                                                             {{data.oldCard}}</td>
                                                         <td class="text-center table-data-7">
 
-                                                            <i class="far fa-eye eye-icon"
-                                                                
-                                                                [hidden]="data.survyed==0"
-                                                                (click)="showLineDetail(contentLineSurveyed,data.wardNo,data.lineNo);"></i>
+                                                            <i class="far fa-eye eye-icon" [hidden]="data.survyed==0" (click)="showLineDetail(contentLineSurveyed,data.wardNo,data.lineNo);"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center divMessage"
-                                        >
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -252,12 +241,10 @@
     </div>
     <div class="modal-body table-wrapper-outer">
         <div id="tblSurvey" class="table-wrapper table-scroll modal-body-iner">
-            <table class="table table-scroll-iner"
-                >
+            <table class="table table-scroll-iner">
                 <thead>
                     <th class="datetable">Date</th>
-                    <th class="text-right surveyTypetable"
-                        ><span id="surveyType"></span></th>
+                    <th class="text-right surveyTypetable"><span id="surveyType"></span></th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let data of surveyDateList; let i=index">
@@ -272,3 +259,41 @@
     </div>
 </ng-template>
 <!--Survey Line End-->
+
+
+<!--House Type  Start-->
+<ng-template #contentHouseType>
+    <div class="modal-header">
+        <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;">
+            <i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export Entity
+                Type</span> </h5>
+        <button type="button" class="close" (click)="closeModel();" style="border: none;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
+        <div id="divHouseStatus" class="content-scroll">
+            <div class="row">
+                <div class="table-wrapper table-one">
+                    <table class="table table-one-iner">
+                        <thead>
+                            <th class="ward-table-heading" style="width:75%">Entity Type</th>
+                            <th class="text-right Markers-table-heading" style="width:25%">
+                                Counts</th>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of zoneHouseTypeList; let i=index">
+                                <td class="table-data" style="width:75%">
+                                    {{data.houseType}}</td>
+                                <td class="text-right table-data" style="width:25%">
+                                    {{data.counts}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-template>
+<!--House Type End-->
