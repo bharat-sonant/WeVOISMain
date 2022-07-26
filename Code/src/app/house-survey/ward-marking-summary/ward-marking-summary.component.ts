@@ -337,13 +337,13 @@ export class WardMarkingSummaryComponent implements OnInit {
       markerDatails.status = "Reject";
       markerDatails.isApprove = "0";
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Reject",isApprove:"0" });
+      this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
       this.updateCount(wardNo, date, userId, "reject");
       this.commonService.setAlertMessage("success", "Marker rejected successfuly !!!");
     }
   }
 
-  approveMarkerStatus(wardNo: any, lineNo: any, markerNo: any){
+  approveMarkerStatus(wardNo: any, lineNo: any, markerNo: any) {
     let markerDatails = this.markerDetailList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
@@ -506,7 +506,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let userId = data[index]["userId"];
               let date = data[index]["date"].split(" ")[0];
               let status = "";
-              let isApprove="0";
+              let isApprove = "0";
               if (data[index]["cardNumber"] != null) {
                 status = "Surveyed";
               }
@@ -542,7 +542,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     userId: userId,
                     date: date,
                     houseTypeId: type,
-                    isApprove:isApprove
+                    isApprove: isApprove
                   });
                 }
               });
@@ -672,7 +672,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  exportHouseTypeList(type:any) {
+  exportHouseTypeList(type: any) {
     if (this.zoneHouseTypeList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -696,7 +696,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       }
       htmlString += "</table>";
       let fileName = "Ward-" + this.selectedZone + "-EntityTypes.xlsx";
-      if(type=="1"){
+      if (type == "1") {
         fileName = "All-Ward-EntityTypes.xlsx";
       }
       this.commonService.exportExcel(htmlString, fileName);
@@ -719,6 +719,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
+
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
         markerData => {
@@ -728,19 +729,25 @@ export class WardMarkingSummaryComponent implements OnInit {
               let zoneNoNew = this.wardProgressList[index]["wardNo"];
               this.getZoneHouseType(zoneNoNew, index);
             }
-            else{
+            else {
               this.exportHouseTypeList("1");
             }
           }
           else {
             let keyArray = Object.keys(markerData);
+
             for (let i = 0; i < keyArray.length; i++) {
               let lineNo = keyArray[i];
               let lineData = markerData[lineNo];
+
+              console.log("Zone No : " + zoneNo + " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]);
+              let houseTypeCount = 0;
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
+
                 if (lineData[markerNo]["houseType"] != null) {
+                  houseTypeCount++;
                   let houseTypeId = lineData[markerNo]["houseType"];
                   let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                   if (detail != undefined) {
@@ -758,14 +765,16 @@ export class WardMarkingSummaryComponent implements OnInit {
                       }
                     }
                   }
+
                 }
               }
+              console.log("Entity Type : " + houseTypeCount);
             }
             if (this.wardProgressList[index] != null) {
               let zoneNoNew = this.wardProgressList[index]["wardNo"];
               this.getZoneHouseType(zoneNoNew, index);
             }
-            else{
+            else {
               this.getZoneHouseType(zoneNo, index);
             }
 

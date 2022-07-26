@@ -21,6 +21,8 @@ export class WardSurveySummaryComponent implements OnInit {
   cityName: any;
   isFirst = true;
   wardCheckList: any[] = [];
+  houseTypeList: any[] = [];
+  zoneHouseTypeList: any[];
   db: any;
   selectedWard: any;
   surveyData: surveyDatail = {
@@ -41,7 +43,27 @@ export class WardSurveySummaryComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getHouseType();
     this.getWardProgressList();
+  }
+
+
+  getHouseType() {
+    let dbPath = "Defaults/FinalHousesType";
+    let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseTypeInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let id = keyArray[i];
+            let houseType = data[id]["name"].toString().split("(")[0];
+            this.houseTypeList.push({ id: id, houseType: houseType });
+          }
+        }
+      }
+    );
+
   }
 
   clearAll() {
@@ -480,6 +502,193 @@ export class WardSurveySummaryComponent implements OnInit {
         }
       }
     );
+  }
+
+
+  getZoneHouseTypeList(content: any) {
+    this.zoneHouseTypeList = [];
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 870;
+    let width = 400;
+    height = (windowHeight * 70) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 75 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divHouseStatus").css("height", divHeight);
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData == null) {
+          this.closeModel();
+        }
+        else {
+          let keyArray = Object.keys(markerData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineData = markerData[lineNo];
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+
+              if (lineData[markerNo]["houseType"] != null) {
+                let houseTypeId = lineData[markerNo]["houseType"];
+                let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                if (detail != undefined) {
+                  let houseType = detail.houseType;
+                  if (this.zoneHouseTypeList.length == 0) {
+                    let count = 0;
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      count = 1;
+                    }
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                  }
+                  else {
+                    let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                    if (listDetail != undefined) {
+                      if (lineData[markerNo]["cardNumber"] != null) {
+                        listDetail.counts = listDetail.counts + 1;
+                      }
+                    }
+                    else {
+                      let count = 0;
+                      if (lineData[markerNo]["cardNumber"] != null) {
+                        count = 1;
+                      }
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+        }
+      }
+    );
+  }
+
+
+  exportHouseTypeList(type: any) {
+    if (this.zoneHouseTypeList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Entity Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Counts";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.zoneHouseTypeList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.zoneHouseTypeList[i]["houseType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneHouseTypeList[i]["counts"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Ward-" + this.selectedWard + "-EntityTypes.xlsx";
+      if (type == "1") {
+        fileName = "All-Ward-EntityTypes.xlsx";
+      }
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+    else {
+      this.commonService.setAlertMessage("error", "No Survey data found !!!");
+      $('#divLoaderMain').hide();
+    }
+  }
+
+  getAllZoneHouseTypeList() {
+    this.zoneHouseTypeList = [];
+    if (this.wardProgressList.length > 0) {
+      $('#divLoaderMain').show();
+      let zoneNo = this.wardProgressList[1]["wardNo"];
+      this.getZoneHouseType(zoneNo, 0);
+    }
+  }
+
+  getZoneHouseType(zoneNo: any, index: any) {
+    index = index + 1;
+    if (index == this.wardProgressList.length + 1) {
+      this.exportHouseTypeList("1");
+    }
+    else {
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        markerData => {
+          markerInstance.unsubscribe();
+          if (markerData == null) {
+            if (this.wardProgressList[index] != null) {
+              let zoneNoNew = this.wardProgressList[index]["wardNo"];
+              this.getZoneHouseType(zoneNoNew, index);
+            }
+            else {
+              this.exportHouseTypeList("1");
+            }
+          }
+          else {
+            let keyArray = Object.keys(markerData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+
+                if (lineData[markerNo]["houseType"] != null) {
+                  let houseTypeId = lineData[markerNo]["houseType"];
+                  let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                  if (detail != undefined) {
+                    let houseType = detail.houseType;
+                    if (this.zoneHouseTypeList.length == 0) {
+                      let count = 0;
+                      if (lineData[markerNo]["cardNumber"] != null) {
+                        count = 1;
+                      }
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                    }
+                    else {
+                      let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                      if (listDetail != undefined) {
+                        if (lineData[markerNo]["cardNumber"] != null) {
+                          listDetail.counts = listDetail.counts + 1;
+                        }
+                      }
+                      else {
+                        let count = 0;
+                        if (lineData[markerNo]["cardNumber"] != null) {
+                          count = 1;
+                        }
+                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                      }
+                    }
+                  }
+                }
+
+              }
+            }
+            if (this.wardProgressList[index] != null) {
+              let zoneNoNew = this.wardProgressList[index]["wardNo"];
+              this.getZoneHouseType(zoneNoNew, index);
+            }
+            else {
+              this.getZoneHouseType(zoneNo, index);
+            }
+
+          }
+        }
+      );
+    }
   }
 }
 
