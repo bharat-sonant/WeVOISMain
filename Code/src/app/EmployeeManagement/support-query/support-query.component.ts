@@ -16,6 +16,7 @@ export class SupportQueryComponent implements OnInit {
   complaintList: any[];
   yearList: any[];
   selectedYear: any;
+  managerList:any;
   ddlYear = "#ddlYear";
   ddlCity = "#ddlCity";
   ddlCategory = "#ddlCategory";
@@ -24,7 +25,14 @@ export class SupportQueryComponent implements OnInit {
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
+    this.getManagers();
     this.getYear();
+  }
+
+  getManagers(){
+    let employeeList=JSON.parse(localStorage.getItem("webPortalUserList"));
+    this.managerList=employeeList.filter(item=>item.isManager==1);
+    console.log(this.managerList);
   }
 
   getYear() {
