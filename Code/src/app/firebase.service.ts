@@ -43,15 +43,15 @@ export class FirebaseService {
     else if (city == 'test') {
 
       this.fireBase = {
-        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-        authDomain: "dtdnavigator.firebaseapp.com",
-        databaseURL: "https://dtdnavigatortesting.firebaseio.com",
-        projectId: "dtdnavigator",
-        storageBucket: "dtdnavigator.appspot.com",
-        messagingSenderId: "381118272786"
+        apiKey: "AIzaSyBplQJbeCNMD4QMl--XVi2KeXnP0iJlHwE",
+        authDomain: "d2d-waste-management.firebaseapp.com",
+        databaseURL: "https://d2d-waste-management.firebaseio.com",
+        projectId: "d2d-waste-management",
+        storageBucket: "d2d-waste-management.appspot.com",
+        messagingSenderId: "522136111136"
       };
-      databaseName = "dtdnavigatortesting";
-      databaseURL = "https://dtdnavigatortesting.firebaseio.com";
+      databaseName = "d2d-waste-management";
+      databaseURL = "https://d2d-waste-management.firebaseio.com";
       /*
             this.fireBase = {
               apiKey: "AIzaSyAXeDgQu4b7pNzCbFf0GmYm-0xYmZ6LEbw",

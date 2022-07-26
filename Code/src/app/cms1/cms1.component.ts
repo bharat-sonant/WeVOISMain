@@ -3,6 +3,8 @@ import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
+import { AngularFireStorage } from "angularfire2/storage";
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-cms1',
@@ -11,7 +13,7 @@ import * as XLSX from 'xlsx';
 })
 export class Cms1Component implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   nameList: any = [];
@@ -22,6 +24,32 @@ export class Cms1Component implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getNameList();
     //this.getCardTypeList();
+  }
+
+  createHelperDevice() {
+   // this.addDevices(39,0);
+  }
+
+  addDevices(lastDevice: any, index: any) {
+    index = index + 1;
+    lastDevice=lastDevice+1;
+    if (index <= 65) {
+      let key = "DummyHelper" + index;
+      const data = {
+        appType: "2",
+        lastActive: "25/07/2022 09:10",
+        name: "JAI-" + lastDevice,
+        readerAppVersion: "1.0.2.9",
+        status: "1"
+      }
+      let dbPath="Devices/Jaipur-Malviyanagar/"+key;
+      this.db.object(dbPath).update(data);
+      this.addDevices(lastDevice,index);
+    }
+    else{
+      this.db.object("Devices").update({LastConfigurationNo:lastDevice });
+    }
+
   }
 
   setSurveyorId() {
@@ -844,6 +872,170 @@ export class Cms1Component implements OnInit {
 
   }
 
+  getD2DMatkers() {
+    let wardNo = "139-R1";
+    let todayDate = "2022-07-12";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      markerInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let lineObject = data[lineNo];
+          let lineKeyArray = Object.keys(lineObject);
+          for (let j = 0; j < lineKeyArray.length; j++) {
+            let markerNo = lineKeyArray[j];
+            if (lineObject[markerNo]["date"] != null) {
+              let date = lineObject[markerNo]["date"];
+              if (date.includes(todayDate)) {
+                let markerData = lineObject[markerNo];
+                console.log(markerData);
+                dbPath = "EntityMarkingData/MarkedHousesNew/" + wardNo + "/" + lineNo + "/" + markerNo;
+                this.db.object(dbPath).update(markerData);
+              }
+            }
+          }
+        }
+      }
+    });
+
+  }
+
+  updateMalviyaNagarData() {
+    let wardNo = "140-R1";
+    let lineNo = "10";
+    let dbPath = "EntityMarkingData/MarkedHousesNew/" + wardNo + "/" + lineNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            let markerCount = keyArray.length;
+            dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lastMarkerKey";
+            let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+              lastKeyData => {
+                markerCountInstance.unsubscribe();
+                let lastMarkerKey = markerCount;
+                let lastKey = 0;
+                if (lastKeyData != null) {
+                  lastKey = Number(lastKeyData);
+                  lastMarkerKey = Number(lastKeyData) + markerCount;
+                }
+                for (let i = 0; i < keyArray.length; i++) {
+                  let markerNo = keyArray[i];
+                  let markerData = data[markerNo];
+                  lastKey = lastKey + 1;
+                  dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + lastKey;
+                  this.db.object(dbPath).update(markerData);
+                }
+                dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                this.setTotal(wardNo, lineNo, markerCount);
+              });
+          }
+        }
+      }
+    );
+  }
+
+  setTotal(wardNo: any, lineNo: any, markerCount: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/marksCount";
+    let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerCountInstance.unsubscribe();
+        let count = markerCount;
+        if (data != null) {
+          count = count + Number(data);
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+        this.db.object(dbPath).update({ marksCount: count });
+      }
+    );
+
+    // datewise total
+
+    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/2022-07-12/" + wardNo + "/marked";
+    let dateMarkedInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        dateMarkedInstance.unsubscribe();
+        let markedCount = markerCount;
+        if (data != null) {
+          markedCount = markedCount + Number(data);
+        }
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/DateWise/2022-07-12/" + wardNo;
+        this.db.object(dbPath).update({ marked: markedCount });
+      }
+    );
+
+    // ward wise total
+    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/marked";
+    let wardInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        wardInstance.unsubscribe();
+        let wardTotalCount = markerCount;
+        if (data != null) {
+          wardTotalCount = wardTotalCount + Number(data);
+        }
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
+        this.db.object(dbPath).update({ marked: wardTotalCount });
+      }
+    );
+
+  }
+
+  moveMalviyanagarImages() {
+
+    let wardNo = "125-R1";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineObject = data[lineNo];
+              let lineKeyArray = Object.keys(lineObject);
+              for (let j = 0; j < lineKeyArray.length; j++) {
+                let markerNo = lineKeyArray[j];
+                if (lineObject[markerNo]["image"] != null) {
+                  let image = lineObject[markerNo]["image"];
+                  let imageId = image.split('.')[0];
+                  //if (imageId == markerNo) {
+                  console.log("lineNo : " + lineNo + " markerNo : " + markerNo + " image : " + imageId);
+                  const pathOld = "JaipurD2D/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + image;
+                  const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+                  ref.getDownloadURL()
+                    .then((url) => {
+                      var xhr = new XMLHttpRequest();
+                      xhr.responseType = 'blob';
+                      xhr.onload = (event) => {
+                        var blob = xhr.response;
+                        const pathNew = "Jaipur-Malviyanagar/MarkingSurveyImagesNew/" + wardNo + "/" + lineNo + "/" + image;
+                        const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+                        ref1.put(blob).then((promise) => {
+
+                        });
+                      };
+                      xhr.open('GET', url);
+
+                      xhr.send();
+                    })
+                    .catch((error) => {
+                    });
+                  //}
+                }
+              }
+            }
+          }
+        }
+      });
+  }
+
+
   exportCardNo() {
     let houseList = [];
     let dbPath = "Houses";
@@ -1211,6 +1403,7 @@ export class Cms1Component implements OnInit {
       }
     });
   }
+
 
 
 }
