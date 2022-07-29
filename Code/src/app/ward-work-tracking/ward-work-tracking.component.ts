@@ -1402,7 +1402,6 @@ export class WardWorkTrackingComponent {
       this.zoneList = [];
       this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
       this.zoneList[0]["zoneName"] = "--Select Zone--";
-      console.log(this.zoneList)
       resolve(true);
     });
   }
