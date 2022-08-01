@@ -146,6 +146,10 @@ export class EmployeeAttendanceComponent implements OnInit {
     let empId = $(this.ddlEmployee).val();
     let dateFrom = $(this.txtDateFrom).val();
     let dateTo = $(this.txtDateTo).val();
+    if (new Date(dateFrom.toString()) > new Date(dateTo.toString())) {
+      this.commonService.setAlertMessage("error", "Please select correct date range !!!");
+      return;
+    }
     $(this.divLoader).show();
     this.getAttendanceEmployee(empId, dateFrom, dateTo);
   }
