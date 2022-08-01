@@ -37,15 +37,9 @@
                                         <option value="0">
                                             All Cities
                                         </option>
-                                        <option value="Behror">Behror</option>
-                                        <option value="Jaipur">Jaipur</option>
-                                        <option value="Jaisalmer">Jaisalmer</option>
-                                        <option value="Kishangarh">Kishangarh</option>
-                                        <option value="Niwai">Niwai</option>
-                                        <option value="Salasar Balaji">Salasar Balaji</option>
-                                        <option value="Shahpura">Shahpura</option>
-                                        <option value="Sikar">Sikar</option>
-                                        <option value="Reengus">Reengus</option>
+                                        <option *ngFor="let dt of cityList" value={{dt.city}}>
+                                            {{dt.city}}
+                                        </option>
                                     </select>
 
                                     <select id="ddlCategory" class="filter-select filter-input" (change)="filterData()">
@@ -61,8 +55,14 @@
                                             Query Status
                                         </option>
                                         <option value="pending">Pending</option>
-                                        <option value="assigned">Assigned</option>
+                                        <option value="assigned" [hidden]="userType=='manager'">Assigned</option>
                                         <option value="resolved">Resolved</option>
+                                    </select>
+
+                                    <select id="ddlFilterManager" class="filter-select filter-input" (change)="filterData()" [hidden]="userType=='manager'">
+                                        <option *ngFor="let dt of managerFilterList" value={{dt.empId}}>
+                                            {{dt.name}}
+                                        </option>
                                     </select>
                                 </div>
 
@@ -88,8 +88,10 @@
                                                 Category</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Description</th>
-                                            <th class="text-left br-1" style="border:none!important;">
+                                            <th class="text-left br-1" style="border:none!important;" [hidden]="userType=='manager'">
                                                 Query Status</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of complaintList; let i=index">
@@ -104,8 +106,30 @@
                                                     {{data.category}}</td>
                                                 <td class="text-left br-1">
                                                     {{data.description}}</td>
+                                                <td class="text-left br-1" [hidden]="userType=='manager'">
+                                                    <div style="cursor: pointer; color:green ; " [hidden]="data.status!='resolved'" (click)="openModel(contentResolvedDetail,data.id,'adminResolved');">
+                                                        <i class="fa-solid fa-r"></i>esolved
+                                                    </div>
+                                                    <div style="color:red ; " [hidden]="data.status!='pending'">
+                                                        <i class="fa-solid fa-p"></i>ending
+                                                    </div>
+                                                    <div style="color:navy ; " [hidden]="data.status!='assigned'">
+                                                        <i class="fa-solid fa-a"></i>ssigned
+                                                    </div>
+
+                                                </td>
                                                 <td class="text-left br-1">
-                                                    {{data.status}}</td>
+                                                    <div style="color:navy ; cursor: pointer;" (click)="openModel(contentAssign,data.id,'assign');" [hidden]="userType=='manager' || data.status=='resolved'">
+                                                        <i class="fa-solid fa-user-pen"></i>
+                                                    </div>
+                                                    <div style="color:green ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status!='resolved' || userType!='manager'">
+                                                        <i class="fa-solid fa-r"></i>solved
+                                                    </div>
+                                                    <div style="color:red ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status=='resolved' || userType!='manager'">
+                                                        <i class="fa-solid fa-p"></i>ending
+                                                    </div>
+
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -123,3 +147,84 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #contentAssign>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign This Query</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="assignKey" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlManager" class="input-green">
+                        <option *ngFor="let dt of managerList" value={{dt.empId}}>
+                            {{dt.name}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div><br />
+                <br />
+                <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveAssignment();" style="height: 45px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #contentResolved>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Query Resolved Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="resolvedId" type="hidden" value="0" />
+
+                <label>Date</label>
+                <div class="wrap-input-effects" required>
+                    <input type="date" id="txtResolvedDate" class="input-green" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <label>Description</label>
+                <div class="wrap-input-effects" required>
+                    <textarea id="txtResolvedDescription" rows="8"></textarea>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" (click)="saveResolved();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #contentResolvedDetail>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Query Resolved Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label style="font-weight: bold;">Resolved Date </label><br />
+                <label id="detailDate"></label><br />
+                <br />
+                <label style="font-weight: bold;">Resolved Description </label><br />
+                <label id="detailDescription"></label>
+            </div>
+        </div>
+    </div>
+</ng-template>
