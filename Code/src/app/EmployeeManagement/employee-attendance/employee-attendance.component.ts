@@ -25,6 +25,15 @@ export class EmployeeAttendanceComponent implements OnInit {
   txtDate = "#txtDate";
   ddlTime = "#ddlTime";
   chkFieldExecutive = "chkFieldExecutive";
+  rdoByDate = "rdoByDate";
+  rdoByEmployee = "rdoByEmployee";
+  divByDate = "#divByDate";
+  divByEmployee = "#divByEmployee";
+  txtDateFrom = "#txtDateFrom";
+  txtDateTo = "#txtDateTo";
+  ddlEmployee = "#ddlEmployee";
+
+  public filterType: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -33,13 +42,30 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setDefault() {
+    this.filterType = "byDate";
+    (<HTMLInputElement>document.getElementById(this.rdoByDate)).checked = true;
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateFrom).val(this.selectedDate);
+    $(this.txtDateTo).val(this.selectedDate);
     this.getSelectedYearMonthName();
     this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     this.getEmployees();
+  }
+
+  setFilterType(filterVal: any,empId:any) {
+    $(this.ddlEmployee).val(empId);
+    this.selectedDate = this.toDayDate;
+    $(this.txtDate).val(this.selectedDate);
+    $(this.txtDateFrom).val(this.selectedDate);
+    $(this.txtDateTo).val(this.selectedDate);
+    this.attendanceList = [];
+    this.filterType = filterVal;
+    if (this.filterType == "byDate") {
+      this.getAttendance();
+    }
   }
 
   getSelectedYearMonthName() {
@@ -103,13 +129,63 @@ export class EmployeeAttendanceComponent implements OnInit {
             }
           }
           if (i == this.allEmployeeList.length - 1) {
-            setTimeout(() => {
-              this.filterData();
-              $(this.divLoader).hide();
-            }, 2000);
+            this.filterData();
+            $(this.divLoader).hide();
           }
         }
       );
+    }
+  }
+
+  getAttendanceByEmployee() {
+    this.attendanceList = [];
+    if ($(this.ddlEmployee).val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select employee !!!");
+      return;
+    }
+    let empId = $(this.ddlEmployee).val();
+    let dateFrom = $(this.txtDateFrom).val();
+    let dateTo = $(this.txtDateTo).val();
+    $(this.divLoader).show();
+    this.getAttendanceEmployee(empId, dateFrom, dateTo);
+  }
+
+  getAttendanceEmployee(empId: any, date: any, dateTo: any) {
+    if (new Date(date) <= new Date(dateTo)) {
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      let dbPath = "Attendance/" + empId + "/" + year + "/" + monthName + "/" + date;
+      let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
+        attendanceData => {
+          employeeAttendanceInstance.unsubscribe();
+          if (attendanceData != null) {
+            let detail = this.allEmployeeList.find(item => item.empId == empId);
+            if (detail != undefined) {
+              let inTime = "";
+              let outTime = "";
+              let inTimestemp = 0;
+              if (attendanceData["inDetails"] != null) {
+                if (attendanceData["inDetails"]["time"] != null) {
+                  inTime = attendanceData["inDetails"]["time"];
+                  inTimestemp = new Date(date + " " + inTime).getTime();
+                }
+              }
+              if (attendanceData["outDetails"] != null) {
+                if (attendanceData["outDetails"]["time"] != null) {
+                  outTime = attendanceData["outDetails"]["time"];
+                }
+              }
+              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, inTimestemp });
+            }
+            this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
+          }
+          else {
+            this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
+          }
+        });
+    }
+    else {
+      $(this.divLoader).hide();
     }
   }
 
@@ -148,12 +224,19 @@ export class EmployeeAttendanceComponent implements OnInit {
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
-      htmlString += "<td>";
-      htmlString += "Employee ID";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Name";
-      htmlString += "</td>";
+      if (this.filterType == "byDate") {
+        htmlString += "<td>";
+        htmlString += "Employee ID";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Name";
+        htmlString += "</td>";
+      }
+      else {
+        htmlString += "<td>";
+        htmlString += "Date";
+        htmlString += "</td>";
+      }
       htmlString += "<td>";
       htmlString += "In Time";
       htmlString += "</td>";
@@ -163,12 +246,15 @@ export class EmployeeAttendanceComponent implements OnInit {
       htmlString += "</tr>";
       for (let i = 0; i < this.attendanceList.length; i++) {
         htmlString += "<tr>";
-        htmlString += "<td>";
-        htmlString += this.attendanceList[i]["empCode"];
-        htmlString += "</td>";
-        htmlString += "<td>";
+        if (this.filterType == "byDate") {
+          htmlString += "<td>";
+          htmlString += this.attendanceList[i]["empCode"];
+          htmlString += "</td>";
+        }
+        htmlString += "<td t='s'>";
         htmlString += this.attendanceList[i]["name"];
         htmlString += "</td>";
+
         htmlString += "<td>";
         htmlString += this.attendanceList[i]["inTime"];
         htmlString += "</td>";
@@ -178,7 +264,13 @@ export class EmployeeAttendanceComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName = this.commonService.getFireStoreCity() + "-Attendance-" + this.selectedDate + ".xlsx";
+      let fileName = "Attendance-" + this.selectedDate + ".xlsx";
+      if (this.filterType == "byEmployee") {
+        let detail=this.allEmployeeList.find(item=>item.empId==$(this.ddlEmployee).val());
+        if(detail!=undefined){
+          fileName=detail.name+"-Attendance.xlsx";
+        }        
+      }
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

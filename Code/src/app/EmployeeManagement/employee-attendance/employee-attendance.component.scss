@@ -755,7 +755,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: calc(80vh);
+    height: calc(70vh);
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -1493,7 +1493,6 @@ input {
         margin-top: -5px;
     }
     table {
-       
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1510,42 +1509,34 @@ input {
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width:361px) and (max-width: 576px) {
-    .date-box{
+    .date-box {
         max-width: 60%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 40% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 60% !important;
         text-align: center !important;
-      
     }
-    
-    .export-main{
+    .export-main {
         max-width: 40% !important;
         margin-top: 7px !important;
     }
-    .export-span{
-       float: unset !important;
+    .export-span {
+        float: unset !important;
     }
-    .custom-header{
+    .custom-header {
         height: unset !important;
     }
-    .check-fieldExecutive{
+    .check-fieldExecutive {
         padding-top: 37px;
     }
-    
     .navbar-expand-lg {
         display: block;
     }
-   
     .main-content {
         margin-top: -35px!important;
     }
@@ -1623,13 +1614,10 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-        
     }
-    .main-headers{
-       
+    .main-headers {
         margin-top: 0px;
         font-size: 15px;
-      
     }
     .mob-10 {
         margin-top: 10px!important;
@@ -1649,7 +1637,6 @@ input {
         margin-top: -5px;
     }
     table {
-      
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1662,13 +1649,10 @@ input {
         background: transparent;
         /* Optional: just make scrollbar invisible */
     }
-
 }
-
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) and (max-width: 991.98px) {
-   
     .pad-mob-b-10 {
         margin-bottom: 10px!important;
     }
@@ -1725,7 +1709,6 @@ input {
     .ipad-pl-40 {
         padding-left: 40px!important
     }
-
 }
 
 // Large devices (desktops, 992px and up)
@@ -1929,501 +1912,426 @@ input {
     font-size: 17px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-.Employees-heading{
+.Employees-heading {
     text-align: center;
 }
-.card-outer{
+
+.card-outer {
     padding-left: 0px;
-    padding-right:7px;
-}
-.custom-header-outer{
-    margin-top:-6px;  
-    height: 88vh!important
-}
-.export-main{
-    padding-right:30px!important;
-    font-weight: bold;
-    font-size:16px;
-}
-.export-span{
-    float: right; 
-    text-align: center; 
-    font-size: 10px; 
-    margin-left: 3px !important;
-  
-}
-.export-icon{
-    cursor:pointer; 
-    color:green;  
-    font-size: 24px;
-}
-.table-heading1{
-    border:none!important;
-}
-.table-heading2{
-    border:none!important;
-}
-.table-heading3{
-    border:none!important;
-}
-.card-main{
-    padding-left: 7px;
-    padding-right:0px;
-}
-.card-body-outer{
-    margin-top:-6px; 
-    height: 88vh!important;
-    overflow: hidden; 
-    display: none;
-}
-.card-body2{
-    padding: 3px 11px 15px 0px; 
-    font-size: 10px!important;
-}
-.form-group-outer{
-    padding-top: 20vh; 
-    display: none;
-}
-.date-box{
-    min-width: 34%;
-    padding-right: 0px;
-    padding-left: 0px  ;
-   
-}
-.all-box{
-    padding-left: 0px ;
-    min-width: 22% ;
-}
-.field-box{
-    padding-left: 0 ;
-    max-width: 21% ;
-    padding-right: 0px ;
+    padding-right: 7px;
 }
 
-.export-main{
+.custom-header-outer {
+    margin-top: -6px;
+    height: 88vh!important
+}
+
+.export-main {
+    padding-right: 30px!important;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.export-span {
+    float: right;
+    text-align: center;
+    font-size: 10px;
+    margin-left: 3px !important;
+}
+
+.export-icon {
+    cursor: pointer;
+    color: green;
+    font-size: 24px;
+}
+
+.table-heading1 {
+    border: none!important;
+}
+
+.table-heading2 {
+    border: none!important;
+}
+
+.table-heading3 {
+    border: none!important;
+}
+
+.card-main {
+    padding-left: 7px;
+    padding-right: 0px;
+}
+
+.card-body-outer {
+    margin-top: -6px;
+    height: 88vh!important;
+    overflow: hidden;
+    display: none;
+}
+
+.card-body2 {
+    padding: 3px 11px 15px 0px;
+    font-size: 10px!important;
+}
+
+.form-group-outer {
+    padding-top: 20vh;
+    display: none;
+}
+
+.date-box {
+    min-width: 34%;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.all-box {
+    padding-left: 0px;
+    min-width: 22%;
+}
+
+.field-box {
+    padding-left: 0;
+    max-width: 21%;
+    padding-right: 0px;
+}
+
+.export-main {
     max-width: 22%;
     margin-top: 7px;
 }
 
-
-
-
-
-
 @media (min-width:361px) and (max-width: 576px) {
-    .date-box{
+    .date-box {
         max-width: 60%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 39% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 60% !important;
         text-align: center !important;
-      
     }
-    
-    .export-main{
+    .export-main {
         max-width: 40% !important;
         margin-top: 7px !important;
     }
-    .export-span{
-       float: unset !important;
+    .export-span {
+        float: unset !important;
     }
-    .custom-header{
+    .custom-header {
         height: unset !important;
     }
-    .check-fieldExecutive{
+    .check-fieldExecutive {
         padding-top: 37px;
     }
-    
-   
     .main-content {
         margin-top: -35px!important;
     }
-
 }
 
+@media (min-width: 350px) and (max-width: 375px) {
+    .table-one {
+        height: calc(70vh);
+    }
+}
 
-@media (min-width: 350px) and (max-width: 375px){
-    .table-one{
+@media (min-width: 385px) and (max-width: 395px) {
+    .table-one {
         height: calc(70vh);
-       
     }
 }
-@media (min-width: 385px) and (max-width: 395px){
-    .table-one{
+
+@media (min-width: 400px) and (max-width: 420px) {
+    .table-one {
         height: calc(70vh);
-       
     }
 }
-@media (min-width: 400px) and (max-width: 420px){
-    .table-one{
-        height: calc(70vh);
-       
-    }
-}
-@media (min-width:425px) and (max-width: 540px){
-    .date-box{
+
+@media (min-width:425px) and (max-width: 540px) {
+    .date-box {
         max-width: 50%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 50% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 50% !important;
         text-align: center !important;
-      
     }
-    .export-main{
+    .export-main {
         max-width: 50% !important;
         margin-top: 10px !important;
         padding-right: 0px !important;
     }
-    .filter-input{
-        width:80% !important;
+    .filter-input {
+        width: 80% !important;
     }
-
 }
 
-
-@media (max-width:361px){
-    .main-headers{
+@media (max-width:361px) {
+    .main-headers {
         text-align: center;
         margin-top: 5px;
         font-size: 12px;
         letter-spacing: 1px;
     }
-    .date-box{
+    .date-box {
         max-width: 100%;
         text-align: left !important;
-      
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 100% !important;
-      
     }
-    .field-box{
-       
+    .field-box {
         min-width: 60% !important;
         padding-left: 10px !important;
-       
-     
-      
     }
-    
-    .export-main{
+    .export-main {
         max-width: 40% !important;
         margin-top: 15px !important;
     }
-    .filter-input{
-      
+    .filter-input {
         width: 95%;
         border: 1px solid lightgray !important;
-       margin-left: 6px;
+        margin-left: 6px;
     }
-    .header{
+    .header {
         display: block !important
     }
-    .main-content{
+    .main-content {
         margin-top: -35px !important;
         padding-bottom: 0px !important
     }
-    .export-span-iner{
+    .export-span-iner {
         display: none !important;
     }
-    .text-input{
-       width: 58% !important;
+    .text-input {
+        width: 58% !important;
     }
-    .custom-header{
+    .custom-header {
         height: unset !important;
     }
-    .fieldExecutive{
+    .fieldExecutive {
         padding-top: 23px !important;
     }
-    
 }
 
-@media (min-width:539px) and (max-width: 576px){
-    .date-box{
+@media (min-width:539px) and (max-width: 576px) {
+    .date-box {
         max-width: 50%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 50% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 50% !important;
         text-align: center !important;
-      
     }
-    .filter-input{
-        width:80% !important;
+    .filter-input {
+        width: 80% !important;
     }
-    
-    .export-main{
+    .export-main {
         max-width: 50% !important;
         margin-top: 10px !important;
         padding-right: 0px !important;
     }
-    .export-span{
-       float: unset !important;
+    .export-span {
+        float: unset !important;
     }
-    .table-one{
+    .table-one {
         height: calc(70vh);
-       
     }
 }
 
-
 @media (min-width: 768px) and (max-width: 991.98px) {
-    .date-box{
+    .date-box {
         min-width: 60%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         min-width: 39% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 60% !important;
         text-align: center !important;
-      
     }
-    
-    .export-main{
+    .export-main {
         min-width: 40% !important;
         margin-top: 7px !important;
     }
-    .export-span{
-       float: unset !important;
+    .export-span {
+        float: unset !important;
     }
-    .check-fieldExecutive{
+    .check-fieldExecutive {
         padding-top: 37px;
     }
-    .card-outer{
+    .card-outer {
         min-width: 330px !important
     }
-    .main-headers{
-      
-        font-size: 18px; 
+    .main-headers {
+        font-size: 18px;
         margin-top: 0;
     }
+}
 
-}
-@media (min-width: 765px) and (max-width: 770px){
-    .table-one{
+@media (min-width: 765px) and (max-width: 770px) {
+    .table-one {
         height: calc(70vh);
-       
-    }
-}
-@media (min-width: 700px) and (max-width:910px){
-    .table-one{
-        height: calc(70vh);
-       
     }
 }
 
-@media (min-width: 911px) and (max-width:1300px){
-    .table-one{
+@media (min-width: 700px) and (max-width:910px) {
+    .table-one {
         height: calc(70vh);
-       
     }
 }
-@media (min-width: 992px) and (max-width: 1400px){
-    .date-box{
+
+@media (min-width: 911px) and (max-width:1300px) {
+    .table-one {
+        height: calc(70vh);
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1400px) {
+    .date-box {
         min-width: 55%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         min-width: 40% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 55% !important;
         text-align: center !important;
-
-      
     }
-    .export-span{
-       
+    .export-span {
         text-align: center;
         font-size: 10px;
         float: unset;
     }
-    
-    .export-main{
+    .export-main {
         min-width: 40% !important;
         margin-top: 15px !important;
     }
-    .check-fieldExecutive{
+    .check-fieldExecutive {
         padding-top: 43px;
     }
-    .main-content{
-       
+    .main-content {
         padding-bottom: 0px !important
     }
-    .main-headers{
-       
+    .main-headers {
         font-size: 18px;
     }
-    
 }
-@media (min-width: 1020px) and (max-width: 1025px){
-    .table-one{
+
+@media (min-width: 1020px) and (max-width: 1025px) {
+    .table-one {
         height: calc(70vh) !important;
-       
     }
 }
 
-@media (min-width: 1270px) and (max-width:1300px){
-    .table-one{
+@media (min-width: 1270px) and (max-width:1300px) {
+    .table-one {
         height: calc(70vh);
-       
     }
-    
-}
-@media (min-width: 696px) and (max-width: 766px){
-    .date-box{
-        max-width: 0% !important;
-        min-width: 30%;
-    }
-    .all-box{
-        max-width: 27% !important;
-    }
-    
-}
-@media (min-width: 766px) and (max-width: 767px){
-    .date-box{
-        max-width: 0% !important;
-        min-width: 30%;
-    }
-    .all-box{
-        max-width: 27% !important;
-    }
-    
 }
 
-@media (min-width: 620px) and (max-width: 696px){
-    .date-box{
+@media (min-width: 696px) and (max-width: 766px) {
+    .date-box {
         max-width: 0% !important;
-        min-width: 202px !important;
+        min-width: 30%;
     }
-    .all-box{
-        max-width: 22% !important;
-     
+    .all-box {
+        max-width: 27% !important;
     }
-    
 }
-@media (min-width: 603px) and (max-width: 620px){
-    .date-box{
+
+@media (min-width: 766px) and (max-width: 767px) {
+    .date-box {
+        max-width: 0% !important;
+        min-width: 30%;
+    }
+    .all-box {
+        max-width: 27% !important;
+    }
+}
+
+@media (min-width: 620px) and (max-width: 696px) {
+    .date-box {
         max-width: 0% !important;
         min-width: 202px !important;
     }
-    .all-box{
+    .all-box {
+        max-width: 22% !important;
+    }
+}
+
+@media (min-width: 603px) and (max-width: 620px) {
+    .date-box {
+        max-width: 0% !important;
+        min-width: 202px !important;
+    }
+    .all-box {
         max-width: 125px !important;
     }
-    .field-box{
+    .field-box {
         max-width: 126px !important;
     }
-    .export-main{
+    .export-main {
         max-width: 125px;
         margin-top: 7px;
     }
-    
 }
-@media (min-width: 576px) and (max-width: 603px){
-    .date-box{
+
+@media (min-width: 576px) and (max-width: 603px) {
+    .date-box {
         max-width: 50%;
         text-align: center !important;
-       
-       
     }
-    .all-box{
-      
+    .all-box {
         max-width: 50% !important;
         text-align: center !important;
     }
-    .field-box{
-       
+    .field-box {
         min-width: 50% !important;
         text-align: center !important;
-      
     }
-    .filter-input{
-        width:80% !important;
+    .filter-input {
+        width: 80% !important;
     }
-    
-    .export-main{
+    .export-main {
         max-width: 50% !important;
         margin-top: 10px !important;
         padding-right: 0px !important;
     }
-    .export-span{
-       float: unset !important;
-    }
-    
-}
-@media (min-width: 1400px){
-    .date-box{
-        min-width: 37%;
-       
-    }
-    .all-box{
-       min-width: 18%;
-    }
-    .field-box{
-      
-        max-width: 24%;
-      
-    }
-    .export-main{
-        max-width: 18%;
-        
-    }
-    .col-md-3{
-        padding-right: 4px !important
+    .export-span {
+        float: unset !important;
     }
 }
 
+@media (min-width: 1400px) {
+    .date-box {
+        min-width: 37%;
+    }
+    .all-box {
+        min-width: 18%;
+    }
+    .field-box {
+        max-width: 24%;
+    }
+    .export-main {
+        max-width: 18%;
+    }
+    .col-md-3 {
+        padding-right: 4px !important
+    }
+}
