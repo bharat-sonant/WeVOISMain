@@ -38,6 +38,8 @@ export class WardMarkingSummaryComponent implements OnInit {
   houseLineNo = "#houseLineNo";
   houseIndex = "#houseIndex";
 
+  public totalTypeCount:any;
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -598,6 +600,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   getZoneHouseTypeList(content: any) {
+    this.totalTypeCount=0;
     this.zoneHouseTypeList = [];
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -620,13 +623,17 @@ export class WardMarkingSummaryComponent implements OnInit {
         else {
           let keyArray = Object.keys(markerData);
           for (let i = 0; i < keyArray.length; i++) {
+            let houseTypeCount = 0;
             let lineNo = keyArray[i];
             let lineData = markerData[lineNo];
+            
             let markerKeyArray = Object.keys(lineData);
             for (let j = 0; j < markerKeyArray.length; j++) {
               let markerNo = markerKeyArray[j];
               if (lineData[markerNo]["houseType"] != null) {
+                houseTypeCount++;
                 let houseTypeId = lineData[markerNo]["houseType"];
+                this.totalTypeCount++;
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;
@@ -645,6 +652,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                 }
               }
             }
+           // console.log( " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]+ " = " + houseTypeCount);
           }
         }
       }
@@ -709,7 +717,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     if (this.wardProgressList.length > 0) {
       $('#divLoaderMain').show();
       let zoneNo = this.wardProgressList[1]["wardNo"];
-      this.getZoneHouseType(zoneNo, 0);
+      this.getZoneHouseType(zoneNo, 1);
     }
   }
 
@@ -719,7 +727,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
-
+      console.log(zoneNo)
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
         markerData => {
@@ -735,19 +743,13 @@ export class WardMarkingSummaryComponent implements OnInit {
           }
           else {
             let keyArray = Object.keys(markerData);
-
             for (let i = 0; i < keyArray.length; i++) {
               let lineNo = keyArray[i];
               let lineData = markerData[lineNo];
-
-              console.log("Zone No : " + zoneNo + " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]);
-              let houseTypeCount = 0;
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
-
                 if (lineData[markerNo]["houseType"] != null) {
-                  houseTypeCount++;
                   let houseTypeId = lineData[markerNo]["houseType"];
                   let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                   if (detail != undefined) {
@@ -765,10 +767,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                       }
                     }
                   }
-
                 }
               }
-              console.log("Entity Type : " + houseTypeCount);
             }
             if (this.wardProgressList[index] != null) {
               let zoneNoNew = this.wardProgressList[index]["wardNo"];
