@@ -14,13 +14,28 @@
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
+                        <div class="col-md-9 text-left date-box" style="padding-left:20px;">
+                            <input type="radio" id="rdoByDate" [checked]="filterType=='byDate'" (change)="setFilterType('byDate','0')"> <label>&nbsp;Filter By Date</label> &nbsp;&nbsp;&nbsp; <input type="radio" id="rdoByEmployee" [checked]="filterType=='byEmployee'"
+                                (change)="setFilterType('byEmployee','0')">
+                            <label>&nbsp;Filter By
+                                Employee</label>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <span class="export-span">
+                                <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
+                                <span class="export-span-iner">Export to Excel</span>
+                            </span>
+                        </div>
+                        <hr />
+                    </div>
+                    <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'">
                         <div class="col-md-4 text-left date-box">
                             <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                 << </button>
                             <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value,'current')">
                             <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
-                                >>
-                              </button>
+                                        >>
+                                    </button>
                         </div>
 
                         <div class="col-md-2 text-left all-box">
@@ -39,14 +54,22 @@
                         <div class="col-md-3 text-left check-fieldExecutive field-box">
                             <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"> &nbsp;Field Executive
                         </div>
-                        <div class="col-md-3 text-center export-main">
-                            <span class="export-span">
-                                <i class="fa-solid fa-file-export export-icon"
-                                
-                                    (click)="exportToExcel();"></i><br />
-                          <span class="export-span-iner">Export to Excel</span>
-                            </span>
+                    </div>
+                    <div id="divByEmployee" class="row" [hidden]="filterType=='byDate'">
+                        <div class="col-md-12">
+                            <select id="ddlEmployee" class="filter-select filter-input" style="width: 150px;">
+                                <option value="0">
+                                    --Select--
+                                </option>
+                                <option value="{{dt.empId}}" *ngFor="let dt of allEmployeeList;">
+                                    {{dt.name}} ({{dt.empCode}})
+                                </option>
+                            </select>
+                            <input id="txtDateFrom" class="filter-select text-input" type="date" style="width: 100px; margin-left: 10px;">
+                            <input id="txtDateTo" class="filter-select text-input" type="date" style="width: 100px; margin-left: 10px;">
+                            <button class="btn btn-success" style="margin-top:10px ;" (click)="getAttendanceByEmployee();">Search</button>
                         </div>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -56,8 +79,10 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="text-left br-1 table-heading1">
+                                            <th class="text-left br-1 table-heading1" [hidden]="filterType=='byEmployee'">
                                                 Name</th>
+                                            <th class="text-left br-1 table-heading1" [hidden]="filterType=='byDate'">
+                                                Date</th>
                                             <th class="text-left br-1 table-heading1">
                                                 In Time</th>
                                             <th class="text-left br-1 table-heading1">
@@ -66,8 +91,11 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" [hidden]="filterType=='byEmployee'" style="cursor: pointer;" (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
+                                                </td>
+                                                <td class="text-left br-1" [hidden]="filterType=='byDate'">
+                                                    {{data.name}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.inTime}}

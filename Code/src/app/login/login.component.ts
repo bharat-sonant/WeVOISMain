@@ -119,6 +119,12 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("isAdmin", "0");
       }
+      if(userDetails.isManager!=null){
+        localStorage.setItem("isManager",userDetails.isManager);
+      }
+      else{
+        localStorage.setItem("isManager", "0");
+      }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);

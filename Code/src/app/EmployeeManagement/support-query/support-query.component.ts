@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-support-query',
@@ -9,30 +10,75 @@ import { HttpClient } from "@angular/common/http";
 })
 export class SupportQueryComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
   toDayDate: any;
+  complaintsJSON: any;
   divLoader = "#divLoader";
   allComplaintList: any[];
   complaintList: any[];
+  cityList: any[] = [];
   yearList: any[];
   selectedYear: any;
-  managerList:any;
+  managerList: any[] = [];
+  managerFilterList: any[] = [];
   ddlYear = "#ddlYear";
   ddlCity = "#ddlCity";
   ddlCategory = "#ddlCategory";
-  ddlStatus="#ddlStatus";
+  ddlStatus = "#ddlStatus";
+  ddlFilterManager = "#ddlFilterManager";
+  assignKey = "#assignKey";
+  ddlManager = "#ddlManager";
+  resolvedId = "#resolvedId";
+  txtResolvedDate = "#txtResolvedDate";
+  txtResolvedDescription = "#txtResolvedDescription";
+  detailDate = "#detailDate";
+  detailDescription = "#detailDescription";
+  public userType: any;
   fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
 
   ngOnInit() {
+    this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.setDefault();
+  }
+
+  setDefault() {
     this.toDayDate = this.commonService.setTodayDate();
+    if (localStorage.getItem("isAdmin") == "1") {
+      this.userType = "admin";
+    }
+    else if (localStorage.getItem("isManager") == "1") {
+      this.userType = "manager";
+    }
+    this.getCityList();
     this.getManagers();
     this.getYear();
   }
 
-  getManagers(){
-    let employeeList=JSON.parse(localStorage.getItem("webPortalUserList"));
-    this.managerList=employeeList.filter(item=>item.isManager==1);
-    console.log(this.managerList);
+  getCityList() {
+    const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let cityInstance = this.httpService.get(path).subscribe(data => {
+      cityInstance.unsubscribe();
+      let list=JSON.parse(JSON.stringify(data));
+      for(let i=0;i<list.length;i++){
+        if(list[i]["cityName"]!="Test"){
+          this.cityList.push({city:list[i]["cityName"]});
+        }
+      }
+      this.cityList=this.commonService.transformNumeric(this.cityList,"city");
+    });
+  }
+
+  getManagers() {
+    this.managerList.push({ empId: "0", name: "--Select--" });
+    let employeeList = JSON.parse(localStorage.getItem("webPortalUserList"));
+    let list = employeeList.filter(item => item.isManager == 1);
+    if (list.length > 0) {
+      for (let i = 0; i < list.length; i++) {
+        this.managerList.push({ empId: list[i]["userId"], name: list[i]["name"] });
+      }
+      this.managerFilterList = this.managerList;
+      this.managerFilterList[0]["name"] = "All Manager";
+    }
   }
 
   getYear() {
@@ -56,6 +102,7 @@ export class SupportQueryComponent implements OnInit {
     let complaintInstance = this.httpService.get(path).subscribe(data => {
       complaintInstance.unsubscribe();
       if (data != null) {
+        this.complaintsJSON = data;
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length - 1; i++) {
@@ -64,8 +111,20 @@ export class SupportQueryComponent implements OnInit {
             if (data[id]["empId"] != "") {
               name = name + " (" + data[id]["empId"] + ")";
             }
+            let assignedTo = "0";
+            if (data[id]["assignedTo"] != null) {
+              assignedTo = data[id]["assignedTo"];
+            }
+            let resolvedDate = "";
+            if (data[id]["resolvedDate"] != null) {
+              resolvedDate = data[id]["resolvedDate"];
+            }
+            let resolvedDescription = "";
+            if (data[id]["resolvedDescription"] != null) {
+              resolvedDescription = data[id]["resolvedDescription"];
+            }
             let timeStamps = new Date(data[id]["date"]).getTime();
-            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps,status:data[id]["status"] });
+            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps, status: data[id]["status"], assignedTo: assignedTo, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription });
             this.allComplaintList = this.allComplaintList.sort((a, b) =>
               b.timeStamps > a.timeStamps ? 1 : -1
             );
@@ -81,6 +140,9 @@ export class SupportQueryComponent implements OnInit {
 
   filterData() {
     this.complaintList = this.allComplaintList;
+    if (this.userType == "manager") {
+      this.complaintList = this.complaintList.filter(item => item.assignedTo == localStorage.getItem("userID"));
+    }
     if ($(this.ddlCity).val() != "0") {
       this.complaintList = this.allComplaintList.filter(item => item.city == $(this.ddlCity).val());
     }
@@ -88,7 +150,14 @@ export class SupportQueryComponent implements OnInit {
       this.complaintList = this.complaintList.filter(item => item.category == $(this.ddlCategory).val());
     }
     if ($(this.ddlStatus).val() != "0") {
-      this.complaintList = this.complaintList.filter(item => item.status == $(this.ddlStatus).val());
+      let status = $(this.ddlStatus).val();
+      if (this.userType == "manager" && status == "pending") {
+        status = "assigned";
+      }
+      this.complaintList = this.complaintList.filter(item => item.status == status);
+    }
+    if ($(this.ddlFilterManager).val() != "0") {
+      this.complaintList = this.complaintList.filter(item => item.assignedTo == $(this.ddlFilterManager).val());
     }
   }
 
@@ -96,4 +165,109 @@ export class SupportQueryComponent implements OnInit {
     this.selectedYear = filterVal;
     this.getComplaintList();
   }
+
+  openModel(content: any, id: any, type: any) {
+    this.clearPopUp();
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 250;
+    let width = 400;
+    if (type != "assign") {
+      height = 430;
+    }
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    setTimeout(() => {
+      let detail = this.complaintList.find((item) => item.id == id);
+      if (detail != undefined) {
+        if (type == "assign") {
+          $(this.assignKey).val(id);
+          if (detail.assignedTo != undefined) {
+            $(this.ddlManager).val(detail.assignedTo);
+          }
+        }
+        else if (type == "adminResolved") {
+          $(this.detailDate).html(detail.resolvedDate);
+          $(this.detailDescription).html(detail.resolvedDescription);
+        }
+        else {
+          $(this.resolvedId).val(id);
+          $(this.txtResolvedDate).val(detail.resolvedDate);
+          $(this.txtResolvedDescription).val(detail.resolvedDescription);
+        }
+      }
+    }, 200);
+  }
+
+  clearPopUp() {
+    $(this.ddlManager).val("0");
+    $(this.assignKey).val("0");
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  saveAssignment() {
+    let id = $(this.assignKey).val();
+    let assignedTo = $(this.ddlManager).val();
+    if (assignedTo == "0") {
+      this.commonService.setAlertMessage("error", "Please select manager !!!");
+      return;
+    }
+    let detail = this.allComplaintList.find(item => item.id == id);
+    if (detail != undefined) {
+      detail.assignedTo = assignedTo;
+      detail.status = "assigned";
+    }
+    detail = this.complaintList.find(item => item.id == id);
+    if (detail != undefined) {
+      detail.assignedTo = assignedTo;
+      detail.status = "assigned";
+    }
+    this.complaintsJSON[id.toString()]["assignedTo"] = assignedTo;
+    this.complaintsJSON[id.toString()]["status"] = "assigned";
+    let path = "/Common/Complaints/";
+    let fileName = this.selectedYear + ".json";
+    this.commonService.saveCommonJsonFile(this.complaintsJSON, fileName, path);
+    this.commonService.setAlertMessage("success", "Query assigned successfully !!!");
+    this.closeModel();
+  }
+
+  saveResolved() {
+    let id = $(this.resolvedId).val();
+    let resolvedDate = $(this.txtResolvedDate).val();
+    let resolvedDescription = $(this.txtResolvedDescription).val();
+    if (resolvedDate == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    if (resolvedDescription == "") {
+      this.commonService.setAlertMessage("error", "Please enter description !!!");
+      return;
+    }
+    let detail = this.allComplaintList.find(item => item.id == id);
+    if (detail != undefined) {
+      detail.resolvedDate = resolvedDate;
+      detail.resolvedDescription = resolvedDescription;
+      detail.status = "resolved";
+    }
+    detail = this.complaintList.find(item => item.id == id);
+    if (detail != undefined) {
+      detail.resolvedDate = resolvedDate;
+      detail.resolvedDescription = resolvedDescription;
+      detail.status = "resolved";
+    }
+    this.complaintsJSON[id.toString()]["resolvedDate"] = resolvedDate;
+    this.complaintsJSON[id.toString()]["resolvedDescription"] = resolvedDescription;
+    this.complaintsJSON[id.toString()]["status"] = "resolved";
+    let path = "/Common/Complaints/";
+    let fileName = this.selectedYear + ".json";
+    this.commonService.saveCommonJsonFile(this.complaintsJSON, fileName, path);
+    this.commonService.setAlertMessage("success", "Data saved successfully !!!");
+    this.closeModel();
+  }
+
 }
