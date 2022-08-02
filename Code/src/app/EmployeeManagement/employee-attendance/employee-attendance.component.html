@@ -29,35 +29,32 @@
                         <hr />
                     </div>
                     <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'">
-                        <div class="col-md-4 text-left date-box">
+                        <div class="col-md-12 text-left date-box">
                             <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                 << </button>
                             <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value,'current')">
                             <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
                                         >>
                                     </button>
-                        </div>
 
-                        <div class="col-md-2 text-left all-box">
-                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData()">
-                                <option value="0">
-                                    All
-                                </option>
-                                <option value="08:15">
-                                    After 8:15
-                                </option>
-                                <option value="08:30">
-                                    After 8:30
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 text-left check-fieldExecutive field-box">
-                            <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"> &nbsp;Field Executive
+                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData()" style="width:130px ;">
+                                        <option value="0">
+                                            All
+                                        </option>
+                                        <option value="08:10">
+                                            After 8:10
+                                        </option>
+                                        <option value="08:30">
+                                            After 8:30
+                                        </option>
+                                    </select>
+
+                            <input type="checkbox" id="chkFieldExecutive" (change)="filterData()" style="margin-left: 10px;"> &nbsp;Field Executive
                         </div>
                     </div>
                     <div id="divByEmployee" class="row" [hidden]="filterType=='byDate'">
                         <div class="col-md-12">
-                            <select id="ddlEmployee" class="filter-select filter-input" style="width: 150px;">
+                            <select id="ddlEmployee" class="filter-select filter-input" style="width: 200px;">
                                 <option value="0">
                                     --Select--
                                 </option>
@@ -90,7 +87,7 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" class="{{data.cssClass}}">
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'" style="cursor: pointer;" (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>

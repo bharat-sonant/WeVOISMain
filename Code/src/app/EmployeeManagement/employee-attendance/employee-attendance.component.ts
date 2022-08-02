@@ -55,7 +55,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.getEmployees();
   }
 
-  setFilterType(filterVal: any,empId:any) {
+  setFilterType(filterVal: any, empId: any) {
     $(this.ddlEmployee).val(empId);
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
@@ -114,10 +114,15 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inTime = "";
               let outTime = "";
               let inTimestemp = 0;
+              let cssClass="";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
+                  let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
+                  if (inTimestemp > afterTimestemp) {
+                    cssClass = "afterTime";
+                  }
                 }
               }
               if (attendanceData["outDetails"] != null) {
@@ -125,7 +130,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   outTime = attendanceData["outDetails"]["time"];
                 }
               }
-              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, inTimestemp });
+              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, inTimestemp,cssClass:cssClass });
             }
           }
           if (i == this.allEmployeeList.length - 1) {
@@ -168,10 +173,15 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inTime = "";
               let outTime = "";
               let inTimestemp = 0;
+              let cssClass = "";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inTimestemp = new Date(date + " " + inTime).getTime();
+                  let afterTimestemp = new Date(date + " 08:10").getTime();
+                  if (inTimestemp > afterTimestemp) {
+                    cssClass = "afterTime";
+                  }
                 }
               }
               if (attendanceData["outDetails"] != null) {
@@ -179,7 +189,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   outTime = attendanceData["outDetails"]["time"];
                 }
               }
-              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, inTimestemp });
+              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, inTimestemp,cssClass:cssClass });
             }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
@@ -270,10 +280,10 @@ export class EmployeeAttendanceComponent implements OnInit {
       htmlString += "</table>";
       let fileName = "Attendance-" + this.selectedDate + ".xlsx";
       if (this.filterType == "byEmployee") {
-        let detail=this.allEmployeeList.find(item=>item.empId==$(this.ddlEmployee).val());
-        if(detail!=undefined){
-          fileName=detail.name+"-Attendance.xlsx";
-        }        
+        let detail = this.allEmployeeList.find(item => item.empId == $(this.ddlEmployee).val());
+        if (detail != undefined) {
+          fileName = detail.name + "-Attendance.xlsx";
+        }
       }
       this.commonService.exportExcel(htmlString, fileName);
     }
