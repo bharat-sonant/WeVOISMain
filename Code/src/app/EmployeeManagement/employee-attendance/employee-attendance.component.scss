@@ -179,7 +179,7 @@ button:focus {
 }
 
 .afterTime {
-    background-color: #ff9191;
+    background-color: #f2b7b7;
 }
 
 .card-header {
@@ -1937,10 +1937,10 @@ input {
 }
 
 .export-span {
-    float: right;
-    text-align: center;
+    position: absolute;
+    z-index: 999;
+    right: 25px;
     font-size: 10px;
-    margin-left: 3px !important;
 }
 
 .export-icon {
