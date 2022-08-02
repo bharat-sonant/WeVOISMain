@@ -178,6 +178,10 @@ button:focus {
     background-color: #f1f1f1;
 }
 
+.afterTime {
+    background-color: #ff9191;
+}
+
 .card-header {
     background: #fff !important;
     padding: 15px 0px 15px 15px !important;
@@ -2332,6 +2336,6 @@ input {
         max-width: 18%;
     }
     .col-md-3 {
-        padding-right: 4px !important
+        padding-right: 20px !important
     }
 }
