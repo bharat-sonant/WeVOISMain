@@ -652,7 +652,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                 }
               }
             }
-           // console.log( " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]+ " = " + houseTypeCount);
+            //console.log( " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]+ " = " + houseTypeCount);
           }
         }
       }
