@@ -1,0 +1,113 @@
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers">
+            Vehicle Breakdown Report
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0 main-row-iner">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card custom-header-outer">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left align-iner">
+                            <div class="row align-iner2">
+                                <div class="col-md-12 text-left p-r ml-20 caret-select caret-select-div">
+                                    <select class="caret-select select-main" id="ddlYear" (change)="getSelectedData()" [(ngModel)]="selectedYear">
+                                        <option value="0">Year</option>
+                                        <option value={{yer.year}} *ngFor="let yer of yearList"
+                                            ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                                    </select>
+                                    <select class="caret-select select-main2" id="ddlMonth" (change)="getSelectedData()">
+                                        <option value="0">Month</option>
+                                        <option value="01">January</option>
+                                        <option value="02">February</option>
+                                        <option value="03">March</option>
+                                        <option value="04">April</option>
+                                        <option value="05">May</option>
+                                        <option value="06">June</option>
+                                        <option value="07">July</option>
+                                        <option value="08">August</option>
+                                        <option value="09">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                    <select class="caret-select select-main2" id="ddlStatus" (change)="getFilterData()">
+                                        <option value="0">All</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Resolved">Resolved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 blanck-box">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divHoldList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1 table-heading">Date</th>
+                                            <th class="text-left br-1 table-heading">
+                                                Vehicle</th>
+                                            <th class="text-left br-1 table-heading ward-table-heading">
+                                                Can Run in Ward</th>
+                                            <th class="text-left br-1 table-heading">
+                                                Description</th>
+                                            <th class="text-left br-1 table-heading">
+                                                Date (R)</th>
+                                            <th class="text-left br-1 table-heading">
+                                                Can Run in Ward (R)</th>
+                                            <th class="text-left br-1 table-heading">
+                                                Description (R)</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of breakdownList; let i=index">
+                                                <td class="td-1 table-data">
+                                                    {{data.date}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.vehicle}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.canRunInWard}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.description}}</td>
+                                                <td class="text-center br-1">
+                                                    {{data.resolvedDate}}
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    {{data.canRunInWardResolved}}
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    {{data.resolvedDescription}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessageHold" class="col-md-12 pr-1 text-center form-group-outer" [hidden]="breakdownList.length>0">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

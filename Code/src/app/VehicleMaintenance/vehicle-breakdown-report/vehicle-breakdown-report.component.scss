@@ -102,10 +102,6 @@
     font-size: 12px;
 }
 
-.check-fieldExecutive {
-    padding-top: 25px;
-}
-
 .filter-select {
     margin-top: 10px;
     margin-right: 2px !important;
@@ -151,13 +147,6 @@
     border-bottom-left-radius: 4px;
 }
 
-.edit-icon {
-    cursor: pointer !important;
-    font-size: 14px;
-    color: royalblue;
-    float: right;
-}
-
 select:focus {
     outline: none !important;
 }
@@ -176,10 +165,6 @@ button:focus {
 
 .card .card-header:not([data-background-color]) {
     background-color: #f1f1f1;
-}
-
-.afterTime {
-    background-color: #f2b7b7;
 }
 
 .card-header {
@@ -407,18 +392,6 @@ tbody {
     margin-bottom: 10px;
 }
 
-.input-remark {
-    font-size: 12px;
-    line-height: 1.5;
-    color: #666666;
-    display: block;
-    width: 100%;
-    background: #fff;
-    border-radius: 2px;
-    padding: 0 12px 0 12px;
-    border: 1px solid lightgray;
-}
-
 .input-green {
     font-size: 12px;
     line-height: 1.5;
@@ -428,7 +401,7 @@ tbody {
     background: #fff;
     height: 40px;
     border-radius: 2px;
-    padding: 0 12px 0 45px;
+    padding: 0 12px 0 12px;
     border: 1px solid lightgray;
 }
 
@@ -550,11 +523,8 @@ textarea:focus-visible {
 
 .submit-btn {
     background: #0ba118!important;
-}
-
-.cancel-btn {
-    background: red!important;
-    margin-top: 0px;
+    width: 100%;
+    height: 45px;
 }
 
 .custom-header {
@@ -642,7 +612,7 @@ textarea:focus-visible {
 }
 
 .btn-success {
-    margin-left: 10px;
+    margin-left: 0px;
     margin-right: 10px;
     margin-top: 0px;
     background-color: #0ba118;
@@ -759,7 +729,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: calc(70vh);
+    height: 79vh;
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -1280,59 +1250,17 @@ input {
     font-weight: bold;
 }
 
-.btn-hvr:hover {
-    background: #726f6f!important;
-}
-
-.arrow-btn {
-    background-color: #888;
-    border-color: #888;
-    font-size: 12px;
-    width: 35px;
-    margin-right: 8px;
-    padding: 8px 8px;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 4px !important;
-}
-
-.arrow-btn2 {
-    background-color: #888;
-    border-color: #888;
-    font-size: 12px;
-    padding: 8px 8px;
-    color: #fff;
-    width: 35px;
-    margin-left: 8px!important;
-    margin-right: 10px!important;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 .filter-input {
     font-size: 12px;
     margin-top: 8px;
     border-radius: 2px;
-    width: 100%;
+    width: 22%!important;
     border: 1px solid lightgray!important;
+    margin-left: 10px;
     height: 38px;
 }
 
 .filter-input:hover {
-    border: 1px solid #0ba118!important;
-}
-
-.text-input {
-    font-size: 12px;
-    margin-top: 8px;
-    border-radius: 2px;
-    width: 100px;
-    border: 1px solid lightgray!important;
-    height: 38px;
-}
-
-.text-input:hover {
     border: 1px solid #0ba118!important;
 }
 
@@ -1393,9 +1321,6 @@ input {
 @media (max-width: 320px) {
     .navbar-expand-lg {
         display: block;
-    }
-    .header {
-        display: none;
     }
     .main-content {
         margin-top: 10px!important;
@@ -1463,7 +1388,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid lightgray !important;
+        border: 1px solid transparent!important;
     }
     .mob-40 {
         padding-left: 40px;
@@ -1497,6 +1422,7 @@ input {
         margin-top: -5px;
     }
     table {
+        display: block;
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1512,37 +1438,12 @@ input {
 }
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width:361px) and (max-width: 576px) {
-    .date-box {
-        max-width: 60%;
-        text-align: center !important;
-    }
-    .all-box {
-        max-width: 40% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 60% !important;
-        text-align: center !important;
-    }
-    .export-main {
-        max-width: 40% !important;
-        margin-top: 7px !important;
-    }
-    .export-span {
-        float: unset !important;
-    }
-    .custom-header {
-        height: unset !important;
-    }
-    .check-fieldExecutive {
-        padding-top: 37px;
-    }
+@media (min-width:321px) and (max-width: 576px) {
     .navbar-expand-lg {
         display: block;
     }
     .main-content {
-        margin-top: -35px!important;
+        margin-top: 10px!important;
     }
     .navbar a {
         color: #FFFFFF;
@@ -1550,7 +1451,6 @@ input {
         font-size: 12px;
         margin-left: 20px;
         margin-top: -5px;
-        display: none
     }
     .navbar .navbar-toggler {
         float: right;
@@ -1580,6 +1480,7 @@ input {
     }
     .caret-select {
         width: 100%!important;
+        margin-left: 0 !important;
     }
     .pr-25 {
         padding-right: 25px;
@@ -1608,7 +1509,7 @@ input {
     /****For custom header****/
     .filter-input {
         margin-top: 10px;
-        border: 1px solid lightgray !important;
+        border: 1px solid transparent!important;
     }
     .mob-40 {
         padding-left: 40px;
@@ -1618,10 +1519,7 @@ input {
     }
     .main-content {
         background: #f1f1f1!important;
-    }
-    .main-headers {
-        margin-top: 0px;
-        font-size: 15px;
+        padding-bottom: 100px!important;
     }
     .mob-10 {
         margin-top: 10px!important;
@@ -1641,6 +1539,7 @@ input {
         margin-top: -5px;
     }
     table {
+        display: block;
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1653,10 +1552,16 @@ input {
         background: transparent;
         /* Optional: just make scrollbar invisible */
     }
+    .align-iner2 {
+        width: 100% !important;
+    }
 }
 
 // Medium devices (tablets, 768px and up)
-@media (min-width: 768px) and (max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 1024px) {
+    .main-row-iner {
+        min-width: 445px !important;
+    }
     .pad-mob-b-10 {
         margin-bottom: 10px!important;
     }
@@ -1677,12 +1582,11 @@ input {
         margin-top: -5px !important;
         margin-right: 10px !important;
         border-radius: 5px;
-        padding: 10px;
+        padding: 12px;
         width: 97%;
         border: 1px solid lightgray !important;
         font-size: 10px;
         width: 120px!important;
-        height: 35px;
     }
     .float-first {
         width: 55px;
@@ -1695,7 +1599,7 @@ input {
     .main-headers {
         text-align: center;
         margin-top: 6px;
-        font-size: 10px;
+        font-size: 18px;
     }
     .main-content {
         background: #f1f1f1!important;
@@ -1713,10 +1617,16 @@ input {
     .ipad-pl-40 {
         padding-left: 40px!important
     }
+    .caret-select-div {
+        margin-left: 0px !important;
+    }
+    .align {
+        width: 100% !important;
+    }
 }
 
 // Large devices (desktops, 992px and up)
-@media (min-width: 992px) and (max-width: 1199.98px) {
+@media (min-width: 1025px) and (max-width: 1400px) {
     .date-input {
         height: 36px;
         width: 128px;
@@ -1751,6 +1661,18 @@ input {
     }
     .pad-pl-20 {
         padding-left: 20px!important;
+    }
+    .align {
+        width: 100% !important;
+    }
+    .caret-select-div {
+        margin-left: 0px !important;
+    }
+    .main-row-iner {
+        min-width: 485px !important;
+    }
+    .main-headers {
+        font-size: 18px !important;
     }
 }
 
@@ -1897,445 +1819,158 @@ input {
     white-space: nowrap!important;
 }
 
-.main-label {
-    padding: 7px 10px;
-    align-items: center;
-    display: flex;
+.user-button {
+    padding: 7px 10px 10px 0px !important;
+    background-color: rgb(38, 167, 6);
+    border-radius: 4px;
+    color: #ffffff;
+    border: 1px solid rgb(87, 86, 86);
+    cursor: cell;
+    margin-top: 0px;
+    height: 33px!important;
+    font-size: 12px;
 }
 
-.main-span {
-    float: left;
-    margin-right: 15px;
-    text-align: right;
-    padding: 0 10px;
-    border-right: solid 1px;
+.user-button:hover {
+    background-color: #16c03b;
 }
 
-.main-span span {
-    font-weight: bolder;
-    font-size: 17px;
+.user-button .icon {
+    background: #fff;
+    padding: 8px 10px 8px 10px !important;
+    transition: 0.5s;
+    cursor: cell;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 
-.Employees-heading {
-    text-align: center;
-}
-
-.card-outer {
-    padding-left: 0px;
-    padding-right: 7px;
+.main-row-iner {
+    padding-right: 10px;
 }
 
 .custom-header-outer {
     margin-top: -6px;
-    height: 88vh!important
+    height: 87vh!important
 }
 
-.export-main {
-    padding-right: 30px!important;
-    font-weight: bold;
-    font-size: 16px;
+.align-iner {
+    padding-right: 0px!important;
 }
 
-.export-span {
-    position: absolute;
-    z-index: 999;
-    right: 25px;
-    font-size: 10px;
+.caret-select-main {
+    margin-left: 0px!important;
 }
 
-.export-icon {
+.select-main {
+    width: 150px;
+}
+
+.select-main2 {
+    width: 150px;
+}
+
+.add-btn {
+    cursor: cell;
+    float: right;
+    margin-right: 20px;
+}
+
+.blanck-box {
+    padding-left: 0px!important;
+}
+
+.table-heading {
+    border: none!important;
+}
+
+.table-data {
+    width: 12%;
+    border-right: 1px solid #dee2e6
+}
+
+.edit-icon {
     cursor: pointer;
-    color: green;
-    font-size: 24px;
-}
-
-.table-heading1 {
-    border: none!important;
-}
-
-.table-heading2 {
-    border: none!important;
-}
-
-.table-heading3 {
-    border: none!important;
-}
-
-.card-main {
-    padding-left: 7px;
-    padding-right: 0px;
-}
-
-.card-body-outer {
-    margin-top: -6px;
-    height: 88vh!important;
-    overflow: hidden;
-    display: none;
-}
-
-.card-body2 {
-    padding: 3px 11px 15px 0px;
-    font-size: 10px!important;
 }
 
 .form-group-outer {
     padding-top: 20vh;
-    display: none;
 }
 
-.date-box {
-    min-width: 34%;
-    padding-right: 0px;
-    padding-left: 0px;
+.ward-table-heading {
+    min-width: 150px !important;
 }
 
-.all-box {
-    padding-left: 0px;
-    min-width: 22%;
-}
-
-.field-box {
-    padding-left: 0;
-    max-width: 21%;
-    padding-right: 0px;
-}
-
-.export-main {
-    max-width: 22%;
-    margin-top: 7px;
-}
-
-@media (min-width:361px) and (max-width: 576px) {
-    .date-box {
-        max-width: 60%;
-        text-align: center !important;
+@media (min-width:420px) and (max-width:766px) {
+    .align-iner2 {
+        width: 100% !important;
     }
-    .all-box {
-        max-width: 39% !important;
-        text-align: center !important;
+    .caret-select-div {
+        margin-left: 0px !important;
     }
-    .field-box {
-        min-width: 60% !important;
-        text-align: center !important;
+    .select-main {
+        width: 30% !important;
     }
-    .export-main {
-        max-width: 40% !important;
-        margin-top: 7px !important;
-    }
-    .export-span {
-        float: unset !important;
+    .select-main2 {
+        width: 30% !important;
+        margin-left: 10px !important;
     }
     .custom-header {
         height: unset !important;
-    }
-    .check-fieldExecutive {
-        padding-top: 37px;
-    }
-    .main-content {
-        margin-top: -35px!important;
-    }
-}
-
-@media (min-width: 350px) and (max-width: 375px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 385px) and (max-width: 395px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 400px) and (max-width: 420px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width:425px) and (max-width: 540px) {
-    .date-box {
-        max-width: 50%;
-        text-align: center !important;
-    }
-    .all-box {
-        max-width: 50% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 50% !important;
-        text-align: center !important;
-    }
-    .export-main {
-        max-width: 50% !important;
-        margin-top: 10px !important;
-        padding-right: 0px !important;
-    }
-    .filter-input {
-        width: 80% !important;
-    }
-}
-
-@media (max-width:361px) {
-    .main-headers {
-        text-align: center;
-        margin-top: 5px;
-        font-size: 12px;
-        letter-spacing: 1px;
-    }
-    .date-box {
-        max-width: 100%;
-        text-align: left !important;
-    }
-    .all-box {
-        max-width: 100% !important;
-    }
-    .field-box {
-        min-width: 60% !important;
-        padding-left: 10px !important;
-    }
-    .export-main {
-        max-width: 40% !important;
-        margin-top: 15px !important;
-    }
-    .filter-input {
-        width: 95%;
-        border: 1px solid lightgray !important;
-        margin-left: 6px;
-    }
-    .header {
-        display: block !important
     }
     .main-content {
         margin-top: -35px !important;
-        padding-bottom: 0px !important
     }
-    .export-span-iner {
-        display: none !important;
+}
+
+@media (min-width:321px) and (max-width:419px) {
+    .select-main {
+        max-width: 48% !important;
     }
-    .text-input {
-        width: 58% !important;
+    .select-main2 {
+        width: 48% !important;
+        margin-left: 10px !important;
+    }
+    .add-btn {
+        cursor: cell;
+        float: right;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
+    .custom-header {
+        height: unset;
+    }
+    .main-content {
+        margin-top: -35px !important;
+    }
+    .main-headers {
+        font-size: 12px !important;
+    }
+}
+
+@media (min-width:270px) and (max-width:320px) {
+    .caret-select {
+        width: 100% !important;
+        margin-left: 0px !important;
     }
     .custom-header {
         height: unset !important;
     }
-    .fieldExecutive {
-        padding-top: 23px !important;
+    .align-iner2 {
+        width: 100% !important;
     }
-}
-
-@media (min-width:539px) and (max-width: 576px) {
-    .date-box {
-        max-width: 50%;
-        text-align: center !important;
+    .select-main2 {
+        margin: 8px 0px !important;
     }
-    .all-box {
-        max-width: 50% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 50% !important;
-        text-align: center !important;
-    }
-    .filter-input {
-        width: 80% !important;
-    }
-    .export-main {
-        max-width: 50% !important;
-        margin-top: 10px !important;
-        padding-right: 0px !important;
-    }
-    .export-span {
-        float: unset !important;
-    }
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) {
-    .date-box {
-        min-width: 60%;
-        text-align: center !important;
-    }
-    .all-box {
-        min-width: 39% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 60% !important;
-        text-align: center !important;
-    }
-    .export-main {
-        min-width: 40% !important;
-        margin-top: 7px !important;
-    }
-    .export-span {
-        float: unset !important;
-    }
-    .check-fieldExecutive {
-        padding-top: 37px;
-    }
-    .card-outer {
-        min-width: 330px !important
+    .add-btn {
+        cursor: cell;
+        float: right;
+        margin-right: 5px;
+        margin-top: 10px;
     }
     .main-headers {
-        font-size: 18px;
-        margin-top: 0;
-    }
-}
-
-@media (min-width: 765px) and (max-width: 770px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 700px) and (max-width:910px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 911px) and (max-width:1300px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1400px) {
-    .date-box {
-        min-width: 55%;
-        text-align: center !important;
-    }
-    .all-box {
-        min-width: 40% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 55% !important;
-        text-align: center !important;
-    }
-    .export-span {
-        text-align: center;
-        font-size: 10px;
-        float: unset;
-    }
-    .export-main {
-        min-width: 40% !important;
-        margin-top: 15px !important;
-    }
-    .check-fieldExecutive {
-        padding-top: 43px;
+        font-size: 16px !important;
     }
     .main-content {
-        padding-bottom: 0px !important
-    }
-    .main-headers {
-        font-size: 18px;
-    }
-}
-
-@media (min-width: 1020px) and (max-width: 1025px) {
-    .table-one {
-        height: calc(70vh) !important;
-    }
-}
-
-@media (min-width: 1270px) and (max-width:1300px) {
-    .table-one {
-        height: calc(70vh);
-    }
-}
-
-@media (min-width: 696px) and (max-width: 766px) {
-    .date-box {
-        max-width: 0% !important;
-        min-width: 30%;
-    }
-    .all-box {
-        max-width: 27% !important;
-    }
-}
-
-@media (min-width: 766px) and (max-width: 767px) {
-    .date-box {
-        max-width: 0% !important;
-        min-width: 30%;
-    }
-    .all-box {
-        max-width: 27% !important;
-    }
-}
-
-@media (min-width: 620px) and (max-width: 696px) {
-    .date-box {
-        max-width: 0% !important;
-        min-width: 202px !important;
-    }
-    .all-box {
-        max-width: 22% !important;
-    }
-}
-
-@media (min-width: 603px) and (max-width: 620px) {
-    .date-box {
-        max-width: 0% !important;
-        min-width: 202px !important;
-    }
-    .all-box {
-        max-width: 125px !important;
-    }
-    .field-box {
-        max-width: 126px !important;
-    }
-    .export-main {
-        max-width: 125px;
-        margin-top: 7px;
-    }
-}
-
-@media (min-width: 576px) and (max-width: 603px) {
-    .date-box {
-        max-width: 50%;
-        text-align: center !important;
-    }
-    .all-box {
-        max-width: 50% !important;
-        text-align: center !important;
-    }
-    .field-box {
-        min-width: 50% !important;
-        text-align: center !important;
-    }
-    .filter-input {
-        width: 80% !important;
-    }
-    .export-main {
-        max-width: 50% !important;
-        margin-top: 10px !important;
-        padding-right: 0px !important;
-    }
-    .export-span {
-        float: unset !important;
-    }
-}
-
-@media (min-width: 1400px) {
-    .date-box {
-        min-width: 37%;
-    }
-    .all-box {
-        min-width: 18%;
-    }
-    .field-box {
-        max-width: 24%;
-    }
-    .export-main {
-        max-width: 18%;
-    }
-    .col-md-3 {
-        padding-right: 20px !important
+        margin-top: -35px !important;
     }
 }

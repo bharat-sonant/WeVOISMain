@@ -15,6 +15,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   cityName: any;
   divLoader = "#divLoader";
   allEmployeeList: any[] = [];
+  filterEmployeeList:any[]=[];
   employeeList: any[];
   attendanceList: any[];
   fireStorePath: any;
@@ -25,6 +26,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   txtDate = "#txtDate";
   ddlTime = "#ddlTime";
   chkFieldExecutive = "chkFieldExecutive";
+  chkIncludeInactive="chkIncludeInactive";
   rdoByDate = "rdoByDate";
   rdoByEmployee = "rdoByEmployee";
   divByDate = "#divByDate";
@@ -56,13 +58,14 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setFilterType(filterVal: any, empId: any) {
+    console.log(empId);
+    this.filterType = filterVal;
     $(this.ddlEmployee).val(empId);
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
     $(this.txtDateFrom).val(this.selectedDate);
     $(this.txtDateTo).val(this.selectedDate);
     this.attendanceList = [];
-    this.filterType = filterVal;
     if (this.filterType == "byDate") {
       this.getAttendance();
     }
@@ -91,10 +94,23 @@ export class EmployeeAttendanceComponent implements OnInit {
           }
         }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+        this.getFilterEmployee();
         this.getAttendance();
       }
     }, error => {
     });
+  }
+
+  getFilterEmployee(){
+    this.filterEmployeeList=[];
+    if((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true){
+      this.filterEmployeeList=this.allEmployeeList;
+    }
+    else{
+      this.filterEmployeeList=this.allEmployeeList.filter(item=>item.status=="1");
+    }
+    $(this.ddlEmployee).val("0");
+    this.attendanceList=[];
   }
 
   getAttendance() {
@@ -114,14 +130,14 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inTime = "";
               let outTime = "";
               let inTimestemp = 0;
-              let cssClass="";
+              let cssClass="text-left br-1";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
                   let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
                   if (inTimestemp > afterTimestemp) {
-                    cssClass = "afterTime";
+                    cssClass = "text-left br-1 afterTime";
                   }
                 }
               }
@@ -173,14 +189,14 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inTime = "";
               let outTime = "";
               let inTimestemp = 0;
-              let cssClass = "";
+              let cssClass = "text-left br-1";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inTimestemp = new Date(date + " " + inTime).getTime();
                   let afterTimestemp = new Date(date + " 08:10").getTime();
                   if (inTimestemp > afterTimestemp) {
-                    cssClass = "afterTime";
+                    cssClass = "text-left br-1 afterTime";
                   }
                 }
               }

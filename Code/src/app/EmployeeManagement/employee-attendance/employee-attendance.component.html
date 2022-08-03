@@ -14,16 +14,20 @@
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-9 text-left date-box" style="padding-left:20px;">
+
+                        <div class="col-md-12 text-left date-box" style="padding-left:20px;height: 50px;">
                             <input type="radio" id="rdoByDate" [checked]="filterType=='byDate'" (change)="setFilterType('byDate','0')"> <label>&nbsp;Filter By Date</label> &nbsp;&nbsp;&nbsp; <input type="radio" id="rdoByEmployee" [checked]="filterType=='byEmployee'"
                                 (change)="setFilterType('byEmployee','0')">
                             <label>&nbsp;Filter By
                                 Employee</label>
-                        </div>
-                        <div class="col-md-3 text-center">
+                            <span [hidden]="filterType=='byDate'">
+                                <input id="chkIncludeInactive" type="checkbox" (change)="getFilterEmployee()"
+                                    style="margin-left: 20px;">
+                                <label>&nbsp; Include In-Active Employee</label></span>
+
                             <span class="export-span">
-                                <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
-                                <span class="export-span-iner">Export to Excel</span>
+                                    <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
+                                    <span class="export-span-iner">Export</span>
                             </span>
                         </div>
                         <hr />
@@ -58,7 +62,7 @@
                                 <option value="0">
                                     --Select--
                                 </option>
-                                <option value="{{dt.empId}}" *ngFor="let dt of allEmployeeList;">
+                                <option value="{{dt.empId}}" *ngFor="let dt of filterEmployeeList;">
                                     {{dt.name}} ({{dt.empCode}})
                                 </option>
                             </select>
@@ -87,16 +91,15 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" class="{{data.cssClass}}">
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'" style="cursor: pointer;" (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'">
                                                     {{data.name}}
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" class="{{data.cssClass}}">
                                                     {{data.inTime}}
-
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.outTime}}

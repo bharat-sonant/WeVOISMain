@@ -104,6 +104,7 @@ import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/d
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
+import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -334,6 +335,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/support-query', component: SupportQueryComponent },
     { path: 'sikar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'sikar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'sikar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-greater
@@ -553,6 +555,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-greater/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-greater/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-greater/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
     
 
     //reengus
@@ -776,6 +779,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/support-query', component: SupportQueryComponent },
     { path: 'reengus/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'reengus/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'reengus/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
 
@@ -998,6 +1002,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/support-query', component: SupportQueryComponent },
     { path: 'shahpura/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'shahpura/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'shahpura/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1218,6 +1223,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/support-query', component: SupportQueryComponent },
     { path: 'test/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'test/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'test/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1438,6 +1444,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-office/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-office/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-office/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     
 
@@ -1660,6 +1667,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/support-query', component: SupportQueryComponent },
     { path: 'kishangarh/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'kishangarh/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'kishangarh/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
 
@@ -1883,6 +1891,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/support-query', component: SupportQueryComponent },
     { path: 'niwai/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'niwai/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'niwai/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
 
@@ -2105,6 +2114,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/support-query', component: SupportQueryComponent },
     { path: 'jaisalmer/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaisalmer/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaisalmer/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2325,6 +2335,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/support-query', component: SupportQueryComponent },
     { path: 'salasar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'salasar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'salasar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
 
@@ -2547,6 +2558,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/support-query', component: SupportQueryComponent },
     { path: 'behror/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'behror/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'behror/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur
@@ -2767,6 +2779,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-jhotwara
@@ -2987,6 +3000,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-jhotwara/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-jhotwara/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-jhotwara/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-jagatpura
@@ -3207,6 +3221,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-jagatpura/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-jagatpura/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-jagatpura/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-malviyanagar
@@ -3427,6 +3442,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-malviyanagar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-malviyanagar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-malviyanagar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-mansarovar
@@ -3647,6 +3663,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-mansarovar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-mansarovar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-mansarovar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-murlipura
@@ -3867,6 +3884,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-murlipura/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-murlipura/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-murlipura/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-sanganer
@@ -4087,6 +4105,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-sanganer/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-sanganer/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-sanganer/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
     //jaipur-vidhyadhar
@@ -4307,6 +4326,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/support-query', component: SupportQueryComponent },
     { path: 'jaipur-vidhyadhar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'jaipur-vidhyadhar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'jaipur-vidhyadhar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
 
 
@@ -4528,6 +4548,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/support-query', component: SupportQueryComponent },
     { path: 'bhiwadi/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'bhiwadi/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'bhiwadi/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     
 
@@ -4749,6 +4770,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/support-query', component: SupportQueryComponent },
     { path: 'chhapar/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'chhapar/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'chhapar/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 
     
 
@@ -4970,4 +4992,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/support-query', component: SupportQueryComponent },
     { path: 'churu/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: 'churu/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'churu/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
 ]; 

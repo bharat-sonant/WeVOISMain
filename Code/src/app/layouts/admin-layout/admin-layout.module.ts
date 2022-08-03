@@ -111,6 +111,7 @@ import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/d
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
+import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 
 @NgModule({
   imports: [
@@ -226,7 +227,8 @@ import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-brea
     DustbinsMonitoringComponent,
     SupportQueryComponent,
     MonthlyFuelReportComponent,
-    VehicleBreakdownComponent
+    VehicleBreakdownComponent,
+    VehicleBreakdownReportComponent
   ]
 })
 
