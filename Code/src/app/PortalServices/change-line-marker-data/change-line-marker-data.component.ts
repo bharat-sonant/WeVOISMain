@@ -69,7 +69,6 @@ export class ChangeLineMarkerDataComponent implements OnInit {
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {
             let lastKey = 0;
-            let markerCount = 1;
             dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/lastMarkerKey";
             let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
               lastMarkerData => {
@@ -77,26 +76,14 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                 if (lastMarkerData != null) {
                   lastKey = Number(lastMarkerData);
                 }
+                let markerNoList = [];
                 for (let i = 0; i < keyArray.length; i++) {
                   let markerNo = keyArray[i];
                   if (markerData[markerNo]["houseType"] != null) {
-                    markerCount = markerCount + 1;
-                    lastKey = lastKey + 1;
-                    let data = markerData[markerNo];
-                    data["image"] = lastKey + ".jpg";
-                    dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                    this.db.object(dbPath).update(data);
-
-                    let oldImageName = markerNo + ".jpg";
-                    let newImageName = lastKey + ".jpg";
-                    this.moveImages(oldImageName, newImageName, lineFrom, lineTo, zoneFrom, zoneTo);
+                    markerNoList.push({ markerNo: markerNo });
                   }
                 }
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
-                this.db.object(dbPath).update({ lastMarkerKey: lastKey })
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom;
-                this.db.object(dbPath).remove();
-                this.updateCounts(zoneFrom, zoneTo, "markerMove");
+                this.moveData(0, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
               });
           }
         }
@@ -105,6 +92,50 @@ export class ChangeLineMarkerDataComponent implements OnInit {
         }
       }
     );
+  }
+
+  moveData(index: any, markerNoList: any, lastKey: any, markerData: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any) {
+    if (index < markerNoList.length) {
+      lastKey = lastKey + 1;
+      let markerNo = markerNoList[index]["markerNo"];
+      let data = markerData[markerNo];
+      data["image"] = lastKey + ".jpg";
+      let oldImageName = markerNo + ".jpg";
+      let newImageName = lastKey + ".jpg";
+      const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
+      const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+      ref.getDownloadURL()
+        .then((url) => {
+          var xhr = new XMLHttpRequest();
+          xhr.responseType = 'blob';
+          xhr.onload = (event) => {
+            var blob = xhr.response;
+            const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
+            const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+            ref1.put(blob).then((promise) => {
+              // ref.delete();
+              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+              this.db.object(dbPath).update(data);
+
+              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+              this.db.object(dbPath).remove();
+              index = index + 1;
+              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
+            });
+          };
+          xhr.open('GET', url);
+          xhr.send();
+        })
+        .catch((error) => {
+          index = index + 1;
+          this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
+        });
+    }
+    else {
+     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
+      this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+      this.updateCounts(zoneFrom, zoneTo, "markerMove");
+    }
   }
 
   updateCounts(zoneNo: any, zoneTo: any, type: any) {
@@ -150,7 +181,6 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
               this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
             }
-
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
           }
@@ -173,54 +203,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
             this.commonService.setAlertMessage("success", "Marker counts updated !!!")
             $(this.divLoader).hide();
           }
-          else {
-            if (zoneNo != zoneTo) {
-              this.updateCounts(zoneTo, zoneTo, "markerMove");
-            }
-            else {
-              this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
-              $(this.divLoader).hide();
-            }
-          }
         }
-      });
-  }
-
-
-  moveImages(imageName: any, newImageName: any, lineNo: any, newLineNo: any, zoneNo: any, newZoneNo: any) {
-    const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneNo + "/" + lineNo + "/" + imageName;
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
-    ref.getDownloadURL()
-      .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-
-        // This can be downloaded directly:
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'blob';
-        // xhr.setRequestHeader("Access-Control-Allow-Origin","*");
-        // xhr.setRequestHeader('Connection', 'close');
-
-
-
-        xhr.onload = (event) => {
-          var blob = xhr.response;
-          const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + newZoneNo + "/" + newLineNo + "/" + newImageName;
-          const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
-          ref1.put(blob).then((promise) => {
-            // ref.delete();
-
-          });
-        };
-        xhr.open('GET', url);
-
-        xhr.send();
-        // Or inserted into an <img> element
-        // var img = document.getElementById('myimg');
-        // img.setAttribute('src', url);
-      })
-      .catch((error) => {
-        // console.log(error);
-        // Handle any errors
       });
   }
 

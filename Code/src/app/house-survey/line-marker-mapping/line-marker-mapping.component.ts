@@ -1,4 +1,4 @@
-import { AngularFireObject, AngularFireList } from 'angularfire2/database';
+import { AngularFireList } from 'angularfire2/database';
 /// <reference types="@types/googlemaps" />
 
 import { Component, ViewChild } from "@angular/core";
@@ -11,7 +11,6 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
-import { ObjectUnsubscribedError } from 'rxjs';
 
 @Component({
   selector: 'app-line-marker-mapping',
@@ -53,6 +52,7 @@ export class LineMarkerMappingComponent {
   oldMarkerList: any[];
   newMarkerList: any[];
   plansRef: AngularFireList<any>;
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -96,9 +96,9 @@ export class LineMarkerMappingComponent {
   }
 
   loadData() {
-    $('#divLoader').show();
+    $(this.divLoader).show();
     setTimeout(() => {
-      $('#divLoader').hide();
+      $(this.divLoader).hide();
     }, 2000);
     this.clearAllOnMap();
     this.getAllLinesFromJson();
@@ -257,7 +257,6 @@ export class LineMarkerMappingComponent {
     });
     this.houseMarker.push({ markerNo: index, marker: marker });
     marker.addListener("click", (e) => {
-      console.log("aaa")
       let lineData = this.selectedCardDetails.find((item) => item.markerNo == index);
       if (lineData == undefined) {
         this.selectedCardDetails.push({
@@ -275,7 +274,6 @@ export class LineMarkerMappingComponent {
     });
   }
 
-
   setMarkerAsSelected(marker: any, isSelected: boolean) {
     if (isSelected) {
       marker.icon.url = "../assets/img/green-home.png";
@@ -286,9 +284,7 @@ export class LineMarkerMappingComponent {
     marker.setMap(this.map);
   }
 
-
   getLineData() {
-
     this.cardDetails.selectedMarkerCount = 0;
     this.cardDetails.totalMarkerOnLine = 0;
     // previousLine
@@ -321,7 +317,6 @@ export class LineMarkerMappingComponent {
     this.getMarkedHouses(this.lineNo);
   }
 
-
   getCurrentLineNo(event: any) {
     if (event.key == "Enter") {
       if ($('#txtLineNo').val() != "") {
@@ -341,7 +336,6 @@ export class LineMarkerMappingComponent {
   }
 
   nextPrevious(type: any) {
-
     if (isNaN(Number($('#txtLineNo').val()))) {
       this.commonService.setAlertMessage("error", "Please enter numeric value as line no !!!");
       return;
@@ -354,9 +348,9 @@ export class LineMarkerMappingComponent {
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
-    $('#divLoader').show();
+    $(this.divLoader).show();
     setTimeout(() => {
-      $('#divLoader').hide();
+      $(this.divLoader).hide();
     }, 1000);
     let currentLine = 1;
     let lineNo = this.previousLine;
@@ -382,7 +376,6 @@ export class LineMarkerMappingComponent {
   }
 
   moveToNewLine() {
-
     if ($("#txtNewLine").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter line no.");
       return;
@@ -403,248 +396,125 @@ export class LineMarkerMappingComponent {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
-    $('#divLoader').show();
-    setTimeout(() => {
-      $('#divLoader').hide();
-      this.commonService.setAlertMessage(
-        "success",
-        "Marker moved to Line " + $("#txtNewLine").val() + " successfully"
-      );
-      $("#txtNewLine").val("");
-      this.getLineData();
-    }, 3000);
+    $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/lastMarkerKey";
     let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastMarkerData => {
         lastMarkerInstance.unsubscribe();
         let lastKey = 0;
-        let surveyedCount = 0;
-        let revisitCount = 0;
-        let rfIdNotFound = 0;
         let newLineNo = $("#txtNewLine").val();
         if (lastMarkerData != null) {
           lastKey = Number(lastMarkerData);
         }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + $("#txtNewLine").val();
-        this.db.object(dbPath).update({ lastMarkerKey: lastKey + this.selectedCardDetails.length });
-        for (let i = 0; i < this.selectedCardDetails.length; i++) {
-          lastKey = lastKey + 1;
-          let markerNo = this.selectedCardDetails[i]["markerNo"];
-          let data = this.selectedCardDetails[i]["data"];
-          data["image"] = lastKey + ".jpg";
-          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/" + lastKey;
-          this.db.object(dbPath).update(data);
-
-          if (data["cardNumber"] != null) {
-            surveyedCount = surveyedCount + 1;
-          }
-          else if (data["revisitKey"] != null) {
-            revisitCount = revisitCount + 1;
-          }
-          else if (data["rfidNotFoundKey"] != null) {
-            rfIdNotFound = rfIdNotFound + 1;
-          }
-
-          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
-          this.db.object(dbPath).remove();
-          let oldImageName = markerNo + ".jpg";
-          let newImageName = lastKey + ".jpg";
-          this.moveImages(oldImageName, newImageName, newLineNo);
-          if (i == this.selectedCardDetails.length - 1) {
-            this.updateCounts(rfIdNotFound, newLineNo, revisitCount, surveyedCount);
-          }
-        }
+        this.moveData(0, lastKey, this.selectedZone, this.lineNo, this.selectedZone, newLineNo);
       }
     );
   }
 
-  updateCounts(rfIdNotFound: any, newLineNo: any, revisitCount: any, surveyedCount: any) {
-    //rfid not found
+  moveData(index: any, lastKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any) {
+    if (index < this.selectedCardDetails.length) {
+      lastKey = lastKey + 1;
+      let markerNo = this.selectedCardDetails[index]["markerNo"];
+      let data = this.selectedCardDetails[index]["data"];
+      data["image"] = lastKey + ".jpg";
+      let oldImageName = markerNo + ".jpg";
+      let newImageName = lastKey + ".jpg";
+      const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
+      const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+      ref.getDownloadURL()
+        .then((url) => {
+          var xhr = new XMLHttpRequest();
+          xhr.responseType = 'blob';
+          xhr.onload = (event) => {
+            var blob = xhr.response;
+            const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
+            const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+            ref1.put(blob).then((promise) => {
+              // ref.delete();
+              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+              this.db.object(dbPath).update(data);
 
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
-    let marksRfIdInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        marksRfIdInstance.unsubscribe();
-        if (marksCount != null) {
-          marksCount = Number(marksCount) - rfIdNotFound;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-        this.db.object(dbPath).update({ lineRfidNotFoundCount: marksCount });
-      }
-    );
+              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+              this.db.object(dbPath).remove();
+              index = index + 1;
+              this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo);
+            });
+          };
+          xhr.open('GET', url);
+          xhr.send();
+        })
+        .catch((error) => {
+          index = index + 1;
+          this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo);
+        });
+    }
+    else {
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
+      this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+      this.updateCounts(zoneFrom);
+    }
+  }
 
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/lineRfidNotFoundCount";
-    let newMarksRfIdInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        newMarksRfIdInstance.unsubscribe();
-        let counts = rfIdNotFound;
-        if (marksCount != null) {
-          counts = Number(marksCount) + counts;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ lineRfidNotFoundCount: counts });
-      }
-    );
-
-    // revisit
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
-    let marksRevisitInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        marksRevisitInstance.unsubscribe();
-        if (marksCount != null) {
-          marksCount = Number(marksCount) - revisitCount;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-        this.db.object(dbPath).update({ lineRevisitCount: marksCount });
-      }
-    );
-
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/lineRevisitCount";
-    let newMarksRevisitInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        newMarksRevisitInstance.unsubscribe();
-        let counts = revisitCount;
-        if (marksCount != null) {
-          counts = Number(marksCount) + counts;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ lineRevisitCount: counts });
-      }
-    );
-
-    //sueveyed
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
-    let marksSurveyedInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        marksSurveyedInstance.unsubscribe();
-        if (marksCount != null) {
-          marksCount = Number(marksCount) - surveyedCount;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-        this.db.object(dbPath).update({ surveyedCount: marksCount });
-      }
-    );
-
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/surveyedCount";
-    let newMarksSurveyedInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        newMarksSurveyedInstance.unsubscribe();
-        let counts = surveyedCount;
-        if (marksCount != null) {
-          counts = Number(marksCount) + surveyedCount;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ surveyedCount: counts });
-      }
-    );
-
-
-    let count = this.selectedCardDetails.length;
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
-    let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      marksCount => {
-        marksCountInstance.unsubscribe();
-        if (marksCount != null) {
-          marksCount = Number(marksCount) - count;
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-        this.db.object(dbPath).update({ marksCount: marksCount });
-      }
-    );
-
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/marksCount";
-    let newMarksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      newMarksCount => {
-        newMarksCountInstance.unsubscribe();
-        if (newMarksCount != null) {
-          newMarksCount = Number(newMarksCount) + count;
+  updateCounts(zoneNo: any) {
+    $(this.divLoader).show();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            let zoneMarkerCount = 0;
+            let zoneAlreadyInstalledCount = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerCount = 0;
+              let surveyedCount = 0;
+              let revisitCount = 0;
+              let rfIdNotFound = 0;
+              let alreadyInstalledCount = 0;
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo]["houseType"] != null) {
+                  markerCount = markerCount + 1;
+                  zoneMarkerCount = zoneMarkerCount + 1;
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    surveyedCount = surveyedCount + 1;
+                  }
+                  else if (lineData[markerNo]["revisitKey"] != null) {
+                    revisitCount = revisitCount + 1;
+                  }
+                  else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
+                    rfIdNotFound = rfIdNotFound + 1;
+                  }
+                  if (lineData[markerNo]["alreadyInstalled"] == true) {
+                    alreadyInstalledCount = alreadyInstalledCount + 1;
+                    zoneAlreadyInstalledCount = zoneAlreadyInstalledCount + 1;
+                  }
+                }
+              }
+              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
+            }
+            let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+            this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
+          }
+          this.selectedCardDetails = [];
+          $("#txtNewLine").val("");
+          this.getLineData();
+          this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
+          $(this.divLoader).hide();
         }
         else {
-          newMarksCount = count;
+          this.selectedCardDetails = [];
+          $("#txtNewLine").val("");
+          this.getLineData();
+          this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
+          $(this.divLoader).hide();
         }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo;
-        this.db.object(dbPath).update({ marksCount: newMarksCount });
-      }
-    );
-
-
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus/status";
-    let perLineInstance = this.db.object(dbPath).valueChanges().subscribe(
-      preData => {
-        let approveCount = 0;
-        perLineInstance.unsubscribe();
-        if (preData != null) {
-          if (preData == "Confirm") {
-            approveCount = approveCount + 1;
-          }
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
-        this.db.object(dbPath).update({ status: "Reject" });
-        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus/status";
-        let newLineInstance = this.db.object(dbPath).valueChanges().subscribe(
-          newData => {
-            newLineInstance.unsubscribe();
-            if (newData != null) {
-              if (newData == "Confirm") {
-                approveCount = approveCount + 1;
-              }
-            }
-            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + newLineNo + "/ApproveStatus";
-            this.db.object(dbPath).update({ status: "Reject" });
-
-            dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
-            let approvedInstance = this.db.object(dbPath).valueChanges().subscribe(
-              approvedData => {
-                approvedInstance.unsubscribe();
-                let total = 0;
-                if (approvedData != null) {
-                  total = Number(approvedData) - approveCount;
-                }
-                dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone;
-                this.db.object(dbPath).update({ approved: total });
-              }
-            );
-          });
-      }
-    );
-  }
-
-  moveImages(imageName: any, newImageName: any, newLineNo: any) {
-    const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + this.lineNo + "/" + imageName;
-    const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
-    ref.getDownloadURL()
-      .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-
-        // This can be downloaded directly:
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'blob';
-        // xhr.setRequestHeader("Access-Control-Allow-Origin","*");
-        // xhr.setRequestHeader('Connection', 'close');
-
-
-
-        xhr.onload = (event) => {
-          var blob = xhr.response;
-          const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + newLineNo + "/" + newImageName;
-          const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
-          ref1.put(blob).then((promise) => {
-            ref.delete();
-
-          });
-        };
-        xhr.open('GET', url);
-
-        xhr.send();
-        // Or inserted into an <img> element
-        // var img = document.getElementById('myimg');
-        // img.setAttribute('src', url);
-      })
-      .catch((error) => {
-        // console.log(error);
-        // Handle any errors
       });
-
   }
 }
 
