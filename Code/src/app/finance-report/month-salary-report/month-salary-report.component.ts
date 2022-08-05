@@ -30,7 +30,7 @@ export class MonthSalaryReportComponent implements OnInit {
   yearList: any[] = [];
   OtherList: any[];
   db: any
-  cityName: any;
+  public cityName: any;
 
   costData: costDatail =
     {

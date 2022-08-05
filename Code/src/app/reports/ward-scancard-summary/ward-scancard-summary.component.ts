@@ -24,9 +24,11 @@ export class WardScancardSummaryComponent implements OnInit {
   wardScaanedList: any;
   isFirst = true;
   db: any;
+  public cityName:any;
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;

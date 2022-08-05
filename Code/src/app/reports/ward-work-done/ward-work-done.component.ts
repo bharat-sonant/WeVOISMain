@@ -10,7 +10,7 @@ import { FirebaseService } from "../../firebase.service";
 export class WardWorkDoneComponent implements OnInit {
 
   constructor(public fs: FirebaseService, private commonService: CommonService) { }
-  cityName: any;
+  public cityName: any;
   db: any;
   toDayDate: any;
   selectedCircle: any;
