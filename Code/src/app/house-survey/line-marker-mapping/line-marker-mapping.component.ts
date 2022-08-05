@@ -506,8 +506,7 @@ export class LineMarkerMappingComponent {
           $("#txtNewLine").val("");
           this.getLineData();
           if (failureCount > 0) {
-            let msg = "Not Processed marker count is : " + failureCount;
-            this.commonService.setAlertMessage("error", "System have not processed some markers. Please try back later");
+            let msg = failureCount + " markers have some issue to be processed, Please try again.";
             this.commonService.setAlertMessage("error", msg);
           }
           else {
@@ -520,8 +519,7 @@ export class LineMarkerMappingComponent {
           $("#txtNewLine").val("");
           this.getLineData();
           if (failureCount > 0) {
-            let msg = "Not Processed marker count is : " + failureCount;
-            this.commonService.setAlertMessage("error", "System have not processed some markers. Please try back later");
+            let msg = failureCount + " markers have some issue to be processed, Please try again.";
             this.commonService.setAlertMessage("error", msg);
           }
           else {
