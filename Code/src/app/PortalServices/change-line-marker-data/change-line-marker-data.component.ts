@@ -83,7 +83,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                     markerNoList.push({ markerNo: markerNo });
                   }
                 }
-                this.moveData(0, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
+                this.moveData(0, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, 0);
               });
           }
         }
@@ -94,7 +94,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
     );
   }
 
-  moveData(index: any, markerNoList: any, lastKey: any, markerData: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any) {
+  moveData(index: any, markerNoList: any, lastKey: any, markerData: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, failureCount: any) {
     if (index < markerNoList.length) {
       lastKey = lastKey + 1;
       let markerNo = markerNoList[index]["markerNo"];
@@ -120,7 +120,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
               this.db.object(dbPath).remove();
               index = index + 1;
-              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
+              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             });
           };
           xhr.open('GET', url);
@@ -128,17 +128,18 @@ export class ChangeLineMarkerDataComponent implements OnInit {
         })
         .catch((error) => {
           index = index + 1;
-          this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo);
+          failureCount = failureCount + 1;
+          this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
         });
     }
     else {
-     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
       this.db.object(dbPath).update({ lastMarkerKey: lastKey });
-      this.updateCounts(zoneFrom, zoneTo, "markerMove");
+      this.updateCounts(zoneFrom, zoneTo, "markerMove",failureCount);
     }
   }
 
-  updateCounts(zoneNo: any, zoneTo: any, type: any) {
+  updateCounts(zoneNo: any, zoneTo: any, type: any,failureCount:any) {
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -190,10 +191,17 @@ export class ChangeLineMarkerDataComponent implements OnInit {
           }
           else {
             if (zoneNo != zoneTo) {
-              this.updateCounts(zoneTo, zoneTo, "markerMove");
+              this.updateCounts(zoneTo, zoneTo, "markerMove",failureCount);
             }
             else {
-              this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
+              if (failureCount > 0) {
+                let msg = "Not Processed marker count is : " + failureCount;
+                this.commonService.setAlertMessage("error", "System have not processed some markers. Please try back later");
+                this.commonService.setAlertMessage("error", msg);
+              }
+              else {
+                this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
+              }
               $(this.divLoader).hide();
             }
           }
@@ -213,6 +221,6 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
-    this.updateCounts(zoneNo, zoneNo, "totalCount");
+    this.updateCounts(zoneNo, zoneNo, "totalCount",0);
   }
 }

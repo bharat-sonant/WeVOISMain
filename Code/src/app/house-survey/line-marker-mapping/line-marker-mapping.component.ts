@@ -406,12 +406,12 @@ export class LineMarkerMappingComponent {
         if (lastMarkerData != null) {
           lastKey = Number(lastMarkerData);
         }
-        this.moveData(0, lastKey, this.selectedZone, this.lineNo, this.selectedZone, newLineNo);
+        this.moveData(0, lastKey, this.selectedZone, this.lineNo, this.selectedZone, newLineNo, 0);
       }
     );
   }
 
-  moveData(index: any, lastKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any) {
+  moveData(index: any, lastKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, failureCount: any) {
     if (index < this.selectedCardDetails.length) {
       lastKey = lastKey + 1;
       let markerNo = this.selectedCardDetails[index]["markerNo"];
@@ -437,7 +437,7 @@ export class LineMarkerMappingComponent {
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
               this.db.object(dbPath).remove();
               index = index + 1;
-              this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo);
+              this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             });
           };
           xhr.open('GET', url);
@@ -445,17 +445,18 @@ export class LineMarkerMappingComponent {
         })
         .catch((error) => {
           index = index + 1;
-          this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo);
+          failureCount = failureCount + 1;
+          this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
         });
     }
     else {
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
       this.db.object(dbPath).update({ lastMarkerKey: lastKey });
-      this.updateCounts(zoneFrom);
+      this.updateCounts(zoneFrom, failureCount);
     }
   }
 
-  updateCounts(zoneNo: any) {
+  updateCounts(zoneNo: any, failureCount: any) {
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -504,14 +505,28 @@ export class LineMarkerMappingComponent {
           this.selectedCardDetails = [];
           $("#txtNewLine").val("");
           this.getLineData();
-          this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
+          if (failureCount > 0) {
+            let msg = "Not Processed marker count is : " + failureCount;
+            this.commonService.setAlertMessage("error", "System have not processed some markers. Please try back later");
+            this.commonService.setAlertMessage("error", msg);
+          }
+          else {
+            this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
+          }
           $(this.divLoader).hide();
         }
         else {
           this.selectedCardDetails = [];
           $("#txtNewLine").val("");
           this.getLineData();
-          this.commonService.setAlertMessage("success", "Marker moved successfully !!!")
+          if (failureCount > 0) {
+            let msg = "Not Processed marker count is : " + failureCount;
+            this.commonService.setAlertMessage("error", "System have not processed some markers. Please try back later");
+            this.commonService.setAlertMessage("error", msg);
+          }
+          else {
+            this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
+          }
           $(this.divLoader).hide();
         }
       });
