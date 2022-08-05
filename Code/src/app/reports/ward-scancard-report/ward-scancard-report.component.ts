@@ -29,6 +29,7 @@ export class WardScancardReportComponent implements OnInit {
   wardScaanedList: any;
   isFirst = true;
   db: any;
+  public cityName:any;
 
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
   headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
@@ -36,7 +37,8 @@ export class WardScancardReportComponent implements OnInit {
   tableData = [[]];
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;

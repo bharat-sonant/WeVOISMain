@@ -19,9 +19,11 @@ export class WardMonitoringReportComponent implements OnInit {
   zoneList: any[] = [];
   db: any;
   txtDate = "#txtDate";
+  public cityName:any;
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.selectedCircle = "Circle1";
     this.selectedDate = this.commonService.setTodayDate();
     this.getWardForLineWeitage();

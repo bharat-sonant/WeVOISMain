@@ -1,0 +1,124 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 header1">
+        </div>
+        <div class="col-md-8 header2">
+
+        </div>
+        <div class="col-md-2 header3"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 left">
+
+            <div class="card card2">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Marker Line </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body2">
+
+                    <form>
+                        <div class="form">
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>From</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneFrom">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoFrom" class="caret-select" type="number" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>To</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneTo">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoTo" class="caret-select" type="number" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row form-group2">
+                                <div class="col-md-12 pr-1">
+                                    <div class="form-group">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 Update2">
+            <div class="card card3">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Marker Counts </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body3">
+                    <div class="outer">
+
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZone">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="updateMarkerCounts();">UPDATE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
