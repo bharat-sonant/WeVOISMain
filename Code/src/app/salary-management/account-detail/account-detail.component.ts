@@ -146,7 +146,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any) {
-    let driverHelperList = this.allAccountList.filter(item => item.empType == 2);
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 2 && item.salaryType!="non-salaried");
     if (status == "all") {
       this.accountList = driverHelperList;
     }

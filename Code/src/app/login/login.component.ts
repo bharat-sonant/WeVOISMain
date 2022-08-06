@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
   vehicleList: any[];
   dustbinList: any[];
   fixdGeoLocations: any[];
+  cityList: any[] = [];
   cityName: any;
   toDayDate: any;
 
@@ -30,15 +31,42 @@ export class LoginComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.setCityList();
     this.getMessage();
     this.getRendomBackground();
     this.commonService.setPortalPages();
     this.commonService.setWebPortalUsers();
-    this.cityName = localStorage.getItem("cityName");
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
+  }
+
+  setCityList() {
+    this.cityList.push({ city: "sikar", name: "Sikar", storagePath: "Sikar" });
+    this.cityList.push({ city: "reengus", name: "Reengus", storagePath: "Reengus" });
+    this.cityList.push({ city: "shahpura", name: "Shahpura", storagePath: "Shahpura" });
+    this.cityList.push({ city: "test", name: "Test", storagePath: "Test" });
+    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office", storagePath: "Jaipur" });
+    this.cityList.push({ city: "jaipur", name: "Jaipur", storagePath: "JaipurD2D" });
+    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater", storagePath: "Jaipur-Greater" });
+    this.cityList.push({ city: "kishangarh", name: "Kishangarh", storagePath: "Kishangarh" });
+    this.cityList.push({ city: "niwai", name: "Niwai", storagePath: "Niwai" });
+    this.cityList.push({ city: "jaisalmer", name: "Jaisalmer", storagePath: "Jaisalmer" });
+    this.cityList.push({ city: "churu", name: "Churu", storagePath: "Churu" });
+    this.cityList.push({ city: "bhiwadi", name: "Bhiwadi", storagePath: "Bhiwadi" });
+    this.cityList.push({ city: "chhapar", name: "Chhapar", storagePath: "Chhapar" });
+    this.cityList.push({ city: "behror", name: "Behror", storagePath: "Behror" });
+    this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath: "Salasar" });
+
+    this.cityList.push({ city: "jaipur-jagatpura", name: "Jagatpura", storagePath: "Jaipur-Jagatpura" });
+    this.cityList.push({ city: "jaipur-jhotwara", name: "Jhotwara", storagePath: "Jaipur-Jhotwara" });
+    this.cityList.push({ city: "jaipur-malviyanagar", name: "Malviyanagar", storagePath: "Jaipur-Malviyanagar" });
+    this.cityList.push({ city: "jaipur-mansarovar", name: "Mansarovar", storagePath: "Jaipur-Mansarovar" });
+    this.cityList.push({ city: "jaipur-murlipura", name: "Murlipura", storagePath: "Jaipur-Murlipura" });
+    this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath: "Jaipur-Sanganer" });
+    this.cityList.push({ city: "jaipur-vidhyadhar", name: "Vidhyadhar", storagePath: "Jaipur-Vidhyadhar" });
+    localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
   getRendomBackground() {
@@ -80,7 +108,6 @@ export class LoginComponent implements OnInit {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetails = userList.find((item) => item.email == userName && item.password == password);
     if (userDetails != undefined) {
-      this.commonService.setUserAccess(userDetails.userId);
       if (userDetails.expiryDate != "") {
         this.expiryDate = userDetails.expiryDate;
         localStorage.setItem("expiryDate", this.expiryDate);
@@ -119,10 +146,10 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("isAdmin", "0");
       }
-      if(userDetails.isManager!=null){
-        localStorage.setItem("isManager",userDetails.isManager);
+      if (userDetails.isManager != null) {
+        localStorage.setItem("isManager", userDetails.isManager);
       }
-      else{
+      else {
         localStorage.setItem("isManager", "0");
       }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
@@ -135,7 +162,7 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           setTimeout(() => {
-            window.location.href = this.cityName + "/home";
+            this.redirectHomePage(userDetails.userId);
           }, 1000);
         } else {
           localStorage.setItem("loginStatus", "Fail");
@@ -145,13 +172,22 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
         setTimeout(() => {
-          window.location.href = this.cityName + "/home";
+          this.redirectHomePage(userDetails.userId);
         }, 1000);
       }
     } else {
       localStorage.setItem("loginStatus", "Fail");
       this.commonService.setAlertMessage("error", "Invalid username or password !!!");
     }
+  }
+
+  redirectHomePage(userId: any) {
+    this.commonService.setUserAccess(userId).then((accessList: any) => {
+      this.cityName = accessList[0]["city"];
+      localStorage.setItem("cityName", this.cityName);
+      localStorage.setItem("isCityChange", "yes");
+      window.location.href = this.cityName + "/home";
+    });
   }
 
   checkLogin() {

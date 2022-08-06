@@ -1081,8 +1081,8 @@ export class CommonService {
         let haltDisableAccess = 0;
         let isActual = 0;
         let isLock = 0;
-        let isAdmin=0;
-        let isManager=0;
+        let isAdmin = 0;
+        let isManager = 0;
         if (doc.data()["haltDisableAccess"] != undefined) {
           haltDisableAccess = doc.data()["haltDisableAccess"];
         }
@@ -1117,8 +1117,8 @@ export class CommonService {
             haltDisableAccess: haltDisableAccess,
             isActual: isActual,
             isLock: isLock,
-            isAdmin:isAdmin,
-            isManager:isManager
+            isAdmin: isAdmin,
+            isManager: isManager
           });
         }
       });
@@ -1136,39 +1136,42 @@ export class CommonService {
   }
 
   setUserAccess(userid: any) {
-    let accessList = [];
-    let accessCity = [];
-    let cityList = JSON.parse(localStorage.getItem("cityList"));
-    for (let i = 0; i < cityList.length; i++) {
-      let city = cityList[i]["city"];
-      let name = cityList[i]["name"];
-      let portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
-        let pageId = doc.data()["pageId"];
-        if (pageId != null) {
-          let dataList = pageId.toString().split(",");
-          for (let i = 0; i < dataList.length; i++) {
-            let accessDetails = portalAccessList.find((item) => item.pageID == dataList[i].trim());
-            if (accessDetails != undefined) {
-              accessList.push({
-                city: city,
-                userId: userid,
-                parentId: accessDetails.parentId,
-                pageId: accessDetails.pageID,
-                name: accessDetails.name,
-                url: accessDetails.url,
-                position: accessDetails.position,
-                img: accessDetails.img,
-              });
+    return new Promise((resolve) => {
+      let accessList = [];
+      let accessCity = [];
+      let cityList = JSON.parse(localStorage.getItem("cityList"));
+      for (let i = 0; i < cityList.length; i++) {
+        let city = cityList[i]["city"];
+        let name = cityList[i]["name"];
+        let portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+        this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
+          let pageId = doc.data()["pageId"];
+          if (pageId != null) {
+            let dataList = pageId.toString().split(",");
+            for (let i = 0; i < dataList.length; i++) {
+              let accessDetails = portalAccessList.find((item) => item.pageID == dataList[i].trim());
+              if (accessDetails != undefined) {
+                accessList.push({
+                  city: city,
+                  userId: userid,
+                  parentId: accessDetails.parentId,
+                  pageId: accessDetails.pageID,
+                  name: accessDetails.name,
+                  url: accessDetails.url,
+                  position: accessDetails.position,
+                  img: accessDetails.img,
+                });
+              }
             }
+            accessCity.push({ city: city, name: name });
           }
-          accessCity.push({ city: city, name: name });
-        }
-        accessList = this.transform(accessList, "position");
-        localStorage.setItem("userAccessList", JSON.stringify(accessList));
-        localStorage.setItem("accessCity", JSON.stringify(accessCity));
-      });
-    }
+          accessList = this.transform(accessList, "position");
+          localStorage.setItem("userAccessList", JSON.stringify(accessList));
+          localStorage.setItem("accessCity", JSON.stringify(accessCity));
+          resolve(accessCity);
+        });
+      }
+    });
   }
 
   checkUserCity(userid: any, city: any) {

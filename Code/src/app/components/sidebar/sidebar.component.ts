@@ -986,40 +986,52 @@ export class SidebarComponent implements OnInit {
       $("#churuBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box active-box");
     }
-
+let isBaseCity=false;
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "sikar") {
         $("#sikarBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
         $("#shahpuraBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "jaipur-greater") {
         $("#jaipurGreaterBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "kishangarh") {
         $("#kishangarhBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "niwai") {
         $("#niwaiBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "jaisalmer") {
         $("#jaisalmerBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "salasar") {
         $("#salasarBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "bhiwadi") {
         $("#bhiwadiBox").show();
       } else if (this.accessCity[i]["city"] == "chhapar") {
         $("#chhaparBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "churu") {
         $("#churuBox").show();
+        isBaseCity=true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
-       // $("#jaipurBox").show();
-        if (this.cityName == "jaipur-jagatpura" || this.cityName == "jaipur-jhotwara" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-mansarovar" || this.cityName == "jaipur-murlipura" || this.cityName == "jaipur-sanganer" || this.cityName == "jaipur-vidhyadhar") {
-          this.openSecondCityModel(this.contentSecondCity);
-        }
+        $("#jaipurBox").show();
       }
+    }
+    if(isBaseCity==false){
+      this.openSecondCityModel(this.contentSecondCity);
     }
   }
 

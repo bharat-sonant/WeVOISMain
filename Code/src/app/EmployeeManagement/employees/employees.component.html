@@ -60,6 +60,9 @@
                                             <th class="text-left br-1 border-none">
                                                 Role</th>
                                             <th class="text-left br-1 border-none">
+                                                Status
+                                            </th>
+                                            <th class="text-left br-1 border-none">
                                                 Action
                                             </th>
                                         </thead>
@@ -70,11 +73,13 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.designation}}
-                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <span [hidden]="data.status!=1" class="green-span" (click)="openModel(contentConfirmation,data.empId,'active')">Active</span>
                                                     <span [hidden]="data.status==1" class="red-span" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -128,6 +133,20 @@
                     <select id="ddlDesignationUpdate" class="input-green">
                         <option *ngFor="let dt of designationUpdateList" value={{dt.designationId}}>
                             {{dt.designation}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <select id="ddlSalaryTypeUpdate" class="input-green">
+                        <option value="salaried">
+                            Salaried
+                        </option>
+                        <option value="non-salaried">
+                           Non-Salaried
                         </option>
                     </select>
                     <span class="focus-input"></span>
