@@ -116,6 +116,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'index#services', component: IndexComponent },
     { path: 'index#gallery', component: IndexComponent },
     { path: 'portal-access', component: PortalAccessComponent },
+    { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     
     //Sikar

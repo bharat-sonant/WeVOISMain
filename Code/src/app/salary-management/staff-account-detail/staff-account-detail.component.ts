@@ -144,7 +144,7 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any) {
-    let driverHelperList = this.allAccountList.filter(item => item.empType == 1);
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 1 && item.salaryType!="non-salaried");
     if (status == "all") {
       this.accountList = driverHelperList;
     }

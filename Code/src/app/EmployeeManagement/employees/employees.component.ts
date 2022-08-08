@@ -21,6 +21,7 @@ export class EmployeesComponent implements OnInit {
   fireStorePath: any;
   ddlDesignation = "#ddlDesignation";
   ddlDesignationUpdate = "#ddlDesignationUpdate";
+  ddlSalaryTypeUpdate="#ddlSalaryTypeUpdate";
   ddlUser = "#ddlUser";
   empID = "#empID";
   empIDActive = "#empIDActive";
@@ -72,7 +73,11 @@ export class EmployeesComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let empId = keyArray[i];
-            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"] });
+            let salaryType = "salaried";
+            if (data[empId]["GeneralDetails"]["salaryType"] != null) {
+              salaryType = data[empId]["GeneralDetails"]["salaryType"];
+            }
+            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"],salaryType:salaryType });
           }
         }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
@@ -160,7 +165,8 @@ export class EmployeesComponent implements OnInit {
         name: this.allEmployeeList[i]["name"],
         designation: this.allEmployeeList[i]["designation"],
         status: this.allEmployeeList[i]["status"],
-        empType: this.allEmployeeList[i]["empType"]
+        empType: this.allEmployeeList[i]["empType"],
+        salaryType:this.allEmployeeList[i]["salaryType"]
       }
       obj[this.allEmployeeList[i]["empId"]] = { GeneralDetails: data };
     }
@@ -202,8 +208,13 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateEmployeeStatus() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 3000);
     let empId = $(this.empIDActive).val();
     let status = $(this.empStatus).val();
+
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.status = status;
@@ -232,11 +243,17 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateDesignation() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 3000);
     let empId = $(this.empID).val();
     let designationId = $(this.ddlDesignationUpdate).val();
+    let salaryType=$(this.ddlSalaryTypeUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.designationId = designationId;
+      empDetail.salaryType=salaryType;
       let empType = 1;
       if (designationId == "5") {
         empDetail.designation = "Driver";
@@ -258,10 +275,11 @@ export class EmployeesComponent implements OnInit {
       let accountDetail = this.accountList.find(item => item.empId == empId);
       if (accountDetail != undefined) {
         accountDetail.designation = empDetail.designation;
+        accountDetail.salaryType=empDetail.salaryType;
         accountDetail.empType = empType;
         this.saveAccountJSONData();
       }
-      this.updateDesignationInDatabase(empId, designationId);
+      this.updateDesignationInDatabase(empId, designationId,salaryType);
     }
     this.getRoles();
     this.filterData();
@@ -270,9 +288,9 @@ export class EmployeesComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Employee designation updated successfully !!!");
   }
 
-  updateDesignationInDatabase(empId: any, designationId: any) {
+  updateDesignationInDatabase(empId: any, designationId: any,salaryType:any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ designationId: designationId.toString() });
+    this.db.object(dbPath).update({ designationId: designationId.toString(),salaryType:salaryType });
     this.closeModel();
   }
 
@@ -283,7 +301,7 @@ export class EmployeesComponent implements OnInit {
     let height = 190;
     let width = 420;
     if (type == "designation") {
-      height = 190;
+      height = 250;
     }
     else {
       height = 160;
@@ -298,6 +316,7 @@ export class EmployeesComponent implements OnInit {
         if (userDetail.designation != null) {
           setTimeout(() => {
             $(this.ddlDesignationUpdate).val(userDetail.designationId);
+            $(this.ddlSalaryTypeUpdate).val(userDetail.salaryType);
           }, 100);
         }
       }
