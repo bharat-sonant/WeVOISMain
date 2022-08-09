@@ -1141,7 +1141,6 @@ export class WardWorkTrackingComponent {
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
-          
           if (j == 0) {
             this.setLineStartMarker(points[j][0], points[j][1], "start");
           }
@@ -1224,7 +1223,7 @@ export class WardWorkTrackingComponent {
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
         icon=[{
           icon: iconsetngs,
-          repeat:"30px",
+          repeat:"100px",
           offset: '100%'}]
       }
       let line = new google.maps.Polyline({

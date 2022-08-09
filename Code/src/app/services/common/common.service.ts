@@ -1017,11 +1017,9 @@ export class CommonService {
     let cityName = localStorage.getItem("cityName");
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
     const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    console.log(path);
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
       availableWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
-      console.log(list);
       if (list.length > 0) {
         for (let index = 0; index < list.length; index++) {
           if (list[index] != null) {
@@ -1132,45 +1130,6 @@ export class CommonService {
       let pageList = JSON.parse(doc.data()["pages"]);
       portalAccessList = this.transform(pageList, "position");
       localStorage.setItem("portalAccess", JSON.stringify(portalAccessList));
-    });
-  }
-
-  setUserAccess(userid: any) {
-    return new Promise((resolve) => {
-      let accessList = [];
-      let accessCity = [];
-      let cityList = JSON.parse(localStorage.getItem("cityList"));
-      for (let i = 0; i < cityList.length; i++) {
-        let city = cityList[i]["city"];
-        let name = cityList[i]["name"];
-        let portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-        this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
-          let pageId = doc.data()["pageId"];
-          if (pageId != null) {
-            let dataList = pageId.toString().split(",");
-            for (let i = 0; i < dataList.length; i++) {
-              let accessDetails = portalAccessList.find((item) => item.pageID == dataList[i].trim());
-              if (accessDetails != undefined) {
-                accessList.push({
-                  city: city,
-                  userId: userid,
-                  parentId: accessDetails.parentId,
-                  pageId: accessDetails.pageID,
-                  name: accessDetails.name,
-                  url: accessDetails.url,
-                  position: accessDetails.position,
-                  img: accessDetails.img,
-                });
-              }
-            }
-            accessCity.push({ city: city, name: name });
-          }
-          accessList = this.transform(accessList, "position");
-          localStorage.setItem("userAccessList", JSON.stringify(accessList));
-          localStorage.setItem("accessCity", JSON.stringify(accessCity));
-          resolve(accessCity);
-        });
-      }
     });
   }
 
@@ -1860,7 +1819,7 @@ export class CommonService {
         let previousDate = this.getPreviousDate(selectedDate, 1);
         newDate = previousDate;
       }
-      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(),2))) {
+      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(), 2))) {
         newDate = selectedDate;
       }
       resolve(newDate);

@@ -23,8 +23,11 @@ export class LoginComponent implements OnInit {
   dustbinList: any[];
   fixdGeoLocations: any[];
   cityList: any[] = [];
+  accessList: any[] = [];
+  accessCity: any[] = [];
   cityName: any;
   toDayDate: any;
+  divLoader = "#divLoader";
 
   messageDetail: messageDetail = {
     type: "Good Morning"
@@ -158,12 +161,12 @@ export class LoginComponent implements OnInit {
       localStorage.setItem("notificationSkippedLines", userDetails.notificationSkippedLines);
       localStorage.setItem("notificationPickDustbins", userDetails.notificationPickDustbins);
       localStorage.setItem("notificationGeoSurfing", userDetails.notificationGeoSurfing);
+      this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
       if (this.expiryDate != null) {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
-          setTimeout(() => {
-            this.redirectHomePage(userDetails.userId);
-          }, 1000);
+          $(this.divLoader).show();
+          this.setUserCityAccess(0, userDetails.userId);
         } else {
           localStorage.setItem("loginStatus", "Fail");
           this.commonService.setAlertMessage("error", "Account Not Activate !!!");
@@ -171,9 +174,8 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
-        setTimeout(() => {
-          this.redirectHomePage(userDetails.userId);
-        }, 1000);
+        $(this.divLoader).show();
+        this.setUserCityAccess(0, userDetails.userId);
       }
     } else {
       localStorage.setItem("loginStatus", "Fail");
@@ -181,13 +183,63 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  redirectHomePage(userId: any) {
-    this.commonService.setUserAccess(userId).then((accessList: any) => {
-      this.cityName = accessList[0]["city"];
+  redirectHomePage() {
+    if (this.accessList.length > 0) {
+      localStorage.setItem("userAccessList", JSON.stringify(this.accessList));
+      localStorage.setItem("accessCity", JSON.stringify(this.accessCity));
+      this.cityName = this.accessList[0]["city"];
       localStorage.setItem("cityName", this.cityName);
       localStorage.setItem("isCityChange", "yes");
       window.location.href = this.cityName + "/home";
-    });
+    }
+    else {
+      this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
+    }
+    $(this.divLoader).hide();
+  }
+
+  setUserCityAccess(index: any, userId: any) {
+    if (index != this.cityList.length - 1) {
+      let city = this.cityList[index]["city"];
+      let name = this.cityList[index]["name"];
+      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userId.toString()).collection(city).doc(city).get().subscribe((doc) => {
+        if (doc.data() != undefined) {
+          let pageId = doc.data()["pageId"];
+          if (pageId != null) {
+            let dataList = pageId.toString().split(",");
+            for (let j = 0; j < dataList.length; j++) {
+              let accessDetails = this.portalAccessList.find((item) => item.pageID == dataList[j].trim());
+              if (accessDetails != undefined) {
+                this.accessList.push({
+                  city: city,
+                  userId: userId,
+                  parentId: accessDetails.parentId,
+                  pageId: accessDetails.pageID,
+                  name: accessDetails.name,
+                  url: accessDetails.url,
+                  position: accessDetails.position,
+                  img: accessDetails.img,
+                });
+              }
+            }
+            this.accessCity.push({ city: city, name: name });
+            index = index + 1;
+            this.setUserCityAccess(index, userId);
+          }
+          else {
+            index = index + 1;
+            this.setUserCityAccess(index, userId);
+          }
+        }
+        else {
+          index = index + 1;
+          this.setUserCityAccess(index, userId);
+        }
+      });
+    }
+    else {
+      this.redirectHomePage();
+    }
   }
 
   checkLogin() {
