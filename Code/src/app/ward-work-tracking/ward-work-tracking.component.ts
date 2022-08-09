@@ -1142,7 +1142,7 @@ export class WardWorkTrackingComponent {
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
           if (j == 0) {
-            this.setLineStartMarker(points[j][0], points[j][1], "start");
+            this.setLineStartMarker(points[j][0], points[j][1]);
           }
         }
 
@@ -1172,26 +1172,18 @@ export class WardWorkTrackingComponent {
     });
   }
 
-  setLineStartMarker(lat: any, lng: any, type: any) {
-    let path = google.maps.SymbolPath.FORWARD_CLOSED_ARROW;
-    let scale = 2;
-    let color = "red";
-    if (type == "start") {
-      path = google.maps.SymbolPath.CIRCLE;
-      scale = 3;
-      color = "green";
-    }
+  setLineStartMarker(lat: any, lng: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
       icon: {
-        path: path,
-        fillColor: color,
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: "black",
         fillOpacity: 0.6,
-        strokeColor: '#00A',
+        strokeColor: 'black',
         strokeOpacity: 0.9,
-        strokeWeight: 0.5,
-        scale: scale
+        strokeWeight: 1,
+        scale: 3
       }
     });
     if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == false) {
@@ -1223,7 +1215,7 @@ export class WardWorkTrackingComponent {
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
         icon=[{
           icon: iconsetngs,
-          repeat:"100px",
+          repeat:"60px",
           offset: '100%'}]
       }
       let line = new google.maps.Polyline({
