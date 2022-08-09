@@ -193,7 +193,7 @@ export class LoginComponent implements OnInit {
       window.location.href = this.cityName + "/home";
     }
     else {
-      this.commonService.setAlertMessage("error", "Sorry you have no access. please contact with administrator !!!");
+      this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
     }
     $(this.divLoader).hide();
   }
