@@ -30,7 +30,7 @@ export class WardWorkTrackingComponent {
   wardLineNoMarker: any[] = [];
   dustbinMarkerList: any[] = [];
   houseMarkerList: any[] = [];
-  lineStartEndMarkerList:any[]=[];
+  lineStartEndMarkerList: any[] = [];
   instancesList: any[] = [];
   dustbinList: any[] = [];
   zoneLineList: any[] = [];
@@ -78,7 +78,7 @@ export class WardWorkTrackingComponent {
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
   chkIsTrackRoute = "chkIsTrackRoute";
-  chkIsShowLineStartEnd="chkIsShowLineStartEnd";
+  chkIsShowLineDirection = "chkIsShowLineDirection";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
@@ -549,7 +549,7 @@ export class WardWorkTrackingComponent {
     (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkerDetailShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingTrackRouteShow"));
-    (<HTMLInputElement>document.getElementById(this.chkIsShowLineStartEnd)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingStartEndPointShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingStartEndPointShow"));
 
     this.showHideWorkDetail();
     this.showHideWorkerDetail();
@@ -1141,11 +1141,9 @@ export class WardWorkTrackingComponent {
         var latLng = [];
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
-          if(j==0){
-            this.setLineStartEndMarker(points[j][0],points[j][1],"start");
-          }
-          else if(j==points.length-1){
-            this.setLineStartEndMarker(points[j][0],points[j][1],"end");
+          
+          if (j == 0) {
+            this.setLineStartMarker(points[j][0], points[j][1], "start");
           }
         }
 
@@ -1168,26 +1166,26 @@ export class WardWorkTrackingComponent {
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked == true || this.selectedZone != "0") {
         this.showHouse();
       }
-      this.showHideLineStartEndPoint();
+      //this.showHideLineLineDirection();
       $(this.divLoader).hide();
     }, error => {
       $(this.divLoader).hide();
     });
   }
 
-  setLineStartEndMarker(lat:any,lng:any,type:any){
-    let path=google.maps.SymbolPath.FORWARD_OPEN_ARROW;
-    let scale=2;
-    let color="red";
-    if(type=="start"){
-      path=google.maps.SymbolPath.CIRCLE;
-      scale=3;
-      color="green";
+  setLineStartMarker(lat: any, lng: any, type: any) {
+    let path = google.maps.SymbolPath.FORWARD_CLOSED_ARROW;
+    let scale = 2;
+    let color = "red";
+    if (type == "start") {
+      path = google.maps.SymbolPath.CIRCLE;
+      scale = 3;
+      color = "green";
     }
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
-       icon: {
+      icon: {
         path: path,
         fillColor: color,
         fillOpacity: 0.6,
@@ -1195,9 +1193,12 @@ export class WardWorkTrackingComponent {
         strokeOpacity: 0.9,
         strokeWeight: 0.5,
         scale: scale
-    }
+      }
     });
-    this.lineStartEndMarkerList.push({marker:marker});
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == false) {
+      marker.setMap(null);
+    }
+    this.lineStartEndMarkerList.push({ marker: marker });
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
@@ -1216,10 +1217,21 @@ export class WardWorkTrackingComponent {
           lineDetail.color = strokeColor;
         }
       }
+      const iconsetngs = {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+      };
+      let icon=null;
+      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
+        icon=[{
+          icon: iconsetngs,
+          repeat:"30px",
+          offset: '100%'}]
+      }
       let line = new google.maps.Polyline({
         path: latlng,
         strokeColor: strokeColor,
         strokeWeight: 2,
+        icons: icon
       });
       this.polylines[index] = line;
       this.polylines[index].setMap(this.map);
@@ -1456,27 +1468,41 @@ export class WardWorkTrackingComponent {
     $("#divMap").css("height", $(window).height() - 80);
   }
 
-  showLineStartEndPoint(){
-    localStorage.setItem("wardWorkTrackingStartEndPointShow", (<HTMLInputElement>document.getElementById("chkIsShowLineStartEnd")).checked.toString());
-    this.showHideLineStartEndPoint();
+  showLineDirection() {
+    localStorage.setItem("wardWorkTrackingStartEndPointShow", (<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked.toString());
+    this.showHideLineLineDirection();
     this.hideSetting();
   }
 
-  
-  showHideLineStartEndPoint() {
-    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineStartEnd)).checked == true) {
-      if(this.lineStartEndMarkerList.length>0){
-        for(let i=0;i<this.lineStartEndMarkerList.length;i++){
-          if(this.lineStartEndMarkerList[i]["marker"]!=null){
+
+  showHideLineLineDirection() {
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != null) {
+          this.polylines[i].setMap(null);
+        }
+      }
+      this.polylines = [];
+    }
+    if(this.lines.length>0){
+      for(let i=0;i<this.lines.length;i++){
+        this.plotLineOnMap(this.lines[i]["lineNo"],this.lines[i]["latlng"],i);
+      }
+    }
+
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
+      if (this.lineStartEndMarkerList.length > 0) {
+        for (let i = 0; i < this.lineStartEndMarkerList.length; i++) {
+          if (this.lineStartEndMarkerList[i]["marker"] != null) {
             this.lineStartEndMarkerList[i]["marker"].setMap(this.map);
           }
         }
       }
     }
     else {
-      if(this.lineStartEndMarkerList.length>0){
-        for(let i=0;i<this.lineStartEndMarkerList.length;i++){
-          if(this.lineStartEndMarkerList[i]["marker"]!=null){
+      if (this.lineStartEndMarkerList.length > 0) {
+        for (let i = 0; i < this.lineStartEndMarkerList.length; i++) {
+          if (this.lineStartEndMarkerList[i]["marker"] != null) {
             this.lineStartEndMarkerList[i]["marker"].setMap(null);
           }
         }

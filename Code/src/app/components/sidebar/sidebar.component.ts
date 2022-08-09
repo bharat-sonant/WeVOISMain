@@ -925,7 +925,7 @@ export class SidebarComponent implements OnInit {
       $("#chhaparBox").addClass("login-box");
       $("#churuBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box");
-    }else if (this.cityName == "bhiwadi") {
+    } else if (this.cityName == "bhiwadi") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#shahpuraBox").addClass("login-box");
@@ -940,7 +940,7 @@ export class SidebarComponent implements OnInit {
       $("#chhaparBox").addClass("login-box");
       $("#churuBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box");
-    }else if (this.cityName == "chhapar") {
+    } else if (this.cityName == "chhapar") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#shahpuraBox").addClass("login-box");
@@ -955,7 +955,7 @@ export class SidebarComponent implements OnInit {
       $("#chhaparBox").addClass("login-box active-box");
       $("#churuBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box");
-    }else if (this.cityName == "churu") {
+    } else if (this.cityName == "churu") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
       $("#shahpuraBox").addClass("login-box");
@@ -986,51 +986,51 @@ export class SidebarComponent implements OnInit {
       $("#churuBox").addClass("login-box");
       $("#jaipurBox").addClass("login-box active-box");
     }
-let isBaseCity=false;
+    let isBaseCity = false;
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "sikar") {
         $("#sikarBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "reengus") {
         $("#reengusBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
         $("#shahpuraBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-greater") {
         $("#jaipurGreaterBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "kishangarh") {
         $("#kishangarhBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "niwai") {
         $("#niwaiBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaisalmer") {
         $("#jaisalmerBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
         $("#salasarBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "bhiwadi") {
         $("#bhiwadiBox").show();
       } else if (this.accessCity[i]["city"] == "chhapar") {
         $("#chhaparBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "churu") {
         $("#churuBox").show();
-        isBaseCity=true;
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
       }
     }
-    if(isBaseCity==false){
+    if (isBaseCity == false) {
       this.openSecondCityModel(this.contentSecondCity);
     }
   }
