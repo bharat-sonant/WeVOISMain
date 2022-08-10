@@ -43,6 +43,8 @@ export class LineMarkerMappingComponent {
   allMarkers: any[];
   selectedCardDetails: any[];
   toDayDate: any;
+  public movedMarkerCount:any;
+  public totalMoveMarkerCount:any;
 
   cardDetails: CardDetails = {
     selectedMarkerCount: 0,
@@ -53,12 +55,15 @@ export class LineMarkerMappingComponent {
   newMarkerList: any[];
   plansRef: AngularFireList<any>;
   divLoader = "#divLoader";
+  divLoaderMarkerMove="#divLoaderMarkerMove";
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.movedMarkerCount=0;
+    this.totalMoveMarkerCount=0;
     this.lineNo = 1;
     this.previousLine = 1;
     this.allMarkers = [];
@@ -396,7 +401,8 @@ export class LineMarkerMappingComponent {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
-    $(this.divLoader).show();
+    $(this.divLoaderMarkerMove).show();
+    this.totalMoveMarkerCount=this.selectedCardDetails.length;
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/lastMarkerKey";
     let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastMarkerData => {
@@ -431,6 +437,7 @@ export class LineMarkerMappingComponent {
             const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
             ref1.put(blob).then((promise) => {
               // ref.delete();
+              this.movedMarkerCount=this.movedMarkerCount+1;
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
               this.db.object(dbPath).update(data);
 
@@ -457,7 +464,7 @@ export class LineMarkerMappingComponent {
   }
 
   updateCounts(zoneNo: any, failureCount: any) {
-    $(this.divLoader).show();
+    $(this.divLoaderMarkerMove).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
@@ -512,7 +519,9 @@ export class LineMarkerMappingComponent {
           else {
             this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
           }
-          $(this.divLoader).hide();
+          $(this.divLoaderMarkerMove).hide();
+          this.movedMarkerCount=0;
+          this.totalMoveMarkerCount=0;
         }
         else {
           this.selectedCardDetails = [];
@@ -525,7 +534,9 @@ export class LineMarkerMappingComponent {
           else {
             this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
           }
-          $(this.divLoader).hide();
+          $(this.divLoaderMarkerMove).hide();
+          this.movedMarkerCount=0;
+          this.totalMoveMarkerCount=0;
         }
       });
   }
