@@ -78,7 +78,6 @@ export class WardWorkTrackingComponent {
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
   chkIsTrackRoute = "chkIsTrackRoute";
-  chkIsShowLineDirection = "chkIsShowLineDirection";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
@@ -549,7 +548,6 @@ export class WardWorkTrackingComponent {
     (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkerDetailShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingTrackRouteShow"));
-    (<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingStartEndPointShow"));
 
     this.showHideWorkDetail();
     this.showHideWorkerDetail();
@@ -1165,7 +1163,6 @@ export class WardWorkTrackingComponent {
       if ((<HTMLInputElement>document.getElementById(this.chkIsShowHouse)).checked == true || this.selectedZone != "0") {
         this.showHouse();
       }
-      //this.showHideLineLineDirection();
       $(this.divLoader).hide();
     }, error => {
       $(this.divLoader).hide();
@@ -1186,7 +1183,7 @@ export class WardWorkTrackingComponent {
         scale: 3
       }
     });
-    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == false) {
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == false) {
       marker.setMap(null);
     }
     this.lineStartEndMarkerList.push({ marker: marker });
@@ -1211,18 +1208,14 @@ export class WardWorkTrackingComponent {
       const iconsetngs = {
         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
       };
-      let icon=null;
-      if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
-        icon=[{
-          icon: iconsetngs,
-          repeat:"60px",
-          offset: '100%'}]
-      }
       let line = new google.maps.Polyline({
         path: latlng,
         strokeColor: strokeColor,
         strokeWeight: 2,
-        icons: icon
+        icons: [{
+          icon: iconsetngs,
+          repeat:"60px",
+          offset: '100%'}]
       });
       this.polylines[index] = line;
       this.polylines[index].setMap(this.map);
@@ -1459,29 +1452,8 @@ export class WardWorkTrackingComponent {
     $("#divMap").css("height", $(window).height() - 80);
   }
 
-  showLineDirection() {
-    localStorage.setItem("wardWorkTrackingStartEndPointShow", (<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked.toString());
-    this.showHideLineLineDirection();
-    this.hideSetting();
-  }
-
-
   showHideLineLineDirection() {
-    if (this.polylines.length > 0) {
-      for (let i = 0; i < this.polylines.length; i++) {
-        if (this.polylines[i] != null) {
-          this.polylines[i].setMap(null);
-        }
-      }
-      this.polylines = [];
-    }
-    if(this.lines.length>0){
-      for(let i=0;i<this.lines.length;i++){
-        this.plotLineOnMap(this.lines[i]["lineNo"],this.lines[i]["latlng"],i);
-      }
-    }
-
-    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineDirection)).checked == true) {
+    if ((<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked == true) {
       if (this.lineStartEndMarkerList.length > 0) {
         for (let i = 0; i < this.lineStartEndMarkerList.length; i++) {
           if (this.lineStartEndMarkerList[i]["marker"] != null) {
@@ -1504,6 +1476,7 @@ export class WardWorkTrackingComponent {
   showLineNo() {
     localStorage.setItem("wardWorkTrackingLineShow", (<HTMLInputElement>document.getElementById("chkIsShowLineNo")).checked.toString());
     this.showHideLineNo();
+    this.showHideLineLineDirection();
     this.hideSetting();
   }
 
@@ -1526,7 +1499,7 @@ export class WardWorkTrackingComponent {
           this.wardLineNoMarker[i]["marker"].setMap(this.map);
         }
       }
-    }
+    }    
   }
 
   hideSetting() {
