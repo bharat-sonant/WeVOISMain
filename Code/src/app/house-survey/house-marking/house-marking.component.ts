@@ -369,7 +369,6 @@ export class HouseMarkingComponent {
 
   showLineDetail(content: any) {
     if (this.markerList.length > 0) {
-      console.log(this.markerList);
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
       let windowWidth = $(window).width();

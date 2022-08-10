@@ -727,7 +727,6 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
-      console.log(zoneNo)
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
         markerData => {

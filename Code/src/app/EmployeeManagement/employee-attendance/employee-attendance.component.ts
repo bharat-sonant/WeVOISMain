@@ -58,7 +58,6 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setFilterType(filterVal: any, empId: any) {
-    console.log(empId);
     this.filterType = filterVal;
     $(this.ddlEmployee).val(empId);
     this.selectedDate = this.toDayDate;

@@ -352,7 +352,6 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getOtherWagesData(monthName: any, monthDate: any, j: any) {
-    console.log(monthName)
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + monthName + "%2F" + monthDate + ".json?alt=media";
     let workDetailInstance = this.httpService.get(path).subscribe(workData => {
       workDetailInstance.unsubscribe();
