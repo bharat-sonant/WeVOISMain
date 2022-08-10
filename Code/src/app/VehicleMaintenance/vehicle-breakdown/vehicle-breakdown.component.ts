@@ -273,7 +273,6 @@ export class VehicleBreakdownComponent implements OnInit {
             }
             $(this.txtResolvedDate).val(detail.resolvedDate);
             $(this.txtResolvedDescription).val(detail.resolvedDescription);
-            console.log(detail)
             $(this.lblVehicleNo).html("Vehicle : " + detail.vehicle);
           }
         }

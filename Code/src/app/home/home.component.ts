@@ -28,7 +28,6 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 
     this.cityName = localStorage.getItem("cityName");
-    console.log(this.commonService.getFireStoreCity());
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
