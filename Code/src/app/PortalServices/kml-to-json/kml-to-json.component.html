@@ -19,10 +19,10 @@
                                 <label>Ward </label>
                                 <div class="wrap-input-effects" required>
                                     <select class="caret-select" id="ddlZone" style="width:300px">
-                                    <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
-                                      {{zone.zoneName}}
-                                    </option>
-                                  </select>
+                                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                                            {{zone.zoneName}}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -37,7 +37,8 @@
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12 pr-1">
                                 <div class="form-group">
-                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">Convert to JSON</button>
+                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">Convert to
+                                        JSON</button>
 
                                     <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
                                 </div>
