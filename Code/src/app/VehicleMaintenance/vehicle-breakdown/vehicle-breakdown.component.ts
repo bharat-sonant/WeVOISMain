@@ -136,7 +136,7 @@ export class VehicleBreakdownComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter date !!!");
       return;
     }
-    if (vehicle == "") {
+    if (vehicle == "0") {
       this.commonService.setAlertMessage("error", "Please select vehicle !!!");
       return;
     }
@@ -287,6 +287,18 @@ export class VehicleBreakdownComponent implements OnInit {
     $(this.breakdownId).val("0");
     $(this.resolvedId).val("0");
     this.modalService.dismissAll();
+  }
+
+  checkDate(filterVal:any){
+    this.commonService.setDate(this.toDayDate, filterVal, 'current').then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.toDayDate) {
+        this.toDayDate = newDate;
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
   }
 
 }
