@@ -116,7 +116,7 @@
                 <input id="breakdownId" type="hidden" value="0" />
                 <div class="wrap-input-effects" required>
                     <label>Date</label>
-                    <input type="date" id="txtDate" class="input-green" />
+                    <input type="date" id="txtDate" class="input-green" (change)="checkDate($event.target.value)" />
                 </div>
                 <div class="wrap-input-effects" required>
                     <label>Vehicle</label>
