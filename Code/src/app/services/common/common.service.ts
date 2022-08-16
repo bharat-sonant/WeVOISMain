@@ -657,12 +657,14 @@ export class CommonService {
   }
 
   getPortalUserDetailById(userId: string) {
+    return new Promise((resolve) => {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     if (userList == null) {
       userList = [];
     }
     let userData = userList.find((item) => item.userId == userId);
-    return userData;
+    resolve(userData);
+  });
   }
 
   setAlertMessage(type: any, message: any) {
@@ -1819,7 +1821,7 @@ export class CommonService {
         let previousDate = this.getPreviousDate(selectedDate, 1);
         newDate = previousDate;
       }
-      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(), 2))) {
+      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(), 0))) {
         newDate = selectedDate;
       }
       resolve(newDate);

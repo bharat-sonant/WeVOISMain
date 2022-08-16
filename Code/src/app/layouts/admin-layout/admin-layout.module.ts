@@ -113,6 +113,7 @@ import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/mo
 import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
 import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
+import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
 
 @NgModule({
   imports: [
@@ -230,7 +231,8 @@ import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-
     MonthlyFuelReportComponent,
     VehicleBreakdownComponent,
     VehicleBreakdownReportComponent,
-    ChangeLineMarkerDataComponent
+    ChangeLineMarkerDataComponent,
+    AddVehicleBreakdownComponent
   ]
 })
 

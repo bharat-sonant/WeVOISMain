@@ -41,7 +41,7 @@
                                         <option value="11">November</option>
                                         <option value="12">December</option>
                                     </select>
-                                    <button type="button" class="user-button add-btn" (click)="openModel(contentBreakDown,0,'entry');">
+                                    <button type="button" class="user-button add-btn" (click)="addNewEntry('0','entry');">
                                         <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
                                             &nbsp; ADD NEW</span></button>
                                 </div>
@@ -59,30 +59,30 @@
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
                                             <th class="br-1 td-1 table-heading">Date</th>
-                                            <th class="text-left br-1 table-heading">
-                                                Vehicle</th>
                                             <th class="text-left br-1 table-heading ward-table-heading">
-                                                Can Run in Ward</th>
-                                            <th class="text-left br-1 table-heading">
-                                                Description</th>
-                                            <th class="text-left br-1 table-heading">
-                                                Action</th>
+                                                Details</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of breakdownList; let i=index">
-                                                <td class="td-1 table-data">
+                                                <td class="td-1 table-data" style="vertical-align: top;">
                                                     {{data.date}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.vehicle}}</td>
-                                                <td class="text-left br-1">
-                                                    {{data.canRunInWard}}</td>
-                                                <td class="text-left br-1">
-                                                    {{data.description}}</td>
-                                                <td class="text-center br-1">
-                                                    <i class="fa-solid fa-p" style="color: red; cursor: pointer;" [hidden]="data.status=='Resolved'" (click)="openModel(contentBreakDownResolved,data.id,'pending');"></i>
-                                                    <i class="fa-solid fa-r" style="color:green;cursor: pointer;" [hidden]="data.status=='Pending'" (click)="openModel(contentBreakDownResolved,data.id,'resolved');"></i>
-                                                    <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID || data.status=='Resolved'" (click)="openModel(contentBreakDown,data.id,'entry');" style="margin-left: 20px;"></i>
+                                                    <b> {{data.vehicle}}</b><br />
+                                                    <b> Issue : </b>{{data.description}}<br />
+                                                    <b>Can Run in Ward : </b>{{data.canRunInWard}}<br/>
+                                                    <b>Entry By : </b>{{data.userName}}
+                                                    <div [hidden]="data.resolvedDate==''" style="width:100%;">
+                                                        <hr />
+                                                        <b>Date : </b>{{data.resolvedDate}}<br />
+                                                        <b>Resolution : </b>{{data.resolvedDescription}}<br />
+                                                        <b>Mechanics : </b>{{data.mechanicName}}<br />
+                                                        <b>Working Hrs : </b>{{data.workingHrs}}
+                                                    </div>
+                                                    <hr />
+                                                    <i class="fa-solid fa-p" style="color: red; cursor: pointer;" [hidden]="data.status=='Resolved'" (click)="addNewEntry(data.id,'pending');"></i>
+                                                    <i class="fa-solid fa-r" style="color:green;cursor: pointer;" [hidden]="data.status=='Pending'" (click)="addNewEntry(data.id,'resolved');"></i>
+                                                    <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID || data.status=='Resolved'" (click)="addNewEntry(data.id,'entry');" style="margin-left: 20px;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -101,76 +101,3 @@
         </div>
     </div>
 </div>
-
-<!--Breakdown Entry  Start-->
-<ng-template #contentBreakDown>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Breakdown Entry</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="breakdownId" type="hidden" value="0" />
-                <div class="wrap-input-effects" required>
-                    <label>Date</label>
-                    <input type="date" id="txtDate" class="input-green" (change)="checkDate($event.target.value)" />
-                </div>
-                <div class="wrap-input-effects" required>
-                    <label>Vehicle</label>
-                    <select id="ddlVehicle" class="input-green">
-                        <option value="0">Select Vehicle</option>
-                        <option value={{dt.vehicle}} *ngFor="let dt of vehicleList">{{dt.vehicle}}</option>
-                    </select>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <label>Description</label>
-                    <textarea id="txtDescription" rows="8"></textarea>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input type="checkbox" id="chkCanRun">&nbsp;&nbsp;
-                    <label>Can run in ward</label>
-                </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" (click)="saveBreakdown();" />
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!--Breakdown Entry End-->
-
-
-<!--Breakdown Resolved  Start-->
-<ng-template #contentBreakDownResolved>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Resolved Entry</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="resolvedId" type="hidden" value="0" />
-                <div class="wrap-input-effects" required style="font-weight: bold;">
-                    <label id="lblVehicleNo">Vehicle : </label>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <label>Date</label>
-                    <input type="date" id="txtResolvedDate" class="input-green" />
-                </div>
-                <div class="wrap-input-effects" required>
-                    <label>Description</label>
-                    <textarea id="txtResolvedDescription" rows="8"></textarea>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input type="checkbox" id="chkResolvedCanRun">&nbsp;&nbsp;
-                    <label>Can run in ward</label>
-                </div>
-                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" (click)="saveResolvedBreakdown();" />
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!--Breakdown Resolved End-->
