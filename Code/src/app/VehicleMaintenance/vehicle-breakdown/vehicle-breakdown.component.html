@@ -61,8 +61,6 @@
                                             <th class="br-1 td-1 table-heading">Date</th>
                                             <th class="text-left br-1 table-heading ward-table-heading">
                                                 Details</th>
-                                            <th class="text-left br-1 table-heading">
-                                                Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of breakdownList; let i=index">
@@ -72,16 +70,16 @@
                                                 <td class="text-left br-1">
                                                     <b> {{data.vehicle}}</b><br />
                                                     <b> Issue : </b>{{data.description}}<br />
-                                                    <b>Can Run in Ward : </b>{{data.canRunInWard}}
-                                                    <div [hidden]="data.resolvedDate==''">
-                                                        <hr/>
-                                                        <b>Date : </b>{{data.resolvedDate}}<br/>
-                                                        <b>Resolution : </b>{{data.resolvedDescription}}<br/>
-                                                        <b>Mechanics : </b>{{data.mechanicName}}<br/>
+                                                    <b>Can Run in Ward : </b>{{data.canRunInWard}}<br/>
+                                                    <b>Entry By : </b>{{data.userName}}
+                                                    <div [hidden]="data.resolvedDate==''" style="width:100%;">
+                                                        <hr />
+                                                        <b>Date : </b>{{data.resolvedDate}}<br />
+                                                        <b>Resolution : </b>{{data.resolvedDescription}}<br />
+                                                        <b>Mechanics : </b>{{data.mechanicName}}<br />
                                                         <b>Working Hrs : </b>{{data.workingHrs}}
                                                     </div>
-                                                </td>
-                                                <td class="text-center br-1" style="vertical-align: top;">
+                                                    <hr />
                                                     <i class="fa-solid fa-p" style="color: red; cursor: pointer;" [hidden]="data.status=='Resolved'" (click)="addNewEntry(data.id,'pending');"></i>
                                                     <i class="fa-solid fa-r" style="color:green;cursor: pointer;" [hidden]="data.status=='Pending'" (click)="addNewEntry(data.id,'resolved');"></i>
                                                     <i class="fas fa-edit edit-icon" [hidden]="data.holdBy!=data.userID || data.status=='Resolved'" (click)="addNewEntry(data.id,'entry');" style="margin-left: 20px;"></i>

@@ -71,6 +71,11 @@ export class VehicleBreakdownComponent implements OnInit {
               let resolvedDescription = "";
               let mechanicName = "";
               let workingHrs = "";
+              let createdBy = "";
+              let userName = "";
+              if (vehicleBreakdownData[id]["createdBy"] != null) {
+                createdBy = vehicleBreakdownData[id]["createdBy"];
+              }
               if (vehicleBreakdownData[id]["canRunInWardResolved"] != null) {
                 canRunInWardResolved = vehicleBreakdownData[id]["canRunInWardResolved"];
               }
@@ -86,10 +91,13 @@ export class VehicleBreakdownComponent implements OnInit {
               if (vehicleBreakdownData[id]["mechanicName"] != null) {
                 mechanicName = vehicleBreakdownData[id]["mechanicName"];
               }
-              this.breakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps, status: vehicleBreakdownData[id]["status"], canRunInWardResolved: canRunInWardResolved, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription, workingHrs: workingHrs, mechanicName: mechanicName });
-              this.breakdownList = this.breakdownList.sort((a, b) =>
-                b.timeStamps > a.timeStamps ? 1 : -1
-              );
+              this.commonService.getPortalUserDetailById(createdBy).then((data: any) => {
+                userName = data["name"];
+                this.breakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps, status: vehicleBreakdownData[id]["status"], canRunInWardResolved: canRunInWardResolved, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription, workingHrs: workingHrs, mechanicName: mechanicName, userName: userName });
+                this.breakdownList = this.breakdownList.sort((a, b) =>
+                  b.timeStamps > a.timeStamps ? 1 : -1
+                );
+              });
             }
           }
         }

@@ -657,12 +657,14 @@ export class CommonService {
   }
 
   getPortalUserDetailById(userId: string) {
+    return new Promise((resolve) => {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     if (userList == null) {
       userList = [];
     }
     let userData = userList.find((item) => item.userId == userId);
-    return userData;
+    resolve(userData);
+  });
   }
 
   setAlertMessage(type: any, message: any) {
