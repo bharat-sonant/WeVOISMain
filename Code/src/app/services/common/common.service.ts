@@ -1819,7 +1819,7 @@ export class CommonService {
         let previousDate = this.getPreviousDate(selectedDate, 1);
         newDate = previousDate;
       }
-      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(), 2))) {
+      if (new Date(newDate) > new Date(this.getNextDate(this.setTodayDate(), 0))) {
         newDate = selectedDate;
       }
       resolve(newDate);
