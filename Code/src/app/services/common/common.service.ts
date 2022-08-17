@@ -215,6 +215,9 @@ export class CommonService {
     else if (cityName == "churu") {
       latLng.push({ lat: 25.885411, lng: 74.958944 });
     }
+    else if (cityName == "wevois-others") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     return latLng;
   }
 
