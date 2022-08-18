@@ -58,19 +58,35 @@ export class VehicleBreakdownReportComponent implements OnInit {
               let canRunInWardResolved = "No";
               let resolvedDate = "";
               let resolvedDescription = "";
-              if(vehicleBreakdownData[id]["canRunInWardResolved"]!=null){
-                canRunInWardResolved=vehicleBreakdownData[id]["canRunInWardResolved"];
+              let mechanicName = "";
+              let workingHrs = "";
+              let createdBy = "";
+              let userName = "";
+              if (vehicleBreakdownData[id]["createdBy"] != null) {
+                createdBy = vehicleBreakdownData[id]["createdBy"];
               }
-              if(vehicleBreakdownData[id]["resolvedDate"]!=null){
-                resolvedDate=vehicleBreakdownData[id]["resolvedDate"];
+              if (vehicleBreakdownData[id]["canRunInWardResolved"] != null) {
+                canRunInWardResolved = vehicleBreakdownData[id]["canRunInWardResolved"];
               }
-              if(vehicleBreakdownData[id]["resolvedDescription"]!=null){
-                resolvedDescription=vehicleBreakdownData[id]["resolvedDescription"];
+              if (vehicleBreakdownData[id]["resolvedDate"] != null) {
+                resolvedDate = vehicleBreakdownData[id]["resolvedDate"];
               }
-              this.allBreakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps, status: vehicleBreakdownData[id]["status"],canRunInWardResolved:canRunInWardResolved,resolvedDate:resolvedDate,resolvedDescription:resolvedDescription });
-              this.allBreakdownList = this.allBreakdownList.sort((a, b) =>
-                b.timeStamps > a.timeStamps ? 1 : -1
-              );
+              if (vehicleBreakdownData[id]["resolvedDescription"] != null) {
+                resolvedDescription = vehicleBreakdownData[id]["resolvedDescription"];
+              }
+              if (vehicleBreakdownData[id]["workingHrs"] != null) {
+                workingHrs = vehicleBreakdownData[id]["workingHrs"];
+              }
+              if (vehicleBreakdownData[id]["mechanicName"] != null) {
+                mechanicName = vehicleBreakdownData[id]["mechanicName"];
+              }
+              this.commonService.getPortalUserDetailById(createdBy).then((data: any) => {
+                userName = data["name"];
+                this.breakdownList.push({ id: id, date: vehicleBreakdownData[id]["date"], vehicle: vehicleBreakdownData[id]["vehicle"], canRunInWard: vehicleBreakdownData[id]["canRunInWard"], description: vehicleBreakdownData[id]["description"], timeStamps: timeStamps, status: vehicleBreakdownData[id]["status"], canRunInWardResolved: canRunInWardResolved, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription, workingHrs: workingHrs, mechanicName: mechanicName, userName: userName });
+                this.breakdownList = this.breakdownList.sort((a, b) =>
+                  b.timeStamps > a.timeStamps ? 1 : -1
+                );
+              });
             }
           }
         }

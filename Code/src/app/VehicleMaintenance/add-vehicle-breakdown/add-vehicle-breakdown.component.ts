@@ -111,7 +111,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
         }
         else {
           $(this.txtResolvedDate).val(this.toDayDate);
-          if (this.vehicleBreakdownJSONData[this.breakdownId]["canRunInWard"] == "Yes") {
+          if (this.vehicleBreakdownJSONData[this.breakdownId]["chkResolvedCanRun"] == "Yes") {
             (<HTMLInputElement>document.getElementById(this.chkResolvedCanRun)).checked = true;
           }
           $(this.ddlResolvedVehicle).val(this.vehicleBreakdownJSONData[this.breakdownId]["vehicle"]);
@@ -120,13 +120,15 @@ export class AddVehicleBreakdownComponent implements OnInit {
           }
           $(this.txtResolvedDescription).val(this.vehicleBreakdownJSONData[this.breakdownId]["resolvedDescription"]);
           $(this.txtWorkingHrs).val(this.vehicleBreakdownJSONData[this.breakdownId]["workingHrs"]);
-          let mechanics = this.vehicleBreakdownJSONData[this.breakdownId]["mechanics"];
-          let list = mechanics.split(',');
-          for (let i = 0; i < list.length; i++) {
-            let empId = list[i].trim();
-            let detail = this.mechanicList.find(item => item.empId == empId);
-            if (detail != undefined) {
-              (<HTMLInputElement>document.getElementById("chk" + empId)).checked = true;
+          if (this.vehicleBreakdownJSONData[this.breakdownId]["mechanics"] != null) {
+            let mechanics = this.vehicleBreakdownJSONData[this.breakdownId]["mechanics"];
+            let list = mechanics.split(',');
+            for (let i = 0; i < list.length; i++) {
+              let empId = list[i].trim();
+              let detail = this.mechanicList.find(item => item.empId == empId);
+              if (detail != undefined) {
+                (<HTMLInputElement>document.getElementById("chk" + empId)).checked = true;
+              }
             }
           }
         }
@@ -250,7 +252,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
               }
               else {
                 mechanics = mechanics + "," + empId;
-                mechanicName =mechanicName+","+ this.mechanicList[i]["name"];
+                mechanicName = mechanicName + "," + this.mechanicList[i]["name"];
               }
             }
           }

@@ -63,36 +63,39 @@
                                             <th class="br-1 td-1 table-heading">Date</th>
                                             <th class="text-left br-1 table-heading">
                                                 Vehicle</th>
-                                            <th class="text-left br-1 table-heading ward-table-heading">
-                                                Can Run in Ward</th>
                                             <th class="text-left br-1 table-heading">
-                                                Description</th>
+                                                Detail</th>
                                             <th class="text-left br-1 table-heading">
                                                 Date (R)</th>
                                             <th class="text-left br-1 table-heading">
-                                                Can Run in Ward (R)</th>
+                                                Detail (R)</th>
+
                                             <th class="text-left br-1 table-heading">
-                                                Description (R)</th>
+                                                Entry By</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of breakdownList; let i=index">
-                                                <td class="td-1 table-data">
+                                                <td class="td-1 table-data" style="vertical-align: top;">
                                                     {{data.date}}
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" style="vertical-align: top;">
                                                     {{data.vehicle}}</td>
-                                                <td class="text-left br-1">
-                                                    {{data.canRunInWard}}</td>
-                                                <td class="text-left br-1">
-                                                    {{data.description}}</td>
-                                                <td class="text-center br-1">
+                                                <td class="text-left br-1" style="vertical-align: top;">
+                                                    <b>Issue : </b> {{data.description}}<br/>
+                                                    <b>Can Run In Ward :</b>{{data.canRunInWard}}
+                                                </td>
+                                                <td class="text-left br-1" style="vertical-align: top;">
                                                     {{data.resolvedDate}}
                                                 </td>
-                                                <td class="text-center br-1">
-                                                    {{data.canRunInWardResolved}}
+                                                <td class="text-left br-1" style="vertical-align: top;">
+                                                    <div [hidden]="data.resolvedDate==''">
+                                                        <b>Solution : </b> {{data.resolvedDescription}}<br/>
+                                                        <b>Mechanics : </b>{{data.mechanicName}}<br/>
+                                                        <b>Working Hrs : </b>{{data.workingHrs}}<br/>
+                                                        <b>Can Run In Ward :</b>{{data.canRunInWardResolved}}</div>
                                                 </td>
-                                                <td class="text-center br-1">
-                                                    {{data.resolvedDescription}}
+                                                <td class="text-left br-1" style="vertical-align: top;">
+                                                    {{data.userName}}
                                                 </td>
                                             </tr>
                                         </tbody>
