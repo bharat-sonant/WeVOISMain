@@ -217,7 +217,9 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.setMap();
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
-    this.setWorkNotStarted();
+    if (this.cityName != "wevois-others") {
+      this.setWorkNotStarted();
+    }
     this.getWardForLineWeitage();
   }
 
@@ -1764,7 +1766,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         position: "nearest",
         title: "wow",
         callbacks: {
-          title: function() {},
+          title: function () { },
           label: function (tooltipItem, data) {
             return (
               +Number(tooltipItem.yLabel) +
