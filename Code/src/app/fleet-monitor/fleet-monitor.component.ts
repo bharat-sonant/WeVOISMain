@@ -273,8 +273,9 @@ export class FleetMonitorComponent {
                     }, 300);
 
                     let details = this.workerDetails;
+                    let cityName=this.cityName;
                     marker.addListener('click', function () {
-                      details.wardMonitorUrl = "/" + this.cityName + "/ward-work-tracking/" + zoneNo;
+                      details.wardMonitorUrl = "/" + cityName + "/ward-work-tracking/" + zoneNo;
                       details.driverName = zoneDetail.driverName;
                       details.helperName = zoneDetail.helperName;
                       details.vehicleNo = zoneDetail.vehicle;

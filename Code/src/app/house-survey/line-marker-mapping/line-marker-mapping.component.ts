@@ -43,8 +43,8 @@ export class LineMarkerMappingComponent {
   allMarkers: any[];
   selectedCardDetails: any[];
   toDayDate: any;
-  public movedMarkerCount:any;
-  public totalMoveMarkerCount:any;
+  public movedMarkerCount: any;
+  public totalMoveMarkerCount: any;
 
   cardDetails: CardDetails = {
     selectedMarkerCount: 0,
@@ -55,15 +55,15 @@ export class LineMarkerMappingComponent {
   newMarkerList: any[];
   plansRef: AngularFireList<any>;
   divLoader = "#divLoader";
-  divLoaderMarkerMove="#divLoaderMarkerMove";
+  divLoaderMarkerMove = "#divLoaderMarkerMove";
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.movedMarkerCount=0;
-    this.totalMoveMarkerCount=0;
+    this.movedMarkerCount = 0;
+    this.totalMoveMarkerCount = 0;
     this.lineNo = 1;
     this.previousLine = 1;
     this.allMarkers = [];
@@ -402,7 +402,7 @@ export class LineMarkerMappingComponent {
       return;
     }
     $(this.divLoaderMarkerMove).show();
-    this.totalMoveMarkerCount=this.selectedCardDetails.length;
+    this.totalMoveMarkerCount = this.selectedCardDetails.length;
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/lastMarkerKey";
     let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastMarkerData => {
@@ -422,8 +422,8 @@ export class LineMarkerMappingComponent {
       lastKey = lastKey + 1;
       let markerNo = this.selectedCardDetails[index]["markerNo"];
       let data = this.selectedCardDetails[index]["data"];
+      let oldImageName = data["image"];
       data["image"] = lastKey + ".jpg";
-      let oldImageName = markerNo + ".jpg";
       let newImageName = lastKey + ".jpg";
       const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
       const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
@@ -437,7 +437,7 @@ export class LineMarkerMappingComponent {
             const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
             ref1.put(blob).then((promise) => {
               // ref.delete();
-              this.movedMarkerCount=this.movedMarkerCount+1;
+              this.movedMarkerCount = this.movedMarkerCount + 1;
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
               this.db.object(dbPath).update(data);
 
@@ -520,8 +520,8 @@ export class LineMarkerMappingComponent {
             this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
           }
           $(this.divLoaderMarkerMove).hide();
-          this.movedMarkerCount=0;
-          this.totalMoveMarkerCount=0;
+          this.movedMarkerCount = 0;
+          this.totalMoveMarkerCount = 0;
         }
         else {
           this.selectedCardDetails = [];
@@ -535,8 +535,8 @@ export class LineMarkerMappingComponent {
             this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
           }
           $(this.divLoaderMarkerMove).hide();
-          this.movedMarkerCount=0;
-          this.totalMoveMarkerCount=0;
+          this.movedMarkerCount = 0;
+          this.totalMoveMarkerCount = 0;
         }
       });
   }

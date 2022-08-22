@@ -33,7 +33,7 @@ export class RemarkReportComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
     this.getZoneList();
-    this.selectedZone = "1";
+    this.selectedZone = this.zoneList[1]["zoneNo"];
     this.selectedCategory = "0";
     this.onSubmit();
   }

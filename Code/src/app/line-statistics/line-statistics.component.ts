@@ -99,7 +99,7 @@ export class LineStatisticsComponent implements OnInit {
 
     this.zoneList = this.mapService.getZones(this.todayDate);
     this.zoneList.splice(0, 1);
-    this.activeZone = "1";
+    this.activeZone = this.zoneList[0]["zoneNo"];
     this.checkTodayWorkStatus();
   }
 
