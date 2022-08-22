@@ -99,8 +99,8 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       lastKey = lastKey + 1;
       let markerNo = markerNoList[index]["markerNo"];
       let data = markerData[markerNo];
+      let oldImageName = data["image"];
       data["image"] = lastKey + ".jpg";
-      let oldImageName = markerNo + ".jpg";
       let newImageName = lastKey + ".jpg";
       const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
       const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
