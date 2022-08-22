@@ -207,38 +207,40 @@ export class DailyWorkDetailComponent implements OnInit {
       summaryData => {
         summaryDetailInstance.unsubscribe();
         if (summaryData != null) {
-          let startTime = summaryData["dutyInTime"].split(',')[0];
-          let endTime = "";
-          let trips = "0";
-          let workPercentage = "";
-          let wardRunKm = "0.000";
-          if (summaryData["dutyOutTime"] != null) {
-            endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
-          }
-          if (summaryData["trip"] != null) {
-            trips = summaryData["trip"];
-          }
-          if (summaryData["workPercentage"] != null) {
-            workPercentage = summaryData["workPercentage"] + "%";
-          }
-          if (summaryData["wardCoveredDistance"] != null) {
-            wardRunKm = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(3);
-          }
-
-          let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
-          if (detail != undefined) {
-            detail.startTime = startTime;
-            detail.endTime = endTime;
-            detail.trips = trips;
-            detail.wardRunKm = wardRunKm;
-            detail.workPercentage = workPercentage;
-            let sTime = new Date(this.selectedDate + " " + startTime);
-            let eTime = new Date();
-            if (endTime != "") {
-              eTime = new Date(this.selectedDate + " " + endTime);
+          if (summaryData["dutyInTime"] != null) {
+            let startTime = summaryData["dutyInTime"].split(',')[0];
+            let endTime = "";
+            let trips = "0";
+            let workPercentage = "";
+            let wardRunKm = "0.000";
+            if (summaryData["dutyOutTime"] != null) {
+              endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
             }
-            let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-            detail.workTime = this.commonService.getHrsFull(totalMinutes);
+            if (summaryData["trip"] != null) {
+              trips = summaryData["trip"];
+            }
+            if (summaryData["workPercentage"] != null) {
+              workPercentage = summaryData["workPercentage"] + "%";
+            }
+            if (summaryData["wardCoveredDistance"] != null) {
+              wardRunKm = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(3);
+            }
+
+            let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+            if (detail != undefined) {
+              detail.startTime = startTime;
+              detail.endTime = endTime;
+              detail.trips = trips;
+              detail.wardRunKm = wardRunKm;
+              detail.workPercentage = workPercentage;
+              let sTime = new Date(this.selectedDate + " " + startTime);
+              let eTime = new Date();
+              if (endTime != "") {
+                eTime = new Date(this.selectedDate + " " + endTime);
+              }
+              let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+              detail.workTime = this.commonService.getHrsFull(totalMinutes);
+            }
           }
         }
       });
