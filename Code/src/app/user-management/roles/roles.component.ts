@@ -39,6 +39,7 @@ export class RolesComponent implements OnInit {
             if (data[roleId]["roleName"] != null) {
               let roleName = data[roleId]["roleName"];
               this.roleList.push({ roleId: roleId, roleName: roleName });
+              this.roleList=this.commonService.transformNumeric(this.roleList,"roleName");
             }
           }
         }
@@ -89,6 +90,7 @@ export class RolesComponent implements OnInit {
       lastKey++;
       this.roleJSONData["lastKey"] = lastKey;
       this.roleList.push({ roleId: lastKey, roleName: roleName });
+      this.roleList=this.commonService.transformNumeric(this.roleList,"roleName");
     }
     else {
       lastKey = Number(id);
