@@ -1,0 +1,121 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 no-gutters-iner">
+            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentRole,0,'add');">
+                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
+                    NEW</span></button>
+
+        </div>
+        <div class="col-md-8 Surveyor-box">
+            User Roles
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 card-main">
+            <div class="card card-main-iner">
+                <div class="card-body card-body2">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-head1">S.No.</th>
+                                            <th class="table-head2">Role</th>
+                                            <th class="text-right table-head5">
+                                                Action</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of roleList; let i=index" class="{{data.trClass}}">
+                                                <td class="table-data-1">{{i+1}}</td>
+                                                <td class="table-data-2">
+                                                    {{data.roleName}}</td>
+                                                <td class="text-center">
+                                                    <span [hidden]="data.isActive==false">
+                                                        <i class="far fa-times-circle circle-icon"
+                                                            (click)="openModel(contentConfirmation,data.roleId,'delete')"
+                                                            title="Remove Entry"
+                                                            ></i>
+                                                        <i class="far fa-edit edit-icon"
+                                                            (click)="openModel(contentRole,data.roleId,'update');"
+                                                            title="Edit Entry"
+                                                            ></i>
+                                                            <i routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="User Access"
+                            class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate; padding-left: 10px;"></i>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center">
+                                <div class="form-group">
+                                    <h5>No data available</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove role ?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteId" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeRole()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Delete Confirmation End-->
+
+
+
+<!--Role  Start-->
+<ng-template #contentRole>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Role</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtRoleName" class="input-green" placeholder="Role Name" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveRole();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Role End-->

@@ -114,6 +114,8 @@ import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-brea
 import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
 import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
+import { RolesComponent } from '../../user-management/roles/roles.component';
+import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 
 @NgModule({
   imports: [
@@ -232,7 +234,9 @@ import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehic
     VehicleBreakdownComponent,
     VehicleBreakdownReportComponent,
     ChangeLineMarkerDataComponent,
-    AddVehicleBreakdownComponent
+    AddVehicleBreakdownComponent,
+    RolesComponent,
+    RolePageAccessComponent
   ]
 })
 

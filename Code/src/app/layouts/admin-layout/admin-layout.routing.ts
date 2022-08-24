@@ -107,6 +107,8 @@ import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-brea
 import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
 import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
+import { RolesComponent } from '../../user-management/roles/roles.component';
+import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -230,6 +232,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'sikar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'sikar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'sikar/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -344,6 +347,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'sikar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'sikar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'sikar/:id/roles', component: RolesComponent },
 
 
     //jaipur-greater
@@ -456,6 +460,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-greater/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-greater/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -569,6 +574,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-greater/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-greater/:id/roles', component: RolesComponent },
     
 
     //reengus
@@ -682,6 +688,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'reengus/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'reengus/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'reengus/role-page-access/:id', component: RolePageAccessComponent },
 
 
 
@@ -798,6 +805,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'reengus/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'reengus/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'reengus/:id/roles', component: RolesComponent },
 
 
 
@@ -912,6 +920,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'shahpura/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'shahpura/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'shahpura/:id/home', component: HomeComponent },
@@ -1026,6 +1035,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'shahpura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'shahpura/:id/roles', component: RolesComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1138,6 +1148,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'test/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'test/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'test/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'test/:id/home', component: HomeComponent },
@@ -1252,6 +1263,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'test/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'test/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'test/:id/roles', component: RolesComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1364,6 +1376,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-office/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-office/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'jaipur-office/:id/home', component: HomeComponent },
@@ -1478,6 +1491,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-office/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-office/:id/roles', component: RolesComponent },
 
     
 
@@ -1592,6 +1606,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'kishangarh/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'kishangarh/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'kishangarh/:id/home', component: HomeComponent },
@@ -1706,6 +1721,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'kishangarh/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'kishangarh/:id/roles', component: RolesComponent },
 
 
 
@@ -1821,6 +1837,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'niwai/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'niwai/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'niwai/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'niwai/:id/home', component: HomeComponent },
@@ -1935,6 +1952,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'niwai/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'niwai/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'niwai/:id/roles', component: RolesComponent },
 
 
 
@@ -2049,6 +2067,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaisalmer/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaisalmer/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'jaisalmer/:id/home', component: HomeComponent },
@@ -2163,6 +2182,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaisalmer/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaisalmer/:id/roles', component: RolesComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2275,6 +2295,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'salasar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'salasar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'salasar/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'salasar/:id/home', component: HomeComponent },
@@ -2389,6 +2410,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'salasar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'salasar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'salasar/:id/roles', component: RolesComponent },
 
 
 
@@ -2503,6 +2525,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'behror/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'behror/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'behror/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'behror/:id/home', component: HomeComponent },
@@ -2617,6 +2640,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'behror/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'behror/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'behror/:id/roles', component: RolesComponent },
 
 
     //jaipur
@@ -2729,6 +2753,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur/:id/home', component: HomeComponent },
@@ -2843,6 +2868,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur/:id/roles', component: RolesComponent },
 
 
     //jaipur-jhotwara
@@ -2955,6 +2981,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-jhotwara/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-jhotwara/:id/home', component: HomeComponent },
@@ -3069,6 +3096,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-jhotwara/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-jhotwara/:id/roles', component: RolesComponent },
 
 
     //jaipur-jagatpura
@@ -3181,6 +3209,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-jagatpura/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-jagatpura/:id/home', component: HomeComponent },
@@ -3295,6 +3324,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-jagatpura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-jagatpura/:id/roles', component: RolesComponent },
 
 
     //jaipur-malviyanagar
@@ -3407,6 +3437,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-malviyanagar/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-malviyanagar/:id/home', component: HomeComponent },
@@ -3521,6 +3552,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-malviyanagar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-malviyanagar/:id/roles', component: RolesComponent },
 
 
     //jaipur-mansarovar
@@ -3633,6 +3665,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-mansarovar/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-mansarovar/:id/home', component: HomeComponent },
@@ -3747,6 +3780,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-mansarovar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-mansarovar/:id/roles', component: RolesComponent },
 
 
     //jaipur-murlipura
@@ -3859,6 +3893,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-murlipura/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-murlipura/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-murlipura/:id/home', component: HomeComponent },
@@ -3973,6 +4008,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-murlipura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-murlipura/:id/roles', component: RolesComponent },
 
 
     //jaipur-sanganer
@@ -4085,6 +4121,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-sanganer/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-sanganer/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-sanganer/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-sanganer/:id/home', component: HomeComponent },
@@ -4199,6 +4236,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-sanganer/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-sanganer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-sanganer/:id/roles', component: RolesComponent },
 
 
     //jaipur-vidhyadhar
@@ -4311,6 +4349,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-vidhyadhar/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'jaipur-vidhyadhar/:id/home', component: HomeComponent },
@@ -4425,6 +4464,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'jaipur-vidhyadhar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'jaipur-vidhyadhar/:id/roles', component: RolesComponent },
 
 
 
@@ -4538,6 +4578,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'bhiwadi/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'bhiwadi/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'bhiwadi/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'bhiwadi/:id/home', component: HomeComponent },
@@ -4652,6 +4693,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'bhiwadi/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'bhiwadi/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'bhiwadi/:id/roles', component: RolesComponent },
 
     
 
@@ -4765,6 +4807,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'chhapar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'chhapar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'chhapar/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'chhapar/:id/home', component: HomeComponent },
@@ -4879,6 +4922,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'chhapar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'chhapar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'chhapar/:id/roles', component: RolesComponent },
 
     
 
@@ -4992,6 +5036,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'churu/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'churu/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'churu/role-page-access/:id', component: RolePageAccessComponent },
 
 
     { path: 'churu/:id/home', component: HomeComponent },
@@ -5106,6 +5151,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'churu/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'churu/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'churu/:id/roles', component: RolesComponent },
 
 
 
@@ -5221,6 +5267,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/vehicle-breakdown', component: VehicleBreakdownComponent },
     { path: 'wevois-others/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'wevois-others/role-page-access/:id', component: RolePageAccessComponent },
 
     
     { path: 'wevois-others/:id/home', component: HomeComponent },
@@ -5335,4 +5382,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
     { path: 'wevois-others/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'wevois-others/:id/roles', component: RolesComponent },
 ]; 
