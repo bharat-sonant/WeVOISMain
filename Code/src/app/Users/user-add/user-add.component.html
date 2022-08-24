@@ -102,11 +102,31 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8 pr-1">
+                                <div class="col-md-4 pr-1">
+                                    <div class="form-group">
+                                        <label>Portal Access As</label>
+                                        <div class="wrap-input-effects" required>
+                                            <select id="userRole" class="input-green">
+                                                <option value="0">Select Role</option>
+                                                <option  *ngFor="let dt of roleList" value="{{dt.roleId}}">{{dt.roleName}}</option>
+                                            </select>
+                                            <span class="focus-input"></span>
+                                            <span class="symbol-input">
+                                                <i class="fas fa-user" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 pr-1">
 
                                 </div>
+                                <div class="col-12 border-bottom" style="margin-top: 20px;">City for access</div>
+                                <div class="col-md-4" style="margin-top: 10px;" *ngFor="let dt of cityList">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkCity{{dt.city}}">&nbsp;&nbsp; <label>{{dt.name}}</label>
+                                    </div>
+                                </div>
                                 <div class="col-12 border-bottom" style="margin-top: 20px;"></div>
-
                                 <div class="col-md-4" style="margin-top: 25px;">
                                     <div class="form-group">
                                         <input type="checkbox" id="isAdmin">&nbsp;&nbsp; <label>Is Admin</label>

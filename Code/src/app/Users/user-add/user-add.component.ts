@@ -7,6 +7,7 @@ import * as $ from "jquery";
 import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { ActivatedRoute, Router } from "@angular/router";
+import { UsersService } from "../../services/users/users.service";
 
 @Component({
   selector: "app-user-add",
@@ -15,7 +16,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class UserAddComponent implements OnInit {
   //public userForm: FormGroup;
-  constructor(private router: Router, public dbFireStore: AngularFirestore, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
+  constructor(private router: Router, private userService: UsersService, public dbFireStore: AngularFirestore, public usrService: UserService, private actRoute: ActivatedRoute, public commonService: CommonService, public toastr: ToastrService, public db: AngularFireDatabase) { }
 
   usr: Users;
   toDayDate: any;
@@ -24,18 +25,45 @@ export class UserAddComponent implements OnInit {
   userid: any;
   $Key: any;
   cityName: any;
+  roleList: any[] = [];
+  cityList: any[] = [];
 
   ngOnInit() {
+    this.setDefaults();
+  }
 
+  setDefaults() {
     this.cityName = localStorage.getItem("cityName");
+    this.cityList = JSON.parse(localStorage.getItem("cityList"));
     this.toDayDate = this.commonService.setTodayDate();
-    const id = this.actRoute.snapshot.paramMap.get("id");
-    this.userid = id;
+    this.userid = this.actRoute.snapshot.paramMap.get("id");
+    this.getRoles();
+  }
 
-    if (id != null) {
-      this.usrid = id;
+  getRoles() {
+    this.userService.getRoles().then((data: any) => {
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let roleId = keyArray[i];
+            if (data[roleId]["roleName"] != null) {
+              let roleName = data[roleId]["roleName"];
+              this.roleList.push({ roleId: roleId, roleName: roleName });
+              this.roleList = this.commonService.transformNumeric(this.roleList, "roleName");
+            }
+          }
+        }
+      }
+      this.getUserDetail();
+    });
+  }
+
+  getUserDetail() {
+    if (this.userid != null) {
       this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").doc(this.userid).get().subscribe((doc) => {
         this.usrid = doc.data()["userId"];
+        console.log(doc.data())
         $("#name").val(doc.data()["name"]);
         $("#name").val(doc.data()["name"]);
         $("#userType").val(doc.data()["userType"]);
@@ -43,6 +71,9 @@ export class UserAddComponent implements OnInit {
         $("#email").val(doc.data()["email"]);
         $("#password").val(doc.data()["password"]);
         $("#expiryDate").val(doc.data()["expiryDate"]);
+        if (doc.data()["roleId"] != null) {
+          $("#userRole").val(doc.data()["roleId"]);
+        }
         if (doc.data()["officeAppUserId"] != null) {
           $("#officeAppUserId").val(doc.data()["officeAppUserId"]);
         }
@@ -72,24 +103,32 @@ export class UserAddComponent implements OnInit {
             (<HTMLInputElement>(document.getElementById("haltDisableAccess"))).checked = true;
           }
         }
-        if(doc.data()["isActual"]!=undefined){
+        if (doc.data()["isActual"] != undefined) {
           if (doc.data()["isActual"] == 1) {
             (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
           }
         }
-        if(doc.data()["isLock"]!=undefined){
+        if (doc.data()["isLock"] != undefined) {
           if (doc.data()["isLock"] == 1) {
             (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
           }
         }
-        if(doc.data()["isAdmin"]!=undefined){
+        if (doc.data()["isAdmin"] != undefined) {
           if (doc.data()["isAdmin"] == 1) {
             (<HTMLInputElement>(document.getElementById("isAdmin"))).checked = true;
           }
         }
-        if(doc.data()["isManager"]!=undefined){
+        if (doc.data()["isManager"] != undefined) {
           if (doc.data()["isManager"] == 1) {
             (<HTMLInputElement>(document.getElementById("isManager"))).checked = true;
+          }
+        }
+        if (doc.data()["accessCities"] != undefined) {
+          let list = doc.data()["accessCities"].split(',');
+          for (let i = 0; i < list.length; i++) {
+            let city = list[i].trim();
+            let chkCity = "chkCity" + city;
+            (<HTMLInputElement>(document.getElementById(chkCity))).checked = true;
           }
         }
       });
@@ -181,21 +220,37 @@ export class UserAddComponent implements OnInit {
     let userId: any = this.usrid;
     let name: any = $("#name").val();
     let userType: any = $("#userType").val();
+    let roleId: any = $("#userRole").val();
     let mobile: any = $("#mobile").val();
     let email: any = $("#email").val();
     let password: any = $("#password").val();
     let expiryDate: any = $("#expiryDate").val();
     let officeAppUserId: any = $("#officeAppUserId").val();
     let isTaskManager: any = 0;
-    let isActual:any=0;
-    let isLock:any=0;
-    let isAdmin:any=0;
-    let isManager:any=0;
+    let isActual: any = 0;
+    let isLock: any = 0;
+    let isAdmin: any = 0;
+    let isManager: any = 0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
     if (expiryDate == "") {
       expiryDate = "";
+    }
+    let accessCities = "";
+    if (this.cityList.length > 0) {
+      for (let i = 0; i < this.cityList.length; i++) {
+        let city = this.cityList[i]["city"];
+        let chkId = "chkCity" + city;
+        if ((<HTMLInputElement>document.getElementById(chkId)).checked == true) {
+          if (accessCities == "") {
+            accessCities = city;
+          }
+          else {
+            accessCities = accessCities + "," + city;
+          }
+        }
+      }
     }
     let element = <HTMLInputElement>document.getElementById("notificationHalt");
     if (element.checked == true) notificationHalt = 1;
@@ -238,10 +293,12 @@ export class UserAddComponent implements OnInit {
       officeAppUserId: officeAppUserId,
       isTaskManager: isTaskManager,
       haltDisableAccess: haltDisableAccess,
-      isActual:isActual,
-      isLock:isLock,
-      isAdmin:isAdmin,
-      isManager:isManager
+      isActual: isActual,
+      isLock: isLock,
+      isAdmin: isAdmin,
+      isManager: isManager,
+      roleId: roleId,
+      accessCities: accessCities
     };
 
     if (id != null) {
