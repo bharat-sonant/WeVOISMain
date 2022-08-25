@@ -149,7 +149,9 @@ export class DashboardComponent implements OnInit {
             }
           }
         }
+        if (this.cityName != "wevois-others") {
         this.setWorkNotStartedforWards();
+        }
         workDetails.unsubscribe();
       });
   }
