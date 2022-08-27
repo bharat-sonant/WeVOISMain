@@ -128,12 +128,12 @@ export class HouseMarkingComponent {
       data => {
         lastScanInstance.unsubscribe();
         if (data != null) {
-          $('#divLastUpdate').show();
+         // $('#divLastUpdate').show();
           this.markerData.lastScanTime = data.toString().split(':')[0] + ":" + data.toString().split(':')[1];
         }
         else {
           this.markerData.lastScanTime = "";
-          $('#divLastUpdate').hide();
+         // $('#divLastUpdate').hide();
         }
       }
     );
@@ -256,7 +256,7 @@ export class HouseMarkingComponent {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
-            if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey" && index != "alreadyInstalledCount") {
+           // if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey" && index != "alreadyInstalledCount") {
               if (data[index]["latLng"] != undefined) {
                 let lat = data[index]["latLng"].split(",")[0];
                 let lng = data[index]["latLng"].split(",")[1];
@@ -324,7 +324,7 @@ export class HouseMarkingComponent {
                   }
                 });
               }
-            }
+            //}
           }
         }
       }
@@ -397,8 +397,12 @@ export class HouseMarkingComponent {
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         markerInstance.unsubscribe();
         if (data != null) {
+          data["removeDate"]=this.commonService.getTodayDateTime();
+          data["removeBy"]=localStorage.getItem("userID");
+          
           dbPath = "EntityMarkingData/RemovedMarkers/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
           this.db.object(dbPath).update(data);
+
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo + "/";
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
