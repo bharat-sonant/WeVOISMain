@@ -3,7 +3,7 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-4 no-gutters-iner">
+        <div class="col-md-3 no-gutters-iner">
 
         </div>
         <div class="col-md-4 Surveyheading">
@@ -11,7 +11,7 @@
         </div>
 
 
-        <div class="col-md-4 text-right total-house fix-home-outer">
+        <div class="col-md-5 text-right total-house fix-home-outer">
             <div class="display" id="popup">
                 <div class="fix-home">
                     <div class="float-first">
@@ -69,7 +69,7 @@
                                                 RFID Not Matched</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="point" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);">
+                                            <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);">
                                                 <td class="table-data1">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data2">
@@ -209,18 +209,34 @@
     <div class="modal-body divStatus-outer">
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-2 " *ngFor="let dt of surveyedDetailList">
-                    <div class="content-scroll-iner">
-                        <a href="{{dt.imageUrl}}" target="_blank">
-                            <img [src]="dt.imageUrl" class="imageurl" />
-                        </a>
-                    </div>
-                    <div class="main-tag">
-                        <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.cardType}} </h3><br />
-
-                            <h3><b> {{dt.cardNo}} </b></h3><br />
-                            <h3> {{dt.name}} </h3><br />
+                <div class="col-md-4 " *ngFor="let dt of surveyedDetailList" style="margin-right: -10px;">
+                    <div class="row" style="margin: 0px;">
+                        <div style="border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-bottom: 10px!important;background-color: #f1f1f1; ">
+                            <div style="width: 48%; float:left; margin-left: 5px;">
+                                <div class="content-scroll-iner">
+                                    <a href="{{dt.imageUrl}}" target="_blank">
+                                        <img [src]="dt.imageUrl" class="imageurl" />
+                                    </a>
+                                </div>
+                                <div class="main-tag">
+                                    <div class="f-left">
+                                        <h3 class="f-left-heading"> {{dt.cardType}} </h3><br />
+                                        <h3><b> {{dt.cardNo}}</b> </h3><br />
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 48%; float:right;">
+                                <div class="content-scroll-iner">
+                                    <a href="{{dt.houseImageUrl}}" target="_blank">
+                                        <img [src]="dt.houseImageUrl" class="imageurl" />
+                                    </a>
+                                </div>
+                                <div class="main-tag">
+                                    <div class="f-left">
+                                        <h3> {{dt.name}}</h3><br />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,7 +282,8 @@
     <div class="modal-header">
         <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;">
             <i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export Entity
-                Type</span> </h5>
+                Type</span>
+        </h5>
         <button type="button" class="close" (click)="closeModel();" style="border: none;">
             <span aria-hidden="true">&times;</span>
         </button>

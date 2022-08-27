@@ -537,10 +537,19 @@ export class WardSurveyAnalysisComponent {
                     imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                 }
+                let houseImageURL = "../../../assets/img/system-generated-image.jpg";
+                if(data[i]["houseImage"]!=null){
+                  if (data[i]["surveyorId"] == "-1") {
+                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
+                  else {
+                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                  }
+                }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"] });
+                this.scannedCardList.push({ houseImageURL:houseImageURL,imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"] });
               }
             }
           }
@@ -573,6 +582,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   openModel(content: any, type: any) {
+
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
