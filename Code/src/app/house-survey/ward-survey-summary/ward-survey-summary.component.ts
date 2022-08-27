@@ -338,7 +338,9 @@ export class WardSurveySummaryComponent implements OnInit {
     let windowWidth = $(window).width();
     let height = 870;
     let width = windowWidth - 300;
+    
     height = (windowHeight * 90) / 100;
+    width = (windowWidth * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 50 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -358,11 +360,27 @@ export class WardSurveySummaryComponent implements OnInit {
         lineDetailInstance.unsubscribe();
         if (data.length > 0) {
           for (let i = 0; i < data.length; i++) {
-            if (data[i]["latLng"] != null) {
-              let imageName = data[i]["cardImage"];
+            if (data[i]["latLng"] != null) {              
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + imageName + "?alt=media";
-              this.surveyedDetailList.push({ cardType: data[i]["cardType"], cardNo: data[i]["cardNo"], imageUrl: imageUrl, name: data[i]["name"] });
+              let imageURL = "../../../assets/img/system-generated-image.jpg";
+                if (data[i]["cardImage"] != null) {
+                  if (data[i]["surveyorId"] == "-1") {
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
+                  else {
+                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
+                }
+                let houseImageURL = "../../../assets/img/system-generated-image.jpg";
+                if(data[i]["houseImage"]!=null){
+                  if (data[i]["surveyorId"] == "-1") {
+                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  }
+                  else {
+                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                  }
+                }
+              this.surveyedDetailList.push({ cardType: data[i]["cardType"], cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"],houseImageUrl:houseImageURL });
             }
           }
         }
