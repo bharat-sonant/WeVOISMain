@@ -37,8 +37,13 @@ export class WardMarkingSummaryComponent implements OnInit {
   houseWardNo = "#houseWardNo";
   houseLineNo = "#houseLineNo";
   houseIndex = "#houseIndex";
+  divConfirm = "#divConfirm";
+  deleteMarkerId = "#deleteMarkerId";
+  deleteAlreadyCard = "#deleteAlreadyCard";
+  deleteWardNo = "#deleteWardNo";
+  deleteLineNo = "#deleteLineNo";
 
-  public totalTypeCount:any;
+  public totalTypeCount: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -222,6 +227,31 @@ export class WardMarkingSummaryComponent implements OnInit {
         }
       }
     );
+  }
+
+  confirmationMarkerDelete(wardNo: any, lineNo: any, markerNo: any, alreadyCard: any) {
+    $(this.deleteMarkerId).val(markerNo);
+    $(this.deleteAlreadyCard).val(alreadyCard);
+    $(this.deleteWardNo).val(wardNo);
+    $(this.deleteLineNo).val(lineNo);
+    $(this.divConfirm).show();
+  }
+
+  cancelMarkerDelete() {
+    $(this.deleteMarkerId).val("0");
+    $(this.deleteAlreadyCard).val("");
+    $(this.deleteWardNo).val("");
+    $(this.deleteLineNo).val("0");
+    $(this.divConfirm).hide();
+  }
+
+  deleteMarker() {
+    let markerNo = $(this.deleteMarkerId).val();
+    let alreadyCard = $(this.deleteAlreadyCard).val();
+    let wardNo = $(this.deleteWardNo).val();
+    let lineNo = $(this.deleteLineNo).val();
+    this.removeMarker(wardNo, lineNo, markerNo, alreadyCard);
+    $(this.divConfirm).hide();
   }
 
   removeMarker(wardNo: any, lineNo: any, markerNo: any, alreadyCard: any) {
@@ -600,7 +630,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   getZoneHouseTypeList(content: any) {
-    this.totalTypeCount=0;
+    this.totalTypeCount = 0;
     this.zoneHouseTypeList = [];
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -626,7 +656,7 @@ export class WardMarkingSummaryComponent implements OnInit {
             let houseTypeCount = 0;
             let lineNo = keyArray[i];
             let lineData = markerData[lineNo];
-            
+
             let markerKeyArray = Object.keys(lineData);
             for (let j = 0; j < markerKeyArray.length; j++) {
               let markerNo = markerKeyArray[j];
