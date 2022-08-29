@@ -7,6 +7,7 @@ import * as $ from "jquery";
 import { Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: "app-house-marking",
@@ -16,7 +17,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 export class HouseMarkingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -24,6 +25,7 @@ export class HouseMarkingComponent {
   allLines: any[];
   polylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
+  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
   lines: any[] = [];
   wardLineCount: any;
   zoneKML: any;
@@ -42,6 +44,10 @@ export class HouseMarkingComponent {
   houseLineNo = "#houseLineNo";
   houseIndex = "#houseIndex";
   ddlHouseType = "#ddlHouseType";
+  divLoader = "#divLoader";
+  deleteMarkerId = "#deleteMarkerId";
+  deleteAlreadyCard = "#deleteAlreadyCard";
+  divConfirm = "#divConfirm";
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -66,23 +72,19 @@ export class HouseMarkingComponent {
     this.getZones();
   }
 
-
   getHouseType() {
-    let dbPath = "Defaults/FinalHousesType";
-    let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        houseTypeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let id = keyArray[i];
-            let houseType = data[id]["name"].toString().split("(")[0];
-            this.houseTypeList.push({ id: id, houseType: houseType });
-          }
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType });
         }
       }
-    );
-
+    });
   }
 
   getZones() {
@@ -98,6 +100,7 @@ export class HouseMarkingComponent {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
+    $(this.divLoader).show();
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
@@ -118,7 +121,6 @@ export class HouseMarkingComponent {
   getWardDetail() {
     this.getTotalMarkers();
     this.getAllLinesFromJson();
-    this.getLastScanTime();
     this.getLineApprove();
   }
 
@@ -128,12 +130,12 @@ export class HouseMarkingComponent {
       data => {
         lastScanInstance.unsubscribe();
         if (data != null) {
-         // $('#divLastUpdate').show();
+          $('#divLastUpdate').show();
           this.markerData.lastScanTime = data.toString().split(':')[0] + ":" + data.toString().split(':')[1];
         }
         else {
           this.markerData.lastScanTime = "";
-         // $('#divLastUpdate').hide();
+          $('#divLastUpdate').hide();
         }
       }
     );
@@ -247,86 +249,79 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
-    this.markerList = [];
+    $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
+      this.markerList = [];
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
-           // if (index != "ApproveStatus" && index != "marksCount" && index != "lastMarkerKey" && index != "alreadyInstalledCount") {
-              if (data[index]["latLng"] != undefined) {
-                let lat = data[index]["latLng"].split(",")[0];
-                let lng = data[index]["latLng"].split(",")[1];
-                let imageName = data[index]["image"];
-                let userId = data[index]["userId"];
-                let date = data[index]["date"].split(" ")[0];
-                let status = "";
-                let statusClass = "";
-                let isRevisit = "0";
-                let cardNumber = "";
-                let isApprove = "0";
-                if (data[index]["isApprove"] != null) {
-                  isApprove = data[index]["isApprove"];
-                }
-                if (data[index]["status"] != null) {
-                  status = data[index]["status"];
-                }
-                if (data[index]["cardNumber"] != null) {
-                  cardNumber = data[index]["cardNumber"];
-                  status = "Surveyed";
-                }
-                if (data[index]["revisitKey"] != null) {
-                  status = "Revisit";
-                }
-                if (data[index]["rfidNotFoundKey"] != null) {
-                  status = "RFID not matched";
-                }
-                if (data[index]["revisitCardDeleted"] != null) {
-                  status = "Revisit Deleted";
-                  isRevisit = "1";
-                  statusClass = "status-deleted";
-                }
-
-                let city = this.commonService.getFireStoreCity();
-
-
-                let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-                let type = data[index]["houseType"];
-                let alreadyInstalled = "नहीं";
-                if (data[index]["alreadyInstalled"] == true) {
-                  this.markerData.alreadyCardLineCount =
-                    this.markerData.alreadyCardLineCount + 1;
-                  alreadyInstalled = "हाँ";
-                }
-                let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-                let houseInstance1 = this.db.object(dbPath1).valueChanges().subscribe((data) => {
-                  houseInstance1.unsubscribe();
-                  if (data != null) {
-                    let houseType = data.toString().split("(")[0];
-                    this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove });
-                  }
-                });
-                let alreadyCard = "";
-                if (alreadyInstalled == "हाँ") {
-                  alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
-                }
-
-                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-                  houseInstance.unsubscribe();
-                  if (data != null) {
-                    let houseType = data.toString().split("(")[0];
-                    let markerURL = this.getMarkerIcon(type);
-                    this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
-                  }
-                });
+            if (data[index]["latLng"] != undefined) {
+              let lat = data[index]["latLng"].split(",")[0];
+              let lng = data[index]["latLng"].split(",")[1];
+              let imageName = data[index]["image"];
+              let userId = data[index]["userId"];
+              let date = data[index]["date"].split(" ")[0];
+              let status = "";
+              let statusClass = "";
+              let isRevisit = "0";
+              let cardNumber = "";
+              let isApprove = "0";
+              if (data[index]["isApprove"] != null) {
+                isApprove = data[index]["isApprove"];
               }
-            //}
+              if (data[index]["status"] != null) {
+                status = data[index]["status"];
+              }
+              if (data[index]["cardNumber"] != null) {
+                cardNumber = data[index]["cardNumber"];
+                status = "Surveyed";
+              }
+              if (data[index]["revisitKey"] != null) {
+                status = "Revisit";
+              }
+              if (data[index]["rfidNotFoundKey"] != null) {
+                status = "RFID not matched";
+              }
+              if (data[index]["revisitCardDeleted"] != null) {
+                status = "Revisit Deleted";
+                isRevisit = "1";
+                statusClass = "status-deleted";
+              }
+
+              let city = this.commonService.getFireStoreCity();
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let type = data[index]["houseType"];
+              let alreadyInstalled = "नहीं";
+              if (data[index]["alreadyInstalled"] == true) {
+                this.markerData.alreadyCardLineCount =
+                  this.markerData.alreadyCardLineCount + 1;
+                alreadyInstalled = "हाँ";
+              }
+              let alreadyCard = "";
+              if (alreadyInstalled == "हाँ") {
+                alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
+              }
+              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+              if (houseTypeDetail != undefined) {
+                let houseType = houseTypeDetail.houseType;
+                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove });
+                let markerURL = this.getMarkerIcon(type);
+                this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+              }
+            }
           }
+          $(this.divLoader).hide();
         }
+        else {
+          $(this.divLoader).hide();
+        }
+      }
+      else {
+        $(this.divLoader).hide();
       }
     });
   }
@@ -354,18 +349,15 @@ export class HouseMarkingComponent {
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + index;
       this.db.object(dbPath).update({ houseType: houseTypeId });
     }
-
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
     this.commonService.setAlertMessage("success", "Saved successfully !!!");
-
   }
 
   cancelHouseType() {
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
   }
-
 
   showLineDetail(content: any) {
     if (this.markerList.length > 0) {
@@ -388,7 +380,27 @@ export class HouseMarkingComponent {
     this.modalService.dismissAll();
   }
 
+  confirmationMarkerDelete(markerNo: any, alreadyCard: any) {
+    $(this.deleteMarkerId).val(markerNo);
+    $(this.deleteAlreadyCard).val(alreadyCard);
+    $(this.divConfirm).show();
+  }
+
+  cancelMarkerDelete() {
+    $(this.deleteMarkerId).val("0");
+    $(this.deleteAlreadyCard).val("");
+    $(this.divConfirm).hide();
+  }
+
+  deleteMarker() {
+    let markerNo = $(this.deleteMarkerId).val();
+    let alreadyCard = $(this.deleteAlreadyCard).val();
+    this.removeMarker(markerNo, alreadyCard);
+    $(this.divConfirm).hide();
+  }
+
   removeMarker(markerNo: any, alreadyCard: any) {
+    $(this.divLoader).show();
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
@@ -397,9 +409,9 @@ export class HouseMarkingComponent {
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         markerInstance.unsubscribe();
         if (data != null) {
-          data["removeDate"]=this.commonService.getTodayDateTime();
-          data["removeBy"]=localStorage.getItem("userID");
-          
+          data["removeDate"] = this.commonService.getTodayDateTime();
+          data["removeBy"] = localStorage.getItem("userID");
+
           dbPath = "EntityMarkingData/RemovedMarkers/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
           this.db.object(dbPath).update(data);
 
@@ -436,11 +448,7 @@ export class HouseMarkingComponent {
           }
           let newMarkerList = [];
           if (this.markerList.length > 0) {
-            for (let i = 0; i < this.markerList.length; i++) {
-              if (this.markerList[i]["index"] != markerNo) {
-                newMarkerList.push({ index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["houseType"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"] });
-              }
-            }
+            newMarkerList=this.markerList.filter(item=>item.index!=markerNo);
             this.markerList = newMarkerList;
           }
 
@@ -476,8 +484,10 @@ export class HouseMarkingComponent {
             );
           }
           this.updateCount(date, userId, "remove");
-          this.commonService.setAlertMessage("success", "Marker deleted successfully !!!"
-          );
+          this.commonService.setAlertMessage("success", "Marker deleted successfully !!!");
+        }
+        else {
+          $(this.divLoader).hide();
         }
       });
     }
@@ -612,6 +622,7 @@ export class HouseMarkingComponent {
         this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "").update({ marked: total, });
       }
     });
+    $(this.divLoader).hide();
   }
 
   saveMarkerStatus(markerNo: any) {
