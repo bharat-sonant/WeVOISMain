@@ -35,6 +35,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.zoneList.push({zoneNo:"132-R2",zoneName:"Zone 132-R2"});
+    this.zoneList.push({zoneNo:"134-R3",zoneName:"Zone 134-R3"});
     this.zoneList.push({zoneNo:"143-R3",zoneName:"Zone 143-R3"});
   }
 
