@@ -210,6 +210,22 @@
                 </div>
             </div>
         </div>
+        <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <input type="hidden" id="deleteMarkerId" value="0">
+                <input type="hidden" id="deleteAlreadyCard" value="">
+                <input type="hidden" id="deleteWardNo" value="">
+                <input type="hidden" id="deleteLineNo" value="0">
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="deleteMarker();">
+                        Confirm</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;"> Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerDetailList">
@@ -232,8 +248,8 @@
                         <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
                             <i class="fa-solid fa-a" style="color:green; font-size: 14px; "></i>pprove
                         </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
-                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="removeMarker(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;" ></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-trash-can" style="color:red; font-size: 14px;"></i>
                         </span>
                     </div>
