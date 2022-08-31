@@ -109,6 +109,7 @@ import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-
 import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
+import { MapsComponent } from '../../maps/maps.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -348,6 +349,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'sikar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'sikar/:id/roles', component: RolesComponent },
+    { path: 'sikar/:id/maps', component: MapsComponent },
 
 
     //jaipur-greater
@@ -575,6 +577,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/:id/roles', component: RolesComponent },
+    { path: 'jaipur-greater/:id/maps', component: MapsComponent },
     
 
     //reengus
@@ -806,6 +809,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'reengus/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'reengus/:id/roles', component: RolesComponent },
+    { path: 'reengus/:id/maps', component: MapsComponent },
 
 
 
@@ -1036,6 +1040,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/:id/roles', component: RolesComponent },
+    { path: 'shahpura/:id/maps', component: MapsComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1264,6 +1269,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'test/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'test/:id/roles', component: RolesComponent },
+    { path: 'test/:id/maps', component: MapsComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1492,6 +1498,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/:id/roles', component: RolesComponent },
+    { path: 'jaipur-office/:id/maps', component: MapsComponent },
 
     
 
@@ -1722,6 +1729,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/:id/roles', component: RolesComponent },
+    { path: 'kishangarh/:id/maps', component: MapsComponent },
 
 
 
@@ -1953,6 +1961,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'niwai/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'niwai/:id/roles', component: RolesComponent },
+    { path: 'niwai/:id/maps', component: MapsComponent },
 
 
 
@@ -2183,6 +2192,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/:id/roles', component: RolesComponent },
+    { path: 'jaisalmer/:id/maps', component: MapsComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2411,6 +2421,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'salasar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'salasar/:id/roles', component: RolesComponent },
+    { path: 'salasar/:id/maps', component: MapsComponent },
 
 
 
@@ -2641,6 +2652,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'behror/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'behror/:id/roles', component: RolesComponent },
+    { path: 'behror/:id/maps', component: MapsComponent },
 
 
     //jaipur
@@ -2869,6 +2881,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur/:id/roles', component: RolesComponent },
+    { path: 'jaipur/:id/maps', component: MapsComponent },
 
 
     //jaipur-jhotwara
@@ -3097,6 +3110,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/:id/roles', component: RolesComponent },
+    { path: 'jaipur-jhotwara/:id/maps', component: MapsComponent },
 
 
     //jaipur-jagatpura
@@ -3325,6 +3339,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/:id/roles', component: RolesComponent },
+    { path: 'jaipur-jagatpura/:id/maps', component: MapsComponent },
 
 
     //jaipur-malviyanagar
@@ -3553,6 +3568,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/:id/roles', component: RolesComponent },
+    { path: 'jaipur-malviyanagar/:id/maps', component: MapsComponent },
 
 
     //jaipur-mansarovar
@@ -3781,6 +3797,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/:id/roles', component: RolesComponent },
+    { path: 'jaipur-mansarovar/:id/maps', component: MapsComponent },
 
 
     //jaipur-murlipura
@@ -4009,6 +4026,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/:id/roles', component: RolesComponent },
+    { path: 'jaipur-murlipura/:id/maps', component: MapsComponent },
 
 
     //jaipur-sanganer
@@ -4237,6 +4255,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-sanganer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-sanganer/:id/roles', component: RolesComponent },
+    { path: 'jaipur-sanganer/:id/maps', component: MapsComponent },
 
 
     //jaipur-vidhyadhar
@@ -4465,6 +4484,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/:id/roles', component: RolesComponent },
+    { path: 'jaipur-vidhyadhar/:id/maps', component: MapsComponent },
 
 
 
@@ -4694,6 +4714,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'bhiwadi/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'bhiwadi/:id/roles', component: RolesComponent },
+    { path: 'bhiwadi/:id/maps', component: MapsComponent },
 
     
 
@@ -4923,6 +4944,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'chhapar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'chhapar/:id/roles', component: RolesComponent },
+    { path: 'chhapar/:id/maps', component: MapsComponent },
 
     
 
@@ -5152,6 +5174,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'churu/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'churu/:id/roles', component: RolesComponent },
+    { path: 'churu/:id/maps', component: MapsComponent },
 
 
 
@@ -5383,4 +5406,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/:id/roles', component: RolesComponent },
+    { path: 'wevois-others/:id/maps', component: MapsComponent },
 ]; 
