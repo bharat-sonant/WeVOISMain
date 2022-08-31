@@ -21,7 +21,6 @@ export class MapsComponent {
   selectedYear: any;
   selectedMonthName: any;
   selectedZone: any;
-  selectedRoute: any;
   mainZoneList: any[] = [];
   zoneList: any[] = [];
   zoneRouteList: any[] = [];
