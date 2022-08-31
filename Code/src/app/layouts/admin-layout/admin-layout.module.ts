@@ -116,6 +116,7 @@ import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-
 import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
+import { MapsComponent } from '../../maps/maps.component';
 
 @NgModule({
   imports: [
@@ -236,7 +237,8 @@ import { RolePageAccessComponent } from '../../user-management/role-page-access/
     ChangeLineMarkerDataComponent,
     AddVehicleBreakdownComponent,
     RolesComponent,
-    RolePageAccessComponent
+    RolePageAccessComponent,
+    MapsComponent
   ]
 })
 

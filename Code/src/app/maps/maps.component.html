@@ -1,0 +1,53 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-8 inputs-main">
+            <button class="btn btn-primary display-class" (click)="setDate('','previous');">
+                << </button>
+            <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
+            <button class="btn btn-primary button display-class" (click)="setDate('','next');">
+                        >>
+                    </button>
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                            {{zone.zoneName}}
+                        </option>
+                    </select>
+        </div>
+        <div class="col-md-4 text-right total-house">
+        </div>
+
+    </div>
+</section>
+
+<div #gmap class="gmap" id="divMap"></div>
+
+<div id="divWorkDetail" class="line-details-box">
+    <div class="dth">
+        <div class="table-bg">
+            <div class="tableFixHead">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-left" scope="col" style="text-align: left!important;">
+                                <b>Routes</b>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let dt of zoneRouteList, let i=index">
+                            <td class="text-left">
+                                <input type="checkbox" id="chk{{i}}" (change)="getSelectedData();"> {{dt.zoneName}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div style="width: 100%; padding-top: 10px; padding-left: 12px; padding-bottom: 10px; font-size: 12px; font-weight: bold;">
+        <input id="chkAll" type="checkbox" (change)="showAllRoute();"> Show All Route
+    </div>
+</div>
