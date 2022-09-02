@@ -25,6 +25,7 @@ export class WardSurveySummaryComponent implements OnInit {
   zoneHouseTypeList: any[];
   db: any;
   selectedWard: any;
+  public isAlreadyShow = false;
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -43,10 +44,16 @@ export class WardSurveySummaryComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getWardProgressList();
   }
-
+  
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
+  }
 
   getHouseType() {
     let dbPath = "Defaults/FinalHousesType";

@@ -151,7 +151,7 @@
                                                 <thead>
                                                     <th class="table-heading-same">Line</th>
                                                     <th class="text-right table-heading-same2">Markers</th>
-                                                    <th class="text-right table-heading-same3">
+                                                    <th class="text-right table-heading-same3" [hidden]="isAlreadyShow==false">
                                                         Already Installed</th>
                                                     <th class="text-right table-heading-same4">Surveyed
                                                     </th>
@@ -167,7 +167,7 @@
                                                             {{data.lineNo}}</td>
                                                         <td class="text-right table-data-2">
                                                             {{data.markers}}</td>
-                                                        <td class="text-right table-data-3">
+                                                        <td class="text-right table-data-3" [hidden]="isAlreadyShow==false">
                                                             {{data.alreadyCard}}</td>
                                                         <td class="text-right table-data-4">
                                                             {{data.survyed}}</td>

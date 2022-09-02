@@ -20,6 +20,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   cityName: any;
   db: any;
   isFirst = true;
+  public isAlreadyShow = false;
   lineMarkerList: any[];
   wardLines: any;
   markerList: any[];
@@ -49,8 +50,15 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getWards();
+  }
+
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
   }
 
   getHouseType() {

@@ -11,7 +11,7 @@
         </div>
         <div class="col-md-4 text-right total-house fix-home-outer">
             <div class="fix-home">
-                <div class="float-first fix-home-iner">
+                <div class="float-first fix-home-iner" [hidden]="isAlreadyShow==false">
                     <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="fix-home-span">
                             {{markerData.totalAlreadyCard}}</span></span><br>
                     <h6>Already Installed</h6>
@@ -42,7 +42,7 @@
                                             <th class="ward-table-heading">Ward</th>
                                             <th class="text-right Markers-table-heading">
                                                 Markers</th>
-                                            <th class="text-right Already-table-heading">
+                                            <th class="text-right Already-table-heading" [hidden]="isAlreadyShow==false">
                                                 Already Installed</th>
                                             <th class="text-right Approved-table-heading">
                                                 Approved Lines</th>
@@ -55,7 +55,7 @@
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data">
                                                     {{data.markers}}</td>
-                                                <td class="text-right table-data">
+                                                <td class="text-right table-data" [hidden]="isAlreadyShow==false">
                                                     {{data.alreadyInstalled}}</td>
 
                                                 <td class="text-right table-data">
@@ -105,7 +105,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center responsive">
+                        <div class="col-md-3 text-center responsive" [hidden]="isAlreadyShow==false">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{markerData.wardInstalled}}</span> <br> Already Installed
@@ -132,7 +132,7 @@
                                                 <thead>
                                                     <th class="table-data-line2">Line</th>
                                                     <th class="text-right table-data-Markers2">Markers</th>
-                                                    <th class="text-right table-data-Already2">Already Installed
+                                                    <th class="text-right table-data-Already2" [hidden]="isAlreadyShow==false">Already Installed
                                                     </th>
                                                     <th class="text-center table-data-Approved2">Approved
                                                     </th>
@@ -145,7 +145,7 @@
                                                             {{data.lineNo}}</td>
                                                         <td class="text-right table-data2">
                                                             {{data.markers}}</td>
-                                                        <td class="text-right table-data2">
+                                                        <td class="text-right table-data2" [hidden]="isAlreadyShow==false">
                                                             {{data.alreadyCard}}</td>
                                                         <td class="text-center table-data2">
                                                             <span [hidden]="data.markers==0">

@@ -46,6 +46,7 @@ export class WardSurveyAnalysisComponent {
   preRevisitIndex: any;
   nameList: any[];
   toDayDate: any;
+  public isAlreadyShow = false;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -78,8 +79,15 @@ export class WardSurveyAnalysisComponent {
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
     this.selectedZone = 0;
+    this.showHideAlreadyCardInstalled();
     this.getZones();
     this.getNameList();
+  }
+
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
   }
 
   getZones() {
