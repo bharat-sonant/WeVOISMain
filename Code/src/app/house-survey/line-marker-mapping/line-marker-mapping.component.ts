@@ -445,6 +445,10 @@ export class LineMarkerMappingComponent {
               this.db.object(dbPath).remove();
               index = index + 1;
               this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+            }).catch((error) => {
+              index = index + 1;
+              failureCount = failureCount + 1;
+              this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             });
           };
           xhr.open('GET', url);
