@@ -23,7 +23,7 @@
                             {{markerData.lastScanTime}}</span></span><br>
                     <h6>Last Marked At</h6>
                 </div>
-                <div class="float-first cardboard-icon-main">
+                <div class="float-first cardboard-icon-main" [hidden]="isAlreadyShow==false">
                     <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="cardboard-span">
                             {{markerData.alreadyCardCount}}</span></span><br>
                     <h6>Already Card Count</h6>
@@ -74,7 +74,7 @@
                     <h5> {{markerData.totalLineMarkers}} </h5>
                     <p>Markers</p>
                 </div>
-                <div class="col-md-6 markers Already-heading-main">
+                <div class="col-md-6 markers Already-heading-main" [hidden]="isAlreadyShow==false">
                     <h5> {{markerData.alreadyCardLineCount}} </h5>
                     <p>Already Card</p>
                 </div>

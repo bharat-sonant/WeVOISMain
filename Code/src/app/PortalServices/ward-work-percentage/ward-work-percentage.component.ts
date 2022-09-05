@@ -80,10 +80,14 @@ export class WardWorkPercentageComponent implements OnInit {
           dutyOnInstance.unsubscribe();
           if (dutyOnData != undefined) {
             let dutyInTime = dutyOnData;
-            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/workPercentage";
-            let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-              workPercentageData => {
-                workPercentageInstance.unsubscribe();
+            dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+            let workInstance = this.db.object(dbPath).valueChanges().subscribe(
+              workData => {
+                workInstance.unsubscribe();
+                let workPercentageData = workData["workPercentage"];
+                if (workData["updatedWorkPercentage"] != null) {
+                  workPercentageData = workData["updatedWorkPercentage"];
+                }
                 let expectedLine = Number(((this.expectedPercentage / 100) * wardTotalLines).toFixed(0));
                 let workPercentage = this.expectedPercentage;
                 if (workPercentageData != null) {
@@ -94,6 +98,7 @@ export class WardWorkPercentageComponent implements OnInit {
                   }
                   workPercentage = this.expectedPercentage - Number(workPercentageData);
                 }
+
                 expectedLine = Number(((workPercentage / 100) * wardTotalLines).toFixed(0));
                 if (expectedLine > 0) {
                   dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus";
@@ -156,7 +161,7 @@ export class WardWorkPercentageComponent implements OnInit {
         }
         if (count == expectedLine) {
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
-          this.db.object(dbPath).update({ completedLines: completedLines, wardCoveredDistance: coveredLength, workPercentage: this.expectedPercentage });
+          this.db.object(dbPath).update({ completedLines: completedLines, wardCoveredDistance: coveredLength, updatedWorkPercentage: this.expectedPercentage });
           i = wardTotalLines + 1;
           this.updateLocationHistory(dutyInTime, lineStatusList, expectedLine, wardLines);
         }

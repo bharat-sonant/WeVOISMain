@@ -37,6 +37,7 @@ export class HouseMarkingComponent {
   houseMarker: any[] = [];
   markerList: any[];
   toDayDate: any;
+  public isAlreadyShow = false;
 
   houseTypeList: any[] = [];
   divHouseType = "#divHouseType";
@@ -68,8 +69,15 @@ export class HouseMarkingComponent {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.commonService.setMapHeight();
+    this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getZones();
+  }
+
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
   }
 
   getHouseType() {
