@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-ward-survey-summary",
@@ -9,7 +10,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./ward-survey-summary.component.scss"],
 })
 export class WardSurveySummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedCircle: any;
   wardList: any[];
@@ -23,9 +24,11 @@ export class WardSurveySummaryComponent implements OnInit {
   wardCheckList: any[] = [];
   houseTypeList: any[] = [];
   zoneHouseTypeList: any[];
+  entityList: any[] = [];
   db: any;
   selectedWard: any;
   public isAlreadyShow = false;
+  divEntityList = "#divEntityList";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -48,7 +51,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.getHouseType();
     this.getWardProgressList();
   }
-  
+
   showHideAlreadyCardInstalled() {
     if (this.cityName == "sikar" || this.cityName == "reengus") {
       this.isAlreadyShow = true;
@@ -56,21 +59,18 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getHouseType() {
-    let dbPath = "Defaults/FinalHousesType";
-    let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        houseTypeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let id = keyArray[i];
-            let houseType = data[id]["name"].toString().split("(")[0];
-            this.houseTypeList.push({ id: id, houseType: houseType });
-          }
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType });
         }
       }
-    );
-
+    });
   }
 
   clearAll() {
@@ -345,7 +345,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let windowWidth = $(window).width();
     let height = 870;
     let width = windowWidth - 300;
-    
+
     height = (windowHeight * 90) / 100;
     width = (windowWidth * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
@@ -367,32 +367,67 @@ export class WardSurveySummaryComponent implements OnInit {
         lineDetailInstance.unsubscribe();
         if (data.length > 0) {
           for (let i = 0; i < data.length; i++) {
-            if (data[i]["latLng"] != null) {              
+            if (data[i]["latLng"] != null) {
               let city = this.commonService.getFireStoreCity();
+              let entityList = [];
+              let hasEntity = "0";
               let imageURL = "../../../assets/img/system-generated-image.jpg";
-                if (data[i]["cardImage"] != null) {
-                  if (data[i]["surveyorId"] == "-1") {
-                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
-                  }
-                  else {
-                    imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+              if (data[i]["cardImage"] != null) {
+                if (data[i]["surveyorId"] == "-1") {
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                }
+                else {
+                  imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                }
+              }
+              let houseImageURL = "../../../assets/img/system-generated-image.jpg";
+              if (data[i]["houseImage"] != null) {
+                if (data[i]["surveyorId"] == "-1") {
+                  houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                }
+                else {
+                  houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                }
+              }
+              if (data[i]["houseType"] == "19") {
+                if (data[i]["Entities"] != null) {
+                  hasEntity = "1";
+                  let entityData = data[i]["Entities"];
+                  for (let j = 1; j < entityData.length; j++) {
+                    let keyIndex = j;
+                    let entityImageURL = "../../../assets/img/system-generated-image.jpg";
+                    if (entityData[keyIndex]["house image"] != null) {
+                      entityImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
+                    }
+                    entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
                   }
                 }
-                let houseImageURL = "../../../assets/img/system-generated-image.jpg";
-                if(data[i]["houseImage"]!=null){
-                  if (data[i]["surveyorId"] == "-1") {
-                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
-                  }
-                  else {
-                    houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
-                  }
-                }
-              this.surveyedDetailList.push({ cardType: data[i]["cardType"], cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"],houseImageUrl:houseImageURL });
+              }
+              let cardType = data[i]["cardType"];
+              let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
+              if (detail != undefined) {
+                cardType = detail.houseType;
+              }
+              this.surveyedDetailList.push({ cardType: cardType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, entityList: entityList, hasEntity: hasEntity });
             }
           }
         }
       }
     );
+  }
+
+  showEntity(cardNo: any) {
+    let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+    if (detail != undefined) {
+      this.entityList = detail.entityList;
+      console.log(this.entityList);
+      $(this.divEntityList).show();
+    }
+  }
+
+  hideEntity() {
+    this.entityList = [];
+    $(this.divEntityList).hide();
   }
 
   showDateWiseDetail(content: any, type: any) {
