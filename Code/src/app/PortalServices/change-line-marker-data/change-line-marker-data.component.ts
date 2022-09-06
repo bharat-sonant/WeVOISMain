@@ -124,6 +124,10 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               this.db.object(dbPath).remove();
               index = index + 1;
               this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+            }).catch((error) => {
+              index = index + 1;
+              failureCount = failureCount + 1;
+              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             });
           };
           xhr.open('GET', url);

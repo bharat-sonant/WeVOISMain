@@ -116,11 +116,14 @@
     background: none;
     border: none;
     border-radius: 5px;
-    padding: 10px;
+    padding: 10px!important;
     text-align: center;
     cursor: pointer;
     color: #0ba118;
-    display: table;
+    //display: table;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /* "to left" / "to right" - affects initial color */
     // background: linear-gradient(to left, #e7e7e7 50%, #0ba118 50%) right;
     // background-size: 200%;
@@ -195,11 +198,10 @@
     transform: scale(1.03);
 }
 
-.vertical {
-    display: table-cell;
-    vertical-align: middle;
-}
-
+//.vertical {
+//    display: table-cell;
+//    vertical-align: middle;
+//}
 i {
     font-size: 35px;
     transition: 0.70s;
