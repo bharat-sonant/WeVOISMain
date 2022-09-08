@@ -21,63 +21,61 @@
 
                 </div>
                 <div class="card-body card-body2">
-                   
                     <form>
-                            <div class="form">
-                        <div class="row">
-                            <div class="col-md-12  pr-1">
-                                <b>From</b>
+                        <div class="form">
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>From</b>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6  pr-1 padding-remove">
-                                <label>Zone No</label>
-                                <div class="wrap-input-effects" required>
-                                    <select class="caret-select" id="ddlZoneFrom">
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneFrom">
                                         <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
                                     </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoFrom" class="caret-select" type="number" />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label>Line No</label>
-                                <div class="wrap-input-effects" required>
-                                    <input id="txtLineNoFrom" class="caret-select" type="number" />
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>To</b>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12  pr-1">
-                                <b>To</b>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6  pr-1 padding-remove">
-                                <label>Zone No</label>
-                                <div class="wrap-input-effects" required>
-                                    <select class="caret-select" id="ddlZoneTo">
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneTo">
                                         <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
                                     </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoTo" class="caret-select" type="number" />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
-                                <label>Line No</label>
-                                <div class="wrap-input-effects" required>
-                                    <input id="txtLineNoTo" class="caret-select" type="number" />
+
+                            <div class="row form-group2">
+                                <div class="col-md-12 pr-1">
+                                    <div class="form-group">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="row form-group2">
-                            <div class="col-md-12 pr-1">
-                                <div class="form-group">
-                                    <button id="btnSave" class="btn btn-success btn-xs"
-                                        (click)="saveData();">SAVE</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     </form>
-                
+
                 </div>
             </div>
         </div>
@@ -94,23 +92,53 @@
                 <div class="card-body card-body3">
                     <div class="outer">
 
-                    <div class="row">
-                        <div class="col-md-12  pr-1">
-                            <label>Zone No</label>
-                            <div class="d-flex wrap-class">
-                            <div class="wrap-input-effects" required>
-                                <select class="caret-select caret-select2" id="ddlZone">
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZone">
                                     <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
                                 </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="updateCardLineData();">SAVE</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group button">
-                                    <button id="btnSave" class="btn btn-success btn-xs"
-                                        (click)="updateCardLineData();">SAVE</button>
-                                </div>
-                                </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card card3">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update House Hold Counts </b></h5>
                         </div>
                     </div>
-                   
+
+                </div>
+                <div class="card-body card-body3">
+                    <div class="outer">
+
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZoneCount">
+                                    <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="updateSurveyCount();">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -124,8 +152,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header2">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you
-                    sure you want to remove assignment ?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -171,8 +198,7 @@
                 <div class="wrap-input-effects" required style="display: none;">
                     <input type="checkbox" id="chkRemove" class="input2"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn input3" value="SUBMIT"
-                    (click)="saveWard();" />
+                <input type="button" class="btn btn-success submit-btn input3" value="SUBMIT" (click)="saveWard();" />
             </div>
         </div>
     </div>
@@ -216,8 +242,7 @@
                     <input type="checkbox" id="chkAcive" style="vertical-align: middle;"> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn input4" value="SUBMIT"
-                    (click)="saveEmployee();"/>
+                <input type="button" class="btn w-100 btn-success submit-btn input4" value="SUBMIT" (click)="saveEmployee();" />
             </div>
         </div>
     </div>
