@@ -87,7 +87,7 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0 });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0,houseHold:0 });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
@@ -144,6 +144,15 @@ export class WardSurveySummaryComponent implements OnInit {
       if (data != null) {
         this.wardProgressList[index]["oldCard"] = Number(data);
         this.surveyData.totalOldCards = this.surveyData.totalOldCards + Number(data);
+      }
+    });
+
+    dbPath = "EntitySurveyData/TotalHouseHoldCount/" + wardNo;
+    let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseHoldInstance.unsubscribe();
+      if (data != null) {
+        this.wardProgressList[index]["houseHold"] = Number(data);
+        //this.surveyData.totalRevisit = this.surveyData.totalRevisit + Number(data);
       }
     });
 
@@ -212,7 +221,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo,houseHoldCount:0 });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -273,6 +282,19 @@ export class WardSurveySummaryComponent implements OnInit {
                 let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                 if (lineDetail != undefined) {
                   lineDetail.alreadyCard = Number(alreadyData);
+                }
+              }
+            }
+          );
+
+          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/houseHoldCount";
+          let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe(
+            houseHoldData => {
+              houseHoldInstance.unsubscribe();
+              if (houseHoldData != null) {
+                let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                if (lineDetail != undefined) {
+                  lineDetail.houseHoldCount = Number(houseHoldData);
                 }
               }
             }
@@ -389,7 +411,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
                 }
               }
-              if (data[i]["houseType"] == "19") {
+              if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
                 if (data[i]["Entities"] != null) {
                   hasEntity = "1";
                   let entityData = data[i]["Entities"];
@@ -420,7 +442,6 @@ export class WardSurveySummaryComponent implements OnInit {
     let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
     if (detail != undefined) {
       this.entityList = detail.entityList;
-      console.log(this.entityList);
       $(this.divEntityList).show();
     }
   }

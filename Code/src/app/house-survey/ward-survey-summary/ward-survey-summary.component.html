@@ -67,6 +67,8 @@
                                                 Revisit</th>
                                             <th class="text-right table-heading5">
                                                 RFID Not Matched</th>
+                                            <th class="text-right table-heading4">
+                                                House Hold</th>
                                         </thead>
                                         <tbody>
                                             <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);">
@@ -81,6 +83,8 @@
                                                     {{data.revisit}} </td>
                                                 <td class="text-right table-data5">
                                                     {{data.oldCard}}</td>
+                                                <td class="text-right table-data5">
+                                                    {{data.houseHold}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -159,6 +163,8 @@
                                                     </th>
                                                     <th class="text-right table-heading-same6">RFID Not Matched
                                                     </th>
+                                                    <th class="text-right table-heading-same4">House Hold
+                                                    </th>
                                                     <th class="text-center table-heading-same7">#</th>
                                                 </thead>
                                                 <tbody>
@@ -175,8 +181,9 @@
                                                             {{data.revisit}}</td>
                                                         <td class="text-right table-data-6">
                                                             {{data.oldCard}}</td>
+                                                        <td class="text-right table-data-6">
+                                                            {{data.houseHoldCount}}</td>
                                                         <td class="text-center table-data-7">
-
                                                             <i class="far fa-eye eye-icon" [hidden]="data.survyed==0" (click)="showLineDetail(contentLineSurveyed,data.wardNo,data.lineNo);"></i>
                                                         </td>
                                                     </tr>
