@@ -144,14 +144,6 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                     houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                     totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                   }
-                  else {
-                    houseHoldCount++;
-                    totalHouseHoldCount++;
-                  }
-                }
-                else {
-                  houseHoldCount++;
-                  totalHouseHoldCount++;
                 }
               }
               let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;            
