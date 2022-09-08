@@ -47,6 +47,8 @@ export class WardSurveyAnalysisComponent {
   nameList: any[];
   toDayDate: any;
   public isAlreadyShow = false;
+  entityList:any[]=[];
+  divEntityList="#divEntityList";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -535,6 +537,8 @@ export class WardSurveyAnalysisComponent {
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
+                let entityList = [];
+                let hasEntity="0";
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
 
@@ -554,16 +558,44 @@ export class WardSurveyAnalysisComponent {
                     houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
                   }
                 }
+                if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
+                  if (data[i]["Entities"] != null) {
+                    hasEntity="1";
+                    let entityData =data[i]["Entities"];
+                    for (let j = 1; j < entityData.length; j++) {
+                      let keyIndex=j;
+                      let entityImageURL="../../../assets/img/system-generated-image.jpg";
+                      if(entityData[keyIndex]["house image"]!=null){
+                        entityImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
+                      }
+                      entityList.push({name:entityData[keyIndex]["name"], mobile:entityData[keyIndex]["mobile"],entityImageURL:entityImageURL});
+                    }
+                  }
+                }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ houseImageURL:houseImageURL,imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"] });
+                this.scannedCardList.push({ houseImageURL:houseImageURL,imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"],entityList:entityList,hasEntity:hasEntity });
               }
             }
           }
         }
       );
     }
+  }
+
+  showEntity(cardNo:any){
+    let detail=this.scannedCardList.find(item=>item.cardNo==cardNo);
+    if(detail!=undefined){
+      this.entityList=detail.entityList;
+      console.log(this.entityList);
+      $(this.divEntityList).show();
+    }
+  }
+
+  hideEntity(){
+    this.entityList=[];
+    $(this.divEntityList).hide();
   }
 
   getOldCard() {

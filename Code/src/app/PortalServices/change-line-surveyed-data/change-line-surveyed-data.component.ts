@@ -20,6 +20,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   txtLineNoTo = "#txtLineNoTo";
   ddlZone = "#ddlZone";
   divLoader = "#divLoader";
+  ddlZoneCount = "#ddlZoneCount";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -113,6 +114,63 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
           }
         }
         this.commonService.setAlertMessage("success", "Card line mapping updated !!!");
+      }
+    );
+  }
+
+  updateSurveyCount() {
+    if ($(this.ddlZoneCount).val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone from !!!");
+      return;
+    }
+    let zoneNo = $(this.ddlZoneCount).val();
+    let dbPath = "Houses/" + zoneNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      houseData => {
+        houseInstance.unsubscribe();
+        if (houseData != null) {
+          let keyArray = Object.keys(houseData);
+          if (keyArray.length > 0) {
+            let totalHouseHoldCount = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let line = keyArray[i];
+              let houseHoldCount = 0;
+              let cardObj = houseData[line];
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                  if (cardObj[cardNo]["Entities"] != null) {
+                    houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
+                    totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
+                  }
+                  else {
+                    houseHoldCount++;
+                    totalHouseHoldCount++;
+                  }
+                }
+                else {
+                  houseHoldCount++;
+                  totalHouseHoldCount++;
+                }
+              }
+              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;            
+              this.db.object(dbHouseHoldPath).update({ houseHoldCount: houseHoldCount });
+            }
+
+            let dbTotalHouseHoldCountPath = "EntitySurveyData/TotalHouseHoldCount/";
+            let houseHoldInstance = this.db.object(dbTotalHouseHoldCountPath).valueChanges().subscribe(data => {
+              houseHoldInstance.unsubscribe();
+              let houseHoldData = {};
+              if (data != null) {
+                houseHoldData = data;
+              }
+              houseHoldData[zoneNo.toString()] = totalHouseHoldCount;
+              this.db.object(dbTotalHouseHoldCountPath).update(houseHoldData);
+              this.commonService.setAlertMessage("success", "Card house hold count updated !!!");
+            });
+          }
+        }        
       }
     );
   }
