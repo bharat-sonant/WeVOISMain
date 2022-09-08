@@ -87,7 +87,7 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0,houseHold:0 });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0, houseHold: '' });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
@@ -221,7 +221,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo,houseHoldCount:0 });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '' });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -294,7 +294,9 @@ export class WardSurveySummaryComponent implements OnInit {
               if (houseHoldData != null) {
                 let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                 if (lineDetail != undefined) {
-                  lineDetail.houseHoldCount = Number(houseHoldData);
+                  if (Number(houseHoldData) > 0) {
+                    lineDetail.houseHoldCount = Number(houseHoldData);
+                  }
                 }
               }
             }
