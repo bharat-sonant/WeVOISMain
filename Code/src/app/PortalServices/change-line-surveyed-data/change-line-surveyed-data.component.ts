@@ -132,22 +132,26 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
             let totalHouseHoldCount = 0;
+            let totalComplexCount = 0;
             for (let i = 0; i < keyArray.length; i++) {
               let line = keyArray[i];
               let houseHoldCount = 0;
+              let complexCount = 0;
               let cardObj = houseData[line];
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
                   if (cardObj[cardNo]["Entities"] != null) {
+                    complexCount++;
+                    totalComplexCount++;
                     houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                     totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                   }
                 }
               }
-              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;            
-              this.db.object(dbHouseHoldPath).update({ houseHoldCount: houseHoldCount });
+              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+              this.db.object(dbHouseHoldPath).update({ houseHoldCount: houseHoldCount, complexCount: complexCount });
             }
 
             let dbTotalHouseHoldCountPath = "EntitySurveyData/TotalHouseHoldCount/";
@@ -159,10 +163,21 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
               }
               houseHoldData[zoneNo.toString()] = totalHouseHoldCount;
               this.db.object(dbTotalHouseHoldCountPath).update(houseHoldData);
-              this.commonService.setAlertMessage("success", "Card house hold count updated !!!");
+              let dbTotalComplexCountPath = "EntitySurveyData/TotalComplexCount/";
+              let complexInstance = this.db.object(dbTotalComplexCountPath).valueChanges().subscribe(complexData => {
+                complexInstance.unsubscribe();
+                let complexCountData = {};
+                if (complexData != null) {
+                  complexCountData = complexData;
+                }
+                complexCountData[zoneNo.toString()] = totalComplexCount;
+                this.db.object(dbTotalComplexCountPath).update(complexCountData);
+                this.commonService.setAlertMessage("success", "Card house hold count updated !!!");
+              });
             });
+
           }
-        }        
+        }
       }
     );
   }
