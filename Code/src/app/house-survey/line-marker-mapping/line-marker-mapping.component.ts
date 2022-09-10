@@ -486,10 +486,12 @@ export class LineMarkerMappingComponent {
               let alreadyInstalledCount = 0;
               let lineNo = keyArray[i];
               let lineData = markerData[lineNo];
+              let lastMarkerKey = 0;
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (lineData[markerNo]["houseType"] != null) {
+                  lastMarkerKey = Number(markerNo);
                   markerCount = markerCount + 1;
                   zoneMarkerCount = zoneMarkerCount + 1;
                   if (lineData[markerNo]["cardNumber"] != null) {
@@ -509,6 +511,10 @@ export class LineMarkerMappingComponent {
               }
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
               this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
+              if (lastMarkerKey > 0) {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              }
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
