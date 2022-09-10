@@ -109,6 +109,7 @@ export class HouseMarkingComponent {
       return;
     }
     $(this.divLoader).show();
+    (<HTMLInputElement>document.getElementById("chkAll")).checked=false;
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
