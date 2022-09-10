@@ -34,9 +34,9 @@ export class ChangeLineMarkerDataComponent implements OnInit {
 
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    this.zoneList.push({zoneNo:"132-R2",zoneName:"Zone 132-R2"});
-    this.zoneList.push({zoneNo:"134-R3",zoneName:"Zone 134-R3"});
-    this.zoneList.push({zoneNo:"143-R3",zoneName:"Zone 143-R3"});
+    this.zoneList.push({ zoneNo: "132-R2", zoneName: "Zone 132-R2" });
+    this.zoneList.push({ zoneNo: "134-R3", zoneName: "Zone 134-R3" });
+    this.zoneList.push({ zoneNo: "143-R3", zoneName: "Zone 143-R3" });
   }
 
   saveData() {
@@ -142,11 +142,11 @@ export class ChangeLineMarkerDataComponent implements OnInit {
     else {
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
       this.db.object(dbPath).update({ lastMarkerKey: lastKey });
-      this.updateCounts(zoneFrom, zoneTo, "markerMove",failureCount);
+      this.updateCounts(zoneFrom, zoneTo, "markerMove", failureCount);
     }
   }
 
-  updateCounts(zoneNo: any, zoneTo: any, type: any,failureCount:any) {
+  updateCounts(zoneNo: any, zoneTo: any, type: any, failureCount: any) {
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -165,10 +165,12 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               let alreadyInstalledCount = 0;
               let lineNo = keyArray[i];
               let lineData = markerData[lineNo];
+              let lastMarkerKey = 0;
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (lineData[markerNo]["houseType"] != null) {
+                  lastMarkerKey = Number(markerNo);
                   markerCount = markerCount + 1;
                   zoneMarkerCount = zoneMarkerCount + 1;
                   if (lineData[markerNo]["cardNumber"] != null) {
@@ -187,7 +189,11 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                 }
               }
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-              this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
+              this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount });
+              if (lastMarkerKey > 0) {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              }
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
@@ -198,11 +204,11 @@ export class ChangeLineMarkerDataComponent implements OnInit {
           }
           else {
             if (zoneNo != zoneTo) {
-              this.updateCounts(zoneTo, zoneTo, "markerMove",failureCount);
+              this.updateCounts(zoneTo, zoneTo, "markerMove", failureCount);
             }
             else {
               if (failureCount > 0) {
-                let msg=failureCount+ " markers have some issue to be processed, Please try again.";
+                let msg = failureCount + " markers have some issue to be processed, Please try again.";
                 this.commonService.setAlertMessage("error", msg);
               }
               else {
@@ -227,6 +233,6 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
-    this.updateCounts(zoneNo, zoneNo, "totalCount",0);
+    this.updateCounts(zoneNo, zoneNo, "totalCount", 0);
   }
 }
