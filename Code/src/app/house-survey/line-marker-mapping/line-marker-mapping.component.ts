@@ -34,6 +34,7 @@ export class LineMarkerMappingComponent {
   isFirst = true;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   markerUrl = "../assets/img/red-home.png";
+  cardMarkerUrl = "../assets/img/blue-home.png";
   selectedMarkerUrl = "../assets/img/green-home.png";
   zoneList: any[];
   polylines: any[];
@@ -204,9 +205,7 @@ export class LineMarkerMappingComponent {
       });
       this.allMarkers.push({ marker });
       if (lineNo == this.lineNo) {
-        let firstLine = this.lines.find(
-          (item) => item.lineNo == Number(lineNo)
-        );
+        let firstLine = this.lines.find((item) => item.lineNo == Number(lineNo));
         this.centerPoint = firstLine.latlng[0];
         if (this.isFirst == true) {
           this.map.setZoom(19);
@@ -249,11 +248,15 @@ export class LineMarkerMappingComponent {
 
   setMarker(lat: any, lng: any, index: any, cardData: any) {
     let isSelected = false;
+    let url = this.markerUrl;
+    if (cardData["cardNumber"] != null) {
+      url = this.cardMarkerUrl;
+    }
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
       icon: {
-        url: this.markerUrl,
+        url: url,
         fillOpacity: 1,
         strokeWeight: 0,
         // scaledSize: new google.maps.Size(27, 27),
@@ -274,16 +277,22 @@ export class LineMarkerMappingComponent {
         this.selectedCardDetails = this.selectedCardDetails.filter((item) => item !== lineData);
         isSelected = false;
       }
-      this.setMarkerAsSelected(marker, isSelected);
+      this.setMarkerAsSelected(marker, isSelected, lineData);
       this.cardDetails.selectedMarkerCount = this.selectedCardDetails.length;
     });
   }
 
-  setMarkerAsSelected(marker: any, isSelected: boolean) {
+  setMarkerAsSelected(marker: any, isSelected: boolean, lineData: any) {
     if (isSelected) {
       marker.icon.url = "../assets/img/green-home.png";
     } else {
-      marker.icon.url = "../assets/img/red-home.png";
+      let url = this.markerUrl;
+      if (lineData != undefined) {
+        if (lineData["data"]["cardNumber"] != null) {
+          url = this.cardMarkerUrl;
+        }
+      }
+      marker.icon.url = url;
     }
     marker.setMap(null);
     marker.setMap(this.map);
