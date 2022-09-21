@@ -11,22 +11,26 @@ export class IndexComponent implements OnInit {
   constructor() {
   }
 
+  divSonant = "#divSonant";
+  isShow: any;
+
   ngOnInit() {
     //$('.navbar-toggler').hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     // When the user scrolls down 20px from the top of the document, show the button
     //window.onscroll = function () { this.scrollFunction() };
+    this.isShow = false;
   }
 
-  setNavBar(){
-    let element=<HTMLDivElement>document.getElementById("navbarCollapse");
-    let className=element.className;
+  setNavBar() {
+    let element = <HTMLDivElement>document.getElementById("navbarCollapse");
+    let className = element.className;
     $("#navbarCollapse").removeClass(className);
-    if(className.includes("show")){
+    if (className.includes("show")) {
       $("#navbarCollapse").addClass("collapse navbar-collapse justify-content-end");
     }
-    else{
+    else {
       $("#navbarCollapse").addClass("collapse show navbar-collapse justify-content-end");
     }
   }
@@ -58,6 +62,17 @@ export class IndexComponent implements OnInit {
       dots.style.display = "none";
       btnText.innerHTML = "View less";
       moreText.style.display = "inline";
+    }
+  }
+
+  showPopup() {
+    if (this.isShow == false) {
+      this.isShow = true;
+      $(this.divSonant).show();
+    }
+    else {
+      this.isShow = false;
+      $(this.divSonant).hide();
     }
   }
 }
