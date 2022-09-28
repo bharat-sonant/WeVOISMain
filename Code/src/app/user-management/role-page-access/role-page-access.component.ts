@@ -18,6 +18,7 @@ export class RolePageAccessComponent implements OnInit {
   cityName: any;
   accessList: any;
   roleAccessPages: any[] = [];
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.setDefaults();
@@ -30,16 +31,17 @@ export class RolePageAccessComponent implements OnInit {
   }
 
   getRoles() {
+    $(this.divLoader).show();
     this.userService.getRoles().then((data: any) => {
       if (data != null) {
         this.roleJSONData = data;
         this.roleName = "(" + this.roleJSONData[this.roleId.toString()]["roleName"] + ")";
         if (this.roleJSONData[this.roleId.toString()]["pages"] != null) {
-          let pages=this.roleJSONData[this.roleId.toString()]["pages"];
+          let pages = this.roleJSONData[this.roleId.toString()]["pages"];
           let dataList = pages.toString().split(",");
-            for (let i = 0; i < dataList.length; i++) {
-              this.roleAccessPages.push({ pageId: dataList[i].trim() });
-            }
+          for (let i = 0; i < dataList.length; i++) {
+            this.roleAccessPages.push({ pageId: dataList[i].trim() });
+          }
         }
         this.getPortalPages();
       }
@@ -48,58 +50,61 @@ export class RolePageAccessComponent implements OnInit {
 
   getPortalPages() {
     this.accessList = [];
-    this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").doc("gR6kziY4rXIv7yIgIK4g").get().subscribe((doc) => {
-      let pageList = JSON.parse(doc.data()["pages"]);
-      let firstData = pageList.filter((e) => e.parentId === 0);
-      if (firstData.length > 0) {
-        for (let i = 0; i < firstData.length; i++) {
-          let index = firstData[i]["pageID"];
-          let sno = firstData[i]["position"];
-          let name = firstData[i]["name"];
-          let isCheck = "";
-          let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
-          if (pageAccess != undefined) {
-            isCheck = "checked";
-          }
-          let secondLevel = [];
-          this.accessList.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, secondLevel: secondLevel, });
-          let secondData = pageList.filter((e) => e.parentId === index);
-          if (secondData.length > 0) {
-            for (let j = 0; j < secondData.length; j++) {
-              index = secondData[j]["pageID"];
-              sno = secondData[j]["position"];
-              name = secondData[j]["name"];
-              isCheck = "";
-              let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
-              if (pageAccess != undefined) {
-                isCheck = "checked";
-              }
-              let thirdLevel = [];
-
-              secondLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, thirdLevel: thirdLevel, });
-              let thirdData = pageList.filter((e) => e.parentId === index);
-              if (thirdData.length > 0) {
-                for (let k = 0; k < thirdData.length; k++) {
-                  index = thirdData[k]["pageID"];
-                  sno = thirdData[k]["position"];
-                  name = thirdData[k]["name"];
-                  isCheck = "";
-                  let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
-                  if (pageAccess != undefined) {
-                    isCheck = "checked";
-                  }
-                  thirdLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, });
-                }
-                secondLevel[secondLevel.length - 1]["thirdLevel"] = thirdLevel;
-              }
+    this.userService.getPortalPages().then((data: any) => {
+      if (data != null) {
+        let pageList = JSON.parse(JSON.stringify(data));
+        let firstData = pageList.filter((e) => e.parentId === 0);
+        if (firstData.length > 0) {
+          for (let i = 0; i < firstData.length; i++) {
+            let index = firstData[i]["pageID"];
+            let sno = firstData[i]["position"];
+            let name = firstData[i]["name"];
+            let isCheck = "";
+            let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
+            if (pageAccess != undefined) {
+              isCheck = "checked";
             }
-            this.accessList[this.accessList.length - 1]["secondLevel"] = secondLevel;
+            let secondLevel = [];
+            this.accessList.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, secondLevel: secondLevel, });
+            let secondData = pageList.filter((e) => e.parentId === index);
+            if (secondData.length > 0) {
+              for (let j = 0; j < secondData.length; j++) {
+                index = secondData[j]["pageID"];
+                sno = secondData[j]["position"];
+                name = secondData[j]["name"];
+                isCheck = "";
+                let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
+                if (pageAccess != undefined) {
+                  isCheck = "checked";
+                }
+                let thirdLevel = [];
+
+                secondLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, thirdLevel: thirdLevel, });
+                let thirdData = pageList.filter((e) => e.parentId === index);
+                if (thirdData.length > 0) {
+                  for (let k = 0; k < thirdData.length; k++) {
+                    index = thirdData[k]["pageID"];
+                    sno = thirdData[k]["position"];
+                    name = thirdData[k]["name"];
+                    isCheck = "";
+                    let pageAccess = this.roleAccessPages.find((item) => item.pageId == index);
+                    if (pageAccess != undefined) {
+                      isCheck = "checked";
+                    }
+                    thirdLevel.push({ sno: sno, pageID: index, name: name, ischeck: isCheck, });
+                  }
+                  secondLevel[secondLevel.length - 1]["thirdLevel"] = thirdLevel;
+                }
+              }
+              this.accessList[this.accessList.length - 1]["secondLevel"] = secondLevel;
+            }
           }
         }
+        $(this.divLoader).hide();
       }
     });
   }
-  
+
   saveRoleAccess() {
     let accessPages = "";
     for (let i = 0; i < this.accessList.length; i++) {
@@ -142,21 +147,21 @@ export class RolePageAccessComponent implements OnInit {
         }
       }
     }
-    if (accessPages == ""){
+    if (accessPages == "") {
       delete this.roleJSONData[this.roleId.toString()]["pages"];
     }
-    else{
-      this.roleJSONData[this.roleId.toString()]["pages"]=accessPages;
-    }    
+    else {
+      this.roleJSONData[this.roleId.toString()]["pages"] = accessPages;
+    }
     this.userService.saveRoles(this.roleJSONData);
-    this.commonService.setAlertMessage("success","Portal access updated successfully");
+    this.commonService.setAlertMessage("success", "Portal access updated successfully");
     this.router.navigate(['/' + this.cityName + '/18A/roles']);
   }
 
   cancelEntry() {
     this.router.navigate(["/" + this.cityName + "/18A/roles"]);
   }
-  
+
   setAccess(mainPageId: any, secondPageId: any) {
     let pageDetail = this.accessList.find(item => item.pageID == mainPageId);
     if (pageDetail != undefined) {

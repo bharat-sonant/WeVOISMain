@@ -215,6 +215,9 @@ export class CommonService {
     else if (cityName == "churu") {
       latLng.push({ lat: 25.885411, lng: 74.958944 });
     }
+    else if (cityName == "gwalior") {
+      latLng.push({ lat: 26.232397, lng: 78.1794748 });
+    }
     else if (cityName == "wevois-others") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
@@ -661,13 +664,13 @@ export class CommonService {
 
   getPortalUserDetailById(userId: string) {
     return new Promise((resolve) => {
-    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    if (userList == null) {
-      userList = [];
-    }
-    let userData = userList.find((item) => item.userId == userId);
-    resolve(userData);
-  });
+      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+      if (userList == null) {
+        userList = [];
+      }
+      let userData = userList.find((item) => item.userId == userId);
+      resolve(userData);
+    });
   }
 
   setAlertMessage(type: any, message: any) {
@@ -750,9 +753,7 @@ export class CommonService {
     }
     let pageId = pageURL.split(city)[1].split("/")[1];
     let accessList = JSON.parse(localStorage.getItem("userAccessList"));
-    let pageDetails = accessList.find(
-      (item) => item.pageId == pageId && item.city == city
-    );
+    let pageDetails = accessList.find((item) => item.pageId == pageId && item.city == city);
     if (pageDetails == undefined) {
       let value = "/" + city + "/home";
       this.router.navigate([value], { replaceUrl: true });
@@ -1066,85 +1067,6 @@ export class CommonService {
       }
     }, error => {
       localStorage.setItem("latest-zones", JSON.stringify(letestZone));
-    });
-
-  }
-
-  setWebPortalUsers() {
-    let userList = [];
-    this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
-      const document = ss.docs;
-      document.forEach((doc) => {
-        let imgUrl = "internal-user.png";
-        let utitle = "Internal User";
-        if (doc.data()["userType"] == "External User") {
-          imgUrl = "external-user.png";
-          utitle = "External User";
-        }
-        let haltDisableAccess = 0;
-        let isActual = 0;
-        let isLock = 0;
-        let isAdmin = 0;
-        let isManager = 0;
-        if (doc.data()["haltDisableAccess"] != undefined) {
-          haltDisableAccess = doc.data()["haltDisableAccess"];
-        }
-        if (doc.data()["isActual"] != undefined) {
-          isActual = doc.data()["isActual"];
-        }
-        if (doc.data()["isLock"] != undefined) {
-          isLock = doc.data()["isLock"];
-        }
-        if (doc.data()["isAdmin"] != undefined) {
-          isAdmin = doc.data()["isAdmin"];
-        }
-        if (doc.data()["isManager"] != undefined) {
-          isManager = doc.data()["isManager"];
-        }
-        if (doc.data()["isDelete"] == "0") {
-          userList.push({
-            userKey: doc.id,
-            userId: doc.data()["userId"],
-            name: doc.data()["name"],
-            email: doc.data()["email"],
-            password: doc.data()["password"],
-            userType: doc.data()["userType"],
-            expiryDate: doc.data()["expiryDate"],
-            notificationHalt: doc.data()["notificationHalt"],
-            notificationMobileDataOff: doc.data()["notificationMobileDataOff"],
-            notificationSkippedLines: doc.data()["notificationSkippedLines"],
-            notificationPickDustbins: doc.data()["notificationPickDustbins"],
-            notificationGeoSurfing: doc.data()["notificationGeoSurfing"],
-            officeAppUserId: doc.data()["officeAppUserId"],
-            isTaskManager: doc.data()["isTaskManager"],
-            haltDisableAccess: haltDisableAccess,
-            isActual: isActual,
-            isLock: isLock,
-            isAdmin: isAdmin,
-            isManager: isManager
-          });
-        }
-      });
-      localStorage.setItem("webPortalUserList", JSON.stringify(userList));
-    });
-  }
-
-  setPortalPages() {
-    let portalAccessList = [];
-    this.dbFireStore.collection("UserManagement").doc("PortalSectionAccess").collection("Pages").doc("gR6kziY4rXIv7yIgIK4g").get().subscribe((doc) => {
-      let pageList = JSON.parse(doc.data()["pages"]);
-      portalAccessList = this.transform(pageList, "position");
-      localStorage.setItem("portalAccess", JSON.stringify(portalAccessList));
-    });
-  }
-
-  checkUserCity(userid: any, city: any) {
-    let isAccess = false;
-    this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userid.toString()).collection(city).doc(city).get().subscribe((doc) => {
-      let pageId = doc.data()["pageId"];
-      if (pageId != null) {
-        return (isAccess = true);
-      }
     });
   }
 

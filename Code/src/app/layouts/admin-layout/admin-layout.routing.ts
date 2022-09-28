@@ -110,6 +110,7 @@ import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehic
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
+import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -350,6 +351,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'sikar/:id/roles', component: RolesComponent },
     { path: 'sikar/:id/maps', component: MapsComponent },
+    { path: 'sikar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-greater
@@ -578,6 +580,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/:id/roles', component: RolesComponent },
     { path: 'jaipur-greater/:id/maps', component: MapsComponent },
+    { path: 'jaipur-greater/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     
 
     //reengus
@@ -810,6 +813,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'reengus/:id/roles', component: RolesComponent },
     { path: 'reengus/:id/maps', component: MapsComponent },
+    { path: 'reengus/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -1041,6 +1045,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/:id/roles', component: RolesComponent },
     { path: 'shahpura/:id/maps', component: MapsComponent },
+    { path: 'shahpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1270,6 +1275,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'test/:id/roles', component: RolesComponent },
     { path: 'test/:id/maps', component: MapsComponent },
+    { path: 'test/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1499,6 +1505,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/:id/roles', component: RolesComponent },
     { path: 'jaipur-office/:id/maps', component: MapsComponent },
+    { path: 'jaipur-office/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     
 
@@ -1730,6 +1737,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/:id/roles', component: RolesComponent },
     { path: 'kishangarh/:id/maps', component: MapsComponent },
+    { path: 'kishangarh/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -1962,6 +1970,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'niwai/:id/roles', component: RolesComponent },
     { path: 'niwai/:id/maps', component: MapsComponent },
+    { path: 'niwai/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -2193,6 +2202,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/:id/roles', component: RolesComponent },
     { path: 'jaisalmer/:id/maps', component: MapsComponent },
+    { path: 'jaisalmer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2422,6 +2432,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'salasar/:id/roles', component: RolesComponent },
     { path: 'salasar/:id/maps', component: MapsComponent },
+    { path: 'salasar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -2653,6 +2664,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'behror/:id/roles', component: RolesComponent },
     { path: 'behror/:id/maps', component: MapsComponent },
+    { path: 'behror/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur
@@ -2882,6 +2894,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur/:id/roles', component: RolesComponent },
     { path: 'jaipur/:id/maps', component: MapsComponent },
+    { path: 'jaipur/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-jhotwara
@@ -3111,6 +3124,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jhotwara/:id/roles', component: RolesComponent },
     { path: 'jaipur-jhotwara/:id/maps', component: MapsComponent },
+    { path: 'jaipur-jhotwara/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-jagatpura
@@ -3340,6 +3354,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-jagatpura/:id/roles', component: RolesComponent },
     { path: 'jaipur-jagatpura/:id/maps', component: MapsComponent },
+    { path: 'jaipur-jagatpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-malviyanagar
@@ -3569,6 +3584,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/:id/roles', component: RolesComponent },
     { path: 'jaipur-malviyanagar/:id/maps', component: MapsComponent },
+    { path: 'jaipur-malviyanagar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-mansarovar
@@ -3798,6 +3814,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-mansarovar/:id/roles', component: RolesComponent },
     { path: 'jaipur-mansarovar/:id/maps', component: MapsComponent },
+    { path: 'jaipur-mansarovar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-murlipura
@@ -4027,6 +4044,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/:id/roles', component: RolesComponent },
     { path: 'jaipur-murlipura/:id/maps', component: MapsComponent },
+    { path: 'jaipur-murlipura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-sanganer
@@ -4256,6 +4274,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-sanganer/:id/roles', component: RolesComponent },
     { path: 'jaipur-sanganer/:id/maps', component: MapsComponent },
+    { path: 'jaipur-sanganer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
     //jaipur-vidhyadhar
@@ -4485,6 +4504,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-vidhyadhar/:id/roles', component: RolesComponent },
     { path: 'jaipur-vidhyadhar/:id/maps', component: MapsComponent },
+    { path: 'jaipur-vidhyadhar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -4715,6 +4735,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'bhiwadi/:id/roles', component: RolesComponent },
     { path: 'bhiwadi/:id/maps', component: MapsComponent },
+    { path: 'bhiwadi/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     
 
@@ -4945,6 +4966,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'chhapar/:id/roles', component: RolesComponent },
     { path: 'chhapar/:id/maps', component: MapsComponent },
+    { path: 'chhapar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
     
 
@@ -5175,6 +5197,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'churu/:id/roles', component: RolesComponent },
     { path: 'churu/:id/maps', component: MapsComponent },
+    { path: 'churu/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 
 
 
@@ -5407,4 +5430,238 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/:id/roles', component: RolesComponent },
     { path: 'wevois-others/:id/maps', component: MapsComponent },
+    { path: 'wevois-others/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+
+
+    
+    
+    //gwalior
+    { path: 'gwalior/home', component: HomeComponent },
+    { path: 'gwalior/dashboard', component: DashboardComponent },
+    { path: 'gwalior/notifications', component: NotificationsComponent },
+    { path: 'gwalior/ward-report', component: WardMonitoringComponent },
+    { path: 'gwalior/skip-lines', component: SkipLineComponent },
+    { path: 'gwalior/halts', component: HaltsComponent },
+    { path: 'gwalior/login', component: LoginComponent },
+    { path: 'gwalior/logout', component: LogoutComponent },
+    { path: 'gwalior/hsfrm', component: HouseEntryFormComponent },
+    { path: 'gwalior/download-report', component: DownloadCollectionReportComponent },
+    { path: 'gwalior/housesearch', component: HouseSearchComponent },
+    { path: 'gwalior/fleet-monitor', component: FleetMonitorComponent },
+    { path: 'gwalior/line-statistics', component: LineStatisticsComponent },
+    { path: 'gwalior/line-card-mapping', component: LineCardMappingComponent },
+    { path: 'gwalior/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: 'gwalior/time-distance', component: TimeDistanceComponent },
+    { path: 'gwalior/realtime-monitoring', component: RealtimeMonitoringComponent },
+    { path: 'gwalior/dustbin-monitoring', component: DustbinMonitoringComponent },
+    { path: 'gwalior/download-ward-reports', component: DownloadWardwiseReportComponent },
+    { path: 'gwalior/users', component: UserListComponent },
+    { path: 'gwalior/useradd/:id', component: UserAddComponent },
+    { path: 'gwalior/useradd', component: UserAddComponent },
+    { path: 'gwalior/useracess/:id', component: UserAccessComponent },
+    { path: 'gwalior/halt-report', component: HaltReportComponent },
+    { path: 'gwalior/route-tracking/:id', component: RouteTrackingComponent },
+    { path: 'gwalior/halt-summary', component: HaltSummaryComponent },
+    { path: 'gwalior/salary-summary', component: SalarySummaryComponent },
+    { path: 'gwalior/ward-monitoring-report', component: WardMonitoringReportComponent },
+    { path: 'gwalior/finance', component: FinanceComponent },
+    { path: 'gwalior/ward-reach-cost', component: WardReachCostComponent },
+    { path: 'gwalior/month-salary-report', component: MonthSalaryReportComponent },
+    { path: 'gwalior/reports', component: ReportsComponent },
+    { path: 'gwalior/remark-report', component: RemarkReportComponent },
+    { path: 'gwalior/work-assign-report', component: WorkAssignReportComponent },
+    { path: 'gwalior/portal-services', component: PortalServicesComponent },
+    { path: 'gwalior/ward-duty-data', component: WardDutyDataComponent },
+    { path: 'gwalior/dustbin-analysis', component: DustbinAnalysisComponent },
+    { path: 'gwalior/dustbin-report', component: DustbinReportComponent },
+    { path: 'gwalior/cms/:id', component: CmsComponent },
+    { path: 'gwalior/cms1', component: Cms1Component },
+    { path: 'gwalior/vehicle-report', component: VehicleReportComponent },
+    { path: 'gwalior/multiple-maps', component: MultipleMapsComponent },
+    { path: 'gwalior/task-manager', component: TaskManagerComponent },
+    { path: 'gwalior/ward-trip-analysis', component: WardTripAnalysisComponent },
+    { path: 'gwalior/house-marking', component: HouseMarkingComponent },
+    { path: 'gwalior/house-marking/:id1', component: HouseMarkingComponent },
+    { path: 'gwalior/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'gwalior/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: 'gwalior/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'gwalior/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'gwalior/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'gwalior/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'gwalior/map-card-review', component: MapCardReviewComponent },
+    { path: 'gwalior/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: 'gwalior/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'gwalior/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'gwalior/vehicle-assigned', component: VehicleAssignedComponent },
+    { path: 'gwalior/log-book', component: LogBookComponent },
+    { path: 'gwalior/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'gwalior/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
+    { path: 'gwalior/vts-report', component: VtsReportComponent },
+    { path: 'gwalior/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'gwalior/change-password', component: ChangePasswordComponent },
+    { path: 'gwalior/vts-route', component: VtsRouteComponent },
+    { path: 'gwalior/create-routes', component: CreateRoutesComponent },
+    { path: 'gwalior/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'gwalior/bvg-routes', component: BvgRoutesComponent },
+    { path: 'gwalior/vts-analysis', component: VtsAnalysisComponent },
+    { path: 'gwalior/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'gwalior/field-executive-tracking', component: FieldExecutiveTrackingComponent },
+    { path: 'gwalior/show-route', component: ShowRouteComponent },
+    { path: 'gwalior/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'gwalior/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'gwalior/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'gwalior/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'gwalior/account-detail', component: AccountDetailComponent },
+    { path: 'gwalior/employee-salary', component: EmployeeSalaryComponent },
+    { path: 'gwalior/salary-holding-management', component: SalaryHoldingManagementComponent },
+    { path: 'gwalior/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'gwalior/kml-to-json', component: KmlToJsonComponent },
+    { path: 'gwalior/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'gwalior/dustbin-service', component: DustbinServiceComponent },
+    { path: 'gwalior/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'gwalior/ward-work-tracking/:id', component: WardWorkTrackingComponent },
+    { path: 'gwalior/staff-account-detail', component: StaffAccountDetailComponent },
+    { path: 'gwalior/cash-management', component: CashManagementComponent },
+    { path: 'gwalior/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'gwalior/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'gwalior/ward-work-done', component: WardWorkDoneComponent },
+    { path: 'gwalior/settings', component: SettingsComponent },
+    { path: 'gwalior/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'gwalior/employees', component: EmployeesComponent },
+    { path: 'gwalior/special-users', component: SpecialUsersComponent },
+    { path: 'gwalior/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'gwalior/dustbin-ward-mapping', component: DustbinWardMappingComponent },
+    { path: 'gwalior/line-weightage', component: LineWeightageComponent },
+    { path: 'gwalior/dustbin-manage', component: DustbinManageComponent },
+    { path: 'gwalior/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'gwalior/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'gwalior/salary-calculation', component: SalaryCalculationComponent },
+    { path: 'gwalior/daily-fuel-report', component: DailyFuelReportComponent },
+    { path: 'gwalior/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'gwalior/employee-attendance', component: EmployeeAttendanceComponent },
+    { path: 'gwalior/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'gwalior/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'gwalior/support-query', component: SupportQueryComponent },
+    { path: 'gwalior/monthly-fuel-report', component: MonthlyFuelReportComponent },
+    { path: 'gwalior/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'gwalior/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'gwalior/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'gwalior/role-page-access/:id', component: RolePageAccessComponent },
+
+    
+    { path: 'gwalior/:id/home', component: HomeComponent },
+    { path: 'gwalior/:id/dashboard', component: DashboardComponent },
+    { path: 'gwalior/:id/notifications', component: NotificationsComponent },
+    { path: 'gwalior/:id/ward-report', component: WardMonitoringComponent },
+    { path: 'gwalior/:id/skip-lines', component: SkipLineComponent },
+    { path: 'gwalior/:id/halts', component: HaltsComponent },
+    { path: 'gwalior/:id/login', component: LoginComponent },
+    { path: 'gwalior/:id/logout', component: LogoutComponent },
+    { path: 'gwalior/:id/hsfrm', component: HouseEntryFormComponent },
+    { path: 'gwalior/:id/download-report', component: DownloadCollectionReportComponent },
+    { path: 'gwalior/:id/housesearch', component: HouseSearchComponent },
+    { path: 'gwalior/:id/fleet-monitor', component: FleetMonitorComponent },
+    { path: 'gwalior/:id/line-statistics', component: LineStatisticsComponent },
+    { path: 'gwalior/:id/line-card-mapping', component: LineCardMappingComponent },
+    { path: 'gwalior/:id/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: 'gwalior/:id/time-distance', component: TimeDistanceComponent },
+    { path: 'gwalior/:id/realtime-monitoring', component: RealtimeMonitoringComponent },
+    { path: 'gwalior/:id/dustbin-monitoring', component: DustbinMonitoringComponent },
+    { path: 'gwalior/:id/download-ward-reports', component: DownloadWardwiseReportComponent },
+    { path: 'gwalior/:id/users', component: UserListComponent },
+    { path: 'gwalior/:id/useradd/:id', component: UserAddComponent },
+    { path: 'gwalior/:id/useradd', component: UserAddComponent },
+    { path: 'gwalior/:id/useracess/:id', component: UserAccessComponent },
+    { path: 'gwalior/:id/halt-report', component: HaltReportComponent },
+    { path: 'gwalior/:id/route-tracking/:id', component: RouteTrackingComponent },
+    { path: 'gwalior/:id/halt-summary', component: HaltSummaryComponent },
+    { path: 'gwalior/:id/salary-summary', component: SalarySummaryComponent },
+    { path: 'gwalior/:id/ward-monitoring-report', component: WardMonitoringReportComponent },
+    { path: 'gwalior/:id/finance', component: FinanceComponent },
+    { path: 'gwalior/:id/ward-reach-cost', component: WardReachCostComponent },
+    { path: 'gwalior/:id/month-salary-report', component: MonthSalaryReportComponent },
+    { path: 'gwalior/:id/reports', component: ReportsComponent },
+    { path: 'gwalior/:id/remark-report', component: RemarkReportComponent },
+    { path: 'gwalior/:id/work-assign-report', component: WorkAssignReportComponent },
+    { path: 'gwalior/:id/portal-services', component: PortalServicesComponent },
+    { path: 'gwalior/:id/ward-duty-data', component: WardDutyDataComponent },
+    { path: 'gwalior/:id/dustbin-analysis', component: DustbinAnalysisComponent },
+    { path: 'gwalior/:id/dustbin-report', component: DustbinReportComponent },
+    { path: 'gwalior/:id/cms/:id', component: CmsComponent },
+    { path: 'gwalior/:id/cms1', component: Cms1Component },
+    { path: 'gwalior/:id/vehicle-report', component: VehicleReportComponent },
+    { path: 'gwalior/:id/multiple-maps', component: MultipleMapsComponent },
+    { path: 'gwalior/:id/task-manager', component: TaskManagerComponent },
+    { path: 'gwalior/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
+    { path: 'gwalior/:id/house-marking', component: HouseMarkingComponent },
+    { path: 'gwalior/:id/house-marking/:id1', component: HouseMarkingComponent },
+    { path: 'gwalior/:id/task-management-masters', component: TaskManagementMastersComponent },
+    { path: 'gwalior/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: 'gwalior/:id/employee-marking', component: EmployeeMarkingComponent },
+    { path: 'gwalior/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
+    { path: 'gwalior/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
+    { path: 'gwalior/:id/ward-survey-summary', component: WardSurveySummaryComponent },
+    { path: 'gwalior/:id/map-card-review', component: MapCardReviewComponent },
+    { path: 'gwalior/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: 'gwalior/:id/ward-scancard-report', component: WardScancardReportComponent },
+    { path: 'gwalior/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: 'gwalior/:id/vehicle-assigned', component: VehicleAssignedComponent },
+    { path: 'gwalior/:id/log-book', component: LogBookComponent },
+    { path: 'gwalior/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
+    { path: 'gwalior/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
+    { path: 'gwalior/:id/vts-report', component: VtsReportComponent },
+    { path: 'gwalior/:id/vts-monthly-report', component: VtsMonthlyReportComponent },
+    { path: 'gwalior/:id/change-password', component: ChangePasswordComponent },
+    { path: 'gwalior/:id/vts-route', component: VtsRouteComponent },
+    { path: 'gwalior/:id/create-routes', component: CreateRoutesComponent },
+    { path: 'gwalior/:id/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'gwalior/:id/bvg-routes', component: BvgRoutesComponent },
+    { path: 'gwalior/:id/vts-analysis', component: VtsAnalysisComponent },
+    { path: 'gwalior/:id/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'gwalior/:id/field-executive-tracking', component: FieldExecutiveTrackingComponent },
+    { path: 'gwalior/:id/show-route', component: ShowRouteComponent },
+    { path: 'gwalior/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'gwalior/:id/vehicle-fuel-report', component: VehicleFuelReportComponent },
+    { path: 'gwalior/:id/employee-penalty', component: EmployeePenaltyComponent },
+    { path: 'gwalior/:id/penalty-portal-service', component: PenaltyPortalServiceComponent },
+    { path: 'gwalior/:id/account-detail', component: AccountDetailComponent },
+    { path: 'gwalior/:id/employee-salary', component: EmployeeSalaryComponent },
+    { path: 'gwalior/:id/salary-holding-management', component: SalaryHoldingManagementComponent },
+    { path: 'gwalior/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'gwalior/:id/kml-to-json', component: KmlToJsonComponent },
+    { path: 'gwalior/:id/salary-transaction', component: SalaryTransactionComponent },
+    { path: 'gwalior/:id/dustbin-service', component: DustbinServiceComponent },
+    { path: 'gwalior/:id1/ward-work-tracking', component: WardWorkTrackingComponent },
+    { path: 'gwalior/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
+    { path: 'gwalior/:id/staff-account-detail', component: StaffAccountDetailComponent },
+    { path: 'gwalior/:id/cash-management', component: CashManagementComponent },
+    { path: 'gwalior/:id/ward-work-percentage', component: WardWorkPercentageComponent },
+    { path: 'gwalior/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: 'gwalior/:id/ward-work-done', component: WardWorkDoneComponent },
+    { path: 'gwalior/:id/settings', component: SettingsComponent },
+    { path: 'gwalior/:id/vendor-ledger', component: VendorLedgerComponent },
+    { path: 'gwalior/:id/employees', component: EmployeesComponent },
+    { path: 'gwalior/:id/special-users', component: SpecialUsersComponent },
+    { path: 'gwalior/:id/dustbin-planing', component: DustbinPlaningComponent },
+    { path: 'gwalior/:id/dustbin-ward-mapping', component: DustbinWardMappingComponent },
+    { path: 'gwalior/:id/line-weightage', component: LineWeightageComponent },
+    { path: 'gwalior/:id/dustbin-manage', component: DustbinManageComponent },
+    { path: 'gwalior/:id/routes-tracking', component: RoutesTrackingComponent },
+    { path: 'gwalior/:id1/routes-tracking/:id', component: RoutesTrackingComponent },
+    { path: 'gwalior/:id/salary-calculation', component: SalaryCalculationComponent },
+    { path: 'gwalior/:id/daily-fuel-report', component: DailyFuelReportComponent },
+    { path: 'gwalior/:id/salary-calculations', component: SalaryCalculationsComponent },
+    { path: 'gwalior/:id/employee-attendance', component: EmployeeAttendanceComponent },
+    { path: 'gwalior/:id/daily-work-detail', component: DailyWorkDetailComponent },
+    { path: 'gwalior/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
+    { path: 'gwalior/:id/support-query', component: SupportQueryComponent },
+    { path: 'gwalior/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
+    { path: 'gwalior/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
+    { path: 'gwalior/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
+    { path: 'gwalior/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
+    { path: 'gwalior/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
+    { path: 'gwalior/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
+    { path: 'gwalior/:id/roles', component: RolesComponent },
+    { path: 'gwalior/:id/maps', component: MapsComponent },
+    { path: 'gwalior/:id/card-marker-mapping', component: CardMarkerMappingComponent },
 ]; 

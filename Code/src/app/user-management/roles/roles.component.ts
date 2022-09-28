@@ -10,14 +10,15 @@ import { UsersService } from "../../services/users/users.service";
 })
 export class RolesComponent implements OnInit {
 
-  constructor(public userService:UsersService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public userService: UsersService, private commonService: CommonService, private modalService: NgbModal) { }
 
   txtRoleName = "#txtRoleName";
   key = "#key";
   deleteId = "#deleteId";
+  divLoader = "#divLoader";
   roleList: any[] = [];
   roleJSONData: any;
-  public cityName:any;
+  public cityName: any;
 
   ngOnInit() {
     this.setDefault();
@@ -29,6 +30,7 @@ export class RolesComponent implements OnInit {
   }
 
   getRoles() {
+    $(this.divLoader).show();
     this.userService.getRoles().then((data: any) => {
       if (data != null) {
         this.roleJSONData = data;
@@ -39,11 +41,12 @@ export class RolesComponent implements OnInit {
             if (data[roleId]["roleName"] != null) {
               let roleName = data[roleId]["roleName"];
               this.roleList.push({ roleId: roleId, roleName: roleName });
-              this.roleList=this.commonService.transformNumeric(this.roleList,"roleName");
+              this.roleList = this.commonService.transformNumeric(this.roleList, "roleName");
             }
           }
         }
       }
+      $(this.divLoader).hide();
     });
   }
 
@@ -67,6 +70,14 @@ export class RolesComponent implements OnInit {
         $(this.txtRoleName).val(roleDetail.roleName);
       }
     }
+    if (type == "delete") {
+      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+      let userDetail = userList.find(item => item.roleId == id);
+      if (userDetail != undefined) {
+        this.commonService.setAlertMessage("error", "Can not delete this role. Some one assigned this role !!!");
+        this.closeModel();
+      }
+    }
   }
 
   saveRole() {
@@ -76,9 +87,15 @@ export class RolesComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter role name");
       return;
     }
-    const data = {
-      roleName: roleName
+
+    if (id == "0") {
+      let roleDetail = this.roleList.find(item => item.roleName == roleName.toString().trim());
+      if (roleDetail != undefined) {
+        this.commonService.setAlertMessage("error", "Portal Access already exists !!!");
+        return;
+      }
     }
+        
     let lastKey = 0;
     if (this.roleJSONData == null) {
       this.roleJSONData = {};
@@ -87,19 +104,23 @@ export class RolesComponent implements OnInit {
       lastKey = Number(this.roleJSONData["lastKey"]);
     }
     if (id == "0") {
+      const data = {
+        roleName: roleName
+      }
       lastKey++;
       this.roleJSONData["lastKey"] = lastKey;
+      this.roleJSONData[lastKey.toString()] = data;
       this.roleList.push({ roleId: lastKey, roleName: roleName });
-      this.roleList=this.commonService.transformNumeric(this.roleList,"roleName");
+      this.roleList = this.commonService.transformNumeric(this.roleList, "roleName");
     }
     else {
       lastKey = Number(id);
       let roleDetail = this.roleList.find(item => item.roleId == id);
       if (roleDetail != undefined) {
         roleDetail.roleName = roleName;
+        this.roleJSONData[lastKey.toString()]["roleName"]=roleName;
       }
     }
-    this.roleJSONData[lastKey.toString()] = data;
     this.userService.saveRoles(this.roleJSONData);
     this.commonService.setAlertMessage("success", "Role saved successfully !!!");
     this.closeModel();

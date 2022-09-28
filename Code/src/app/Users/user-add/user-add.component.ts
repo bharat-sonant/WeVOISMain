@@ -27,12 +27,15 @@ export class UserAddComponent implements OnInit {
   cityName: any;
   roleList: any[] = [];
   cityList: any[] = [];
+  userJsonData: any;
+  divLoader = "#divLoader";
 
   ngOnInit() {
     this.setDefaults();
   }
 
   setDefaults() {
+    $(this.divLoader).show();
     this.cityName = localStorage.getItem("cityName");
     this.cityList = JSON.parse(localStorage.getItem("cityList"));
     this.toDayDate = this.commonService.setTodayDate();
@@ -55,105 +58,96 @@ export class UserAddComponent implements OnInit {
           }
         }
       }
+      this.getPortalUsers();
+    });
+  }
+
+  getPortalUsers() {
+    this.userService.getPortalUsers().then((data: any) => {
+      if (data != null) {
+        this.userJsonData = data;
+      }
       this.getUserDetail();
     });
   }
 
   getUserDetail() {
     if (this.userid != null) {
-      this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").doc(this.userid).get().subscribe((doc) => {
-        this.usrid = doc.data()["userId"];
-        console.log(doc.data())
-        $("#name").val(doc.data()["name"]);
-        $("#name").val(doc.data()["name"]);
-        $("#userType").val(doc.data()["userType"]);
-        $("#mobile").val(doc.data()["mobile"]);
-        $("#email").val(doc.data()["email"]);
-        $("#password").val(doc.data()["password"]);
-        $("#expiryDate").val(doc.data()["expiryDate"]);
-        if (doc.data()["roleId"] != null) {
-          $("#userRole").val(doc.data()["roleId"]);
+      let data = this.userJsonData[this.userid];
+      $("#name").val(data["name"]);
+      $("#name").val(data["name"]);
+      $("#userType").val(data["userType"]);
+      $("#mobile").val(data["mobile"]);
+      $("#email").val(data["email"]);
+      $("#password").val(data["password"]);
+      $("#expiryDate").val(data["expiryDate"]);
+      if (data["roleId"] != null) {
+        $("#userRole").val(data["roleId"]);
+      }
+      if (data["officeAppUserId"] != null) {
+        $("#officeAppUserId").val(data["officeAppUserId"]);
+      }
+      if (data["empLocation"] != null) {
+        $("#empLocation").val(data["empLocation"]);
+      }
+      if (data["notificationHalt"] == "1") {
+        (<HTMLInputElement>(document.getElementById("notificationHalt"))).checked = true;
+      }
+      if (data["notificationMobileDataOff"] == 1) {
+        (<HTMLInputElement>(document.getElementById("notificationMobileDataOff"))).checked = true;
+      }
+      if (data["notificationSkippedLines"] == 1) {
+        (<HTMLInputElement>(document.getElementById("notificationSkippedLines"))).checked = true;
+      }
+      if (data["notificationPickDustbins"] == 1) {
+        (<HTMLInputElement>(document.getElementById("notificationPickDustbins"))).checked = true;
+      }
+      if (data["notificationGeoSurfing"] == 1) {
+        (<HTMLInputElement>(document.getElementById("notificationGeoSurfing"))).checked = true;
+      }
+      if (data["isTaskManager"] == 1) {
+        (<HTMLInputElement>(document.getElementById("isTaskManager"))).checked = true;
+      }
+      if (data["haltDisableAccess"] != undefined) {
+        if (data["haltDisableAccess"] == 1) {
+          (<HTMLInputElement>(document.getElementById("haltDisableAccess"))).checked = true;
         }
-        if (doc.data()["officeAppUserId"] != null) {
-          $("#officeAppUserId").val(doc.data()["officeAppUserId"]);
+      }
+      if (data["isActual"] != undefined) {
+        if (data["isActual"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
         }
-        if (doc.data()["empLocation"] != null) {
-          $("#empLocation").val(doc.data()["empLocation"]);
+      }
+      if (data["isLock"] != undefined) {
+        if (data["isLock"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
         }
-        if (doc.data()["notificationHalt"] == "1") {
-          (<HTMLInputElement>(document.getElementById("notificationHalt"))).checked = true;
+      }
+      if (data["isAdmin"] != undefined) {
+        if (data["isAdmin"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isAdmin"))).checked = true;
         }
-        if (doc.data()["notificationMobileDataOff"] == 1) {
-          (<HTMLInputElement>(document.getElementById("notificationMobileDataOff"))).checked = true;
+      }
+      if (data["isManager"] != undefined) {
+        if (data["isManager"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isManager"))).checked = true;
         }
-        if (doc.data()["notificationSkippedLines"] == 1) {
-          (<HTMLInputElement>(document.getElementById("notificationSkippedLines"))).checked = true;
-        }
-        if (doc.data()["notificationPickDustbins"] == 1) {
-          (<HTMLInputElement>(document.getElementById("notificationPickDustbins"))).checked = true;
-        }
-        if (doc.data()["notificationGeoSurfing"] == 1) {
-          (<HTMLInputElement>(document.getElementById("notificationGeoSurfing"))).checked = true;
-        }
-        if (doc.data()["isTaskManager"] == 1) {
-          (<HTMLInputElement>(document.getElementById("isTaskManager"))).checked = true;
-        }
-        if (doc.data()["haltDisableAccess"] != undefined) {
-          if (doc.data()["haltDisableAccess"] == 1) {
-            (<HTMLInputElement>(document.getElementById("haltDisableAccess"))).checked = true;
-          }
-        }
-        if (doc.data()["isActual"] != undefined) {
-          if (doc.data()["isActual"] == 1) {
-            (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
-          }
-        }
-        if (doc.data()["isLock"] != undefined) {
-          if (doc.data()["isLock"] == 1) {
-            (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
-          }
-        }
-        if (doc.data()["isAdmin"] != undefined) {
-          if (doc.data()["isAdmin"] == 1) {
-            (<HTMLInputElement>(document.getElementById("isAdmin"))).checked = true;
-          }
-        }
-        if (doc.data()["isManager"] != undefined) {
-          if (doc.data()["isManager"] == 1) {
-            (<HTMLInputElement>(document.getElementById("isManager"))).checked = true;
-          }
-        }
-        if (doc.data()["accessCities"] != undefined) {
-          let list = doc.data()["accessCities"].split(',');
-          for (let i = 0; i < list.length; i++) {
-            let city = list[i].trim();
+      }
+      if (data["accessCities"] != undefined) {
+        let list = data["accessCities"].split(',');
+        for (let i = 0; i < list.length; i++) {
+          let city = list[i].trim();
+          if (city != "") {
             let chkCity = "chkCity" + city;
             (<HTMLInputElement>(document.getElementById(chkCity))).checked = true;
           }
         }
-      });
-    } else {
-      this.userRecord = [];
-      this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
-        const document = ss.docs;
-        document.forEach((doc) => {
-          this.userRecord.push({ userId: doc.data()["userId"] });
-        });
-        if (this.userRecord.length == 0) {
-          this.usrid = 1;
-        } else {
-          this.userRecord = this.commonService.transform(this.userRecord, "userId");
-          // var sorted = this.userRecord.sort();
-          this.usrid =
-            this.userRecord[this.userRecord.length - 1]["userId"] + 1;
-
-        }
-      });
+      }
     }
+    $(this.divLoader).hide();
   }
 
   submitData() {
-    const id = this.actRoute.snapshot.paramMap.get("id");
     if ($("#userType").val() == "0") {
       this.commonService.setAlertMessage("error", "Please Select User Type !!!");
       return;
@@ -163,10 +157,11 @@ export class UserAddComponent implements OnInit {
       return;
     }
     if ($("#mobile").val() == "") {
-      this.commonService.setAlertMessage(
-        "error",
-        "Please Enter Mobile No. !!!"
-      );
+      this.commonService.setAlertMessage("error", "Please Enter Mobile No. !!!");
+      return;
+    }
+    if ($("#userRole").val() == "0") {
+      this.commonService.setAlertMessage("error", "Please Select Portal Access As !!!");
       return;
     }
     if ($("#email").val() == "") {
@@ -177,26 +172,27 @@ export class UserAddComponent implements OnInit {
     if (this.validateEmail(emailChk) == false) {
       this.commonService.setAlertMessage("error", "Please Enter Valid Email ID !!!");
       return;
-    } else {
-      if (this.userRecord != null) {
-        for (let i = 0; i < this.userRecord.length; i++) {
-          if (this.usrid == null) {
-            if (emailChk == this.userRecord[i]["email"]) {
-              if (this.userRecord[i]["isDelete"] == "0") {
+    }
+
+    if (this.userJsonData != null) {
+      let keyArray = Object.keys(this.userJsonData);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let key = keyArray[i];
+          if (this.actRoute.snapshot.paramMap.get("id") == null) {
+            if (emailChk == this.userJsonData[key]["email"]) {
+              if (this.userJsonData[key]["isDelete"] == "0") {
                 this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with active user !!!");
-              } else if (this.userRecord[i]["isDelete"] == "1") {
+              } else if (this.userJsonData[key]["isDelete"] == "1") {
                 this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with deleted user !!!");
               }
               return;
             }
           } else {
-            if (
-              emailChk == this.userRecord[i]["email"] &&
-              this.usrid != this.userRecord[i]["userId"]
-            ) {
-              if (this.userRecord[i]["isDelete"] == "0") {
+            if (emailChk == this.userJsonData[key]["email"] && this.userid != this.userJsonData[key]["userId"]) {
+              if (this.userJsonData[key]["isDelete"] == "0") {
                 this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with active user !!!");
-              } else if (this.userRecord[i]["isDelete"] == "1") {
+              } else if (this.userJsonData[key]["isDelete"] == "1") {
                 this.commonService.setAlertMessage("error", "Email Id " + emailChk + " already exist with deleted user !!!");
               }
               return;
@@ -217,7 +213,6 @@ export class UserAddComponent implements OnInit {
     let notificationPickDustbins: any = 0;
     let notificationGeoSurfing: any = 0;
     let haltDisableAccess: any = 0;
-    let userId: any = this.usrid;
     let name: any = $("#name").val();
     let userType: any = $("#userType").val();
     let roleId: any = $("#userRole").val();
@@ -274,9 +269,13 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isAdmin = 1;
     element = <HTMLInputElement>document.getElementById("isManager");
     if (element.checked == true) isManager = 1;
+    if (this.userid == null) {
+      let lastKey = Number(this.userJsonData["lastKey"]) + 1;
+      this.userid = lastKey;
+    }
 
     const dish = {
-      userId: userId,
+      userId: this.userid,
       name: name,
       userType: userType,
       mobile: mobile,
@@ -301,18 +300,25 @@ export class UserAddComponent implements OnInit {
       accessCities: accessCities
     };
 
-    if (id != null) {
-      this.usrService.UpdateUser(id, dish);
+    if (this.actRoute.snapshot.paramMap.get("id") != null) {
+      this.userJsonData[this.userid] = dish;
+      this.userService.savePortalUsers(this.userJsonData);
       let message = "" + $("#name").val() + " Updated Successfully !!!";
       let cssClass = "alert alert-info alert-with-icon";
       this.commonService.setAlertMessageWithCss("success", message, cssClass);
     } else {
-      this.usrService.AddUser(dish);
+      let lastKey = Number(this.userJsonData["lastKey"]) + 1;
+      this.userJsonData["lastKey"] = lastKey;
+      this.userJsonData[lastKey.toString()] = dish;
+      this.userService.savePortalUsers(this.userJsonData);
       let message = "" + $("#name").val() + " Added Successfully !!!";
       let cssClass = "alert alert-info alert-with-icon";
       this.commonService.setAlertMessageWithCss("success", message, cssClass);
     }
-    this.router.navigate(["/" + this.cityName + "/11/users"]);
+    this.userService.setWebPortalUsers();
+    setTimeout(() => {
+      this.router.navigate(["/" + this.cityName + "/11/users"]);
+    }, 2000);
   }
 
   cancelEntry() {

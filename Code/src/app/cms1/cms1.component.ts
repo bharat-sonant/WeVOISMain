@@ -4,6 +4,7 @@ import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
 import { AngularFireStorage } from "angularfire2/storage";
+import { AngularFirestore } from "@angular/fire/firestore";
 import * as firebase from 'firebase/app';
 
 @Component({
@@ -13,7 +14,7 @@ import * as firebase from 'firebase/app';
 })
 export class Cms1Component implements OnInit {
 
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService,public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   nameList: any = [];
@@ -26,14 +27,28 @@ export class Cms1Component implements OnInit {
     //this.getCardTypeList();
   }
 
+  createUserJson(){
+    this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
+      const document = ss.docs;
+      const userJson={};
+      document.forEach((doc) => {
+       let userId=doc.data()["userId"];
+       let data=doc.data();
+       userJson[userId]=data;
+      })
+      console.log(userJson);
+      this.commonService.saveCommonJsonFile(userJson, "PortalUsers.json", "/Common/");
+    });
+  }
+
   createHelperDevice() {
-   // this.addDevices(39,0);
+    this.addDevices(328,75);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice=lastDevice+1;
-    if (index <= 65) {
+    if (index <= 85) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
@@ -49,7 +64,6 @@ export class Cms1Component implements OnInit {
     else{
       this.db.object("Devices").update({LastConfigurationNo:lastDevice });
     }
-
   }
 
   setSurveyorId() {
@@ -709,8 +723,37 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  markerSurveyUpdate(){
+    let wardNo="128-R1";
+    let lineNo="1";
+    
+
+  }
+
+  removeLineApprove(){
+    let wardNo = "18-R2";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = Number(keyArray[i]);
+            if(data[lineNo]["ApproveStatus"]!=null){
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus";
+              this.db.object(dbPath).remove();
+            }
+          }
+          dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+wardNo;
+          this.db.object(dbPath).update({approved:0,rejected:0});
+        }
+      }
+    );
+  }
+
   checkMarkerCount() {
-    let wardNo = "9_10";
+    let wardNo = "129-R1";
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
