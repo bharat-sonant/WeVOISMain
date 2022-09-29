@@ -15,6 +15,9 @@
 <div class="main-content">
     <div class="row">
         <div class="col-md-6 card-main">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
                     <form>
@@ -34,20 +37,9 @@
                                                 <td class="table-data-2">
                                                     {{data.roleName}}</td>
                                                 <td class="text-right">
-                                                    <span [hidden]="data.isActive==false">
-                                                        
-                                                        <i class="far fa-edit edit-icon"
-                                                            (click)="openModel(contentRole,data.roleId,'update');"
-                                                            title="Edit Entry"
-                                                            ></i>
-                                                            <i routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="User Access"
-                            class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate; padding-left: 10px;"></i>
-                            
-                            <i class="far fa-times-circle circle-icon"
-                            (click)="openModel(contentConfirmation,data.roleId,'delete')"
-                            title="Remove Entry" style="padding-left:10px ;"
-                            ></i>
-                                                    </span>
+                                                    <i routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="Page Access" class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate;"></i>
+                                                    <i class="far fa-edit edit-icon" style="padding-left: 20px;" (click)="openModel(contentRole,data.roleId,'update');" title="Edit Entry"></i>
+                                                    <i class="far fa-times-circle circle-icon" (click)="openModel(contentConfirmation,data.roleId,'delete')" title="Remove Entry" style="padding-left:20px ;"></i>
                                                 </td>
                                             </tr>
 
@@ -74,7 +66,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove role ?</h5>
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove role ?
+                </h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />

@@ -117,6 +117,7 @@ import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehic
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
+import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 
 @NgModule({
   imports: [
@@ -238,7 +239,8 @@ import { MapsComponent } from '../../maps/maps.component';
     AddVehicleBreakdownComponent,
     RolesComponent,
     RolePageAccessComponent,
-    MapsComponent
+    MapsComponent,
+    CardMarkerMappingComponent
   ]
 })
 

@@ -53,6 +53,7 @@ export class MapsComponent {
     this.activeCount=0;
     this.bounds = new google.maps.LatLngBounds();
     this.setDefaultMap();
+    (<HTMLInputElement>document.getElementById("chkAll")).checked=false;
   }
 
   showAllRoute() {

@@ -5,6 +5,7 @@ import * as $ from "jquery";
 import { AngularFireDatabase } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { CommonService } from "../services/common/common.service";
+import { UsersService } from "../services/users/users.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { HttpClient } from "@angular/common/http";
 
@@ -14,7 +15,7 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
-  constructor(private router: Router, private commonService: CommonService, private toastr: ToastrService, public db: AngularFireDatabase, public dbFireStore: AngularFirestore, public httpService: HttpClient) { }
+  constructor(public userService: UsersService, private router: Router, private commonService: CommonService, private toastr: ToastrService, public db: AngularFireDatabase, public dbFireStore: AngularFirestore, public httpService: HttpClient) { }
   userId: any;
   userName: any = "admin";
   expiryDate: any;
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
   cityName: any;
   toDayDate: any;
   divLoader = "#divLoader";
+  roleJSONData: any;
 
   messageDetail: messageDetail = {
     type: "Good Morning"
@@ -35,14 +37,23 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.setCityList();
+    this.getRoles();
     this.getMessage();
     this.getRendomBackground();
-    this.commonService.setPortalPages();
-    this.commonService.setWebPortalUsers();
+    this.userService.setPortalPages();
+    this.userService.setWebPortalUsers();
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
+  }
+
+  getRoles() {
+    this.userService.getRoles().then((data: any) => {
+      if (data != null) {
+        this.roleJSONData = data;
+      }
+    });
   }
 
   setCityList() {
@@ -62,6 +73,7 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "behror", name: "Behror", storagePath: "Behror" });
     this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath: "Salasar" });
     this.cityList.push({ city: "wevois-others", name: "WeVOIS-Others", storagePath: "WeVOIS-Others" });
+    this.cityList.push({ city: "gwalior", name: "Gwalior", storagePath: "Gwalior" });
 
     this.cityList.push({ city: "jaipur-jagatpura", name: "Jagatpura", storagePath: "Jaipur-Jagatpura" });
     this.cityList.push({ city: "jaipur-jhotwara", name: "Jhotwara", storagePath: "Jaipur-Jhotwara" });
@@ -112,6 +124,15 @@ export class LoginComponent implements OnInit {
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetails = userList.find((item) => item.email == userName && item.password == password);
     if (userDetails != undefined) {
+      if (userDetails.accessCities == "") {
+        this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
+        return;
+      }
+      if (userDetails.roleId == 0) {
+        this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
+        return;
+      }
+
       if (userDetails.expiryDate != "") {
         this.expiryDate = userDetails.expiryDate;
         localStorage.setItem("expiryDate", this.expiryDate);
@@ -167,7 +188,7 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           $(this.divLoader).show();
-          this.setUserCityAccess(0, userDetails.userId);
+          this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
         } else {
           localStorage.setItem("loginStatus", "Fail");
           this.commonService.setAlertMessage("error", "Account Not Activate !!!");
@@ -176,7 +197,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
         $(this.divLoader).show();
-        this.setUserCityAccess(0, userDetails.userId);
+        this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
       }
     } else {
       localStorage.setItem("loginStatus", "Fail");
@@ -199,75 +220,36 @@ export class LoginComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  setUserCityAccess(index: any, userId: any) {
-    if (index != this.cityList.length - 1) {
-      let city = this.cityList[index]["city"];
-      let name = this.cityList[index]["name"];
-      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userId.toString()).collection(city).doc(city).get().subscribe((doc) => {
-        if (doc.data() != undefined) {
-          let pageId = doc.data()["pageId"];
-          if (pageId != null) {
-            let dataList = pageId.toString().split(",");
-            for (let j = 0; j < dataList.length; j++) {
-              let accessDetails = this.portalAccessList.find((item) => item.pageID == dataList[j].trim());
-              if (accessDetails != undefined) {
-                this.accessList.push({
-                  city: city,
-                  userId: userId,
-                  parentId: accessDetails.parentId,
-                  pageId: accessDetails.pageID,
-                  name: accessDetails.name,
-                  url: accessDetails.url,
-                  position: accessDetails.position,
-                  img: accessDetails.img,
-                });
-              }
+  setUserCityAccess(userId: any, accessCities: any, roleId: any) {
+    if (this.roleJSONData != null) {
+      let cityList = accessCities.split(',');
+      for (let i = 0; i < cityList.length; i++) {
+        let city = cityList[i].trim();
+        let cityDetail = this.cityList.find(item => item.city == city);
+        if (cityDetail != undefined) {
+          this.accessCity.push({ city: city, name: cityDetail.name });
+        }
+        if (this.roleJSONData[roleId]["pages"] != undefined) {
+          let pagesList = this.roleJSONData[roleId]["pages"].split(',');
+          for (let j = 0; j < pagesList.length; j++) {
+            let accessDetails = this.portalAccessList.find((item) => item.pageID == pagesList[j].toString().trim());
+            if (accessDetails != undefined) {
+              this.accessList.push({
+                city: city,
+                userId: userId,
+                parentId: accessDetails.parentId,
+                pageId: accessDetails.pageID,
+                name: accessDetails.name,
+                url: accessDetails.url,
+                position: accessDetails.position,
+                img: accessDetails.img,
+              });
             }
-            this.accessCity.push({ city: city, name: name });
-            index = index + 1;
-            this.setUserCityAccess(index, userId);
-          }
-          else {
-            index = index + 1;
-            this.setUserCityAccess(index, userId);
           }
         }
-        else {
-          index = index + 1;
-          this.setUserCityAccess(index, userId);
-        }
-      });
+      }
     }
-    else {
-      this.redirectHomePage();
-    }
-  }
-
-  checkLogin() {
-    let userName = $("#txtUserName").val();
-    let password = $("#txtPassword").val();
-    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    let userDetails = userList.find((item) => item.email == userName && item.password == password);
-    if (userDetails != undefined) {
-      this.dbFireStore.collection("UserManagement").doc("UserAccess").collection("UserAccess").doc(userDetails.userId.toString()).collection(this.cityName).doc(this.cityName).get().subscribe((doc) => {
-        if (doc.data() == undefined) {
-          this.commonService.setAlertMessage("error", "sorry! you have not access for " + this.cityName + "");
-          this.router.navigate(["/portal-access"]);
-        } else {
-          let pageId = doc.data()["pageId"];
-          if (pageId == null) {
-            this.commonService.setAlertMessage("error", "sorry! you have not access for " + this.cityName + "");
-            this.router.navigate(["/portal-access"]);
-          } else {
-            this.doLogin();
-          }
-        }
-      });
-    }
-    else {
-      localStorage.setItem("loginStatus", "Fail");
-      this.commonService.setAlertMessage("error", "Invalid username or password !!!");
-    }
+    this.redirectHomePage();
   }
 }
 

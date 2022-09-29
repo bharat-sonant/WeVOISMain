@@ -1,162 +1,219 @@
-.header{
-    height:64px ; 
-    width: 100%; 
+.header {
+    height: 64px;
+    width: 100%;
     background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
-    color:#fff;
-}
-.heading{
-  padding-top: 12px; 
-  font-size: 20px; 
-  color: #fff; 
-  letter-spacing: 2px; 
-  text-transform: uppercase;
+    color: #fff;
 }
 
-.user-button{
+.heading {
+    padding-top: 12px;
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.loaderClass {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: lightgray;
+    opacity: 0.5;
+}
+
+.imgLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.user-button {
     padding: 10px!important;
     background-color: #fff;
     border-radius: 4px;
-    color:#333333;
-    border:1px solid lightgray;
+    color: #333333;
+    border: 1px solid lightgray;
     cursor: cell;
-  } 
-  .user-button .icon-bg{
+}
+
+.user-button .icon-bg {
     background-color: #19a337;
     color: #fff;
     padding: 10px;
     margin-left: -10px;
-    border:1px solid #fff;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4x;
-  }
-  .user-button .text-bg{
-    margin-left: 10px;
-  }
-  .user-button:hover{
-    border:1px solid #19a337;
-  } 
-  .user-button i{
-    color:#fff;
-  }
-  .user-button:not(:disabled):not(.disabled):active{
-    background-color:#ffffff;
-    color: #000;
-  }
+    border: 1px solid #fff;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4x;
+}
 
-  .user-anc{
+.user-button .text-bg {
+    margin-left: 10px;
+}
+
+.user-button:hover {
+    border: 1px solid #19a337;
+}
+
+.user-button i {
+    color: #fff;
+}
+
+.user-button:not(:disabled):not(.disabled):active {
+    background-color: #ffffff;
+    color: #000;
+}
+
+.user-anc {
     padding: 10px!important;
     background-color: #fff;
     border-radius: 4px;
-    color:#333333;
-    border:1px solid lightgray;
-  } 
-  .user-anc .icon-bg{
+    color: #333333;
+    border: 1px solid lightgray;
+}
+
+.user-anc .icon-bg {
     background-color: #19a337;
     color: #fff;
     padding: 10px;
     margin-left: -10px;
-    border:1px solid #fff;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4x;
-  }
-  .user-anc .text-bg{
+    border: 1px solid #fff;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4x;
+}
+
+.user-anc .text-bg {
     margin-left: 10px;
-  }
-  .user-anc:hover{
-    border:2px solid #0ba118;
-  } 
-  .user-anc i{
-    color:#fff;
-  }
-  .user-anc:not(:disabled):not(.disabled):active{
-    background-color:#ffffff;
+}
+
+.user-anc:hover {
+    border: 2px solid #0ba118;
+}
+
+.user-anc i {
+    color: #fff;
+}
+
+.user-anc:not(:disabled):not(.disabled):active {
+    background-color: #ffffff;
     color: #000;
-  }
+}
+
+
 /**************************User Button Start***************************/
-.add-user{
-  position: absolute;
-  // left: 50%;
-  // transform: translateY(-50%);
-  bottom: 40px;
+
+.add-user {
+    position: absolute;
+    // left: 50%;
+    // transform: translateY(-50%);
+    bottom: 40px;
 }
-.add-user .btn-success{
-  border-radius: 25px;
-  padding: 15px 20px;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-weight: normal;
-  background-color: #0ba118!important;
+
+.add-user .btn-success {
+    border-radius: 25px;
+    padding: 15px 20px;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: normal;
+    background-color: #0ba118!important;
 }
-.add-user .btn-success:hover{
-  background-color: #1fc52d!important;
+
+.add-user .btn-success:hover {
+    background-color: #1fc52d!important;
 }
+
 
 /**************************Table Start***************************/
-  .tableFixHead {
+
+.tableFixHead {
     overflow-y: scroll;
-    height:85vh;
+    height: 85vh;
     position: relative;
     border-radius: 5px;
-  }
-  .tableFixHead thead th {
+}
+
+.tableFixHead thead th {
     position: sticky;
     top: 0;
     background-color: #f1f1f1;
-   // width: 200px;
+    // width: 200px;
     z-index: 10;
-  }
-  table {
+}
+
+table {
     border-collapse: collapse;
     margin-bottom: 6rem!important;
-   // border: 1px solid lightgray;
-   // width: 100%;
-  }
-  thead th{
-   // padding: 10px 7px !important;
-    font-size:14px;
+    // border: 1px solid lightgray;
+    // width: 100%;
+}
+
+thead th {
+    // padding: 10px 7px !important;
+    font-size: 14px;
     color: rgb(56, 56, 56);
-    font-weight: bold;  
+    font-weight: bold;
     background-color: #fff;
-  }
-  table td{
-   padding: 10px 14px !important;
-    font-size:12px;
+}
+
+table td {
+    padding: 10px 14px !important;
+    font-size: 12px;
     min-height: 20px!important;
-  }
+}
+
+
 /**************************Table End***************************/
 
-  /******************************Custom Scrollbar Start*********************************/
+
+/******************************Custom Scrollbar Start*********************************/
+
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
+
+
 /* Track */
+
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: transparent; 
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
+    -webkit-box-shadow: transparent;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
 }
+
+
 /* Handle */
+
 ::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  background: transparent; 
-  -webkit-box-shadow: transparent; 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent;
+    -webkit-box-shadow: transparent;
 }
 
 :hover::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
+
+
 /* Track */
+
 :hover::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
 }
+
+
 /* Handle */
+
 :hover::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  background: #20a120; 
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
+
+
 /******************************Custom Scrollbar End*********************************/
