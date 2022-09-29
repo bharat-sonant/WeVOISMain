@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router, } from "@angular/router";
 
 @Component({
   selector: "app-portal-access",
@@ -8,36 +9,68 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./portal-access.component.scss"],
 })
 export class PortalAccessComponent implements OnInit {
-  constructor(private commonService: CommonService,private modalService: NgbModal) { }
-  cityList: any[] = [];
+  constructor(private commonService: CommonService,private modalService: NgbModal,public router: Router) { }
+  accessCity:any[]=[];
   ngOnInit() {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
-    this.cityList.push({ city: "sikar", name: "Sikar", storagePath:"Sikar" });
-    this.cityList.push({ city: "reengus", name: "Reengus", storagePath:"Reengus" });
-    this.cityList.push({ city: "shahpura", name: "Shahpura", storagePath:"Shahpura" });
-    this.cityList.push({ city: "test", name: "Test", storagePath:"Test" });
-    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office", storagePath:"Jaipur" });
-    this.cityList.push({ city: "jaipur", name: "Jaipur", storagePath:"JaipurD2D" });
-    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater", storagePath:"Jaipur-Greater" });
-    this.cityList.push({ city: "kishangarh", name: "Kishangarh", storagePath:"Kishangarh" });
-    this.cityList.push({ city: "niwai", name: "Niwai", storagePath:"Niwai" });
-    this.cityList.push({ city: "jaisalmer", name: "Jaisalmer", storagePath:"Jaisalmer" });
-    this.cityList.push({ city: "churu", name: "Churu", storagePath:"Churu" });
-    this.cityList.push({ city: "bhiwadi", name: "Bhiwadi", storagePath:"Bhiwadi" });
-    this.cityList.push({ city: "chhapar", name: "Chhapar", storagePath:"Chhapar" });
-    this.cityList.push({ city: "behror", name: "Behror", storagePath:"Behror" });
-    this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath:"Salasar" });
+    this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
+    this.getCityAccess();
     
-    this.cityList.push({ city: "jaipur-jagatpura", name: "Jagatpura", storagePath:"Jaipur-Jagatpura" });
-    this.cityList.push({ city: "jaipur-jhotwara", name: "Jhotwara", storagePath:"Jaipur-Jhotwara" });
-    this.cityList.push({ city: "jaipur-malviyanagar", name: "Malviyanagar", storagePath:"Jaipur-Malviyanagar" });
-    this.cityList.push({ city: "jaipur-mansarovar", name: "Mansarovar", storagePath:"Jaipur-Mansarovar" });
-    this.cityList.push({ city: "jaipur-murlipura", name: "Murlipura", storagePath:"Jaipur-Murlipura" });
-    this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath:"Jaipur-Sanganer" });
-    this.cityList.push({ city: "jaipur-vidhyadhar", name: "Vidhyadhar", storagePath:"Jaipur-Vidhyadhar" });
-    localStorage.setItem("cityList", JSON.stringify(this.cityList));
+  }
+
+  getCityAccess(){
+    let isBaseCity = false;
+    for (let i = 0; i < this.accessCity.length; i++) {
+      if (this.accessCity[i]["city"] == "sikar") {
+        $("#sikarBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "reengus") {
+        $("#reengusBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "shahpura") {
+        $("#shahpuraBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaipur-office") {
+        $("#jaipurOfficeBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaipur-greater") {
+        $("#jaipurGreaterBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "kishangarh") {
+        $("#kishangarhBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "niwai") {
+        $("#niwaiBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaisalmer") {
+        $("#jaisalmerBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "salasar") {
+        $("#salasarBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "behror") {
+        $("#behrorBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "bhiwadi") {
+        $("#bhiwadiBox").show();
+      } else if (this.accessCity[i]["city"] == "chhapar") {
+        $("#chhaparBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "churu") {
+        $("#churuBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "gwalior") {
+        $("#gwaliorBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "wevois-others") {
+        $("#wevoisBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
+        $("#jaipurBox").show();
+      }
+    }
   }
 
   getCity(city: any) {
@@ -45,6 +78,14 @@ export class PortalAccessComponent implements OnInit {
     localStorage.setItem("isCityChange", "yes");
     let path = city + "/login";
     window.location.href = path;
+  }
+
+  changeCity(cityName: any) {
+    localStorage.removeItem("mapUpdateHistory");
+    localStorage.setItem("cityName", cityName);
+    localStorage.setItem("isCityChange", "yes");
+    this.closeMapModel();
+    window.location.href = "/" + cityName + "/home";    
   }
 
   
@@ -89,6 +130,24 @@ export class PortalAccessComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
+
+    for (let i = 0; i < this.accessCity.length; i++) {
+      if (this.accessCity[i]["city"] == "jaipur-jagatpura") {
+        $("#jaipurJagatpuraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-jhotwara") {
+        $("#jaipurJhotwaraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-malviyanagar") {
+        $("#jaipurMalviyanagarBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-mansarovar") {
+        $("#jaipurMansarovarBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-murlipura") {
+        $("#jaipurMurlipuraBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-sanganer") {
+        $("#jaipurSanganerBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
+        $("#jaipurVidhyadharBox").show();
+      }
+    }
   }
 
   closeMapModel() {
