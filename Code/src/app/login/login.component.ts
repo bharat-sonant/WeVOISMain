@@ -212,7 +212,7 @@ export class LoginComponent implements OnInit {
       this.cityName = this.accessList[0]["city"];
       localStorage.setItem("cityName", this.cityName);
       localStorage.setItem("isCityChange", "yes");
-      window.location.href = this.cityName + "/home";
+      window.location.href = "/portal-access";
     }
     else {
       this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");

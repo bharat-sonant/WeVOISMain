@@ -117,19 +117,53 @@ export class ChangeLineMarkerDataComponent implements OnInit {
             const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
             ref1.put(blob).then((promise) => {
               // ref.delete();
-              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-              this.db.object(dbPath).update(data);
+              if (data["cardNumber"] != null) {
+                let cardNo = data["cardNumber"];
+                let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
+                let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+                  cardInstance.unsubscribe();
+                  if (cardData != null) {
+                    data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
+                    let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
+                    this.db.object(dbPath).update(cardData);
 
-              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-              this.db.object(dbPath).remove();
-              index = index + 1;
-              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+                    dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
+                    this.db.object(dbPath).remove();
+
+                    // modify card ward mapping
+                    this.db.object("CardWardMapping/" + cardNo).set({ line: lineTo, ward: zoneTo });
+
+                    if (cardData["mobile"] != "") {
+                      // modify house ward mapping
+                      this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
+                    }
+                  }
+                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+                  this.db.object(dbPath).update(data);
+
+                  dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+                  this.db.object(dbPath).remove();
+                  index = index + 1;
+                  this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+                });
+
+              }
+              else {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+                this.db.object(dbPath).update(data);
+
+                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+                this.db.object(dbPath).remove();
+                index = index + 1;
+                this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+              }
             }).catch((error) => {
               index = index + 1;
               failureCount = failureCount + 1;
               this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             });
           };
+
           xhr.open('GET', url);
           xhr.send();
         })
