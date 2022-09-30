@@ -304,6 +304,18 @@ export class FirebaseService {
       databaseName = "dtdwevois";
       databaseURL = "https://dtdwevois.firebaseio.com";
     }
+    else if (city == 'gwalior') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdgwalior.firebaseapp.com",
+        databaseURL: "https://dtdwevois.firebaseio.com",
+        projectId: "dtdgwalior",
+        storageBucket: "dtdgwalior.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdgwalior";
+      databaseURL = "https://dtdgwalior.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
