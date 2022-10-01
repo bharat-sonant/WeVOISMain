@@ -5088,5 +5088,23 @@ p{
 .main-header{
   border-bottom: 1px solid #e9e9e9;
 }
+@media (max-width: 571px){
+  .login-box{
+    margin-left: 0px !important;
+    margin-right: 35px !important;
+    
+  }
+}
+@media (max-width: 391px){
+  .login-box{
+   margin-top: 0px !important;
+   margin-bottom: 30px !important;
+  }
+  #wevoisBox{
+    margin-top: 30px !important;
 
-
+  }
+  #ram{
+    margin-top: 30px !important;
+  }
+}
