@@ -1,278 +1,586 @@
 {
-	"1": {
-		"driver": 400,
-		"helper": 300
-	},
-	"2": {
-		"driver": 300,
-		"helper": 240
-	},
-	"3": {
-		"driver": 300,
-		"helper": 240
-	},
-	"4": {
-		"driver": 300,
-		"helper": 240
-	},
-	"5": {
-		"driver": 300,
-		"helper": 240
-	},
-	"7": {
-		"driver": 300,
-		"helper": 240
-	},
-	"8": {
-		"driver": 300,
-		"helper": 240
-	},
-	"9": {
-		"driver": 300,
-		"helper": 240
-	},
-	"10": {
-		"driver": 300,
-		"helper": 240
-	},
-	"11": {
-		"driver": 300,
-		"helper": 240
-	},
-	"12": {
-		"driver": 300,
-		"helper": 240
-	},
-	"13": {
-		"driver": 300,
-		"helper": 240
-	},
-	"14": {
-		"driver": 300,
-		"helper": 240
-	},
-	"15": {
-		"driver": 300,
-		"helper": 240
-	},
-	"17": {
-		"driver": 300,
-		"helper": 240
-	},
-	"18": {
-		"driver": 300,
-		"helper": 240
-	},
-	"19": {
-		"driver": 300,
-		"helper": 240
-	},
-	"20": {
-		"driver": 400,
-		"helper": 300
-	},
-	"21": {
-		"driver": 450,
-		"helper": 350
-	},
-	"22": {
-		"driver": 500,
-		"helper": 400
-	},
-	"23": {
-		"driver": 300,
-		"helper": 240
-	},
-	"24": {
-		"driver": 300,
-		"helper": 240
-	},
-	"27": {
-		"driver": 500,
-		"helper": 400
-	},
-	"28": {
-		"driver": 300,
-		"helper": 240
-	},
-	"29": {
-		"driver": 300,
-		"helper": 240
-	},
-	"30": {
-		"driver": 300,
-		"helper": 240
-	},
-	"31": {
-		"driver": 300,
-		"helper": 240
-	},
-	"32": {
-		"driver": 300,
-		"helper": 240
-	},
-	"33": {
-		"driver": 300,
-		"helper": 240
-	},
-	"34": {
-		"driver": 300,
-		"helper": 240
-	},
-	"35": {
-		"driver": 300,
-		"helper": 240
-	},
-	"36": {
-		"driver": 300,
-		"helper": 240
-	},
-	"37": {
-		"driver": 300,
-		"helper": 240
-	},
-	"39": {
-		"driver": 300,
-		"helper": 240
-	},
-	"40": {
-		"driver": 300,
-		"helper": 240
-	},
-	"41": {
-		"driver": 300,
-		"helper": 240
-	},
-	"42": {
-		"driver": 300,
-		"helper": 240
-	},
-	"43": {
-		"driver": 500,
-		"helper": 400
-	},
-	"44": {
-		"driver": 500,
-		"helper": 400
-	},
-	"47": {
-		"driver": 300,
-		"helper": 240
-	},
-	"49_51": {
-		"driver": 500,
-		"helper": 400
-	},
-	"49": {
-		"driver": 300,
-		"helper": 240
-	},
-	"50": {
-		"driver": 500,
-		"helper": 400
-	},
-	"51": {
-		"driver": 300,
-		"helper": 240
-	},
-	"52": {
-		"driver": 500,
-		"helper": 400
-	},
-	"53": {
-		"driver": 500,
-		"helper": 400
-	},
-	"55": {
-		"driver": 600,
-		"helper": 500
-	},
-	"55-Wet": {
-		"driver": 600,
-		"helper": 500
-	},
-	"55A": {
-		"driver": 500,
-		"helper": 500
-	},
-	"55A-Wet": {
-		"driver": 300,
-		"helper": 240
-	},
-	"55B": {
-		"driver": 600,
-		"helper": 400
-	},
-	"55B-Wet": {
-		"driver": 300,
-		"helper": 240
-	},
-	"56A": {
-		"driver": 500,
-		"helper": 400
-	},
-	"56B": {
-		"driver": 600,
-		"helper": 500
-	},
-	"65B": {
-		"driver": 600,
-		"helper": 500
-	},
-	"57_58": {
-		"driver": 600,
-		"helper": 500
-	},
-	"59": {
-		"driver": 500,
-		"helper": 400
-	},
-	"60": {
-		"driver": 500,
-		"helper": 400
-	},
-	"61": {
-		"driver": 300,
-		"helper": 240
-	},
-	"62": {
-		"driver": 500,
-		"helper": 400
-	},
-	"63": {
-		"driver": 300,
-		"helper": 240
-	},
-	"64": {
-		"driver": 300,
-		"helper": 240
-	},
-	"65": {
-		"driver": 500,
-		"helper": 400
-	},
-	"WetWaste": {
-		"driver": 200,
-		"helper": 200
-	},
-	"WetWaste1": {
-		"driver": 200,
-		"helper": 200
-	},
-	"WetWaste2": {
-		"driver": 200,
-		"helper": 200
-	},
-	"WetWaste4": {
-		"driver": 200,
-		"helper": 200
-	},
-	"WetWaste5": {
-		"driver": 200,
-		"helper": 200
-	},
-	"WetWaste6": {
-		"driver": 200,
-		"helper": 200
+	"2022-05-08": {
+		"1": {
+			"driver": 300,
+			"helper": 240
+		},
+		"2": {
+			"driver": 300,
+			"helper": 240
+		},
+		"3": {
+			"driver": 300,
+			"helper": 240
+		},
+		"4": {
+			"driver": 300,
+			"helper": 240
+		},
+		"5": {
+			"driver": 300,
+			"helper": 240
+		},
+		"7": {
+			"driver": 300,
+			"helper": 240
+		},
+		"8": {
+			"driver": 300,
+			"helper": 240
+		},
+		"9": {
+			"driver": 300,
+			"helper": 240
+		},
+		"10": {
+			"driver": 300,
+			"helper": 240
+		},
+		"11": {
+			"driver": 300,
+			"helper": 240
+		},
+		"12": {
+			"driver": 300,
+			"helper": 240
+		},
+		"13": {
+			"driver": 300,
+			"helper": 240
+		},
+		"14": {
+			"driver": 300,
+			"helper": 240
+		},
+		"15": {
+			"driver": 300,
+			"helper": 240
+		},
+		"17": {
+			"driver": 300,
+			"helper": 240
+		},
+		"18": {
+			"driver": 300,
+			"helper": 240
+		},
+		"19": {
+			"driver": 300,
+			"helper": 240
+		},
+		"20": {
+			"driver": 400,
+			"helper": 300
+		},
+		"21": {
+			"driver": 300,
+			"helper": 240
+		},
+		"22": {
+			"driver": 500,
+			"helper": 400
+		},
+		"23": {
+			"driver": 300,
+			"helper": 240
+		},
+		"24": {
+			"driver": 300,
+			"helper": 240
+		},
+		"27": {
+			"driver": 500,
+			"helper": 400
+		},
+		"28": {
+			"driver": 300,
+			"helper": 240
+		},
+		"29": {
+			"driver": 300,
+			"helper": 240
+		},
+		"30": {
+			"driver": 300,
+			"helper": 240
+		},
+		"31": {
+			"driver": 300,
+			"helper": 240
+		},
+		"32": {
+			"driver": 300,
+			"helper": 240
+		},
+		"33": {
+			"driver": 300,
+			"helper": 240
+		},
+		"34": {
+			"driver": 300,
+			"helper": 240
+		},
+		"35": {
+			"driver": 300,
+			"helper": 240
+		},
+		"36": {
+			"driver": 300,
+			"helper": 240
+		},
+		"37": {
+			"driver": 300,
+			"helper": 240
+		},
+		"39": {
+			"driver": 300,
+			"helper": 240
+		},
+		"40": {
+			"driver": 300,
+			"helper": 240
+		},
+		"41": {
+			"driver": 300,
+			"helper": 240
+		},
+		"42": {
+			"driver": 300,
+			"helper": 240
+		},
+		"43": {
+			"driver": 500,
+			"helper": 400
+		},
+		"44": {
+			"driver": 500,
+			"helper": 400
+		},
+		"47": {
+			"driver": 300,
+			"helper": 240
+		},
+		"49_51": {
+			"driver": 500,
+			"helper": 400
+		},
+		"49": {
+			"driver": 300,
+			"helper": 240
+		},
+		"50": {
+			"driver": 500,
+			"helper": 400
+		},
+		"51": {
+			"driver": 300,
+			"helper": 240
+		},
+		"52": {
+			"driver": 500,
+			"helper": 400
+		},
+		"53": {
+			"driver": 500,
+			"helper": 400
+		},
+		"55": {
+			"driver": 600,
+			"helper": 500
+		},
+		"55-Wet": {
+			"driver": 600,
+			"helper": 500
+		},
+		"55A": {
+			"driver": 300,
+			"helper": 240
+		},
+		"55A-Wet": {
+			"driver": 300,
+			"helper": 240
+		},
+		"55B": {
+			"driver": 300,
+			"helper": 240
+		},
+		"55B-Wet": {
+			"driver": 300,
+			"helper": 240
+		},
+		"56A": {
+			"driver": 500,
+			"helper": 400
+		},
+		"65B": {
+			"driver": 600,
+			"helper": 500
+		},
+		"57_58": {
+			"driver": 600,
+			"helper": 500
+		},
+		"59": {
+			"driver": 500,
+			"helper": 400
+		},
+		"60": {
+			"driver": 500,
+			"helper": 400
+		},
+		"61": {
+			"driver": 300,
+			"helper": 240
+		},
+		"62": {
+			"driver": 500,
+			"helper": 400
+		},
+		"63": {
+			"driver": 300,
+			"helper": 240
+		},
+		"64": {
+			"driver": 300,
+			"helper": 240
+		},
+		"65": {
+			"driver": 500,
+			"helper": 400
+		},
+		"WetWaste": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste1": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste2": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste4": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste5": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste6": {
+			"driver": 200,
+			"helper": 200
+		}
+	},
+	"2022-09-01": {
+		"1": {
+			"driver": 400,
+			"helper": 300
+		},
+		"2": {
+			"driver": 300,
+			"helper": 240
+		},
+		"3": {
+			"driver": 300,
+			"helper": 240
+		},
+		"4": {
+			"driver": 300,
+			"helper": 240
+		},
+		"5": {
+			"driver": 300,
+			"helper": 240
+		},
+		"6": {
+			"driver": 300,
+			"helper": 240
+		},
+		"7": {
+			"driver": 300,
+			"helper": 240
+		},
+		"8": {
+			"driver": 300,
+			"helper": 240
+		},
+		"9": {
+			"driver": 300,
+			"helper": 240
+		},
+		"10": {
+			"driver": 300,
+			"helper": 240
+		},
+		"11": {
+			"driver": 300,
+			"helper": 240
+		},
+		"12": {
+			"driver": 300,
+			"helper": 240
+		},
+		"13": {
+			"driver": 300,
+			"helper": 240
+		},
+		"14": {
+			"driver": 300,
+			"helper": 240
+		},
+		"15": {
+			"driver": 300,
+			"helper": 240
+		},
+		"16": {
+			"driver": 500,
+			"helper": 400
+		},
+		"17": {
+			"driver": 300,
+			"helper": 240
+		},
+		"18": {
+			"driver": 300,
+			"helper": 240
+		},
+		"19": {
+			"driver": 300,
+			"helper": 240
+		},
+		"20": {
+			"driver": 400,
+			"helper": 300
+		},
+		"21": {
+			"driver": 450,
+			"helper": 350
+		},
+		"22": {
+			"driver": 500,
+			"helper": 400
+		},
+		"23": {
+			"driver": 300,
+			"helper": 240
+		},
+		"24": {
+			"driver": 300,
+			"helper": 240
+		},
+		"25": {
+			"driver": 300,
+			"helper": 240
+		},
+		"26": {
+			"driver": 500,
+			"helper": 400
+		},
+		"27": {
+			"driver": 500,
+			"helper": 400
+		},
+		"28": {
+			"driver": 300,
+			"helper": 240
+		},
+		"29": {
+			"driver": 300,
+			"helper": 240
+		},
+		"30": {
+			"driver": 300,
+			"helper": 240
+		},
+		"31": {
+			"driver": 300,
+			"helper": 240
+		},
+		"32": {
+			"driver": 300,
+			"helper": 240
+		},
+		"33": {
+			"driver": 300,
+			"helper": 240
+		},
+		"34": {
+			"driver": 300,
+			"helper": 240
+		},
+		"35": {
+			"driver": 300,
+			"helper": 240
+		},
+		"36": {
+			"driver": 300,
+			"helper": 240
+		},
+		"37": {
+			"driver": 300,
+			"helper": 240
+		},
+		"38": {
+			"driver": 300,
+			"helper": 240
+		},
+		"39": {
+			"driver": 300,
+			"helper": 240
+		},
+		"40": {
+			"driver": 300,
+			"helper": 240
+		},
+		"41": {
+			"driver": 300,
+			"helper": 240
+		},
+		"42": {
+			"driver": 300,
+			"helper": 240
+		},
+		"43": {
+			"driver": 500,
+			"helper": 400
+		},
+		"44": {
+			"driver": 500,
+			"helper": 400
+		},
+		"45": {
+			"driver": 500,
+			"helper": 400
+		},
+		"46": {
+			"driver": 300,
+			"helper": 240
+		},
+		"47": {
+			"driver": 500,
+			"helper": 400
+		},
+		"48": {
+			"driver": 500,
+			"helper": 400
+		},
+		"49_51": {
+			"driver": 500,
+			"helper": 400
+		},
+		"49": {
+			"driver": 300,
+			"helper": 240
+		},
+		"50": {
+			"driver": 300,
+			"helper": 240
+		},
+		"51": {
+			"driver": 300,
+			"helper": 240
+		},
+		"52": {
+			"driver": 500,
+			"helper": 400
+		},
+		"53": {
+			"driver": 500,
+			"helper": 400
+		},
+		"54": {
+			"driver": 500,
+			"helper": 400
+		},
+		"55": {
+			"driver": 600,
+			"helper": 500
+		},
+		"55-Wet": {
+			"driver": 600,
+			"helper": 500
+		},
+		"55A": {
+			"driver": 500,
+			"helper": 500
+		},
+		"55A-Wet": {
+			"driver": 500,
+			"helper": 400
+		},
+		"55B": {
+			"driver": 600,
+			"helper": 400
+		},
+		"55B-Wet": {
+			"driver": 500,
+			"helper": 400
+		},
+		"56A": {
+			"driver": 500,
+			"helper": 400
+		},
+		"56B": {
+			"driver": 600,
+			"helper": 500
+		},
+		"57_58": {
+			"driver": 600,
+			"helper": 500
+		},
+		"59": {
+			"driver": 500,
+			"helper": 400
+		},
+		"60": {
+			"driver": 500,
+			"helper": 400
+		},
+		"61": {
+			"driver": 300,
+			"helper": 240
+		},
+		"62": {
+			"driver": 500,
+			"helper": 400
+		},
+		"63": {
+			"driver": 300,
+			"helper": 240
+		},
+		"64": {
+			"driver": 300,
+			"helper": 240
+		},
+		"65": {
+			"driver": 500,
+			"helper": 400
+		},
+		"WetWaste": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste1": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste2": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste4": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste5": {
+			"driver": 200,
+			"helper": 200
+		},
+		"WetWaste6": {
+			"driver": 200,
+			"helper": 200
+		}
 	}
 }
