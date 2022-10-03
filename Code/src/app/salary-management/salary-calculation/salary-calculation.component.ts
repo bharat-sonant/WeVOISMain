@@ -80,7 +80,7 @@ export class SalaryCalculationComponent implements OnInit {
     this.todayDate = this.commonService.setTodayDate();
     this.getYear();
     this.getWardWagesList();
-    this.getEmployee();
+    //this.getEmployee();
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
@@ -90,13 +90,25 @@ export class SalaryCalculationComponent implements OnInit {
         let keyArray = Object.keys(wardWageData);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
-            let ward = keyArray[i];
-            let driver = wardWageData[ward]["driver"];
-            let helper = wardWageData[ward]["helper"];
-            this.wardWagesList.push({ ward: ward, driver: driver, helper: helper });
+            let date = keyArray[i];
+            let wages = [];
+            let wardObject = wardWageData[date];
+            let wardKeyArray = Object.keys(wardObject);
+            if (wardKeyArray.length > 0) {
+              for (let j = 0; j < wardKeyArray.length; j++) {
+                let ward = wardKeyArray[j];
+                let driver = wardObject[ward]["driver"];
+                let helper = wardObject[ward]["helper"];
+                wages.push({ ward: ward, driver: driver, helper: helper });
+              }
+            }
+            let timestamp=new Date(date).getTime();
+            this.wardWagesList.push({ date: date, timestamp:timestamp, wages: wages });
           }
         }
+        this.wardWagesList=this.commonService.transformNumeric(this.wardWagesList,"-timestamp");
       }
+      this.getEmployee();
     });
   }
 
@@ -159,7 +171,6 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
-    
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
     let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
       dailyWorkData => {
@@ -184,21 +195,31 @@ export class SalaryCalculationComponent implements OnInit {
                       wages = dailyWorkData[empId]["task" + j]["task-wages"];
                     }
                     if (new Date(monthDate) >= new Date(this.getDate())) {
-                      let wageDetail = this.wardWagesList.find(item => item.ward == ward);
-                      if (wageDetail != undefined) {
-                        if (isFirstZone == true) {
-                          wages = 200;
-                        }
-                        else {
-                          if (salaryDetail.designation == "Driver") {
-                            wages = wageDetail.driver;
+
+                      if (this.wardWagesList.length > 0) {
+                        for (let k = 0; k < this.wardWagesList.length; k++) {
+                          let wageDate = this.wardWagesList[k]["date"];
+                          if (new Date(monthDate) >= new Date(wageDate)) {                            
+                            let wagesList = this.wardWagesList[k]["wages"];
+                            let wageDetail = wagesList.find(item => item.ward == ward);
+                            if (wageDetail != undefined) {
+                              if (isFirstZone == true) {
+                                wages = 200;
+                              }
+                              else {
+                                if (salaryDetail.designation == "Driver") {
+                                  wages = wageDetail.driver;
+                                }
+                                else {
+                                  wages = wageDetail.helper;
+                                }
+                              }
+                              if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
+                                isFirstZone = true;
+                              }
+                            }
+                            k = this.wardWagesList.length;
                           }
-                          else {
-                            wages = wageDetail.helper;
-                          }
-                        }
-                        if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
-                          isFirstZone = true;
                         }
                       }
                     }
@@ -221,9 +242,9 @@ export class SalaryCalculationComponent implements OnInit {
             }
           }
         }
-         if (index == days) {
-           $(this.divLoader).hide();
-         }
+        if (index == days) {
+          $(this.divLoader).hide();
+        }
       }
     );
   }
@@ -248,11 +269,13 @@ export class SalaryCalculationComponent implements OnInit {
           }
         }
         if (index == days) {
-         // $(this.divLoader).hide();
+          // $(this.divLoader).hide();
         }
       }
     );
   }
+
+  
 
   getTotalSalaryFooter(index: any, totalWeges: any) {
     if (index == 1) {
