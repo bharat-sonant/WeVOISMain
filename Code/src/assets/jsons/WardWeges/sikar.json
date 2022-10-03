@@ -507,7 +507,7 @@
 			"helper": 500
 		},
 		"55A-Wet": {
-			"driver": 500,
+			"driver": 400,
 			"helper": 400
 		},
 		"55B": {
@@ -515,7 +515,7 @@
 			"helper": 400
 		},
 		"55B-Wet": {
-			"driver": 500,
+			"driver": 400,
 			"helper": 400
 		},
 		"56A": {
