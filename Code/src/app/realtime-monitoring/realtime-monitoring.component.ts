@@ -738,6 +738,9 @@ export class RealtimeMonitoringComponent implements OnInit {
           this.workerDetails.totalTime = this.commonService.getHrsFull(totalMinutes);
         }
       }
+      if(zoneNo.includes('(')){
+        zoneNo=zoneNo.toString().replace("(","~").replace(")","");
+      }
       let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
       element.href = this.cityName + "/route-tracking/" + zoneNo;
       element = <HTMLAnchorElement>document.getElementById("mapsLink");

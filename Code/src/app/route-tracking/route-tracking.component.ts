@@ -110,7 +110,13 @@ export class RouteTrackingComponent {
 
     const id = this.actRoute.snapshot.paramMap.get('id');
     if (id != null) {
-      this.selectedZone = id.trim();
+      if (id.includes("~")) {
+        let zoneUrl = id.toString().split("~")[0] + "(" + id.toString().split("~")[1] + ")";
+        this.selectedZone = zoneUrl;
+      }
+      else {
+        this.selectedZone = id.trim();
+      }
     }
     else {
       this.selectedZone = "1";
