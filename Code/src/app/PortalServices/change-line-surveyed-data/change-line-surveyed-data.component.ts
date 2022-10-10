@@ -111,6 +111,8 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 this.db.object(dbPath).update({ line: line, ward: zoneNo });
               }
             }
+            dbPath="EntitySurveyData/TotalHouseCount/"+zoneNo;
+            this.db.object(dbPath).set(count.toString());
           }
         }
         this.commonService.setAlertMessage("success", "Card line mapping updated !!!");
