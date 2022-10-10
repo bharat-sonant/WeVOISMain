@@ -275,6 +275,9 @@ export class FleetMonitorComponent {
                     let details = this.workerDetails;
                     let cityName=this.cityName;
                     marker.addListener('click', function () {
+                      if(zoneNo.includes('(')){
+                        zoneNo=zoneNo.toString().replace("(","~").replace(")","");
+                      }
                       details.wardMonitorUrl = "/" + cityName + "/ward-work-tracking/" + zoneNo;
                       details.driverName = zoneDetail.driverName;
                       details.helperName = zoneDetail.helperName;

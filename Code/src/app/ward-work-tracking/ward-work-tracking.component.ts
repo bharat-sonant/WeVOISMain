@@ -140,7 +140,13 @@ export class WardWorkTrackingComponent {
         this.getLocalStorage();
         const id = this.actRoute.snapshot.paramMap.get("id");
         if (id != null) {
-          this.selectedZone = id.trim();
+          if (id.includes("~")) {
+            let zoneUrl = id.toString().split("~")[0] + "(" + id.toString().split("~")[1] + ")";
+            this.selectedZone = zoneUrl;
+          }
+          else {
+            this.selectedZone = id.trim();
+          }
           this.getLineWeightage();
         } else {
           this.selectedZone = "0";
@@ -1214,8 +1220,9 @@ export class WardWorkTrackingComponent {
         strokeWeight: 2,
         icons: [{
           icon: iconsetngs,
-          repeat:"60px",
-          offset: '100%'}]
+          repeat: "60px",
+          offset: '100%'
+        }]
       });
       this.polylines[index] = line;
       this.polylines[index].setMap(this.map);
@@ -1499,7 +1506,7 @@ export class WardWorkTrackingComponent {
           this.wardLineNoMarker[i]["marker"].setMap(this.map);
         }
       }
-    }    
+    }
   }
 
   hideSetting() {
