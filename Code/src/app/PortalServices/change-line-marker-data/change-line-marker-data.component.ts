@@ -191,6 +191,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
           if (keyArray.length > 0) {
             let zoneMarkerCount = 0;
             let zoneAlreadyInstalledCount = 0;
+            let totalSurveyed=0;
             for (let i = 0; i < keyArray.length; i++) {
               let markerCount = 0;
               let surveyedCount = 0;
@@ -209,6 +210,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                   zoneMarkerCount = zoneMarkerCount + 1;
                   if (lineData[markerNo]["cardNumber"] != null) {
                     surveyedCount = surveyedCount + 1;
+                    totalSurveyed=totalSurveyed+1;
                   }
                   else if (lineData[markerNo]["revisitKey"] != null) {
                     revisitCount = revisitCount + 1;
@@ -231,6 +233,8 @@ export class ChangeLineMarkerDataComponent implements OnInit {
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
+            dbPath="EntitySurveyData/TotalHouseCount/"+zoneNo;
+            this.db.object(dbPath).set(totalSurveyed.toString());   
           }
           if (type == "totalCount") {
             this.commonService.setAlertMessage("success", "Marker counts updated !!!")
