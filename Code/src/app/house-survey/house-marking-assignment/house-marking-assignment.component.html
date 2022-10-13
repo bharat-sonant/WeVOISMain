@@ -39,6 +39,22 @@
                                                 <td class="table-data">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
+                                             <div class="showAllData">
+                                                <span  [hidden]="data.isLogin=='no'">
+                                                   
+                                                <i class="fa-solid fa-user-lock" style="color:rgb(19, 236, 19)" (click)="updateLoginStatus(data.userId)" 
+                                                title="yes">
+
+                                                </i>
+                                                </span>
+                                                
+                                                <span [hidden]="data.isLogin=='yes'">
+                                                   <i class="fa-solid fa-user-lock" style="color:red" (click)="updateLoginStatus(data.userId)"
+                                                   title="no">
+
+                                                   </i>
+                                                </span>
+                                                
                                                     <span class="Inactive-span" [hidden]="data.isActive==true">Inactive</span>
                                                     <span [hidden]="data.isActive==false">
                                                         <i class="fas fa-map-marked-alt marked-icon"
@@ -50,6 +66,7 @@
                                                             title="Remove Entry"
                                                             ></i>
                                                     </span>
+                                                </div>
                                                 </td>
                                             </tr>
                                         </tbody>

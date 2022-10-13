@@ -6,6 +6,8 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
 
+
+
 @Component({
   selector: "app-house-marking-assignment",
   templateUrl: "./house-marking-assignment.component.html",
@@ -243,6 +245,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             let name = data[index]["name"];
             let loginId = data[index]["pin"];
+            let isLogin = data[index]["isLogin"];
             let joiningDate = data[index]["joining-date"].split('-')[2] + "-" + data[index]["joining-date"].split('-')[1] + "-" + data[index]["joining-date"].split('-')[0];
             let isActive = false;
             if (data[index]["status"] == "2") {
@@ -268,12 +271,12 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                   }
                   this.surveyorList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
+                    this.assignedList.push({ userId: index,name: name, isLogin: isLogin, joiningDate: joiningDate, wardNo: dataSurvey["ward"], lines: lines, loginId: loginId, isActive: isActive });
                   }
                 } else {
-                  this.surveyorList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
+                  this.surveyorList.push({ userId: index,name: name,joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   if (isActive == true) {
-                    this.assignedList.push({ userId: index, name: name, joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
+                    this.assignedList.push({ userId: index, name: name, isLogin: isLogin, joiningDate: joiningDate, wardNo: "", lines: "", loginId: loginId, isActive: isActive });
                   }
                 }
                 this.surveyorList = this.commonService.transformNumeric(this.surveyorList, "name");
@@ -290,6 +293,23 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     });
   }
 
+  updateLoginStatus(userId: any) {
+    let dbPath="Surveyors/"+userId
+    let detail = this.assignedList.find((item) => item.userId == userId);
+    
+    if (detail != undefined) {
+      if (detail.isLogin == "yes") {
+        detail.isLogin="no"
+       this.db.object(dbPath).update({isLogin:'no'});
+        
+      } else {
+        detail.isLogin="yes"
+        this.db.object(dbPath).update({isLogin:'yes'});
+      }
+    }
+
+
+  }
   showAll() {
     this.assignedList = [];
     let element = <HTMLInputElement>document.getElementById("chkAll");

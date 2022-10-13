@@ -434,22 +434,6 @@ label{
   font-size: 12px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .no-gutters-iner{
   text-align:center;
   margin-top: -2px; 
@@ -571,6 +555,11 @@ label{
 }
 .lineNo-checkbox{
   vertical-align: middle;
+}
+.showAllData{
+  text-indent: 10px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .saveAssignment-btn{
