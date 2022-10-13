@@ -630,7 +630,6 @@ export class WardSurveySummaryComponent implements OnInit {
           this.closeModel();
         }
         else {
-          let totalCounts = 0;
           let keyArray = Object.keys(markerData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -648,8 +647,6 @@ export class WardSurveySummaryComponent implements OnInit {
                     let count = 0;
                     if (lineData[markerNo]["cardNumber"] != null) {
                       count = 1;
-
-                      totalCounts++;
                     }
                     this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                   }
@@ -658,14 +655,12 @@ export class WardSurveySummaryComponent implements OnInit {
                     if (listDetail != undefined) {
                       if (lineData[markerNo]["cardNumber"] != null) {
                         listDetail.counts = listDetail.counts + 1;
-                        totalCounts++;
                       }
                     }
                     else {
                       let count = 0;
                       if (lineData[markerNo]["cardNumber"] != null) {
                         count = 1;
-                        totalCounts++;
                       }
                       this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                     }
@@ -676,7 +671,6 @@ export class WardSurveySummaryComponent implements OnInit {
             }
 
           }
-          console.log(this.selectedWard + " : " + totalCounts);
         }
       }
     );
@@ -724,7 +718,7 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardProgressList.length > 0) {
       $('#divLoaderMain').show();
       let zoneNo = this.wardProgressList[1]["wardNo"];
-      this.getZoneHouseType(zoneNo, 0);
+      this.getZoneHouseType(zoneNo, 1);
     }
   }
 
@@ -734,6 +728,8 @@ export class WardSurveySummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
+
+      let totalCounts = 0;
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
         markerData => {
@@ -765,6 +761,7 @@ export class WardSurveySummaryComponent implements OnInit {
                       let count = 0;
                       if (lineData[markerNo]["cardNumber"] != null) {
                         count = 1;
+                        totalCounts = totalCounts + 1;
                       }
                       this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                     }
@@ -773,12 +770,14 @@ export class WardSurveySummaryComponent implements OnInit {
                       if (listDetail != undefined) {
                         if (lineData[markerNo]["cardNumber"] != null) {
                           listDetail.counts = listDetail.counts + 1;
+                          totalCounts = totalCounts + 1;
                         }
                       }
                       else {
                         let count = 0;
                         if (lineData[markerNo]["cardNumber"] != null) {
                           count = 1;
+                          totalCounts = totalCounts + 1;
                         }
                         this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                       }
