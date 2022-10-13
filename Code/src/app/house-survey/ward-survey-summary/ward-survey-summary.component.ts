@@ -87,7 +87,7 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0, houseHold: '',complex:'' });
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0, houseHold: '', complex: '' });
         if (i == 1) {
           setTimeout(() => {
             this.getSurveyDetail(wardNo, 1);
@@ -228,7 +228,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '',complexCount:'' });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '' });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -437,7 +437,7 @@ export class WardSurveySummaryComponent implements OnInit {
               if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
                 if (data[i]["Entities"] != null) {
                   let entityData = data[i]["Entities"];
-                  houseHoldCount=entityData.length-1;
+                  houseHoldCount = entityData.length - 1;
                   for (let j = 1; j < entityData.length; j++) {
                     let keyIndex = j;
                     let entityImageURL = "../../../assets/img/system-generated-image.jpg";
@@ -630,6 +630,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.closeModel();
         }
         else {
+          let totalCounts = 0;
           let keyArray = Object.keys(markerData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -647,6 +648,8 @@ export class WardSurveySummaryComponent implements OnInit {
                     let count = 0;
                     if (lineData[markerNo]["cardNumber"] != null) {
                       count = 1;
+
+                      totalCounts++;
                     }
                     this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                   }
@@ -655,12 +658,14 @@ export class WardSurveySummaryComponent implements OnInit {
                     if (listDetail != undefined) {
                       if (lineData[markerNo]["cardNumber"] != null) {
                         listDetail.counts = listDetail.counts + 1;
+                        totalCounts++;
                       }
                     }
                     else {
                       let count = 0;
                       if (lineData[markerNo]["cardNumber"] != null) {
                         count = 1;
+                        totalCounts++;
                       }
                       this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                     }
@@ -669,7 +674,9 @@ export class WardSurveySummaryComponent implements OnInit {
               }
 
             }
+
           }
+          console.log(this.selectedWard + " : " + totalCounts);
         }
       }
     );
@@ -778,7 +785,6 @@ export class WardSurveySummaryComponent implements OnInit {
                     }
                   }
                 }
-
               }
             }
             if (this.wardProgressList[index] != null) {
