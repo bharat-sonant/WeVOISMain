@@ -39,8 +39,24 @@
                                                 <td class="table-data">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
-                                                    <span class="Inactive-span" [hidden]="data.isActive==true">Inactive</span>
-                                                    <span [hidden]="data.isActive==false">
+                                                    <div class="showAllData">
+                                                        <span [hidden]="data.isLogin=='no' || data.isActive==false">
+                                                   
+                                                <i class="fa-solid fa-user-lock" style="color:rgb(19, 236, 19)" (click)="updateLoginStatus(data.userId)" 
+                                                title="yes">
+
+                                                </i>
+                                                </span>
+
+                                                        <span [hidden]="data.isLogin=='yes' || data.isActive==false">
+                                                   <i class="fa-solid fa-user-lock" style="color:red" (click)="updateLoginStatus(data.userId)"
+                                                   title="no">
+
+                                                   </i>
+                                                </span>
+
+                                                        <span class="Inactive-span" [hidden]="data.isActive==true">Inactive</span>
+                                                        <span [hidden]="data.isActive==false">
                                                         <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentAssign,data.userId,'update');"
                                                             title="Edit Assignment"
@@ -50,6 +66,7 @@
                                                             title="Remove Entry"
                                                             ></i>
                                                     </span>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>

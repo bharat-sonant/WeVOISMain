@@ -93,7 +93,9 @@ export class LineMarkerMappingComponent {
     this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
   }
 
-  changeZoneSelection(filterVal: any) {
+  changeZoneSelection(filterVal: any) {    
+    this.cardDetails.selectedMarkerCount = 0;
+    this.cardDetails.totalMarkerOnLine = 0;
     this.activeZone = filterVal;
     this.lineNo = 1;
     this.previousLine = 1;
