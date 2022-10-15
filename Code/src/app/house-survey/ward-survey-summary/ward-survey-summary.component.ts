@@ -29,6 +29,7 @@ export class WardSurveySummaryComponent implements OnInit {
   selectedWard: any;
   public isAlreadyShow = false;
   divEntityList = "#divEntityList";
+  divLoaderMain = "#divLoaderMain";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -49,7 +50,13 @@ export class WardSurveySummaryComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
-    this.getWardProgressList();
+    this.updateSurveyCounts();
+  }
+
+  updateSurveyCounts() {
+    $(this.divLoaderMain).show();
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.updateCounts(1);
   }
 
   showHideAlreadyCardInstalled() {
@@ -81,8 +88,129 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalRevisit = 0;
   }
 
+  updateCounts(index: any) {
+    if (index == this.wardList.length) {
+      $(this.divLoaderMain).hide();
+      this.getWardProgressList();
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      this.updateSurveyComplexCount(zoneNo);
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        markerData => {
+          markerInstance.unsubscribe();
+          if (markerData != null) {
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              let zoneMarkerCount = 0;
+              let zoneAlreadyInstalledCount = 0;
+              let totalSurveyed = 0;
+              for (let i = 0; i < keyArray.length; i++) {
+                let markerCount = 0;
+                let surveyedCount = 0;
+                let revisitCount = 0;
+                let rfIdNotFound = 0;
+                let alreadyInstalledCount = 0;
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let lastMarkerKey = 0;
+                let markerKeyArray = Object.keys(lineData);
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  if (lineData[markerNo]["houseType"] != null) {
+                    lastMarkerKey = Number(markerNo);
+                    markerCount = markerCount + 1;
+                    zoneMarkerCount = zoneMarkerCount + 1;
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      surveyedCount = surveyedCount + 1;
+                      totalSurveyed = totalSurveyed + 1;
+                    }
+                    else if (lineData[markerNo]["revisitKey"] != null) {
+                      revisitCount = revisitCount + 1;
+                    }
+                    else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
+                      rfIdNotFound = rfIdNotFound + 1;
+                    }
+                    if (lineData[markerNo]["alreadyInstalled"] == true) {
+                      alreadyInstalledCount = alreadyInstalledCount + 1;
+                      zoneAlreadyInstalledCount = zoneAlreadyInstalledCount + 1;
+                    }
+                  }
+                }
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount });
+                if (lastMarkerKey > 0) {
+                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                  this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                }
+              }
+              let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+              this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
+              dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
+              this.db.object(dbPath).set(totalSurveyed.toString());
+              index++;
+              this.updateCounts(index);
+            }
+            else {
+              index++;
+              this.updateCounts(index);
+            }
+          }
+          else {
+            index++;
+            this.updateCounts(index);
+          }
+        });
+    }
+  }
+
+  updateSurveyComplexCount(zoneNo:any){
+    let dbPath = "Houses/" + zoneNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      houseData => {
+        houseInstance.unsubscribe();
+        if (houseData != null) {
+          let keyArray = Object.keys(houseData);
+          if (keyArray.length > 0) {
+            let totalHouseHoldCount = 0;
+            let totalComplexCount = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let line = keyArray[i];
+              let houseHoldCount = 0;
+              let complexCount = 0;
+              let cardObj = houseData[line];
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                  complexCount++;
+                  totalComplexCount++;
+                  if (cardObj[cardNo]["Entities"] != null) {
+
+                    houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
+                    totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
+                  }
+                }
+              }
+              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+              this.db.object(dbHouseHoldPath).update({ houseHoldCount: houseHoldCount, complexCount: complexCount });
+            }
+
+            dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;
+            this.db.object(dbPath).set(totalHouseHoldCount.toString());
+
+            dbPath = "EntitySurveyData/TotalComplexCount/" + zoneNo;
+            this.db.object(dbPath).set(totalComplexCount.toString());
+          }
+        }
+      }
+    );
+
+  }
+
   getWardProgressList() {
-    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    //this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
@@ -640,6 +768,9 @@ export class WardSurveySummaryComponent implements OnInit {
 
               if (lineData[markerNo]["houseType"] != null) {
                 let houseTypeId = lineData[markerNo]["houseType"];
+                if (houseTypeId == "19" || houseTypeId=="20") {
+                  console.log("line no : " + lineNo + " marker no : " + markerNo)
+                }
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;

@@ -142,9 +142,10 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                  complexCount++;
+                  totalComplexCount++;
                   if (cardObj[cardNo]["Entities"] != null) {
-                    complexCount++;
-                    totalComplexCount++;
+
                     houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                     totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                   }
