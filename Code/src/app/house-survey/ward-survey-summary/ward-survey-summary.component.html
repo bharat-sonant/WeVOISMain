@@ -28,10 +28,15 @@
                             {{surveyData.totalRevisit}}</span><br>
                         <h6>Revisit Request</h6>
                     </div>
-                    <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                    <div class="float-fourth float-second2" style="display:none;" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
                         <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
                             {{surveyData.totalOldCards}}</span><br>
                         <h6>RFID not matched</h6>
+                    </div>
+                    <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{surveyData.totalHouses}}</span><br>
+                        <h6>Houses</h6>
                     </div>
 
                     <div class="float-first fix-home-iner" style="padding-top: 5px;">
@@ -63,9 +68,11 @@
 
                                             <th class="text-right table-heading3">
                                                 Surveyed</th>
+                                            <th class="text-right table-heading3">
+                                                Houses</th>
                                             <th class="text-right table-heading4">
                                                 Revisit</th>
-                                            <th class="text-right table-heading5">
+                                            <th class="text-right table-heading5" style="display:none;">
                                                 RFID Not Matched</th>
                                             <th class="text-right table-heading4">
                                                 Complex(s)</th>
@@ -79,9 +86,11 @@
 
                                                 <td class="text-right table-data3">
                                                     {{data.surveyed}}</td>
+                                                <td class="text-right table-data3">
+                                                    {{data.houses}}</td>
                                                 <td class="text-right table-data4">
                                                     {{data.revisit}} </td>
-                                                <td class="text-right table-data5">
+                                                <td class="text-right table-data5" style="display: none;">
                                                     {{data.oldCard}}</td>
                                                 <td class="text-right table-data5">
                                                     <span [hidden]="data.complex==''">{{data.complex}}
@@ -161,9 +170,11 @@
                                                         Already Installed</th>
                                                     <th class="text-right table-heading-same4">Surveyed
                                                     </th>
+                                                    <th class="text-right table-heading-same4">Houses
+                                                    </th>
                                                     <th class="text-right table-heading-same5">Revisit
                                                     </th>
-                                                    <th class="text-right table-heading-same6">RFID Not Matched
+                                                    <th class="text-right table-heading-same6" style="display:none;">RFID Not Matched
                                                     </th>
                                                     <th class="text-right table-heading-same4">Complex(s)
                                                     </th>
@@ -179,12 +190,14 @@
                                                             {{data.alreadyCard}}</td>
                                                         <td class="text-right table-data-4">
                                                             {{data.survyed}}</td>
+                                                        <td class="text-right table-data-4">
+                                                            {{data.houses}}</td>
                                                         <td class="text-right table-data-5">
                                                             {{data.revisit}}</td>
-                                                        <td class="text-right table-data-6">
+                                                        <td class="text-right table-data-6" style="display:none;">
                                                             {{data.oldCard}}</td>
                                                         <td class="text-right table-data-6">
-                                                            <span [hidden]="data.complexCount==''">
+                                                            <span [hidden]="data.complexCount=='0'">
                                                                 {{data.complexCount}} ({{data.houseHoldCount}})</span>
                                                         </td>
                                                         <td class="text-center table-data-7">
