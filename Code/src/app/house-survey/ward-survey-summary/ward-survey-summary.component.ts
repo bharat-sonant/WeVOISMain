@@ -30,6 +30,7 @@ export class WardSurveySummaryComponent implements OnInit {
   public isAlreadyShow = false;
   divEntityList = "#divEntityList";
   divLoaderMain = "#divLoaderMain";
+  divLoaderCounts="#divLoaderCounts";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -55,7 +56,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateSurveyCounts() {
-    $(this.divLoaderMain).show();
+    $(this.divLoaderCounts).show();
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
 
@@ -92,7 +93,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
   updateCounts(index: any) {
     if (index == this.wardList.length) {
-      $(this.divLoaderMain).hide();
+      $(this.divLoaderCounts).hide();
       this.getWardProgressList();
     }
     else {
