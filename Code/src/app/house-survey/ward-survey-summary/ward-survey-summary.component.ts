@@ -188,7 +188,6 @@ export class WardSurveySummaryComponent implements OnInit {
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
-                totalHouseCount++;
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
                   complexCount++;
                   totalComplexCount++;
@@ -201,10 +200,12 @@ export class WardSurveySummaryComponent implements OnInit {
                   }
                   else {
                     houseCount++;
+                    totalHouseCount++;
                   }
                 }
                 else{
                   houseCount++;
+                  totalHouseCount++;
                 }
               }
               let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
