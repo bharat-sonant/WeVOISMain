@@ -1,3 +1,7 @@
+<div id="divLoaderCounts" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+      <img src="../../../assets/img/loading.gif" width="50"><br/><span style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br/></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
 <div id="divLoaderMain" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
@@ -21,7 +25,7 @@
                     </div>
                     <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
                         <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
-                        <h6>Surveyed Marker</h6>
+                        <h6>Cards</h6>
                     </div>
                     <div class="float-third float-second2" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
                         <i class="fas fa-house-damage icon-damage"></i> <span class="house">
@@ -67,7 +71,7 @@
                                                 Markers</th>
 
                                             <th class="text-right table-heading3">
-                                                Surveyed</th>
+                                                Cards</th>
                                             <th class="text-right table-heading3">
                                                 Houses</th>
                                             <th class="text-right table-heading4">
@@ -125,7 +129,7 @@
                         <div class="col text-center">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br> Surveyed
+                                    <span class="tbl-points"> {{surveyData.wardSurveyed}}</span> <br> Cards
                                 </h3>
                             </div>
                         </div>
@@ -168,7 +172,7 @@
                                                     <th class="text-right table-heading-same2">Markers</th>
                                                     <th class="text-right table-heading-same3" [hidden]="isAlreadyShow==false">
                                                         Already Installed</th>
-                                                    <th class="text-right table-heading-same4">Surveyed
+                                                    <th class="text-right table-heading-same4">Cards
                                                     </th>
                                                     <th class="text-right table-heading-same4">Houses
                                                     </th>
