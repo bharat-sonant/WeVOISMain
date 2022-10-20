@@ -600,6 +600,16 @@ export class CommonService {
     return ((parseFloat(minutes) / 60).toFixed(2).split(".")[0] + " hr " + (parseFloat((parseFloat(minutes) / 60).toFixed(2).split(".")[1]) * 60).toString().slice(0, 2) + " min");
   }
 
+  getDiffrernceHrMin(dt2: Date, dt1: Date) {
+    
+    let diff = (dt2.getTime() - dt1.getTime());
+
+    let minutes = Math.floor((diff / (1000 * 60)) % 60);
+    let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    
+    return ((hours < 10) ? "0" + hours : hours)+":"+ ((minutes < 10) ? "0" + minutes : minutes);
+  }
+
   getCurrentTime() {
     return (new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1]);
   }
