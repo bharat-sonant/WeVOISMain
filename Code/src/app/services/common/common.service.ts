@@ -607,7 +607,7 @@ export class CommonService {
     let minutes = Math.floor((diff / (1000 * 60)) % 60);
     let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     
-    return ((hours < 10) ? "0" + hours : hours)+":"+ ((minutes < 10) ? "0" + minutes : minutes);
+    return ((hours < 10) ? "0" + hours : hours)+" hr"+ ((minutes < 10) ? " 0" + minutes : minutes)+" min";
   }
 
   getCurrentTime() {
