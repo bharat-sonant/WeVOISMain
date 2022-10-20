@@ -63,7 +63,7 @@
                                     --Select--
                                 </option>
                                 <option value="{{dt.empId}}" *ngFor="let dt of filterEmployeeList;">
-                                    {{dt.name}} ({{dt.empCode}})
+                                    {{dt.name}} ({{dt.empCode}})  
                                 </option>
                             </select>
                             <input id="txtDateFrom" class="filter-select text-input" type="date" style="width: 100px; margin-left: 10px;">
@@ -89,6 +89,9 @@
                                             <th class="text-left br-1 table-heading1">
                                                 Out Time
                                             </th>
+                                            <th class="text-left br-1 table-heading1">
+                                            Working Hrs
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
@@ -103,6 +106,9 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.outTime}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.workingHour}}
                                                 </td>
                                             </tr>
                                         </tbody>
