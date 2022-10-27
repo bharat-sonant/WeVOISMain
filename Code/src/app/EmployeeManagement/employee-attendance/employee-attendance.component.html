@@ -51,6 +51,8 @@
                                         <option value="08:30">
                                             After 8:30
                                         </option>
+    
+
                                     </select>
 
                             <input type="checkbox" id="chkFieldExecutive" (change)="filterData()" style="margin-left: 10px;"> &nbsp;Field Executive
@@ -107,7 +109,7 @@
                                                 <td class="text-left br-1">
                                                     {{data.outTime}}
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" class="{{data.cssClass}}">
                                                     {{data.workingHour}}
                                                 </td>
                                             </tr>
