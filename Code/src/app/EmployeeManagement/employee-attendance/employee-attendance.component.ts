@@ -130,6 +130,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let workingHour = "";
               let inTimestemp = 0;
               let cssClass = "text-left br-1";
+              let cssWorkingClass = "text-left br-1";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
@@ -148,9 +149,18 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (outTime != "") {
                 let currentTime = new Date(this.selectedDate + " " + outTime);
                 let inTimes = new Date(this.selectedDate + " " + inTime);
+                let diff = (currentTime.getTime() - inTimes.getTime());
+                let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((diff / (1000 * 60)) % 60);
+                let rminutes=minutes + hours*60;
+                if ( rminutes < 525 ) {
+                  cssWorkingClass = "text-left br-1 workingTime";
+                  }
+
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
+
               }
-              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass });
+              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass });
             }
           }
           if (i == this.allEmployeeList.length - 1) {
@@ -195,6 +205,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let workingHour = "";
               let inTimestemp = 0;
               let cssClass = "text-left br-1";
+              let cssWorkingClass="text-left br-1";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
@@ -213,9 +224,16 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (outTime != "") {
                 let currentTime = new Date(this.selectedDate + " " + outTime);
                 let inTimes = new Date(this.selectedDate + " " + inTime);
+                let diff = (currentTime.getTime() - inTimes.getTime());
+                let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((diff / (1000 * 60)) % 60);
+                let rminutes=minutes + hours*60;
+                if ( rminutes < 525 ) {
+                   cssWorkingClass = "text-left br-1 workingTime";
+                  }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass });
+              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass });
             }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }

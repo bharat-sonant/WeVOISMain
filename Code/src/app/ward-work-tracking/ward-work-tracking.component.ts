@@ -115,7 +115,7 @@ export class WardWorkTrackingComponent {
 
   setDefault() {
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
-    if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai") {
+    if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       $(this.divParshadDetail).hide();
       this.isParshadShow = false;
     }
@@ -290,6 +290,7 @@ export class WardWorkTrackingComponent {
       if (this.wardLinesDataObj["totalHouseCount"] != null) {
         this.progressData.totalHouses = this.wardLinesDataObj["totalHouseCount"];
       }
+      console.log(this.wardLinesDataObj)
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let houses = [];
