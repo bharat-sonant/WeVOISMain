@@ -42,22 +42,22 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(328,75);
+    this.addDevices(21,0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice=lastDevice+1;
-    if (index <= 85) {
+    if (index <= 5) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
         lastActive: "25/07/2022 09:10",
-        name: "JAI-" + lastDevice,
+        name: "TES-" + lastDevice,
         readerAppVersion: "1.0.2.9",
         status: "1"
       }
-      let dbPath="Devices/Jaipur-Malviyanagar/"+key;
+      let dbPath="Devices/Gwalior/"+key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice,index);
     }
@@ -731,7 +731,7 @@ export class Cms1Component implements OnInit {
   }
 
   removeLineApprove(){
-    let wardNo = "18-R2";
+    let wardNo = $("#txtwardLineMarker").val();
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -748,6 +748,7 @@ export class Cms1Component implements OnInit {
           dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+wardNo;
           this.db.object(dbPath).update({approved:0,rejected:0});
         }
+        $("#txtwardLineMarker").val("");
       }
     );
   }
