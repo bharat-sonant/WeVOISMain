@@ -221,6 +221,9 @@ export class CommonService {
     else if (cityName == "wevois-others") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "tonk") {
+      latLng.push({ lat: 26.165516, lng: 75.779292 });
+    }
     return latLng;
   }
 
