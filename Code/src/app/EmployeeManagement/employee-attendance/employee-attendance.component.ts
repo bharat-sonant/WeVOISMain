@@ -134,8 +134,8 @@ export class EmployeeAttendanceComponent implements OnInit {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
-                  let afterTimestemp = new Date(this.selectedDate + " 08:45").getTime();
-                  if (inTimestemp < afterTimestemp) {
+                  let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
+                  if (inTimestemp > afterTimestemp) {
                     cssClass = "text-left br-1 afterTime";
                   }
                 }
