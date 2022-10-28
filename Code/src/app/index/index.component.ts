@@ -12,6 +12,7 @@ export class IndexComponent implements OnInit {
   }
 
   divSonant = "#divSonant";
+  iframeSonant="iframeSonant";
   isShow: any;
 
   ngOnInit() {
@@ -69,6 +70,8 @@ export class IndexComponent implements OnInit {
     if (this.isShow == false) {
       this.isShow = true;
       $(this.divSonant).show();
+      let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
+      element.src="http://localhost:4401/home-page";
     }
     else {
       this.isShow = false;
