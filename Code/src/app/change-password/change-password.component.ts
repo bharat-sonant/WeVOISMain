@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from "@angular/fire/firestore";
 import { CommonService } from "../services/common/common.service";
+import { UsersService } from "../services/users/users.service";
 
 @Component({
   selector: 'app-change-password',
@@ -9,15 +10,24 @@ import { CommonService } from "../services/common/common.service";
 })
 export class ChangePasswordComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, public commonService: CommonService) { }
+  constructor(public dbFireStore: AngularFirestore, public commonService: CommonService, private userService: UsersService) { }
 
   oldPassword: any;
   userId: any;
   userKey: any;
+  userJsonData:any;
   ngOnInit() {
     this.userId = localStorage.getItem("userID");
     this.oldPassword = localStorage.getItem("userPassword");
-    this.userKey = localStorage.getItem("userKey");
+    this.getPortalUsers();
+  }
+  
+  getPortalUsers() {
+    this.userService.getPortalUsers().then((data: any) => {
+      if (data != null) {
+        this.userJsonData = data;
+      }
+    });
   }
 
   changePassword() {
@@ -43,7 +53,8 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     let password = $('#txtNewPassword').val().toString().trim();
-    this.dbFireStore.doc("UserManagement/Users").collection("Users").doc(this.userKey).update({ password: password });
+    this.userJsonData[this.userId.toString()]["password"]=password;
+    this.userService.savePortalUsers(this.userJsonData);
     this.commonService.setAlertMessage("success", "Password changed successfully!!!");
     $('#txtOldPassword').val("");
     $('#txtNewPassword').val("");
