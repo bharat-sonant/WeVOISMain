@@ -47,8 +47,9 @@ export class WardSurveyAnalysisComponent {
   nameList: any[];
   toDayDate: any;
   public isAlreadyShow = false;
-  entityList:any[]=[];
-  divEntityList="#divEntityList";
+  entityList: any[] = [];
+  divEntityList = "#divEntityList";
+  chkShowAll = "chkShowAll";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -89,6 +90,17 @@ export class WardSurveyAnalysisComponent {
   showHideAlreadyCardInstalled() {
     if (this.cityName == "sikar" || this.cityName == "reengus") {
       this.isAlreadyShow = true;
+    }
+  }
+
+  showAllMarkers() {
+    if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == true) {
+      for (let i = 1; i <= this.wardLineCount; i++) {
+        this.getMarkedHouses(i);
+      }
+    }
+    else {
+      this.getMarkedHouses(this.lineNo);
     }
   }
 
@@ -162,6 +174,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getCurrentLineDetail(event: any) {
+    (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     if (event.key == "Enter") {
       let lineNo = $("#txtLineNo").val();
       if (lineNo == "") {
@@ -246,16 +259,20 @@ export class WardSurveyAnalysisComponent {
 
   getMarkedHouses(lineNo: any) {
     this.clearLineData();
-    this.getRevisitRequest();
-    this.getOldCards();
-    this.getLineSurveyed();
+    if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == false) {
+      this.getRevisitRequest();
+      this.getOldCards();
+      this.getLineSurveyed();
+    }
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.list(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
       if (data.length > 0) {
         for (let i = 0; i < data.length - 1; i++) {
           if (data[i]["latLng"] != undefined) {
+            if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == false) {
             this.progressData.totalLineMarkers++;
+            }
             let markerURL = "../assets/img/red-home.png";
             let lat = data[i]["latLng"].split(",")[0];
             let lng = data[i]["latLng"].split(",")[1];
@@ -469,6 +486,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getNextPrevious(type: any) {
+    (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     let lineNo = $("#txtLineNo").val();
     if (lineNo == "") {
       this.commonService.setAlertMessage("error", "Please enter line no. !!!");
@@ -538,7 +556,7 @@ export class WardSurveyAnalysisComponent {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
                 let entityList = [];
-                let hasEntity="0";
+                let hasEntity = "0";
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
 
@@ -550,7 +568,7 @@ export class WardSurveyAnalysisComponent {
                   }
                 }
                 let houseImageURL = "../../../assets/img/system-generated-image.jpg";
-                if(data[i]["houseImage"]!=null){
+                if (data[i]["houseImage"] != null) {
                   if (data[i]["surveyorId"] == "-1") {
                     houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
@@ -560,22 +578,22 @@ export class WardSurveyAnalysisComponent {
                 }
                 if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
                   if (data[i]["Entities"] != null) {
-                    hasEntity="1";
-                    let entityData =data[i]["Entities"];
+                    hasEntity = "1";
+                    let entityData = data[i]["Entities"];
                     for (let j = 1; j < entityData.length; j++) {
-                      let keyIndex=j;
-                      let entityImageURL="../../../assets/img/system-generated-image.jpg";
-                      if(entityData[keyIndex]["house image"]!=null){
+                      let keyIndex = j;
+                      let entityImageURL = "../../../assets/img/system-generated-image.jpg";
+                      if (entityData[keyIndex]["house image"] != null) {
                         entityImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
                       }
-                      entityList.push({name:entityData[keyIndex]["name"], mobile:entityData[keyIndex]["mobile"],entityImageURL:entityImageURL});
+                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
                     }
                   }
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ houseImageURL:houseImageURL,imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"],entityList:entityList,hasEntity:hasEntity });
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, hasEntity: hasEntity });
               }
             }
           }
@@ -584,17 +602,17 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  showEntity(cardNo:any){
-    let detail=this.scannedCardList.find(item=>item.cardNo==cardNo);
-    if(detail!=undefined){
-      this.entityList=detail.entityList;
+  showEntity(cardNo: any) {
+    let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+    if (detail != undefined) {
+      this.entityList = detail.entityList;
       console.log(this.entityList);
       $(this.divEntityList).show();
     }
   }
 
-  hideEntity(){
-    this.entityList=[];
+  hideEntity() {
+    this.entityList = [];
     $(this.divEntityList).hide();
   }
 
@@ -978,7 +996,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   clearAllOnMap() {
-
+    (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     this.lines = [];
     this.lineNo = 1;
     this.previousLine = 1;
