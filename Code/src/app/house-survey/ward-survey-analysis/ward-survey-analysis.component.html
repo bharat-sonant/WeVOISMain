@@ -87,6 +87,11 @@
                             <i class="fas fa-house-damage damage-icon"></i> <span class="house house-damage-icon-span">
               {{progressData.totalLineRevisit}}</span><br>
                         </div>
+
+                        <div style="padding-top: 20px;" class="float-l">
+                            <input id="chkShowAll" type="checkbox" (change)="showAllMarkers();"> Show All
+
+                        </div>
                         <div id="divLineOldCardCount" class="float-l" (click)="progressData.totalLineOldCard > 0 && openModel(contentLineOldCard,'OldCard')" [hidden]="isAlreadyShow==false">
                             <i class="fas fa-house-damage damage-icon2"></i> <span class="house house-damage-icon-span">
               {{progressData.totalLineOldCard}}</span><br>
