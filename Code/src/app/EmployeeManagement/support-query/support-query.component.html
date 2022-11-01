@@ -41,13 +41,13 @@
                                             {{dt.city}}
                                         </option>
                                     </select>
-
                                     <select id="ddlCategory" class="filter-select filter-input" (change)="filterData()">
                                         <option value="0">
                                             All Categories
                                         </option>
                                         <option value="Salary">Salary</option>
                                         <option value="General">General</option>
+                                        <option value="PF">PF</option>
                                     </select>
 
                                     <select id="ddlFilterManager" class="filter-select filter-input" (change)="filterData()" [hidden]="userType=='manager'">
@@ -219,10 +219,12 @@
                 </button>
             </div>
             <div class="modal-body">
-                <label style="font-weight: bold;">Resolved Date </label><br />
+                <label style="font-weight: bold;">Resolved By : </label> &nbsp;
+                <label id="detailBy"></label><br />
+                <br /><label style="font-weight: bold;">Resolved Date : </label> &nbsp;
                 <label id="detailDate"></label><br />
                 <br />
-                <label style="font-weight: bold;">Resolved Description </label><br />
+                <label style="font-weight: bold;">Resolved Description :</label><br />
                 <label id="detailDescription"></label>
             </div>
         </div>

@@ -31,6 +31,7 @@ export class SupportQueryComponent implements OnInit {
   resolvedId = "#resolvedId";
   txtResolvedDate = "#txtResolvedDate";
   txtResolvedDescription = "#txtResolvedDescription";
+  detailBy="#detailBy";
   detailDate = "#detailDate";
   detailDescription = "#detailDescription";
   public userType: any;
@@ -189,6 +190,11 @@ export class SupportQueryComponent implements OnInit {
           }
         }
         else if (type == "adminResolved") {
+
+          let empDetail=this.managerList.find(item=>item.empId==detail.assignedTo);
+          if(empDetail!=undefined){
+            $(this.detailBy).html(empDetail.name);
+          }
           $(this.detailDate).html(detail.resolvedDate);
           $(this.detailDescription).html(detail.resolvedDescription);
         }
