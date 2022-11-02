@@ -14,7 +14,7 @@ import * as firebase from 'firebase/app';
 })
 export class Cms1Component implements OnInit {
 
-  constructor(public fs: FirebaseService,public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   nameList: any = [];
@@ -27,14 +27,14 @@ export class Cms1Component implements OnInit {
     //this.getCardTypeList();
   }
 
-  createUserJson(){
+  createUserJson() {
     this.dbFireStore.collection("UserManagement").doc("Users").collection("Users").get().subscribe((ss) => {
       const document = ss.docs;
-      const userJson={};
+      const userJson = {};
       document.forEach((doc) => {
-       let userId=doc.data()["userId"];
-       let data=doc.data();
-       userJson[userId]=data;
+        let userId = doc.data()["userId"];
+        let data = doc.data();
+        userJson[userId] = data;
       })
       console.log(userJson);
       this.commonService.saveCommonJsonFile(userJson, "PortalUsers.json", "/Common/");
@@ -42,27 +42,27 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(21,0);
+    this.addDevices(3, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
-    lastDevice=lastDevice+1;
+    lastDevice = lastDevice + 1;
     if (index <= 5) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
         lastActive: "25/07/2022 09:10",
-        name: "TES-" + lastDevice,
+        name: "TON-" + lastDevice,
         readerAppVersion: "1.0.2.9",
         status: "1"
       }
-      let dbPath="Devices/Gwalior/"+key;
+      let dbPath = "Devices/Tonk/" + key;
       this.db.object(dbPath).update(data);
-      this.addDevices(lastDevice,index);
+      this.addDevices(lastDevice, index);
     }
-    else{
-      this.db.object("Devices").update({LastConfigurationNo:lastDevice });
+    else {
+      this.db.object("Devices").update({ LastConfigurationNo: lastDevice });
     }
   }
 
@@ -681,6 +681,36 @@ export class Cms1Component implements OnInit {
   arrayBuffer: any;
   first_sheet_name: any;
 
+
+  uploadImage(){
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    
+    var uri = "data:application/image;charset=UTF-8," + file;
+    let fileName = file.name;
+    const path =  "Test/"+fileName;
+
+    //const ref = this.storage.ref(path);
+    const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
+    var byteString;
+    // write the bytes of the string to a typed array
+
+    byteString = unescape(uri.split(",")[1]);
+    var mimeString = uri
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    let blob = new Blob([ia], { type: mimeString });
+    const task = ref.put(blob);
+  }
+
   uploadDustbinData() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
@@ -723,14 +753,14 @@ export class Cms1Component implements OnInit {
     }
   }
 
-  markerSurveyUpdate(){
-    let wardNo="128-R1";
-    let lineNo="1";
-    
+  markerSurveyUpdate() {
+    let wardNo = "128-R1";
+    let lineNo = "1";
+
 
   }
 
-  removeLineApprove(){
+  removeLineApprove() {
     let wardNo = $("#txtwardLineMarker").val();
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -740,13 +770,13 @@ export class Cms1Component implements OnInit {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = Number(keyArray[i]);
-            if(data[lineNo]["ApproveStatus"]!=null){
+            if (data[lineNo]["ApproveStatus"] != null) {
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus";
               this.db.object(dbPath).remove();
             }
           }
-          dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+wardNo;
-          this.db.object(dbPath).update({approved:0,rejected:0});
+          dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
+          this.db.object(dbPath).update({ approved: 0, rejected: 0 });
         }
         $("#txtwardLineMarker").val("");
       }
@@ -1077,6 +1107,118 @@ export class Cms1Component implements OnInit {
           }
         }
       });
+  }
+
+  exportHouseData() {
+    let houseList = [];
+    let ward = "10-R1";
+    let path = "Houses/" + ward;
+    let instance = this.db.object(path).valueChanges().subscribe(data => {
+      if (data != null) {
+        instance.unsubscribe();
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let cardData = data[lineNo];
+            let cardKeyArray = Object.keys(cardData);
+            if (cardKeyArray.length > 0) {
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                let name = cardData[cardNo]["name"];
+                let address = cardData[cardNo]["address"];
+                let cardType = cardData[cardNo]["cardType"];
+                let latLng = cardData[cardNo]["latLng"];
+                let mobile = cardData[cardNo]["mobile"];
+                let phaseNo = cardData[cardNo]["phaseNo"];
+                let rfid = cardData[cardNo]["rfid"];
+                let ward = cardData[cardNo]["ward"];
+                let isNameCorrect = cardData[cardNo]["isNameCorrect"];
+                houseList.push({ lineNo: lineNo, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, phaseNo: phaseNo, rfid: rfid, ward: ward, isNameCorrect: isNameCorrect });
+              }
+            }
+          }
+          console.log(houseList);
+          if (houseList.length > 0) {
+            let htmlString = "";
+            htmlString = "<table>";
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += "Ward No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Line No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Card No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Name";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Address";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Card Type";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "LatLng";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Mobile";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "RfID";
+            htmlString += "</td>";
+            htmlString += "</tr>";
+            for (let i = 0; i < houseList.length; i++) {
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["ward"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["lineNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["cardNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["name"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["address"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["cardType"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["latLng"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["mobile"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += houseList[i]["rfid"];
+              htmlString += "</td>";
+              htmlString += "</tr>";
+            }
+            htmlString += "<table>";
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(htmlString, 'text/html');
+            const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+            /* generate workbook and add the worksheet */
+            const wb: XLSX.WorkBook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            /* save to file */
+            let fileName = "Ward-" + ward + "-house-Data.xlsx";
+            XLSX.writeFile(wb, fileName);
+
+          }
+        }
+      }
+    });
   }
 
 
