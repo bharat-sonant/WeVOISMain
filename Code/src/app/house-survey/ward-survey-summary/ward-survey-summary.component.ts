@@ -25,12 +25,13 @@ export class WardSurveySummaryComponent implements OnInit {
   houseTypeList: any[] = [];
   zoneHouseTypeList: any[];
   entityList: any[] = [];
+  employeeSurvey: any[] = [];
   db: any;
   selectedWard: any;
   public isAlreadyShow = false;
   divEntityList = "#divEntityList";
   divLoaderMain = "#divLoaderMain";
-  divLoaderCounts="#divLoaderCounts";
+  divLoaderCounts = "#divLoaderCounts";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -57,8 +58,10 @@ export class WardSurveySummaryComponent implements OnInit {
 
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
+    this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
+
 
   }
 
@@ -93,6 +96,9 @@ export class WardSurveySummaryComponent implements OnInit {
 
   updateCounts(index: any) {
     if (index == this.wardList.length) {
+      setTimeout(() => {
+        console.log(this.employeeSurvey);
+      }, 2000);
       $(this.divLoaderCounts).hide();
       this.getWardProgressList();
     }
@@ -108,6 +114,7 @@ export class WardSurveySummaryComponent implements OnInit {
               let zoneMarkerCount = 0;
               let zoneAlreadyInstalledCount = 0;
               let totalSurveyed = 0;
+              let totalRevisit=0;
               for (let i = 0; i < keyArray.length; i++) {
                 let markerCount = 0;
                 let surveyedCount = 0;
@@ -130,6 +137,7 @@ export class WardSurveySummaryComponent implements OnInit {
                     }
                     else if (lineData[markerNo]["revisitKey"] != null) {
                       revisitCount = revisitCount + 1;
+                      totalRevisit=totalRevisit+1;
                     }
                     else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
                       rfIdNotFound = rfIdNotFound + 1;
@@ -151,6 +159,8 @@ export class WardSurveySummaryComponent implements OnInit {
               this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
               dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
               this.db.object(dbPath).set(totalSurveyed.toString());
+              dbPath = "EntitySurveyData/TotalRevisitRequest/" + zoneNo;
+              this.db.object(dbPath).set(totalRevisit.toString());
               index++;
               this.updateCounts(index);
 
@@ -189,7 +199,17 @@ export class WardSurveySummaryComponent implements OnInit {
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
+                let surveyorId = cardObj[cardNo]["surveyorId"];
+                let surveyDate = cardObj[cardNo]["createdDate"].split(' ')[0];
+                let surveyHouseCount = 1;
+                let surveyComplexCount = 0;
+                let surveyComplexHouseCount = 1;
+
+
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                  surveyComplexCount = 1;
+
+
                   complexCount++;
                   totalComplexCount++;
                   if (cardObj[cardNo]["Entities"] != null) {
@@ -198,15 +218,28 @@ export class WardSurveySummaryComponent implements OnInit {
 
                     houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
                     totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
+
+                    surveyComplexHouseCount = surveyHouseCount + (cardObj[cardNo]["Entities"].length - 1);
                   }
                   else {
                     houseCount++;
                     totalHouseCount++;
                   }
                 }
-                else{
+                else {
                   houseCount++;
                   totalHouseCount++;
+                }
+                if (surveyorId == "78") {
+                  let employeeSurveyDetail = this.employeeSurvey.find(item => item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                  if (employeeSurveyDetail != undefined) {
+                    employeeSurveyDetail.surveyHouseCount = employeeSurveyDetail.surveyHouseCount + surveyHouseCount;
+                    employeeSurveyDetail.surveyComplexCount = employeeSurveyDetail.surveyComplexCount + surveyComplexCount;
+                    employeeSurveyDetail.surveyComplexHouseCount = employeeSurveyDetail.surveyComplexHouseCount + surveyComplexHouseCount;
+                  }
+                  else {
+                    this.employeeSurvey.push({ line: line, zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, surveyHouseCount: surveyHouseCount, surveyComplexCount: surveyComplexCount, surveyComplexHouseCount: surveyComplexHouseCount });
+                  }
                 }
               }
               let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;

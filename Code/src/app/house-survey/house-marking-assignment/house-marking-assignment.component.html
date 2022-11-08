@@ -31,7 +31,7 @@
                                             <tr class="table-row" id="tr{{i}}" *ngFor="let data of assignedList; let i=index" (click)="getServeyorDetail(data.userId,i);">
                                                 <td class="table-data">{{i+1}}</td>
                                                 <td class="table-data">
-                                                    {{data.name}}</td>
+                                                    {{data.userId}} ---- {{data.name}}</td>
                                                 <td class="table-data">
                                                     {{data.loginId}}</td>
                                                 <td class="table-data">
