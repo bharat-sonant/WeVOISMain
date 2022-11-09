@@ -97,7 +97,7 @@ export class WardSurveySummaryComponent implements OnInit {
   updateCounts(index: any) {
     if (index == this.wardList.length) {
       setTimeout(() => {
-        console.log(this.employeeSurvey);
+        //console.log(this.employeeSurvey);
       }, 2000);
       $(this.divLoaderCounts).hide();
       this.getWardProgressList();
@@ -838,9 +838,9 @@ export class WardSurveySummaryComponent implements OnInit {
 
               if (lineData[markerNo]["houseType"] != null) {
                 let houseTypeId = lineData[markerNo]["houseType"];
-                if (houseTypeId == "19" || houseTypeId == "20") {
-                  console.log("line no : " + lineNo + " marker no : " + markerNo)
-                }
+               // if (houseTypeId == "19" || houseTypeId == "20") {
+               //   console.log("line no : " + lineNo + " marker no : " + markerNo)
+              //  }
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;
