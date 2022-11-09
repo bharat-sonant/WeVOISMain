@@ -93,7 +93,7 @@ export class LineMarkerMappingComponent {
     this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
   }
 
-  changeZoneSelection(filterVal: any) {    
+  changeZoneSelection(filterVal: any) {
     this.cardDetails.selectedMarkerCount = 0;
     this.cardDetails.totalMarkerOnLine = 0;
     this.activeZone = filterVal;
@@ -470,26 +470,29 @@ export class LineMarkerMappingComponent {
                       this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
                     }
                   }
-
-                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                  this.db.object(dbPath).update(data);
-
-                  dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                  this.db.object(dbPath).remove();
-                  index = index + 1;
-                  this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
-
                 });
               }
-              else {
-                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                this.db.object(dbPath).update(data);
-
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                this.db.object(dbPath).remove();
-                index = index + 1;
-                this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+              if (data["revisitKey"] != null) {
+                let revisitKey = data["revisitKey"];
+                let dbPathPre = "EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom + "/" + revisitKey;
+                let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
+                  revisitInstance.unsubscribe();
+                  if (revisitData != null) {
+                    let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
+                    this.db.object(dbPath).update(revisitData);
+                    this.db.object(dbPathPre).remove();
+                  }
+                });
               }
+
+              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+              this.db.object(dbPath).update(data);
+
+              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+              this.db.object(dbPath).remove();
+              index = index + 1;
+              this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+              
             }).catch((error) => {
               index = index + 1;
               failureCount = failureCount + 1;
