@@ -244,16 +244,16 @@ border: 1px solid lightgray;
 display: flex;
 justify-content: center;
 align-items: center;
-margin-bottom: 20px;
+margin-bottom: 30px;
 cursor: pointer;
 transition: 0.3s ease-out;
 transition-duration: 0.3s;
 border-radius: 10px;
-margin-left: 0px !important;
+/* margin-left: 0px !important;
 margin-right: 0px !important;
-margin: 20px !important
+margin: 20px !important */
 }
-.login-box i{
+/* .login-box i{
 font-size:20px!important;
 background: #8080802e;
 padding: 15px;
@@ -261,7 +261,79 @@ border-radius: 50%;
 width: 55px;
 height: 55px;
 color: #000;
-}
+} */
+#bhiwadiBox img{
+    width: 75px;
+    }
+    #gwaliorBox img{
+      width: 95px;
+    }
+    #jaipurGreaterBox img{
+      width: 72px;
+    }
+    #jaisalmerBox img{
+      width: 74px;
+    }
+    #niwaiBox img{
+      width: 75px;
+    }
+    #salasarBox img {
+      width: 68px;
+    }
+    #sikarBox img {
+      width: 75px;
+    }
+    #shahpuraBox img{ 
+      width: 73px;
+    }
+    #jaipurBox img{
+      width: 75px;
+    }
+    #churuBox img{
+      width: 75px;
+    }
+    #kishangarhBox img{
+      width: 75px;
+    }
+    #reengusBox img{
+      width: 75px;
+    }
+    #behrorBox img{
+      width: 75px;
+    }
+    #chhaparBox img{
+      width: 75px;
+    }
+    #wevoisBox img{
+      width: 70px;
+    }
+    #jaipurOfficeBox img{
+      width: 75px;
+    }
+    #tonkBox img{
+      width: 75px;
+    }
+    #jaipurMalviyanagarBox img{
+      width: 75px;
+    }
+    #jaipurMurlipuraBox img{
+    width: 75px;
+    }
+    #jaipurJagatpuraBox img{
+      width: 75px;
+    }
+    #jaipurJhotwaraBox img{
+      width: 75px;
+    }
+    #jaipurMansarovarBox img {
+      width: 75px;
+    }
+    #jaipurSanganerBox img{
+      width: 75px;
+    }
+    #jaipurVidhyadharBox img {
+      width: 75px;
+    }
 .login-box p{
 font-size:14px!important;
 text-align: center;
@@ -389,8 +461,6 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     padding: 20px !important;
     display: unset !important;
 }
-
-
 @media (min-width:500px){
     .login-body{
       height: unset !important;
@@ -399,7 +469,8 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     }
     .row2{
         background-color: #fff;
-        padding-bottom: 20px !important;
+        /* padding-bottom: 20px !important; */
+        
     }
     .container {
         max-width: 100%;
@@ -415,6 +486,8 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   }
   .login-container{
     top: 40% !important;
+    /* max-width: 900px; */
+    /* left: 72%; */
   }
   .modal.show .modal-dialog {
     transform: none;
@@ -426,9 +499,95 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
    
   }
+  @media (min-width: 1070px){
+ 
+    .row2{
+           background-color: #fff;
+            min-width: 912px !important ;
+        
+    }
+    .login-container{
+        min-width: 912px !important ; 
+    }
+
+}
+@media (max-width: 576px){
+    .login-container{
+       transform: translate(-50%, -20%)
+    }
+
+}
+@media (max-width: 575.60px){
+  .login-container{
+       transform: translate(-28%, -18%);
+  }
+
+}
+@media (max-width: 498px){
+  .login-container{
+   
+     transform: translate(-40%, -18%);
+  }
+
+}
+@media (max-width: 447px){
+  .login-container{
+      
+     transform: translate(-46%, -18%);
+  }
+
+}
+@media (max-width: 426px){
+  .login-container{
+    
+     transform: translate(-49%, -18%);
+  }
+
+}
+@media (max-width: 409px){
+  .login-container{
+    
+    transform: translate(-23%, -10%);
+  }
+
+}
+@media (max-width: 345px){
+  .login-container{
+    
+    transform: translate(-40%, -10%);
+  }
+
+}
+@media (max-width: 300px){
+  .login-container{
+    
+    transform: translate(-47%, -10%);
+  }
+
+}
+@media (max-width: 283px){
+  .login-container{
+    
+    transform: translate(-50%, -10%);
+  }
+
+}
+@media (max-width: 270px){
+  .login-container{
+    
+    top: 50%;
+    height: auto;
+
+  }
+
+}
+
+
+
+
 @media (min-width:576px) and (max-width:767px){
     .login-container{
-        min-width: 100% !important;
+        /* min-width: 100% !important; */
     }
     
      .modal-dialog {
@@ -449,7 +608,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
   @media (min-width:411px) and (max-width:576px){
     .login-container{
-       top: 108% !important;
+       top: 52% !important;
        height: unset !important;
     }
     .modal-dialog {
@@ -472,9 +631,9 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
         margin: auto !important;
     }
   }
-  @media (min-width:270px) and (max-width:411px){
+  @media (min-width:270px) and (max-width:413px){
     .login-container{
-       top: 172% !important;
+       top: 50% !important;
        height: unset !important;
     }
     .modal-dialog {
@@ -491,7 +650,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
         border: none;
     }
     .close-icon button{
-        margin-top: -80px !important;
+        /* margin-top: 80px !important; */
     }
     .modal-dialog{
         margin: auto !important;
@@ -500,12 +659,23 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
   @media (min-width:412px) and (max-width:413px){
     .login-container{
-        top: 100% !important;
+        /* top: 100% !important; */
         height: unset !important;
      }
   }
 
-
+  /* @media screen and (max-width: 576px){
+    .modal{
+        left: 70px !important;
+    }
+  } */
+    
+  /* @media screen and (min-width: 575px){
+    .modal-dialog{
+        left: 70px !important;
+    }
+ 
+  } */
 
 
 
