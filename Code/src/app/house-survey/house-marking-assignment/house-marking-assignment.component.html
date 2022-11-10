@@ -105,7 +105,14 @@
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br> Surveyed
+                                    <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br> Cards
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col text-center extra-class">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> {{houseData.totalHouses}}</span> <br> Houses
                                 </h3>
                             </div>
                         </div>
@@ -117,7 +124,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="col text-center extra-class">
+                        <div class="col text-center extra-class" style="display:none;">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalRFID}}</span> <br> RFID not matched
@@ -137,10 +144,13 @@
                                             <table class="table table2">
                                                 <thead>
                                                     <th class="date-tableheading">Date</th>
-                                                    <th class="border-right Surveyed-tableheading">Surveyed
+                                                    <th class="border-right Surveyed-tableheading">Cards
+                                                    </th>
+                                                    <th class="border-right Surveyed-tableheading">Houses
                                                     </th>
                                                     <th class="border-right Revisit-tableheading">Revisit</th>
-                                                    <th class="border-right RFID-tableheading">RFID not matched
+                                                    <th class="border-right Revisit-tableheading">Complex(s)</th>
+                                                    <th class="border-right RFID-tableheading" style="display: none;">RFID not matched
                                                     </th>
                                                 </thead>
                                                 <tbody>
@@ -151,9 +161,15 @@
                                                             <span [hidden]="data.surveyed!=null">-</span> {{data.surveyed}}
                                                         </td>
                                                         <td class="border-right table-data2">
-                                                            <span [hidden]="data.revisit!=null">-</span> {{data.revisit}}
+                                                            <span [hidden]="data.houses!=undefind">-</span> {{data.houses}}
                                                         </td>
                                                         <td class="border-right table-data2">
+                                                            <span [hidden]="data.revisit!=null">-</span> {{data.revisit}}
+                                                        </td>
+                                                        <td class="text-right table-data2">
+                                                            <span [hidden]="data.complex!=0">-</span><span [hidden]="data.complex==0"> {{data.complex}} ({{data.houseHold}})</span>
+                                                        </td>
+                                                        <td class="border-right table-data2" style="display: none;">
                                                             <span [hidden]="data.rfid!=null">-</span> {{data.rfid}}
                                                         </td>
                                                     </tr>

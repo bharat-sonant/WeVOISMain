@@ -14,92 +14,120 @@
             </div>
         </div>
         <div class="row row2" style="display: flex; justify-content: center;">
-            <div id="behrorBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('behror');">
+            <div id="behrorBox" class="  login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('behror');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Behror
+                    <img src="../../assets/images/Behror logo.png" alt=""> <br> Behror
                 </p>
             </div>
-            <div id="bhiwadiBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('bhiwadi');">
+            <div id="bhiwadiBox" class="  login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('bhiwadi');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Bhiwadi
+                    <img src="../../assets/images/bhiwadi logo-3.png" alt=""> <br> Bhiwadi
                 </p>
             </div>
-            <div id="chhaparBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('chhapar');">
+            <div id="chhaparBox" class="  login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('chhapar');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Chhapar
+                    <img src="../../assets/images/chhapar.png" alt=""> <br> Chhapar
                 </p>
             </div>
-            <div id="churuBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('churu');">
+            <div id="churuBox" class=" login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('churu');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Churu
+                    <img src="../../assets/images/churu logo.png" alt=""> <br> churu
+                </p>
+            </div>
+            <div id="gwaliorBox" class="login-box " style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('gwalior');">
+                <p>
+                    <img src="../../../assets/images/GMC-Logo.png" alt=""> <br> Gwalior
+                </p>
+            </div>
+            <div id="jaipurBox" class="login-box" style="padding: 10px; margin-right: 30px;"
+                (click)="openCityModel(contentCity);">
+                <p>
+                    <img src="../../../assets/images/jaipur icon.png" alt=""> <br> Jaipur D2D
                 </p>
             </div>
 
-            <div id="gwaliorBox" class="login-box Shahpura-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('gwalior');">
+
+            <!-- <div id="jaipurBox" class="login-box"   (click)="openCityModel('contentCity');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Gwalior
+                    <img src="../../../assets/images/jaipur icon.png" alt=""> <br> Jaipur 
+                </p>
+            </div> -->
+            <div id="jaipurGreaterBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('jaipur-greater');">
+                <p>
+                    <img src="../../../assets/images/jaipur greater .png" alt=""><br> Jaipur Greater
                 </p>
             </div>
-            <div id="jaipurBox" class="login-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="openCityModel(contentCity);">
+            <div id="jaisalmerBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('jaisalmer');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur D2D
+                    <img src="../../../assets/images/jaisalmer.png" alt=""> <br> Jaisalmer
                 </p>
             </div>
-            <div id="jaipurGreaterBox" class="login-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-greater');">
+            <div id="kishangarhBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('kishangarh');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Greater
+                    <img src="../../../assets/images/kishangarh logo.png" alt=""> <br> Kishangarh
                 </p>
             </div>
-            <div id="jaisalmerBox" style="display:none;" class="login-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaisalmer');">
+            <div id="niwaiBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('niwai');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaisalmer
+                    <img src="../../../assets/images/niwai logo.png" alt=""> <br> Niwai
                 </p>
             </div>
-            <div id="kishangarhBox" class="login-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('kishangarh');">
+            <div id="reengusBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('reengus');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Kishangarh
+                    <img src="../../../assets/images/reengus logo.png" alt=""> <br> Reengus
                 </p>
             </div>
-            <div id="niwaiBox" class="login-box" style="margin-bottom: 30px!important;cursor: pointer; margin-right: 60px; display: none;" (click)="changeCity('niwai');">
+            <div id="salasarBox" class="login-box" style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('salasar');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Niwai
+                    <img src="../../../assets/images/salasar balaji logo.png" alt=""> <br> Salasar Balaji
                 </p>
             </div>
-            <div id="reengusBox" class="login-box" style="margin-bottom: 30px!important;margin-left: -30px;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('reengus');">
+            <div id="sikarBox" class="login-box " style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('sikar');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Reengus
+                    <img src="../../../assets/images/sikar logo_2x2.png" alt=""><br> Sikar
                 </p>
             </div>
-            <div id="salasarBox" class="login-box" style=" margin-bottom: 30px; cursor: pointer;  margin-right: 30px;  display: none;" (click)="changeCity('salasar');">
+            <div id="shahpuraBox" class="login-box " style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('shahpura');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Salasar Balaji
+                    <img src="../../../assets/images/shahapura.png" alt=""><br> Shahpura
                 </p>
             </div>
-            <div id="sikarBox" class="login-box active-box" style=" margin-bottom: 30px; cursor: pointer; margin-right: 30px; display: none;margin-top: 0px; " (click)="changeCity('sikar');">
+            <div id="tonkBox" class="login-box " style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('tonk');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sikar
+                    <img src="../../../assets/images/tonk logo.png" alt=""> <br> Tonk
                 </p>
             </div>
-            <div id="shahpuraBox" class="login-box Shahpura-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;margin-top: 0px;" (click)="changeCity('shahpura');">
+            <div id="wevoisBox" class="login-box " style="display: none;padding: 10px; margin-right: 30px;"
+                (click)="changeCity('wevois-others');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Shahpura
+                    <img src="../../../assets/images/wevois other logo.png" alt=""> <br> WeVOIS-Others
                 </p>
             </div>
-            <div id="tonkBox" class="login-box Shahpura-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;margin-top: 0px;" (click)="changeCity('tonk');">
+            <div id="jaipurOfficeBox" class="login-box " style="display: none; padding: 10px; margin-right: 30px;"
+                (click)="changeCity('jaipur-office');">
                 <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Tonk
+                    <img src="../../../assets/images/wevois office.png" alt=""> <br> Jaipur Office
                 </p>
             </div>
-            <div id="wevoisBox" class="login-box Shahpura-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none; margin-top: 0px;" (click)="changeCity('wevois-others');">
-                <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> WeVOIS-Others
-                </p>
-            </div>
-            <div id="jaipurOfficeBox" class="login-box jaipurofficebox" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px;  margin-top: 0px; display: none; " (click)="changeCity('jaipur-office');">
-                <p>
-                    <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Office
-                </p>
-            </div>
+
+
+
+
+
             <!-- <div class="ram" id="jaipurOfficeBox" style="margin-bottom: 0px!important; cursor: pointer;  margin-right: 30px;  display:; margin-top: 0px; " (click)="changeCity('jaipur-office');">
                 <p>
                     <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jaipur Office
@@ -131,39 +159,60 @@
 
                             <div class="login-body login-body2">
                                 <div class="row row2" style="display: flex; justify-content: center;">
-                                    <div id="jaipurJagatpuraBox" class="login-box active-box" style="cursor: pointer; margin-right: 30px; display: none; " (click)="changeCity('jaipur-jagatpura');">
+                                    <div id="jaipurJagatpuraBox" class="login-box active-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-jagatpura');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jagatpura
+                                            <img src="../../../assets/images/jagatpura .logo.png" alt=""> <br>
+                                            Jagatpura
                                         </p>
                                     </div>
-                                    <div id="jaipurJhotwaraBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-jhotwara');">
+                                    <div id="jaipurJhotwaraBox" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-jhotwara');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Jhotwara
+                                            <img src="../../../assets/images/jhotwara.logo.png" alt=""><br>
+                                            Jhotwara
                                         </p>
                                     </div>
-                                    <div id="jaipurMalviyanagarBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-malviyanagar');">
+                                    <div id="jaipurMalviyanagarBox" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-malviyanagar');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Malviyanagar
+                                            <img src="../../../assets/images/malviyanagar. logo.png" alt=""> <br>
+                                            Malviyanagar
                                         </p>
                                     </div>
-                                    <div id="jaipurMansarovarBox" style="display:none;" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-mansarovar');">
+                                    <div id="jaipurMansarovarBox" style="display:none;" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-mansarovar');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Mansarovar
+                                            <img src="../../../assets/images/mansarovar.logo.png" alt="">  <br>
+                                            Mansarovar
                                         </p>
                                     </div>
-                                    <div id="jaipurMurlipuraBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-murlipura');">
+                                    <div id="jaipurMurlipuraBox" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-murlipura');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Murlipura
+                                            <img src="../../../assets/images/murlipura .logo.png" alt=""> <br>
+                                            Murlipura
                                         </p>
                                     </div>
-                                    <div id="jaipurSanganerBox" class="login-box" style="margin-bottom: 0px!important;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-sanganer');">
+                                    <div id="jaipurSanganerBox" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-sanganer');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Sanganer
+                                            <img src="../../../assets/images/sanganer.logo.png" alt=""> <br>
+                                            Sanganer
                                         </p>
                                     </div>
-                                    <div id="jaipurVidhyadharBox" class="login-box" style="margin-bottom: 0px!important;margin-left: 0px;cursor: pointer; margin-right: 30px; display: none;" (click)="changeCity('jaipur-vidhyadhar');">
+                                    <div id="jaipurVidhyadharBox" class="login-box"
+                                    style="display: none; padding: 10px; margin-right: 30px;"
+                                        (click)="changeCity('jaipur-vidhyadhar');">
                                         <p>
-                                            <i class="fas fa-city" style="margin-right: 5px !important;"></i> <br> Vidhyadhar
+                                            <img src="../../../assets/images/Vidhyadhar.logo.png" alt=""> <br>
+                                            Vidhyadhar
                                         </p>
                                     </div>
                                 </div>
