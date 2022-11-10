@@ -36,6 +36,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   houseData: houseDatail = {
     totalMarking: "0",
     totalSurveyed: "0",
+    totalHouses:"0",
     totalRevisit: "0",
     totalRFID: "0",
     name: "",
@@ -74,6 +75,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
     this.houseData.totalMarking = "0";
     this.houseData.totalSurveyed = "0";
+    this.houseData.totalHouses="0";
     this.houseData.totalRevisit = "0";
     this.houseData.totalRFID = "0";
     this.houseData.average = "0";
@@ -85,10 +87,130 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.houseData.name = userDetail.name;
       this.houseData.wardNo = userDetail.wardNo;
       this.getSurveyCount(userId);
+      this.getHousesCount(userId);
+      this.getComplexCount(userId);
       this.getRevisitCount(userId);
+      this.getHouseHoldCount(userId);
       this.getRfidCount(userId);
     }
   }
+
+  getHousesCount(userId: any) {  
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyHouseWithComplexCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    if (detail.houses != null) {
+                      detail.houses = Number(detail.houses) + count;
+                    }
+                    else {
+                      detail.houses = count;
+                    }
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, houses: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
+  
+  getComplexCount(userId: any) {  
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyComplexCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    if (detail.complex != null) {
+                      detail.complex = Number(detail.complex) + count;
+                    }
+                    else {
+                      detail.complex = count;
+                    }
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, complex: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
+  
+  getHouseHoldCount(userId: any) {  
+    if (this.zoneList.length > 0) {
+      for (let i = 0; i < this.zoneList.length; i++) {
+        let dbPath = "EntitySurveyData/DailyHouseHoldCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
+        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            houseCountInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let j = 0; j < keyArray.length; j++) {
+                  let date = keyArray[j];
+                  let count = Number(data[date]);
+                  let detail = this.lineMarkerList.find(item => item.date == date);
+                  if (detail != undefined) {
+                    if (detail.houseHold != null) {
+                      detail.houseHold = Number(detail.houseHold) + count;
+                    }
+                    else {
+                      detail.houseHold = count;
+                    }
+                  }
+                  else {
+                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
+                    this.lineMarkerList.push({ date: date, houseHold: count, dateOrder: dateOrder });
+                  }
+                }
+                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                  b.dateOrder > a.dateOrder ? 1 : -1
+                );
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
 
   getSurveyCount(userId: any) {
     if (this.zoneList.length > 0) {
@@ -208,6 +330,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       let surved = 0;
       let revisit = 0;
       let rfid = 0;
+      let houses=0;
       for (let i = 0; i < this.lineMarkerList.length; i++) {
         if (this.lineMarkerList[i]["surveyed"] != null) {
           surved = surved + Number(this.lineMarkerList[i]["surveyed"]);
@@ -218,6 +341,10 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         if (this.lineMarkerList[i]["rfid"] != null) {
           rfid = rfid + Number(this.lineMarkerList[i]["rfid"]);
         }
+        if (this.lineMarkerList[i]["houses"] != null) {
+          houses = houses + Number(this.lineMarkerList[i]["houses"]);
+        }
+        this.houseData.totalHouses=houses.toString();
         this.houseData.totalSurveyed = surved.toString();
         this.houseData.totalRevisit = revisit.toString();
         this.houseData.totalRFID = rfid.toString();
@@ -496,6 +623,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 export class houseDatail {
   totalMarking: string;
   totalSurveyed: string;
+  totalHouses:string;
   totalRevisit: string;
   totalRFID: string;
   name: string;

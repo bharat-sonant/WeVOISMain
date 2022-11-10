@@ -97,7 +97,6 @@ export class WardSurveySummaryComponent implements OnInit {
   updateCounts(index: any) {
     if (index == this.wardList.length) {
       setTimeout(() => {
-        //console.log(this.employeeSurvey);
       }, 2000);
       $(this.divLoaderCounts).hide();
       this.getWardProgressList();
@@ -199,8 +198,6 @@ export class WardSurveySummaryComponent implements OnInit {
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
-                let surveyorId = cardObj[cardNo]["surveyorId"];
-                let surveyDate = cardObj[cardNo]["createdDate"].split(' ')[0];
                 let surveyHouseCount = 1;
                 let surveyComplexCount = 0;
                 let surveyComplexHouseCount = 1;
@@ -229,17 +226,6 @@ export class WardSurveySummaryComponent implements OnInit {
                 else {
                   houseCount++;
                   totalHouseCount++;
-                }
-                if (surveyorId == "78") {
-                  let employeeSurveyDetail = this.employeeSurvey.find(item => item.surveyorId == surveyorId && item.surveyDate == surveyDate);
-                  if (employeeSurveyDetail != undefined) {
-                    employeeSurveyDetail.surveyHouseCount = employeeSurveyDetail.surveyHouseCount + surveyHouseCount;
-                    employeeSurveyDetail.surveyComplexCount = employeeSurveyDetail.surveyComplexCount + surveyComplexCount;
-                    employeeSurveyDetail.surveyComplexHouseCount = employeeSurveyDetail.surveyComplexHouseCount + surveyComplexHouseCount;
-                  }
-                  else {
-                    this.employeeSurvey.push({ line: line, zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, surveyHouseCount: surveyHouseCount, surveyComplexCount: surveyComplexCount, surveyComplexHouseCount: surveyComplexHouseCount });
-                  }
                 }
               }
               let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
