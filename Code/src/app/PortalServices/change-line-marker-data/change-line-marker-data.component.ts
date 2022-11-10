@@ -135,25 +135,30 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                       this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
                     }
                   }
-                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                  this.db.object(dbPath).update(data);
 
-                  dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                  this.db.object(dbPath).remove();
-                  index = index + 1;
-                  this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
                 });
 
               }
-              else {
-                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                this.db.object(dbPath).update(data);
-
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                this.db.object(dbPath).remove();
-                index = index + 1;
-                this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+              if (data["revisitKey"] != null) {
+                let revisitKey = data["revisitKey"];
+                let dbPathPre = "EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom + "/" + revisitKey;
+                let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
+                  revisitInstance.unsubscribe();
+                  if (revisitData != null) {
+                    let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
+                    this.db.object(dbPath).update(revisitData);
+                    this.db.object(dbPathPre).remove();
+                  }
+                });
               }
+
+              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
+              this.db.object(dbPath).update(data);
+
+              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
+              this.db.object(dbPath).remove();
+              index = index + 1;
+              this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             }).catch((error) => {
               index = index + 1;
               failureCount = failureCount + 1;
@@ -188,7 +193,8 @@ export class ChangeLineMarkerDataComponent implements OnInit {
           if (keyArray.length > 0) {
             let zoneMarkerCount = 0;
             let zoneAlreadyInstalledCount = 0;
-            let totalSurveyed=0;
+            let totalSurveyed = 0;
+            let totalRevisit = 0;
             for (let i = 0; i < keyArray.length; i++) {
               let markerCount = 0;
               let surveyedCount = 0;
@@ -207,10 +213,11 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                   zoneMarkerCount = zoneMarkerCount + 1;
                   if (lineData[markerNo]["cardNumber"] != null) {
                     surveyedCount = surveyedCount + 1;
-                    totalSurveyed=totalSurveyed+1;
+                    totalSurveyed = totalSurveyed + 1;
                   }
                   else if (lineData[markerNo]["revisitKey"] != null) {
                     revisitCount = revisitCount + 1;
+                    totalRevisit = totalRevisit + 1;
                   }
                   else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
                     rfIdNotFound = rfIdNotFound + 1;
@@ -230,8 +237,10 @@ export class ChangeLineMarkerDataComponent implements OnInit {
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
-            dbPath="EntitySurveyData/TotalHouseCount/"+zoneNo;
-            this.db.object(dbPath).set(totalSurveyed.toString());   
+            dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
+            this.db.object(dbPath).set(totalSurveyed.toString());
+            dbPath = "EntitySurveyData/TotalRevisitRequest/" + zoneNo;
+            this.db.object(dbPath).set(totalRevisit.toString());
           }
           if (type == "totalCount") {
             this.commonService.setAlertMessage("success", "Marker counts updated !!!")
