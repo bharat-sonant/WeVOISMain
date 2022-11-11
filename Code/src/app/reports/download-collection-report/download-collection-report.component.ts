@@ -124,6 +124,13 @@ export class DownloadCollectionReportComponent {
       return;
     }
 
+    
+    this.reportData.driverName="--";
+    this.reportData.helperName="--";
+    this.reportData.reportDate="--";
+    this.reportData.vehicleNo="--";
+    this.reportData.zoneName="--";
+
     this.skipCount = 0;
     this.completeCount = 0;
     this.totalLineCount = 0;
@@ -292,7 +299,7 @@ export class DownloadCollectionReportComponent {
           }
         }
         this.reportData.helperName = helperName != "" ? helperName : "Not Assigned";
-        this.reportData.vehicleNo = workerData != null ? workerData["vehicle"] : "Not Assigned";
+        this.reportData.vehicleNo = workerData["vehicle"] != null ? workerData["vehicle"] : "Not Assigned";
         this.reportData.zoneName = this.selectedZoneName;
         this.reportData.reportDate = this.selectedDate;
         this.drawChart();
