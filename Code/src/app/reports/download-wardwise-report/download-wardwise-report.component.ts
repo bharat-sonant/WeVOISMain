@@ -53,6 +53,7 @@ export class DownloadWardwiseReportComponent {
   mapRefrence: any;
   wardTotalLines: any;
   txtDate = "#txtDate";
+  divLoader="#divLoader";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -109,6 +110,7 @@ export class DownloadWardwiseReportComponent {
     }
     $("#divProgress").show();
     this.progressDisplayText = "Progress";
+    $(this.divLoader).show();
     this.createReport();
   }
 
@@ -432,6 +434,7 @@ export class DownloadWardwiseReportComponent {
       }
     }
     pdf.save(this.selectedZoneName + "[ " + this.selectedDate + "]");
+    $(this.divLoader).hide();
   }
 }
 

@@ -47,6 +47,7 @@ export class DownloadCollectionReportComponent {
   cityName: any;
   wardTotalLines: any;
   txtDate = "#txtDate";
+  divLoader="#divLoader";
   reportData: ReportData = {
     zoneName: "--",
     reportDate: "--",
@@ -113,6 +114,7 @@ export class DownloadCollectionReportComponent {
 
     $("#divProgress").show();
     this.progressDisplayText = "Progress";
+    $(this.divLoader).show();
     this.createReport(this.wardIndex);
   }
 
@@ -425,6 +427,7 @@ export class DownloadCollectionReportComponent {
     }
 
     pdf.save("Report [" + this.selectedDate + "]");
+    $(this.divLoader).hide();
   }
 }
 
