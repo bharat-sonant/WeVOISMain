@@ -4786,13 +4786,11 @@ body {
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -74%);
   transition-duration: 0.5s;
 }
 
-.row1{
-  border-bottom: 1px solid rgb(233, 233, 233);
-}
+
 .login-header {
   padding: 20px 40px;
   background-color: #fff;
@@ -4819,14 +4817,7 @@ font-size: 18px;
   align-items: center;
   height: 250px;
 }
-.welcome-text{
-  margin: 0px;
-  font-size: 28px;
-  font-family: 'montserrat', sans-serif;
-  color: #0ba118;
-  padding-bottom: 10px;
-  font-weight: 700;
-}
+
 .login p{
   margin: 0px;
   font-size: 18px;
@@ -4853,7 +4844,7 @@ font-size: 18px;
 }
 .login-box{
   height: 120px;
-  width: 160px;
+  width: 140px;
   border: 1px solid lightgray;
   display: flex;
   justify-content: center;
@@ -4864,93 +4855,87 @@ font-size: 18px;
   border-radius: 10px;
   
 }
-// .login-box i{
-//   font-size:20px !important;
-//   background: #8080802e;
-//   padding: 15px;
-//   border-radius: 50%;
-//   width: 55px;
-//   height: 55px;
-// }
+
 #bhiwadiBox img{
-width: 75px;
+width: 70px;
 }
 #gwaliorBox img{
-  width: 95px;
+  width: 90px;
 }
 #jaipurGreaterBox img{
-  width: 72px;
+  width: 67px;
 }
 #jaisalmerBox img{
-  width: 74px;
+  width: 69px;
 }
 #niwaiBox img{
-  width: 75px;
-}
-#salasarBox img {
-  width: 68px;
-}
-#sikarBox img {
-  width: 75px;
-}
-#shahpuraBox img{ 
-  width: 73px;
-}
-#jaipurBox img{
-  width: 75px;
-}
-#churuBox img{
-  width: 75px;
-}
-#kishangarhBox img{
-  width: 75px;
-}
-#reengusBox img{
-  width: 75px;
-}
-#behrorBox img{
-  width: 75px;
-}
-#chhaparBox img{
-  width: 75px;
-}
-#wevoisBox img{
   width: 70px;
 }
+#salasarBox img {
+  width: 69px;
+}
+#sikarBox img {
+  width: 68px;
+}
+#shahpuraBox img{ 
+  width: 67px;
+}
+#jaipurBox img{
+  width: 70px;
+}
+#churuBox img{
+  width: 70px;
+}
+#kishangarhBox img{
+  width: 70px;
+}
+#reengusBox img{
+  width: 70px;
+}
+#behrorBox img{
+  width: 70px;
+}
+#chhaparBox img{
+  width: 70px;
+}
+#wevoisBox img{
+  width: 65px;
+}
 #jaipurOfficeBox img{
-  width: 75px;
+  width: 70px;
 }
 #tonkBox img{
-  width: 75px;
+  width: 70px;
 }
 #jaipurMalviyanagarBox img{
-  width: 75px;
+  width: 70px;
 }
 #jaipurMurlipuraBox img{
-width: 75px;
+width: 70px;
 }
 #jaipurJagatpuraBox img{
-  width: 75px;
+  width: 70px;
 }
 #jaipurJhotwaraBox img{
-  width: 75px;
+  width: 70px;
 }
 #jaipurMansarovarBox img {
-  width: 75px;
+  width: 70px;
 }
 #jaipurSanganerBox img{
-  width: 75px;
+  width: 70px;
 }
 #jaipurVidhyadharBox img {
-  width: 75px;
+  width: 70px;
 }
 .login-box p{
   font-size:14px!important;
   text-align: center;
-  letter-spacing: 2.5px;
-  line-height: 20px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  line-height: 27px;
   margin-right: -5px!important;
-  padding: 0px!important;
+  padding-top: 10px !important;
   transition: 0.3s ease-out;
 }
 .login-box:hover p{
@@ -5024,7 +5009,7 @@ p{
     max-width: 100% !important;
    }
    .login-header2{
-    padding: 0px !important;
+    padding:0px !important;
   }
   .close2{
     margin-top: -60px;
@@ -5100,11 +5085,7 @@ p{
     transform: translate(-50%, -50%) !important;
   }
 }
-// @media (max-width:270px) {
-//   .login-container2{
-//     transform: translate(-52%, -55%) !important;
-//   }
-// }
+
 
 
 
@@ -5112,8 +5093,7 @@ p{
 @media (min-width:950px){
   .login-container2{
    max-width: 100% !important;
-// width: auto;
-// height: auto;
+
   }
   .close2{
     margin-top: 0px !important;
@@ -5121,13 +5101,21 @@ p{
     }
     .extra-container{
       max-width: 967px !important;
-      top: 45% !important;
+      // top: % !important;
+      
     }
     .login-body2{
       margin-top: 30px !important;
     }
     
     
+}
+@media (max-width:1512px) {
+  .extra-container{
+    transform: translate(-50%, -50%)
+    
+  }
+  
 }
 
 
@@ -5150,7 +5138,7 @@ p{
   margin-right: 5px !important;
 }
 .jaipur-p{
-  padding-top: 5px;
+  padding-top: 16px;
 }
 .login-body-iner{
   display: flex; 
@@ -5219,30 +5207,4 @@ p{
     
   }
 }
-// @media (max-width: 768px){
-//   // .login p{
-//   //   margin: -73px 0px;
-    
-//   // }
-// }
-// @media (max-width: 571px){
-//   .login-box{
-//     margin-left: 0px !important;
-//     margin-right: 35px !important;
-    
-//   }
-// }
-// @media (max-width: 391px){
-//   .login-box{
-//    margin-top: 0px !important;
-//    margin-bottom: 30px !important;
-//   }
-//   #wevoisBox{
-//     margin-top: 30px !important;
 
-//   }
-//   #ram{
-//     margin-top: 30px !important;
-//   }
- 
-// }
