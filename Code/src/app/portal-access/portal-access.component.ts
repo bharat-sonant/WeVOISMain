@@ -48,7 +48,7 @@ export class PortalAccessComponent implements OnInit {
         $("#jaisalmerBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
-        $("#salasarBox").show();
+        // $("#salasarBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
@@ -95,7 +95,7 @@ export class PortalAccessComponent implements OnInit {
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 500;
+    let height = 300;
     let width = 767;
 
 
@@ -104,7 +104,7 @@ export class PortalAccessComponent implements OnInit {
 
     if (windowwidth >= 1350) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "15%");
 
     } else if (windowwidth <= 1349 && windowwidth >= 1201) {
       width = 767;
@@ -132,23 +132,23 @@ export class PortalAccessComponent implements OnInit {
 
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("div .modal-dialog-centered").css("margin-top", "50px");
 
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "jaipur-jagatpura") {
-        $("#jaipurJagatpuraBox").show();
+        // $("#jaipurJagatpuraBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-jhotwara") {
-        $("#jaipurJhotwaraBox").show();
+        // $("#jaipurJhotwaraBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-malviyanagar") {
         $("#jaipurMalviyanagarBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-mansarovar") {
-        $("#jaipurMansarovarBox").show();
+        // $("#jaipurMansarovarBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-murlipura") {
         $("#jaipurMurlipuraBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-sanganer") {
-        $("#jaipurSanganerBox").show();
+        // $("#jaipurSanganerBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
-        $("#jaipurVidhyadharBox").show();
+        // $("#jaipurVidhyadharBox").show();
       }
     }
   }

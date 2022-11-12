@@ -181,7 +181,7 @@ transition-duration: 0.5s;
 .login-header {
 padding: 10px 40px;
 background-color: #fff;
-border-bottom: 1px solid rgb(233, 233, 233);
+/* border-bottom: 1px solid rgb(233, 233, 233); */
 border-top-left-radius: 10px;
 border-top-right-radius: 10px;
 }
@@ -239,7 +239,7 @@ transition-timing-function: ease-out;
 }
 .login-box{
 height: 120px;
-width: 150px!important;
+width: 140px!important;
 border: 1px solid lightgray;
 display: flex;
 justify-content: center;
@@ -263,84 +263,85 @@ height: 55px;
 color: #000;
 } */
 #bhiwadiBox img{
-    width: 75px;
-    }
-    #gwaliorBox img{
-      width: 95px;
-    }
-    #jaipurGreaterBox img{
-      width: 72px;
-    }
-    #jaisalmerBox img{
-      width: 74px;
-    }
-    #niwaiBox img{
-      width: 75px;
-    }
-    #salasarBox img {
-      width: 68px;
-    }
-    #sikarBox img {
-      width: 75px;
-    }
-    #shahpuraBox img{ 
-      width: 73px;
-    }
-    #jaipurBox img{
-      width: 75px;
-    }
-    #churuBox img{
-      width: 75px;
-    }
-    #kishangarhBox img{
-      width: 75px;
-    }
-    #reengusBox img{
-      width: 75px;
-    }
-    #behrorBox img{
-      width: 75px;
-    }
-    #chhaparBox img{
-      width: 75px;
-    }
-    #wevoisBox img{
-      width: 70px;
-    }
-    #jaipurOfficeBox img{
-      width: 75px;
-    }
-    #tonkBox img{
-      width: 75px;
-    }
-    #jaipurMalviyanagarBox img{
-      width: 75px;
-    }
-    #jaipurMurlipuraBox img{
-    width: 75px;
-    }
-    #jaipurJagatpuraBox img{
-      width: 75px;
-    }
-    #jaipurJhotwaraBox img{
-      width: 75px;
-    }
-    #jaipurMansarovarBox img {
-      width: 75px;
-    }
-    #jaipurSanganerBox img{
-      width: 75px;
-    }
-    #jaipurVidhyadharBox img {
-      width: 75px;
-    }
+  width: 70px;
+  }
+  #gwaliorBox img{
+    width: 90px;
+  }
+  #jaipurGreaterBox img{
+    width: 67px;
+  }
+  #jaisalmerBox img{
+    width: 69px;
+  }
+  #niwaiBox img{
+    width: 70px;
+  }
+  #salasarBox img {
+    width: 69px;
+  }
+  #sikarBox img {
+    width: 68px;
+  }
+  #shahpuraBox img{ 
+    width: 67px;
+  }
+  #jaipurBox img{
+    width: 70px;
+  }
+  #churuBox img{
+    width: 70px;
+  }
+  #kishangarhBox img{
+    width: 70px;
+  }
+  #reengusBox img{
+    width: 70px;
+  }
+  #behrorBox img{
+    width: 70px;
+  }
+  #chhaparBox img{
+    width: 70px;
+  }
+  #wevoisBox img{
+    width: 65px;
+  }
+  #jaipurOfficeBox img{
+    width: 70px;
+  }
+  #tonkBox img{
+    width: 70px;
+  }
+  #jaipurMalviyanagarBox img{
+    width: 70px;
+  }
+  #jaipurMurlipuraBox img{
+  width: 70px;
+  }
+  #jaipurJagatpuraBox img{
+    width: 70px;
+  }
+  #jaipurJhotwaraBox img{
+    width: 70px;
+  }
+  #jaipurMansarovarBox img {
+    width: 70px;
+  }
+  #jaipurSanganerBox img{
+    width: 70px;
+  }
+  #jaipurVidhyadharBox img {
+    width: 70px;
+  }
 .login-box p{
 font-size:14px!important;
 text-align: center;
-letter-spacing: 2.5px;
-line-height: 20px;
+letter-spacing: 0.5px;
+line-height: 27px;
+font-weight: 500;
 margin-right: -5px!important;
-padding: 0px!important;
+padding-top: 10px!important;
 transition: 0.3s ease-out;
 }
 .login-box:hover{
