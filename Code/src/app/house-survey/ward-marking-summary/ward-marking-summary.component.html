@@ -247,7 +247,7 @@
                     <div style="text-align: left; margin-bottom: 20px;">
                         <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
                             <i class="fa-solid fa-a" style="color:green; font-size: 14px; "></i>pprove
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
+                        </span> <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;" ></i>eject
                         </span> <span style="cursor: pointer;" [hidden]="dt.status!=''" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-trash-can" style="color:red; font-size: 14px;"></i>

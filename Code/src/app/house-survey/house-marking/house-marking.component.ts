@@ -283,7 +283,7 @@ export class HouseMarkingComponent {
                 isApprove = data[index]["isApprove"];
               }
               if (data[index]["status"] != null) {
-                status = data[index]["status"];
+               // status = data[index]["status"];
               }
               if (data[index]["cardNumber"] != null) {
                 cardNumber = data[index]["cardNumber"];
