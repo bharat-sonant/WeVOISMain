@@ -115,7 +115,7 @@ export class ScanCardStatusComponent implements OnInit {
         }
         setTimeout(() => {
           this.getScanCardStatus();
-        }, 3000);
+        }, 6000);
       })
   }
 
