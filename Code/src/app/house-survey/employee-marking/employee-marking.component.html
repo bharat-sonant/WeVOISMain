@@ -1,15 +1,13 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-2 no-gutters-iner">
-            <button type="button" class="user-button no-gutters-btn"
-                (click)="openModel(contentEmployee,0,'add');">
+            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
                 <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
                     NEW</span></button>
 
         </div>
         <div class="col-md-8 Surveyor-box">
-            Manage Surveyor
-            [For Marking]
+            Manage Surveyor [For Marking]
         </div>
         <div class="col-md-2"></div>
     </div>
@@ -23,8 +21,7 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="table-wrapper table-one">
-                                    <table class="table table-one-iner"
-                                        >
+                                    <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-head1">S.No.</th>
                                             <th class="table-head2">Name</th>
@@ -32,14 +29,11 @@
                                             </th>
                                             <th class="text-right table-head4">
                                                 Assigned</th>
-                                            <th class="text-right table-head5"
-                                               >
+                                            <th class="text-right table-head5">
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
-                                                 class="{{data.trClass}}"
-                                                (click)="getMarkerDetail(data.empId, data.wardNo,i);">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}" (click)="getMarkerDetail(data.empId, data.wardNo,i);">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
@@ -70,8 +64,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center"
-                                >
+                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center">
                                 <div class="form-group">
                                     <h5>No data available</h5>
                                 </div>
@@ -96,32 +89,28 @@
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalMarking}}</span><br />
-                                    Total Marker
+                                    <span class="tbl-points"> {{markerData.totalMarking}}</span><br /> Total Marker
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalDays}}</span><br />
-                                    Working Days
+                                    <span class="tbl-points"> {{markerData.totalDays}}</span><br /> Working Days
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.average}}</span><br />
-                                    Avg. Per Day
+                                    <span class="tbl-points"> {{markerData.average}}</span><br /> Avg. Per Day
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading current-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />
-                                    Current Ward Marking
+                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br /> Current Ward Marking
                                 </h3>
                             </div>
                         </div>
@@ -132,20 +121,17 @@
                                 <div class="row">
                                     <div class="col-md-12 pr-1 table-outer">
                                         <div class="table-wrapper table-scroll table-scroll-2">
-                                            <table class="table table-scroll-iner"
-                                                >
+                                            <table class="table table-scroll-iner">
                                                 <thead>
                                                     <th class="table-heading-1">Date</th>
-                                                    <th class="text-right table-heading-2"
-                                                        >
+                                                    <th class="text-right table-heading-2">
                                                         Markers</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of markerList; let i=index">
                                                         <td class="date-details">
                                                             {{data.date}}</td>
-                                                        <td class="text-right markers-details"
-                                                            >
+                                                        <td class="text-right markers-details">
                                                             {{data.markers}}</td>
                                                     </tr>
 
@@ -154,8 +140,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center"
-                                        >
+                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -169,21 +154,18 @@
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
                                         <div class="table-wrapper table-scroll table-main">
-                                            <table class="table table-main-iner"
-                                                >
+                                            <table class="table table-main-iner">
                                                 <thead>
                                                     <th class="ward-heading">Ward No.
                                                     </th>
-                                                    <th class="text-right markers-heading"
-                                                        >
+                                                    <th class="text-right markers-heading">
                                                         Markers</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of markerWardList; let i=index">
                                                         <td class="ward-data">
                                                             {{data.wardNo}}</td>
-                                                        <td class="text-right markers-data"
-                                                            >
+                                                        <td class="text-right markers-data">
                                                             {{data.markers}}</td>
                                                     </tr>
 
@@ -191,8 +173,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main"
-                                        >
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -213,8 +194,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you
-                    sure you want to remove assignment ?</h5>
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -260,8 +240,7 @@
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
-                    (click)="saveWard();" />
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT" (click)="saveWard();" />
             </div>
         </div>
     </div>
@@ -302,11 +281,10 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input class="active-input" type="checkbox" id="chkAcive"> Is Active
+                    <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                    (click)="saveEmployee();" />
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveEmployee();" />
             </div>
         </div>
     </div>
