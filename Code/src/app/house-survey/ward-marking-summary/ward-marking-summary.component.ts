@@ -555,7 +555,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               }
 
               if (data[index]["status"] != null) {
-                status = data[index]["status"];
+                //status = data[index]["status"];
               }
               if (data[index]["isApprove"] != null) {
                 isApprove = data[index]["isApprove"];
