@@ -118,6 +118,7 @@ import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
+import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 
 @NgModule({
   imports: [
@@ -240,7 +241,8 @@ import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping
     RolesComponent,
     RolePageAccessComponent,
     MapsComponent,
-    CardMarkerMappingComponent
+    CardMarkerMappingComponent,
+    ScanCardStatusComponent
   ]
 })
 
