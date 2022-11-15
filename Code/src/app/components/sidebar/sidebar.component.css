@@ -241,7 +241,7 @@ transition-timing-function: ease-out;
 height: 120px;
 width: 140px!important;
 border: 1px solid lightgray;
-display: flex;
+/* display: flex; */
 justify-content: center;
 align-items: center;
 margin-bottom: 30px;
@@ -253,111 +253,36 @@ border-radius: 10px;
 margin-right: 0px !important;
 margin: 20px !important */
 }
-/* .login-box i{
-font-size:20px!important;
-background: #8080802e;
-padding: 15px;
-border-radius: 50%;
-width: 55px;
-height: 55px;
-color: #000;
-} */
-#bhiwadiBox img{
-  width: 70px;
-  }
-  #gwaliorBox img{
-    width: 90px;
-  }
-  #jaipurGreaterBox img{
-    width: 67px;
-  }
-  #jaisalmerBox img{
-    width: 69px;
-  }
-  #niwaiBox img{
-    width: 70px;
-  }
-  #salasarBox img {
-    width: 69px;
-  }
-  #sikarBox img {
-    width: 68px;
-  }
-  #shahpuraBox img{ 
-    width: 67px;
-  }
-  #jaipurBox img{
-    width: 70px;
-  }
-  #churuBox img{
-    width: 70px;
-  }
-  #kishangarhBox img{
-    width: 70px;
-  }
-  #reengusBox img{
-    width: 70px;
-  }
-  #behrorBox img{
-    width: 70px;
-  }
-  #chhaparBox img{
-    width: 70px;
-  }
-  #wevoisBox img{
-    width: 65px;
-  }
-  #jaipurOfficeBox img{
-    width: 70px;
-  }
-  #tonkBox img{
-    width: 70px;
-  }
-  #jaipurMalviyanagarBox img{
-    width: 70px;
-  }
-  #jaipurMurlipuraBox img{
-  width: 70px;
-  }
-  #jaipurJagatpuraBox img{
-    width: 70px;
-  }
-  #jaipurJhotwaraBox img{
-    width: 70px;
-  }
-  #jaipurMansarovarBox img {
-    width: 70px;
-  }
-  #jaipurSanganerBox img{
-    width: 70px;
-  }
-  #jaipurVidhyadharBox img {
-    width: 70px;
-  }
-.login-box p{
-font-size:14px!important;
-text-align: center;
-letter-spacing: 0.5px;
-line-height: 27px;
-font-weight: 500;
-margin-right: -5px!important;
-padding-top: 10px!important;
-transition: 0.3s ease-out;
+
+.login-box img {
+  width: 60px;
+  overflow: hidden;
+  transition: 0.3s;
+  margin-left: 25px;
+  padding-top: 18px
+
+  
 }
-.login-box:hover{
-transform: translateY(-8px);
+  .login-box p{
+    font-size: 11px !important;
+    text-align: center;
+    letter-spacing: 0.5px;
+background-color: lightgrey;
+    font-weight: 600;
+    line-height: 17px;
+    padding: 8px;
+    width: 140px;
+    margin-top: 11px;
+    margin-left: -13px;
+    transition: 0.3s ease-out;
+    border-radius: 0px 0px 10px 10px;
+  }
+.login-box:hover img{
+transform: scale(1.1);
 }
-.active-box{
-background-color: #0ba118!important;
-color: #fff!important;
-}
-.active-box p{
-color: #fff!important;
-}
-.active-box i{
-background: #fff!important;
-color: #0ba118!important;
-}
+
+
+
 .login-box a{
 color:#000;
 text-decoration: none;
@@ -508,7 +433,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
         
     }
     .login-container{
-        min-width: 912px !important ; 
+        min-width: 1048px !important ; 
     }
 
 }
@@ -651,7 +576,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
         border: none;
     }
     .close-icon button{
-        /* margin-top: 80px !important; */
+        margin-top: -69px !important;
     }
     .modal-dialog{
         margin: auto !important;
@@ -677,6 +602,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     }
  
   } */
+
 
 
 
