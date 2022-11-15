@@ -188,8 +188,11 @@
         <div class="row iner-main">
             <div class="col-md-8 iner-main2">
                 <span class="timer-class"> Total timer <b> {{progressData.totalTimer}} min</b></span>
+                <i class="fa-solid fa-file-export" style="color:green; cursor: pointer;" (click)="exportTimeTaken();"></i>
+
             </div>
             <div class="col-md-4 image-div">
+
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
             </div>
         </div>

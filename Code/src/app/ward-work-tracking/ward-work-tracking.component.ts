@@ -729,6 +729,34 @@ export class WardWorkTrackingComponent {
     }
   }
 
+  exportTimeTaken() {
+    if (this.zoneLineList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Line No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Time (min)";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.zoneLineList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.zoneLineList[i]["lineNo"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneLineList[i]["actualCoveredTime"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "<table>";
+      let fileName="TimeAtLine-Report ["+this.selectedZone+"] ["+this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]+" "+"].xlsx";
+      this.commonService.exportExcel(htmlString,fileName);
+    }
+  }
+
   getLineActualCoveredTime(lineNo: any) {
     let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineData) => {
