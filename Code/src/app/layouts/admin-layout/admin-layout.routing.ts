@@ -111,6 +111,7 @@ import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
+import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -352,6 +353,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/roles', component: RolesComponent },
     { path: 'sikar/:id/maps', component: MapsComponent },
     { path: 'sikar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'sikar/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-greater
@@ -465,6 +467,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/role-page-access/:id', component: RolePageAccessComponent },
+
+    
 
     
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
@@ -581,6 +585,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/roles', component: RolesComponent },
     { path: 'jaipur-greater/:id/maps', component: MapsComponent },
     { path: 'jaipur-greater/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-greater/:id/scan-card-status', component: ScanCardStatusComponent },
     
 
     //reengus
@@ -814,6 +819,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/roles', component: RolesComponent },
     { path: 'reengus/:id/maps', component: MapsComponent },
     { path: 'reengus/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'reengus/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -1046,6 +1052,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/roles', component: RolesComponent },
     { path: 'shahpura/:id/maps', component: MapsComponent },
     { path: 'shahpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'shahpura/:id/scan-card-status', component: ScanCardStatusComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1276,6 +1283,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/roles', component: RolesComponent },
     { path: 'test/:id/maps', component: MapsComponent },
     { path: 'test/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'test/:id/scan-card-status', component: ScanCardStatusComponent },
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
@@ -1506,6 +1514,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/roles', component: RolesComponent },
     { path: 'jaipur-office/:id/maps', component: MapsComponent },
     { path: 'jaipur-office/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-office/:id/scan-card-status', component: ScanCardStatusComponent },
 
     
 
@@ -1738,6 +1747,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/roles', component: RolesComponent },
     { path: 'kishangarh/:id/maps', component: MapsComponent },
     { path: 'kishangarh/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'kishangarh/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -1971,6 +1981,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/roles', component: RolesComponent },
     { path: 'niwai/:id/maps', component: MapsComponent },
     { path: 'niwai/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'niwai/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -2203,6 +2214,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/roles', component: RolesComponent },
     { path: 'jaisalmer/:id/maps', component: MapsComponent },
     { path: 'jaisalmer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaisalmer/:id/scan-card-status', component: ScanCardStatusComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2433,6 +2445,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/roles', component: RolesComponent },
     { path: 'salasar/:id/maps', component: MapsComponent },
     { path: 'salasar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'salasar/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -2665,6 +2678,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/roles', component: RolesComponent },
     { path: 'behror/:id/maps', component: MapsComponent },
     { path: 'behror/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'behror/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur
@@ -2895,6 +2909,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/roles', component: RolesComponent },
     { path: 'jaipur/:id/maps', component: MapsComponent },
     { path: 'jaipur/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-jhotwara
@@ -3125,6 +3140,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/roles', component: RolesComponent },
     { path: 'jaipur-jhotwara/:id/maps', component: MapsComponent },
     { path: 'jaipur-jhotwara/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-jhotwara/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-jagatpura
@@ -3355,6 +3371,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/roles', component: RolesComponent },
     { path: 'jaipur-jagatpura/:id/maps', component: MapsComponent },
     { path: 'jaipur-jagatpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-jagatpura/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-malviyanagar
@@ -3585,6 +3602,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/roles', component: RolesComponent },
     { path: 'jaipur-malviyanagar/:id/maps', component: MapsComponent },
     { path: 'jaipur-malviyanagar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-malviyanagar/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-mansarovar
@@ -3815,6 +3833,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/roles', component: RolesComponent },
     { path: 'jaipur-mansarovar/:id/maps', component: MapsComponent },
     { path: 'jaipur-mansarovar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-mansarovar/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-murlipura
@@ -4045,6 +4064,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/roles', component: RolesComponent },
     { path: 'jaipur-murlipura/:id/maps', component: MapsComponent },
     { path: 'jaipur-murlipura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-murlipura/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-sanganer
@@ -4275,6 +4295,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/roles', component: RolesComponent },
     { path: 'jaipur-sanganer/:id/maps', component: MapsComponent },
     { path: 'jaipur-sanganer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-sanganer/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     //jaipur-vidhyadhar
@@ -4505,6 +4526,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/roles', component: RolesComponent },
     { path: 'jaipur-vidhyadhar/:id/maps', component: MapsComponent },
     { path: 'jaipur-vidhyadhar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'jaipur-vidhyadhar/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -4736,6 +4758,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/roles', component: RolesComponent },
     { path: 'bhiwadi/:id/maps', component: MapsComponent },
     { path: 'bhiwadi/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'bhiwadi/:id/scan-card-status', component: ScanCardStatusComponent },
 
     
 
@@ -4967,6 +4990,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/roles', component: RolesComponent },
     { path: 'chhapar/:id/maps', component: MapsComponent },
     { path: 'chhapar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'chhapar/:id/scan-card-status', component: ScanCardStatusComponent },
 
     
 
@@ -5198,6 +5222,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/roles', component: RolesComponent },
     { path: 'churu/:id/maps', component: MapsComponent },
     { path: 'churu/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'churu/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
 
@@ -5431,6 +5456,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id/roles', component: RolesComponent },
     { path: 'wevois-others/:id/maps', component: MapsComponent },
     { path: 'wevois-others/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'wevois-others/:id/scan-card-status', component: ScanCardStatusComponent },
 
 
     
@@ -5664,11 +5690,12 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/roles', component: RolesComponent },
     { path: 'gwalior/:id/maps', component: MapsComponent },
     { path: 'gwalior/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'gwalior/:id/scan-card-status', component: ScanCardStatusComponent },
 
     
 
 
-    //Bhiwadi
+    //Tonk
     { path: 'tonk/home', component: HomeComponent },
     { path: 'tonk/account-detail', component: AccountDetailComponent },
     { path: 'tonk/change-password', component: ChangePasswordComponent },
@@ -5896,6 +5923,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/roles', component: RolesComponent },
     { path: 'tonk/:id/maps', component: MapsComponent },
     { path: 'tonk/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: 'tonk/:id/scan-card-status', component: ScanCardStatusComponent },
 
     
 
