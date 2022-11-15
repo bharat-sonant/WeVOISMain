@@ -469,6 +469,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/role-page-access/:id', component: RolePageAccessComponent },
 
     
+
+    
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
     { path: 'jaipur-greater/:id/dashboard', component: DashboardComponent },
     { path: 'jaipur-greater/:id/notifications', component: NotificationsComponent },

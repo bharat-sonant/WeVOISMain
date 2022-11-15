@@ -120,6 +120,8 @@ import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 
+
+
 @NgModule({
   imports: [
     CommonModule,
