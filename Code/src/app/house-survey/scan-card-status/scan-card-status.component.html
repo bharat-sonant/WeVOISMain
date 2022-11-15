@@ -17,12 +17,24 @@
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div id="divByEmployee" class="row">
-                        <div class="col-md-12">
-                            <input id="txtSearch" type="text" class="filter-select filter-input" style="width:300px" autocomplete="off" placeholder="Enter Card Serial No." (keyup)="getScanCardFilteredData();">
-                            <span style="float: right;">
-                            <i class="fas fa-redo-alt refresh" aria-hidden="true" (click)="getScanCardData();"></i><br/> Last update date : {{lastUpdateDate}}
-                        </span>
+
+                        <div class="col-md-4">
+                            <input id="txtSearch" type="text" class="filter-select filter-input" autocomplete="off" placeholder="Enter Card Serial No." (keyup)="getScanCardFilteredData();">
                         </div>
+                        <div class="col-md-2">
+                            {{summaryData.installed}}<br/>
+                            <b>Installed</b>
+                        </div>
+                        <div class="col-md-2">
+                            {{summaryData.unInstalled}}<br/>
+                            <b>Un-Installed</b>
+                        </div>
+                        <div class="col-md-4">
+
+                            <i class="fas fa-redo-alt refresh" aria-hidden="true" (click)="getScanCardData();"></i><br /> Last update date : {{summaryData.date}}
+
+                        </div>
+
                     </div>
                 </div>
                 <div class="card-body">
