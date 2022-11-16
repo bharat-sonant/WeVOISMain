@@ -10,7 +10,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5 card-outer">
+        <div class="col-md-7 card-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
@@ -21,15 +21,15 @@
                         <div class="col-md-4">
                             <input id="txtSearch" type="text" class="filter-select filter-input" autocomplete="off" placeholder="Enter Card Serial No." (keyup)="getScanCardFilteredData();">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 "style="text-align:center">
                             {{summaryData.installed}}<br/>
                             <b>Installed</b>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" style="text-align:center">
                             {{summaryData.unInstalled}}<br/>
                             <b>Un-Installed</b>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 " style="text-align: end; margin: -8px;">
 
                             <i class="fas fa-redo-alt refresh" aria-hidden="true" (click)="getScanCardData();"></i><br /> Last update date : {{summaryData.date}}
 
