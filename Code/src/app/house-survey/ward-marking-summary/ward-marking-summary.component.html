@@ -24,6 +24,10 @@
                     <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
                     <h6>Export Entity Types</h6>
                 </div>
+                <div class="float-first fix-home-iner">
+                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="openExportMarkerData(contentExportMarkers);"></i><br>
+                    <h6>Export Markers</h6>
+                </div>
             </div>
         </div>
     </div>
@@ -297,3 +301,34 @@
     </div>
 </ng-template>
 <!--House Type End-->
+
+<!--Export Markers Start-->
+<ng-template #contentExportMarkers>
+    <div class="img-close-outer">
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+    </div>
+    <div class="modal-body content-scroll-outer">
+        <div id="divHouseType">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Export Markers</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-12">
+                    <select id="ddlZone" class="caret-select-vehicle">
+                        <option *ngFor="let dt of wardList" value={{dt.zoneNo}}>
+                            {{dt.zoneNo}}
+                        </option>
+                    </select>
+
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="exportMarkers();">
+                        Export</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="closeModel();" style="text-transform: uppercase;">
+                        Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Export Markers End-->

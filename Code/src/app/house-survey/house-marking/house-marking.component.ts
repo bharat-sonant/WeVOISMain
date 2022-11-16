@@ -89,7 +89,7 @@ export class HouseMarkingComponent {
         for (let i = 1; i < keyArray.length; i++) {
           let id = keyArray[i];
           let houseType = data[id]["name"].toString().split("(")[0];
-          this.houseTypeList.push({ id: id, houseType: houseType });
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
         }
       }
     });
@@ -109,7 +109,7 @@ export class HouseMarkingComponent {
       return;
     }
     $(this.divLoader).show();
-    (<HTMLInputElement>document.getElementById("chkAll")).checked=false;
+    (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
@@ -192,15 +192,12 @@ export class HouseMarkingComponent {
               let lat = data[index]["latLng"].split(",")[0];
               let lng = data[index]["latLng"].split(",")[1];
               let type = data[index]["houseType"];
-              let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-              let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-                houseInstance.unsubscribe();
-                if (data != null) {
-                  let houseType = data.toString().split("(")[0];
-                  let markerURL = this.getMarkerIcon(type);
-                  this.setMarker(lat, lng, markerURL, houseType, "", "marker", lineNo, "", index);
-                }
-              });
+              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+              if (houseTypeDetail != undefined) {
+                let houseType = houseTypeDetail.houseType;
+                let markerURL = this.getMarkerIcon(type);
+                this.setMarker(lat, lng, markerURL, houseType, "", "marker", lineNo, "", index);
+              }
             }
           }
         }
@@ -283,7 +280,7 @@ export class HouseMarkingComponent {
                 isApprove = data[index]["isApprove"];
               }
               if (data[index]["status"] != null) {
-               // status = data[index]["status"];
+                // status = data[index]["status"];
               }
               if (data[index]["cardNumber"] != null) {
                 cardNumber = data[index]["cardNumber"];
@@ -354,6 +351,17 @@ export class HouseMarkingComponent {
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
         detail.type = houseTypeDetail.houseType;
+        if (detail.cardNumber != "") {
+          let cardType = "";
+          if (houseTypeDetail.entityType == "residential") {
+            cardType = "आवासीय"
+          }
+          else {
+            cardType = "व्यावसायिक";
+          }
+          let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo + "/" + detail.cardNumber;
+          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType });
+        }
       }
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + index;
       this.db.object(dbPath).update({ houseType: houseTypeId });
@@ -457,7 +465,7 @@ export class HouseMarkingComponent {
           }
           let newMarkerList = [];
           if (this.markerList.length > 0) {
-            newMarkerList=this.markerList.filter(item=>item.index!=markerNo);
+            newMarkerList = this.markerList.filter(item => item.index != markerNo);
             this.markerList = newMarkerList;
           }
 

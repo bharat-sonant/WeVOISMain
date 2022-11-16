@@ -32,6 +32,7 @@ export class WardSurveySummaryComponent implements OnInit {
   divEntityList = "#divEntityList";
   divLoaderMain = "#divLoaderMain";
   divLoaderCounts = "#divLoaderCounts";
+  ddlZone = "#ddlZone";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -47,6 +48,9 @@ export class WardSurveySummaryComponent implements OnInit {
     wardNameNotCorrect: 0
   };
 
+  markerList: any[] = [];
+  cardHousesList: any[] = [];
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -61,8 +65,6 @@ export class WardSurveySummaryComponent implements OnInit {
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
-
-
   }
 
   showHideAlreadyCardInstalled() {
@@ -94,12 +96,139 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalRevisit = 0;
   }
 
+  openExportHouseData(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divHouseStatus").css("height", divHeight);
+
+  }
+
+
   updateCounts(index: any) {
     if (index == this.wardList.length) {
       setTimeout(() => {
+        $(this.divLoaderCounts).hide();
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Zone";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Longitue";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Latitude";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Type";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < this.markerList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += this.markerList[i]["Zone"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.markerList[i]["Line"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerList[i]["Longitue"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerList[i]["Latitude"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerList[i]["Type"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+
+        // this.commonService.exportExcel(htmlString, "Bhiwadi-Markers.xlsx");
+        if (this.cardHousesList.length > 0) {
+          htmlString = "";
+          htmlString = "<table>";
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += "Zone No";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Line No";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Card No";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Name";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Address";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Card Type";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "LatLng";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Mobile";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "Date";
+          htmlString += "</td>";
+          htmlString += "</tr>";
+          for (let i = 0; i < this.cardHousesList.length; i++) {
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["zoneNo"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["lineNo"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["cardNo"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["name"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["address"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["cardType"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["latLng"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["mobile"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["date"];
+            htmlString += "</td>";
+            htmlString += "</tr>";
+          }
+          htmlString += "<table>";
+          //this.commonService.exportExcel(htmlString, "Bhiwadi-House-Data.xlsx");
+        }
+
+
+        this.getWardProgressList();
+
       }, 2000);
-      $(this.divLoaderCounts).hide();
-      this.getWardProgressList();
+
     }
     else {
       let zoneNo = this.wardList[index]["zoneNo"];
@@ -113,7 +242,7 @@ export class WardSurveySummaryComponent implements OnInit {
               let zoneMarkerCount = 0;
               let zoneAlreadyInstalledCount = 0;
               let totalSurveyed = 0;
-              let totalRevisit=0;
+              let totalRevisit = 0;
               for (let i = 0; i < keyArray.length; i++) {
                 let markerCount = 0;
                 let surveyedCount = 0;
@@ -136,7 +265,7 @@ export class WardSurveySummaryComponent implements OnInit {
                     }
                     else if (lineData[markerNo]["revisitKey"] != null) {
                       revisitCount = revisitCount + 1;
-                      totalRevisit=totalRevisit+1;
+                      totalRevisit = totalRevisit + 1;
                     }
                     else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
                       rfIdNotFound = rfIdNotFound + 1;
@@ -145,6 +274,18 @@ export class WardSurveySummaryComponent implements OnInit {
                       alreadyInstalledCount = alreadyInstalledCount + 1;
                       zoneAlreadyInstalledCount = zoneAlreadyInstalledCount + 1;
                     }
+                    let houseType = "";
+                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
+                    if (detail != undefined) {
+                      houseType = detail.houseType;
+                    }
+                    let lat = "";
+                    let lng = "";
+                    if (lineData[markerNo]["latLng"] != null) {
+                      lat = lineData[markerNo]["latLng"].split(',')[0];
+                      lng = lineData[markerNo]["latLng"].split(',')[1];
+                    }
+                    this.markerList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType });
                   }
                 }
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
@@ -201,6 +342,16 @@ export class WardSurveySummaryComponent implements OnInit {
                 let surveyHouseCount = 1;
                 let surveyComplexCount = 0;
                 let surveyComplexHouseCount = 1;
+                let name = cardObj[cardNo]["name"];
+                let address = cardObj[cardNo]["address"];
+                let cardType = cardObj[cardNo]["cardType"];
+                let latLng = cardObj[cardNo]["latLng"];
+                let mobile = cardObj[cardNo]["mobile"];
+                let date = "";
+                if (cardObj[cardNo]["createdDate"] != null) {
+                  date = cardObj[cardNo]["createdDate"].split(' ')[0];
+                }
+                this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date });
 
 
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
@@ -262,6 +413,148 @@ export class WardSurveySummaryComponent implements OnInit {
         }
         this.getWardSummary(i, wardNo);
       }
+    }
+    this.wardList[0]["zoneNo"] = "--All--";
+  }
+
+  exportCards() {
+    this.cardHousesList = [];
+    $(this.divLoaderMain).show();
+    let zoneNo = $(this.ddlZone).val();
+    if (zoneNo == "--All--") {
+      this.getExportCardData(1, 'All');
+    }
+    else {
+      for (let i = 0; i < this.wardList.length; i++) {
+        if (this.wardList[i]["zoneNo"] == zoneNo) {
+          this.getExportCardData(i, zoneNo);
+          i = this.wardList.length;
+        }
+      }
+    }
+  }
+
+  getExportCardData(index: any, type: any) {
+    if (index == this.wardList.length) {
+      if (this.cardHousesList.length > 0) {
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Zone No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Card No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Address";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Card Type";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "LatLng";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Mobile";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Date";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < this.cardHousesList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["zoneNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["lineNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["address"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["cardType"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["latLng"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["mobile"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["date"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        let fileName = this.commonService.getFireStoreCity() + "-" + type + "-HouseData.xlsx";
+        this.commonService.exportExcel(htmlString, fileName);
+      }
+      $(this.divLoaderMain).hide();
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+        houseData => {
+          houseInstance.unsubscribe();
+          if (houseData != null) {
+            let keyArray = Object.keys(houseData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let line = keyArray[i];
+                let cardObj = houseData[line];
+                let cardKeyArray = Object.keys(cardObj);
+                for (let j = 0; j < cardKeyArray.length; j++) {
+                  let cardNo = cardKeyArray[j];
+                  let name = cardObj[cardNo]["name"];
+                  let address = cardObj[cardNo]["address"];
+                  let cardType = cardObj[cardNo]["cardType"];
+                  let latLng = cardObj[cardNo]["latLng"];
+                  let mobile = cardObj[cardNo]["mobile"];
+                  let date = "";
+                  if (cardObj[cardNo]["createdDate"] != null) {
+                    date = cardObj[cardNo]["createdDate"].split(' ')[0];
+                  }
+                  this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date });
+                }
+              }
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportCardData(index, type);
+            }
+            else {
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportCardData(index, type);
+            }
+          }
+          else {
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
+            }
+            this.getExportCardData(index, type);
+          }
+        }
+      );
     }
   }
 
@@ -824,9 +1117,9 @@ export class WardSurveySummaryComponent implements OnInit {
 
               if (lineData[markerNo]["houseType"] != null) {
                 let houseTypeId = lineData[markerNo]["houseType"];
-               // if (houseTypeId == "19" || houseTypeId == "20") {
-               //   console.log("line no : " + lineNo + " marker no : " + markerNo)
-              //  }
+                // if (houseTypeId == "19" || houseTypeId == "20") {
+                //   console.log("line no : " + lineNo + " marker no : " + markerNo)
+                //  }
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;
