@@ -259,7 +259,7 @@ margin: 20px !important */
   overflow: hidden;
   transition: 0.3s;
   margin-left: 25px;
-  padding-top: 18px
+  padding-top: 15px
 
   
 }
@@ -267,12 +267,12 @@ margin: 20px !important */
     font-size: 11px !important;
     text-align: center;
     letter-spacing: 0.5px;
-background-color: lightgrey;
+    background-color: lightgrey;
     font-weight: 600;
     line-height: 17px;
-    padding: 8px;
+    padding: 4px;
     width: 140px;
-    margin-top: 11px;
+    margin-top: 22px;
     margin-left: -13px;
     transition: 0.3s ease-out;
     border-radius: 0px 0px 10px 10px;
