@@ -13,6 +13,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
   selectedCircle: any;
   selectedZone: any;
+  wardList: any[] = [];
   wardProgressList: any[] = [];
   wardProgressListShow: any[] = [];
   houseTypeList: any[] = [];
@@ -25,6 +26,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   wardLines: any;
   markerList: any[];
   markerDetailList: any[];
+  markerExportList: any[] = [];
   markerData: markerDatail = {
     totalLines: "0",
     totalMarkers: 0,
@@ -43,6 +45,8 @@ export class WardMarkingSummaryComponent implements OnInit {
   deleteAlreadyCard = "#deleteAlreadyCard";
   deleteWardNo = "#deleteWardNo";
   deleteLineNo = "#deleteLineNo";
+  ddlZone = "#ddlZone";
+  divLoaderMain = "#divLoaderMain";
 
   public totalTypeCount: any;
 
@@ -62,29 +66,26 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getHouseType() {
-    let dbPath = "Defaults/FinalHousesType";
-    let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        houseTypeInstance.unsubscribe();
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
-            let id = keyArray[i];
-            let houseType = data[id]["name"].toString().split("(")[0];
-            this.houseTypeList.push({ id: id, houseType: houseType });
-          }
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
         }
       }
-    );
-
+    });
   }
 
   getWards() {
-    let wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
-    if (wardList.length > 0) {
-      for (let i = 0; i < wardList.length; i++) {
-        let wardNo = wardList[i]["zoneNo"];
+    if (this.wardList.length > 0) {
+      for (let i = 0; i < this.wardList.length; i++) {
+        let wardNo = this.wardList[i]["zoneNo"];
         let url = this.cityName + "/13A3/house-marking/" + wardNo;
         this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, status: "", cssClass: "not-start" });
         if (i == 1) {
@@ -98,6 +99,130 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.getWardSummary(i, wardNo);
         }
       }
+    }
+    this.wardList[0]["zoneNo"] = "--All--";
+  }
+
+  exportMarkers() {
+    this.markerExportList = [];
+    $(this.divLoaderMain).show();
+    let zoneNo = $(this.ddlZone).val();
+    if (zoneNo == "--All--") {
+      this.getExportMarkerData(1, 'All');
+    }
+    else {
+      for (let i = 0; i < this.wardList.length; i++) {
+        if (this.wardList[i]["zoneNo"] == zoneNo) {
+          this.getExportMarkerData(i, zoneNo);
+          i = this.wardList.length;
+        }
+      }
+    }
+
+
+  }
+
+  getExportMarkerData(index: any, type: any) {
+    if (index == this.wardList.length) {
+      console.log(this.markerExportList);
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Zone";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Line";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Longitue";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Latitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.markerExportList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Zone"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.markerExportList[i]["Line"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Longitue"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Latitude"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Type"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "<table>";
+      let fileName = this.commonService.getFireStoreCity() + "-" + type + "-MarkersData.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoaderMain).hide();
+
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        markerData => {
+          markerInstance.unsubscribe();
+          if (markerData != null) {
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let markerKeyArray = Object.keys(lineData);
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  if (lineData[markerNo]["houseType"] != null) {
+                    let houseType = "";
+                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
+                    if (detail != undefined) {
+                      houseType = detail.houseType;
+                    }
+                    let lat = "";
+                    let lng = "";
+                    if (lineData[markerNo]["latLng"] != null) {
+                      lat = lineData[markerNo]["latLng"].split(',')[0];
+                      lng = lineData[markerNo]["latLng"].split(',')[1];
+                    }
+                    this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType });
+                  }
+                }
+              }
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
+            }
+            else {
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
+            }
+          }
+          else {
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
+            }
+            this.getExportMarkerData(index, type);
+          }
+        });
     }
   }
 
@@ -547,8 +672,10 @@ export class WardMarkingSummaryComponent implements OnInit {
               let date = data[index]["date"].split(" ")[0];
               let status = "";
               let isApprove = "0";
+              let cardNumber = "";
               if (data[index]["cardNumber"] != null) {
                 status = "Surveyed";
+                cardNumber = data[index]["cardNumber"];
               }
               if (data[index]["revisitKey"] != null) {
                 status = "Revisit";
@@ -565,27 +692,25 @@ export class WardMarkingSummaryComponent implements OnInit {
 
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
-              let dbPath1 = "Defaults/FinalHousesType/" + type + "/name";
-              let houseInstance1 = this.db.object(dbPath1).valueChanges().subscribe((data) => {
-                houseInstance1.unsubscribe();
-                if (data != null) {
-                  let houseType = data.toString().split("(")[0];
-                  this.markerDetailList.push({
-                    wardNo: wardNo,
-                    lineNo: lineNo,
-                    index: index,
-                    alreadyInstalled: alreadyInstalled,
-                    imageName: imageName,
-                    type: houseType,
-                    imageUrl: imageUrl,
-                    status: status,
-                    userId: userId,
-                    date: date,
-                    houseTypeId: type,
-                    isApprove: isApprove
-                  });
-                }
-              });
+              let houseTypeDetail=this.houseTypeList.find(item=>item.id==type);
+              if(houseTypeDetail!=undefined){
+                let houseType = houseTypeDetail.houseType;
+                this.markerDetailList.push({
+                  wardNo: wardNo,
+                  lineNo: lineNo,
+                  index: index,
+                  alreadyInstalled: alreadyInstalled,
+                  imageName: imageName,
+                  type: houseType,
+                  imageUrl: imageUrl,
+                  status: status,
+                  userId: userId,
+                  date: date,
+                  houseTypeId: type,
+                  isApprove: isApprove,
+                  cardNumber: cardNumber
+                });
+              }
             }
           }
         }
@@ -616,6 +741,17 @@ export class WardMarkingSummaryComponent implements OnInit {
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
         detail.type = houseTypeDetail.houseType;
+        if (detail.cardNumber != "") {
+          let cardType="";
+          if(houseTypeDetail.entityType=="residential"){
+            cardType="आवासीय"
+          }
+          else{
+            cardType="व्यावसायिक";
+          }
+          let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + detail.cardNumber;
+          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType });
+        }
       }
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + index;
       this.db.object(dbPath).update({ houseType: houseTypeId });
@@ -634,6 +770,20 @@ export class WardMarkingSummaryComponent implements OnInit {
     $(this.houseLineNo).val("0");
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
+  }
+
+  openExportMarkerData(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divHouseStatus").css("height", divHeight);
+
   }
 
 

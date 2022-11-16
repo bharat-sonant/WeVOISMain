@@ -7,15 +7,15 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-3 no-gutters-iner">
+        <div class="col-md-2 no-gutters-iner">
 
         </div>
-        <div class="col-md-4 Surveyheading">
+        <div class="col-md-3 Surveyheading">
             Ward Survey Summary
         </div>
 
 
-        <div class="col-md-5 text-right total-house fix-home-outer">
+        <div class="col-md-7 text-right total-house fix-home-outer">
             <div class="display" id="popup">
                 <div class="fix-home">
                     <div class="float-first">
@@ -46,6 +46,11 @@
                     <div class="float-first fix-home-iner" style="padding-top: 5px;">
                         <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
                         <h6>Export Entity Types</h6>
+                    </div>
+
+                    <div class="float-first fix-home-iner" style="padding-top: 5px;">
+                        <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="openExportHouseData(contentExportHouses);"></i><br>
+                        <h6>Export Cards</h6>
                     </div>
                 </div>
             </div>
@@ -367,3 +372,39 @@
     </div>
 </ng-template>
 <!--House Type End-->
+
+<!--Export House Start-->
+<ng-template #contentExportHouses>
+    <div class="modal-header">
+        <h5 class="modal-title text-center">
+            Export Cards
+        </h5>
+        <button type="button" class="close" (click)="closeModel();" style="border: none;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
+        <div id="divHouseStatus">
+            <div class="row">
+                <div class="col-md-12">
+                    <select id="ddlZone" class="caret-select-vehicle">
+                        <option *ngFor="let dt of wardList" value={{dt.zoneNo}}>
+                            {{dt.zoneNo}}
+                        </option>
+                    </select>
+
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="exportCards();">
+                        Export</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="closeModel();" style="text-transform: uppercase;">
+                        Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-template>
+<!--Export House End-->

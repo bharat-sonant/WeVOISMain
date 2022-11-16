@@ -42,6 +42,7 @@ export class WardSurveyAnalysisComponent {
   revisitSurveyList: any[];
   revisitLineSurveyList: any[];
   revisitAllSurveyList: any[];
+  houseTypeList: any[] = [];
   revisitMarker: any[];
   preRevisitIndex: any;
   nameList: any[];
@@ -82,9 +83,25 @@ export class WardSurveyAnalysisComponent {
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
     this.selectedZone = 0;
+    this.getHouseType();
     this.showHideAlreadyCardInstalled();
     this.getZones();
     this.getNameList();
+  }
+
+  getHouseType() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
+        }
+      }
+    });
   }
 
   showHideAlreadyCardInstalled() {
@@ -271,7 +288,7 @@ export class WardSurveyAnalysisComponent {
         for (let i = 0; i < data.length - 1; i++) {
           if (data[i]["latLng"] != undefined) {
             if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == false) {
-            this.progressData.totalLineMarkers++;
+              this.progressData.totalLineMarkers++;
             }
             let markerURL = "../assets/img/red-home.png";
             let lat = data[i]["latLng"].split(",")[0];
@@ -413,6 +430,7 @@ export class WardSurveyAnalysisComponent {
     } else if (revisitKey != "") {
       let wardNo = this.selectedZone;
       let progressData = this.progressData;
+      let houseTypeList = this.houseTypeList;
       let db = this.db;
       marker.addListener("click", function () {
         $("#divLoaderRevisit").show();
@@ -426,20 +444,17 @@ export class WardSurveyAnalysisComponent {
             let date = data["date"].split(' ')[0];
             let time = data["date"].split(' ')[1];
             let revisitDate = date.split('-')[2] + " " + CommonService.prototype.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-            let dbPath = "Defaults/FinalHousesType/" + data["houseType"] + "/name";
-            let houseInstance = db.object(dbPath).valueChanges().subscribe((houseData) => {
-              houseInstance.unsubscribe();
-              if (houseData != null) {
-                let houseType = houseData.toString().split("(")[0];
-                $("#divOldCardDetail").hide();
-                $("#divRevisitDetail").show();
-                $("#divCardDetail").hide();
-                progressData.revisitHouseType = houseType;
-                progressData.revisitName = data["name"];
-                progressData.revisitReason = data["reason"];
-                progressData.revisitDate = revisitDate;
-              }
-            });
+            let houseTypeDetail = houseTypeList.find(item => item.id == data["houseType"]);
+            if (houseTypeDetail != undefined) {
+              let houseType = houseTypeDetail.houseType;
+              $("#divOldCardDetail").hide();
+              $("#divRevisitDetail").show();
+              $("#divCardDetail").hide();
+              progressData.revisitHouseType = houseType;
+              progressData.revisitName = data["name"];
+              progressData.revisitReason = data["reason"];
+              progressData.revisitDate = revisitDate;
+            }
           }
         });
       });
@@ -778,26 +793,23 @@ export class WardSurveyAnalysisComponent {
                   imageURL = "../../../assets/img/image-not-found.jpg";
                 }
                 let type = data[index]["houseType"];
-                let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
-                  houseInstance.unsubscribe();
-                  if (houseData != null) {
-                    let houseType = houseData.toString().split("(")[0];
-                    dbPath = "Surveyors/" + surveyorId + "/name";
-                    let surveyorInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      surveyorData => {
-                        surveyorInstance.unsubscribe();
-                        let surveyorName = "";
-                        if (surveyorData != null) {
-                          surveyorName = surveyorData;
-                        }
-                        this.revisitSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                        this.revisitLineSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                        this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
+                let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+                if (houseTypeDetail != undefined) {
+                  let houseType = houseTypeDetail.houseType;
+                  let dbPath = "Surveyors/" + surveyorId + "/name";
+                  let surveyorInstance = this.db.object(dbPath).valueChanges().subscribe(
+                    surveyorData => {
+                      surveyorInstance.unsubscribe();
+                      let surveyorName = "";
+                      if (surveyorData != null) {
+                        surveyorName = surveyorData;
                       }
-                    );
-                  }
-                });
+                      this.revisitSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                      this.revisitLineSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
+                    }
+                  );
+                }
               }
             }
           }
@@ -841,25 +853,22 @@ export class WardSurveyAnalysisComponent {
                     imageURL = "../../../assets/img/image-not-found.jpg";
                   }
                   let type = data[index]["houseType"];
-                  let dbPath = "Defaults/FinalHousesType/" + type + "/name";
-                  let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
-                    houseInstance.unsubscribe();
-                    if (houseData != null) {
-                      let houseType = houseData.toString().split("(")[0];
-                      dbPath = "Surveyors/" + surveyorId + "/name";
-                      let surveyorInstance = this.db.object(dbPath).valueChanges().subscribe(
-                        surveyorData => {
-                          surveyorInstance.unsubscribe();
-                          let surveyorName = "";
-                          if (surveyorData != null) {
-                            surveyorName = surveyorData;
-                          }
-                          this.revisitSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                          this.revisitAllSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                          this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
-                        });
-                    }
-                  });
+                  let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+                  if (houseTypeDetail != undefined) {
+                    let houseType = houseTypeDetail.houseType;
+                    let dbPath = "Surveyors/" + surveyorId + "/name";
+                    let surveyorInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      surveyorData => {
+                        surveyorInstance.unsubscribe();
+                        let surveyorName = "";
+                        if (surveyorData != null) {
+                          surveyorName = surveyorData;
+                        }
+                        this.revisitSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                        this.revisitAllSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
+                        this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit);
+                      });
+                  }
                 }
               }
             }
