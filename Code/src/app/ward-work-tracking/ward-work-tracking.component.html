@@ -5,19 +5,19 @@
     <div class="row no-gutters">
         <div class="col-md-8 inputs-main">
             <button class="btn btn-primary display-class" (click)="setDate('','previous');">
-        << </button>
+                << </button>
             <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value,'current')">
             <button class="btn btn-primary button display-class" (click)="setDate('','next');">
-            >>
-          </button>
+                        >>
+                    </button>
             <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
-            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-              ngSelected="zone.zoneNo == selectedZone?'selected':''">
-              {{zone.zoneName}}
-            </option>
-          </select>&nbsp;&nbsp;
+                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                            {{zone.zoneName}}
+                        </option>
+                    </select>&nbsp;&nbsp;
             <input class="checkbox-input" id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span class="checkbox-span" id="showHouseLabel"> Show
-            Houses</span>
+                        Houses</span>
         </div>
         <div class="col-md-4 text-right total-house">
 
@@ -25,7 +25,7 @@
                 <div id="divNotSacnned" class="float-first float-first2">
                     <i class="fas fa-vr-cardboard" (click)="openModel(contentCardNotScaned,'notScanedImages');"></i>
                     <span class="house"> <span> {{progressData.cardNotScanedImages}}
-            </span></span><br>
+                        </span></span><br>
                     <h6>Card Images</h6>
                 </div>
                 <div id="divTotalHouse" class="float-second float-second2">
@@ -39,8 +39,8 @@
                 </div>
                 <div id="divSetting" class="float-third float-third3">
                     <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo" aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
-            <h6>Settings</h6>
-          </button>
+                        <h6>Settings</h6>
+                    </button>
 
                 </div>
 
@@ -75,9 +75,14 @@
                                         <p> Show Track Route</p>
                                         <input id="chkIsTrackRoute" type="checkbox" (change)="showHideTrackRoute()">
                                     </div>
-                                    <div class="setting-box setting-box5">
+                                    <div class="setting-box setting-box1">
                                         <p> Show Line Details</p>
-                                        <i class="fas fa-eye" (click)="openModel(contentLineDetail,'lineDetail')"> </i>
+                                        <i class="fas fa-eye" style="float: right; margin-top: 12px; margin-right: 20px; cursor: pointer;" (click)="openModel(contentLineDetail,'lineDetail')"> </i>
+                                    </div>
+                                    <div class="setting-box setting-box5">
+                                        <p> Show Line Summary</p>
+                                        <i class="fas fa-eye" (click)="openModel(contentLineSummary,'lineSummary')">
+                                        </i>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +116,8 @@
                     <h5> H </h5>
                 </div>
                 <div class="all-details">
-                    <h6>{{progressData.helperName}} <span [hidden]="progressData.secondHelperName==''"> | {{progressData.secondHelperName}}</span> <br>
+                    <h6>{{progressData.helperName}} <span [hidden]="progressData.secondHelperName==''"> |
+                            {{progressData.secondHelperName}}</span> <br>
                         <p>{{progressData.helperMobile}}</p>
                     </h6>
                 </div>
@@ -234,6 +240,60 @@
 
     </div>
 </ng-template>
+
+
+<ng-template #contentLineSummary>
+    <div class="main">
+        <div class="row iner-main">
+            <div class="col-md-8 iner-main2">
+                <span style="font-size: 10px; font-weight: bold; cursor: pointer;" (click)="exportLineSummary();">
+                    <i class="fa-solid fa-file-export" style="color:green; cursor: pointer;"
+                        (click)="exportTimeTaken();"></i> Export
+                </span>
+            </div>
+            <div class="col-md-4 image-div">
+
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-body modal-body2">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="dth">
+                    <div class="table-bg">
+                        <div id="divLinePopup" class="tableFixHead tableFixHead2">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-left">Line No </th>
+                                        <th scope="col" class="text-right">Length (meter)</th>
+                                        <th scope="col" class="text-right">Time Taken</th>
+                                        <th scope="col" class="text-right">Cards</th>
+                                        <th scope="col" class="text-right">Scan Count</th>
+                                        <th scope="col" class="text-right">Scan %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of lineSummaryList">
+                                        <td class="text-left border-left">{{dt.lineNo}} </td>
+                                        <td class="text-right border-left">{{dt.lineLength}} </td>
+                                        <td class="text-right border-left">{{dt.timeTaken}} </td>
+                                        <td class="text-right border-left">{{dt.houseCount}}</td>
+                                        <td class="text-right border-left">{{dt.scanCount}} </td>
+                                        <td class="text-right border-left">{{dt.scanPercentage}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
 <!--Line Detail Scan End-->
 
 <!--Card Not Scan Start-->
@@ -255,7 +315,7 @@
                     <div class="main-tag">
                         <div class="f-left">
                             <span [hidden]="dt.lineNo==null">
-                <p>Line No. <span class="f-right"> :</span></p>
+                                <p>Line No. <span class="f-right"> :</span></p>
                             <h3> {{dt.lineNo}} </h3><br />
                             </span>
                             <p>Scan Time <span class="f-right"> :</span></p>
@@ -291,11 +351,12 @@
                     <div class="main-tag">
                         <div class="f-left">
                             <p>Line <span class="f-right"> :</span></p>
-                            <h3> {{dt.lineNo}} <i class="far fa-eye eye" (click)="showSkippedMarker(dt.latLng)"></i></h3><br />
+                            <h3> {{dt.lineNo}} <i class="far fa-eye eye" (click)="showSkippedMarker(dt.latLng)"></i>
+                            </h3><br />
                             <p>Reason <span class="f-right"> :</span></p>
                             <h3> {{dt.reason}} </h3><br />
                             <span [hidden]="dt.status==''">
-                <p>Time <span class="f-right"> :</span></p>
+                                <p>Time <span class="f-right"> :</span></p>
                             <h3> {{dt.time}} </h3>
                             </span>
                         </div>
