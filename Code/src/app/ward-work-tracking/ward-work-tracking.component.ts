@@ -699,7 +699,7 @@ export class WardWorkTrackingComponent {
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
     else if (type == "lineSummary") {
-      width = 900;
+      width = 700;
       height = (windowHeight * 90) / 100;
       divHeight = height - 80 + "px";
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
@@ -868,9 +868,6 @@ export class WardWorkTrackingComponent {
         }
       }
     }
-
-
-
   }
 
   getWardLineLengthAndHouses() {
