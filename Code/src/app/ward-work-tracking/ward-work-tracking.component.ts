@@ -26,6 +26,7 @@ export class WardWorkTrackingComponent {
   selectedDate: any;
   cityName: any;
   lines: any[] = [];
+  lineSummaryList: any[];
   polylines = [];
   wardLineNoMarker: any[] = [];
   dustbinMarkerList: any[] = [];
@@ -132,6 +133,7 @@ export class WardWorkTrackingComponent {
     this.setDefaultMap();
     this.getWardForLineWeitage();
   }
+
 
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
@@ -290,7 +292,6 @@ export class WardWorkTrackingComponent {
       if (this.wardLinesDataObj["totalHouseCount"] != null) {
         this.progressData.totalHouses = this.wardLinesDataObj["totalHouseCount"];
       }
-      console.log(this.wardLinesDataObj)
       for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         let houses = [];
@@ -697,6 +698,12 @@ export class WardWorkTrackingComponent {
       divHeight = height - 80 + "px";
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }
+    else if (type == "lineSummary") {
+      width = 900;
+      height = (windowHeight * 90) / 100;
+      divHeight = height - 80 + "px";
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    }
     else if (type == "notScanedImages") {
       width = windowWidth - 300;
       height = (windowHeight * 90) / 100;
@@ -709,6 +716,10 @@ export class WardWorkTrackingComponent {
     if (type == "lineDetail") {
       $("#divLinePopup").css("height", divHeight);
       this.getZoneLineDetail();
+    }
+    else if (type == "lineSummary") {
+      $("#divLinePopup").css("height", divHeight);
+      this.getLineSummary();
     }
     else if (type == "notScanedImages") {
       $("#divNotScanedImages").css("height", divHeight);
@@ -726,6 +737,66 @@ export class WardWorkTrackingComponent {
         this.getWardLineLengthAndHouses();
         this.getMinimumCardToBeScanned();
       }
+    }
+  }
+
+
+  getLineSummary() {
+    for (let i = 0; i < this.lineSummaryList.length; i++) {
+      this.getLineActualCoveredTime(this.lineSummaryList[i]["lineNo"]);
+      this.getScanCardCounts(this.lineSummaryList[i]["lineNo"]);
+    }
+  }
+
+  exportLineSummary(){
+    if (this.lineSummaryList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Line No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Length (meter)";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Time Taken";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cards";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Scan Count";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Scan %";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.lineSummaryList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["lineNo"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["lineLength"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["timeTaken"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["houseCount"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["scanCount"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineSummaryList[i]["scanPercentage"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "<table>";
+      let fileName = "Line-Summary-Report [" + this.selectedZone + "] [" + this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0] + " " + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
     }
   }
 
@@ -752,8 +823,8 @@ export class WardWorkTrackingComponent {
         htmlString += "</tr>";
       }
       htmlString += "<table>";
-      let fileName="TimeAtLine-Report ["+this.selectedZone+"] ["+this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]+" "+"].xlsx";
-      this.commonService.exportExcel(htmlString,fileName);
+      let fileName = "TimeAtLine-Report [" + this.selectedZone + "] [" + this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0] + " " + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
     }
   }
 
@@ -767,9 +838,39 @@ export class WardWorkTrackingComponent {
           if (lineDetail != undefined) {
             lineDetail.actualCoveredTime = this.commonService.timeDifferenceMin(new Date(this.toDayDate + " " + lineData["end-time"]), new Date(this.toDayDate + " " + lineData["start-time"]));
           }
+          lineDetail = this.lineSummaryList.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            lineDetail.timeTaken = this.commonService.timeDifferenceMin(new Date(this.toDayDate + " " + lineData["end-time"]), new Date(this.toDayDate + " " + lineData["start-time"]));
+          }
         }
       }
     });
+  }
+
+  getScanCardCounts(lineNo: any) {
+    let lineDetail = this.lineSummaryList.find(item => item.lineNo == lineNo);
+    if (lineDetail != undefined) {
+      let houses = lineDetail.houses;
+      if (houses.length > 0) {
+        for (let i = 0; i < houses.length; i++) {
+          let cardNo = houses[i]["Basicinfo"]["CardNumber"];
+          let scanCardPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + cardNo + "/scanBy";
+          let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
+            this.instancesList.push({ instances: scanInfoInstance });
+            if (scanBy != undefined) {
+              if (scanBy != "-1") {
+                lineDetail.scanCount = Number(lineDetail.scanCount) + 1;
+                let scanPercentage=((lineDetail.scanCount/lineDetail.houseCount)*100).toFixed(2);
+                lineDetail.scanPercentage=Number(scanPercentage);
+              }
+            }
+          });
+        }
+      }
+    }
+
+
+
   }
 
   getWardLineLengthAndHouses() {
@@ -1095,6 +1196,7 @@ export class WardWorkTrackingComponent {
     $(this.divNotSacnned).hide();
     $(this.divScannedHouses).hide();
     $(this.divTotalHouse).hide();
+
   }
 
   setWardBoundary() {
@@ -1156,6 +1258,7 @@ export class WardWorkTrackingComponent {
     this.clearMapAll();
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
       this.lines = [];
+      this.lineSummaryList = [];
       this.wardLinesDataObj = JSON.parse(linesData);
       let keyArray = Object.keys(this.wardLinesDataObj);
       this.progressData.totalLines = this.wardLinesDataObj["totalLines"];
@@ -1187,6 +1290,7 @@ export class WardWorkTrackingComponent {
           houseCount: houses.length,
           lineStatus: ""
         });
+        this.lineSummaryList.push({ lineNo: lineNo, lineLength: lineLength, houses: houses, houseCount: houses.length, timeTaken: 0, scanCount: 0, scanPercentage: 0 });
         this.plotLineOnMap(lineNo, latLng, i);
       }
       this.setWardStartMarker();
