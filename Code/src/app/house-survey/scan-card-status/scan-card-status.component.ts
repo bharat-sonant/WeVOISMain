@@ -46,8 +46,6 @@ export class ScanCardStatusComponent implements OnInit {
       cityDataInstance.unsubscribe();
       if(cityData!=null){
         let cityList=JSON.parse(JSON.stringify(cityData));
-        console.log(cityList);
-        console.log(this.commonService.getFireStoreCity());
         let detail=cityList.find(item=>item.cityName==this.commonService.getFireStoreCity());
         if(detail!=undefined)
         {
@@ -71,41 +69,10 @@ export class ScanCardStatusComponent implements OnInit {
     let scanCardStatusInstance = this.httpService.get(path).subscribe(scanCardStatusData => {
       scanCardStatusInstance.unsubscribe();
       if (scanCardStatusData != null) {
-
         this.scanCardList=JSON.parse(JSON.stringify(scanCardStatusData));
         this.scanCardList=this.commonService.transformNumeric(this.scanCardList,"serialNo");
         this.summaryData.installed=this.scanCardList.filter(item=>item.cardInstalled=='yes').length;
         this.summaryData.unInstalled=this.scanCardList.filter(item=>item.cardInstalled=='no').length;
-
-
-        /*
-        this.lastUpdateDate = scanCardStatusData["lastUpdate"];
-        
-
-        let keyArray = Object.keys(scanCardStatusData);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let key = keyArray[i];
-            if (key != "lastUpdate") {
-              let cardNo = scanCardStatusData[key]["serialNo"];
-              let serialNo = Number(cardNo.toString().substring(3, cardNo.toString().length));
-              let date = "";
-              let scanDate = "";
-              let cardInstalled = "no";
-              if (scanCardStatusData[key]["scanDate"] != null) {
-                date = scanCardStatusData[key]["scanDate"].split(' ')[0];
-                scanDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0];
-              }
-              if (scanCardStatusData[key]["cardInstalled"] != null) {
-                cardInstalled = scanCardStatusData[key]["cardInstalled"];
-              }
-              this.scanCardList.push({ cardNo: cardNo, scanDate: scanDate, cardInstalled: cardInstalled, serialNo: serialNo });
-              this.scanCardList = this.commonService.transformNumeric(this.scanCardList, 'serialNo');
-            }
-          }
-        }
-
-        */
         this.scanCardFilterList = this.scanCardList;
         this.progressList = this.scanCardFilterList.slice(0, this.rowsProgressListIndex);
         $(this.divLoader).hide();
@@ -178,6 +145,42 @@ export class ScanCardStatusComponent implements OnInit {
           this.getScanCardStatus();
         }, 9000);
       })
+  }
+
+  exportScanCardStatus(){
+    $(this.divLoader).show();
+    if (this.scanCardList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Card No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Scan Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Is Installed";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.scanCardList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.scanCardList[i]["cardNo"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.scanCardList[i]["scanDate"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.scanCardList[i]["cardInstalled"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "<table>";
+      let fileName = "SCan-Card-Report [" + this.commonService.getFireStoreCity() + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoader).hide();
+    }
   }
 
 }

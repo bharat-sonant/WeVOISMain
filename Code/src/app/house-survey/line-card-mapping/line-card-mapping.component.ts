@@ -138,6 +138,7 @@ export class LineCardMappingComponent {
   }
 
   moveToNewLine() {
+
     if ($("#txtNewLine").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter line no.");
       return;
@@ -150,32 +151,129 @@ export class LineCardMappingComponent {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
+    let lineTo = $("#txtNewLine").val();
+    let lineFrom = $('#txtLineNo').val();
+    let lastMarkerKey = 1;
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineTo + "/lastMarkerKey";
+    let lastMarkerKeyInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lastMarkerKeyData => {
+        lastMarkerKeyInstance.unsubscribe();
+        if (lastMarkerKeyData != null) {
+          lastMarkerKey = Number(lastMarkerKeyData) + 1;
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineFrom;
+        let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+          markerData => {
+            let markerList = [];
+            markerInstance.unsubscribe();
+            if (markerData != null) {
+              let keyArray = Object.keys(markerData);
+              for (let i = 0; i < keyArray.length; i++) {
+                let markerNo = keyArray[i];
+                if (markerData[markerNo]["cardNumber"] != null) {
+                  markerList.push({ markerNo: markerNo, cardNumber: markerData[markerNo]["cardNumber"] });
+                }
+              }
+            }
+            this.moveHouseData(0, lineFrom, lineTo, lastMarkerKey, markerList);
+          }
+        );
+      }
+    )
+  }
 
-
-    for (let index = 0; index < this.selectedCardDetails.length; index++) {
+  moveHouseData(index: any, lineFrom: any, lineTo: any, lastMarkerKey: any, markerList: any) {
+    if (index == this.selectedCardDetails.length) {
+      let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineTo;
+      this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+      this.commonService.setAlertMessage("success", "Card moved to Line " + lineTo + " successfully");
+      $("#txtNewLine").val("");
+      this.getLineData();
+    }
+    else {
       let cardNo = this.selectedCardDetails[index]["cardNo"];
       let data = this.selectedCardDetails[index]["data"];
-      data["line"] = $("#txtNewLine").val();
+      data["line"] = lineTo;
+      let latLng = data["latLng"].toString().replace("(", "").replace(")", "");
 
-      this.db.object("Houses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/" + cardNo).set(data);
+      this.db.object("Houses/" + this.selectedZone + "/" + lineTo + "/" + cardNo).set(data);
 
-      let path = "Houses/" + this.selectedZone + "/" + $('#txtLineNo').val() + "/" + cardNo;
+      let path = "Houses/" + this.selectedZone + "/" + lineFrom + "/" + cardNo;
       this.db.object(path).remove();
 
       // modify card ward mapping
-      this.db.object("CardWardMapping/" + data["cardNo"]).set({ line: $("#txtNewLine").val(), ward: this.selectedZone, });
+      this.db.object("CardWardMapping/" + data["cardNo"]).set({ line: lineTo, ward: this.selectedZone, });
 
       if (data["mobile"] != "") {
         // modify house ward mapping
-        this.db.object("HouseWardMapping/" + data["mobile"]).set({ line: $("#txtNewLine").val(), ward: this.selectedZone, });
+        this.db.object("HouseWardMapping/" + data["mobile"]).set({ line: lineTo, ward: this.selectedZone, });
       }
+      if (markerList.length != 0) {
+        let detail = markerList.find(item => item.cardNumber == cardNo);
+        if (detail != undefined) {
+          let markerNo = detail.markerNo;
+          let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineFrom + "/" + markerNo;
+          let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+            markerData => {
+              markerInstance.unsubscribe();
+              if (markerData != null) {
+                let oldImageName = markerData["image"];
+                markerData["image"] = lastMarkerKey + ".jpg";
+                let newImageName = lastMarkerKey + ".jpg";
+                markerData["latLng"] = latLng;
+                const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineFrom + "/" + oldImageName;
+                const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+                ref.getDownloadURL()
+                  .then((url) => {
+                    var xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = (event) => {
+                      var blob = xhr.response;
+                      const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineTo + "/" + newImageName;
+                      const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+                      ref1.put(blob).then((promise) => {
+                        // ref.delete();
 
+                      }
+                      ).catch((error) => {
+
+                      });
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+                  })
+                  .catch((error) => {
+
+                  });
+                let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineTo + "/" + lastMarkerKey;
+                this.db.object(dbPath).update(markerData);
+
+                dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineFrom + "/" + markerNo;
+                this.db.object(dbPath).remove();
+                lastMarkerKey++;
+                index++;
+                this.moveHouseData(index, lineFrom, lineTo, lastMarkerKey, markerList);
+              }
+              else {
+                lastMarkerKey++;
+                index++;
+                this.moveHouseData(index, lineFrom, lineTo, lastMarkerKey, markerList);
+              }
+            }
+          );
+        }
+        else {
+          lastMarkerKey++;
+          index++;
+          this.moveHouseData(index, lineFrom, lineTo, lastMarkerKey, markerList);
+        }
+      }
+      else {
+        lastMarkerKey++;
+        index++;
+        this.moveHouseData(index, lineFrom, lineTo, lastMarkerKey, markerList);
+      }
     }
-    setTimeout(() => {
-      this.commonService.setAlertMessage("success", "Card moved to Line " + $("#txtNewLine").val() + " successfully");
-      $("#txtNewLine").val("");
-      this.getLineData();
-    }, 3000);
   }
 
   getAllLinesFromJson() {
