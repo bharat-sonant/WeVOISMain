@@ -64,7 +64,7 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
-    this.updateCounts(1);
+    this.updateCounts(3);
   }
 
   showHideAlreadyCardInstalled() {
@@ -112,7 +112,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
 
   updateCounts(index: any) {
-    if (index == this.wardList.length) {
+    if (index == 5) {
       setTimeout(() => {
         $(this.divLoaderCounts).hide();
         let htmlString = "";
