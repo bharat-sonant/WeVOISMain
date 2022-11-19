@@ -84,7 +84,7 @@ export class CardMarkerMappingComponent implements OnInit {
       let markerNo = markerKeyArray[markerIndex];
       if (markerData[markerNo]["cardNumber"] != null) {
 
-        console.log("line No => " + lineNo + " ");
+       // console.log("line No => " + lineNo + " ");
         let cardNo = markerData[markerNo]["cardNumber"];
         let dbPath = "CardWardMapping/" + cardNo;
         let cardWardMappingInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -94,8 +94,8 @@ export class CardMarkerMappingComponent implements OnInit {
               let zoneTo = mappingData["ward"];
               let lineTo = mappingData["line"];
               this.movedLineCount = lineNo;
-              console.log("Card Mapping line No => " + lineTo + " ");
-              console.log("Card Mapping ward No => " + zoneTo + " ");
+            //  console.log("Card Mapping line No => " + lineTo + " ");
+            //  console.log("Card Mapping ward No => " + zoneTo + " ");
               let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
               let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
                 houseData => {
@@ -105,7 +105,7 @@ export class CardMarkerMappingComponent implements OnInit {
                     markerData[markerNo]["latLng"] = latLng;
                     markerData[markerNo]["alreadyInstalled"] = null;
                     if (zoneNo == zoneTo && lineNo == lineTo) {
-                      console.log(markerData[markerNo]);
+                     // console.log(markerData[markerNo]);
                       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                       this.db.object(dbPath).update(markerData[markerNo]);
                       markerIndex++;
@@ -123,7 +123,7 @@ export class CardMarkerMappingComponent implements OnInit {
                           let oldImageName = markerData[markerNo]["image"];
                           markerData[markerNo]["image"] = lastMarkerKey + ".jpg";
                           let newImageName = lastMarkerKey + ".jpg";
-                          console.log(markerData[markerNo]);
+                        //  console.log(markerData[markerNo]);
                           const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneNo + "/" + lineNo + "/" + oldImageName;
                           const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
                           ref.getDownloadURL()
@@ -163,7 +163,7 @@ export class CardMarkerMappingComponent implements OnInit {
                     }
                   }
                   else {
-                    console.log("Card house not found => " + cardNo);
+                  //  console.log("Card house not found => " + cardNo);
                     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/cardNumber";
                     this.db.object(dbPath).remove();
                     markerIndex++;
@@ -172,7 +172,7 @@ export class CardMarkerMappingComponent implements OnInit {
                 });
             }
             else {
-              console.log("Card not mapped => " + cardNo);
+             // console.log("Card not mapped => " + cardNo);
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/cardNumber";
               this.db.object(dbPath).remove();
               markerIndex++;
