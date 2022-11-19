@@ -47,9 +47,8 @@ export class WardSurveySummaryComponent implements OnInit {
     wardOldCards: 0,
     wardNameNotCorrect: 0
   };
+  cardHousesList: any[];
 
-  markerList: any[] = [];
-  cardHousesList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -64,7 +63,7 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
-    this.updateCounts(3);
+    this.updateCounts(1);
   }
 
   showHideAlreadyCardInstalled() {
@@ -112,121 +111,10 @@ export class WardSurveySummaryComponent implements OnInit {
 
 
   updateCounts(index: any) {
-    if (index == 5) {
+    if (index == 4) {
       setTimeout(() => {
         $(this.divLoaderCounts).hide();
-        let htmlString = "";
-        htmlString = "<table>";
-        htmlString += "<tr>";
-        htmlString += "<td>";
-        htmlString += "Zone";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Line";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Longitue";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Latitude";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Type";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "</tr>";
-        for (let i = 0; i < this.markerList.length; i++) {
-          htmlString += "<tr>";
-          htmlString += "<td>";
-          htmlString += this.markerList[i]["Zone"];
-          htmlString += "</td>";
-          htmlString += "<td t='s'>";
-          htmlString += this.markerList[i]["Line"];
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += this.markerList[i]["Longitue"];
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += this.markerList[i]["Latitude"];
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += this.markerList[i]["Type"];
-          htmlString += "</td>";
-          htmlString += "</tr>";
-        }
-        htmlString += "<table>";
-
-        // this.commonService.exportExcel(htmlString, "Bhiwadi-Markers.xlsx");
-        if (this.cardHousesList.length > 0) {
-          htmlString = "";
-          htmlString = "<table>";
-          htmlString += "<tr>";
-          htmlString += "<td>";
-          htmlString += "Zone No";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Line No";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Card No";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Name";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Address";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Card Type";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "LatLng";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Mobile";
-          htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += "Date";
-          htmlString += "</td>";
-          htmlString += "</tr>";
-          for (let i = 0; i < this.cardHousesList.length; i++) {
-            htmlString += "<tr>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["zoneNo"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["lineNo"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["cardNo"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["name"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["address"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["cardType"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["latLng"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["mobile"];
-            htmlString += "</td>";
-            htmlString += "<td>";
-            htmlString += this.cardHousesList[i]["date"];
-            htmlString += "</td>";
-            htmlString += "</tr>";
-          }
-          htmlString += "<table>";
-          //this.commonService.exportExcel(htmlString, "Bhiwadi-House-Data.xlsx");
-        }
-
-
         this.getWardProgressList();
-
       }, 2000);
 
     }
@@ -274,18 +162,6 @@ export class WardSurveySummaryComponent implements OnInit {
                       alreadyInstalledCount = alreadyInstalledCount + 1;
                       zoneAlreadyInstalledCount = zoneAlreadyInstalledCount + 1;
                     }
-                    let houseType = "";
-                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
-                    if (detail != undefined) {
-                      houseType = detail.houseType;
-                    }
-                    let lat = "";
-                    let lng = "";
-                    if (lineData[markerNo]["latLng"] != null) {
-                      lat = lineData[markerNo]["latLng"].split(',')[0];
-                      lng = lineData[markerNo]["latLng"].split(',')[1];
-                    }
-                    this.markerList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType });
                   }
                 }
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
@@ -339,38 +215,20 @@ export class WardSurveySummaryComponent implements OnInit {
               let cardKeyArray = Object.keys(cardObj);
               for (let j = 0; j < cardKeyArray.length; j++) {
                 let cardNo = cardKeyArray[j];
-                let surveyHouseCount = 1;
-                let surveyComplexCount = 0;
-                let surveyComplexHouseCount = 1;
-                let name = cardObj[cardNo]["name"];
-                let address = cardObj[cardNo]["address"];
-                let cardType = cardObj[cardNo]["cardType"];
-                let latLng = cardObj[cardNo]["latLng"];
-                let mobile = cardObj[cardNo]["mobile"];
-                let date = "";
-                if (cardObj[cardNo]["createdDate"] != null) {
-                  date = cardObj[cardNo]["createdDate"].split(' ')[0];
-                }
-                this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date });
-
-
                 if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
-                  surveyComplexCount = 1;
-
-
                   complexCount++;
                   totalComplexCount++;
                   if (cardObj[cardNo]["Entities"] != null) {
-                    houseCount = houseCount + (cardObj[cardNo]["Entities"].length - 1);
-                    totalHouseCount = totalHouseCount + (cardObj[cardNo]["Entities"].length - 1);
+                    houseCount = houseCount + (cardObj[cardNo]["Entities"].length);
+                    totalHouseCount = totalHouseCount + (cardObj[cardNo]["Entities"].length);
 
-                    houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
-                    totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length - 1);
-
-                    surveyComplexHouseCount = surveyHouseCount + (cardObj[cardNo]["Entities"].length - 1);
+                    houseHoldCount = houseHoldCount + (cardObj[cardNo]["Entities"].length);
+                    totalHouseHoldCount = totalHouseHoldCount + (cardObj[cardNo]["Entities"].length);
                   }
                   else {
                     houseCount++;
+                    houseHoldCount++;
+                    totalHouseHoldCount++
                     totalHouseCount++;
                   }
                 }
