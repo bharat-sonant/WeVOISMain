@@ -1,3 +1,9 @@
+<div id="divLoaderLineMove" class="loaderClass">
+    <span class="spanLoader" id="spLoader">
+      <img src="../../../assets/img/loading.gif" width="50"><br/><span style="color:#fff; font-weight: normal;font-size: 18px;"> Card and Marker are mapping....<br/> system has mapped lines <b>{{movedLineCount}}/{{totalLineCount}}</b><br/></span>
+    <span style="color:#0ba118; font-size: 24px;"> Please wait...</span>
+    </span>
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-2 header1">
@@ -80,7 +86,7 @@
             </div>
         </div>
         <div class="col-md-6 Update2">
-            <div class="card card3">
+            <div class="card card3" style="display: none;">
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-12 text-center">
@@ -132,7 +138,7 @@
                                 </select>
                                     </div>
                                     <div class="form-group button">
-                                        <button id="btnSave" class="btn btn-success btn-xs">SAVE</button>
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="mapHouseMarkerData();">SAVE</button>
                                     </div>
                                 </div>
                             </div>
