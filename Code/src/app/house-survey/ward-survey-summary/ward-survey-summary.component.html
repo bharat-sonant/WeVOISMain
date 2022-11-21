@@ -190,7 +190,7 @@
                                                     <th class="text-center table-heading-same7">#</th>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let data of lineSurveyList; let i=index">
+                                                    <tr *ngFor="let data of lineSurveyList; let i=index" class="{{data.class}}">
                                                         <td class="table-data-1">
                                                             {{data.lineNo}}</td>
                                                         <td class="text-right table-data-2">
@@ -238,6 +238,34 @@
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
     </div>
     <div class="modal-body divStatus-outer">
+        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+            <input type="hidden" id="houseWardNo" value="0">
+            <input type="hidden" id="houseLineNo" value="0">
+            <input type="hidden" id="houseIndex" value="0">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-12">
+                    Entity Type
+                    <select id="ddlHouseType" class="caret-select-vehicle" (change)="setServingCount();">
+                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
+                            {{dt.houseType}}
+                        </option>
+                    </select>
+
+                </div>
+                <div id="divServingCount" class="col-md-12">
+                    Serving Count <input id="txtServingCount" type="number" class="caret-select-vehicle">
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="updateHouseType();">
+                        Save</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;">
+                        Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="divEntityList" style="display:none;position: absolute;z-index: 9999; width: 80%; height:80%;background-color: #fff; padding: 20px; border: 1px solid lightgray; overflow-y: scroll; margin-top: 5%; margin-left: 10%;">
             <img src="../../../assets/img/close-grey.png" style="float:right ;" class="img-close" (click)="hideEntity();">
             <div class="row">
@@ -263,7 +291,7 @@
         </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-4 " *ngFor="let dt of surveyedDetailList" style="margin-right: -10px;">
+                <div class="col-md-4 " *ngFor="let dt of surveyedDetailList; let i=index" style="margin-right: -10px;">
                     <div class="row" style="margin: 0px;">
                         <div style="border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-bottom: 10px!important;background-color: #f1f1f1; ">
                             <div style="width: 48%; float:left; margin-left: 5px;">
@@ -274,8 +302,8 @@
                                 </div>
                                 <div class="main-tag">
                                     <div class="f-left">
-                                        <h3 class="f-left-heading"> {{dt.cardType}} </h3><br />
-                                        <h3><b> {{dt.cardNo}}</b> </h3><br />
+                                        <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
+                                        <h3>{{dt.entityType}} <b [hidden]="dt.servingCount==0">({{dt.servingCount}})</b> <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);"></i></h3><br />
                                     </div>
                                 </div>
                             </div>
@@ -287,7 +315,10 @@
                                 </div>
                                 <div class="main-tag">
                                     <div class="f-left">
-                                        <h3> {{dt.name}} </h3><span [hidden]="dt.houseHoldCount==0" style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;<i
+                                        <h3>
+                                            {{dt.surveyorName}}
+                                        </h3><br/>
+                                        <h3> {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0" style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;<i
                                                 class="far fa-eye eye-icon"
                                                 style="float: right !important; cursor: pointer;"
                                                 (click)="showEntity(dt.cardNo);"></i></span><br />

@@ -3,7 +3,6 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
-import { convertActionBinding } from "@angular/compiler/src/compiler_util/expression_converter";
 
 @Component({
   selector: "app-ward-survey-summary",
@@ -19,6 +18,7 @@ export class WardSurveySummaryComponent implements OnInit {
   lineSurveyList: any[];
   surveyedDetailList: any[];
   surveyDateList: any[];
+  surveyorList: any[];
   wardLineCount: any;
   cityName: any;
   isFirst = true;
@@ -57,13 +57,33 @@ export class WardSurveySummaryComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
+    this.getSurveyorList();
     this.updateSurveyCounts();
+  }
+
+  getSurveyorList() {
+    this.surveyorList = [];
+    let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
+      surveyorData => {
+        surveyorInstance.unsubscribe();
+        if (surveyorData != null) {
+          let keyArray = Object.keys(surveyorData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let surveyorId = keyArray[i];
+              let name = surveyorData[surveyorId]["name"];
+              this.surveyorList.push({ surveyorId: surveyorId, name: name });
+            }
+          }
+        }
+      }
+    );
   }
 
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
-    this.wardList = JSON.parse(localStorage.getItem("markingWards"));    
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.lineuptoLoop = this.wardList.length;
     this.updateCounts_Bharat(1);
   }
@@ -83,7 +103,7 @@ export class WardSurveySummaryComponent implements OnInit {
         for (let i = 1; i < keyArray.length; i++) {
           let id = keyArray[i];
           let houseType = data[id]["name"].toString().split("(")[0];
-          this.houseTypeList.push({ id: id, houseType: houseType });
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
         }
       }
     });
@@ -358,8 +378,8 @@ export class WardSurveySummaryComponent implements OnInit {
               totalComplexCount = totalComplexCount + complexCount;
               totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
               totalHouseCount = totalHouseCount + houseCount;
-               
-              
+
+
 
               let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
 
@@ -745,7 +765,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
         }
         for (let i = 1; i <= this.wardLineCount; i++) {
-          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0' });
+          this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
           let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/marksCount";
           let marksCountInstance = this.db.object(dbPath).valueChanges().subscribe(
             data => {
@@ -756,21 +776,30 @@ export class WardSurveySummaryComponent implements OnInit {
                   lineDetail.markers = Number(data);
                 }
               }
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/surveyedCount";
+              let survedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                data => {
+                  survedInstance.unsubscribe();
+                  if (data != null) {
+                    let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                    if (lineDetail != undefined) {
+                      lineDetail.survyed = Number(data);
+                    }
+
+                  }
+                  let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                  if (lineDetail != undefined) {
+                    if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
+                      lineDetail.class = "not-matched";
+                    }
+                  }
+
+                }
+              );
             }
           );
 
-          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/surveyedCount";
-          let survedInstance = this.db.object(dbPath).valueChanges().subscribe(
-            data => {
-              survedInstance.unsubscribe();
-              if (data != null) {
-                let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
-                if (lineDetail != undefined) {
-                  lineDetail.survyed = Number(data);
-                }
-              }
-            }
-          );
+
 
           dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + i + "/houseCount";
           let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -943,6 +972,24 @@ export class WardSurveySummaryComponent implements OnInit {
               let city = this.commonService.getFireStoreCity();
               let entityList = [];
               let houseHoldCount = 0;
+              let surveyorName = "";
+              let surveyDate = "";
+              if (data[i]["surveyorId"] != null) {
+                let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
+                if (detail != undefined) {
+                  surveyorName = detail.name;
+                }
+              }
+              if (data[i]["createdDate"] != null) {
+                let date = data[i]["createdDate"].split(' ')[0];
+                surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0];
+              }
+              let servingCount = 0;
+              if (data[i]["servingCount"] != null) {
+                if (data[i]["servingCount"] != "") {
+                  servingCount = Number(data[i]["servingCount"]);
+                }
+              }
               let imageURL = "../../../assets/img/system-generated-image.jpg";
               if (data[i]["cardImage"] != null) {
                 if (data[i]["surveyorId"] == "-1") {
@@ -976,17 +1023,114 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
               }
               let cardType = data[i]["cardType"];
+              let entityType = "";
               let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
               if (detail != undefined) {
-                cardType = detail.houseType;
+                entityType = detail.houseType;
               }
-              this.surveyedDetailList.push({ cardType: cardType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, entityList: entityList, houseHoldCount: houseHoldCount });
+              this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount });
             }
           }
         }
       }
     );
   }
+
+  divHouseType = "#divHouseType";
+  houseWardNo = "#houseWardNo";
+  houseLineNo = "#houseLineNo";
+  houseIndex = "#houseIndex";
+  ddlHouseType = "#ddlHouseType";
+  txtServingCount = "#txtServingCount";
+  divServingCount = "#divServingCount";
+
+
+  openHouseTypePopup(wardNo: any, lineNo: any, index: any) {
+    $(this.divHouseType).show();
+    $(this.houseWardNo).val(wardNo);
+    $(this.houseLineNo).val(lineNo);
+    $(this.houseIndex).val(index);
+    if (this.surveyedDetailList.length > 0) {
+      $(this.ddlHouseType).val(this.surveyedDetailList[index]["houseType"]);
+      if (this.surveyedDetailList[index]["houseType"] == "19" || this.surveyedDetailList[index]["houseType"] == "20") {
+        $(this.txtServingCount).val(this.surveyedDetailList[index]["houseType"]);
+        $(this.divServingCount).show();
+      }
+      else {
+        $(this.txtServingCount).val("0");
+        $(this.divServingCount).hide();
+      }
+    }
+  }
+
+  setServingCount() {
+    let houseType = $(this.ddlHouseType).val();
+    $(this.txtServingCount).val('0');
+    if (houseType == "19" || houseType == "20") {
+      $(this.divServingCount).show();
+    }
+    else {
+      $(this.divServingCount).hide();
+    }
+  }
+
+  updateHouseType() {
+    let wardNo = $(this.houseWardNo).val();
+    let lineNo = $(this.houseLineNo).val();
+    let index = $(this.houseIndex).val();
+    let houseTypeId = $(this.ddlHouseType).val();
+    let servingCount = $(this.txtServingCount).val();
+    let cardType = "व्यावसायिक";
+    this.surveyedDetailList[Number(index)]["houseType"] = houseTypeId;
+    this.surveyedDetailList[Number(index)]["servingCount"] = servingCount;
+    let cardNumber = this.surveyedDetailList[Number(index)]["cardNo"];
+
+    let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
+    if (houseTypeDetail != undefined) {
+      if (houseTypeDetail.entityType == "residential") {
+        cardType = "आवासीय"
+      }
+      this.surveyedDetailList[Number(index)]["entityType"] = houseTypeDetail.houseType;
+    }
+    let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
+    this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, servingCount: servingCount });
+    dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerNo = keyArray[i];
+              if (data[markerNo]["cardNumber"] != null) {
+                if (cardNumber == data[markerNo]["cardNumber"]) {
+                  let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+                  this.db.object(dbPath).update({ houseType: houseTypeId });
+                  i=keyArray.length;
+                }
+              }
+            }
+          }
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+        else {
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+      }
+    );
+  }
+
+  cancelHouseType() {
+    $(this.houseWardNo).val("0");
+    $(this.houseLineNo).val("0");
+    $(this.houseIndex).val("0");
+    $(this.txtServingCount).val("0");
+    $(this.divHouseType).hide();
+  }
+
 
   showEntity(cardNo: any) {
     let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
