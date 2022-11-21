@@ -604,13 +604,13 @@ export class CommonService {
   }
 
   getDiffrernceHrMin(dt2: Date, dt1: Date) {
-    
+
     let diff = (dt2.getTime() - dt1.getTime());
 
     let minutes = Math.floor((diff / (1000 * 60)) % 60);
     let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    
-    return ((hours < 10) ? "0" + hours : hours)+" hr "+ ((minutes < 10) ? " 0" + minutes : minutes)+" min";
+
+    return ((hours < 10) ? "0" + hours : hours) + " hr " + ((minutes < 10) ? " 0" + minutes : minutes) + " min";
   }
 
   getCurrentTime() {
@@ -1591,27 +1591,19 @@ export class CommonService {
   }
 
   getCarePrefix(cityName: any) {
-    let cardPrefix = "SIKA"
-    if (cityName == "reengus") {
-      cardPrefix = "RENA"
-    }
-    else if (cityName == "kishangarh") {
-      cardPrefix = "KNGH"
-    }
-    else if (cityName == "shahpura") {
-      cardPrefix = "SHAH"
-    }
-    else if (cityName == "niwai") {
-      cardPrefix = "NIWA"
-    }
-    else if (cityName == "jaisalmer") {
-      cardPrefix = "JAIS"
-    }
-    else if (cityName == "salasar") {
-      cardPrefix = "SALA"
-    }
-
-    return cardPrefix;
+    return new Promise((resolve) => {
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
+      let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
+        cityDataInstance.unsubscribe();
+        if (cityData != null) {
+          let cityList = JSON.parse(JSON.stringify(cityData));
+          let detail = cityList.find(item => item.cityName == this.getFireStoreCity());
+          if (detail != undefined) {
+            resolve(detail.key);
+          }
+        }
+      });
+    });
   }
 
   getWardLineWeightage(zoneNo: any, date: any) {

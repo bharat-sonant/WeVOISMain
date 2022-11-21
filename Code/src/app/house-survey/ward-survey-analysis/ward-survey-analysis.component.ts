@@ -84,6 +84,9 @@ export class WardSurveyAnalysisComponent {
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
+    this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
+      console.log(prefix);
+    });
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
@@ -96,7 +99,7 @@ export class WardSurveyAnalysisComponent {
     this.getNameList();
   }
 
-  
+
   getSurveyorList() {
     this.surveyorList = [];
     let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
@@ -635,7 +638,7 @@ export class WardSurveyAnalysisComponent {
                 }
                 if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
                   className = "commercial-list";
-                  isCommercial=true;
+                  isCommercial = true;
                   if (data[i]["Entities"] != null) {
                     houseHoldCount = data[i]["Entities"].length - 1;
                     let entityData = data[i]["Entities"];
@@ -657,7 +660,7 @@ export class WardSurveyAnalysisComponent {
                   entityType = detail.houseType;
                 }
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList,surveyorName:surveyorName,class:className,servingCount:servingCount,entityType:entityType,isCommercial:isCommercial,houseHoldCount:houseHoldCount, houseType: data[i]["houseType"] });
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"] });
               }
             }
           }
@@ -666,7 +669,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  
+
   openHouseTypePopup(index: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -701,9 +704,9 @@ export class WardSurveyAnalysisComponent {
     let houseTypeId = $(this.ddlHouseType).val();
     let servingCount = $(this.txtServingCount).val();
     let cardType = "व्यावसायिक";
-    let isCommercial=false;
+    let isCommercial = false;
     if (houseTypeId == "19" || houseTypeId == "20") {
-      isCommercial=true;
+      isCommercial = true;
       $(this.divServingCount).show();
     }
     this.scannedCardList[Number(index)]["isCommercial"] = isCommercial;
@@ -1276,44 +1279,49 @@ export class WardSurveyAnalysisComponent {
             cardCount = Number(data) + 1;
             this.db.object("Settings").update({ revisitLastCardNumber: cardCount });
             this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
-            let cardNumber = this.commonService.getCarePrefix(this.cityName) + cardCount;
-            if (surveyType == "revisit") {
-              this.generateMobileNo(cardNumber, index, markerNo);
-            }
-            else {
-              if (mobileNo == "0000000000") {
-                mobileNo = this.generateRFIDMobile();
+            this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
+              let cardNumber = prefix + cardCount;
+              if (surveyType == "revisit") {
+                this.generateMobileNo(cardNumber, index, markerNo);
               }
-              this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
-            }
+              else {
+                if (mobileNo == "0000000000") {
+                  mobileNo = this.generateRFIDMobile();
+                }
+                this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+              }
+            });
+
           }
         }
       );
     }
     else {
-      let cardNumber = this.commonService.getCarePrefix(this.cityName) + cardNo;
-      let dbPath = "CardWardMapping/" + cardNumber;
-      let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          checkInstance.unsubscribe();
-          if (data != null) {
-            cardCount = cardCount + 1;
-            this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
-          }
-          else {
-            this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
-            if (surveyType == "revisit") {
-              this.generateMobileNo(cardNumber, index, markerNo);
+      this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
+        let cardNumber = prefix + cardNo;
+        let dbPath = "CardWardMapping/" + cardNumber;
+        let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            checkInstance.unsubscribe();
+            if (data != null) {
+              cardCount = cardCount + 1;
+              this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
             }
             else {
-              if (mobileNo == "0000000000") {
-                mobileNo = this.generateRFIDMobile();
+              this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
+              if (surveyType == "revisit") {
+                this.generateMobileNo(cardNumber, index, markerNo);
               }
-              this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+              else {
+                if (mobileNo == "0000000000") {
+                  mobileNo = this.generateRFIDMobile();
+                }
+                this.saveRFIDSurveyData(index, cardNumber, mobileNo, markerNo);
+              }
             }
           }
-        }
-      );
+        );
+      });
     }
   }
 
@@ -1510,23 +1518,25 @@ export class WardSurveyAnalysisComponent {
     let mobileNo = $('#spMobile' + index).html().trim();
     let rfidCardNo = $('#spCardNo' + index).html().trim().split(' ')[0];
     if (cardNumber != "") {
-      cardNumber = this.commonService.getCarePrefix(this.cityName) + cardNumber;
-      let dbPath = "CardWardMapping/" + cardNumber;
-      let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          checkInstance.unsubscribe();
-          if (data != null) {
-            this.commonService.setAlertMessage("error", "You can not process this card number!!!");
-            $('#divLoaderUpdate').hide();
-          }
-          else {
-            if (mobileNo == "0000000000") {
-              mobileNo = this.generateRFIDMobile();
+      this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
+        cardNumber = prefix + cardNumber;
+        let dbPath = "CardWardMapping/" + cardNumber;
+        let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            checkInstance.unsubscribe();
+            if (data != null) {
+              this.commonService.setAlertMessage("error", "You can not process this card number!!!");
+              $('#divLoaderUpdate').hide();
             }
-            this.saveRFIDSurveyData(index, cardNumber, mobileNo, rfidCardNo);
+            else {
+              if (mobileNo == "0000000000") {
+                mobileNo = this.generateRFIDMobile();
+              }
+              this.saveRFIDSurveyData(index, cardNumber, mobileNo, rfidCardNo);
+            }
           }
-        }
-      );
+        );
+      });
     }
     else {
       this.generateNewCardNumber(index, rfidCardNo, mobileNo, "RFID");
