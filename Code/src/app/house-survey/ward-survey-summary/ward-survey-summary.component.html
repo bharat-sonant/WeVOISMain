@@ -293,7 +293,7 @@
             <div class="row">
                 <div class="col-md-4 " *ngFor="let dt of surveyedDetailList; let i=index" style="margin-right: -10px;">
                     <div class="row" style="margin: 0px;">
-                        <div style="border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-bottom: 10px!important;background-color: #f1f1f1; ">
+                        <div class="{{dt.class}}">
                             <div style="width: 48%; float:left; margin-left: 5px;">
                                 <div class="content-scroll-iner">
                                     <a href="{{dt.imageUrl}}" target="_blank">
@@ -303,7 +303,8 @@
                                 <div class="main-tag">
                                     <div class="f-left">
                                         <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
-                                        <h3>{{dt.entityType}} <b [hidden]="dt.servingCount==0">({{dt.servingCount}})</b> <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);"></i></h3><br />
+                                        <h3>{{dt.entityType}} <b [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);"></i></h3><br
+                                        />
                                     </div>
                                 </div>
                             </div>
