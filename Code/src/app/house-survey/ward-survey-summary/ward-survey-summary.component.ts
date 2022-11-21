@@ -58,13 +58,13 @@ export class WardSurveySummaryComponent implements OnInit {
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.updateSurveyCounts();
-    this.lineuptoLoop = 70;
   }
 
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
-    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));    
+    this.lineuptoLoop = this.wardList.length;
     this.updateCounts_Bharat(1);
   }
 
@@ -207,7 +207,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
   updateCounts_Bharat(index: any) {
 
-    if (index == 70) {
+    if (index == this.wardList.length) {
       setTimeout(() => {
         $(this.divLoaderCounts).hide();
         this.getWardProgressList();
