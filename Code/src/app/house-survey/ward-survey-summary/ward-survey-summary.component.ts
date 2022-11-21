@@ -92,7 +92,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.lineuptoLoop = this.wardList.length;
-    this.updateCounts_Bharat(this.wardList.length);
+    this.updateCounts_Bharat(1);
   }
 
   showHideAlreadyCardInstalled() {
@@ -779,10 +779,10 @@ export class WardSurveySummaryComponent implements OnInit {
                   lineDetail.markers = Number(data);
                 }
               }
-              if(i==this.wardLineCount){
+              if (i == this.wardLineCount) {
                 $('#divLoaderMain').hide();
               }
-              
+
             }
           );
 
@@ -980,7 +980,7 @@ export class WardSurveySummaryComponent implements OnInit {
               let houseHoldCount = 0;
               let surveyorName = "";
               let surveyDate = "";
-              let isCommercial=false;
+              let isCommercial = false;
               if (data[i]["surveyorId"] != null) {
                 let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
                 if (detail != undefined) {
@@ -997,7 +997,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   servingCount = Number(data[i]["servingCount"]);
                 }
               }
-              let className="house-list";
+              let className = "house-list";
               let imageURL = "../../../assets/img/system-generated-image.jpg";
               if (data[i]["cardImage"] != null) {
                 if (data[i]["surveyorId"] == "-1") {
@@ -1017,8 +1017,8 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
               }
               if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
-                className="commercial-list";
-                isCommercial=true;
+                className = "commercial-list";
+                isCommercial = true;
                 if (data[i]["Entities"] != null) {
                   let entityData = data[i]["Entities"];
                   houseHoldCount = entityData.length - 1;
@@ -1038,7 +1038,7 @@ export class WardSurveySummaryComponent implements OnInit {
               if (detail != undefined) {
                 entityType = detail.houseType;
               }
-              this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount,isCommercial:isCommercial,class:className });
+              this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount, isCommercial: isCommercial, class: className });
             }
           }
         }
@@ -1066,12 +1066,15 @@ export class WardSurveySummaryComponent implements OnInit {
 
   setServingCount() {
     let houseType = $(this.ddlHouseType).val();
+    let index = $(this.houseIndex).val();
     $(this.txtServingCount).val('0');
     if (houseType == "19" || houseType == "20") {
+      this.surveyedDetailList[Number(index)]["isCommercial"] = true;
       $(this.divServingCount).show();
     }
     else {
       $(this.divServingCount).hide();
+      this.surveyedDetailList[Number(index)]["isCommercial"] = false;
     }
   }
 
@@ -1108,7 +1111,7 @@ export class WardSurveySummaryComponent implements OnInit {
                 if (cardNumber == data[markerNo]["cardNumber"]) {
                   let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
                   this.db.object(dbPath).update({ houseType: houseTypeId });
-                  i=keyArray.length;
+                  i = keyArray.length;
                 }
               }
             }
