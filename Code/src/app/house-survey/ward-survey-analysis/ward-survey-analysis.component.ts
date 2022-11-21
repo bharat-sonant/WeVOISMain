@@ -84,9 +84,6 @@ export class WardSurveyAnalysisComponent {
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
-    this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
-      console.log(prefix);
-    });
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
