@@ -49,8 +49,14 @@ export class WardSurveyAnalysisComponent {
   toDayDate: any;
   public isAlreadyShow = false;
   entityList: any[] = [];
+  surveyorList: any[];
   divEntityList = "#divEntityList";
   chkShowAll = "chkShowAll";
+  divHouseType = "#divHouseType";
+  houseIndex = "#houseIndex";
+  ddlHouseType = "#ddlHouseType";
+  txtServingCount = "#txtServingCount";
+  divServingCount = "#divServingCount";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -84,9 +90,30 @@ export class WardSurveyAnalysisComponent {
     this.map = this.commonService.setMap(this.gmap);
     this.selectedZone = 0;
     this.getHouseType();
+    this.getSurveyorList();
     this.showHideAlreadyCardInstalled();
     this.getZones();
     this.getNameList();
+  }
+
+  
+  getSurveyorList() {
+    this.surveyorList = [];
+    let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
+      surveyorData => {
+        surveyorInstance.unsubscribe();
+        if (surveyorData != null) {
+          let keyArray = Object.keys(surveyorData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let surveyorId = keyArray[i];
+              let name = surveyorData[surveyorId]["name"];
+              this.surveyorList.push({ surveyorId: surveyorId, name: name });
+            }
+          }
+        }
+      }
+    );
   }
 
   getHouseType() {
@@ -571,7 +598,22 @@ export class WardSurveyAnalysisComponent {
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
                 let entityList = [];
-                let hasEntity = "0";
+                let surveyorName = "";
+                let isCommercial = false;
+                let houseHoldCount = 0;
+                if (data[i]["surveyorId"] != null) {
+                  let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
+                  if (detail != undefined) {
+                    surveyorName = detail.name;
+                  }
+                }
+                let servingCount = 0;
+                if (data[i]["servingCount"] != null) {
+                  if (data[i]["servingCount"] != "") {
+                    servingCount = Number(data[i]["servingCount"]);
+                  }
+                }
+                let className = "house-list";
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
 
@@ -592,8 +634,10 @@ export class WardSurveyAnalysisComponent {
                   }
                 }
                 if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
+                  className = "commercial-list";
+                  isCommercial=true;
                   if (data[i]["Entities"] != null) {
-                    hasEntity = "1";
+                    houseHoldCount = data[i]["Entities"].length - 1;
                     let entityData = data[i]["Entities"];
                     for (let j = 1; j < entityData.length; j++) {
                       let keyIndex = j;
@@ -607,14 +651,108 @@ export class WardSurveyAnalysisComponent {
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
                 let time = data[i]["createdDate"].split(' ')[1];
+                let entityType = "";
+                let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
+                if (detail != undefined) {
+                  entityType = detail.houseType;
+                }
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, hasEntity: hasEntity });
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList,surveyorName:surveyorName,class:className,servingCount:servingCount,entityType:entityType,isCommercial:isCommercial,houseHoldCount:houseHoldCount, houseType: data[i]["houseType"] });
               }
             }
           }
         }
       );
     }
+  }
+
+  
+  openHouseTypePopup(index: any) {
+    $(this.divHouseType).show();
+    $(this.houseIndex).val(index);
+    if (this.scannedCardList.length > 0) {
+      $(this.ddlHouseType).val(this.scannedCardList[index]["houseType"]);
+      if (this.scannedCardList[index]["houseType"] == "19" || this.scannedCardList[index]["houseType"] == "20") {
+        $(this.txtServingCount).val(this.scannedCardList[index]["servingCount"]);
+        $(this.divServingCount).show();
+      }
+      else {
+        $(this.txtServingCount).val("0");
+        $(this.divServingCount).hide();
+      }
+    }
+  }
+
+  setServingCount() {
+    let houseType = $(this.ddlHouseType).val();
+    $(this.txtServingCount).val('0');
+    if (houseType == "19" || houseType == "20") {
+      $(this.divServingCount).show();
+    }
+    else {
+      $(this.divServingCount).hide();
+    }
+  }
+
+  updateHouseType() {
+    let wardNo = this.selectedZone;
+    let lineNo = this.lineNo;
+    let index = $(this.houseIndex).val();
+    let houseTypeId = $(this.ddlHouseType).val();
+    let servingCount = $(this.txtServingCount).val();
+    let cardType = "व्यावसायिक";
+    let isCommercial=false;
+    if (houseTypeId == "19" || houseTypeId == "20") {
+      isCommercial=true;
+      $(this.divServingCount).show();
+    }
+    this.scannedCardList[Number(index)]["isCommercial"] = isCommercial;
+    this.scannedCardList[Number(index)]["houseType"] = houseTypeId;
+    this.scannedCardList[Number(index)]["servingCount"] = servingCount;
+    let cardNumber = this.scannedCardList[Number(index)]["cardNo"];
+
+    let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
+    if (houseTypeDetail != undefined) {
+      if (houseTypeDetail.entityType == "residential") {
+        cardType = "आवासीय"
+      }
+      this.scannedCardList[Number(index)]["entityType"] = houseTypeDetail.houseType;
+    }
+    let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
+    this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, servingCount: servingCount });
+    dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerNo = keyArray[i];
+              if (data[markerNo]["cardNumber"] != null) {
+                if (cardNumber == data[markerNo]["cardNumber"]) {
+                  let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+                  this.db.object(dbPath).update({ houseType: houseTypeId });
+                  i = keyArray.length;
+                }
+              }
+            }
+          }
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+        else {
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+      }
+    );
+  }
+
+  cancelHouseType() {
+    $(this.houseIndex).val("0");
+    $(this.txtServingCount).val("0");
+    $(this.divHouseType).hide();
   }
 
   showEntity(cardNo: any) {

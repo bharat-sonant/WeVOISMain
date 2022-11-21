@@ -1325,3 +1325,29 @@ button:focus {
         top: 220px !important;
     }
 }
+
+.house-list {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px!important;
+    background-color: #f1f1f1;
+}
+
+.commercial-list {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px!important;
+    background-color: #b5f8c6;
+}
+
+.caret-select-vehicle {
+    margin-top: 0px!important;
+    margin-left: 0px!important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 97%;
+    border: 1px solid lightgray!important;
+    font-size: 12px;
+}

@@ -989,7 +989,8 @@ export class WardSurveySummaryComponent implements OnInit {
               }
               if (data[i]["createdDate"] != null) {
                 let date = data[i]["createdDate"].split(' ')[0];
-                surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0];
+                let time = data[i]["createdDate"].split(' ')[1];
+                surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
               }
               let servingCount = 0;
               if (data[i]["servingCount"] != null) {
@@ -1066,15 +1067,12 @@ export class WardSurveySummaryComponent implements OnInit {
 
   setServingCount() {
     let houseType = $(this.ddlHouseType).val();
-    let index = $(this.houseIndex).val();
     $(this.txtServingCount).val('0');
     if (houseType == "19" || houseType == "20") {
-      this.surveyedDetailList[Number(index)]["isCommercial"] = true;
       $(this.divServingCount).show();
     }
     else {
       $(this.divServingCount).hide();
-      this.surveyedDetailList[Number(index)]["isCommercial"] = false;
     }
   }
 
@@ -1085,6 +1083,12 @@ export class WardSurveySummaryComponent implements OnInit {
     let houseTypeId = $(this.ddlHouseType).val();
     let servingCount = $(this.txtServingCount).val();
     let cardType = "व्यावसायिक";
+    let isCommercial=false;
+    if (houseTypeId == "19" || houseTypeId == "20") {
+      isCommercial=true;
+      $(this.divServingCount).show();
+    }
+    this.surveyedDetailList[Number(index)]["isCommercial"] = isCommercial;
     this.surveyedDetailList[Number(index)]["houseType"] = houseTypeId;
     this.surveyedDetailList[Number(index)]["servingCount"] = servingCount;
     let cardNumber = this.surveyedDetailList[Number(index)]["cardNo"];
