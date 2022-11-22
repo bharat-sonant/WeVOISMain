@@ -1277,7 +1277,8 @@ export class WardSurveyAnalysisComponent {
             this.db.object("Settings").update({ revisitLastCardNumber: cardCount });
             this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
             this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
-              let cardNumber = prefix + cardCount;
+              let cardPrefix=prefix.toString();
+              let cardNumber = cardPrefix + cardCount.toString();
               if (surveyType == "revisit") {
                 this.generateMobileNo(cardNumber, index, markerNo);
               }
@@ -1295,7 +1296,9 @@ export class WardSurveyAnalysisComponent {
     }
     else {
       this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
-        let cardNumber = prefix + cardNo;
+        
+        let cardPrefix=prefix.toString();
+        let cardNumber = cardPrefix + cardNo.toString();
         let dbPath = "CardWardMapping/" + cardNumber;
         let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
           data => {
@@ -1516,8 +1519,10 @@ export class WardSurveyAnalysisComponent {
     let rfidCardNo = $('#spCardNo' + index).html().trim().split(' ')[0];
     if (cardNumber != "") {
       this.commonService.getCarePrefix(this.cityName).then((prefix: any) => {
-        cardNumber = prefix + cardNumber;
-        let dbPath = "CardWardMapping/" + cardNumber;
+        
+        let cardPrefix=prefix.toString();
+        cardNumber = cardPrefix + cardNumber;
+        let dbPath = "CardWardMapping/" + cardNumber.toString();
         let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
           data => {
             checkInstance.unsubscribe();
