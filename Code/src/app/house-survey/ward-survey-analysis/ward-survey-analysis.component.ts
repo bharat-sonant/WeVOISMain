@@ -46,6 +46,7 @@ export class WardSurveyAnalysisComponent {
   revisitMarker: any[];
   preRevisitIndex: any;
   nameList: any[];
+  userList: any[] = [];
   toDayDate: any;
   public isAlreadyShow = false;
   entityList: any[] = [];
@@ -88,6 +89,7 @@ export class WardSurveyAnalysisComponent {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
+    this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     this.selectedZone = 0;
     this.getHouseType();
     this.getSurveyorList();
@@ -539,10 +541,10 @@ export class WardSurveyAnalysisComponent {
         $("#virtualLat").val(lat);
         $("#virtualLng").val(lng);
         $("#virtualHouseType").val(entityType);
+        $("#lblEntityTypeVirtual").html(entityType);
         let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         let element = <HTMLImageElement>document.getElementById("imgVertual");
         element.src = imageURL;
-        $("#lblEntityTypeVirtual").html(entityType);
       });
     }
     if (map == this.mapRevisit) {
@@ -579,7 +581,6 @@ export class WardSurveyAnalysisComponent {
             this.commonService.getCarePrefix().then((prefix: any) => {
               let cardNo = prefix;
               let cardNumber = prefix + current.toString();
-              console.log("cardNumber => "+cardNumber);
               let houseTypeId = "";
               let cardType = "व्यावसायिक";
               let detail = this.houseTypeList.find(item => item.houseType == entityType);
@@ -619,25 +620,43 @@ export class WardSurveyAnalysisComponent {
                 surveyorId: "-2",
                 ward: ward
               }
-              console.log(data);
-              let dbPath="Houses/"+wardNo+"/"+lineNo+"/"+cardNumber;
               
-             // this.db.object(dbPath).update(data);
-              dbPath="CardWardMapping/"+cardNumber;
+              let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
+              this.db.object(dbPath).update(data);
 
-              //this.db.object(dbPath).update({line:lineNo,ward:wardNo});
+              dbPath = "CardWardMapping/" + cardNumber;
+              this.db.object(dbPath).update({ line: lineNo, ward: wardNo });
 
+              let userName = "";
+              let userDetail = this.userList.find(item => item.userId == localStorage.getItem("userID"));
+              if (userDetail != undefined) {
+                userName = userDetail.name;
+              }
+              dbPath = "EntitySurveyData/VirtualCardHistory/" + cardNumber;
+              this.db.object(dbPath).update({ name: userName, date: date });
 
-
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+              this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
+              current++;
+              dbPath = "EntitySurveyData/WardVirtualCards/" + wardNo;
+              this.db.object(dbPath).update({ current: current });
+              this.commonService.setAlertMessage("success", "Card processed successfully !!!");
+              this.cancelVirtualSurvey();
             });
           }
         }
       }
     );
-
   }
 
   cancelVirtualSurvey() {
+    $("#virtualWardNo").val("0");
+    $("#virtualLineNo").val("0");
+    $("#virtualMarkerNo").val("0");
+    $("#virtualLat").val("");
+    $("#virtualLng").val("");
+    $("#virtualHouseType").val("");
+    $("#lblEntityTypeVirtual").html("");
     $("#divVirtualSurvey").hide();
   }
 
