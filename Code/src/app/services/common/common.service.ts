@@ -1590,7 +1590,7 @@ export class CommonService {
     const task = ref.put(blob);
   }
 
-  getCarePrefix(cityName: any) {
+  getCarePrefix() {
     return new Promise((resolve) => {
       const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
       let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
