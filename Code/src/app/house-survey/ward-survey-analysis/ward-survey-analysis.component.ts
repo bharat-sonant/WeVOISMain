@@ -580,9 +580,12 @@ export class WardSurveyAnalysisComponent {
             $("#divLoaderUpdate").hide();
           }
           else {
+            current++;
+            dbPath = "EntitySurveyData/WardVirtualCards/" + wardNo;
+            this.db.object(dbPath).update({ current: current });
             this.commonService.getCarePrefix().then((prefix: any) => {
               let cardNo = prefix;
-              let cardNumber = prefix + current.toString();
+              let cardNumber = cardNo + current.toString();
               let houseTypeId = "";
               let cardType = "व्यावसायिक";
               let detail = this.houseTypeList.find(item => item.houseType == entityType);
@@ -599,17 +602,14 @@ export class WardSurveyAnalysisComponent {
               let time = (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min + ":" + (second < 10 ? "0" : "") + second;
 
               let address = "Ward " + this.selectedZone;
-              let rfId = Math.floor(1000000000 + Math.random() * 9000000000);
               let createdDate = this.commonService.setTodayDate() + " " + time;
               let latLng = "(" + lat + "," + lng + ")";
               let line = lineNo;
               let mobile = "";
-              let phaseNo = "2";
-              let rfid = rfId;
               let ward = this.selectedZone;
               const data = {
                 address: address,
-                cardNo: cardNo,
+                cardNo: cardNumber,
                 cardType: cardType,
                 createdDate: createdDate,
                 houseType: houseTypeId,
@@ -617,8 +617,6 @@ export class WardSurveyAnalysisComponent {
                 line: line,
                 mobile: mobile,
                 name: name,
-                phaseNo: phaseNo,
-                rfid: rfid,
                 surveyorId: "-2",
                 ward: ward
               }
@@ -635,17 +633,15 @@ export class WardSurveyAnalysisComponent {
                 userName = userDetail.name;
               }
               dbPath = "EntitySurveyData/VirtualCardHistory/" + cardNumber;
-              this.db.object(dbPath).update({ name: userName, date: date });
+              this.db.object(dbPath).update({ by: userName, date: date });
 
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
               this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
-              current++;
-              dbPath = "EntitySurveyData/WardVirtualCards/" + wardNo;
-              this.db.object(dbPath).update({ current: current });
+
 
               this.updateSurveyedCounts(lineNo);
+              this.resetSurveyed();
               setTimeout(() => {
-                this.resetSurveyed();
                 this.commonService.setAlertMessage("success", "Card processed successfully !!!");
                 this.cancelVirtualSurvey();
                 $("#divLoaderUpdate").hide();
@@ -654,6 +650,7 @@ export class WardSurveyAnalysisComponent {
           }
         }
         else {
+          this.commonService.setAlertMessage("error","Card series is not assigned for this ward  !!!");
           $("#divLoaderUpdate").hide();
         }
 
@@ -668,6 +665,7 @@ export class WardSurveyAnalysisComponent {
     $("#virtualLat").val("");
     $("#virtualLng").val("");
     $("#virtualHouseType").val("");
+    $("#txtVirtualName").val("");
     $("#lblEntityTypeVirtual").html("");
     $("#divVirtualSurvey").hide();
   }
