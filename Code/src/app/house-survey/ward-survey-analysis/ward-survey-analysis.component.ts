@@ -638,10 +638,12 @@ export class WardSurveyAnalysisComponent {
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
               this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
 
-
+              this.progressData.totalSurveyed = Number(this.progressData.totalSurveyed) + 1;
+              this.progressData.totalLineSurveyed = Number(this.progressData.totalLineSurveyed) + 1;
               this.updateSurveyedCounts(lineNo);
-              this.resetSurveyed();
               setTimeout(() => {
+                this.clearLineData();
+                this.getHouseLineData();
                 this.commonService.setAlertMessage("success", "Card processed successfully !!!");
                 this.cancelVirtualSurvey();
                 $("#divLoaderUpdate").hide();
@@ -650,7 +652,7 @@ export class WardSurveyAnalysisComponent {
           }
         }
         else {
-          this.commonService.setAlertMessage("error","Card series is not assigned for this ward  !!!");
+          this.commonService.setAlertMessage("error", "Card series is not assigned for this ward  !!!");
           $("#divLoaderUpdate").hide();
         }
 
