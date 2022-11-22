@@ -566,6 +566,7 @@ export class WardSurveyAnalysisComponent {
       this.commonService.setAlertMessage("error", "Please enter name !!!!");
       return;
     }
+    $("#divLoaderUpdate").show();
     let dbPath = "EntitySurveyData/WardVirtualCards/" + wardNo;
     let cardNumberInstance = this.db.object(dbPath).valueChanges().subscribe(
       cardNumberData => {
@@ -576,6 +577,7 @@ export class WardSurveyAnalysisComponent {
           if (current == end) {
             this.commonService.setAlertMessage("error", "Sorry! you have used all cred numbars for this ward!!!");
             this.cancelVirtualSurvey();
+            $("#divLoaderUpdate").hide();
           }
           else {
             this.commonService.getCarePrefix().then((prefix: any) => {
@@ -620,7 +622,7 @@ export class WardSurveyAnalysisComponent {
                 surveyorId: "-2",
                 ward: ward
               }
-              
+
               let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
               this.db.object(dbPath).update(data);
 
@@ -640,11 +642,21 @@ export class WardSurveyAnalysisComponent {
               current++;
               dbPath = "EntitySurveyData/WardVirtualCards/" + wardNo;
               this.db.object(dbPath).update({ current: current });
-              this.commonService.setAlertMessage("success", "Card processed successfully !!!");
-              this.cancelVirtualSurvey();
+
+              this.updateSurveyedCounts(lineNo);
+              setTimeout(() => {
+                this.resetSurveyed();
+                this.commonService.setAlertMessage("success", "Card processed successfully !!!");
+                this.cancelVirtualSurvey();
+                $("#divLoaderUpdate").hide();
+              }, 2000);
             });
           }
         }
+        else {
+          $("#divLoaderUpdate").hide();
+        }
+
       }
     );
   }
