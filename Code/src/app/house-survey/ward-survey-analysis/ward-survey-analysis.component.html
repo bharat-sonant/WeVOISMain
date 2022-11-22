@@ -1,6 +1,33 @@
 <div id="divLoaderUpdate" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
+<div id="divVirtualSurvey" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 5%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+    <input type="hidden" id="virtualWardNo" value="0">
+    <input type="hidden" id="virtualLineNo" value="0">
+    <input type="hidden" id="virtualMarkerNo" value="0">
+    <input type="hidden" id="virtualLat" value="0">
+    <input type="hidden" id="virtualLng" value="0">
+    <input type="hidden" id="virtualHouseType" value="0">
+    <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+        <div class="col-md-12">
+            <img id="imgVertual" style="width:300px; height:400px" />
+        </div>
+        <div class="col-md-12">
+            <label id="lblEntityTypeVirtual" style="font-weight: bold;"></label>
+        </div>
+        <div class="col-md-12">
+            Name <input id="txtVirtualName" type="text" class="caret-select-vehicle">
+        </div>
+        <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+            <button class="btn btn-success " style="width: 100px;" (click)="processVirtualSurvey();">
+                Process</button>
+        </div>
+        <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+            <button class="btn btn-danger " (click)="cancelVirtualSurvey();" style="text-transform: uppercase;width: 100px;">
+                Cancel</button>
+        </div>
+    </div>
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
