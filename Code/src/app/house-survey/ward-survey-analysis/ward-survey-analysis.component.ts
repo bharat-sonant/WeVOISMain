@@ -620,6 +620,13 @@ export class WardSurveyAnalysisComponent {
                 ward: ward
               }
               console.log(data);
+              let dbPath="Houses/"+wardNo+"/"+lineNo+"/"+cardNumber;
+             // this.db.object(dbPath).update(data);
+              dbPath="CardWardMapping/"+cardNumber;
+              //this.db.object(dbPath).update({line:lineNo,ward:wardNo});
+
+
+
             });
           }
         }
