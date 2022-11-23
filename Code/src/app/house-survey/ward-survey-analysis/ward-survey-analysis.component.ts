@@ -1340,6 +1340,8 @@ export class WardSurveyAnalysisComponent {
   // process for survey revisit request
 
   getProcess(index: any) {
+    this.commonService.setAlertMessage("error","Unable to process. We are modify something.");
+    return;
     $('#divLoaderUpdate').show();
     let lineNo = this.revisitSurveyList[index]["lineNo"];
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
