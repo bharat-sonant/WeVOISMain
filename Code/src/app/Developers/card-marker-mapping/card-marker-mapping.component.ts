@@ -84,7 +84,7 @@ export class CardMarkerMappingComponent implements OnInit {
       let markerNo = markerKeyArray[markerIndex];
       if (markerData[markerNo]["cardNumber"] != null) {
 
-       // console.log("line No => " + lineNo + " ");
+        console.log("line No => " + lineNo + " ");
         let cardNo = markerData[markerNo]["cardNumber"];
         let dbPath = "CardWardMapping/" + cardNo;
         let cardWardMappingInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -94,8 +94,8 @@ export class CardMarkerMappingComponent implements OnInit {
               let zoneTo = mappingData["ward"];
               let lineTo = mappingData["line"];
               this.movedLineCount = lineNo;
-            //  console.log("Card Mapping line No => " + lineTo + " ");
-            //  console.log("Card Mapping ward No => " + zoneTo + " ");
+              console.log("Card Mapping line No => " + lineTo + " ");
+              console.log("Card Mapping ward No => " + zoneTo + " ");
               let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
               let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
                 houseData => {
