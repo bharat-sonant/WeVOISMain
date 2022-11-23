@@ -201,7 +201,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   updateMarkerAddress(index: any, type: any) {
     if (index == this.markerExportList.length) {
-      console.log(this.markerExportList)
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -261,7 +260,6 @@ export class WardMarkingSummaryComponent implements OnInit {
         let cardNumber = this.markerExportList[index]["cardNumber"];
         if (cardNumber != "") {
           let dbPath = "Houses/" + zoneNo + "/" + LineNo + "/" + cardNumber + "/address";
-          console.log(dbPath)
           let addressInstance = this.db.object(dbPath).valueChanges().subscribe(
             addressData => {
               addressInstance.unsubscribe();
@@ -911,7 +909,6 @@ export class WardMarkingSummaryComponent implements OnInit {
                 }
               }
             }
-            //console.log( " line No : " + lineNo + " Marker Count : " + lineData["marksCount"]+ " = " + houseTypeCount);
           }
         }
       }

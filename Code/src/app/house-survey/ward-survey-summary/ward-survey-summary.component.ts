@@ -334,7 +334,6 @@ export class WardSurveySummaryComponent implements OnInit {
 
   updateSurveyComplexCount_Bharat(zoneNo: any) {
 
-    console.log("zoneNo:" + zoneNo);
     let dbPath = "Houses/" + zoneNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseData => {
@@ -1368,9 +1367,6 @@ export class WardSurveySummaryComponent implements OnInit {
 
               if (lineData[markerNo]["houseType"] != null) {
                 let houseTypeId = lineData[markerNo]["houseType"];
-                // if (houseTypeId == "19" || houseTypeId == "20") {
-                //   console.log("line no : " + lineNo + " marker no : " + markerNo)
-                //  }
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;
