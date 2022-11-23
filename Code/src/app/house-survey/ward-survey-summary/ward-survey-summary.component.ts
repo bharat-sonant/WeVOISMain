@@ -92,7 +92,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.lineuptoLoop = this.wardList.length;
-    this.updateCounts_Bharat(this.wardList.length);
+    this.updateCounts_Bharat(1);
   }
 
   showHideAlreadyCardInstalled() {
@@ -514,6 +514,7 @@ export class WardSurveySummaryComponent implements OnInit {
   getExportCardData(index: any, type: any) {
     if (index == this.wardList.length) {
       if (this.cardHousesList.length > 0) {
+        let totalHouses = 0;
         let htmlString = "";
         htmlString = "<table>";
         htmlString += "<tr>";
@@ -581,7 +582,33 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += this.cardHousesList[i]["date"];
           htmlString += "</td>";
           htmlString += "</tr>";
+          totalHouses += Number(this.cardHousesList[i]["houseCount"]);
         }
+
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Total";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += totalHouses;
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "</tr>";
         htmlString += "<table>";
         let fileName = this.commonService.getFireStoreCity() + "-" + type + "-HouseData.xlsx";
         this.commonService.exportExcel(htmlString, fileName);
@@ -615,9 +642,11 @@ export class WardSurveySummaryComponent implements OnInit {
                   }
                   let houseType = cardObj[cardNo]["houseType"];
                   if (houseType == "19" || houseType == "20") {
-                    houseCount = cardObj[cardNo]["servingCount"];
-                    if (houseCount == "" || houseCount == "0") {
-                      houseCount = "1";
+                    if (cardObj[cardNo]["servingCount"] != null) {
+                      houseCount = cardObj[cardNo]["servingCount"];
+                      if (houseCount == "" || houseCount == "0") {
+                        houseCount = "1";
+                      }
                     }
                   }
                   let detail = this.houseTypeList.find(item => item.id == houseType);
