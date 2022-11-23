@@ -92,7 +92,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.employeeSurvey = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.lineuptoLoop = this.wardList.length;
-    this.updateCounts_Bharat(1);
+    this.updateCounts_Bharat(this.wardList.length);
   }
 
   showHideAlreadyCardInstalled() {
@@ -527,6 +527,9 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "Card No";
         htmlString += "</td>";
         htmlString += "<td>";
+        htmlString += "No of Houses";
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += "Name";
         htmlString += "</td>";
         htmlString += "<td>";
@@ -555,6 +558,9 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["houseCount"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["name"];
@@ -599,14 +605,26 @@ export class WardSurveySummaryComponent implements OnInit {
                   let cardNo = cardKeyArray[j];
                   let name = cardObj[cardNo]["name"];
                   let address = cardObj[cardNo]["address"];
-                  let cardType = cardObj[cardNo]["cardType"];
+                  let cardType = "";
                   let latLng = cardObj[cardNo]["latLng"];
                   let mobile = cardObj[cardNo]["mobile"];
                   let date = "";
+                  let houseCount = "1";
                   if (cardObj[cardNo]["createdDate"] != null) {
                     date = cardObj[cardNo]["createdDate"].split(' ')[0];
                   }
-                  this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date });
+                  let houseType = cardObj[cardNo]["houseType"];
+                  if (houseType == "19" || houseType == "20") {
+                    houseCount = cardObj[cardNo]["servingCount"];
+                    if (houseCount == "" || houseCount == "0") {
+                      houseCount = "1";
+                    }
+                  }
+                  let detail = this.houseTypeList.find(item => item.id == houseType);
+                  if (detail != undefined) {
+                    cardType = detail.houseType;
+                  }
+                  this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date, houseCount: houseCount });
                 }
               }
               index++;
@@ -1083,10 +1101,12 @@ export class WardSurveySummaryComponent implements OnInit {
     let houseTypeId = $(this.ddlHouseType).val();
     let servingCount = $(this.txtServingCount).val();
     let cardType = "व्यावसायिक";
-    let isCommercial=false;
+    let isCommercial = false;
     if (houseTypeId == "19" || houseTypeId == "20") {
-      isCommercial=true;
-      $(this.divServingCount).show();
+      isCommercial = true;
+    }
+    else {
+      servingCount = "0";
     }
     this.surveyedDetailList[Number(index)]["isCommercial"] = isCommercial;
     this.surveyedDetailList[Number(index)]["houseType"] = houseTypeId;

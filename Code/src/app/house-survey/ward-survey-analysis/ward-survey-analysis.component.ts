@@ -849,7 +849,9 @@ export class WardSurveyAnalysisComponent {
     let isCommercial = false;
     if (houseTypeId == "19" || houseTypeId == "20") {
       isCommercial = true;
-      $(this.divServingCount).show();
+    }
+    else {
+      servingCount = "0";
     }
     this.scannedCardList[Number(index)]["isCommercial"] = isCommercial;
     this.scannedCardList[Number(index)]["houseType"] = houseTypeId;

@@ -687,3 +687,25 @@ label {
         height: unset !important;
     }
 }
+
+.pos-right {
+    padding-right: 42px!important;
+}
+
+.update-time {
+    font-size: 12px!important;
+}
+
+.refresh {
+    background: #fff;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 4px;
+    height: 35px;
+    width: 35px;
+    position: absolute;
+    bottom: 5px;
+    top: 7px;
+    right: 15px;
+}

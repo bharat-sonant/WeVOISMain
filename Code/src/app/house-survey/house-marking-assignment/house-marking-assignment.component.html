@@ -3,6 +3,13 @@
         <div class="col-md-12 no-gutters-iner">
             Surveyor Assignment
         </div>
+        <div style="z-index: 99; float:right; position: absolute;">
+            <span class="pos-right" style="float:right; font-size: 7px; line-height: 15px; padding-right:50px; text-align: right;">
+                <span class="update-time" style="font-size: 18px; font-weight: bold;">55565 </span><br/>last Update
+            <br />
+            </span>
+            <button class="refresh" (click)="showGraph();" title="Show Graph"><i class="fas fa-redo-alt"></i></button>
+        </div>
     </div>
 </section>
 <div class="main-content">
@@ -117,7 +124,7 @@
                             </div>
                         </div>
 
-                        <div class="col text-center extra-class">
+                        <div class="col text-center extra-class" style="display:none;">
                             <div class="table-heading">
                                 <h3>
                                     <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br> Revisit
@@ -148,7 +155,7 @@
                                                     </th>
                                                     <th class="border-right Surveyed-tableheading">Houses
                                                     </th>
-                                                    <th class="border-right Revisit-tableheading">Revisit</th>
+                                                    <th class="border-right Revisit-tableheading" style="display:none;">Revisit</th>
                                                     <th class="border-right Revisit-tableheading">Complex(s)</th>
                                                     <th class="border-right RFID-tableheading" style="display: none;">RFID not matched
                                                     </th>
@@ -163,7 +170,7 @@
                                                         <td class="border-right table-data2">
                                                             <span [hidden]="data.houses!=undefind">-</span> {{data.houses}}
                                                         </td>
-                                                        <td class="border-right table-data2">
+                                                        <td class="border-right table-data2" style="display:none;">
                                                             <span [hidden]="data.revisit!=null">-</span> {{data.revisit}}
                                                         </td>
                                                         <td class="text-right table-data2">
