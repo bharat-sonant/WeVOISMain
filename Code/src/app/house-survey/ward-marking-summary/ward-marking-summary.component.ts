@@ -266,7 +266,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (addressData != null) {
                 address = addressData.toString();
                 dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + LineNo + "/" + markerNo;
-                this.db.object(dbPath).update({ address: address });
+                //this.db.object(dbPath).update({ address: address });
                 this.markerExportList[index]["address"] = address;
               }
               index++;
