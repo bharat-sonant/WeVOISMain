@@ -3,15 +3,31 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12 no-gutters-iner">
+        <div class="col-md-3 no-gutters-iner">
             Surveyor Assignment
         </div>
-        <div style="z-index: 99; float:right; position: absolute;">
-            <span class="pos-right" style="float:right; font-size: 7px; line-height: 15px; padding-right:50px; text-align: right;">
-                <span class="update-time" style="font-size: 18px; font-weight: bold;">{{houseData.lastUpdate}} </span><br/>last Update
-            <br />
-            </span>
-            <button class="refresh" (click)="updateSurveyorSummary();"><i class="fas fa-redo-alt"></i></button>
+        <div class="col-md-9 text-right total-house fix-home-outer">
+            <div class="display" id="popup">
+                <div class="fix-home">
+                    <div class="float-second float-second2">
+                        <i class="fas fa-house-damage"></i> <span class="house"> {{houseData.totalCards}}</span><br>
+                        <h6>Cards</h6>
+                    </div>
+                    <div class="float-fourth float-second2">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{houseData.totalHouses}}</span><br>
+                        <h6>Houses</h6>
+                    </div>
+
+                    <div class="float-first fix-home-iner" style="padding-top: 0px;  cursor: pointer;" (click)="updateSurveyorSummary();">
+                        <i class="fas fa-redo-alt icon-damage2" style="color: #1fda2f;"></i>
+                        <span class="house">
+                            {{houseData.lastUpdate}}</span><br>
+                        <h6>Last Updated</h6>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -38,7 +54,7 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of assignedList; let i=index" (click)="getServeyorDetail(data.userId,i);">
+                                            <tr class="table-row" style="cursor: pointer;" id="tr{{i}}" *ngFor="let data of assignedList; let i=index" (click)="getServeyorDetail(data.userId,i);">
                                                 <td class="table-data">{{i+1}}</td>
                                                 <td class="table-data">
                                                     {{data.name}}</td>
@@ -101,7 +117,7 @@
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalDays}}</span> <br> Working Day
+                                    <span class="tbl-points"> {{houseData.days}}</span> <br> Working Day
                                 </h3>
                             </div>
                         </div>
@@ -115,29 +131,14 @@
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalSurveyed}}</span> <br> Cards
+                                    <span class="tbl-points"> {{houseData.cards}}</span> <br> Cards
                                 </h3>
                             </div>
                         </div>
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{houseData.totalHouses}}</span> <br> Houses
-                                </h3>
-                            </div>
-                        </div>
-
-                        <div class="col text-center extra-class" style="display:none;">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{houseData.totalRevisit}}</span> <br> Revisit
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col text-center extra-class" style="display:none;">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{houseData.totalRFID}}</span> <br> RFID not matched
+                                    <span class="tbl-points"> {{houseData.houses}}</span> <br> Houses
                                 </h3>
                             </div>
                         </div>
@@ -158,10 +159,7 @@
                                                     </th>
                                                     <th class="border-right Surveyed-tableheading">Houses
                                                     </th>
-                                                    <th class="border-right Revisit-tableheading" style="display:none;">Revisit</th>
                                                     <th class="border-right Revisit-tableheading">Complex(s)</th>
-                                                    <th class="border-right RFID-tableheading" style="display: none;">RFID not matched
-                                                    </th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of lineMarkerList; let i=index">
@@ -173,14 +171,8 @@
                                                         <td class="border-right table-data2">
                                                             <span [hidden]="data.houses!=undefind">-</span> {{data.houses}}
                                                         </td>
-                                                        <td class="border-right table-data2" style="display:none;">
-                                                            <span [hidden]="data.revisit!=null">-</span> {{data.revisit}}
-                                                        </td>
                                                         <td class="text-right table-data2">
                                                             <span [hidden]="data.complex!=0">-</span><span [hidden]="data.complex==0"> {{data.complex}} ({{data.houseHold}})</span>
-                                                        </td>
-                                                        <td class="border-right table-data2" style="display: none;">
-                                                            <span [hidden]="data.rfid!=null">-</span> {{data.rfid}}
                                                         </td>
                                                     </tr>
                                                 </tbody>

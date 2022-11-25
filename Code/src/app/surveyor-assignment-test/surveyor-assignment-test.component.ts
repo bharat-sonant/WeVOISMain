@@ -34,19 +34,20 @@ export class SurveyorAssignmentTestComponent implements OnInit {
   lineMarkerList: any[];
   isFirst = true;
   houseData: houseDatail = {
-    totalMarking: "0",
-    totalSurveyed: "0",
-    totalHouses: "0",
-    totalRevisit: "0",
-    totalRFID: "0",
+    days: "0",
+    cards: "0",
+    houses: "0",
     name: "",
     wardNo: "",
     average: "0",
-    totalDays: "0",
-    lastUpdate: "---"
+    lastUpdate: "---",
+    totalCards: "0",
+    totalHouses: "0"
   };
   db: any;
   divLoader = "#divLoader";
+  totalHouses: any;
+  totalCards: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.getLastUpdate();
@@ -54,13 +55,15 @@ export class SurveyorAssignmentTestComponent implements OnInit {
     this.getAssignedList();
   }
 
-  getLastUpdate(){
-    let dbPath = "EntitySurveyData/SurveyorSurveySummary/lastUpdate";
-    let lastUpdateInstance=this.db.object(dbPath).valueChanges().subscribe(
-      lastUpdateData=>{
+  getLastUpdate() {
+    let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
+    let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
+      summaryData => {
         lastUpdateInstance.unsubscribe();
-        if(lastUpdateData!=null){
-          this.houseData.lastUpdate=lastUpdateData;
+        if (summaryData != null) {
+          this.houseData.lastUpdate = summaryData["lastUpdate"];
+          this.houseData.totalCards = summaryData["cards"];
+          this.houseData.totalHouses = summaryData["houses"];
         }
       }
     );
@@ -68,6 +71,8 @@ export class SurveyorAssignmentTestComponent implements OnInit {
 
   updateSurveyorSummary() {
     $(this.divLoader).show();
+    this.totalCards = 0;
+    this.totalHouses = 0;
     let dbPath = "Houses";
     let housesInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseData => {
@@ -101,8 +106,16 @@ export class SurveyorAssignmentTestComponent implements OnInit {
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
       let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
-      let dbPath = "EntitySurveyData/SurveyorSurveySummary/";
-      this.db.object(dbPath).update({ lastUpdate: lastUpdate });
+      const data = {
+        lastUpdate: lastUpdate,
+        cards: this.totalCards,
+        houses: this.totalHouses
+      }
+      let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
+      this.db.object(dbPath).update(data);
+      this.houseData.lastUpdate = lastUpdate;
+      this.houseData.totalCards = this.totalCards;
+      this.houseData.totalHouses = this.totalHouses;
       this.commonService.setAlertMessage("success", "Data update successfully !!!");
       $(this.divLoader).hide();
     }
@@ -123,6 +136,7 @@ export class SurveyorAssignmentTestComponent implements OnInit {
                   let surveyorId = cardData[cardNo]["surveyorId"];
                   let houseType = cardData[cardNo]["houseType"];
                   if (cardData[cardNo]["createdDate"] != null) {
+                    this.totalCards++;
                     let cardCount = 1;
                     let houseCount = 1;
                     let complexCount = 0;
@@ -142,6 +156,7 @@ export class SurveyorAssignmentTestComponent implements OnInit {
                       }
                       housesInComplex = houseCount;
                     }
+                    this.totalHouses += Number(houseCount);
                     if (this.surveyorSummaryList.length == 0) {
                       this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
                     }
@@ -192,13 +207,10 @@ export class SurveyorAssignmentTestComponent implements OnInit {
     } else {
       this.isFirst = false;
     }
-    this.houseData.totalMarking = "0";
-    this.houseData.totalSurveyed = "0";
-    this.houseData.totalHouses = "0";
-    this.houseData.totalRevisit = "0";
-    this.houseData.totalRFID = "0";
+    this.houseData.days = "0";
+    this.houseData.cards = "0";
+    this.houseData.houses = "0";
     this.houseData.average = "0";
-    this.houseData.totalDays = "0";
     this.lineMarkerList = [];
 
     let userDetail = this.assignedList.find((item) => item.userId == userId);
@@ -239,20 +251,12 @@ export class SurveyorAssignmentTestComponent implements OnInit {
         if (this.lineMarkerList[i]["surveyed"] != null) {
           surved = surved + Number(this.lineMarkerList[i]["surveyed"]);
         }
-        if (this.lineMarkerList[i]["revisit"] != null) {
-          revisit = revisit + Number(this.lineMarkerList[i]["revisit"]);
-        }
-        if (this.lineMarkerList[i]["rfid"] != null) {
-          rfid = rfid + Number(this.lineMarkerList[i]["rfid"]);
-        }
         if (this.lineMarkerList[i]["houses"] != null) {
           houses = houses + Number(this.lineMarkerList[i]["houses"]);
         }
-        this.houseData.totalHouses = houses.toString();
-        this.houseData.totalSurveyed = surved.toString();
-        this.houseData.totalRevisit = revisit.toString();
-        this.houseData.totalRFID = rfid.toString();
-        this.houseData.totalDays = this.lineMarkerList.length.toString();
+        this.houseData.houses = houses.toString();
+        this.houseData.cards = surved.toString();
+        this.houseData.days = this.lineMarkerList.length.toString();
         this.houseData.average = ((surved + revisit + rfid) / this.lineMarkerList.length).toFixed(2);
       }
     }
@@ -526,14 +530,13 @@ export class SurveyorAssignmentTestComponent implements OnInit {
 
 
 export class houseDatail {
-  totalMarking: string;
-  totalSurveyed: string;
-  totalHouses: string;
-  totalRevisit: string;
-  totalRFID: string;
+  days: string;
+  cards: string;
+  houses: string;
   name: string;
   wardNo: string;
   average: string;
-  totalDays: string;
-  lastUpdate: String;
+  lastUpdate: string;
+  totalCards: string;
+  totalHouses: string;
 }
