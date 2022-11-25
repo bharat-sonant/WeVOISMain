@@ -114,6 +114,9 @@ import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
+import { SurveyorAssignmentTestComponent } from '../../surveyor-assignment-test/surveyor-assignment-test.component';
+
+
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
     { path: 'index#home', component: IndexComponent },
@@ -124,9 +127,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'portal-access', component: PortalAccessComponent },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
-    {path:'manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'complaint-list',component:ComplaintListComponent},
-    
+    { path: 'manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'complaint-list', component: ComplaintListComponent },
+
     //Sikar
     { path: 'sikar/home', component: HomeComponent },
     { path: 'sikar/account-detail', component: AccountDetailComponent },
@@ -238,8 +241,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'sikar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'sikar/role-page-access/:id', component: RolePageAccessComponent },
+    { path: 'sikar/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
-    
+
     { path: 'sikar/:id/home', component: HomeComponent },
     { path: 'sikar/:id/dashboard', component: DashboardComponent },
     { path: 'sikar/:id/notifications', component: NotificationsComponent },
@@ -356,9 +360,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/maps', component: MapsComponent },
     { path: 'sikar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'sikar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'siker/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'siker/:id/complaint-list',component:ComplaintListComponent},
-    
+    { path: 'siker/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'siker/:id/complaint-list', component: ComplaintListComponent },
+
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
     { path: 'jaipur-greater/dashboard', component: DashboardComponent },
@@ -470,10 +474,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/role-page-access/:id', component: RolePageAccessComponent },
+    { path: 'jaipur-greater/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
-    
 
-    
+
+
     { path: 'jaipur-greater/:id/home', component: HomeComponent },
     { path: 'jaipur-greater/:id/dashboard', component: DashboardComponent },
     { path: 'jaipur-greater/:id/notifications', component: NotificationsComponent },
@@ -589,8 +594,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/maps', component: MapsComponent },
     { path: 'jaipur-greater/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-greater/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-greater/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-greater/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-greater/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-greater/:id/complaint-list', component: ComplaintListComponent },
     //reengus
     { path: 'reengus/home', component: HomeComponent },
     { path: 'reengus/dashboard', component: DashboardComponent },
@@ -703,10 +708,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'reengus/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'reengus/role-page-access/:id', component: RolePageAccessComponent },
-   
+    { path: 'reengus/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
-    
+
+
     { path: 'reengus/:id/home', component: HomeComponent },
     { path: 'reengus/:id/dashboard', component: DashboardComponent },
     { path: 'reengus/:id/notifications', component: NotificationsComponent },
@@ -823,8 +829,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/maps', component: MapsComponent },
     { path: 'reengus/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'reengus/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'reengus/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'reengus/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'reengus/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'reengus/:id/complaint-list', component: ComplaintListComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -939,7 +945,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'shahpura/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'shahpura/:id/home', component: HomeComponent },
     { path: 'shahpura/:id/dashboard', component: DashboardComponent },
     { path: 'shahpura/:id/notifications', component: NotificationsComponent },
@@ -1056,8 +1062,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/maps', component: MapsComponent },
     { path: 'shahpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'shahpura/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'shahpura/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'shahpura/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'shahpura/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'shahpura/:id/complaint-list', component: ComplaintListComponent },
     //test
     { path: 'test/home', component: HomeComponent },
     { path: 'test/dashboard', component: DashboardComponent },
@@ -1171,7 +1177,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'test/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'test/:id/home', component: HomeComponent },
     { path: 'test/:id/dashboard', component: DashboardComponent },
     { path: 'test/:id/notifications', component: NotificationsComponent },
@@ -1288,8 +1294,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/maps', component: MapsComponent },
     { path: 'test/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'test/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'test/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'test/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'test/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'test/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
     { path: 'jaipur-office/dashboard', component: DashboardComponent },
@@ -1403,7 +1409,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-office/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'jaipur-office/:id/home', component: HomeComponent },
     { path: 'jaipur-office/:id/dashboard', component: DashboardComponent },
     { path: 'jaipur-office/:id/notifications', component: NotificationsComponent },
@@ -1520,8 +1526,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/maps', component: MapsComponent },
     { path: 'jaipur-office/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-office/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-office/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-office/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-office/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-office/:id/complaint-list', component: ComplaintListComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1636,7 +1642,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'kishangarh/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'kishangarh/:id/home', component: HomeComponent },
     { path: 'kishangarh/:id/dashboard', component: DashboardComponent },
     { path: 'kishangarh/:id/notifications', component: NotificationsComponent },
@@ -1753,8 +1759,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/maps', component: MapsComponent },
     { path: 'kishangarh/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'kishangarh/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'kishangarh/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'kishangarh/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'kishangarh/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'kishangarh/:id/complaint-list', component: ComplaintListComponent },
 
 
     //Nawai
@@ -1870,7 +1876,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'niwai/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'niwai/:id/home', component: HomeComponent },
     { path: 'niwai/:id/dashboard', component: DashboardComponent },
     { path: 'niwai/:id/notifications', component: NotificationsComponent },
@@ -1987,8 +1993,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/maps', component: MapsComponent },
     { path: 'niwai/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'niwai/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'niwai/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'niwai/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'niwai/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'niwai/:id/complaint-list', component: ComplaintListComponent },
 
 
     //Jaisalmer
@@ -2104,7 +2110,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaisalmer/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'jaisalmer/:id/home', component: HomeComponent },
     { path: 'jaisalmer/:id/dashboard', component: DashboardComponent },
     { path: 'jaisalmer/:id/notifications', component: NotificationsComponent },
@@ -2221,8 +2227,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/maps', component: MapsComponent },
     { path: 'jaisalmer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaisalmer/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaisalmer/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaisalmer/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaisalmer/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaisalmer/:id/complaint-list', component: ComplaintListComponent },
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
     { path: 'salasar/dashboard', component: DashboardComponent },
@@ -2336,7 +2342,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'salasar/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'salasar/:id/home', component: HomeComponent },
     { path: 'salasar/:id/dashboard', component: DashboardComponent },
     { path: 'salasar/:id/notifications', component: NotificationsComponent },
@@ -2453,8 +2459,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/maps', component: MapsComponent },
     { path: 'salasar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'salasar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'salasar/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'salasar/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'salasar/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'salasar/:id/complaint-list', component: ComplaintListComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2568,8 +2574,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'behror/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'behror/role-page-access/:id', component: RolePageAccessComponent },
-  
-    
+
+
     { path: 'behror/:id/home', component: HomeComponent },
     { path: 'behror/:id/dashboard', component: DashboardComponent },
     { path: 'behror/:id/notifications', component: NotificationsComponent },
@@ -2686,8 +2692,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/maps', component: MapsComponent },
     { path: 'behror/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'behror/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'behror/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'behror/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'behror/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'behror/:id/complaint-list', component: ComplaintListComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
@@ -2917,8 +2923,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/maps', component: MapsComponent },
     { path: 'jaipur/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
     { path: 'jaipur-jhotwara/account-detail', component: AccountDetailComponent },
@@ -3148,8 +3154,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/maps', component: MapsComponent },
     { path: 'jaipur-jhotwara/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-jhotwara/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-jhotwara/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-jhotwara/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-jhotwara/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-jhotwara/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
     { path: 'jaipur-jagatpura/account-detail', component: AccountDetailComponent },
@@ -3379,8 +3385,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/maps', component: MapsComponent },
     { path: 'jaipur-jagatpura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-jagatpura/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-jagatpura/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-jagatpura/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-jagatpura/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-jagatpura/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
     { path: 'jaipur-malviyanagar/account-detail', component: AccountDetailComponent },
@@ -3492,6 +3498,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/role-page-access/:id', component: RolePageAccessComponent },
+    { path: 'jaipur-malviyanagar/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
     { path: 'jaipur-malviyanagar/:id/home', component: HomeComponent },
@@ -3610,8 +3617,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/maps', component: MapsComponent },
     { path: 'jaipur-malviyanagar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-malviyanagar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-malviyanagar/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-malviyanagar/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-malviyanagar/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-malviyanagar/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
     { path: 'jaipur-mansarovar/account-detail', component: AccountDetailComponent },
@@ -3841,8 +3848,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/maps', component: MapsComponent },
     { path: 'jaipur-mansarovar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-mansarovar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-mansarovar/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-mansarovar/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-mansarovar/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-mansarovar/:id/complaint-list', component: ComplaintListComponent },
 
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
@@ -3955,6 +3962,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/role-page-access/:id', component: RolePageAccessComponent },
+    { path: 'jaipur-murlipura/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
     { path: 'jaipur-murlipura/:id/home', component: HomeComponent },
@@ -4073,8 +4081,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/maps', component: MapsComponent },
     { path: 'jaipur-murlipura/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-murlipura/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-murlipura/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-murlipura/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-murlipura/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-murlipura/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
     { path: 'jaipur-sanganer/account-detail', component: AccountDetailComponent },
@@ -4304,8 +4312,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/maps', component: MapsComponent },
     { path: 'jaipur-sanganer/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-sanganer/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-sanganer/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-sanganer/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-sanganer/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-sanganer/:id/complaint-list', component: ComplaintListComponent },
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
     { path: 'jaipur-vidhyadhar/account-detail', component: AccountDetailComponent },
@@ -4535,8 +4543,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/maps', component: MapsComponent },
     { path: 'jaipur-vidhyadhar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'jaipur-vidhyadhar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'jaipur-vidhyadhar/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'jaipur-vidhyadhar/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'jaipur-vidhyadhar/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'jaipur-vidhyadhar/:id/complaint-list', component: ComplaintListComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -4767,8 +4775,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/maps', component: MapsComponent },
     { path: 'bhiwadi/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'bhiwadi/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'bhiwadi/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'bhiwadi/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'bhiwadi/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'bhiwadi/:id/complaint-list', component: ComplaintListComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -4999,8 +5007,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/maps', component: MapsComponent },
     { path: 'chhapar/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'chhapar/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'chhapar/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'chhapar/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'chhapar/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'chhapar/:id/complaint-list', component: ComplaintListComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5231,10 +5239,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/maps', component: MapsComponent },
     { path: 'churu/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'churu/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'churu/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'churu/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'churu/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'churu/:id/complaint-list', component: ComplaintListComponent },
 
-    
+
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
     { path: 'wevois-others/dashboard', component: DashboardComponent },
@@ -5348,7 +5356,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'wevois-others/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'wevois-others/:id/home', component: HomeComponent },
     { path: 'wevois-others/:id/dashboard', component: DashboardComponent },
     { path: 'wevois-others/:id/notifications', component: NotificationsComponent },
@@ -5465,11 +5473,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id/maps', component: MapsComponent },
     { path: 'wevois-others/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'wevois-others/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'wevois-others/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'wevois-others/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'wevois-others/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'wevois-others/:id/complaint-list', component: ComplaintListComponent },
 
-    
-    
+
+
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
     { path: 'gwalior/dashboard', component: DashboardComponent },
@@ -5583,7 +5591,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'gwalior/role-page-access/:id', component: RolePageAccessComponent },
 
-    
+
     { path: 'gwalior/:id/home', component: HomeComponent },
     { path: 'gwalior/:id/dashboard', component: DashboardComponent },
     { path: 'gwalior/:id/notifications', component: NotificationsComponent },
@@ -5700,8 +5708,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/maps', component: MapsComponent },
     { path: 'gwalior/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'gwalior/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'gwalior/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'gwalior/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'gwalior/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'gwalior/:id/complaint-list', component: ComplaintListComponent },
 
 
     //Tonk
@@ -5933,7 +5941,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/maps', component: MapsComponent },
     { path: 'tonk/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: 'tonk/:id/scan-card-status', component: ScanCardStatusComponent },
-    {path:'tonk/:id/manage-ward-supervisor',component:ManageWardSupervisorComponent},
-    {path:'tonk/:id/complaint-list',component:ComplaintListComponent},
+    { path: 'tonk/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
+    { path: 'tonk/:id/complaint-list', component: ComplaintListComponent },
 
 ]; 

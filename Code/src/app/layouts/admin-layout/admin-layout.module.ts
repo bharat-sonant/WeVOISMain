@@ -121,6 +121,7 @@ import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
+import { SurveyorAssignmentTestComponent } from '../../surveyor-assignment-test/surveyor-assignment-test.component';
 
 @NgModule({
   imports: [
@@ -247,6 +248,7 @@ import { ComplaintListComponent } from '../../complaint-list/complaint-list.comp
     ScanCardStatusComponent,
     ManageWardSupervisorComponent ,
     ComplaintListComponent,
+    SurveyorAssignmentTestComponent
   ]
 })
 
