@@ -1,1 +1,73 @@
-<p>complaint-list works!</p>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 no-gutters-iner">
+
+
+        </div>
+        <div class="col-md-8 Surveyor-box">
+            Complaint-List
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row" style="width:200%">
+        <div class="col-md-6 card-main">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card card-main-iner">
+                <div class="card-body card-body2">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-head1">S.No.</th>
+                                            <th class="table-head1">Date</th>
+                                           
+                                            <th class="table-head1">Complain type</th>
+                                            
+                                           
+                                          
+                                            <th class="table-head1">Zone</th>
+                                            <th class="table-head1">Name</th>
+                                            <th class="table-head1">Complaint</th>
+
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row" id="tr{{i}}"
+                                                *ngFor="let data of complainList; let i=index" class="{{data.trClass}}">
+                                                <td class="table-data-1">{{i+1}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.date}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.complaintype}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.zone}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.name}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.message}}</td>
+                                               
+
+
+
+
+
+
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
