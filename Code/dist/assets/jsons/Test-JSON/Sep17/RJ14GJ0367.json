@@ -1,0 +1,1360 @@
+[
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:10 AM",
+            "latitude": "26.832007",
+            "longitude": "75.76327",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:10 AM",
+            "latitude": "26.831938",
+            "longitude": "75.76328",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:20 AM",
+            "latitude": "26.833258",
+            "longitude": "75.769123",
+            "speed": "24.82"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:21 AM",
+            "latitude": "26.834432",
+            "longitude": "75.77001",
+            "speed": "28.95"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:22 AM",
+            "latitude": "26.836512",
+            "longitude": "75.769033",
+            "speed": "36.21"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:22 AM",
+            "latitude": "26.838473",
+            "longitude": "75.76817",
+            "speed": "29.24"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:23 AM",
+            "latitude": "26.839823",
+            "longitude": "75.768332",
+            "speed": "27.56"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:23 AM",
+            "latitude": "26.840077",
+            "longitude": "75.768908",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:24 AM",
+            "latitude": "26.840077",
+            "longitude": "75.768908",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:24 AM",
+            "latitude": "26.84057",
+            "longitude": "75.770125",
+            "speed": "14.96"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:24 AM",
+            "latitude": "26.841923",
+            "longitude": "75.77024",
+            "speed": "26.65"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:25 AM",
+            "latitude": "26.843697",
+            "longitude": "75.770615",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:25 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:26 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:26 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:27 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:27 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:28 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:28 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:29 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:29 AM",
+            "latitude": "26.843693",
+            "longitude": "75.770568",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:30 AM",
+            "latitude": "26.843695",
+            "longitude": "75.770563",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:30 AM",
+            "latitude": "26.844993",
+            "longitude": "75.77074",
+            "speed": "28.48"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:30 AM",
+            "latitude": "26.846895",
+            "longitude": "75.76984",
+            "speed": "29.13"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:31 AM",
+            "latitude": "26.848142",
+            "longitude": "75.769243",
+            "speed": "21.91"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:31 AM",
+            "latitude": "26.849575",
+            "longitude": "75.768573",
+            "speed": "17.48"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:32 AM",
+            "latitude": "26.849775",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:32 AM",
+            "latitude": "26.84977",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:33 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:33 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:34 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:34 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:35 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:35 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:35 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:36 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:36 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768338",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:37 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:37 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:38 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:38 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:39 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:39 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768337",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:40 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768335",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:40 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768335",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:40 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768335",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:41 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768333",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:41 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768333",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:42 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768333",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:42 AM",
+            "latitude": "26.849772",
+            "longitude": "75.768332",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:43 AM",
+            "latitude": "26.849773",
+            "longitude": "75.768332",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:43 AM",
+            "latitude": "26.849663",
+            "longitude": "75.768025",
+            "speed": "8.59"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:44 AM",
+            "latitude": "26.849645",
+            "longitude": "75.767853",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:44 AM",
+            "latitude": "26.849983",
+            "longitude": "75.768405",
+            "speed": "12.87"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:45 AM",
+            "latitude": "26.850357",
+            "longitude": "75.767995",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:45 AM",
+            "latitude": "26.850245",
+            "longitude": "75.767818",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:45 AM",
+            "latitude": "26.850238",
+            "longitude": "75.767822",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:46 AM",
+            "latitude": "26.850237",
+            "longitude": "75.767813",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:46 AM",
+            "latitude": "26.850235",
+            "longitude": "75.767805",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:47 AM",
+            "latitude": "26.850237",
+            "longitude": "75.767793",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:47 AM",
+            "latitude": "26.85024",
+            "longitude": "75.767792",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:48 AM",
+            "latitude": "26.85024",
+            "longitude": "75.76779",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:48 AM",
+            "latitude": "26.85024",
+            "longitude": "75.76779",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:49 AM",
+            "latitude": "26.85024",
+            "longitude": "75.76779",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:49 AM",
+            "latitude": "26.85024",
+            "longitude": "75.76779",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:50 AM",
+            "latitude": "26.85024",
+            "longitude": "75.76779",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:50 AM",
+            "latitude": "26.85024",
+            "longitude": "75.767788",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:51 AM",
+            "latitude": "26.850243",
+            "longitude": "75.767785",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:51 AM",
+            "latitude": "26.850245",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:51 AM",
+            "latitude": "26.850245",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:52 AM",
+            "latitude": "26.850245",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:52 AM",
+            "latitude": "26.850245",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:53 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:53 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:54 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767783",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:54 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767785",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:55 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767785",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:55 AM",
+            "latitude": "26.850247",
+            "longitude": "75.767785",
+            "speed": "1.09"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:56 AM",
+            "latitude": "26.850137",
+            "longitude": "75.767477",
+            "speed": "2.44"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:56 AM",
+            "latitude": "26.85005",
+            "longitude": "75.767208",
+            "speed": "6.96"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:57 AM",
+            "latitude": "26.850267",
+            "longitude": "75.766973",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:57 AM",
+            "latitude": "26.850382",
+            "longitude": "75.766915",
+            "speed": "4.04"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:57 AM",
+            "latitude": "26.850505",
+            "longitude": "75.766855",
+            "speed": "4.46"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:58 AM",
+            "latitude": "26.850735",
+            "longitude": "75.766757",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:58 AM",
+            "latitude": "26.850898",
+            "longitude": "75.766647",
+            "speed": "3.8"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:59 AM",
+            "latitude": "26.851082",
+            "longitude": "75.766545",
+            "speed": "5.78"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 7:59 AM",
+            "latitude": "26.851383",
+            "longitude": "75.766537",
+            "speed": "2.52"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:00 AM",
+            "latitude": "26.851377",
+            "longitude": "75.766533",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:00 AM",
+            "latitude": "26.851382",
+            "longitude": "75.766538",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:01 AM",
+            "latitude": "26.8514",
+            "longitude": "75.766627",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:01 AM",
+            "latitude": "26.851463",
+            "longitude": "75.766757",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:02 AM",
+            "latitude": "26.851507",
+            "longitude": "75.766895",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:02 AM",
+            "latitude": "26.851528",
+            "longitude": "75.766918",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:03 AM",
+            "latitude": "26.851553",
+            "longitude": "75.766962",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:03 AM",
+            "latitude": "26.851548",
+            "longitude": "75.76703",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:03 AM",
+            "latitude": "26.851548",
+            "longitude": "75.76703",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:04 AM",
+            "latitude": "26.851628",
+            "longitude": "75.767207",
+            "speed": "4.89"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:04 AM",
+            "latitude": "26.851787",
+            "longitude": "75.76734",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:05 AM",
+            "latitude": "26.851733",
+            "longitude": "75.767263",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:05 AM",
+            "latitude": "26.851663",
+            "longitude": "75.767147",
+            "speed": "4.93"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:06 AM",
+            "latitude": "26.851483",
+            "longitude": "75.767158",
+            "speed": "2.06"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:06 AM",
+            "latitude": "26.851382",
+            "longitude": "75.767215",
+            "speed": "2.06"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:07 AM",
+            "latitude": "26.851335",
+            "longitude": "75.767317",
+            "speed": "2.07"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:07 AM",
+            "latitude": "26.851227",
+            "longitude": "75.76736",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:08 AM",
+            "latitude": "26.85112",
+            "longitude": "75.7674",
+            "speed": "2.89"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:08 AM",
+            "latitude": "26.85105",
+            "longitude": "75.767402",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:08 AM",
+            "latitude": "26.85103",
+            "longitude": "75.767405",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:09 AM",
+            "latitude": "26.850888",
+            "longitude": "75.767487",
+            "speed": "3.11"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:09 AM",
+            "latitude": "26.850693",
+            "longitude": "75.767573",
+            "speed": "3.37"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:10 AM",
+            "latitude": "26.850585",
+            "longitude": "75.767475",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:10 AM",
+            "latitude": "26.85059",
+            "longitude": "75.767462",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:11 AM",
+            "latitude": "26.850563",
+            "longitude": "75.767435",
+            "speed": "2.13"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:11 AM",
+            "latitude": "26.850498",
+            "longitude": "75.767315",
+            "speed": "1.39"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:12 AM",
+            "latitude": "26.850445",
+            "longitude": "75.767118",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:12 AM",
+            "latitude": "26.850513",
+            "longitude": "75.767307",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:13 AM",
+            "latitude": "26.850623",
+            "longitude": "75.767218",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:13 AM",
+            "latitude": "26.850757",
+            "longitude": "75.76717",
+            "speed": "1.63"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:14 AM",
+            "latitude": "26.850862",
+            "longitude": "75.767085",
+            "speed": "2.8"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:14 AM",
+            "latitude": "26.851038",
+            "longitude": "75.767",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:14 AM",
+            "latitude": "26.85103",
+            "longitude": "75.766995",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:15 AM",
+            "latitude": "26.851153",
+            "longitude": "75.76695",
+            "speed": "1.02"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:15 AM",
+            "latitude": "26.851212",
+            "longitude": "75.76708",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:16 AM",
+            "latitude": "26.851243",
+            "longitude": "75.767142",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:16 AM",
+            "latitude": "26.85123",
+            "longitude": "75.767142",
+            "speed": "1.54"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:17 AM",
+            "latitude": "26.851155",
+            "longitude": "75.767",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:17 AM",
+            "latitude": "26.851108",
+            "longitude": "75.766825",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:18 AM",
+            "latitude": "26.85109",
+            "longitude": "75.766755",
+            "speed": "2.19"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:18 AM",
+            "latitude": "26.850957",
+            "longitude": "75.766637",
+            "speed": "4.52"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:53 AM",
+            "latitude": "26.849625",
+            "longitude": "75.765992",
+            "speed": "7.65"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:54 AM",
+            "latitude": "26.849873",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:54 AM",
+            "latitude": "26.849872",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:54 AM",
+            "latitude": "26.849872",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:55 AM",
+            "latitude": "26.849872",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:55 AM",
+            "latitude": "26.84987",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:56 AM",
+            "latitude": "26.84987",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:56 AM",
+            "latitude": "26.84987",
+            "longitude": "75.766695",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:57 AM",
+            "latitude": "26.84987",
+            "longitude": "75.766697",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:57 AM",
+            "latitude": "26.84987",
+            "longitude": "75.766697",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:58 AM",
+            "latitude": "26.849868",
+            "longitude": "75.766697",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:58 AM",
+            "latitude": "26.849868",
+            "longitude": "75.766698",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:59 AM",
+            "latitude": "26.849868",
+            "longitude": "75.7667",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:59 AM",
+            "latitude": "26.849868",
+            "longitude": "75.7667",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 8:59 AM",
+            "latitude": "26.849867",
+            "longitude": "75.7667",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:00 AM",
+            "latitude": "26.849867",
+            "longitude": "75.7667",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:00 AM",
+            "latitude": "26.849867",
+            "longitude": "75.766703",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:01 AM",
+            "latitude": "26.849868",
+            "longitude": "75.766703",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:01 AM",
+            "latitude": "26.849868",
+            "longitude": "75.766703",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:02 AM",
+            "latitude": "26.849872",
+            "longitude": "75.76674",
+            "speed": "4.94"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:02 AM",
+            "latitude": "26.850345",
+            "longitude": "75.76789",
+            "speed": "18.33"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:03 AM",
+            "latitude": "26.850162",
+            "longitude": "75.768443",
+            "speed": "17.46"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:03 AM",
+            "latitude": "26.848722",
+            "longitude": "75.769065",
+            "speed": "32.21"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:04 AM",
+            "latitude": "26.84728",
+            "longitude": "75.769725",
+            "speed": "28"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:04 AM",
+            "latitude": "26.845808",
+            "longitude": "75.7704",
+            "speed": "22.89"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:05 AM",
+            "latitude": "26.844187",
+            "longitude": "75.770695",
+            "speed": "13.83"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:05 AM",
+            "latitude": "26.842355",
+            "longitude": "75.77037",
+            "speed": "32.28"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:05 AM",
+            "latitude": "26.840923",
+            "longitude": "75.77026",
+            "speed": "10.93"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:06 AM",
+            "latitude": "26.840662",
+            "longitude": "75.771197",
+            "speed": "13.87"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:06 AM",
+            "latitude": "26.840632",
+            "longitude": "75.771458",
+            "speed": "7.26"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:07 AM",
+            "latitude": "26.840397",
+            "longitude": "75.773183",
+            "speed": "37.17"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:07 AM",
+            "latitude": "26.839977",
+            "longitude": "75.776142",
+            "speed": "34.39"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:08 AM",
+            "latitude": "26.839898",
+            "longitude": "75.776717",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:10 AM",
+            "latitude": "26.836418",
+            "longitude": "75.778453",
+            "speed": "11.32"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:10 AM",
+            "latitude": "26.836452",
+            "longitude": "75.77899",
+            "speed": "8.07"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:11 AM",
+            "latitude": "26.83583",
+            "longitude": "75.779315",
+            "speed": "8.69"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:11 AM",
+            "latitude": "26.835892",
+            "longitude": "75.779488",
+            "speed": "4.22"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:11 AM",
+            "latitude": "26.83586",
+            "longitude": "75.779483",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:12 AM",
+            "latitude": "26.835857",
+            "longitude": "75.779485",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:12 AM",
+            "latitude": "26.835853",
+            "longitude": "75.779433",
+            "speed": "4.32"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:13 AM",
+            "latitude": "26.83583",
+            "longitude": "75.779332",
+            "speed": "8.91"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:13 AM",
+            "latitude": "26.836477",
+            "longitude": "75.778877",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:14 AM",
+            "latitude": "26.836387",
+            "longitude": "75.77837",
+            "speed": "10.5"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:14 AM",
+            "latitude": "26.836305",
+            "longitude": "75.777878",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:15 AM",
+            "latitude": "26.836322",
+            "longitude": "75.777798",
+            "speed": "6.89"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:16 AM",
+            "latitude": "26.840393",
+            "longitude": "75.771768",
+            "speed": "49.58"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:17 AM",
+            "latitude": "26.840423",
+            "longitude": "75.77055",
+            "speed": "3.28"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:17 AM",
+            "latitude": "26.839797",
+            "longitude": "75.76873",
+            "speed": "41.87"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:18 AM",
+            "latitude": "26.837823",
+            "longitude": "75.768542",
+            "speed": "39.35"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:18 AM",
+            "latitude": "26.836093",
+            "longitude": "75.769327",
+            "speed": "33.19"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:19 AM",
+            "latitude": "26.833952",
+            "longitude": "75.770297",
+            "speed": "31.21"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:19 AM",
+            "latitude": "26.833437",
+            "longitude": "75.769642",
+            "speed": "22.67"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:20 AM",
+            "latitude": "26.832785",
+            "longitude": "75.7685",
+            "speed": "16.41"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:20 AM",
+            "latitude": "26.831355",
+            "longitude": "75.768762",
+            "speed": "20.48"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:21 AM",
+            "latitude": "26.830325",
+            "longitude": "75.768838",
+            "speed": "11.63"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:21 AM",
+            "latitude": "26.83096",
+            "longitude": "75.767685",
+            "speed": "21.41"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:22 AM",
+            "latitude": "26.830938",
+            "longitude": "75.766388",
+            "speed": "15.24"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:22 AM",
+            "latitude": "26.830575",
+            "longitude": "75.765492",
+            "speed": "25.48"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:22 AM",
+            "latitude": "26.831603",
+            "longitude": "75.76335",
+            "speed": "16.28"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:23 AM",
+            "latitude": "26.83186",
+            "longitude": "75.763293",
+            "speed": "8.28"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:23 AM",
+            "latitude": "26.831842",
+            "longitude": "75.763332",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:24 AM",
+            "latitude": "26.831855",
+            "longitude": "75.763307",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 9:24 AM",
+            "latitude": "26.831863",
+            "longitude": "75.763283",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 10:52 PM",
+            "latitude": "26.83191",
+            "longitude": "75.763285",
+            "speed": "0"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 11:48 PM",
+            "latitude": "26.831862",
+            "longitude": "75.7631",
+            "speed": "1.31"
+        },
+        {
+            "vehicleName": "RJ14GJ0367",
+            "packetdatetime": "9/17/21 11:48 PM",
+            "latitude": "26.831837",
+            "longitude": "75.763173",
+            "speed": "0"
+        }
+    ]

@@ -1,0 +1,43 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 no-gutters-iner">
+            Manage ward supervisor
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 card-main">
+            <div class="card card-body-outer">
+                <div class="card-body card-iner">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-main">
+                                        <thead>
+                                            <th class="table-heading-sno">S.No.</th>
+                                            <th class="table-heading-Name">Ward</th>
+                                            <th class="table-heading-Login">Supervisor</th>
+                                            <th class="table-heading-Assigned">
+                                                Action</th>
+                                            
+                                           
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of supervisorList; let i=index">
+                                                <td class="table-data">{{i+1}}</td>
+                                                <td class="table-data">
+                                                    {{data.wardNo}}</td>
+                                                <td class="table-data">
+                                                    {{data.supervisor}}</td>
+                                               
+                                                <td class="text-right">
+                                                  
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                           

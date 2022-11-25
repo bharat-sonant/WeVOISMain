@@ -15,6 +15,8 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { FirestoreSettingsToken } from '@angular/fire/firestore';
 import { SpeedTestModule } from 'ng-speed-test';
+
+
 //import * as express from 'express';
 //import * as cors from '@Types/cors';
 
@@ -143,11 +145,13 @@ if (city != null) {
     AngularFireDatabaseModule, // for database
     AngularFireStorageModule, // for storage
     AngularFirestoreModule, // for firestore
-    SpeedTestModule
+    SpeedTestModule,
   ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,
+  
+   
   ],
   providers: [{ provide: FirestoreSettingsToken, useValue: {} }],
   bootstrap: [AppComponent]

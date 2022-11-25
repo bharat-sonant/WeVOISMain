@@ -1,0 +1,880 @@
+{
+    "Sheet1": [
+        {
+            "CARD_NO": "SIKA13582",
+            "CUSTOMER NAME": "PRATEEK",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9413869801"
+        },
+        {
+            "CARD_NO": "SIKA13696",
+            "CUSTOMER NAME": "VIDHYARTHI BOYS HOSTEL",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9660278709"
+        },
+        {
+            "CARD_NO": "SIKA17743",
+            "CUSTOMER NAME": "G R TAILOR",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9129040761"
+        },
+        {
+            "CARD_NO": "SIKA17744",
+            "CUSTOMER NAME": "BHANWAR LAL ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9829816317"
+        },
+        {
+            "CARD_NO": "SIKA17745",
+            "CUSTOMER NAME": "SUBHASH CHANDRA ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9587030225"
+        },
+        {
+            "CARD_NO": "SIKA20209",
+            "CUSTOMER NAME": "JWALA SINGH SHEKHWAT",
+            "ADDRESS": "RADHAKISHANPURA"
+        },
+        {
+            "CARD_NO": "SIKA20210",
+            "CUSTOMER NAME": "TAPESH TYAGI",
+            "ADDRESS": "RADHAKISHANPURA SIKAR "
+        },
+        {
+            "CARD_NO": "SIKA20608",
+            "CUSTOMER NAME": "SATYANARYAN VERMA ",
+            "ADDRESS": "VIDHYA VIHAR II RADHAKISHANPURAWARD NO 40 SIKAR",
+            "MOBILE_NO": "9571450113"
+        },
+        {
+            "CARD_NO": "SIKA20609",
+            "CUSTOMER NAME": "VINOD YADAV ",
+            "ADDRESS": "VIDHYA VIHAR RTO ROAD WARD NO 40 SIKAR",
+            "MOBILE_NO": "9460181423"
+        },
+        {
+            "CARD_NO": "SIKA20610",
+            "CUSTOMER NAME": "BANWARI LAL JAT",
+            "ADDRESS": "VIDHYA VIHAR COLONY RTO ROAD WARD NO 40 RADHAKISHANPURA",
+            "MOBILE_NO": "9414807236"
+        },
+        {
+            "CARD_NO": "SIKA20614",
+            "CUSTOMER NAME": "JAGDISH YADAV ",
+            "ADDRESS": "YADAV COLONY WARD NO 40",
+            "MOBILE_NO": "9902101881"
+        },
+        {
+            "CARD_NO": "SIKA20615",
+            "CUSTOMER NAME": "GINDA RAM ",
+            "ADDRESS": "VIDHYA VIHAR RTO ROAD WARD NO 40 SIKAR",
+            "MOBILE_NO": "9784619339"
+        },
+        {
+            "CARD_NO": "SIKA20616",
+            "CUSTOMER NAME": "PRAHLAD YADAV ",
+            "ADDRESS": "YADAV COLONY RTO ROAD RADHAKISHANPURA WARD NO 40"
+        },
+        {
+            "CARD_NO": "SIKA20617",
+            "CUSTOMER NAME": "BALRAM YADAV ",
+            "ADDRESS": "YADAV COLONY RTO ROAD SIKAR WARD NO 40",
+            "MOBILE_NO": "9413926795"
+        },
+        {
+            "CARD_NO": "SIKA20618",
+            "CUSTOMER NAME": "SHYAMSUNDAR JOSHI ",
+            "ADDRESS": "YADAV COLONY RTO ROAD RADHAKISHANPURA WARD NO 40"
+        },
+        {
+            "CARD_NO": "SIKA20619",
+            "CUSTOMER NAME": "RAM NATH YADAV ",
+            "ADDRESS": "YADAV COLONY RTO ROAD RADHAKISHANPURA WARD NO 40"
+        },
+        {
+            "CARD_NO": "SIKA20620",
+            "CUSTOMER NAME": "DURAJ RANA ",
+            "ADDRESS": "VIDHYA VIHAR RTO ROAD WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20621",
+            "CUSTOMER NAME": "V S VYAS",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40",
+            "MOBILE_NO": "9414664049"
+        },
+        {
+            "CARD_NO": "SIKA20622",
+            "CUSTOMER NAME": "AMRISH SHARMA ",
+            "ADDRESS": "VIDHYA VIHAR RTO ROAD WARD NO 40 RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20623",
+            "CUSTOMER NAME": "SANT SINGH ",
+            "ADDRESS": "VIDHYA VIHAR COLONY RTO ROAD WARD NO 40 SIKAR",
+            "MOBILE_NO": "9460838811"
+        },
+        {
+            "CARD_NO": "SIKA20624",
+            "CUSTOMER NAME": "SUDHIR GOUR ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40",
+            "MOBILE_NO": "9460836758"
+        },
+        {
+            "CARD_NO": "SIKA20625",
+            "ADDRESS": "RANU COLONY RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20626",
+            "ADDRESS": "KALU JADAM KA JAV RTO RTO ROAD SIKAR",
+            "MOBILE_NO": "9680940349"
+        },
+        {
+            "CARD_NO": "SIKA20627",
+            "CUSTOMER NAME": "KAMLESH SHARMA ",
+            "MOBILE_NO": "8104061196"
+        },
+        {
+            "CARD_NO": "SIKA20628",
+            "CUSTOMER NAME": "SUNIL KUMAR",
+            "ADDRESS": "VIDHYA VIHAR SIKAR "
+        },
+        {
+            "CARD_NO": "SIKA20651",
+            "ADDRESS": "YADAV COLONY RADHAKISHANPUR WARD NO 40",
+            "MOBILE_NO": "9414001357"
+        },
+        {
+            "CARD_NO": "SIKA20652",
+            "CUSTOMER NAME": "NAROTAM LAL YADAV ",
+            "ADDRESS": "RADHAKISHANPURA YADAV COLONY WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20653",
+            "CUSTOMER NAME": "MUKESH ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20654",
+            "CUSTOMER NAME": "JAGDISH PRASAD YADAV",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9829759157"
+        },
+        {
+            "CARD_NO": "SIKA20655",
+            "CUSTOMER NAME": "MOOL CHAND YADAV ",
+            "ADDRESS": "YADAV COLONY RADHAKISHANPUR WARD NO 40"
+        },
+        {
+            "CARD_NO": "SIKA20656",
+            "CUSTOMER NAME": "SURESH KUMAR MANGADH",
+            "ADDRESS": "HOUSE NO 49 YADAV COLONY RTO ROAD WARD NO 40 RADHAKISHANPURA",
+            "MOBILE_NO": "9785015862"
+        },
+        {
+            "CARD_NO": "SIKA20657",
+            "CUSTOMER NAME": "DEVENDAR YADAV ",
+            "ADDRESS": "VIDHYA VIHAR RTO ROAD WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20658",
+            "CUSTOMER NAME": "MOOLCHAND YADAV",
+            "ADDRESS": "YADAV COLONY WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20659",
+            "CUSTOMER NAME": "MANISH KUMAWAT",
+            "ADDRESS": "YADAV COLONY WARD NO 40"
+        },
+        {
+            "CARD_NO": "SIKA20660",
+            "CUSTOMER NAME": "ANIL BHARDWAJ ",
+            "ADDRESS": "RTO ROAD RADHAKISHANPURA",
+            "MOBILE_NO": "9414417057"
+        },
+        {
+            "CARD_NO": "SIKA20661",
+            "CUSTOMER NAME": "MOHAN SINGH A/O BHANWAR SINGH ",
+            "ADDRESS": "VIDHYA VIHAR II LAL SINGH COLONY RTO ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20662",
+            "CUSTOMER NAME": "BHANWAR SINGH S/O ARJUN SINGH ",
+            "ADDRESS": "VIDHYA VIHAR II LAL SINGH COLONY RTO ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20664",
+            "CUSTOMER NAME": "CHANDAN KUMAR TANWAR ",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9351874815"
+        },
+        {
+            "CARD_NO": "SIKA20665",
+            "ADDRESS": "RADHAKISHAN PURA SIKAR",
+            "MOBILE_NO": "9468831073"
+        },
+        {
+            "CARD_NO": "SIKA20666",
+            "CUSTOMER NAME": "MAKHAN KAMYA ",
+            "ADDRESS": "VIDHYA VIHAR COLONY ",
+            "MOBILE_NO": "9414038407"
+        },
+        {
+            "CARD_NO": "SIKA20667",
+            "CUSTOMER NAME": "SITARAM ",
+            "ADDRESS": "VIDHYA VIHAR COLONY SIKAR",
+            "MOBILE_NO": "9829826475"
+        },
+        {
+            "CARD_NO": "SIKA20669",
+            "CUSTOMER NAME": "SURESH KUMAR SHARMA ",
+            "ADDRESS": "LAL SINGH COLONY RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20670",
+            "CUSTOMER NAME": "MALIRAM ",
+            "ADDRESS": "LAL SINGH COLONY RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20671",
+            "CUSTOMER NAME": "RAJKUMAR TANWAR ",
+            "ADDRESS": "LAL SINGH COLNY RADHAKISHANPURA",
+            "MOBILE_NO": "7424884601"
+        },
+        {
+            "CARD_NO": "SIKA20704",
+            "CUSTOMER NAME": "GOPAL SINGH RTHORE ",
+            "ADDRESS": "VIDHAVIHAR LALSINGH COLONY WARD NO 40 RTO ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20705",
+            "CUSTOMER NAME": "SURENDRA SINGH ",
+            "ADDRESS": "RADHAKISHAN PURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA20798",
+            "ADDRESS": "RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9982705000"
+        },
+        {
+            "CARD_NO": "SIKA20799",
+            "CUSTOMER NAME": "RAJENDRA KUMAR",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9829808362"
+        },
+        {
+            "CARD_NO": "SIKA20800",
+            "CUSTOMER NAME": "SUNIL PAREEK ",
+            "ADDRESS": "RADHAKISHAN PURA SIKAR",
+            "MOBILE_NO": "9351586907"
+        },
+        {
+            "CARD_NO": "SIKA21601",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "9636623835"
+        },
+        {
+            "CARD_NO": "SIKA21602",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "9460167355"
+        },
+        {
+            "CARD_NO": "SIKA21603",
+            "CUSTOMER NAME": "JOGENDRA RAJ ",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "8385941260"
+        },
+        {
+            "CARD_NO": "SIKA21604",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "8104845109"
+        },
+        {
+            "CARD_NO": "SIKA21606",
+            "CUSTOMER NAME": "BAHGOTI DEVI",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "7231553431"
+        },
+        {
+            "CARD_NO": "SIKA21607",
+            "CUSTOMER NAME": "JAVED KHATRI ",
+            "ADDRESS": "VIKAS COLONY SIKAR WARD NO 40 "
+        },
+        {
+            "CARD_NO": "SIKA21608",
+            "CUSTOMER NAME": "BALBEER ",
+            "ADDRESS": "NIEW INDIRA COLONY PIPARALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA21609",
+            "CUSTOMER NAME": "AASHA NAYAK",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "8107079278"
+        },
+        {
+            "CARD_NO": "SIKA21610",
+            "CUSTOMER NAME": "MUNGILAL NAYAK",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9352738395"
+        },
+        {
+            "CARD_NO": "SIKA21611",
+            "CUSTOMER NAME": "ARJUNLAL TEKEDHAR",
+            "ADDRESS": "WARD NO 40 ",
+            "MOBILE_NO": "9772070837"
+        },
+        {
+            "CARD_NO": "SIKA21613",
+            "CUSTOMER NAME": "SHRI HARIRAM KANWADIYA",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "9785226449"
+        },
+        {
+            "CARD_NO": "SIKA21614",
+            "CUSTOMER NAME": "MANJU DEVI S/O PRAKASH CHANDRA PAREEK",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA21615",
+            "CUSTOMER NAME": "DINESH SAINI",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR",
+            "MOBILE_NO": "9950205096"
+        },
+        {
+            "CARD_NO": "SIKA21616",
+            "CUSTOMER NAME": "BANSIDHAR CHOUDHRY",
+            "ADDRESS": "ABHISEK COLONY RADHAKISHANPURA"
+        },
+        {
+            "CARD_NO": "SIKA21617",
+            "CUSTOMER NAME": "SH C M SETA KOOD ",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414652221"
+        },
+        {
+            "CARD_NO": "SIKA21809",
+            "CUSTOMER NAME": "GANPAT CHOUDHRY",
+            "ADDRESS": "RADHAKISHANPURA SIKAR WARD NO 40 "
+        },
+        {
+            "CARD_NO": "SIKA21811",
+            "CUSTOMER NAME": "BIRBAL SINGH ",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9928021385"
+        },
+        {
+            "CARD_NO": "SIKA22411",
+            "CUSTOMER NAME": "RAM SINGH PALAWAT",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414113261"
+        },
+        {
+            "CARD_NO": "SIKA22412",
+            "CUSTOMER NAME": "RAJENDRA KUMAR SHARMA",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414399047"
+        },
+        {
+            "CARD_NO": "SIKA22413",
+            "CUSTOMER NAME": "DIWAKAR DUTT ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22414",
+            "CUSTOMER NAME": "KISHAN LAL SAINI ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9352810650"
+        },
+        {
+            "CARD_NO": "SIKA22415",
+            "CUSTOMER NAME": "DURGA PRASAD GADHWAL ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414773374"
+        },
+        {
+            "CARD_NO": "SIKA22416",
+            "CUSTOMER NAME": "MANGILAL SAINI",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9784630570"
+        },
+        {
+            "CARD_NO": "SIKA22417",
+            "CUSTOMER NAME": "PAWAN KUMAR SHARMA",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9799245975"
+        },
+        {
+            "CARD_NO": "SIKA22418",
+            "CUSTOMER NAME": "SUWALAL SAINI",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "8432377390"
+        },
+        {
+            "CARD_NO": "SIKA22429",
+            "CUSTOMER NAME": "BANWARI LAL SHARMA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22430",
+            "CUSTOMER NAME": "NARSINGH SHARMA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22491",
+            "CUSTOMER NAME": "PIYUSH MISHRA ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22492",
+            "CUSTOMER NAME": "SITARAM SHARMA ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22493",
+            "CUSTOMER NAME": "MAHENDRA KUMAR ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22494",
+            "CUSTOMER NAME": "SHANKAR LAL SHARMA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22495",
+            "CUSTOMER NAME": "PARSARAM ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22496",
+            "CUSTOMER NAME": "GOVIND RAM SAINI ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22497",
+            "CUSTOMER NAME": "MOHAN SINGH RATHOR",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22498",
+            "CUSTOMER NAME": "SANTLAL KOSHIK ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22499",
+            "CUSTOMER NAME": "GOPAL SHARMA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22500",
+            "CUSTOMER NAME": "PAWAN KUMAR SHARMA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22601",
+            "CUSTOMER NAME": "SHABNAM ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22608",
+            "CUSTOMER NAME": "MANJU DEVI ",
+            "ADDRESS": "CITY LIGHT COLONY PIPRALI RAOD SIKAR",
+            "MOBILE_NO": "8058751319"
+        },
+        {
+            "CARD_NO": "SIKA22614"
+        },
+        {
+            "CARD_NO": "SIKA22615",
+            "CUSTOMER NAME": "PRABHUDYAL VERMA ",
+            "ADDRESS": "WARD NO 40 VESHNAV COLONY SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22616",
+            "CUSTOMER NAME": "VIKRAM SINGH ",
+            "ADDRESS": "PIPRALI ROAD SIKAR",
+            "MOBILE_NO": "9982008525"
+        },
+        {
+            "CARD_NO": "SIKA22617",
+            "CUSTOMER NAME": "RAKESH MORYA ",
+            "ADDRESS": "PIPRALI ROAD SIKAR",
+            "MOBILE_NO": "9413245942"
+        },
+        {
+            "CARD_NO": "SIKA22618",
+            "CUSTOMER NAME": "PREMCHAND S/O GHANSHYAM ",
+            "ADDRESS": "BASOTHA KRISHI FARMHOUSE PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22619",
+            "CUSTOMER NAME": "RATANLAL GURJAR",
+            "ADDRESS": "SODHANI KRISHI HOUSE PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22620",
+            "CUSTOMER NAME": "CHANDAN KUMAR VERMA ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22621",
+            "CUSTOMER NAME": "NAVEEN KUMAWAT ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22622",
+            "CUSTOMER NAME": "IMTIYAJ GOURI ",
+            "ADDRESS": "NEW INDARA COLONY PIPRALI ROAD WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22623",
+            "CUSTOMER NAME": "RANGWARI BALA ",
+            "ADDRESS": "PIPRALI ROAD SIKAR",
+            "MOBILE_NO": "7062348135"
+        },
+        {
+            "CARD_NO": "SIKA22624",
+            "CUSTOMER NAME": "MITHU ",
+            "ADDRESS": "CITY LIGHT COLONY PIPRALI RAOD SIKAR",
+            "MOBILE_NO": "9799203360"
+        },
+        {
+            "CARD_NO": "SIKA22625",
+            "CUSTOMER NAME": "BHAGWAN SAHAY ",
+            "ADDRESS": "WARD NO 40 SIKAR VAISHNAV COLONY PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22628",
+            "CUSTOMER NAME": "KESHAR DEV SAINI LIC DO SIKAR",
+            "ADDRESS": "NEW INDRA COLONY PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22629",
+            "CUSTOMER NAME": "BABULAL SAINI ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22630",
+            "CUSTOMER NAME": "MD NANU KHAN ",
+            "ADDRESS": "NEAR AKSHA MAS D NEW INDIRA COLONY PIPRALI ROAD SIKAR",
+            "MOBILE_NO": "9774652757"
+        },
+        {
+            "CARD_NO": "SIKA22631",
+            "CUSTOMER NAME": "HAMID ALI QURESHI ",
+            "ADDRESS": "CITY LIGHT COLONY PIPRALI RAOD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22632",
+            "CUSTOMER NAME": "BHAGIRATH BERWAL ",
+            "ADDRESS": "CITILIGHT COLONY WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414260396"
+        },
+        {
+            "CARD_NO": "SIKA22633",
+            "CUSTOMER NAME": "SANWARMAL KUMAWAT ",
+            "ADDRESS": "NEAR MADARSA SCHOOL "
+        },
+        {
+            "CARD_NO": "SIKA22634",
+            "CUSTOMER NAME": "PERMESHWAR BIWAL ",
+            "MOBILE_NO": "7568588803"
+        },
+        {
+            "CARD_NO": "SIKA22668",
+            "CUSTOMER NAME": "BHANWARLAL BHASKAR ",
+            "ADDRESS": "DURGA COLONY RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22669"
+        },
+        {
+            "CARD_NO": "SIKA22678",
+            "CUSTOMER NAME": "NAND KISHOR KUMAWAT ",
+            "ADDRESS": "LAL SINGH COLONY WARD NO 40 NEAR SAI BABA MANDIR"
+        },
+        {
+            "CARD_NO": "SIKA22679",
+            "CUSTOMER NAME": "PRADEEP ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "9783594338"
+        },
+        {
+            "CARD_NO": "SIKA22680",
+            "CUSTOMER NAME": "PRATAP SINGH SHEKHAWAT ",
+            "ADDRESS": "RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9971410554"
+        },
+        {
+            "CARD_NO": "SIKA22681",
+            "CUSTOMER NAME": "KULDEEP ",
+            "ADDRESS": "RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22682",
+            "CUSTOMER NAME": "SACHIN SAINI ",
+            "ADDRESS": "DURGA COLONY RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9057526441"
+        },
+        {
+            "CARD_NO": "SIKA22685",
+            "CUSTOMER NAME": "DHARMENDRA SINGH ",
+            "ADDRESS": "MAYURI HOSTEL SIKAR "
+        },
+        {
+            "CARD_NO": "SIKA22686",
+            "CUSTOMER NAME": "NAND SINGH ",
+            "ADDRESS": "WARD NO 40 LAL SINGH COLONY RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9413269333"
+        },
+        {
+            "CARD_NO": "SIKA22687",
+            "CUSTOMER NAME": "MO CHAND KHATRI ",
+            "ADDRESS": "WARD NO 40 SIKAR",
+            "MOBILE_NO": "7727077082"
+        },
+        {
+            "CARD_NO": "SIKA22826",
+            "CUSTOMER NAME": "GAPAL SINGH ",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22826",
+            "ADDRESS": "RADHAKISHANPUR SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22827",
+            "CUSTOMER NAME": "GOURISHANKAR SAINI",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22828",
+            "CUSTOMER NAME": "AJAY SHARMA",
+            "ADDRESS": "WARD NO 40 RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22829",
+            "CUSTOMER NAME": "SURENDRA SAINI",
+            "ADDRESS": "WARD NO 40 RADHAKISHAN PURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22830",
+            "ADDRESS": "AAJAD NAGAR SENT POLS SCHOOK KE PAAS RADHAKISHAN PURA",
+            "MOBILE_NO": "9460861931"
+        },
+        {
+            "CARD_NO": "SIKA22831",
+            "CUSTOMER NAME": "REENA SHARMA W/O YOGENDRA KUMAR SHARMA ",
+            "ADDRESS": "VANDE MATRAM CHOUK RADHAKISHANPURA",
+            "MOBILE_NO": "9828939395"
+        },
+        {
+            "CARD_NO": "SIKA22832",
+            "CUSTOMER NAME": "SURESH KUMAR",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR",
+            "MOBILE_NO": "9414037876"
+        },
+        {
+            "CARD_NO": "SIKA22990",
+            "CUSTOMER NAME": "SURESH SHARMA ",
+            "ADDRESS": "VENDE MATRAM CHOUK RADHAKISHAN PURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22991",
+            "CUSTOMER NAME": "VIRENDRA KUMAR GUPTA",
+            "ADDRESS": "YADAV COLONY RTO ROAD RADHAKISHAN PURA SIKAR",
+            "MOBILE_NO": "9460450929"
+        },
+        {
+            "CARD_NO": "SIKA22992",
+            "CUSTOMER NAME": "DASHRATH KUMAR YADAV ",
+            "ADDRESS": "YADAV COLONY RTO ROAD RADHAKISHAN PURA SIKAR",
+            "MOBILE_NO": "9928651285"
+        },
+        {
+            "CARD_NO": "SIKA22993",
+            "CUSTOMER NAME": "RAMOWATAR KARWADIA ",
+            "ADDRESS": "NEW INDIRA COLONY WARD NO 40 SIKAR "
+        },
+        {
+            "CARD_NO": "SIKA22994",
+            "CUSTOMER NAME": "RAJENDRA KANWADIYA BSNL WALA ",
+            "ADDRESS": "WARD NO 40 NEW INDRA COLONY PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22995",
+            "CUSTOMER NAME": "SHUKHDEV SINGH ",
+            "ADDRESS": "NEW INDIA COLONY WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA22996",
+            "CUSTOMER NAME": "GHANSHYAM ",
+            "ADDRESS": "INDIRA COLONY WARD NO 40 "
+        },
+        {
+            "CARD_NO": "SIKA22997",
+            "ADDRESS": "WARD NO 40 VESHNAV COLONY PIPRALI ROAD SIKAR ",
+            "MOBILE_NO": "9784239437"
+        },
+        {
+            "CARD_NO": "SIKA22998",
+            "CUSTOMER NAME": "JAGDISH PRASAD SWAMI ",
+            "ADDRESS": "VESHNAV COLONY PIPRALI ROAD SIKAR",
+            "MOBILE_NO": "7734046009"
+        },
+        {
+            "CARD_NO": "SIKA22999",
+            "ADDRESS": "NEW INDRA COLONY PIPRALI ROAD SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA23612",
+            "CUSTOMER NAME": "DEVILAL SAINI S/O MADANLAL SAINI ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA23613",
+            "CUSTOMER NAME": "GURUDYAL SAINI ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA23616",
+            "CUSTOMER NAME": "RAM LAL BAIRWA",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA23617",
+            "CUSTOMER NAME": "DUNGARMAL SAINI ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA23618",
+            "CUSTOMER NAME": "BADRINARAYAN ",
+            "ADDRESS": "RADHAKISHANPURA WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA36420",
+            "CUSTOMER NAME": "PAWAN KUMAR SHARMA ",
+            "ADDRESS": "DADHIMATI VILLA DURGA COLONY SIKAR",
+            "MOBILE_NO": "9462068279"
+        },
+        {
+            "CARD_NO": "SIKA39080",
+            "CUSTOMER NAME": "NIKITA ",
+            "MOBILE_NO": "9636225650"
+        },
+        {
+            "CARD_NO": "SIKA39095",
+            "CUSTOMER NAME": "DEVENDRA KUMAR ",
+            "ADDRESS": "RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9413891858"
+        },
+        {
+            "CARD_NO": "SIKA39224",
+            "CUSTOMER NAME": "RATAN SINGH RATHOR",
+            "MOBILE_NO": "9928334037"
+        },
+        {
+            "CARD_NO": "SIKA39226",
+            "CUSTOMER NAME": "PAWAN ",
+            "MOBILE_NO": "9829646343"
+        },
+        {
+            "CARD_NO": "SIKA39363",
+            "CUSTOMER NAME": "DAMODAR PRASAD GUPTA ",
+            "ADDRESS": "LAL SINGH COLONY WARD NO 40 RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9461536509"
+        },
+        {
+            "CARD_NO": "SIKA39364",
+            "CUSTOMER NAME": "HARI PRASAD JANGID",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA39365",
+            "CUSTOMER NAME": "SUBHASH ",
+            "MOBILE_NO": "9660725383"
+        },
+        {
+            "CARD_NO": "SIKA39444",
+            "CUSTOMER NAME": "SHYAMLAL SWAMI ",
+            "ADDRESS": "DURGA COLONY WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA39445",
+            "CUSTOMER NAME": "ROHITASH JAKHAR ",
+            "ADDRESS": "RADHAKISHANPURA VENDE MATRAM CHOUK WALI GALI WARD NO 40 "
+        },
+        {
+            "CARD_NO": "SIKA39446",
+            "CUSTOMER NAME": "SULOCHANA RAKHI VERMA ",
+            "MOBILE_NO": "9460417449"
+        },
+        {
+            "CARD_NO": "SIKA39447",
+            "CUSTOMER NAME": "KISHAN LAL SAINI ",
+            "ADDRESS": "WARD NO 40 DURGA COLONY SIKAR",
+            "MOBILE_NO": "9828193644"
+        },
+        {
+            "CARD_NO": "SIKA39448",
+            "CUSTOMER NAME": "SANJAY KUMAR GUPTA ",
+            "ADDRESS": "WARD NO 40 SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA39449",
+            "CUSTOMER NAME": "NITU SHARMA ",
+            "ADDRESS": "DURGA COLONY RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9414739667"
+        },
+        {
+            "CARD_NO": "SIKA39450",
+            "CUSTOMER NAME": "HEMANT KUMAR SHARMA ",
+            "ADDRESS": "DURGA COLONY SIKAR ",
+            "MOBILE_NO": "9414739667"
+        },
+        {
+            "CARD_NO": "SIKA39620",
+            "CUSTOMER NAME": "PRALAD SAHAY SHARMA",
+            "MOBILE_NO": "9414744804"
+        },
+        {
+            "CARD_NO": "SIKA40101",
+            "CUSTOMER NAME": "YADVENDER SINGH ",
+            "ADDRESS": "LAL SINGH COLONY WARD NO 40 RADHAKISHANPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA40102",
+            "CUSTOMER NAME": "RAMPRASAD JOSHI ",
+            "ADDRESS": "NARYAN VIHAR RADHAKISHANPURA ",
+            "MOBILE_NO": "9610969063"
+        },
+        {
+            "CARD_NO": "SIKA40103",
+            "CUSTOMER NAME": "SHANKARLAL SHARMA ",
+            "ADDRESS": "RADHAKISHANPURA SIKAR",
+            "MOBILE_NO": "9828606946"
+        },
+        {
+            "CARD_NO": "SIKA40104",
+            "CUSTOMER NAME": "SURENDRA KHICHAR ",
+            "ADDRESS": "GOKULPURA SIKAR"
+        },
+        {
+            "CARD_NO": "SIKA40105",
+            "CUSTOMER NAME": "SANJAY SINGH ",
+            "MOBILE_NO": "9549669613"
+        },
+        {
+            "CARD_NO": "SIKA40107",
+            "CUSTOMER NAME": "LAXMAN KNAWAR ",
+            "MOBILE_NO": "9602561989"
+        },
+        {
+            "CARD_NO": "SIKA40108",
+            "CUSTOMER NAME": "SAROJ "
+        },
+        {
+            "CARD_NO": "SIKA48106",
+            "CUSTOMER NAME": "ROHIT KUMAR ",
+            "MOBILE_NO": "8747016940"
+        }
+    ]
+}

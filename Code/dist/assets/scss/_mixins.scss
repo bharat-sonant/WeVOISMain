@@ -1,0 +1,112 @@
+//Components
+@import "mixins/buttons";
+@import "mixins/vendor-prefixes";
+@import "mixins/inputs";
+@import "mixins/page-header";
+@import "mixins/dropdown";
+@import "mixins/cards";
+@import "mixins/transparency";
+
+
+.sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
+    background:#19a337 !important;
+}
+.sidebar .nav i, .off-canvas-sidebar .nav i {
+    font-size: 20px;
+    float: left;
+    margin-right: 12px;
+    line-height: 30px;
+    width: 34px;color: #FFFFFF!important;
+    text-align: center;
+    /* color: rgba(255, 255, 255, 0.5); */
+    position: relative;
+}
+
+.sidebar:before, .sidebar:after, .off-canvas-sidebar:before, .off-canvas-sidebar:after {
+    display: block;
+    content: "";
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -40px!important;
+}
+
+.sidebar:before, .sidebar:after, .off-canvas-sidebar:before, .off-canvas-sidebar:after {
+    display: block;
+    content: "";
+    opacity: 1;
+    position: absolute;
+    width: 100%!important;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.sidebar .sidebar-wrapper, .off-canvas-sidebar .sidebar-wrapper {
+    position: relative;
+    height: calc(100vh - 75px);
+    overflow: auto;
+    width: 210px!important;
+    z-index: 4;
+    padding-bottom: 100px;
+}
+
+.sidebar .logo:after, .off-canvas-sidebar .logo:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 47px!important;
+    height: 1px;
+    width: calc(90% - 30px)!important;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.panel-header {
+    height: 260px;
+    padding-top: 80px;
+    padding-bottom: 45px;
+    background: #0c7944!important;
+    background: red;
+    background-size: 105%;
+    position: relative;
+    overflow: hidden;
+    
+}
+
+.btn, .navbar .navbar-nav > a.btn {
+    border-width: 2px;
+    font-weight: 400;
+    font-size: 0.8571em;
+    line-height: 1.35em;
+    border: none;
+    margin: 10px 1px;
+    border-radius: 0.1875rem;
+    padding: 11px 22px;
+    cursor: pointer;
+    background-color: #cccaca !important;
+    color: #000000!important;
+}
+
+.sidebar[data-color="blue"] .nav li.active > a i, .off-canvas-sidebar[data-color="blue"] .nav li.active > a i {
+    color: #4AAD41!important;
+}
+
+.sidebar[data-color="blue"] .nav li.active > a, .off-canvas-sidebar[data-color="blue"] .nav li.active > a {
+    color: #4AAD41!important;
+    font-weight: 600!important;
+}
+.sidebar .nav li > a, .off-canvas-sidebar .nav li > a {
+    margin: 10px 15px 0;
+    border-radius: 30px;
+    color: #FFFFFF;
+    display: block;
+    font-weight: 500;
+    text-decoration: none;
+    position: relative;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 0.7142em;
+    padding: 10px 8px;
+    line-height: 1.625rem;
+}

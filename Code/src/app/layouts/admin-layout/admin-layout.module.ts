@@ -119,8 +119,8 @@ import { RolePageAccessComponent } from '../../user-management/role-page-access/
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
-
-
+import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
+import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
 
 @NgModule({
   imports: [
@@ -244,7 +244,9 @@ import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/sca
     RolePageAccessComponent,
     MapsComponent,
     CardMarkerMappingComponent,
-    ScanCardStatusComponent
+    ScanCardStatusComponent,
+    ManageWardSupervisorComponent ,
+    ComplaintListComponent,
   ]
 })
 
