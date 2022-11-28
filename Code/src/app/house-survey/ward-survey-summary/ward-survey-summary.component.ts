@@ -136,6 +136,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalMarkers = 0;
     this.surveyData.totalSurveyed = 0;
     this.surveyData.totalRevisit = 0;
+    this.surveyData.totalHouses=0;
   }
 
   openExportHouseData(content: any) {
@@ -153,18 +154,17 @@ export class WardSurveySummaryComponent implements OnInit {
   }
   
   updateCounts_Bharat(index: any) {
-
     if (index == this.wardList.length) {
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
       let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
       let dbPath = "EntitySurveyData/";
       this.db.object(dbPath).update({ surveySummarylastUpdate: lastUpdate });
-      alert(lastUpdate);
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
-        this.getLastUpdate();
+        this.surveyData.lastUpdate=lastUpdate;
+        this.clearAll();
         this.getWardProgressList();
       }, 5000);
 
