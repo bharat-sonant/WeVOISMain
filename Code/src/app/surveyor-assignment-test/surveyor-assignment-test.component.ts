@@ -131,14 +131,15 @@ export class SurveyorAssignmentTestComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
-              if (cardData[cardNo]["houseType"] != null) {
-                if (cardData[cardNo]["surveyorId"] != null) {
+             // if (cardData[cardNo]["houseType"] != null) {
+               // if (cardData[cardNo]["surveyorId"] != null) {
                   let surveyorId = cardData[cardNo]["surveyorId"];
                   let houseType = cardData[cardNo]["houseType"];
+                  console.log(zoneNo+" , "+lineNo+" , "+cardNo);
                   if (cardData[cardNo]["createdDate"] != null) {
                     this.totalCards++;
                     let cardCount = 1;
-                    let houseCount = 1;
+                    let houseCount = 0;
                     let complexCount = 0;
                     let housesInComplex = 0;
                     let surveyDate = cardData[cardNo]["createdDate"].split(" ")[0];
@@ -146,15 +147,15 @@ export class SurveyorAssignmentTestComponent implements OnInit {
                     surveyDate = list[2] + "-" + list[1] + "-" + list[0];
                     if (houseType == "19" || houseType == "20") {
                       complexCount = 1;
-                      if (cardData[cardNo]["servingCount"] != null) {
-                        if (cardData[cardNo]["servingCount"] == "" || cardData[cardNo]["servingCount"] == "0" || cardData[cardNo]["servingCount"] == "Enter No of Houses") {
-                          houseCount = 1;
-                        }
-                        else {
-                          houseCount = cardData[cardNo]["servingCount"];
-                        }
+                      let servingCount = parseInt(cardData[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
                       }
-                      housesInComplex = houseCount;
+                      housesInComplex = servingCount;
+                      houseCount = servingCount;
+                    }
+                    else {
+                      houseCount = 1;
                     }
                     this.totalHouses += Number(houseCount);
                     if (this.surveyorSummaryList.length == 0) {
@@ -174,8 +175,8 @@ export class SurveyorAssignmentTestComponent implements OnInit {
                       }
                     }
                   }
-                }
-              }
+                //}
+             // }
             }
           }
         }
