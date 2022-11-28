@@ -26,11 +26,11 @@
                                         <thead>
                                             <th class="table-head1">S.No.</th>
                                             <th class="table-head1">Date</th>
-                                           
+
                                             <th class="table-head1">Complain type</th>
-                                            
-                                           
-                                          
+
+
+
                                             <th class="table-head1">Zone</th>
                                             <th class="table-head1">Name</th>
                                             <th class="table-head1">Complaint</th>
@@ -41,7 +41,7 @@
                                                 *ngFor="let data of complainList; let i=index" class="{{data.trClass}}">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-1">
-                                                    {{data.date}}</td>
+                                                    {{data.dateTime}}</td>
                                                 <td class="table-data-1">
                                                     {{data.complaintype}}</td>
                                                 <td class="table-data-1">
@@ -50,7 +50,7 @@
                                                     {{data.name}}</td>
                                                 <td class="table-data-1">
                                                     {{data.message}}</td>
-                                               
+
 
 
 
@@ -63,7 +63,7 @@
                                     </table>
                                 </div>
                             </div>
-                           
+
                         </div>
                     </form>
                 </div>
