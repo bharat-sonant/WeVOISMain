@@ -68,6 +68,7 @@ export class SurveyorAssignmentTestComponent implements OnInit {
       }
     );
   }
+  cardNumberList: any[] = [];
 
   updateSurveyorSummary() {
     $(this.divLoader).show();
@@ -87,6 +88,27 @@ export class SurveyorAssignmentTestComponent implements OnInit {
     );
   }
 
+  checkWithCardWardMapping(){
+    let dbPath = "CardWardMapping";
+    let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseinstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for(let i=0;i<keyArray.length;i++){
+            let cardNo=keyArray[i];
+            let detail=this.cardNumberList.find(item=>item.cardNo==cardNo);
+            if(detail==undefined){
+              console.log(cardNo);
+            }
+          }
+        }
+        
+      $(this.divLoader).hide();
+      }
+    );
+  }
+
   updateSummaryCounts(index: any, keyArray: any, houseData: any) {
     if (index == keyArray.length) {
       this.surveyorSummaryList = this.commonService.transformNumeric(this.surveyorSummaryList, "surveyorId");
@@ -102,6 +124,7 @@ export class SurveyorAssignmentTestComponent implements OnInit {
         }
         let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
         this.db.object(dbPath).update(data);
+        //this.checkWithCardWardMapping();
       }
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
@@ -131,52 +154,62 @@ export class SurveyorAssignmentTestComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
-             // if (cardData[cardNo]["houseType"] != null) {
-               // if (cardData[cardNo]["surveyorId"] != null) {
-                  let surveyorId = cardData[cardNo]["surveyorId"];
-                  let houseType = cardData[cardNo]["houseType"];
-                  console.log(zoneNo+" , "+lineNo+" , "+cardNo);
-                  if (cardData[cardNo]["createdDate"] != null) {
-                    this.totalCards++;
-                    let cardCount = 1;
-                    let houseCount = 0;
-                    let complexCount = 0;
-                    let housesInComplex = 0;
-                    let surveyDate = cardData[cardNo]["createdDate"].split(" ")[0];
-                    let list = surveyDate.toString().split('-');
-                    surveyDate = list[2] + "-" + list[1] + "-" + list[0];
-                    if (houseType == "19" || houseType == "20") {
-                      complexCount = 1;
-                      let servingCount = parseInt(cardData[cardNo]["servingCount"]);
-                      if (isNaN(servingCount)) {
-                        servingCount = 1;
-                      }
-                      housesInComplex = servingCount;
-                      houseCount = servingCount;
-                    }
-                    else {
-                      houseCount = 1;
-                    }
-                    this.totalHouses += Number(houseCount);
-                    if (this.surveyorSummaryList.length == 0) {
-                      this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
-                    }
-                    else {
-                      let summaryDetail = this.surveyorSummaryList.find(item => item.surveyorId == surveyorId && item.surveyDate == surveyDate);
-                      if (summaryDetail != undefined) {
-                        summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
-                        summaryDetail.houseCount = Number(summaryDetail.houseCount) + Number(houseCount);
-                        summaryDetail.complexCount = Number(summaryDetail.complexCount) + Number(complexCount);
-                        summaryDetail.housesInComplex = Number(summaryDetail.housesInComplex) + Number(housesInComplex);
-                        summaryDetail.cards = summaryDetail.cards + "," + cardNo;
-                      }
-                      else {
-                        this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
-                      }
-                    }
+              let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
+              if (detail != undefined) {
+                detail.count = detail.count + 1;
+                detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                detail.lineNo = detail.lineNo + ", " + lineNo;
+
+                //console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
+              }
+              else {
+                this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardData[cardNo]["cardNo"], count: 1 });
+              }
+              // if (cardData[cardNo]["houseType"] != null) {
+              // if (cardData[cardNo]["surveyorId"] != null) {
+              let surveyorId = cardData[cardNo]["surveyorId"];
+              let houseType = cardData[cardNo]["houseType"];
+              if (cardData[cardNo]["createdDate"] != null) {
+                this.totalCards++;
+                let cardCount = 1;
+                let houseCount = 0;
+                let complexCount = 0;
+                let housesInComplex = 0;
+                let surveyDate = cardData[cardNo]["createdDate"].split(" ")[0];
+                let list = surveyDate.toString().split('-');
+                surveyDate = list[2] + "-" + list[1] + "-" + list[0];
+                if (houseType == "19" || houseType == "20") {
+                  complexCount = 1;
+                  let servingCount = parseInt(cardData[cardNo]["servingCount"]);
+                  if (isNaN(servingCount)) {
+                    servingCount = 1;
                   }
-                //}
-             // }
+                  housesInComplex = servingCount;
+                  houseCount = servingCount;
+                }
+                else {
+                  houseCount = 1;
+                }
+                this.totalHouses += Number(houseCount);
+                if (this.surveyorSummaryList.length == 0) {
+                  this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
+                }
+                else {
+                  let summaryDetail = this.surveyorSummaryList.find(item => item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                  if (summaryDetail != undefined) {
+                    summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                    summaryDetail.houseCount = Number(summaryDetail.houseCount) + Number(houseCount);
+                    summaryDetail.complexCount = Number(summaryDetail.complexCount) + Number(complexCount);
+                    summaryDetail.housesInComplex = Number(summaryDetail.housesInComplex) + Number(housesInComplex);
+                    summaryDetail.cards = summaryDetail.cards + "," + cardNo;
+                  }
+                  else {
+                    this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
+                  }
+                }
+              }
+              //}
+              // }
             }
           }
         }
