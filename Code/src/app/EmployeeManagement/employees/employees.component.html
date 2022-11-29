@@ -10,7 +10,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5 card-outer">
+        <div class="col-md-6 card-outer">
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
@@ -25,7 +25,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3 text-left employ-input">
+                        <div class="col-md-2 text-left employ-input">
 
                             <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
                                 <option value="all">
@@ -43,9 +43,13 @@
 
                             <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
                         </div>
-                        <div class="col-md-3 text-center text-input-iner active-input">
+                        <div class="col-md-2 text-center text-input-iner active-input">
                             {{employeeCountSummary.active}}<br/><span class="text-input-iner-span">Active</span>
                         </div>
+                        <div class="col-md-1 text-center" style="font-size: 12px;padding-top:8px;">
+                            <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()"></i><br/> Export
+                        </div>
+
                     </div>
                 </div>
                 <div class="card-body">

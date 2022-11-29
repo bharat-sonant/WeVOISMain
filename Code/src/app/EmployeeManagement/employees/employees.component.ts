@@ -21,7 +21,7 @@ export class EmployeesComponent implements OnInit {
   fireStorePath: any;
   ddlDesignation = "#ddlDesignation";
   ddlDesignationUpdate = "#ddlDesignationUpdate";
-  ddlSalaryTypeUpdate="#ddlSalaryTypeUpdate";
+  ddlSalaryTypeUpdate = "#ddlSalaryTypeUpdate";
   ddlUser = "#ddlUser";
   empID = "#empID";
   empIDActive = "#empIDActive";
@@ -77,7 +77,7 @@ export class EmployeesComponent implements OnInit {
             if (data[empId]["GeneralDetails"]["salaryType"] != null) {
               salaryType = data[empId]["GeneralDetails"]["salaryType"];
             }
-            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"],salaryType:salaryType });
+            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType });
           }
         }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
@@ -166,7 +166,7 @@ export class EmployeesComponent implements OnInit {
         designation: this.allEmployeeList[i]["designation"],
         status: this.allEmployeeList[i]["status"],
         empType: this.allEmployeeList[i]["empType"],
-        salaryType:this.allEmployeeList[i]["salaryType"]
+        salaryType: this.allEmployeeList[i]["salaryType"]
       }
       obj[this.allEmployeeList[i]["empId"]] = { GeneralDetails: data };
     }
@@ -249,11 +249,11 @@ export class EmployeesComponent implements OnInit {
     }, 3000);
     let empId = $(this.empID).val();
     let designationId = $(this.ddlDesignationUpdate).val();
-    let salaryType=$(this.ddlSalaryTypeUpdate).val();
+    let salaryType = $(this.ddlSalaryTypeUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
       empDetail.designationId = designationId;
-      empDetail.salaryType=salaryType;
+      empDetail.salaryType = salaryType;
       let empType = 1;
       if (designationId == "5") {
         empDetail.designation = "Driver";
@@ -275,11 +275,11 @@ export class EmployeesComponent implements OnInit {
       let accountDetail = this.accountList.find(item => item.empId == empId);
       if (accountDetail != undefined) {
         accountDetail.designation = empDetail.designation;
-        accountDetail.salaryType=empDetail.salaryType;
+        accountDetail.salaryType = empDetail.salaryType;
         accountDetail.empType = empType;
         this.saveAccountJSONData();
       }
-      this.updateDesignationInDatabase(empId, designationId,salaryType);
+      this.updateDesignationInDatabase(empId, designationId, salaryType);
     }
     this.getRoles();
     this.filterData();
@@ -288,9 +288,9 @@ export class EmployeesComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Employee designation updated successfully !!!");
   }
 
-  updateDesignationInDatabase(empId: any, designationId: any,salaryType:any) {
+  updateDesignationInDatabase(empId: any, designationId: any, salaryType: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ designationId: designationId.toString(),salaryType:salaryType });
+    this.db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType });
     this.closeModel();
   }
 
@@ -337,6 +337,86 @@ export class EmployeesComponent implements OnInit {
 
   closeModel() {
     this.modalService.dismissAll();
+  }
+
+  exportEmployee() {
+    let exportEmployeeList = [];
+    $(this.divLoader).show();
+    let dbPath = "Employees/";
+    let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        employeeInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let empId = keyArray[i];
+              if (data[empId]["GeneralDetails"] != null) {
+                if (data[empId]["GeneralDetails"]["status"] != null) {
+                  let status = data[empId]["GeneralDetails"]["status"];
+                  let designation = "";
+                  let detail = this.designationUpdateList.find(item => item.designationId == data[empId]["GeneralDetails"]["designationId"]);
+                  if (detail != undefined) {
+                    designation = detail.designation;
+                  }
+                  let empStatus = "In-Active";
+                  if (status == "1") {
+                    empStatus = "Active";
+                  }
+                  exportEmployeeList.push({ name: data[empId]["GeneralDetails"]["name"], mobile: data[empId]["GeneralDetails"]["mobile"], designation: designation, empId:Number(empId), empStatus: empStatus });
+                }
+              }
+            }
+            if (exportEmployeeList.length > 0) {
+              exportEmployeeList=this.commonService.transformNumeric(exportEmployeeList,"empId");
+              let htmlString = "";
+              htmlString = "<table>";
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += "Employee ID";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Name";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Mobile";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Designation";
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += "Status";
+              htmlString += "</td>";
+              htmlString += "</tr>";
+              for (let i = 0; i < exportEmployeeList.length; i++) {
+                htmlString += "<tr>";
+                htmlString += "<td>";
+                htmlString += exportEmployeeList[i]["empId"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += exportEmployeeList[i]["name"];
+                htmlString += "</td>";
+                htmlString += "<td t='s'>";
+                htmlString += exportEmployeeList[i]["mobile"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += exportEmployeeList[i]["designation"];
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += exportEmployeeList[i]["empStatus"];
+                htmlString += "</td>";
+                htmlString += "</tr>";
+              }
+              htmlString += "<table>";
+              let fileName = "Employee [" + this.commonService.getFireStoreCity() + "].xlsx";
+              this.commonService.exportExcel(htmlString, fileName);
+              $(this.divLoader).hide();
+            }
+          }
+        }
+      }
+    );
+
   }
 }
 
