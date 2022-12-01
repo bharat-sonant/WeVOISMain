@@ -276,6 +276,14 @@ export class HouseMarkingComponent {
               let isRevisit = "0";
               let cardNumber = "";
               let isApprove = "0";
+              let servingCount = 0;
+              if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
+                servingCount = parseInt(data[index]["totalHouses"]);
+                if (isNaN(servingCount)) {
+                  servingCount = 0;
+                }
+              }
+
               if (data[index]["isApprove"] != null) {
                 isApprove = data[index]["isApprove"];
               }
@@ -314,7 +322,7 @@ export class HouseMarkingComponent {
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 let houseType = houseTypeDetail.houseType;
-                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove });
+                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove,servingCount:servingCount });
                 let markerURL = this.getMarkerIcon(type);
                 this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               }
