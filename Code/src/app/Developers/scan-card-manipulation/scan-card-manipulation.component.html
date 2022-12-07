@@ -1,0 +1,67 @@
+<div id="divLoader" class="loaderClass">
+    <span class="spanLoader" id="spLoader">
+      <img src="../../../assets/img/loading.gif" width="50"><br/><span style="color:#fff; font-weight: normal;font-size: 18px;"> Scan Card Data Processing....<br/> system has processing date <b>{{processDate}}</b> and line no <b>{{processLine}}</b><br/></span>
+    <span style="color:#0ba118; font-size: 24px;"> Please wait...</span>
+    </span>
+</div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text">Ward Work Percentage </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Date From</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDateFrom" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Date To</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDateTo" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Zone</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZone">
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Percentage</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlPercentage">
+                                        <option value="0">Select</option>
+                                        <option value="80">80%</option>
+                                        <option value="90">90%</option>
+                                        <option value="100">100%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
