@@ -165,11 +165,10 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
             userId: userId,
             cardNumber: cardNo
           }
-          console.log(data);
           dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + lastKey;
-          // this.db.object(dbPath).update(data);
+          this.db.object(dbPath).update(data);
           dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-          // this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+          this.db.object(dbPath).update({ lastMarkerKey: lastKey });
 
           index++;
           setTimeout(() => {
