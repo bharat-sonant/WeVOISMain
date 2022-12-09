@@ -21,6 +21,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   yearList: any[] = [];
   assignedList: any[] = [];
   surveyorList: any[] = [];
+  surveyorSummaryList: any[] = [];
   userId: any;
   WardList: any[] = [];
   vehicleAllList: any[] = [];
@@ -34,21 +35,206 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   lineMarkerList: any[];
   isFirst = true;
   houseData: houseDatail = {
-    totalMarking: "0",
-    totalSurveyed: "0",
-    totalHouses:"0",
-    totalRevisit: "0",
-    totalRFID: "0",
+    days: "0",
+    cards: "0",
+    houses: "0",
     name: "",
     wardNo: "",
     average: "0",
-    totalDays: "0"
+    lastUpdate: "---",
+    totalCards: "0",
+    totalHouses: "0"
   };
   db: any;
+  divLoader = "#divLoader";
+  totalHouses: any;
+  totalCards: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    //this.checkWithCardWardMapping();
+    this.getLastUpdate();
     this.getZoneList();
     this.getAssignedList();
+  }
+
+  getLastUpdate() {
+    let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
+    let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
+      summaryData => {
+        lastUpdateInstance.unsubscribe();
+        if (summaryData != null) {
+          this.houseData.lastUpdate = summaryData["lastUpdate"];
+          this.houseData.totalCards = summaryData["cards"];
+          this.houseData.totalHouses = summaryData["houses"];
+        }
+      }
+    );
+  }
+  cardNumberList: any[] = [];
+
+  updateSurveyorSummary() {
+    $(this.divLoader).show();
+    this.totalCards = 0;
+    this.totalHouses = 0;
+    let dbPath = "Houses";
+    let housesInstance = this.db.object(dbPath).valueChanges().subscribe(
+      houseData => {
+        housesInstance.unsubscribe();
+        if (houseData != null) {
+          let keyArray = Object.keys(houseData);
+          if (keyArray.length > 0) {
+            this.updateSummaryCounts(0, keyArray, houseData);
+          }
+        }
+      }
+    );
+  }
+
+  checkWithCardWardMapping() {
+    let dbPath = "CardWardMapping";
+    let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseinstance.unsubscribe();
+        let htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "CardNo";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let cardNo = keyArray[i];
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += cardNo;
+            htmlString += "</td>";
+            htmlString += "</tr>";
+           // console.log(cardNo);
+            //let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
+            // if (detail == undefined) {
+            //   console.log(cardNo);
+            // }
+          }
+        }
+        htmlString += "</table>";
+       // console.log(htmlString);
+        //this.commonService.exportExcel(htmlString,"CardWardMapping.xlsx");
+
+
+        $(this.divLoader).hide();
+      }
+    );
+  }
+
+  updateSummaryCounts(index: any, keyArray: any, houseData: any) {
+    if (index == keyArray.length) {
+      this.surveyorSummaryList = this.commonService.transformNumeric(this.surveyorSummaryList, "surveyorId");
+      for (let i = 0; i < this.surveyorSummaryList.length; i++) {
+        let surveyorId = this.surveyorSummaryList[i]["surveyorId"];
+        let surveyDate = this.surveyorSummaryList[i]["surveyDate"];
+        const data = {
+          cardCount: this.surveyorSummaryList[i]["cardCount"],
+          cards: this.surveyorSummaryList[i]["cards"],
+          complexCount: this.surveyorSummaryList[i]["complexCount"],
+          houseCount: this.surveyorSummaryList[i]["houseCount"],
+          housesInComplex: this.surveyorSummaryList[i]["housesInComplex"]
+        }
+        let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
+        this.db.object(dbPath).update(data);
+        //this.checkWithCardWardMapping();
+      }
+      let date = this.commonService.setTodayDate();
+      let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
+      let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
+      const data = {
+        lastUpdate: lastUpdate,
+        cards: this.totalCards,
+        houses: this.totalHouses
+      }
+      let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
+      this.db.object(dbPath).update(data);
+      this.houseData.lastUpdate = lastUpdate;
+      this.houseData.totalCards = this.totalCards;
+      this.houseData.totalHouses = this.totalHouses;
+      this.commonService.setAlertMessage("success", "Data update successfully !!!");
+      $(this.divLoader).hide();
+    }
+    else {
+      let zoneNo = keyArray[index];
+      let zoneData = houseData[zoneNo];
+      let lineArray = Object.keys(zoneData);
+      if (lineArray.length > 0) {
+        for (let i = 0; i < lineArray.length; i++) {
+          let lineNo = lineArray[i];
+          let cardData = zoneData[lineNo];
+          let cardArray = Object.keys(cardData);
+          if (cardArray.length > 0) {
+            for (let j = 0; j < cardArray.length; j++) {
+              let cardNo = cardArray[j];
+              let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
+              if (detail != undefined) {
+                detail.count = detail.count + 1;
+                detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                detail.lineNo = detail.lineNo + ", " + lineNo;
+
+               // console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
+              }
+              else {
+                this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardData[cardNo]["cardNo"], count: 1 });
+              }
+              // if (cardData[cardNo]["houseType"] != null) {
+              // if (cardData[cardNo]["surveyorId"] != null) {
+              let surveyorId = cardData[cardNo]["surveyorId"];
+              let houseType = cardData[cardNo]["houseType"];
+              if (cardData[cardNo]["createdDate"] != null) {
+                this.totalCards++;
+                let cardCount = 1;
+                let houseCount = 0;
+                let complexCount = 0;
+                let housesInComplex = 0;
+                let surveyDate = cardData[cardNo]["createdDate"].split(" ")[0];
+                let list = surveyDate.toString().split('-');
+                surveyDate = list[2] + "-" + list[1] + "-" + list[0];
+                if (houseType == "19" || houseType == "20") {
+                  complexCount = 1;
+                  let servingCount = parseInt(cardData[cardNo]["servingCount"]);
+                  if (isNaN(servingCount)) {
+                    servingCount = 1;
+                  }
+                  housesInComplex = servingCount;
+                  houseCount = servingCount;
+                }
+                else {
+                  houseCount = 1;
+                }
+                this.totalHouses += Number(houseCount);
+                if (this.surveyorSummaryList.length == 0) {
+                  this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
+                }
+                else {
+                  let summaryDetail = this.surveyorSummaryList.find(item => item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                  if (summaryDetail != undefined) {
+                    summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                    summaryDetail.houseCount = Number(summaryDetail.houseCount) + Number(houseCount);
+                    summaryDetail.complexCount = Number(summaryDetail.complexCount) + Number(complexCount);
+                    summaryDetail.housesInComplex = Number(summaryDetail.housesInComplex) + Number(housesInComplex);
+                    summaryDetail.cards = summaryDetail.cards + "," + cardNo;
+                  }
+                  else {
+                    this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
+                  }
+                }
+              }
+              //}
+              // }
+            }
+          }
+        }
+      }
+      index++;
+      this.updateSummaryCounts(index, keyArray, houseData);
+    }
   }
 
   //#region serveyor detail
@@ -73,255 +259,37 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     } else {
       this.isFirst = false;
     }
-    this.houseData.totalMarking = "0";
-    this.houseData.totalSurveyed = "0";
-    this.houseData.totalHouses="0";
-    this.houseData.totalRevisit = "0";
-    this.houseData.totalRFID = "0";
+    this.houseData.days = "0";
+    this.houseData.cards = "0";
+    this.houseData.houses = "0";
     this.houseData.average = "0";
-    this.houseData.totalDays = "0";
     this.lineMarkerList = [];
 
     let userDetail = this.assignedList.find((item) => item.userId == userId);
     if (userDetail != undefined) {
       this.houseData.name = userDetail.name;
       this.houseData.wardNo = userDetail.wardNo;
-      this.getSurveyCount(userId);
-      this.getHousesCount(userId);
-      this.getComplexCount(userId);
-      this.getRevisitCount(userId);
-      this.getHouseHoldCount(userId);
-      this.getRfidCount(userId);
-    }
-  }
-
-  getHousesCount(userId: any) {  
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyHouseWithComplexCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    if (detail.houses != null) {
-                      detail.houses = Number(detail.houses) + count;
-                    }
-                    else {
-                      detail.houses = count;
-                    }
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, houses: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
+      let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + userId;
+      let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          summaryInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let key = keyArray[i];
+                let dateOrder = new Date(key.split('-')[2] + "-" + key.split('-')[1] + "-" + key.split('-')[0]);
+                let date = key.split('-')[0] + " " + this.commonService.getCurrentMonthShortName(Number(key.split('-')[1])) + " " + key.split('-')[2];
+                this.lineMarkerList.push({ date: date, surveyed: data[key]["cardCount"], houses: data[key]["houseCount"], complex: data[key]["complexCount"], houseHold: data[key]["housesInComplex"], dateOrder: dateOrder });
               }
-            }
-          }
-        );
-      }
-    }
-  }
-
-  
-  getComplexCount(userId: any) {  
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyComplexCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    if (detail.complex != null) {
-                      detail.complex = Number(detail.complex) + count;
-                    }
-                    else {
-                      detail.complex = count;
-                    }
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, complex: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
-              }
-            }
-          }
-        );
-      }
-    }
-  }
-
-  
-  getHouseHoldCount(userId: any) {  
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyHouseHoldCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    if (detail.houseHold != null) {
-                      detail.houseHold = Number(detail.houseHold) + count;
-                    }
-                    else {
-                      detail.houseHold = count;
-                    }
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, houseHold: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
-              }
-            }
-          }
-        );
-      }
-    }
-  }
-
-
-  getSurveyCount(userId: any) {
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyHouseCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    detail.surveyed = Number(detail.surveyed) + count;
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, surveyed: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
-              }
-            }
-          }
-        );
-      }
-    }
-  }
-
-  getRevisitCount(userId: any) {
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    if (detail.revisit != null) {
-                      detail.revisit = Number(detail.revisit) + count;
-                    }
-                    else {
-                      detail.revisit = count;
-                    }
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, revisit: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
-              }
-            }
-          }
-        );
-      }
-    }
-  }
-
-  getRfidCount(userId: any) {
-    if (this.zoneList.length > 0) {
-      for (let i = 0; i < this.zoneList.length; i++) {
-        let dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.zoneList[i]["zoneNo"] + "/" + userId;
-        let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            houseCountInstance.unsubscribe();
-            if (data != null) {
-              let keyArray = Object.keys(data);
-              if (keyArray.length > 0) {
-                for (let j = 0; j < keyArray.length; j++) {
-                  let date = keyArray[j];
-                  let count = Number(data[date]);
-                  let detail = this.lineMarkerList.find(item => item.date == date);
-                  if (detail != undefined) {
-                    if (detail.rfid != null) {
-                      detail.rfid = Number(detail.rfid) + count;
-                    }
-                    else {
-                      detail.rfid = count;
-                    }
-                  }
-                  else {
-                    let dateOrder = new Date(date.split('-')[2] + "-" + date.split('-')[1] + "-" + date.split('-')[0]);
-                    this.lineMarkerList.push({ date: date, rfid: count, dateOrder: dateOrder });
-                  }
-                }
-                this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
-                  b.dateOrder > a.dateOrder ? 1 : -1
-                );
-              }
-
-            }
-            if (i == this.zoneList.length - 1) {
+              this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
+                b.dateOrder > a.dateOrder ? 1 : -1
+              );
               this.getSummary();
             }
           }
-        );
-      }
+        }
+      );
     }
   }
 
@@ -330,25 +298,17 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       let surved = 0;
       let revisit = 0;
       let rfid = 0;
-      let houses=0;
+      let houses = 0;
       for (let i = 0; i < this.lineMarkerList.length; i++) {
         if (this.lineMarkerList[i]["surveyed"] != null) {
           surved = surved + Number(this.lineMarkerList[i]["surveyed"]);
         }
-        if (this.lineMarkerList[i]["revisit"] != null) {
-          revisit = revisit + Number(this.lineMarkerList[i]["revisit"]);
-        }
-        if (this.lineMarkerList[i]["rfid"] != null) {
-          rfid = rfid + Number(this.lineMarkerList[i]["rfid"]);
-        }
         if (this.lineMarkerList[i]["houses"] != null) {
           houses = houses + Number(this.lineMarkerList[i]["houses"]);
         }
-        this.houseData.totalHouses=houses.toString();
-        this.houseData.totalSurveyed = surved.toString();
-        this.houseData.totalRevisit = revisit.toString();
-        this.houseData.totalRFID = rfid.toString();
-        this.houseData.totalDays = this.lineMarkerList.length.toString();
+        this.houseData.houses = houses.toString();
+        this.houseData.cards = surved.toString();
+        this.houseData.days = this.lineMarkerList.length.toString();
         this.houseData.average = ((surved + revisit + rfid) / this.lineMarkerList.length).toFixed(2);
       }
     }
@@ -616,18 +576,17 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     let id = $("#deleteId").val();
     this.deleteEntry(id);
   }
-
-  //#endregion
 }
 
+
 export class houseDatail {
-  totalMarking: string;
-  totalSurveyed: string;
-  totalHouses:string;
-  totalRevisit: string;
-  totalRFID: string;
+  days: string;
+  cards: string;
+  houses: string;
   name: string;
   wardNo: string;
   average: string;
-  totalDays: string;
+  lastUpdate: string;
+  totalCards: string;
+  totalHouses: string;
 }

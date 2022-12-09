@@ -709,3 +709,93 @@ label {
     top: 7px;
     right: 15px;
 }
+
+.loaderClass {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: lightgray;
+    opacity: 0.5;
+}
+
+.imgLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.fix-home {
+    float: right;
+    margin-right: 15px;
+    margin-top: -5px;
+}
+
+.float-first {
+    width: 215px;
+    float: left;
+}
+
+.float-second {
+    width: 110px;
+    float: left;
+}
+
+.float-third {
+    width: 100px;
+    float: left;
+}
+
+.float-fourth {
+    width: 102px;
+    float: left;
+}
+
+.total-house .fa-home {
+    margin-top: 2px;
+    color: #8dbaff;
+    font-size: 18px;
+}
+
+.total-house h6 {
+    font-size: 8px;
+    font-weight: normal!important;
+    letter-spacing: 0.5px;
+}
+
+.house {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.total-house .fa-house-damage {
+    margin-top: 0px;
+    color: #1fda2f;
+    font-size: 18px;
+}
+
+.no-gutters-iner {
+    padding-left: 18px;
+}
+
+.Surveyheading {
+    text-align: center;
+    margin-top: -2px;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.fix-home-outer {
+    padding-left: 18px;
+}
+
+.home-icon {
+    color: red;
+}
+
+.float-second2 {
+    cursor: pointer;
+}
