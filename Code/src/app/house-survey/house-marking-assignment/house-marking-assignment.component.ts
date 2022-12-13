@@ -6,8 +6,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
 
-
-
 @Component({
   selector: "app-house-marking-assignment",
   templateUrl: "./house-marking-assignment.component.html",
@@ -51,7 +49,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   totalCards: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    //this.checkWithCardWardMapping();
+    // this.checkWithCardWardMapping();
     this.getLastUpdate();
     this.getZoneList();
     this.getAssignedList();
@@ -70,6 +68,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       }
     );
   }
+
   cardNumberList: any[] = [];
 
   updateSurveyorSummary() {
@@ -110,16 +109,15 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             htmlString += cardNo;
             htmlString += "</td>";
             htmlString += "</tr>";
-           // console.log(cardNo);
-            //let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
-            // if (detail == undefined) {
-            //   console.log(cardNo);
-            // }
+            // console.log(cardNo);
+            let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
+            if (detail == undefined) {
+              //console.log(cardNo);
+            }
           }
         }
         htmlString += "</table>";
-       // console.log(htmlString);
-        //this.commonService.exportExcel(htmlString,"CardWardMapping.xlsx");
+        this.commonService.exportExcel(htmlString, "CardWardMapping.xlsx");
 
 
         $(this.divLoader).hide();
@@ -142,7 +140,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }
         let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
         this.db.object(dbPath).update(data);
-        //this.checkWithCardWardMapping();
+        // this.checkWithCardWardMapping();
       }
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
@@ -226,6 +224,9 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                   }
                 }
               }
+              else {
+               // console.log("Date not >> " + zoneNo + " >> " + lineNo + "  >> " + cardNo);
+              }
               //}
               // }
             }
@@ -269,6 +270,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     if (userDetail != undefined) {
       this.houseData.name = userDetail.name;
       this.houseData.wardNo = userDetail.wardNo;
+      let loginId = userDetail.loginId;
       let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + userId;
       let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -280,7 +282,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                 let key = keyArray[i];
                 let dateOrder = new Date(key.split('-')[2] + "-" + key.split('-')[1] + "-" + key.split('-')[0]);
                 let date = key.split('-')[0] + " " + this.commonService.getCurrentMonthShortName(Number(key.split('-')[1])) + " " + key.split('-')[2];
-                this.lineMarkerList.push({ date: date, surveyed: data[key]["cardCount"], houses: data[key]["houseCount"], complex: data[key]["complexCount"], houseHold: data[key]["housesInComplex"], dateOrder: dateOrder });
+                this.lineMarkerList.push({ loginId: loginId, date: date, surveyed: data[key]["cardCount"], houses: data[key]["houseCount"], complex: data[key]["complexCount"], houseHold: data[key]["housesInComplex"], dateOrder: dateOrder, key: key });
               }
               this.lineMarkerList = this.lineMarkerList.sort((a, b) =>
                 b.dateOrder > a.dateOrder ? 1 : -1
@@ -575,6 +577,57 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   confirmDelete() {
     let id = $("#deleteId").val();
     this.deleteEntry(id);
+  }
+
+  exportEmployeeSurveyedData() {
+    if (this.lineMarkerList.length > 0) {
+      let htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cards";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Houses";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Complex";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "House In Complex";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.lineMarkerList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.lineMarkerList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineMarkerList[i]["surveyed"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.lineMarkerList[i]["houses"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.lineMarkerList[i]["complex"] != 0) {
+          htmlString += this.lineMarkerList[i]["complex"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.lineMarkerList[i]["complex"] != 0) {
+          htmlString += this.lineMarkerList[i]["houseHold"];
+        }
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+
+      htmlString += "</table>";
+      let fileName = "Surveyor-" + this.lineMarkerList[0]["loginId"] + "-Survey-Report.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+
+    }
   }
 }
 
