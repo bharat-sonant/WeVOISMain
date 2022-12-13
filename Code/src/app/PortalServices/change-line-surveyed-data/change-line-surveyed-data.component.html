@@ -36,8 +36,13 @@
                                     <label>Zone No</label>
                                     <div class="wrap-input-effects" required>
                                         <select class="caret-select" id="ddlZoneFrom">
-                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
-                                    </select>
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+
+                                            <option value="1">
+                                                Zone 1
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -57,8 +62,9 @@
                                     <label>Zone No</label>
                                     <div class="wrap-input-effects" required>
                                         <select class="caret-select" id="ddlZoneTo">
-                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
-                                    </select>
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6 ">
@@ -101,8 +107,9 @@
                                 <div class="d-flex wrap-class">
                                     <div class="wrap-input-effects" required>
                                         <select class="caret-select caret-select2" id="ddlZone">
-                                    <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
-                                </select>
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group button">
                                         <button id="btnSave" class="btn btn-success btn-xs" (click)="updateCardLineData();">SAVE</button>
@@ -132,8 +139,9 @@
                                 <div class="d-flex wrap-class">
                                     <div class="wrap-input-effects" required>
                                         <select class="caret-select caret-select2" id="ddlZoneCount">
-                                    <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
-                                </select>
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group button">
                                         <button id="btnSave" class="btn btn-success btn-xs" (click)="updateSurveyCount();">SAVE</button>
