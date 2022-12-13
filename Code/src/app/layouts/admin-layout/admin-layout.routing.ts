@@ -117,6 +117,7 @@ import { ComplaintListComponent } from '../../complaint-list/complaint-list.comp
 import { SurveyorAssignmentTestComponent } from '../../surveyor-assignment-test/surveyor-assignment-test.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
+import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -366,6 +367,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'siker/:id/complaint-list', component: ComplaintListComponent },
     { path: 'sikar/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'sikar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'sikar/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -602,6 +604,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-greater/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'jaipur-greater/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-greater/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -843,6 +846,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/complaint-list', component: ComplaintListComponent },
     { path: 'reengus/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'reengus/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'reengus/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -1080,6 +1084,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/complaint-list', component: ComplaintListComponent },
     { path: 'shahpura/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'shahpura/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'shahpura/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //test
@@ -1316,6 +1321,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/complaint-list', component: ComplaintListComponent },
     { path: 'test/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'test/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'test/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -1554,6 +1560,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-office/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'jaipur-office/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-office/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1789,6 +1796,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/complaint-list', component: ComplaintListComponent },
     { path: 'kishangarh/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'kishangarh/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'kishangarh/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //Nawai
@@ -2025,6 +2033,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/complaint-list', component: ComplaintListComponent },
     { path: 'niwai/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'niwai/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'niwai/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //Jaisalmer
@@ -2261,6 +2270,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaisalmer/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'jaisalmer/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaisalmer/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -2498,6 +2508,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/complaint-list', component: ComplaintListComponent },
     { path: 'salasar/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'salasar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'salasar/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2733,6 +2744,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/complaint-list', component: ComplaintListComponent },
     { path: 'behror/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'behror/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'behror/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //jaipur
@@ -2968,6 +2980,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //jaipur-jhotwara
@@ -3203,6 +3216,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-jhotwara/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-jhotwara/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-jhotwara/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //jaipur-jagatpura
@@ -3438,6 +3452,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-jagatpura/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-jagatpura/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-jagatpura/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -3675,6 +3690,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-malviyanagar/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-malviyanagar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-malviyanagar/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -3911,6 +3927,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-mansarovar/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-mansarovar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-mansarovar/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
@@ -4146,6 +4163,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-murlipura/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-murlipura/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-murlipura/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -4383,6 +4401,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-sanganer/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-sanganer/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-sanganer/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -4619,6 +4638,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/complaint-list', component: ComplaintListComponent },
     { path: 'jaipur-vidhyadhar/:id/scan-card-manipulation', component: ScanCardManipulationComponent }, 
     { path: 'jaipur-vidhyadhar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'jaipur-vidhyadhar/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -4853,6 +4873,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/complaint-list', component: ComplaintListComponent },
     { path: 'bhiwadi/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'bhiwadi/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'bhiwadi/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -5087,6 +5108,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/complaint-list', component: ComplaintListComponent },
     { path: 'chhapar/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'chhapar/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'chhapar/:id/card-scanning-report', component: CardScanningReportComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5321,6 +5343,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/complaint-list', component: ComplaintListComponent },
     { path: 'churu/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'churu/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'churu/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //wevois-others
@@ -5557,6 +5580,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id/complaint-list', component: ComplaintListComponent },
     { path: 'wevois-others/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'wevois-others/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'wevois-others/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
 
@@ -5794,6 +5818,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/complaint-list', component: ComplaintListComponent },
     { path: 'gwalior/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'gwalior/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'gwalior/:id/card-scanning-report', component: CardScanningReportComponent },
 
 
     //Tonk
@@ -6029,5 +6054,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/complaint-list', component: ComplaintListComponent },
     { path: 'tonk/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: 'tonk/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: 'tonk/:id/card-scanning-report', component: CardScanningReportComponent },
 
 ]; 
