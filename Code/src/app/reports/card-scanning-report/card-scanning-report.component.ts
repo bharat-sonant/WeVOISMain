@@ -1,0 +1,139 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+//services
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
+
+@Component({
+  selector: 'app-card-scanning-report',
+  templateUrl: './card-scanning-report.component.html',
+  styleUrls: ['./card-scanning-report.component.scss']
+})
+export class CardScanningReportComponent implements OnInit {
+
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
+
+  wardList: any[];
+  selectedDate: any;
+  scannedList: any;
+  isFirst = true;
+  db: any;
+  public cityName: any;
+  txtDate = "#txtDate";
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.setDefaults();
+  }
+
+  setDefaults() {
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.selectedDate = this.commonService.setTodayDate();
+    $(this.txtDate).val(this.selectedDate);
+    this.getWards();
+  }
+
+  getWards() {
+    this.wardList = [];
+    this.wardList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.scannedList = [];
+    if (this.wardList.length > 0) {
+      for (let i = 1; i < this.wardList.length; i++) {
+        if (!this.wardList[i]["zoneNo"].includes("Commercial") && !this.wardList[i]["zoneNo"].includes("Dummy")) {
+          let ward = this.wardList[i]["zoneNo"];
+          this.scannedList.push({ ward: this.wardList[i]["zoneNo"], cards: '', scanned: '', percentage: '' });
+          this.getCardsData(ward);
+        }
+      }
+    }
+  }
+
+  setDate(filterVal: any, type: string) {
+    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+      $(this.txtDate).val(newDate);
+      if (newDate != this.selectedDate) {
+        this.selectedDate = newDate;
+        this.clearAllData();
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
+  }
+
+  clearAllData() {
+    if (this.scannedList.length > 0) {
+      for (let i = 0; i < this.scannedList.length; i++) {
+        this.scannedList[i]["cards"] = "";
+        this.scannedList[i]["scanned"] = "";
+        this.scannedList[i]["percentage"] = "";
+        this.getCardsData(this.scannedList[i]["ward"]);
+      }
+    }
+  }
+
+  getCardsData(ward: any) {
+    this.commonService.getWardLine(ward, this.selectedDate).then((linesData: any) => {
+      let wardLinesDataObj = JSON.parse(linesData);
+      let detail = this.scannedList.find(item => item.ward == ward);
+      if (detail != undefined) {
+        detail.cards = wardLinesDataObj["totalHouseCount"];
+        this.getScannedCards(ward);
+      }
+    });
+  }
+
+  getScannedCards(ward: any) {
+    let year = this.selectedDate.split('-')[0];
+    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+    let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + this.selectedDate + "/totalScanned";
+    let scannedCardsInstance = this.db.object(dbPath).valueChanges().subscribe(
+      totalScanned => {
+        scannedCardsInstance.unsubscribe();
+        if (totalScanned != null) {
+          let detail = this.scannedList.find(item => item.ward == ward);
+          if (detail != undefined) {
+            detail.scanned = totalScanned;
+            detail.percentage = ((Number(detail.scanned) / Number(detail.cards)) * 100).toFixed(0);
+          }
+        }
+      }
+    );
+  }
+
+  exportToExcel() {
+    if (this.scannedList.length > 0) {
+      let htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>Ward";
+      htmlString += "</td>";
+      htmlString += "<td>Cards";
+      htmlString += "</td>";
+      htmlString += "<td>Scanned Cards";
+      htmlString += "</td>";
+      htmlString += "<td>Scan (%)";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.scannedList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.scannedList[i]["ward"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.scannedList[i]["cards"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.scannedList[i]["scanned"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.scannedList[i]["percentage"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let exportDate = this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]
+      let fileName = "Card-Scan-Report [" + exportDate + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
+}
