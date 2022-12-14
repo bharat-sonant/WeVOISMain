@@ -73,14 +73,30 @@ export class CardScanningReportComponent implements OnInit {
   }
 
   getCardsData(ward: any) {
-    this.commonService.getWardLine(ward, this.selectedDate).then((linesData: any) => {
-      let wardLinesDataObj = JSON.parse(linesData);
-      let detail = this.scannedList.find(item => item.ward == ward);
-      if (detail != undefined) {
-        detail.cards = wardLinesDataObj["totalHouseCount"];
-        this.getScannedCards(ward);
+    let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
+    let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+      houseCountData => {
+        houseCountInstance.unsubscribe();
+        if (houseCountData != null) {
+          let detail = this.scannedList.find(item => item.ward == ward);
+          if (detail != undefined) {
+            detail.cards =Number(houseCountData);
+            this.getScannedCards(ward);
+          }
+        }
+        else {
+          this.commonService.getWardLine(ward, this.selectedDate).then((linesData: any) => {
+            let wardLinesDataObj = JSON.parse(linesData);
+            let detail = this.scannedList.find(item => item.ward == ward);
+            if (detail != undefined) {
+              detail.cards = wardLinesDataObj["totalHouseCount"];
+              this.getScannedCards(ward);
+            }
+          });
+        }
       }
-    });
+    );
+
   }
 
   getScannedCards(ward: any) {
