@@ -80,7 +80,7 @@ export class CardScanningReportComponent implements OnInit {
         if (houseCountData != null) {
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
-            detail.cards =Number(houseCountData);
+            detail.cards = Number(houseCountData);
             this.getScannedCards(ward);
           }
         }
@@ -110,6 +110,9 @@ export class CardScanningReportComponent implements OnInit {
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
             detail.scanned = totalScanned;
+            if (Number(detail.scanned) > Number(detail.cards)) {
+              detail.scanned = detail.cards;
+            }
             detail.percentage = ((Number(detail.scanned) / Number(detail.cards)) * 100).toFixed(0);
           }
         }
