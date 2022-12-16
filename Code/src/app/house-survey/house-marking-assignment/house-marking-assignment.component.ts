@@ -75,6 +75,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     $(this.divLoader).show();
     this.totalCards = 0;
     this.totalHouses = 0;
+    this.surveyorSummaryList = [];
     let dbPath = "Houses";
     let housesInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseData => {
@@ -118,8 +119,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }
         htmlString += "</table>";
         this.commonService.exportExcel(htmlString, "CardWardMapping.xlsx");
-
-
         $(this.divLoader).hide();
       }
     );
@@ -140,6 +139,8 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         }
         let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
         this.db.object(dbPath).update(data);
+
+        
         // this.checkWithCardWardMapping();
       }
       let date = this.commonService.setTodayDate();
@@ -170,17 +171,25 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
+              let cardDetail = cardData[cardNo];
+              //console.log(cardData);
+              cardDetail["line"] = lineNo;
+              cardDetail["ward"] = zoneNo;
+              let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
+              this.db.object(dbPath).update(cardData);
+              /*
               let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
               if (detail != undefined) {
                 detail.count = detail.count + 1;
                 detail.zoneNo = detail.zoneNo + ", " + zoneNo;
                 detail.lineNo = detail.lineNo + ", " + lineNo;
 
-               // console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
+                // console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
               }
               else {
                 this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardData[cardNo]["cardNo"], count: 1 });
               }
+              */
               // if (cardData[cardNo]["houseType"] != null) {
               // if (cardData[cardNo]["surveyorId"] != null) {
               let surveyorId = cardData[cardNo]["surveyorId"];
@@ -222,10 +231,10 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                   else {
                     this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
                   }
-                }
+                }                
               }
               else {
-               // console.log("Date not >> " + zoneNo + " >> " + lineNo + "  >> " + cardNo);
+                // console.log("Date not >> " + zoneNo + " >> " + lineNo + "  >> " + cardNo);
               }
               //}
               // }
@@ -399,8 +408,6 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         this.db.object(dbPath).update({ isLogin: 'yes' });
       }
     }
-
-
   }
   showAll() {
     this.assignedList = [];

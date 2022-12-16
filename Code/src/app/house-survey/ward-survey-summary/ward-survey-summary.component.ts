@@ -18,6 +18,7 @@ export class WardSurveySummaryComponent implements OnInit {
   lineSurveyList: any[];
   surveyedDetailList: any[];
   surveyDateList: any[];
+  dateSummaryList: any[] = [];
   surveyorList: any[];
   wardLineCount: any;
   cityName: any;
@@ -68,6 +69,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.getHouseType();
     this.getSurveyorList();
     this.getWardProgressList();
+    //this.checkWithCardWardMapping();
   }
 
   getLastUpdate() {
@@ -104,6 +106,7 @@ export class WardSurveySummaryComponent implements OnInit {
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
+    this.dateSummaryList = [];
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.lineuptoLoop = this.wardList.length;
     this.updateCounts_Bharat(1);
@@ -136,7 +139,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalMarkers = 0;
     this.surveyData.totalSurveyed = 0;
     this.surveyData.totalRevisit = 0;
-    this.surveyData.totalHouses=0;
+    this.surveyData.totalHouses = 0;
   }
 
   openExportHouseData(content: any) {
@@ -152,7 +155,57 @@ export class WardSurveySummaryComponent implements OnInit {
     $("#divHouseStatus").css("height", divHeight);
 
   }
-  
+
+  cardNumberList: any[] = [];
+
+  checkWithCardWardMapping() {
+    let dbPath = "CardWardMapping";
+    let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseinstance.unsubscribe();
+        let htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "CardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Zone No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let cardNo = keyArray[i];
+            //console.log(cardNo);
+            let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
+            if (detail == undefined) {
+              //console.log(cardNo);
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += cardNo;
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += data[cardNo]["ward"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += data[cardNo]["line"];
+              htmlString += "</td>";
+              htmlString += "</tr>";
+            }
+          }
+        }
+        htmlString += "</table>";
+        // console.log(htmlString);
+        this.commonService.exportExcel(htmlString, "CardWardMappingNotInMArkedHouses.xlsx");
+
+      }
+    );
+  }
+
   updateCounts_Bharat(index: any) {
     if (index == this.wardList.length) {
       let date = this.commonService.setTodayDate();
@@ -160,10 +213,28 @@ export class WardSurveySummaryComponent implements OnInit {
       let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
       let dbPath = "EntitySurveyData/";
       this.db.object(dbPath).update({ surveySummarylastUpdate: lastUpdate });
+      //console.log(this.dateSummaryList);
+      if (this.dateSummaryList.length > 0) {
+        let dbPath = "EntitySurveyData/DailyHouseCount/";
+        this.db.object(dbPath).remove();
+        
+      }
+
       setTimeout(() => {
+        for (let i = 0; i < this.dateSummaryList.length; i++) {
+          let surveyorId = this.dateSummaryList[i]["surveyorId"];
+          let surveyDate = this.dateSummaryList[i]["surveyDate"];
+          let zone = this.dateSummaryList[i]["zoneNo"];
+          let cardCount = this.dateSummaryList[i]["cardCount"];
+          let dbPath = "EntitySurveyData/DailyHouseCount/" + zone + "/" + surveyorId + "/" + surveyDate;
+          this.db.object(dbPath).set(cardCount);
+        }
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
-        this.surveyData.lastUpdate=lastUpdate;
+        this.surveyData.lastUpdate = lastUpdate;
+        // this.checkWithCardWardMapping();
+
+        //console.log(this.cardNumberList);
         this.clearAll();
         this.getWardProgressList();
       }, 5000);
@@ -208,7 +279,23 @@ export class WardSurveySummaryComponent implements OnInit {
                     markerCount = markerCount + 1;
                     lastMarkerKey = Number(markerNo);
                     if (lineData[markerNo]["cardNumber"] != null) {
+                      if (lineData[markerNo]["houseType"] == null) {
+                        // console.log(zoneNo + " " + lineNo + " " + markerNo);
+                      }
                       cardCount = cardCount + 1;
+                      /*
+                      let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
+                      if (detail != undefined) {
+                        detail.count = detail.count + 1;
+                        detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                        detail.lineNo = detail.lineNo + ", " + lineNo;
+
+                        //console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
+                      }
+                      else {
+                        this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
+                      }
+                      */
                     } else if (lineData[markerNo]["revisitKey"] != null) {
                       revisitCount = revisitCount + 1;
                     }
@@ -305,6 +392,29 @@ export class WardSurveySummaryComponent implements OnInit {
                     houseCount = houseCount + servingCount;
                   } else {
                     houseCount = houseCount + 1;
+                  }
+                  /*
+                  let cardData=cardObj[cardNo];
+                  //console.log(cardData);
+                  cardData["line"]=line;
+                  cardData["ward"]=zoneNo;
+                  dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
+                  this.db.object(dbPath).update(cardData);
+                  */
+                  let cardCount = 1;
+                  let surveyorId = cardObj[cardNo]["surveyorId"];
+                  let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
+                  if (this.dateSummaryList.length == 0) {
+                    this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                  }
+                  else {
+                    let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                    if (summaryDetail != undefined) {
+                      summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                    }
+                    else {
+                      this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                    }
                   }
                 }
               }
