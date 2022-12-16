@@ -121,6 +121,8 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                   cardInstance.unsubscribe();
                   if (cardData != null) {
                     data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
+                    cardData["line"] = lineTo;
+                    cardData["ward"] = zoneTo;
                     let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
                     this.db.object(dbPath).update(cardData);
 
