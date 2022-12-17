@@ -238,7 +238,7 @@ export class WardSurveySummaryComponent implements OnInit {
         //console.log(this.cardNumberList);
         this.clearAll();
         this.getWardProgressList();
-      }, 5000);
+      }, 2000);
 
     }
     else {

@@ -864,9 +864,11 @@ label {
 }
 
 .img-close-box {
-    width: 100%;
+    width: 50%;
     text-align: right;
-    float: left;
+    float: right;
+    position: absolute;
+    right: 0;
 }
 
 .table-wrapper-outer {
