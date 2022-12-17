@@ -18,11 +18,11 @@
                             {{surveyData.totalMarkers}}</span><br>
                         <h6>Total Marker</h6>
                     </div>
-                    <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Surveyed');">
+                    <div class="float-second float-second2" (click)="showDateWiseDetail(contentDateWise,'Cards');">
                         <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
                         <h6>Cards</h6>
                     </div>
-                    <div class="float-third float-second2" (click)="showDateWiseDetail(contentDateWise,'Revisit Requests');">
+                    <div class="float-third float-second2">
                         <i class="fas fa-house-damage icon-damage"></i> <span class="house">
                             {{surveyData.totalRevisit}}</span><br>
                         <h6>Revisit Request</h6>
@@ -32,7 +32,7 @@
                             {{surveyData.totalOldCards}}</span><br>
                         <h6>RFID not matched</h6>
                     </div>
-                    <div class="float-fourth float-second2" (click)="showDateWiseDetail(contentDateWise,'RFID Not Matched');">
+                    <div class="float-fourth float-second2">
                         <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
                             {{surveyData.totalHouses}}</span><br>
                         <h6>Houses</h6>
@@ -340,6 +340,7 @@
 
 <!--Survey Line Start-->
 <ng-template #contentDateWise>
+    Export <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="exportDateWiseCards();"></i>
     <div class="img-close-box">
 
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">

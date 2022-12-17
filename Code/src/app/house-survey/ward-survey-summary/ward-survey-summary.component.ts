@@ -124,6 +124,7 @@ export class WardSurveySummaryComponent implements OnInit {
       houseTypeInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
+        console.log(data);
         for (let i = 1; i < keyArray.length; i++) {
           let id = keyArray[i];
           let houseType = data[id]["name"].toString().split("(")[0];
@@ -217,7 +218,7 @@ export class WardSurveySummaryComponent implements OnInit {
       if (this.dateSummaryList.length > 0) {
         let dbPath = "EntitySurveyData/DailyHouseCount/";
         this.db.object(dbPath).remove();
-        
+
       }
 
       setTimeout(() => {
@@ -1381,6 +1382,38 @@ export class WardSurveySummaryComponent implements OnInit {
     );
   }
 
+  exportDateWiseCards() {
+    if (this.surveyDateList.length > 0) {
+      $('#divLoaderMain').show();
+
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cards";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.surveyDateList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.surveyDateList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.surveyDateList[i]["count"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Date-Wise-Cards.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+
+  }
+
 
   exportHouseTypeList(type: any) {
     if (this.zoneHouseTypeList.length > 0) {
@@ -1456,29 +1489,13 @@ export class WardSurveySummaryComponent implements OnInit {
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
-
-                if (lineData[markerNo]["houseType"] != null) {
-                  let houseTypeId = lineData[markerNo]["houseType"];
-                  let detail = this.houseTypeList.find(item => item.id == houseTypeId);
-                  if (detail != undefined) {
-                    let houseType = detail.houseType;
-                    if (this.zoneHouseTypeList.length == 0) {
-                      let count = 0;
-                      if (lineData[markerNo]["cardNumber"] != null) {
-                        count = 1;
-                        totalCounts = totalCounts + 1;
-                      }
-                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
-                    }
-                    else {
-                      let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
-                      if (listDetail != undefined) {
-                        if (lineData[markerNo]["cardNumber"] != null) {
-                          listDetail.counts = listDetail.counts + 1;
-                          totalCounts = totalCounts + 1;
-                        }
-                      }
-                      else {
+                if (parseInt(markerNo)) {
+                  if (lineData[markerNo]["houseType"] != null) {
+                    let houseTypeId = lineData[markerNo]["houseType"];
+                    let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                    if (detail != undefined) {
+                      let houseType = detail.houseType;
+                      if (this.zoneHouseTypeList.length == 0) {
                         let count = 0;
                         if (lineData[markerNo]["cardNumber"] != null) {
                           count = 1;
@@ -1486,7 +1503,27 @@ export class WardSurveySummaryComponent implements OnInit {
                         }
                         this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                       }
+                      else {
+                        let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                        if (listDetail != undefined) {
+                          if (lineData[markerNo]["cardNumber"] != null) {
+                            listDetail.counts = listDetail.counts + 1;
+                            totalCounts = totalCounts + 1;
+                          }
+                        }
+                        else {
+                          let count = 0;
+                          if (lineData[markerNo]["cardNumber"] != null) {
+                            count = 1;
+                            totalCounts = totalCounts + 1;
+                          }
+                          this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                        }
+                      }
                     }
+                  }
+                  else {
+                    console.log(zoneNo + " >> " + lineNo + " >> " + markerNo + " >> " + lineData[markerNo]["cardNumber"]);
                   }
                 }
               }
