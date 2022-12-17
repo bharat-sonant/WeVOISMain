@@ -126,41 +126,45 @@ export class HouseMarkingAssignmentComponent implements OnInit {
 
   updateSummaryCounts(index: any, keyArray: any, houseData: any) {
     if (index == keyArray.length) {
-      this.surveyorSummaryList = this.commonService.transformNumeric(this.surveyorSummaryList, "surveyorId");
-      for (let i = 0; i < this.surveyorSummaryList.length; i++) {
-        let surveyorId = this.surveyorSummaryList[i]["surveyorId"];
-        let surveyDate = this.surveyorSummaryList[i]["surveyDate"];
-        const data = {
-          cardCount: this.surveyorSummaryList[i]["cardCount"],
-          cards: this.surveyorSummaryList[i]["cards"],
-          complexCount: this.surveyorSummaryList[i]["complexCount"],
-          houseCount: this.surveyorSummaryList[i]["houseCount"],
-          housesInComplex: this.surveyorSummaryList[i]["housesInComplex"]
+      let dbPath = "EntitySurveyData/SurveyorSurveySummary/";
+      this.db.object(dbPath).remove();
+      setTimeout(() => {
+        this.surveyorSummaryList = this.commonService.transformNumeric(this.surveyorSummaryList, "surveyorId");
+        for (let i = 0; i < this.surveyorSummaryList.length; i++) {
+          let surveyorId = this.surveyorSummaryList[i]["surveyorId"];
+          let surveyDate = this.surveyorSummaryList[i]["surveyDate"];
+          const data = {
+            cardCount: this.surveyorSummaryList[i]["cardCount"],
+            cards: this.surveyorSummaryList[i]["cards"],
+            complexCount: this.surveyorSummaryList[i]["complexCount"],
+            houseCount: this.surveyorSummaryList[i]["houseCount"],
+            housesInComplex: this.surveyorSummaryList[i]["housesInComplex"]
+          }
+          dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
+          this.db.object(dbPath).update(data);
         }
-        let dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
-        this.db.object(dbPath).update(data);
-
-        
         // this.checkWithCardWardMapping();
-      }
-      let date = this.commonService.setTodayDate();
-      let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
-      let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
-      const data = {
-        lastUpdate: lastUpdate,
-        cards: this.totalCards,
-        houses: this.totalHouses
-      }
-      let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
-      this.db.object(dbPath).update(data);
-      this.houseData.lastUpdate = lastUpdate;
-      this.houseData.totalCards = this.totalCards;
-      this.houseData.totalHouses = this.totalHouses;
-      this.commonService.setAlertMessage("success", "Data update successfully !!!");
-      $(this.divLoader).hide();
+        let date = this.commonService.setTodayDate();
+        let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
+        let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
+        const data = {
+          lastUpdate: lastUpdate,
+          cards: this.totalCards,
+          houses: this.totalHouses
+        }
+        dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
+        this.db.object(dbPath).update(data);
+        this.houseData.lastUpdate = lastUpdate;
+        this.houseData.totalCards = this.totalCards;
+        this.houseData.totalHouses = this.totalHouses;
+        this.commonService.setAlertMessage("success", "Data update successfully !!!");
+        $(this.divLoader).hide();
+      }, 1000);
+
     }
     else {
       let zoneNo = keyArray[index];
+      console.log(zoneNo);
       let zoneData = houseData[zoneNo];
       let lineArray = Object.keys(zoneData);
       if (lineArray.length > 0) {
@@ -171,12 +175,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
+/*
               let cardDetail = cardData[cardNo];
               //console.log(cardData);
               cardDetail["line"] = lineNo;
               cardDetail["ward"] = zoneNo;
               let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
               this.db.object(dbPath).update(cardData);
+              */
               /*
               let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
               if (detail != undefined) {
@@ -231,7 +237,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                   else {
                     this.surveyorSummaryList.push({ surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount, houseCount: houseCount, complexCount: complexCount, housesInComplex: housesInComplex, cards: cardNo });
                   }
-                }                
+                }
               }
               else {
                 // console.log("Date not >> " + zoneNo + " >> " + lineNo + "  >> " + cardNo);
