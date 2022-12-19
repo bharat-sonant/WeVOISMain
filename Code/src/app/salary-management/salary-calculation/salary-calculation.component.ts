@@ -85,7 +85,9 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getWardWagesList() {
-    this.httpService.get("../../assets/jsons/WardWeges/" + this.cityName + ".json").subscribe(wardWageData => {
+    const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FWages.json?alt=media";
+    let wardLineInstance = this.httpService.get(pathDate).subscribe(wardWageData => {
+      wardLineInstance.unsubscribe();
       if (wardWageData != null) {
         let keyArray = Object.keys(wardWageData);
         if (keyArray.length > 0) {
@@ -102,11 +104,11 @@ export class SalaryCalculationComponent implements OnInit {
                 wages.push({ ward: ward, driver: driver, helper: helper });
               }
             }
-            let timestamp=new Date(date).getTime();
-            this.wardWagesList.push({ date: date, timestamp:timestamp, wages: wages });
+            let timestamp = new Date(date).getTime();
+            this.wardWagesList.push({ date: date, timestamp: timestamp, wages: wages });
           }
         }
-        this.wardWagesList=this.commonService.transformNumeric(this.wardWagesList,"-timestamp");
+        this.wardWagesList = this.commonService.transformNumeric(this.wardWagesList, "-timestamp");
       }
       this.getEmployee();
     });
@@ -199,7 +201,7 @@ export class SalaryCalculationComponent implements OnInit {
                       if (this.wardWagesList.length > 0) {
                         for (let k = 0; k < this.wardWagesList.length; k++) {
                           let wageDate = this.wardWagesList[k]["date"];
-                          if (new Date(monthDate) >= new Date(wageDate)) {                            
+                          if (new Date(monthDate) >= new Date(wageDate)) {
                             let wagesList = this.wardWagesList[k]["wages"];
                             let wageDetail = wagesList.find(item => item.ward == ward);
                             if (wageDetail != undefined) {
@@ -275,7 +277,7 @@ export class SalaryCalculationComponent implements OnInit {
     );
   }
 
-  
+
 
   getTotalSalaryFooter(index: any, totalWeges: any) {
     if (index == 1) {
