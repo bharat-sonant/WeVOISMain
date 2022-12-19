@@ -49,6 +49,8 @@ export class WardSurveySummaryComponent implements OnInit {
     totalRevisit: 0,
     totalOldCards: 0,
     totalHouses: 0,
+    totalResidential: 0,
+    totalCommercial: 0,
     wardMarkers: 0,
     wardSurveyed: 0,
     wardRevisit: 0,
@@ -140,6 +142,8 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.totalSurveyed = 0;
     this.surveyData.totalRevisit = 0;
     this.surveyData.totalHouses = 0;
+    this.surveyData.totalResidential = 0;
+    this.surveyData.totalCommercial = 0;
   }
 
   openExportHouseData(content: any) {
@@ -282,19 +286,19 @@ export class WardSurveySummaryComponent implements OnInit {
                         // console.log(zoneNo + " " + lineNo + " " + markerNo);
                       }
                       cardCount = cardCount + 1;
-/*
-                      let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
-                      if (detail != undefined) {
-                        detail.count = detail.count + 1;
-                        detail.zoneNo = detail.zoneNo + ", " + zoneNo;
-                        detail.lineNo = detail.lineNo + ", " + lineNo;
-
-                        console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
-                      }
-                      else {
-                        this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
-                      }
-*/
+                      /*
+                                            let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
+                                            if (detail != undefined) {
+                                              detail.count = detail.count + 1;
+                                              detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                                              detail.lineNo = detail.lineNo + ", " + lineNo;
+                      
+                                              console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
+                                            }
+                                            else {
+                                              this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
+                                            }
+                      */
 
                     } else if (lineData[markerNo]["revisitKey"] != null) {
                       revisitCount = revisitCount + 1;
@@ -359,6 +363,8 @@ export class WardSurveySummaryComponent implements OnInit {
             let totalHouseHoldCount = 0;
             let totalComplexCount = 0;
             let totalHouseCount = 0;
+            let totalResidencialCount = 0;
+            let totalCommercialCount = 0;
             let wardLastLineNo = keyArray[keyArray.length - 1];
             for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
 
@@ -373,6 +379,8 @@ export class WardSurveySummaryComponent implements OnInit {
               let houseCount = 0;
               let houseHoldCount = 0;
               let complexCount = 0;
+              let residencialCount = 0;
+              let commercialCount = 0;
 
 
               let cardObj = houseData[line];
@@ -380,18 +388,29 @@ export class WardSurveySummaryComponent implements OnInit {
                 let cardKeyArray = Object.keys(cardObj);
                 for (let j = 0; j < cardKeyArray.length; j++) {
                   let cardNo = cardKeyArray[j];
+
                   if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
                     complexCount = complexCount + 1;
                     let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
                     if (isNaN(servingCount)) {
                       servingCount = 1;
                     }
-
-
                     houseHoldCount = houseHoldCount + servingCount;
                     houseCount = houseCount + servingCount;
+                    if (cardObj[cardNo]["houseType"] == "19") {
+                      residencialCount = residencialCount + servingCount;
+                    }
+                    else {
+                      commercialCount = commercialCount + servingCount;
+                    }
                   } else {
                     houseCount = houseCount + 1;
+                    if (cardObj[cardNo]["houseType"] == "1") {
+                      residencialCount = residencialCount + 1;
+                    }
+                    else {
+                      commercialCount = commercialCount + 1;
+                    }
                   }
                   /*
                   let cardData=cardObj[cardNo];
@@ -422,6 +441,8 @@ export class WardSurveySummaryComponent implements OnInit {
               totalComplexCount = totalComplexCount + complexCount;
               totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
               totalHouseCount = totalHouseCount + houseCount;
+              totalCommercialCount = totalCommercialCount + commercialCount;
+              totalResidencialCount = totalResidencialCount + residencialCount;
 
 
 
@@ -444,6 +465,12 @@ export class WardSurveySummaryComponent implements OnInit {
 
             dbPath = "EntitySurveyData/totalHouseWithComplexCount/" + zoneNo;
             this.db.object(dbPath).set(totalHouseCount.toString());
+
+            dbPath = "EntitySurveyData/TotalResidentialCount/" + zoneNo;
+            this.db.object(dbPath).set(totalResidencialCount.toString());
+
+            dbPath = "EntitySurveyData/TotalCommercialCount/" + zoneNo;
+            this.db.object(dbPath).set(totalCommercialCount.toString());
           }
         }
       }
@@ -728,6 +755,24 @@ export class WardSurveySummaryComponent implements OnInit {
       complexInstance.unsubscribe();
       if (data != null) {
         this.wardProgressList[index]["complex"] = Number(data);
+      }
+    });
+
+    dbPath = "EntitySurveyData/TotalResidentialCount/" + wardNo;
+    let residentailInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      residentailInstance.unsubscribe();
+      if (data != null) {
+        this.wardProgressList[index]["residential"] = Number(data);
+        this.surveyData.totalResidential = this.surveyData.totalResidential + Number(data);
+      }
+    });
+
+    dbPath = "EntitySurveyData/TotalCommercialCount/" + wardNo;
+    let commercialInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      commercialInstance.unsubscribe();
+      if (data != null) {
+        this.wardProgressList[index]["commercial"] = Number(data);
+        this.surveyData.totalCommercial = this.surveyData.totalCommercial + Number(data);
       }
     });
 
@@ -1489,9 +1534,9 @@ export class WardSurveySummaryComponent implements OnInit {
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (parseInt(markerNo)) {
-                 // if (lineData[markerNo]["houseType"] == "") {
-                 //   console.log(zoneNo + " >> " + lineNo + " >> " + markerNo + " >> " + lineData[markerNo]["cardNumber"]);
-                //  }
+                  // if (lineData[markerNo]["houseType"] == "") {
+                  //   console.log(zoneNo + " >> " + lineNo + " >> " + markerNo + " >> " + lineData[markerNo]["cardNumber"]);
+                  //  }
                   if (lineData[markerNo]["houseType"] != null) {
                     let houseTypeId = lineData[markerNo]["houseType"];
                     let detail = this.houseTypeList.find(item => item.id == houseTypeId);
@@ -1591,6 +1636,8 @@ export class surveyDatail {
   totalRevisit: number;
   totalOldCards: number;
   totalHouses: number;
+  totalResidential: number;
+  totalCommercial: number;
   wardMarkers: number;
   wardSurveyed: number;
   wardRevisit: number;
