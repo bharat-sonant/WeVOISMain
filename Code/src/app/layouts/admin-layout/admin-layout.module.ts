@@ -121,7 +121,6 @@ import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
-import { SurveyorAssignmentTestComponent } from '../../surveyor-assignment-test/surveyor-assignment-test.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
@@ -251,7 +250,6 @@ import { CardScanningReportComponent } from '../../reports/card-scanning-report/
     ScanCardStatusComponent,
     ManageWardSupervisorComponent ,
     ComplaintListComponent,
-    SurveyorAssignmentTestComponent,
     ScanCardManipulationComponent,
     AddMarkerAgainstCardsComponent,
     CardScanningReportComponent

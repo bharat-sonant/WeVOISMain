@@ -114,7 +114,6 @@ import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
-import { SurveyorAssignmentTestComponent } from '../../surveyor-assignment-test/surveyor-assignment-test.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
@@ -244,7 +243,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'sikar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'sikar/role-page-access/:id', component: RolePageAccessComponent },
-    { path: 'sikar/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
     { path: 'sikar/:id/home', component: HomeComponent },
@@ -480,7 +478,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-greater/role-page-access/:id', component: RolePageAccessComponent },
-    { path: 'jaipur-greater/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
 
@@ -721,7 +718,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'reengus/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'reengus/role-page-access/:id', component: RolePageAccessComponent },
-    { path: 'reengus/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
 
@@ -3567,7 +3563,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-malviyanagar/role-page-access/:id', component: RolePageAccessComponent },
-    { path: 'jaipur-malviyanagar/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
     { path: 'jaipur-malviyanagar/:id/home', component: HomeComponent },
@@ -4040,7 +4035,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: 'jaipur-murlipura/role-page-access/:id', component: RolePageAccessComponent },
-    { path: 'jaipur-murlipura/surveyor-assignment-test', component: SurveyorAssignmentTestComponent },
 
 
     { path: 'jaipur-murlipura/:id/home', component: HomeComponent },
