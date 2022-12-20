@@ -20,7 +20,7 @@
                     </li>
                     <li class="nav-item nav-link" style="cursor: pointer;" (click)="getDetail('contact');">Contact</li>
                     <li class="nav-item nav-link"><a class="log-in" href="/login">Monitoring</a></li>
-                    <li class="nav-item nav-link"><a class="log-in" href="https://wevois-vm.firebaseapp.com/login" target="_blank">Manage Vehicle</a></li>
+                    <li class="nav-item nav-link"><a class="log-in" href="https://wevoisvm-d2596.firebaseapp.com/login" target="_blank">Manage Vehicle</a></li>
                 </ul>
             </div>
         </nav>
@@ -883,7 +883,8 @@
         </div>
     </div>
     <div id="divSonant" style="width:300px; display: none; right:10px; bottom: 30px; position:fixed ; z-index: 999; height:600px; background-color: #fff;">
-        <iframe id="iframeSonant" style="width:300px; height:600px"></iframe>
+        <embed id="iframeSonant" style="width:300px; height:300px" />
+        <button class="btn-success btn" onclick="getText();">Get Text</button>
     </div>
     <i (click)="showPopup();" class="fa-solid fa-square-plus" style="right:10px; bottom: 10px; position:fixed ; z-index: 999; background-color: green; font-size: 30px;"></i>
 </section>
