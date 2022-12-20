@@ -49,7 +49,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   totalCards: any;
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    // this.checkWithCardWardMapping();
+    //this.checkWithCardWardMapping();
     this.getLastUpdate();
     this.getZoneList();
     this.getAssignedList();
@@ -103,6 +103,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         htmlString += "</tr>";
         if (data != null) {
           let keyArray = Object.keys(data);
+          console.log(keyArray.length);
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
             htmlString += "<tr>";
@@ -175,14 +176,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
-/*
-              let cardDetail = cardData[cardNo];
-              //console.log(cardData);
-              cardDetail["line"] = lineNo;
-              cardDetail["ward"] = zoneNo;
-              let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
-              this.db.object(dbPath).update(cardData);
-              */
+              /*
+                            let cardDetail = cardData[cardNo];
+                            //console.log(cardData);
+                            cardDetail["line"] = lineNo;
+                            cardDetail["ward"] = zoneNo;
+                            let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
+                            this.db.object(dbPath).update(cardData);
+                            */
               /*
               let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
               if (detail != undefined) {

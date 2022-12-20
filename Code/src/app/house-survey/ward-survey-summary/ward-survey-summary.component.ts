@@ -65,6 +65,7 @@ export class WardSurveySummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.showHideAlreadyCardInstalled();
     this.getLastUpdate();
@@ -640,18 +641,25 @@ export class WardSurveySummaryComponent implements OnInit {
                   let latLng = cardObj[cardNo]["latLng"];
                   let mobile = cardObj[cardNo]["mobile"];
                   let date = "";
-                  let houseCount = "1";
+                  let houseCount = 0;
                   if (cardObj[cardNo]["createdDate"] != null) {
                     date = cardObj[cardNo]["createdDate"].split(' ')[0];
                   }
                   let houseType = cardObj[cardNo]["houseType"];
                   if (houseType == "19" || houseType == "20") {
                     if (cardObj[cardNo]["servingCount"] != null) {
-                      houseCount = cardObj[cardNo]["servingCount"];
-                      if (houseCount == "" || houseCount == "0") {
-                        houseCount = "1";
+                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
                       }
+                      houseCount = servingCount;
                     }
+                    else{
+                      houseCount=1;
+                    }
+                  }
+                  else {
+                    houseCount = 1;
                   }
                   let detail = this.houseTypeList.find(item => item.id == houseType);
                   if (detail != undefined) {
