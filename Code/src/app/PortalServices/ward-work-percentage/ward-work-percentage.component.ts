@@ -24,6 +24,8 @@ export class WardWorkPercentageComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
+
+    console.log(this.cityName)
   }
 
   setDefault() {
@@ -144,6 +146,8 @@ export class WardWorkPercentageComponent implements OnInit {
     let coveredLength = 0;
     let count = 1;
     let completedLines = 0;
+    console.log("wardTotalLines => " + wardTotalLines)
+    console.log("expectedLine => " + expectedLine)
     for (let i = 1; i <= wardTotalLines; i++) {
       if (count <= expectedLine) {
         let detail = lineStatusList.find(item => item.lineNo == i);
@@ -152,7 +156,9 @@ export class WardWorkPercentageComponent implements OnInit {
           this.db.object(dbPath).update({ Status: "LineCompleted" });
         }
         else {
-          expectedLine++;
+          if (expectedLine != Number(wardTotalLines)) {
+            expectedLine++;
+          }
         }
         let lineDetail = wardLines.find(item => item.lineNo == i);
         if (lineDetail != undefined) {
