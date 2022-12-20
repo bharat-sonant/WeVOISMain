@@ -222,6 +222,9 @@ export class DailyWorkDetailComponent implements OnInit {
             if (summaryData["workPercentage"] != null) {
               workPercentage = summaryData["workPercentage"] + "%";
             }
+            if (summaryData["updatedWorkPercentage"] != null) {
+              workPercentage = summaryData["updatedWorkPercentage"] + "%";
+            }
             if (summaryData["wardCoveredDistance"] != null) {
               wardRunKm = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(3);
             }
