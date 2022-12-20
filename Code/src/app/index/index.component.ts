@@ -71,9 +71,11 @@ export class IndexComponent implements OnInit {
       this.isShow = true;
       $(this.divSonant).show();
       let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
-      element.src="https://signey-d5ccb.firebaseapp.com/home-page";
+      element.src="http://localhost:4401/home-page";
     }
     else {
+      let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
+      element.src="#";
       this.isShow = false;
       $(this.divSonant).hide();
     }
