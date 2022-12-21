@@ -19,6 +19,7 @@ export class WardWorkPercentageComponent implements OnInit {
   selectedZone: any;
   zoneList: any[] = [];
   expectedPercentage: any;
+  lblMsg = "#lblMsg";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -37,6 +38,7 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   saveData() {
+    $(this.lblMsg).html("");
     if ($("#txtDate").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter date !!!");
       return;
@@ -62,7 +64,7 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   getWardLines() {
-     $("#divLoader").show();
+    $("#divLoader").show();
     let wardLines = [];
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
       let wardLinesDataObj = JSON.parse(linesData);
@@ -116,7 +118,7 @@ export class WardWorkPercentageComponent implements OnInit {
                     }
                   }
                   let expectedLines = (Number(wardTotalLines) * Number(this.expectedPercentage)) / 100;
-                  
+
                   let aa = Number(expectedLines.toString().split('.')[0]);
                   if (expectedLines > aa) {
                     expectedLines = aa + 1;
@@ -219,11 +221,10 @@ export class WardWorkPercentageComponent implements OnInit {
           let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
           this.db.object(dbPath).update({ TotalCoveredDistance: coveredLength });
           $("#divLoader").hide();
+          this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
           if (skippedLines > 0) {
-            this.commonService.setAlertMessage("success", "Ward work percentage " + percentage + " due to " + skippedLines + " !!!");
-          }
-          else {
-            this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+            let msg = "We can not modify the work % upto " + this.expectedPercentage + "% due to " + skippedLines + " skipped line, Now modified % is : " + percentage + " %, Please contact to admin for further process."
+            $(this.lblMsg).html(msg);
           }
         }
       );
@@ -247,11 +248,10 @@ export class WardWorkPercentageComponent implements OnInit {
       let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
       this.db.object(dbPath).update({ TotalCoveredDistance: coveredLength, 'last-update-time': lastUpdatedTime });
       $("#divLoader").hide();
+      this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
       if (skippedLines > 0) {
-        this.commonService.setAlertMessage("success", "Ward work percentage " + percentage + " due to " + skippedLines + " !!!");
-      }
-      else {
-        this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+        let msg = "We can not modify the work % upto " + this.expectedPercentage + "% due to " + skippedLines + " skipped line, Now modified % is : " + percentage + " %, Please contact to admin for further process."
+        $(this.lblMsg).html(msg);
       }
     }
   }
