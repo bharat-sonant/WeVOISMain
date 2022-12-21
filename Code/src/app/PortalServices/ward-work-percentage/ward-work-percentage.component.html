@@ -32,19 +32,16 @@
                             <div class="col-md-2">
                                 <label>Filled Percentage</label>
                                 <div class="wrap-input-effects" required>
-                                    <input id="txtPercentage" class="caret-select" type="number"
-                                        />
+                                    <input id="txtPercentage" class="caret-select" type="number" max="100" />
                                 </div>
                             </div>
                         </div>
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12 pr-1">
                                 <div class="form-group">
-                                    <button id="btnSave" class="btn btn-success btn-xs"
-                                        (click)="saveData();">SAVE</button>
+                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
 
-                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
-                                        style="display: none;">
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
                                 </div>
                             </div>
                         </div>
