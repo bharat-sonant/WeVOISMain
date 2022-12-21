@@ -29,7 +29,7 @@ export class WardScancardReportComponent implements OnInit {
   wardScaanedList: any;
   isFirst = true;
   db: any;
-  public cityName:any;
+  public cityName: any;
 
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
   headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
@@ -37,7 +37,7 @@ export class WardScancardReportComponent implements OnInit {
   tableData = [[]];
 
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
@@ -151,6 +151,7 @@ export class WardScancardReportComponent implements OnInit {
   changeCircleSelection(filterVal: any) {
     this.selectedCircle = filterVal;
     this.isFirst = true;
+    this.clearList();
     this.onSubmit();
   }
 
@@ -173,24 +174,26 @@ export class WardScancardReportComponent implements OnInit {
     }
   }
 
+  clearList(){
+    for(let i=0;i<this.wardDataList.length;i++){
+      this.wardDataList[i]["houses"]=0;
+      this.wardDataList[i]["scanned"]=0;
+      this.wardDataList[i]["wardLength"]=0;
+      this.wardDataList[i]["wardCoveredLength"]=0;
+      this.wardDataList[i]["workPer"]=0;
+    }
+  }
+
   getWardLength() {
     if (this.wardDataList.length > 0) {
+
       for (let i = 0; i < this.wardDataList.length; i++) {
-        let wardLenghtPath = "WardRouteLength/" + this.wardDataList[i]["wardNo"];
-        let wardLengthDetails = this.db.object(wardLenghtPath).valueChanges().subscribe((wardLengthData) => {
-          wardLengthDetails.unsubscribe();
-          if (wardLengthData != null) {
-            let wardLength = (parseFloat(wardLengthData.toString()) / 1000).toFixed(2);
-            this.wardDataList[i]["wardLength"] = Number(wardLength);
-            this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
-          }
+        this.commonService.getWardLine(this.wardDataList[i]["wardNo"], this.selectedDate).then((linesData: any) => {
+          let wardLinesDataObj = JSON.parse(linesData);
+          let wardLength = (parseFloat(wardLinesDataObj["totalWardLength"]) / 1000).toFixed(2);
+          this.wardDataList[i]["wardLength"] = Number(wardLength);
+          this.getCoveredLength(i, this.wardDataList[i]["wardNo"]);
         });
-        if (i == 0) {
-          this.getScanDetail(this.wardDataList[i]["wardNo"], i);
-          setTimeout(() => {
-            $("#tr0").addClass("active");
-          }, 600);
-        }
       }
     }
   }
@@ -262,10 +265,12 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   setDate(filterVal: any, type: string) {
+    this.clearList();
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
+        this.showLoder();
         this.getWardLength();
       }
       else {
@@ -332,18 +337,16 @@ export class WardScancardReportComponent implements OnInit {
                           personName: personName,
                           sno: Number(date),
                         });
+                        this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                      Number(b.sno) < Number(a.sno) ? 1 : -1
+                    );
                       }
-
+                      
                     });
                   }
                 });
               }
             }
-            setTimeout(() => {
-              this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
-                Number(b.sno) < Number(a.sno) ? 1 : -1
-              );
-            }, 2000);
           }
         });
       }
