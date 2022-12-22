@@ -134,52 +134,52 @@ export class ScanCardManipulationComponent implements OnInit {
         data => {
           wardCollectionInstance.unsubscribe();
           if (data != null) {
-           // if (data["Status"] == "LineCompleted") {
-              let startTime = "";
-              let endTime = "";
-              if (data["start-time"] != null) {
-                startTime = data["start-time"];
-              }
-              if (data["end-time"] != null) {
-                endTime = data["end-time"];
-              }
-              this.scanTimeList = [];
-              let scanStartTime = new Date(this.toDayDate + " " + startTime).getTime();
-              let scanEndTime = new Date(this.toDayDate + " " + endTime).getTime();
-              let cardList = wardHouses.filter(item => item.lineNo == lineNo);
-              let totalCards = cardList.length;
-              if (totalCards > 0) {
-                let cardToScanCount = ((totalCards * Number(this.percentage)) / 100);
-                for (let i = 0; i < cardToScanCount; i++) {
-                  let cardNumber = cardList[i]["cardNumber"];
-                  dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/" + cardNumber;
-                  let houseCollectionInstance = this.db.object(dbPath).valueChanges().subscribe(
-                    houseCollectionData => {
-                      houseCollectionInstance.unsubscribe();
-                      if (houseCollectionData == null) {
-                        let scanTime = this.getRandomScanTime(scanStartTime, scanEndTime);
-                        const scanData = {
-                          latLng: cardList[i]["latlng"],
-                          scanBy: "-1",
-                          scanTime: scanTime
-                        }
-                        dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/" + cardNumber;
-                        this.db.object(dbPath).update(scanData);
+            // if (data["Status"] == "LineCompleted") {
+            let startTime = "";
+            let endTime = "";
+            if (data["start-time"] != null) {
+              startTime = data["start-time"];
+            }
+            if (data["end-time"] != null) {
+              endTime = data["end-time"];
+            }
+            this.scanTimeList = [];
+            let scanStartTime = new Date(this.toDayDate + " " + startTime).getTime();
+            let scanEndTime = new Date(this.toDayDate + " " + endTime).getTime();
+            let cardList = wardHouses.filter(item => item.lineNo == lineNo);
+            let totalCards = cardList.length;
+            if (totalCards > 0) {
+              let cardToScanCount = ((totalCards * Number(this.percentage)) / 100);
+              for (let i = 0; i < cardToScanCount; i++) {
+                let cardNumber = cardList[i]["cardNumber"];
+                dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/" + cardNumber;
+                let houseCollectionInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  houseCollectionData => {
+                    houseCollectionInstance.unsubscribe();
+                    if (houseCollectionData == null) {
+                      let scanTime = this.getRandomScanTime(scanStartTime, scanEndTime);
+                      const scanData = {
+                        latLng: cardList[i]["latlng"],
+                        scanBy: "-1",
+                        scanTime: scanTime
                       }
-                    });
-                }
-                lineNo++;
-                this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
+                      dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/" + cardNumber;
+                      this.db.object(dbPath).update(scanData);
+                    }
+                  });
               }
-              else {
-                lineNo++;
-                this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
-              }
+              lineNo++;
+              this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
+            }
+            else {
+              lineNo++;
+              this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
+            }
             //}
-           // else {
+            // else {
             //  lineNo++;
-           //   this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
-           // }
+            //   this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
+            // }
           }
           else {
             lineNo++;
