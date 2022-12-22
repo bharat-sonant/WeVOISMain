@@ -69,6 +69,7 @@ export class WardWorkPercentageComponent implements OnInit {
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
       let wardLinesDataObj = JSON.parse(linesData);
       let wardTotalLines = wardLinesDataObj["totalLines"];
+      console.log(wardTotalLines)
       let keyArray = Object.keys(wardLinesDataObj);
       for (let i = 0; i < keyArray.length; i++) {
         let lineNo = keyArray[i];
@@ -117,20 +118,25 @@ export class WardWorkPercentageComponent implements OnInit {
                       }
                     }
                   }
-                  let expectedLines = (Number(wardTotalLines) * Number(this.expectedPercentage)) / 100;
-
-                  let aa = Number(expectedLines.toString().split('.')[0]);
-                  if (expectedLines > aa) {
-                    expectedLines = aa + 1;
-                  }
-                  if (expectedLines > wardTotalLines) {
-                    expectedLines = wardTotalLines;
-                  }
-                  let updateLines = expectedLines - (completedLines + skippedLines);
-                  this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList);
                 }
+                let expectedLines = (Number(wardTotalLines) * Number(this.expectedPercentage)) / 100;
+
+                let aa = Number(expectedLines.toString().split('.')[0]);
+                if (expectedLines > aa) {
+                  expectedLines = aa + 1;
+                }
+                if (expectedLines > wardTotalLines) {
+                  expectedLines = wardTotalLines;
+                }
+                let updateLines = expectedLines - (completedLines + skippedLines);
+                this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList);
               }
             );
+          }
+          else {
+            $("#divLoader").hide();
+            let msg = "We can not modify the work % due to no duty on this " + this.selectedDate + ", Please contact to admin for further process."
+            $(this.lblMsg).html(msg);
           }
         });
     });
