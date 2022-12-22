@@ -134,7 +134,7 @@ export class ScanCardManipulationComponent implements OnInit {
         data => {
           wardCollectionInstance.unsubscribe();
           if (data != null) {
-            if (data["Status"] == "LineCompleted") {
+           // if (data["Status"] == "LineCompleted") {
               let startTime = "";
               let endTime = "";
               if (data["start-time"] != null) {
@@ -175,11 +175,11 @@ export class ScanCardManipulationComponent implements OnInit {
                 lineNo++;
                 this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
               }
-            }
-            else {
-              lineNo++;
-              this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
-            }
+            //}
+           // else {
+            //  lineNo++;
+           //   this.updateLineCard(lineNo, date, endDate, wardHouses, wardTotalLines);
+           // }
           }
           else {
             lineNo++;
