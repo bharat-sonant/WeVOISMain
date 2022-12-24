@@ -284,30 +284,47 @@
                 <div class="col-md-4" *ngFor="let dt of scannedCardList; let i=index" style="margin-right: -10px;">
                     <div class="row" style="margin: 0px;">
                         <div class="{{dt.class}}">
-                            <div style="width: 48%; float:left;">
-                                <div class="imagrurl">
+                            <div style="width: 30%; float:left; margin-left: 5px; border:1px solid lightgray;">
+                                <div class="content-scroll-iner">
+                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                        Marker Image</div>
+
+                                    <a href="{{dt.markerImageURL}}" target="_blank">
+                                        <img [src]="dt.markerImageURL" class="imageurl" />
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div style="width: 30%; float:left; margin-left: 5px;">
+                                <div class="content-scroll-iner">
                                     <a href="{{dt.imageURL}}" target="_blank">
-                                        <img [src]="dt.imageURL" class="imageurl-img" />
+                                        <img [src]="dt.imageURL" class="imageurl" />
                                     </a>
                                 </div>
+                            </div>
+                            <div style="width: 30%; float:left; margin-left: 5px;">
+                                <div class="content-scroll-iner">
+                                    <a href="{{dt.houseImageURL}}" target="_blank">
+                                        <img [src]="dt.houseImageURL" class="imageurl" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div style="width: 48%; float:left; margin-left: 5px;">
                                 <div class="main-tag">
                                     <div class="f-left">
                                         <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
-                                        <h3>{{dt.entityType}} <b [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(i);"></i></h3><br />
+                                        <h3>{{dt.entityType}} <b [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp;
+                                            <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);"></i>
+                                        </h3><br />
                                     </div>
                                 </div>
                             </div>
                             <div style="width: 48%; float:right;">
-                                <div class="imagrurl">
-                                    <a href="{{dt.houseImageURL}}" target="_blank">
-                                        <img [src]="dt.houseImageURL" class="imageurl-img" />
-                                    </a>
-                                </div>
                                 <div class="main-tag">
                                     <div class="f-left">
                                         <h3>
                                             {{dt.surveyorName}}
-                                        </h3><br/>
+                                        </h3><br />
                                         <h3> {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0" style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;<i
                                                 class="far fa-eye eye-icon"
                                                 style="float: right !important; cursor: pointer;"

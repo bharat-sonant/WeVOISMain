@@ -59,6 +59,7 @@ export class WardSurveyAnalysisComponent {
   ddlHouseType = "#ddlHouseType";
   txtServingCount = "#txtServingCount";
   divServingCount = "#divServingCount";
+  wardLineMarkerImageList: any[] = [];
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -182,6 +183,34 @@ export class WardSurveyAnalysisComponent {
     this.getTotalMarkers();
   }
 
+  getMarkerImages() {
+    this.wardLineMarkerImageList = [];
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markedHouseData => {
+        markedHouseInstance.unsubscribe();
+        if (markedHouseData != null) {
+          for (let i = 1; i <= this.wardLineCount; i++) {
+            let markerData = markedHouseData[i];
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              for (let j = 0; j < keyArray.length; j++) {
+                let markerNo = parseInt(keyArray[j]);
+                if (!isNaN(markerNo)) {
+                  if (markerData[markerNo]["cardNumber"] != null) {
+                    let image = markerData[markerNo]["image"];
+                    this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+
+  }
+
   getTotalMarkers() {
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/marked";
     let totalInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
@@ -275,6 +304,7 @@ export class WardSurveyAnalysisComponent {
         }
         catch { }
       }
+      this.getMarkerImages();
       this.getMarkedHouses(this.lineNo);
     });
   }
@@ -332,9 +362,9 @@ export class WardSurveyAnalysisComponent {
               if (detail != undefined) {
                 entityType = detail.houseType;
               }
-              let address="";
-              if(data[markerNo]["address"]!=null){
-                address=data[markerNo]["address"];
+              let address = "";
+              if (data[markerNo]["address"] != null) {
+                address = data[markerNo]["address"];
               }
               let cardNo = "";
               let revisitKey = "";
@@ -350,7 +380,7 @@ export class WardSurveyAnalysisComponent {
                     if (latLngData != null) {
                       lat = latLngData.replace("(", "").replace(")", "").split(",")[0];
                       lng = latLngData.replace("(", "").replace(")", "").split(",")[1];
-                      this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map, imageName, entityType, markerNo,address);
+                      this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map, imageName, entityType, markerNo, address);
                     }
                   }
                 );
@@ -366,7 +396,7 @@ export class WardSurveyAnalysisComponent {
                   rfidNotFoundKey = data[markerNo]["rfidNotFoundKey"];
                   $('#divLineScannedCount').css("cursor", "pointer");
                 }
-                this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map, imageName, entityType, markerNo,address);
+                this.setMarkerForHouse(lat, lng, markerURL, cardNo, revisitKey, rfidNotFoundKey, lineNo, this.map, imageName, entityType, markerNo, address);
               }
             }
 
@@ -438,7 +468,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, rfidNotFoundKey: any, lineNo: any, map: any, imageName: any, entityType: any, markerNo: any,address:any) {
+  setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, rfidNotFoundKey: any, lineNo: any, map: any, imageName: any, entityType: any, markerNo: any, address: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: map,
@@ -566,7 +596,7 @@ export class WardSurveyAnalysisComponent {
     let markerNo = $("#virtualMarkerNo").val();
     let entityType = $("#virtualHouseType").val();
     let markerImageName = $("#virtualImageName").val();
-    let address=$("#virtualAddress").val();
+    let address = $("#virtualAddress").val();
 
     let lat = $("#virtualLat").val();
     let lng = $("#virtualLng").val();
@@ -840,7 +870,15 @@ export class WardSurveyAnalysisComponent {
                   entityType = detail.houseType;
                 }
                 let surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"] });
+                let markerImageURL = "../../../assets/img/system-generated-image.jpg";
+                detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
+                if (detail != undefined) {
+                  if (detail.image != "") {
+                    markerImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
+                  }
+                }
+
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"] });
               }
             }
           }
@@ -1128,7 +1166,7 @@ export class WardSurveyAnalysisComponent {
                       }
                       this.revisitSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
                       this.revisitLineSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "","");
+                      this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "", "");
                     }
                   );
                 }
@@ -1141,7 +1179,7 @@ export class WardSurveyAnalysisComponent {
     else {
       this.revisitSurveyList = this.revisitLineSurveyList;
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
-        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "","");
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "", "");
       }
     }
   }
@@ -1188,7 +1226,7 @@ export class WardSurveyAnalysisComponent {
                         }
                         this.revisitSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
                         this.revisitAllSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
-                        this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "","");
+                        this.setMarkerForHouse(Number(data[index]["lat"]), Number(data[index]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "", "");
                       });
                   }
                 }
@@ -1200,7 +1238,7 @@ export class WardSurveyAnalysisComponent {
     else {
       this.revisitSurveyList = this.revisitAllSurveyList;
       for (let i = 0; i < this.revisitSurveyList.length; i++) {
-        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "","");
+        this.setMarkerForHouse(Number(this.revisitSurveyList[i]["lat"]), Number(this.revisitSurveyList[i]["lng"]), "../assets/img/red-home.png", "", "", "", "", this.mapRevisit, "", "", "", "");
       }
     }
   }
