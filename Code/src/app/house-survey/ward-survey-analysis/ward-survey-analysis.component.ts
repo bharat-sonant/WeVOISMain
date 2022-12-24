@@ -655,7 +655,6 @@ export class WardSurveyAnalysisComponent {
                   xhr.onload = (event) => {
                     var blob = xhr.response;
                     const pathNew = this.commonService.getFireStoreCity() + "/SurveyHouseImage/" + houseImage;
-                    console.log(pathNew);
                     const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
                     ref1.put(blob).then((promise) => {
                       // ref.delete();

@@ -910,7 +910,6 @@ export class WardSurveySummaryComponent implements OnInit {
                 if (keyArray.length > 0) {
                   for (let j = 0; j < keyArray.length; j++) {
                     let markerNo = parseInt(keyArray[j]);
-                    console.log(markerNo)
                     if (!isNaN(markerNo)) {
                       if (markerData[markerNo]["cardNumber"] != null) {
                         let image = markerData[markerNo]["image"];
