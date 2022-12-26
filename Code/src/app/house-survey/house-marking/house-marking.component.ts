@@ -270,7 +270,10 @@ export class HouseMarkingComponent {
               let lng = data[index]["latLng"].split(",")[1];
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
-              let date = data[index]["date"].split(" ")[0];
+              let date = "";
+              if (data[index]["date"] != null) {
+                date = data[index]["date"].split(" ")[0];
+              }
               let status = "";
               let statusClass = "";
               let isRevisit = "0";
