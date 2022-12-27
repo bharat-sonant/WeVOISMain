@@ -116,6 +116,10 @@ export class DustbinManageComponent implements OnInit {
 
   addDustbin(data: any) {
     let dustbin = Number(this.dustbinStorageList[this.dustbinStorageList.length - 1]["dustbin"]) + 1;
+    if (isNaN(dustbin)) {
+      this.commonService.setAlertMessage("error", "Please try again !!!");
+      return;
+    }
     this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
     this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone });
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
@@ -125,6 +129,7 @@ export class DustbinManageComponent implements OnInit {
   }
 
   updateDustbin(dustbin: any, data: any) {
+
     this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
     this.updateLocalStorageDustbin(dustbin, data);
     this.getDustbins();
