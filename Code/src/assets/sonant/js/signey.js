@@ -50,21 +50,30 @@ request.onload = () => {
 }
 
 
+
+
 // do something with myJson
 
-$("#plusPoint").click(function(e) {
-    var element = $('#sonantWeb');
-    if (element.is(":visible")) {
-        leave();
-        $('#sonantWeb').html("");
-        $('#sonantWeb').hide();
-    } else {
-        var innerHtml = '<div id="remote-playerlist" class="player-dimension"></div><div><p>Please select text and play from here </p><button type="button" onclick="sendSentance();">Play</button></div>';
-        $('#sonantWeb').html(innerHtml);
-        $('#sonantWeb').show();
+var isSigny = false;
+
+function plusPointClick() {
+    var checkHtml = document.getElementById('sonantWeb').innerHTML;
+    if (checkHtml == "") {
+        // var innerHtml = '<div id="remote-playerlist" class="player-dimension"></div><div><p>Please select text and play from here </p><button type="button" onclick="sendSentance();">Play</button></div>';
+        var innerHtml = '<div id="remote-playerlist" class="player-dimension"></div>';
+        document.getElementById('sonantWeb').innerHTML = innerHtml;
+        document.getElementById('sonantWeb').style.display = "block";
+        document.body.style.cursor = 'pointer';
+        isSigny = true;
         join();
+    } else {
+        document.getElementById('sonantWeb').innerHTML = "";
+        document.getElementById('sonantWeb').style.display = "none";
+        document.body.style.cursor = 'default';
+        isSigny = false;
+        leave();
     }
-})
+}
 
 async function join() {
 
@@ -149,12 +158,12 @@ function handleUserUnpublished(user) {
     $(`#player-wrapper-${id}`).remove();
 }
 
-function sendSentance() {
+function sendSentanceNew(framedata) {
     if (options.channel == null) {
         alert("sorry ! you are not connected !!!");
         return;
     }
-    let framedata = document.getSelection().toString();
+    //let framedata = document.getSelection().toString();
     let showSign = framedata.toUpperCase();
     let channelName = options.channel;
     let request = new XMLHttpRequest();
@@ -166,3 +175,21 @@ function sendSentance() {
     var data = JSON.stringify({ "framedata": framedata, "showSign": showSign, "channelName": channelName });
     request.send(data);
 }
+var doc = $(document);
+
+doc.mouseover(function(e) {
+    var elems = document.body.getElementsByTagName("*");
+    for (var i = 0; i < elems.length; i++) {
+        $(elems[i]).css("text-decoration", "none");
+    }
+    if (isSigny == true) {
+        if ($(e.target)[0].childNodes[0] != undefined) {
+            if ($(e.target)[0].childNodes[0].nodeName == "#text") {
+                $(e.target).css("text-decoration", "underline");
+                $(e.target).click(function(e) {
+                    sendSentanceNew($(e.target).text());
+                });
+            }
+        }
+    }
+})
