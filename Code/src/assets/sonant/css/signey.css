@@ -1,0 +1,24 @@
+.div-main {
+    width: 300px;
+    display: none;
+    right: 10px;
+    bottom: 30px;
+    position: fixed;
+    z-index: 999;
+    height: 400px;
+    background-color: #fff;
+}
+
+.plus-icon {
+    right: 10px;
+    bottom: 10px;
+    position: fixed;
+    z-index: 999;
+    background-color: green;
+    font-size: 30px;
+}
+
+.player-dimension {
+    width: 200px!important;
+    height: 300px!important;
+}
