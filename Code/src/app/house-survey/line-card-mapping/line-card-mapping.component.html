@@ -1,68 +1,61 @@
 <section class="header" style="position: relative;">
-  <div class="row no-gutters">
-    <div class="heading "
-      style="width: 67%;float: left;text-align: right;padding-right: 10%; font-size: 20px;text-transform: uppercase; padding-top:12px;">
-      <b> CHANGE CARD LINES</b>
-    </div>
-    <div style="float: left;" style="width: 31%;text-align: right;margin-right: 10px;">
-      <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-        style="position: absolute;top: -3px;right: 315px;">
+    <div class="row no-gutters">
+        <div class="heading " style="width: 67%;float: left;text-align: right;padding-right: 10%; font-size: 20px;text-transform: uppercase; padding-top:12px;">
+            <b> CHANGE CARD LINES</b>
+        </div>
+        <div style="float: left;" style="width: 31%;text-align: right;margin-right: 10px;">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" style="position: absolute;top: -3px;right: 315px;">
         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
           {{zone.zoneName}}
         </option>
+        <option value="146-R3">
+         Zone 146-R3
+        </option>
       </select>
-      <button class="save-btn btn" type="submit" (click)="nextPrevious('pre');"
-        style="position: absolute;top: -3px;right: 260px; width: 40px;"> << </button>
-      <input id="txtLineNo" class="txt-lineNo" type="text" value="1" style="position: absolute;top: -3px;right: 190px;">
-      <button class="save-btn btn" type="submit" (click)="nextPrevious('next');"
-      style="position: absolute;top: -3px;right: 140px; width: 40px;"> >> </button>
-      <button class="save-btn btn" type="submit" (click)="getLineData();"
-        style="position: absolute;top: -3px;right: 15px;"> Show Houses</button>
+            <button class="save-btn btn" type="submit" (click)="nextPrevious('pre');" style="position: absolute;top: -3px;right: 260px; width: 40px;"> << </button>
+            <input id="txtLineNo" class="txt-lineNo" type="text" value="1" style="position: absolute;top: -3px;right: 190px;">
+            <button class="save-btn btn" type="submit" (click)="nextPrevious('next');" style="position: absolute;top: -3px;right: 140px; width: 40px;"> >> </button>
+            <button class="save-btn btn" type="submit" (click)="getLineData();" style="position: absolute;top: -3px;right: 15px;"> Show Houses</button>
+        </div>
     </div>
-  </div>
 </section>
 
 <div #gmap style="width:100%;height:600px;margin-top: -50px; position:absolute;" id="divMap"></div>
 
 <div class="driver-helper-box" *ngIf="cardDetails">
 
-  <div id="divDetails">
-    <div class="div-values div-style">
-      <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.totalCardOnLine}}</span>
-      Cards on Line
-    </div>
+    <div id="divDetails">
+        <div class="div-values div-style">
+            <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.totalCardOnLine}}</span> Cards on Line
+        </div>
 
-    <div class="div-labels" style="height: 43px;padding-top: 20px;width: 40%;border-bottom: none;text-align: right;">
-      Move to Line</div>
-    <div class="div-values" style="width: 59%; border-bottom: none;"> <input type="number" id="txtNewLine"
-        class="txt-newLine" />
-      <img (click)="moveToNewLine();" src="../../assets/img/save1.png"
-        style="width: 32px; margin-left: 15px;margin-top: 0px;cursor: pointer;">
-    </div> 
-    <div class="div-values"
-      style="border-top: solid 1px #DCDCDC; text-align: center;   height: 50px;    padding: 0px;">
-      <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.selectedHouseCount}}</span>
-      Card Selected
+        <div class="div-labels" style="height: 43px;padding-top: 20px;width: 40%;border-bottom: none;text-align: right;">
+            Move to Line</div>
+        <div class="div-values" style="width: 59%; border-bottom: none;"> <input type="number" id="txtNewLine" class="txt-newLine" />
+            <img (click)="moveToNewLine();" src="../../assets/img/save1.png" style="width: 32px; margin-left: 15px;margin-top: 0px;cursor: pointer;">
+        </div>
+        <div class="div-values" style="border-top: solid 1px #DCDCDC; text-align: center;   height: 50px;    padding: 0px;">
+            <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.selectedHouseCount}}</span> Card Selected
+        </div>
     </div>
-  </div>
 </div>
 
 
 <div class="row no-gutters" style=" margin-top: -50px;">
-  <div class="col-md-9 ">
+    <div class="col-md-9 ">
 
-  </div>
-  <div class="col-md-3">
-
-
+    </div>
+    <div class="col-md-3">
 
 
-    <!-- <div id="helperMsg" class="hd1">Select any vehilce to get details</div>
+
+
+        <!-- <div id="helperMsg" class="hd1">Select any vehilce to get details</div>
       <h2><b>{{workerDetails.helperName}} </b><br>
         <a href="tel:+911234567890" style="color: #000;">{{workerDetails.helperMobile}}</a>
         <h1>{{workerDetails.vehicleNo}}</h1>
       </h2>
     </div> -->
 
-  </div>
+    </div>
 </div>
