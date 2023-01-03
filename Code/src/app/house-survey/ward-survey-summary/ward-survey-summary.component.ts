@@ -186,6 +186,21 @@ export class WardSurveySummaryComponent implements OnInit {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
+            // let lineNo=data[cardNo]["line"];
+            //let zoneNo=data[cardNo]["ward"];
+            // let dbPath="Houses/"+zoneNo+"/"+lineNo+"/"+cardNo;
+            //console.log(dbPath);
+            // let instance=this.db.object(dbPath).valueChanges().subscribe(
+            //  houseData=>{
+            //    instance.unsubscribe();
+            //    if(houseData==null){
+            //      dbPath="Houses/"+zoneNo+"/"+lineNo+"/"+cardNo;
+            //      this.db.object(dbPath).remove();
+            //      console.log(cardNo);
+            //    }
+            //  }
+            //)
+
             //console.log(cardNo);
             let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
             if (detail == undefined) {
@@ -207,6 +222,8 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "</table>";
         // console.log(htmlString);
         this.commonService.exportExcel(htmlString, "CardWardMappingNotInMArkedHouses.xlsx");
+
+
 
       }
     );
@@ -284,6 +301,16 @@ export class WardSurveySummaryComponent implements OnInit {
                         // console.log(zoneNo + " " + lineNo + " " + markerNo);
                       }
                       cardCount = cardCount + 1;
+                      // if (lineData[markerNo]["isVirtualAssign"] != null) {
+
+                      //  let newCard=Number(lineData[markerNo]["cardNumber"].replace("MPZ", ""));
+                      // if(newCard<200000)
+                      // {
+                      //   console.log(lineData[markerNo]["cardNumber"]);
+                      //this.updateVirtualCards(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
+                      // }
+
+                      //}
 /*
                       let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
                       if (detail != undefined) {
@@ -353,6 +380,25 @@ export class WardSurveySummaryComponent implements OnInit {
           }
         });
     }
+  }
+
+  updateVirtualCards(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          let newCardNo = "MPZ" + (Number(cardNo.replace("MPZ", "")) + 100000);
+          markerData["cardNumber"] = newCardNo;
+          //console.log(markerData);
+          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+          this.db.object(dbPath).update(markerData);
+        }
+      }
+    );
+
+
+
   }
 
   updateSurveyComplexCount_Bharat(zoneNo: any) {
@@ -857,63 +903,66 @@ export class WardSurveySummaryComponent implements OnInit {
             markedHouseInstance.unsubscribe();
             if (markedHouseData != null) {
               for (let i = 1; i <= this.wardLineCount; i++) {
-                this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
-                let markedCount = 0;
-                let surveyedCount = 0;
-                let houseCount = 0;
-                let lineRevisitCount = 0;
-                let lineRfidNotFoundCount = 0;
-                let alreadyInstalledCount = 0;
-                let houseHoldCount = 0;
-                let complexCount = 0;
-                if (markedHouseData[i]["marksCount"] != null) {
-                  markedCount = markedHouseData[i]["marksCount"];
-                }
-                if (markedHouseData[i]["surveyedCount"] != null) {
-                  surveyedCount = markedHouseData[i]["surveyedCount"];
-                }
-                if (markedHouseData[i]["houseCount"] != null) {
-                  houseCount = markedHouseData[i]["houseCount"];
-                }
-                if (markedHouseData[i]["lineRevisitCount"] != null) {
-                  lineRevisitCount = markedHouseData[i]["lineRevisitCount"];
-                }
-                if (markedHouseData[i]["lineRfidNotFoundCount"] != null) {
-                  lineRfidNotFoundCount = markedHouseData[i]["lineRfidNotFoundCount"];
-                }
-                if (markedHouseData[i]["alreadyInstalledCount"] != null) {
-                  alreadyInstalledCount = markedHouseData[i]["alreadyInstalledCount"];
-                }
-                if (markedHouseData[i]["houseHoldCount"] != null) {
-                  houseHoldCount = markedHouseData[i]["houseHoldCount"];
-                }
-                if (markedHouseData[i]["complexCount"] != null) {
-                  complexCount = markedHouseData[i]["complexCount"];
-                }
-
-                let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
-                if (lineDetail != undefined) {
-                  lineDetail.markers = Number(markedCount);
-                  lineDetail.survyed = Number(surveyedCount);
-                  lineDetail.houses = Number(houseCount);
-                  lineDetail.revisit = Number(lineRevisitCount);
-                  lineDetail.oldCard = Number(lineRfidNotFoundCount);
-                  lineDetail.alreadyCard = Number(alreadyInstalledCount);
-                  lineDetail.houseHoldCount = Number(houseHoldCount);
-                  lineDetail.complexCount = Number(complexCount);
-                  if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
-                    lineDetail.class = "not-matched";
+                
+                  this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
+                  if (markedHouseData[i] != null) {
+                  let markedCount = 0;
+                  let surveyedCount = 0;
+                  let houseCount = 0;
+                  let lineRevisitCount = 0;
+                  let lineRfidNotFoundCount = 0;
+                  let alreadyInstalledCount = 0;
+                  let houseHoldCount = 0;
+                  let complexCount = 0;
+                  if (parseInt(markedHouseData[i]["marksCount"])) {
+                    markedCount = markedHouseData[i]["marksCount"];
                   }
-                }
-                let markerData = markedHouseData[i];
-                let keyArray = Object.keys(markerData);
-                if (keyArray.length > 0) {
-                  for (let j = 0; j < keyArray.length; j++) {
-                    let markerNo = parseInt(keyArray[j]);
-                    if (!isNaN(markerNo)) {
-                      if (markerData[markerNo]["cardNumber"] != null) {
-                        let image = markerData[markerNo]["image"];
-                        this.wardLineMarkerImageList.push({ wardNo: wardNo, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                  if (parseInt(markedHouseData[i]["surveyedCount"])) {
+                    surveyedCount = markedHouseData[i]["surveyedCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["houseCount"])) {
+                    houseCount = markedHouseData[i]["houseCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["lineRevisitCount"])) {
+                    lineRevisitCount = markedHouseData[i]["lineRevisitCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["lineRfidNotFoundCount"])) {
+                    lineRfidNotFoundCount = markedHouseData[i]["lineRfidNotFoundCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["alreadyInstalledCount"])) {
+                    alreadyInstalledCount = markedHouseData[i]["alreadyInstalledCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["houseHoldCount"])) {
+                    houseHoldCount = markedHouseData[i]["houseHoldCount"];
+                  }
+                  if (parseInt(markedHouseData[i]["complexCount"])) {
+                    complexCount = markedHouseData[i]["complexCount"];
+                  }
+
+                  let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                  if (lineDetail != undefined) {
+                    lineDetail.markers = Number(markedCount);
+                    lineDetail.survyed = Number(surveyedCount);
+                    lineDetail.houses = Number(houseCount);
+                    lineDetail.revisit = Number(lineRevisitCount);
+                    lineDetail.oldCard = Number(lineRfidNotFoundCount);
+                    lineDetail.alreadyCard = Number(alreadyInstalledCount);
+                    lineDetail.houseHoldCount = Number(houseHoldCount);
+                    lineDetail.complexCount = Number(complexCount);
+                    if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
+                      lineDetail.class = "not-matched";
+                    }
+                  }
+                  let markerData = markedHouseData[i];
+                  let keyArray = Object.keys(markerData);
+                  if (keyArray.length > 0) {
+                    for (let j = 0; j < keyArray.length; j++) {
+                      let markerNo = parseInt(keyArray[j]);
+                      if (!isNaN(markerNo)) {
+                        if (markerData[markerNo]["cardNumber"] != null) {
+                          let image = markerData[markerNo]["image"];
+                          this.wardLineMarkerImageList.push({ wardNo: wardNo, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                        }
                       }
                     }
                   }
