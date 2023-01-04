@@ -1031,6 +1031,27 @@ export class CommonService {
     });
   }
 
+  getAllowMarkingWards(){
+    return new Promise((resolve) => {
+      let markingWards=[];
+      let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAllowMarkingWards.json?alt=media";
+      let markingWardInstance = this.httpService.get(path).subscribe(data => {
+        markingWardInstance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(data));
+        if (list.length > 0) {
+          for (let index = 0; index < list.length; index++) {
+            if (list[index] != null) {
+              markingWards.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
+            }
+          }
+        }
+        resolve(markingWards);
+      },error=>{
+        resolve(null);
+      });      
+    });
+  }
+
   setZones() {
     let letestZone = [];
     let cityName = localStorage.getItem("cityName");
