@@ -47,8 +47,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   divLoader = "#divLoader";
   totalHouses: any;
   totalCards: any;
+  isActionShow:any;
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName=localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.isActionShow=true;
+    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
+      this.isActionShow=false;
+    }
     //this.checkWithCardWardMapping();
     this.getLastUpdate();
     this.getZoneList();
@@ -103,23 +109,24 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         htmlString += "</tr>";
         if (data != null) {
           let keyArray = Object.keys(data);
-          console.log(keyArray.length);
+          // console.log(keyArray.length);
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
-            htmlString += "<tr>";
-            htmlString += "<td>";
-            htmlString += cardNo;
-            htmlString += "</td>";
-            htmlString += "</tr>";
-            // console.log(cardNo);
             let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
             if (detail == undefined) {
-              //console.log(cardNo);
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += cardNo;
+              htmlString += "</td>";
+              htmlString += "</tr>";
+              // console.log(cardNo);
+
+              // console.log(cardNo);
             }
           }
         }
         htmlString += "</table>";
-        this.commonService.exportExcel(htmlString, "CardWardMapping.xlsx");
+        // this.commonService.exportExcel(htmlString, "CardWardMapping.xlsx");
         $(this.divLoader).hide();
       }
     );
@@ -144,7 +151,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           dbPath = "EntitySurveyData/SurveyorSurveySummary/" + surveyorId + "/" + surveyDate;
           this.db.object(dbPath).update(data);
         }
-        // this.checkWithCardWardMapping();
+        //this.checkWithCardWardMapping();
         let date = this.commonService.setTodayDate();
         let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
         let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
@@ -165,7 +172,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }
     else {
       let zoneNo = keyArray[index];
-      console.log(zoneNo);
+      // console.log(zoneNo);
       let zoneData = houseData[zoneNo];
       let lineArray = Object.keys(zoneData);
       if (lineArray.length > 0) {
@@ -176,27 +183,31 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           if (cardArray.length > 0) {
             for (let j = 0; j < cardArray.length; j++) {
               let cardNo = cardArray[j];
-              /*
-                            let cardDetail = cardData[cardNo];
-                            //console.log(cardData);
-                            cardDetail["line"] = lineNo;
-                            cardDetail["ward"] = zoneNo;
-                            let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
-                            this.db.object(dbPath).update(cardData);
-                            */
-              /*
+              //console.log(cardNo);
+
+              let cardDetail = cardData[cardNo];
+
+              //console.log(cardData);
+              //cardDetail["line"] = lineNo;
+              //cardDetail["ward"] = zoneNo;
+              //let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
+              //this.db.object(dbPath).update(cardData);
+
+/*
+
               let detail = this.cardNumberList.find(item => item.cardNo == cardData[cardNo]["cardNo"]);
               if (detail != undefined) {
                 detail.count = detail.count + 1;
                 detail.zoneNo = detail.zoneNo + ", " + zoneNo;
                 detail.lineNo = detail.lineNo + ", " + lineNo;
-
-                // console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
+                console.log(cardData[cardNo]["cardNo"]);
+                console.log(detail.zoneNo + " " + detail.lineNo + " " + cardData[cardNo]["cardNo"] + " " + detail.count);
               }
               else {
                 this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardData[cardNo]["cardNo"], count: 1 });
               }
-              */
+*/
+
               // if (cardData[cardNo]["houseType"] != null) {
               // if (cardData[cardNo]["surveyorId"] != null) {
               let surveyorId = cardData[cardNo]["surveyorId"];
@@ -252,6 +263,22 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       index++;
       this.updateSummaryCounts(index, keyArray, houseData);
     }
+  }
+
+  updateVirtualCards(zoneNo: any, lineNo: any, cardNo: any) {
+    let dbCardPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
+    let cardInstance = this.db.object(dbCardPath).valueChanges().subscribe(
+      cardData => {
+        cardInstance.unsubscribe();
+        let newCardNo = "MPZ" + (Number(cardNo.replace("MPZ", "")) + 100000);
+        cardData["cardNo"] = newCardNo;
+        cardData["houseImage"] = newCardNo + "House.jpg";
+        cardData["cardImage"] = null;
+        let dbNewCardPath = "Houses/" + zoneNo + "/" + lineNo + "/" + newCardNo;
+        this.db.object(dbNewCardPath).update(cardData);
+        this.db.object("Houses/" + zoneNo + "/" + lineNo + "/" + cardNo).remove();
+      });
+
   }
 
   //#region serveyor detail

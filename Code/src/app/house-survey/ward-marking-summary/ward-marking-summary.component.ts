@@ -55,10 +55,15 @@ export class WardMarkingSummaryComponent implements OnInit {
   divLoaderCounts = "#divLoaderCounts";
 
   public totalTypeCount: any;
+  isActionShow:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.isActionShow=true;
+    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
+      this.isActionShow=false;
+    }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getLastUpdate();
     this.getMarkerCityName();

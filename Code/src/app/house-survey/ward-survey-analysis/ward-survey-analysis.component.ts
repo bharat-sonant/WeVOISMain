@@ -60,6 +60,7 @@ export class WardSurveyAnalysisComponent {
   txtServingCount = "#txtServingCount";
   divServingCount = "#divServingCount";
   wardLineMarkerImageList: any[] = [];
+  isActionShow:any;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -88,6 +89,10 @@ export class WardSurveyAnalysisComponent {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.isActionShow=true;
+    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
+      this.isActionShow=false;
+    }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);

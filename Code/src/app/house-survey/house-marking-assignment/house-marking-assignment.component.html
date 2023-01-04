@@ -19,7 +19,7 @@
                         <h6>Houses</h6>
                     </div>
 
-                    <div class="float-first fix-home-iner" style="padding-top: 0px;  cursor: pointer;" (click)="updateSurveyorSummary();">
+                    <div class="float-first fix-home-iner" style="padding-top: 0px;  cursor: pointer;" (click)="updateSurveyorSummary();" [hidden]="isActionShow==false">
                         <i class="fas fa-redo-alt icon-damage2" style="color: #1fda2f;"></i>
                         <span class="house">
                             {{houseData.lastUpdate}}</span><br>

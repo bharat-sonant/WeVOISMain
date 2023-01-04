@@ -49,6 +49,7 @@ export class HouseMarkingComponent {
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
   divConfirm = "#divConfirm";
+  isActionShow:any;
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -66,6 +67,10 @@ export class HouseMarkingComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.isActionShow=true;
+    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
+      this.isActionShow=false;
+    }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.commonService.setMapHeight();
