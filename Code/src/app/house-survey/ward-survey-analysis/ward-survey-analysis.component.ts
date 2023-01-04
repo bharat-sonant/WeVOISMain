@@ -640,6 +640,7 @@ export class WardSurveyAnalysisComponent {
                 }
               }
               if(houseTypeId==""){
+                $("#divLoaderUpdate").hide();
                 this.commonService.setAlertMessage("error","Please update house type before process this marker!!!");
                 return;   
               }
