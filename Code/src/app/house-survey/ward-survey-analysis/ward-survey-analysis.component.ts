@@ -60,7 +60,7 @@ export class WardSurveyAnalysisComponent {
   txtServingCount = "#txtServingCount";
   divServingCount = "#divServingCount";
   wardLineMarkerImageList: any[] = [];
-  isActionShow:any;
+  isActionShow: any;
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -89,9 +89,9 @@ export class WardSurveyAnalysisComponent {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.isActionShow=true;
-    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
-      this.isActionShow=false;
+    this.isActionShow = true;
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      this.isActionShow = false;
     }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.setMapHeight();
@@ -631,14 +631,19 @@ export class WardSurveyAnalysisComponent {
               let cardNo = prefix;
               let cardNumber = cardNo + current.toString();
               let houseTypeId = "";
-              let cardType = "व्यावसायिक";
+              let cardType = "आवासीय";
               let detail = this.houseTypeList.find(item => item.houseType == entityType);
               if (detail != undefined) {
                 houseTypeId = detail.id;
-                if (detail.entityType == "residential") {
-                  cardType = "आवासीय";
+                if (detail.entityType == "commercial") {
+                  cardType = "व्यावसायिक";
                 }
               }
+              if(houseTypeId==""){
+                this.commonService.setAlertMessage("error","Please update house type before process this marker!!!");
+                return;   
+              }
+
               let date = new Date();
               let hour = date.getHours();
               let min = date.getMinutes();

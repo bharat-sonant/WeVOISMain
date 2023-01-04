@@ -30,6 +30,7 @@ export class EmployeeMarkingComponent implements OnInit {
   };
   isFirst = true;
   db: any;
+  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -39,7 +40,9 @@ export class EmployeeMarkingComponent implements OnInit {
 
   getZoneList() {
     this.zoneList = [];
-    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
+    this.commonService.getAllowMarkingWards().then((wardData: any) => {
+      this.zoneList=wardData;
+    });
   }
 
   getEmployee() {
