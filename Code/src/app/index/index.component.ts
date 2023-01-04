@@ -71,7 +71,7 @@ export class IndexComponent implements OnInit {
       this.isShow = true;
       $(this.divSonant).show();
       let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
-      element.src="http://localhost:4401/home-page";
+      element.src="file:///D:/Office%20Work/Sonant%20Applications/SonantPlugin/Code/index.html";
     }
     else {
       let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
