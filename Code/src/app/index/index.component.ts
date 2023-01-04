@@ -66,18 +66,4 @@ export class IndexComponent implements OnInit {
     }
   }
 
-  showPopup() {
-    if (this.isShow == false) {
-      this.isShow = true;
-      $(this.divSonant).show();
-      let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
-      element.src="file:///D:/Office%20Work/Sonant%20Applications/SonantPlugin/Code/index.html";
-    }
-    else {
-      let element=<HTMLIFrameElement>document.getElementById(this.iframeSonant);
-      element.src="#";
-      this.isShow = false;
-      $(this.divSonant).hide();
-    }
-  }
 }
