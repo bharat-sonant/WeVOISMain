@@ -206,12 +206,14 @@ export class SurveyVerificationComponent {
       else {
         houseVerifiedMarkerList = this.houseVerifiedCardList.filter(item => item.mapLineNo == lineNo);
       }
+
       this.verifiedDetail.greenCount = houseVerifiedMarkerList.filter(item => item.color == "green").length;
       this.verifiedDetail.yellowCount = houseVerifiedMarkerList.filter(item => item.color == "yellow").length;
       this.verifiedDetail.purpleCount = houseVerifiedMarkerList.filter(item => item.color == "purple").length;
       this.verifiedDetail.redCount = houseVerifiedMarkerList.filter(item => item.color == "red").length;
       for (let i = 0; i < houseVerifiedMarkerList.length; i++) {
         let markerURL = this.getMarkerIcon(houseVerifiedMarkerList[i]["color"]);
+        let cardNo=houseVerifiedMarkerList[i]["cardNo"];
         let lat = houseVerifiedMarkerList[i]["latLng"].split(",")[0];
         let lng = houseVerifiedMarkerList[i]["latLng"].split(",")[1];
         let marker = new google.maps.Marker({
@@ -224,6 +226,12 @@ export class SurveyVerificationComponent {
             scaledSize: new google.maps.Size(15, 15),
             origin: new google.maps.Point(0, 0),
           },
+        });
+        let infowindow = new google.maps.InfoWindow({
+          content: cardNo
+        });
+        marker.addListener('click', function () {
+          infowindow.open(this.map, marker);
         });
         this.cardMarkers.push({ marker });
       }
