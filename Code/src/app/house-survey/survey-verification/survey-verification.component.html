@@ -1,0 +1,85 @@
+<div id="divLoaderUpdate" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-4 no-gutters-iner">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+          ngSelected="zone.zoneNo == selectedZone?'selected':''">
+          {{zone.zoneName}}
+        </option>
+      </select>
+        </div>
+        <div id="houseCount" class="col-md-8 text-right total-house background-black">
+            <div class="display" id="popup2">
+                <div class="fix-home">
+                    <div class="float-first">
+                        <i class="fas fa-redo-alt" style="font-size: 28px; cursor: pointer;" (click)="updateJSONData();"></i> <br>
+                        <h6>{{verifiedDetail.lastUpdate}}</h6>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row w-100">
+        <div class="col-12 p-0">
+            <div class="display1">
+                <i class="bi bi-chevron-down" onclick="show()"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div #gmap class="gmap" id="divMap"></div>
+<div class="display" id="popup">
+    <div class="house-card-box">
+        <div class="house-card-box-iner" id="divDetails">
+            <div class="row row-box">
+                <div class="col-md-12 row-box-iner">
+                    <div class="border-bottom">
+                        <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
+            << </button>
+                        <input class="arrow-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
+                        <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                >>
+              </button>
+                    </div>
+                </div>
+                <div class="col-md-12 total-house fix-home-outer">
+                    <div class="fix-home">
+                        <div class="float-l fix-home-iner">
+                            <img src="../assets/img/green-home.png" style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span class="house home-icon-span">
+                                {{verifiedDetail.greenCount}}</span><br>
+                        </div>
+                        <div id="divLineScannedCount" class="float-l house-damage-icon-div">
+                            <img src="../assets/img/yellow-home.png" style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                                {{verifiedDetail.yellowCount}}</span><br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 total-house fix-home-outer">
+                    <div class="fix-home">
+                        <div id="divLineRevisitCount" class="float-l">
+                            <img src="../assets/img/purple-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                                {{verifiedDetail.purpleCount}}</span><br>
+                        </div>
+                        <div id="divLineOldCardCount" class="float-l">
+                            <img src="../assets/img/red-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                                {{verifiedDetail.redCount}}</span><br>
+                        </div>
+                        <div style="padding-top: 20px;" class="float-l">
+                            <input id="chkShowAll" type="checkbox" (change)="showAllMarkers();"> Show All
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
