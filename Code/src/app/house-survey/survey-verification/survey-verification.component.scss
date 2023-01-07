@@ -402,12 +402,12 @@ button {
     width: 50px;
     min-height: 100px;
     background-color: #ffffff;
-    // box-shadow: 0 1px 5px 1px #80bd7b;
     position: absolute;
-    right: 235px;
-    top: 0px;
+    right: 250px;
+    top: 70px;
     border: 1px solid #80bd7b;
-    z-index: -111;
+    z-index: 999;
+    float: right;
 }
 
 .driver {
