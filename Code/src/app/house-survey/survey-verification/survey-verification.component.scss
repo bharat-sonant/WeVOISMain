@@ -483,7 +483,7 @@ button:focus-visible {
 }
 
 .main-box:hover .all-details {
-    width: 13rem!important;
+    width: 20rem!important;
     transform: translate(-15em, 0);
     -webkit-transform: translate(-15em, 0);
     -moz-transform: translate(-15em, 0);
@@ -493,6 +493,7 @@ button:focus-visible {
     padding: 10px;
     height: 51px;
     display: flex;
+    margin-left: -111px;
     align-items: center;
     border-left: 4px solid #0ba118;
     border-top: 1px solid #0ba118;
