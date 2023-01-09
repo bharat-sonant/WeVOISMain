@@ -1046,6 +1046,7 @@ export class CommonService {
             }
           }
         }
+        
         resolve(markingWards);
       },error=>{
         resolve(null);
