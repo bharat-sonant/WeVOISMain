@@ -134,6 +134,7 @@ export class HouseMarkingComponent {
 
   getWardDetail() {
     this.getTotalMarkers();
+    this.getLastScanTime();
     this.getAllLinesFromJson();
     this.getLineApprove();
   }
