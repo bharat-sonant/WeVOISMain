@@ -41,7 +41,7 @@ export class EmployeeMarkingComponent implements OnInit {
   getZoneList() {
     this.zoneList = [];
     this.commonService.getAllowMarkingWards().then((wardData: any) => {
-      this.zoneList=wardData;
+      this.zoneList = wardData;
     });
   }
 
@@ -146,21 +146,19 @@ export class EmployeeMarkingComponent implements OnInit {
               for (let j = 0; j < list.length; j++) {
                 if (list[j] == empId) {
                   if (data[index][list[j]]["marked"] != null) {
-                    this.markerData.totalDays =
-                      Number(this.markerData.totalDays) + 1;
-                    this.markerList.push({
-                      date: index,
-                      markers: data[index][list[j]]["marked"],
-                    });
+                    this.markerData.totalDays = Number(this.markerData.totalDays) + 1;
+                    let timstemp = new Date(index).getTime();
+                    this.markerList.push({ date: index, markers: data[index][list[j]]["marked"], timstemp: timstemp });
                   }
                 }
               }
+              this.markerList = this.markerList.sort((a, b) =>
+                b.timstemp > a.timstemp ? 1 : -1
+              );
             }
           }
           if (this.markerData.totalDays != 0) {
-            let average =
-              Number(this.markerData.totalMarking) /
-              Number(this.markerData.totalDays);
+            let average = Number(this.markerData.totalMarking) / Number(this.markerData.totalDays);
             if (average % 1 == 0) {
               this.markerData.average = average.toFixed(0);
             } else {

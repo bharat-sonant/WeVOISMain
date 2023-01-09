@@ -33,7 +33,7 @@
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}" (click)="getMarkerDetail(data.empId, data.wardNo,i);">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}" (click)="getMarkerDetail(data.empId, data.wardNo,i);" style="cursor: pointer;">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
