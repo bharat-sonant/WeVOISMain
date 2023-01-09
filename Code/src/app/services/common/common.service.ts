@@ -1035,7 +1035,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let markingWards=[];
       markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
-      let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAllowMarkingWards.json?alt=media";
+      let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWardForMarking.json?alt=media";
       let markingWardInstance = this.httpService.get(path).subscribe(data => {
         markingWardInstance.unsubscribe();
         let list = JSON.parse(JSON.stringify(data));
