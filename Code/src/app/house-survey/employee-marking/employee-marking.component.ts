@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
-import { HtmlAstPath, identifierModuleUrl } from "@angular/compiler";
 
 @Component({
   selector: "app-employee-marking",
@@ -27,6 +26,7 @@ export class EmployeeMarkingComponent implements OnInit {
     average: "0",
     name: "",
     wardNo: "",
+    lastScan:""
   };
   isFirst = true;
   db: any;
@@ -115,8 +115,7 @@ export class EmployeeMarkingComponent implements OnInit {
     });
     dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
     let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
-      console.log(data);
-      this.markerData.totalWardMarking = data;
+      this.markerData.lastScan = data;
     })
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
     //dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
@@ -130,8 +129,7 @@ export class EmployeeMarkingComponent implements OnInit {
             let index = keyArray[i];
             if (data[index]["marked"] != null) {
               if (index == wardNo) {
-                
-                console.log( this.markerData.totalWardMarking )
+                this.markerData.totalWardMarking=data[index]["marked"];
               }
               this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
             }
@@ -362,4 +360,5 @@ export class markerDatail {
   average: string;
   name: string;
   wardNo: string;
+  lastScan:string;
 }
