@@ -115,7 +115,9 @@ export class EmployeeMarkingComponent implements OnInit {
     });
     dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
     let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
-      this.markerData.lastScan = data;
+      let lastscandata=data.split(":");
+      let scandata=lastscandata[0]+":"+lastscandata[1]
+      this.markerData.lastScan = scandata;
     })
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
     //dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
