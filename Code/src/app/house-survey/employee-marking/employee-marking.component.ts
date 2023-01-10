@@ -113,18 +113,25 @@ export class EmployeeMarkingComponent implements OnInit {
         this.markerData.totalMarking = data.toString();
       }
     });
-
+    dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
+    let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+      console.log(data);
+      this.markerData.totalWardMarking = data;
+    })
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
+     //dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
     let wardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      console.log(data);
       wardInstance.unsubscribe();
       if (data != undefined) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length - 1; i++) {
+          for (let i = 0; i < keyArray.length-1; i++) {
             let index = keyArray[i];
             if (data[index]["marked"] != null) {
               if (index == wardNo) {
-                this.markerData.totalWardMarking = data[index]["marked"];
+                
+                console.log(this.markerData.totalWardMarking );
               }
               this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
             }
