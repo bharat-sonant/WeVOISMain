@@ -224,6 +224,9 @@ export class CommonService {
     else if (cityName == "tonk") {
       latLng.push({ lat: 26.165516, lng: 75.779292 });
     }
+    else if (cityName == "ratangarh") {
+      latLng.push({ lat: 28.074173, lng: 74.595064 });
+    }
     return latLng;
   }
 
