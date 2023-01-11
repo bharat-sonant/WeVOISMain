@@ -329,6 +329,19 @@ export class FirebaseService {
       databaseName = "dtdtonk";
       databaseURL = "https://dtdtonk.firebaseio.com";
     }
+    else if (city == 'ratangarh') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdratangarh.firebaseio.com",
+        projectId: "dtdratangarh",
+        storageBucket: "dtdratangarh.appspot.com",
+        messagingSenderId: "381118272786",
+        //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
+      };
+      databaseName = "dtdratangarh";
+      databaseURL = "https://dtdratangarh.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
