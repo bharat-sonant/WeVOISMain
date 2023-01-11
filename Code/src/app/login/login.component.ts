@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath: "Jaipur-Sanganer" });
     this.cityList.push({ city: "jaipur-vidhyadhar", name: "Vidhyadhar", storagePath: "Jaipur-Vidhyadhar" });
     this.cityList.push({ city: "tonk", name: "Tonk", storagePath: "Tonk" });
+    this.cityList.push({ city: "ratangarh", name: "Ratangarh", storagePath: "Ratangarh" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
@@ -146,6 +147,7 @@ export class LoginComponent implements OnInit {
       localStorage.setItem("userKey", userDetails.userKey);
       localStorage.setItem("userType", userDetails.userType);
       localStorage.setItem("userPassword", userDetails.password);
+      localStorage.setItem("roleId",userDetails.roleId);
       if (userDetails.officeAppUserId != 0) {
         localStorage.setItem("officeAppUserId", userDetails.officeAppUserId);
       }
