@@ -44,6 +44,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setDefault() {
+    this.showStatus=false;
     this.filterType = "byDate";
     (<HTMLInputElement>document.getElementById(this.rdoByDate)).checked = true;
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -335,7 +336,13 @@ export class EmployeeAttendanceComponent implements OnInit {
       htmlString += "<td>";
       htmlString += " Working Hrs";
       htmlString += "</td>";
+    if (this.showStatus == true) {
+      htmlString += "<td>";
+      htmlString += "Status"
+      htmlString += "</td>";
+    }
       htmlString += "</tr>";
+    
       for (let i = 0; i < this.attendanceList.length; i++) {
         htmlString += "<tr>";
         if (this.filterType == "byDate") {
@@ -356,7 +363,13 @@ export class EmployeeAttendanceComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.attendanceList[i]["workingHour"];
         htmlString += "</td>";
+      if (this.showStatus == true) {
+        htmlString += "<td>";
+        htmlString += this.attendanceList[i]["status"];
+        htmlString += "</td>";
+        }
         htmlString += "</tr>";
+
       }
       htmlString += "</table>";
       let fileName = "Attendance-" + this.selectedDate + ".xlsx";
