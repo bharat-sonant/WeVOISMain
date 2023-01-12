@@ -125,6 +125,7 @@ import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-ma
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
 import { SurveyVerificationComponent } from '../../house-survey/survey-verification/survey-verification.component';
+import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-houses.component';
 
 @NgModule({
   imports: [
@@ -254,7 +255,8 @@ import { SurveyVerificationComponent } from '../../house-survey/survey-verificat
     ScanCardManipulationComponent,
     AddMarkerAgainstCardsComponent,
     CardScanningReportComponent,
-    SurveyVerificationComponent
+    SurveyVerificationComponent,
+    SurveyHousesComponent
   ]
 })
 
