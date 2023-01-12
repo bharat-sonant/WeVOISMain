@@ -32,7 +32,7 @@
                         </div>
                         <hr />
                     </div>
-                    <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'">
+                    <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'" >
                         <div class="col-md-12 text-left date-box">
                             <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                 << </button>
@@ -94,6 +94,9 @@
                                             <th class="text-left br-1 table-heading1">
                                             Working Hrs
                                             </th>
+                                            <th class="text-left br-1 table-heading1" [hidden]="showStatus==false">
+                                            Status
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
@@ -111,6 +114,9 @@
                                                 </td>
                                                 <td class="text-left br-1" class="{{data.cssWorkingClass}}">
                                                     {{data.workingHour}}
+                                                </td>
+                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" [hidden]="showStatus==false">
+                                                    {{data.status}}
                                                 </td>
                                             </tr>
                                         </tbody>

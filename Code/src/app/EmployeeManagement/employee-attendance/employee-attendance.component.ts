@@ -34,6 +34,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   txtDateFrom = "#txtDateFrom";
   txtDateTo = "#txtDateTo";
   ddlEmployee = "#ddlEmployee";
+  showStatus:any;
   public filterType: any;
 
   ngOnInit() {
@@ -66,7 +67,12 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.attendanceList = [];
     if (this.filterType == "byDate") {
       this.getAttendance();
+      this.showStatus=false;
     }
+    else{
+      this.showStatus=true;
+    }
+
   }
 
   getSelectedYearMonthName() {
@@ -190,6 +196,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendanceEmployee(empId: any, date: any, dateTo: any) {
+    this.showStatus=true;
     if (new Date(date) <= new Date(dateTo)) {
       let year = date.split('-')[0];
       let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
@@ -204,8 +211,31 @@ export class EmployeeAttendanceComponent implements OnInit {
               let outTime = "";
               let workingHour = "";
               let inTimestemp = 0;
+              let status="";
               let cssClass = "text-left br-1";
               let cssWorkingClass="text-left br-1";
+              if (attendanceData["inDetails"] != null) {
+                if (attendanceData["inDetails"]["status"] != null) {
+                  status = attendanceData["inDetails"]["status"];
+                  if(status=="0"){
+                    status="Not Approved";
+                  }if(status=="1"){
+                    status="Full Day";
+                  }
+                }if(status=="2"){
+                  status="Pre Lunch";
+
+                }if(status=="3"){
+                  status="Post Lunch";
+
+                }if(status=="4"){
+                  status="Absent";
+
+                }if(status=="default"){
+                  status="Leave";
+
+                }
+              }
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
@@ -233,7 +263,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass });
+              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass,status:status });
             }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
@@ -253,6 +283,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
         $(this.divLoader).show();
+        
         this.getSelectedYearMonthName();
         this.getAttendance();
       }
