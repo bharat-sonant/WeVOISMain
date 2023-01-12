@@ -1,0 +1,111 @@
+<div id="divLoaderCounts" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br /><span
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
+<div id="divLoaderMain" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-3 no-gutters-iner">
+            Ward Survey Summary
+        </div>
+        <div class="col-md-9 text-right total-house fix-home-outer">
+            <div class="display" id="popup">
+                <div class="fix-home">
+                    <div class="float-first">
+                        <i class="fas fa-home home-icon"></i> <span class="house">
+                            {{surveyData.totalMarkers}}</span><br>
+                        <h6>Total Marker</h6>
+                    </div>
+                    <div class="float-second float-second2">
+                        <i class="fas fa-house-damage"></i> <span class="house"> {{surveyData.totalSurveyed}}</span><br>
+                        <h6>Cards</h6>
+                    </div>
+                    <div class="float-fourth float-second2">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{surveyData.totalResidential}}</span><br>
+                        <h6>Residential</h6>
+                    </div>
+                    <div class="float-fourth float-second2">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{surveyData.totalCommercial}}</span><br>
+                        <h6>Commercial</h6>
+                    </div>
+                    <div class="float-fourth float-second2">
+                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                            {{surveyData.totalHouses}}</span><br>
+                        <h6>Total Houses</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="arrow" onclick="show()">
+            <i class="bi bi-chevron-down"></i>
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-5 main-content-iner">
+            <div class="card card-body-outer">
+                <div class="card-body card-iner">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-heading1">Ward</th>
+                                            <th class="text-right table-heading2">
+                                                Markers</th>
+
+                                            <th class="text-right table-heading3">
+                                                Cards</th>
+                                            <th class="text-right table-heading3">
+                                                Houses</th>
+                                            <th class="text-right table-heading4">
+                                                Revisit</th>
+                                            <th class="text-right table-heading5" style="display:none;">
+                                                RFID Not Matched</th>
+                                            <th class="text-right table-heading4">
+                                                Complex(s)</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let data of surveydHouseList; let i=index" [hidden]="data.wardNo==0" (click)="getSurveyDetail(data.wardNo,i);">
+                                                <td class="table-data1">
+                                                    {{data.wardNo}}</td>
+                                                <td class="text-right table-data2">
+                                                    {{data.markers}}</td>
+
+                                                <td class="text-right table-data3">
+                                                    {{data.surveyed}}</td>
+                                                <td class="text-right table-data3">
+                                                    {{data.houses}}</td>
+                                                <td class="text-right table-data4">
+                                                    {{data.revisit}} </td>
+                                                <td class="text-right table-data5">
+                                                    <span [hidden]="data.complex==''">{{data.complex}}
+                                                        ({{data.houseHold}})</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
+                                <div class="form-group">
+                                    <h5>No data available</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7 card-outer">
+
+        </div>
+    </div>
+</div>
