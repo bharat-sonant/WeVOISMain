@@ -678,7 +678,7 @@ export class HouseMarkingComponent {
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ isApprove: "1" });
+      this.db.object(dbPath).update({ isApprove: "1",approveById:localStorage.getItem("userID"),approveDate:this.commonService.getTodayDateTime() });
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
     }
   }
