@@ -33,10 +33,7 @@
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}"
-                                                *ngFor="let data of userList; let i=index" class="{{data.trClass}}"
-                                                (click)="getMarkerDetail(data.empId, data.wardNo,i);"
-                                                style="cursor: pointer;">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}" (click)="getMarkerDetail(data.empId, data.wardNo,i);" style="cursor: pointer;">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
@@ -56,18 +53,12 @@
                                                             (click)="openModel(contentEmployee,data.empId,'update');"
                                                             title="Edit Entry"></i>
                                                     </span>
-                                                    <span class="inactive"
-                                                        [hidden]="data.isActive==true">Inactive</span>
+                                                    <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
                                                 </td>
                                             </tr>
 
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center">
-                                <div class="form-group">
-                                    <h5>No data available</h5>
                                 </div>
                             </div>
                         </div>
@@ -85,8 +76,7 @@
                         <div class="col-md-6 text-center">
 
                             <h5 style="margin-left:100px">{{this.markerData.lastScan}}
-                                <p style="font-size:9px;">Last
-                                    Scan Time</p>
+                                <p style="font-size:9px;">Last Scan Time</p>
                             </h5>
 
 
@@ -121,8 +111,7 @@
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading current-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />Current Ward
-                                    Markers
+                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />Current Ward Markers
                                 </h3>
                             </div>
                         </div>
@@ -150,11 +139,6 @@
 
                                                 </tbody>
                                             </table>
-                                        </div>
-                                    </div>
-                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -185,11 +169,6 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -206,8 +185,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
-                    assignment ?</h5>
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -253,8 +231,7 @@
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
-                    (click)="saveWard();" />
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT" (click)="saveWard();" />
             </div>
         </div>
     </div>
@@ -298,8 +275,7 @@
                     <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                    (click)="saveEmployee();" />
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveEmployee();" />
             </div>
         </div>
     </div>
