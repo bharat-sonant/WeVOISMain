@@ -116,6 +116,12 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getWards() {
+    let path = "EntityMarkingData/MarkingSurveyData/MarkerSummary/"
+    let wardInstance = this.db.object(path).valueChanges().subscribe((data) => {
+      wardInstance.unsubscribe();
+      this.markerData.totalMarkers = data["totalMarkers"];
+      this.markerData.totalHouses = data["totalHouses"];
+    })
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
@@ -319,13 +325,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     }
   }
 
-  getWardSummary(index: any, wardNo: any) {
-    let path = "EntityMarkingData/MarkingSurveyData/MarkerSummary/"
-    let wardInstance = this.db.object(path).valueChanges().subscribe((data) => {
-      wardInstance.unsubscribe();
-      this.markerData.totalMarkers = data["totalMarkers"]
-      this.markerData.totalHouses = data["totalHouses"]
-    })
+  getWardSummary(index: any, wardNo: any) {    
     this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
       let wardLines = JSON.parse(data);
       this.wardLines = wardLines["totalLines"];
@@ -1169,7 +1169,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
         this.markerData.totalHouses = 0;
-        this, this.markerData.totalMarkers = 0;
+        this.markerData.totalMarkers = 0;
         this.getWards();
       }, 5000);
 
