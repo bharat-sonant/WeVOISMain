@@ -922,14 +922,17 @@ export class HouseMarkingComponent {
       return;
     }
 
+    let approveById="0";
     let lineNo = $("#txtLineNo").val();
     let lineStatus = $("#btnSave").html();
     let status = "";
     if (lineStatus == "Approve Line") {
       status = "Confirm";
+      approveById=localStorage.getItem("userID");
       $("#btnSave").html("Reject Line");
     } else {
       status = "Reject";
+      approveById="0";
       $("#btnSave").html("Approve Line");
     }
 
@@ -941,6 +944,7 @@ export class HouseMarkingComponent {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     const data = {
       status: status,
+      approveById:approveById
     };
     this.db.object(dbPath).update(data);
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
