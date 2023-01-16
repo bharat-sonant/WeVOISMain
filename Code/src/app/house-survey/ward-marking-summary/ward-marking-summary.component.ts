@@ -53,6 +53,8 @@ export class WardMarkingSummaryComponent implements OnInit {
   ddlZone = "#ddlZone";
   divLoaderMain = "#divLoaderMain";
   divLoaderCounts = "#divLoaderCounts";
+  totalMarkersCount:any;
+  totalHousesCount:any;
 
   public totalTypeCount: any;
   isActionShow: any;
@@ -1145,6 +1147,8 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   updateMarkerCounts() {
     $(this.divLoaderCounts).show();
+    this.totalHousesCount=0;
+    this.totalMarkersCount=0;
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
   }
@@ -1157,6 +1161,8 @@ export class WardMarkingSummaryComponent implements OnInit {
       let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
       let dbPath = "EntityMarkingData/MarkingSurveyData";
       this.db.object(dbPath).update({ markerSummarylastUpdate: lastUpdate });
+      dbPath="EntityMarkingData/MarkingSurveyData/MarkerSummary";
+      this.db.object(dbPath).update({totalHouses:this.totalHousesCount,totalMarkers:this.totalMarkersCount});
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
@@ -1219,6 +1225,9 @@ export class WardMarkingSummaryComponent implements OnInit {
                 totalHouseCount = totalHouseCount + houseCount;
                 totalComplexCount = totalComplexCount + complexCount;
                 totalHouseInComplexCount = totalHouseInComplexCount + houseInComplexCount;
+
+                this.totalHousesCount=this.totalHousesCount+houseCount;
+                this.totalMarkersCount=this.totalMarkersCount+markerCount;
 
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
                 this.db.object(dbPath).update({
