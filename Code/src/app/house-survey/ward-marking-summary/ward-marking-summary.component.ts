@@ -55,14 +55,14 @@ export class WardMarkingSummaryComponent implements OnInit {
   divLoaderCounts = "#divLoaderCounts";
 
   public totalTypeCount: any;
-  isActionShow:any;
+  isActionShow: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.isActionShow=true;
-    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
-      this.isActionShow=false;
+    this.isActionShow = true;
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      this.isActionShow = false;
     }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getLastUpdate();
@@ -318,6 +318,12 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getWardSummary(index: any, wardNo: any) {
+    let path = "EntityMarkingData/MarkingSurveyData/MarkerSummary/"
+    let wardInstance = this.db.object(path).valueChanges().subscribe((data) => {
+      wardInstance.unsubscribe();
+      this.markerData.totalMarkers = data["totalMarkers"]
+      this.markerData.totalHouses = data["totalHouses"]
+    })
     this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
       let wardLines = JSON.parse(data);
       this.wardLines = wardLines["totalLines"];
@@ -341,7 +347,8 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.wardProgressList[index]["cssClass"] = "in-progress";
           }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
-          this.markerData.totalMarkers = this.markerData.totalMarkers + markers;
+
+
           let houseCount = 0;
           if (data["houseCount"] != null) {
             houseCount = Number(data["houseCount"]);
@@ -357,7 +364,6 @@ export class WardMarkingSummaryComponent implements OnInit {
             houseInComplex = Number(data["housesInComplex"]);
           }
           this.wardProgressList[index]["houseInComplex"] = houseInComplex;
-          this.markerData.totalHouses = this.markerData.totalHouses + houseCount;
           let approved = 0;
           if (data["approved"] != null) {
             approved = Number(data["approved"]);
@@ -1219,7 +1225,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   marksCount: markerCount,
                   marksHouse: houseCount,
                   marksHouseInComplex: houseInComplexCount,
-                  marksComplex:complexCount
+                  marksComplex: complexCount
                 });
               }
 
