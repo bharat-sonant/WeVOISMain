@@ -422,7 +422,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardHouses = wardDetail.houses;
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
-        this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
+        this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0});
         this.getLineStatus(wardNo, i);
         this.getLineMarkers(wardNo, i);
         this.getLineHouses(wardNo, i);
@@ -838,6 +838,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let isApprove = "0";
               let cardNumber = "";
               let servingCount = 0;
+              let markerTypeHouse=false;
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
@@ -856,6 +857,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                 //status = data[index]["status"];
               }
               if (data[index]["isApprove"] != null) {
+                markerTypeHouse=true;
                 isApprove = data[index]["isApprove"];
               }
 
@@ -880,7 +882,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                   houseTypeId: type,
                   isApprove: isApprove,
                   cardNumber: cardNumber,
-                  servingCount: servingCount
+                  servingCount: servingCount,
+                  markerTypeHouse:markerTypeHouse
                 });
               }
             }

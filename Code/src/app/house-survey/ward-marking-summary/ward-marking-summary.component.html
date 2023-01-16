@@ -276,7 +276,7 @@
                         <div class="f-left">
                             <div style="width:100%!important ;">
                                 <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"
-                                        [hidden]="isActionShow==false"></i></h3>
+                                        [hidden]="isActionShow==false || dt.markerTypeHouse==true"></i></h3>
                             </div><br />
                             <span [hidden]="dt.status==''">
                                 <h3> Status : {{dt.status}}&nbsp;<b>{{dt.cardNumber}}</b> </h3>
