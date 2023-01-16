@@ -279,12 +279,13 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index);" [hidden]="isActionShow==false"></i></h3><br
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index);" [hidden]="isActionShow==false || dt.showHouseType==true"></i></h3><br
                             />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
+
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
