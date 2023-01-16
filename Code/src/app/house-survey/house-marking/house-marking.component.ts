@@ -117,7 +117,7 @@ export class HouseMarkingComponent {
     (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
     this.clearAllData();
     this.clearAllOnMap();
-    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 4).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
