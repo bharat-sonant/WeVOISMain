@@ -15,26 +15,26 @@
     display: inline-block;
     position: relative;
     width: 100%;
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
 }
 
 .caret-select {
-    margin-top: -5px!important;
-    margin-right: 10px!important;
+    margin-top: -5px !important;
+    margin-right: 10px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
 .caret-select-vehicle {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
@@ -46,7 +46,7 @@
     border: 1px solid lightgray;
     cursor: cell;
     margin-top: 0px;
-    height: 33px!important;
+    height: 33px !important;
     font-size: 12px;
 }
 
@@ -206,14 +206,14 @@ tbody {
     cursor: pointer;
 }
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     -webkit-box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -222,21 +222,21 @@ tbody {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     -webkit-box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -245,7 +245,7 @@ tbody {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -391,7 +391,7 @@ textarea:focus-visible {
 }
 
 .submit-btn {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .custom-header {
@@ -461,7 +461,7 @@ table tr:hover {
 }
 
 .active-tr i {
-    color: #fff!important;
+    color: #fff !important;
 }
 
 .checkbox-scroll {
@@ -516,7 +516,7 @@ label {
 
 .f-left p {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 87px;
     font-weight: normal;
@@ -530,13 +530,13 @@ label {
 
 .f-left h3 {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 100%;
     font-weight: normal;
     color: #333;
     text-transform: capitalize;
-    margin-top: 1px!important;
+    margin-top: 1px !important;
 }
 
 .fix-home {
@@ -573,7 +573,7 @@ label {
 
 .total-house h6 {
     font-size: 8px;
-    font-weight: normal!important;
+    font-weight: normal !important;
     letter-spacing: 0.5px;
 }
 
@@ -667,7 +667,7 @@ label {
 
 .card-body-outer {
     margin-top: -6px;
-    height: 88vh!important
+    height: 88vh !important
 }
 
 .card-body2 {
@@ -716,14 +716,14 @@ label {
 
 .custom-header-outer {
     margin-top: -6px;
-    height: 88vh!important;
+    height: 88vh !important;
     overflow: hidden;
 }
 
 .table-one-iner {
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
-    margin-bottom: 0px!important
+    margin-bottom: 0px !important
 }
 
 .card-body3 {
@@ -817,60 +817,73 @@ label {
 
 .reject-btn {
     width: 45%;
-    background: #0ba118!important;
-    margin-left: 0px!important;
-    margin-bottom: 10px!important;
+    background: #0ba118 !important;
+    margin-left: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 .delete-btn {
     width: 45%;
-    background: red!important;
-    margin-left: 0px!important;
-    margin-bottom: 10px!important;
+    background: red !important;
+    margin-left: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 @media only screen and (min-width:270px) and (max-width:550px) {
     .Ward-Marking-heading {
         display: none;
     }
+
     .custom-header-outer {
         height: unset !important;
     }
+
     .loaderClass-outer {
         padding-left: 0px;
         padding-right: 0px;
     }
+
     .card-outer {
         padding-left: 0px !important;
         padding-right: 0px !important;
     }
+
     .table-one {
         overflow-x: scroll;
     }
+
     .table-outer {
         overflow-x: scroll;
     }
+
     div#divMessage {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
+
     .col-md-6.loaderClass-outer {
         margin-top: 35px !important;
     }
+
     .card-header {
         box-shadow: unset !important;
     }
+
     .responsive {
         width: 50% !important;
     }
+
     .custom-header {
         height: unset !important;
     }
+
     .card-body3 {
         margin-top: 0px !important;
     }
+
     .table-scroll {
         height: unset !important;
     }
@@ -880,19 +893,24 @@ label {
     .table-one {
         overflow-x: scroll;
     }
+
     .Ward-Marking-heading {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
+
     .responsive {
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
+
     .fix-home-iner {
         margin-left: 0px !important
     }
+
     .table-outer {
         overflow-x: scroll !important;
     }
@@ -902,6 +920,7 @@ label {
     .Ward-Marking-heading {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
@@ -928,6 +947,11 @@ label {
     font-size: 24px;
     transform: translate(-50%, -50%);
 }
-.pop-up-header{
-    margin-left: 430px;
+
+.pop-up-header {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #16c03b;
+
+
 }
