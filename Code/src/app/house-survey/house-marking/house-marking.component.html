@@ -294,10 +294,10 @@
                         </span>
                         <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false ||dt.showHouseType==true" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false ||dt.showHouseType==true" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
                     </div>
