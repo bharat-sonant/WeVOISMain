@@ -219,9 +219,16 @@
 
 <!--Line Markers Start-->
 <ng-template #contentLineMarkers>
+   
     <div class="img-close-outer">
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+       
     </div>
+    <div class="pop-up-header">
+       <h5 style="font-size: 14px;">Ward no.-{{this.markerDetailList[0]["wardNo"]}}   Line no.-{{this.markerDetailList[0]["lineNo"]}}</h5>
+    </div>
+    <hr style="margin-top: -15px;">
+   
     <div class="modal-body content-scroll-outer">
         <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseWardNo" value="0">
@@ -272,6 +279,7 @@
                             <img class="dt-img" [src]="dt.imageUrl" />
                         </a>
                     </div>
+                
                     <div class="main-tag">
                         <div class="f-left">
                             <div style="width:100%!important ;">
@@ -288,14 +296,14 @@
                             <i class="fa-solid fa-a" style="color:green; font-size: 14px; "></i>pprove
                         </span> <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false || dt.markerTypeHouse==true" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-trash-can" style="color:red; font-size: 14px;"></i>
                         </span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+</div>
 </ng-template>
 <!--Line Markers End-->
 
