@@ -1036,7 +1036,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     let width = windowWidth - 300;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 50 + "px";
+    let divHeight = height - 140 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
