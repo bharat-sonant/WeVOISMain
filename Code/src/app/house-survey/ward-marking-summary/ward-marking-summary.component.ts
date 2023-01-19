@@ -72,6 +72,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getWards();
+   
   }
 
   getLastUpdate() {
@@ -560,6 +561,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       let date = markerDatails.date.toString().split(" ")[0];
       let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        
         markerInstance.unsubscribe();
         if (data != null) {
           dbPath = "EntityMarkingData/RemovedMarkers/" + wardNo + "/" + lineNo + "/" + markerNo;
@@ -613,8 +615,9 @@ export class WardMarkingSummaryComponent implements OnInit {
                   imageUrl: this.markerDetailList[i]["imageUrl"],
                   status: this.markerDetailList[i]["status"],
                   userId: this.markerDetailList[i]["userId"],
-                  date: this.markerDetailList[i]["date"],
+                  date: this.markerDetailList[i]["date"]
                 });
+                
               }
             }
             this.markerDetailList = newMarkerList;
@@ -840,7 +843,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let isApprove = "0";
               let cardNumber = "";
               let servingCount = 0;
-              let markerTypeHouse=false;
+             
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
@@ -859,7 +862,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                 //status = data[index]["status"];
               }
               if (data[index]["isApprove"] != null) {
-                markerTypeHouse=true;
+              
                 isApprove = data[index]["isApprove"];
               }
 
@@ -885,7 +888,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   isApprove: isApprove,
                   cardNumber: cardNumber,
                   servingCount: servingCount,
-                  markerTypeHouse:markerTypeHouse
+                 
                 });
               }
             }
@@ -1039,7 +1042,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", marginTop);
     $("#divStatus").css("height", divHeight);
   }
-
   closeModel() {
     this.modalService.dismissAll();
   }

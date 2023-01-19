@@ -279,13 +279,18 @@
                             <img class="dt-img" [src]="dt.imageUrl" />
                         </a>
                     </div>
+                   
                 
                     <div class="main-tag">
                         <div class="f-left">
                             <div style="width:100%!important ;">
                                 <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"
-                                        [hidden]="isActionShow==false || dt.markerTypeHouse==true"></i></h3>
+                                        [hidden]="isActionShow==false"></i></h3>
                             </div><br />
+                            <div>
+                                <h5 style="font-size:15px">Date:-{{dt.date}}</h5>
+            
+                            </div>
                             <span [hidden]="dt.status==''">
                                 <h3> Status : {{dt.status}}&nbsp;<b>{{dt.cardNumber}}</b> </h3>
                             </span>
@@ -296,7 +301,7 @@
                             <i class="fa-solid fa-a" style="color:green; font-size: 14px; "></i>pprove
                         </span> <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false || dt.markerTypeHouse==true" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-trash-can" style="color:red; font-size: 14px;"></i>
                         </span>
                     </div>
