@@ -291,6 +291,7 @@ export class HouseMarkingComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
+              let approveName=""
 
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
@@ -343,11 +344,11 @@ export class HouseMarkingComponent {
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 let houseType = houseTypeDetail.houseType;
-                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId });
+                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName });
                 let markerURL = this.getMarkerIcon(type);
                 this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
                 this.getUsername( index, userId);
-                this.getApproveUsername(ApproveId);
+                this.getApproveUsername(ApproveId,index);
               }
             }
           }
@@ -378,11 +379,16 @@ export class HouseMarkingComponent {
 
     })
   }
-  getApproveUsername(ApproveId: any) {
+  getApproveUsername(ApproveId: any,index:any) {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
-      this.Approvename = userDetail.name;
+      let detail = this.markerList.find(item => item.index == index);
+      if (detail != undefined) {
+        detail.approveName = userDetail.name;
+        
+      }
+     
     }
 
   }

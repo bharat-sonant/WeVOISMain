@@ -276,7 +276,7 @@
         </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-3" *ngFor="let dt of markerList">
+                <div class="col-md-2" *ngFor="let dt of markerList">
                     <div class="markerList-iner">
                         <a href="{{dt.imageUrl}}" target="_blank">
                             <img class="markerList-iner-img" [src]="dt.imageUrl" />
@@ -294,8 +294,8 @@
                             </span>
                            
                                 <span style="font-size:11px">
-                                    Marked By {{dt.markingBy}} on {{dt.date}}<br />
-                                    Approve By {{this.Approvename}} on {{dt.approveDate}}
+                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved Date : {{dt.approveDate}}</span> 
 
                                 </span>
 
