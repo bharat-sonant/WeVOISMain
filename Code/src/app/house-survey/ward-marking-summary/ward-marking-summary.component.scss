@@ -86,7 +86,7 @@ button:focus {
 .card-header {
     background: #fff !important;
     padding: 15px 0px 15px 15px !important;
-    box-shadow: 0px 4px 4px #0e0e0e1a;
+    //box-shadow: 0px 4px 4px #0e0e0e1a;
 }
 
 //   .card-body{
@@ -446,7 +446,7 @@ textarea:focus-visible {
 
 .table-scroll {
     padding: 0px;
-    height: 83vh;
+    height: 74vh;
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -489,7 +489,8 @@ label {
     // margin-top: -80px;
     margin-top: -23px;
 }
-.header-12{
+
+.header-12 {
     background: #f1f1f1 !important;
     border-bottom: 2px solid #000;
 }
@@ -734,7 +735,7 @@ label {
 }
 
 .card-body3 {
-    padding: 3px 11px 15px 0px;
+    padding: 55px 11px 15px 0px;
 }
 
 .table-outer {
@@ -810,7 +811,6 @@ label {
 // .content-scroll-outer {
 //     margin-top: -20px;
 // }
-
 .dt-img {
     height: 100%;
     width: 100%;
@@ -842,57 +842,44 @@ label {
     .Ward-Marking-heading {
         display: none;
     }
-
     .custom-header-outer {
         height: unset !important;
     }
-
     .loaderClass-outer {
         padding-left: 0px;
         padding-right: 0px;
     }
-
     .card-outer {
         padding-left: 0px !important;
         padding-right: 0px !important;
     }
-
     .table-one {
         overflow-x: scroll;
     }
-
     .table-outer {
         overflow-x: scroll;
     }
-
     div#divMessage {
         display: none;
     }
-
     .fix-home-outer {
         margin-left: auto;
     }
-
     .col-md-6.loaderClass-outer {
         margin-top: 35px !important;
     }
-
     .card-header {
         box-shadow: unset !important;
     }
-
     .responsive {
         width: 50% !important;
     }
-
     .custom-header {
         height: unset !important;
     }
-
     .card-body3 {
         margin-top: 0px !important;
     }
-
     .table-scroll {
         height: unset !important;
     }
@@ -902,24 +889,19 @@ label {
     .table-one {
         overflow-x: scroll;
     }
-
     .Ward-Marking-heading {
         display: none;
     }
-
     .fix-home-outer {
         margin-left: auto;
     }
-
     .responsive {
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
-
     .fix-home-iner {
         margin-left: 0px !important
     }
-
     .table-outer {
         overflow-x: scroll !important;
     }
@@ -929,7 +911,6 @@ label {
     .Ward-Marking-heading {
         display: none;
     }
-
     .fix-home-outer {
         margin-left: auto;
     }
@@ -960,13 +941,11 @@ label {
 .pop-up-header {
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color:#000;
+    color: #000;
     // background-color: red;
-    
-
-
 }
-.pop-up-header h5{
+
+.pop-up-header h5 {
     // margin-bottom: 0px;
     margin-top: 16px;
     font-size: 18px;
