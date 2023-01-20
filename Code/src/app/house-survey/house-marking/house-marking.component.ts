@@ -37,6 +37,8 @@ export class HouseMarkingComponent {
   houseMarker: any[] = [];
   markerList: any[];
   toDayDate: any;
+  Approvename: any
+  userList: any[] = [];
   public isAlreadyShow = false;
 
   houseTypeList: any[] = [];
@@ -49,7 +51,7 @@ export class HouseMarkingComponent {
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
   divConfirm = "#divConfirm";
-  isActionShow:any;
+  isActionShow: any;
 
   markerData: markerDetail = {
     totalMarkers: "0",
@@ -67,9 +69,9 @@ export class HouseMarkingComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.isActionShow=true;
-    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
-      this.isActionShow=false;
+    this.isActionShow = true;
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      this.isActionShow = false;
     }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
@@ -280,13 +282,16 @@ export class HouseMarkingComponent {
               if (data[index]["date"] != null) {
                 date = data[index]["date"].split(" ")[0];
               }
+              let approveDate = data[index]["approveDate"];
               let status = "";
               let statusClass = "";
               let isRevisit = "0";
               let cardNumber = "";
               let isApprove = "0";
               let servingCount = 0;
-              
+              let markingBy = "";
+              let ApproveId = 0;
+
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
@@ -295,7 +300,7 @@ export class HouseMarkingComponent {
               }
 
               if (data[index]["isApprove"] != null) {
-                
+
                 isApprove = data[index]["isApprove"];
               }
               if (data[index]["status"] != null) {
@@ -316,6 +321,11 @@ export class HouseMarkingComponent {
                 isRevisit = "1";
                 statusClass = "status-deleted";
               }
+              if (data[index]["approveById"] != null) {
+
+                ApproveId = data[index]["approveById"];
+              }
+
 
               let city = this.commonService.getFireStoreCity();
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
@@ -333,9 +343,11 @@ export class HouseMarkingComponent {
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 let houseType = houseTypeDetail.houseType;
-                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove,servingCount:servingCount });
+                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId });
                 let markerURL = this.getMarkerIcon(type);
                 this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+                this.getUsername( index, userId);
+                this.getApproveUsername(ApproveId);
               }
             }
           }
@@ -348,9 +360,32 @@ export class HouseMarkingComponent {
       else {
         $(this.divLoader).hide();
       }
-    });
-  }
 
+    });
+
+  }
+  getUsername( index: any, userId: any) {
+    let path = "EntityMarkingData/MarkerAppAccess" + "/" + userId + "/" + "name";
+    console.log(path);
+    let usernameInstance = this.db.object(path).valueChanges().subscribe((data) => {
+      usernameInstance.unsubscribe();
+      console.log(data)
+      let detail = this.markerList.find(item => item.index == index);
+      if (detail != undefined) {
+        detail.markingBy = data;
+        console.log(detail.markingBy)
+      }
+
+    })
+  }
+  getApproveUsername(ApproveId: any) {
+    this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+    let userDetail = this.userList.find(item => item.userId == ApproveId);
+    if (userDetail != undefined) {
+      this.Approvename = userDetail.name;
+    }
+
+  }
   setHouseType(index: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -680,7 +715,7 @@ export class HouseMarkingComponent {
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ isApprove: "1",approveById:localStorage.getItem("userID"),approveDate:this.commonService.getTodayDateTime() });
+      this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
     }
   }
@@ -924,17 +959,17 @@ export class HouseMarkingComponent {
       return;
     }
 
-    let approveById="0";
+    let approveById = "0";
     let lineNo = $("#txtLineNo").val();
     let lineStatus = $("#btnSave").html();
     let status = "";
     if (lineStatus == "Approve Line") {
       status = "Confirm";
-      approveById=localStorage.getItem("userID");
+      approveById = localStorage.getItem("userID");
       $("#btnSave").html("Reject Line");
     } else {
       status = "Reject";
-      approveById="0";
+      approveById = "0";
       $("#btnSave").html("Approve Line");
     }
 
@@ -946,7 +981,7 @@ export class HouseMarkingComponent {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     const data = {
       status: status,
-      approveById:approveById
+      approveById: approveById
     };
     this.db.object(dbPath).update(data);
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";

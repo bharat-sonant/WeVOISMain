@@ -4,7 +4,8 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                     ngSelected="zone.zoneNo == selectedZone?'selected':''">
                     {{zone.zoneName}}
@@ -61,8 +62,9 @@
                 <div class="col-md-12 arrow-btn-div">
                     <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
                         << </button>
-                    <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
-                    <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);"
+                                autocomplete="off" value="1" />
+                            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
                                 >>
                             </button>
                 </div>
@@ -232,7 +234,8 @@
 
     </div>
     <div class="modal-body divStatus">
-        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divHouseType"
+            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseIndex" value="0">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
@@ -249,12 +252,14 @@
                         Save</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();"
+                        style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
                         Cancel</button>
                 </div>
             </div>
         </div>
-        <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divConfirm"
+            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <input type="hidden" id="deleteMarkerId" value="0">
@@ -271,7 +276,7 @@
         </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-2" *ngFor="let dt of markerList">
+                <div class="col-md-3" *ngFor="let dt of markerList">
                     <div class="markerList-iner">
                         <a href="{{dt.imageUrl}}" target="_blank">
                             <img class="markerList-iner-img" [src]="dt.imageUrl" />
@@ -279,25 +284,42 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index);" [hidden]="isActionShow==false"></i></h3><br
-                            />
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
+                                    style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i
+                                    class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                    (click)="setHouseType(dt.index);" [hidden]="isActionShow==false"></i></h3><br />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
+                           
+                                <span style="font-size:11px">
+                                    Marked By {{dt.markingBy}} on {{dt.date}}<br />
+                                    Approve By {{this.Approvename}} on {{dt.approveDate}}
 
+                                </span>
+
+
+
+
+
+                            
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.index);">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
+                            (click)="approveMarkerStatus(dt.index);">
                             <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
                         </span>
-                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index);">
+                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
+                            (click)="saveMarkerStatus(dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
                     </div>
