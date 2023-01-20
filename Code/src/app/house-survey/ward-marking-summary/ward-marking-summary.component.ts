@@ -404,6 +404,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getMarkingDetail(wardNo: any, listIndex: any) {
+    this.markerData.lastScan=""
     this.selectedZone = wardNo;
     $('#divLoader').show();
     setTimeout(() => {
@@ -441,16 +442,15 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.getLineAlreadyCard(wardNo, i);
       }
   let dbPath="EntityMarkingData/LastScanTime/Ward/"+ wardNo;
-  console.log(dbPath)
+    console.log(dbPath)
       let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+      totalmarkingInstance.unsubscribe();
         console.log(data)
         let lastscandata=data.split(":");
         let scandata=lastscandata[0]+":"+lastscandata[1]
         //this.markerData.lastScan = scandata;
         if(data !=null){
           this.markerData.lastScan = scandata;
-        }else{
-          this.markerData.lastScan=""
         }
         
       })
