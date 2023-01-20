@@ -254,20 +254,19 @@
 
 <!--Line Markers Start-->
 <ng-template #contentLineMarkers>
-    <div class="header-12">
-
-        <div class="pop-up-header">
-            <h5 style="font-size: 18px;">Ward no.-{{this.markerDetailList[0]["wardNo"]}} Line
-                no.-{{this.markerDetailList[0]["lineNo"]}}</h5>
-            <div class="img-close-outer">
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-            </div>
-        </div>
-
-        <!-- <hr style="margin-top: -15px;"> -->
+   <div class="header-12">
+    
+    <div class="pop-up-header">
+       <h5 style="font-size: 18px;">Ward no.-{{this.markerDetailList[0]["wardNo"]}}   Line no.-{{this.markerDetailList[0]["lineNo"]}}</h5>
+       <div class="img-close-outer">
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+       
     </div>
-
+    </div>
+    
+    <!-- <hr style="margin-top: -15px;"> -->
+</div>
+   
     <div class="modal-body content-scroll-outer">
         <div id="divHouseType"
             style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
