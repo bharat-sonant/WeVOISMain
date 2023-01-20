@@ -41,7 +41,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardHouses: 0,
     wardInstalled: 0,
     wardApprovedLines: 0,
-    lastUpdate: "---"
+    lastUpdate: "---",
+    wardNo:"0",
+    lastScan:""
+    
   };
   divHouseType = "#divHouseType";
   ddlHouseType = "#ddlHouseType";
@@ -426,6 +429,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardInstalled = wardDetail.alreadyInstalled;
       this.markerData.wardMarkers = wardDetail.markers;
       this.markerData.wardHouses = wardDetail.houses;
+      this.markerData.wardNo=wardDetail.wardNo
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
         this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
@@ -436,6 +440,20 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.getLineHousesInComplex(wardNo, i);
         this.getLineAlreadyCard(wardNo, i);
       }
+  let dbPath="EntityMarkingData/LastScanTime/Ward/"+ wardNo;
+  console.log(dbPath)
+      let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+        console.log(data)
+        let lastscandata=data.split(":");
+        let scandata=lastscandata[0]+":"+lastscandata[1]
+        //this.markerData.lastScan = scandata;
+        if(data !=null){
+          this.markerData.lastScan = scandata;
+        }else{
+          this.markerData.lastScan=""
+        }
+        
+      })
     }
   }
 
@@ -1010,4 +1028,7 @@ export class markerDatail {
   wardInstalled: number;
   wardApprovedLines: number;
   lastUpdate: string;
+  wardNo:string
+  lastScan:string;
+
 }
