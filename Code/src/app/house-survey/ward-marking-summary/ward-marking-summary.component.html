@@ -129,12 +129,6 @@
 
                         </div>
                         <hr style="margin-top:-19px">
-                        <!--<div>
-                           
-                            <h5 style="font-size: 10px;">Ward no.- {{this.markerData.wardNo}}</h5>
-                            <h5 style="font-size: 10px;">Last scan time.- {{this.markerData.lastScan}}</h5>
-                            <hr>
-                        </div>-->
                         <div class="col-md-2 text-center responsive">
                             <div class="table-heading">
                                 <h3>
@@ -257,7 +251,7 @@
    <div class="header-12">
     
     <div class="pop-up-header">
-       <h5 style="font-size: 18px;">Ward no.-{{this.markerDetailList[0]["wardNo"]}}   Line no.-{{this.markerDetailList[0]["lineNo"]}}</h5>
+       <h5 style="font-size: 18px;">Ward {{this.markerDetailList[0]["wardNo"]}} [Line {{this.markerDetailList[0]["lineNo"]}}]</h5>
        <div class="img-close-outer">
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
        
