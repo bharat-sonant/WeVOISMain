@@ -86,6 +86,7 @@ export class WardWorkTrackingComponent {
   divScannedHouses = "#divScannedHouses";
   wardLinesDataObj: any;
   isShowAllHouse = false;
+  isShowHouses:any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -115,6 +116,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
+    this.isShowHouses=true;
     this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       $(this.divParshadDetail).hide();
@@ -550,6 +552,9 @@ export class WardWorkTrackingComponent {
     if (localStorage.getItem("userType") == "External User") {
       $(this.divSetting).hide();
       this.isShowAllHouse = true;
+      if(this.cityName=="bhiwadi"){
+        this.isShowHouses=false;
+      }
     }
     (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsShowAllDustbin)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingAllDustbinShow"));
