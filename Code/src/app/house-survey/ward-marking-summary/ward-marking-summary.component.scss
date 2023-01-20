@@ -490,7 +490,8 @@ label {
     margin-top: -23px;
 }
 .header-12{
-    background: linear-gradient(160deg, #000000 0%, #e4e3e3 100%) !important;
+    background: #f1f1f1 !important;
+    border-bottom: 2px solid #000;
 }
 
 .modal-body {
@@ -959,7 +960,7 @@ label {
 .pop-up-header {
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #ffffff;
+    color:#000;
     // background-color: red;
     
 
