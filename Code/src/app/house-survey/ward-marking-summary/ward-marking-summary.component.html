@@ -273,7 +273,7 @@
         </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-2" *ngFor="let dt of markerDetailList">
+                <div class="col-md-3" *ngFor="let dt of markerDetailList">
                     <div class="dt-img-outer">
                         <a href="{{dt.imageUrl}}" target="_blank">
                             <img class="dt-img" [src]="dt.imageUrl" />
@@ -287,24 +287,12 @@
                                 <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"
                                         [hidden]="isActionShow==false"></i></h3>
                             </div><br />
-                       <!--..   <div>
-                                <h5 style="font-size:15px">Date:-{{dt.date}}</h5>
-            
-                            </div>.--> 
                             <span [hidden]="dt.status==''">
                                 <h3> Status : {{dt.status}}&nbsp;<b>{{dt.cardNumber}}</b> </h3>
                             </span>
                         </div>
                     </div>
-                    <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="approveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 14px; "></i>pprove
-                        </span> <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.wardNo,dt.lineNo,dt.index);">
-                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 14px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.wardNo,dt.lineNo,dt.index,dt.alreadyInstalled);">
-                            &nbsp; &nbsp;<i class="fa-solid fa-trash-can" style="color:red; font-size: 14px;"></i>
-                        </span>
-                    </div>
+                   
                 </div>
             </div>
         </div>
