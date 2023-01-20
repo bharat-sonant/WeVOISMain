@@ -16,8 +16,9 @@
                             {{zone.zoneName}}
                         </option>
                     </select>&nbsp;&nbsp;
-            <input class="checkbox-input" id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span class="checkbox-span" id="showHouseLabel"> Show
-                        Houses</span>
+            <span [hidden]="isShowHouses==false"><input class="checkbox-input" id="chkIsShowHouse" type="checkbox" (change)="showHouse();" /><span class="checkbox-span" id="showHouseLabel"> Show
+                        Houses</span></span>
+
         </div>
         <div class="col-md-4 text-right total-house">
 

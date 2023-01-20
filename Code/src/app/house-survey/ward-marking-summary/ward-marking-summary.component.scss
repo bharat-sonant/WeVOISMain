@@ -486,10 +486,16 @@ label {
     z-index: 10;
     width: 25px;
     cursor: pointer;
+    // margin-top: -80px;
+    margin-top: -23px;
+}
+.header-12{
+    background: linear-gradient(160deg, #000000 0%, #e4e3e3 100%) !important;
 }
 
 .modal-body {
     padding: 20px;
+    margin-top: -16px;
 }
 
 .content-scroll {
@@ -796,11 +802,13 @@ label {
     width: 100%;
     text-align: right;
     float: left;
+    // margin-top: 28px;
+    margin: -28px;
 }
 
-.content-scroll-outer {
-    margin-top: -20px;
-}
+// .content-scroll-outer {
+//     margin-top: -20px;
+// }
 
 .dt-img {
     height: 100%;
@@ -951,7 +959,15 @@ label {
 .pop-up-header {
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #16c03b;
+    color: #ffffff;
+    // background-color: red;
+    
 
 
+}
+.pop-up-header h5{
+    // margin-bottom: 0px;
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: bold;
 }
