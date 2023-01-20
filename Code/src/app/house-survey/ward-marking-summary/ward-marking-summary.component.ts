@@ -42,9 +42,9 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardInstalled: 0,
     wardApprovedLines: 0,
     lastUpdate: "---",
-    wardNo:"0",
-    lastScan:""
-    
+    wardNo: "0",
+    lastScan: ""
+
   };
   divHouseType = "#divHouseType";
   ddlHouseType = "#ddlHouseType";
@@ -404,7 +404,16 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getMarkingDetail(wardNo: any, listIndex: any) {
-    this.markerData.lastScan=""
+    this.markerData.lastScan = ""
+    let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
+      let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        totalmarkingInstance.unsubscribe();
+        let lastscandata = data.split(":");
+        let scandata = lastscandata[0] + ":" + lastscandata[1];
+        if (data != null) {
+          this.markerData.lastScan = scandata;
+        }
+      });
     this.selectedZone = wardNo;
     $('#divLoader').show();
     setTimeout(() => {
@@ -430,7 +439,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardInstalled = wardDetail.alreadyInstalled;
       this.markerData.wardMarkers = wardDetail.markers;
       this.markerData.wardHouses = wardDetail.houses;
-      this.markerData.wardNo=wardDetail.wardNo
+      this.markerData.wardNo = wardDetail.wardNo
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
         this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
@@ -441,19 +450,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.getLineHousesInComplex(wardNo, i);
         this.getLineAlreadyCard(wardNo, i);
       }
-  let dbPath="EntityMarkingData/LastScanTime/Ward/"+ wardNo;
-    console.log(dbPath)
-      let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
-      totalmarkingInstance.unsubscribe();
-        console.log(data)
-        let lastscandata=data.split(":");
-        let scandata=lastscandata[0]+":"+lastscandata[1]
-        //this.markerData.lastScan = scandata;
-        if(data !=null){
-          this.markerData.lastScan = scandata;
-        }
-        
-      })
+      
     }
   }
 
@@ -1028,7 +1025,7 @@ export class markerDatail {
   wardInstalled: number;
   wardApprovedLines: number;
   lastUpdate: string;
-  wardNo:string
-  lastScan:string;
+  wardNo: string
+  lastScan: string;
 
 }
