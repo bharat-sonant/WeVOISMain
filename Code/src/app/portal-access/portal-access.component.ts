@@ -49,7 +49,7 @@ export class PortalAccessComponent implements OnInit {
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
         // $("#salasarBox").show();
-        isBaseCity = true;
+        //isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
         isBaseCity = true;
