@@ -119,7 +119,7 @@ import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-agai
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
 import { SurveyVerificationComponent } from '../../house-survey/survey-verification/survey-verification.component';
 import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-houses.component';
-
+import {MarkerApprovalTestComponent } from '../../marker-approval-test/marker-approval-test.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -133,6 +133,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'logout', component: LogoutComponent },
     { path: 'manage-ward-supervisor', component: ManageWardSupervisorComponent },
     { path: 'complaint-list', component: ComplaintListComponent },
+    { path: 'marker-approval-test', component:MarkerApprovalTestComponent },
 
     //Sikar
     { path: 'sikar/home', component: HomeComponent },
@@ -370,6 +371,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'sikar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'sikar/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'sikar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -608,7 +610,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-greater/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-greater/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-greater/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
 
@@ -851,7 +853,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'reengus/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'reengus/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'reengus/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //Shahpura
@@ -1091,6 +1093,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'shahpura/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'shahpura/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'shahpura/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //test
@@ -1330,6 +1333,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'test/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'test/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'test/:id/marker-approval-test', component:MarkerApprovalTestComponent },
+    
 
 
 
@@ -1571,6 +1576,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-office/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-office/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'jaipur-office/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1809,7 +1815,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'kishangarh/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'kishangarh/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'kishangarh/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
@@ -2048,6 +2054,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'niwai/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'niwai/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'niwai/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //Jaisalmer
@@ -2287,6 +2294,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaisalmer/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaisalmer/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'jaisalmer/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
 
@@ -2527,7 +2535,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'salasar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'salasar/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'salasar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     //Behror
     { path: 'behror/home', component: HomeComponent },
     { path: 'behror/dashboard', component: DashboardComponent },
@@ -2765,7 +2773,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'behror/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'behror/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'behror/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -3003,7 +3011,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3241,7 +3249,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-jhotwara/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-jhotwara/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-jhotwara/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
@@ -3479,7 +3487,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-jagatpura/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-jagatpura/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-jagatpura/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //jaipur-malviyanagar
@@ -3718,7 +3726,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-malviyanagar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-malviyanagar/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-malviyanagar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //jaipur-mansarovar
@@ -3957,7 +3965,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-mansarovar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-mansarovar/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-mansarovar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -4194,7 +4202,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-murlipura/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-murlipura/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-murlipura/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
 
@@ -4434,7 +4442,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-sanganer/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-sanganer/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-sanganer/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //jaipur-vidhyadhar
@@ -4673,7 +4681,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'jaipur-vidhyadhar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'jaipur-vidhyadhar/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'jaipur-vidhyadhar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
     { path: 'bhiwadi/account-detail', component: AccountDetailComponent },
@@ -4910,7 +4918,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'bhiwadi/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'bhiwadi/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'bhiwadi/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
     { path: 'chhapar/account-detail', component: AccountDetailComponent },
@@ -5147,7 +5155,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'chhapar/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'chhapar/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'chhapar/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     //Churu
     { path: 'churu/home', component: HomeComponent },
     { path: 'churu/account-detail', component: AccountDetailComponent },
@@ -5384,6 +5392,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'churu/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'churu/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'churu/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //wevois-others
@@ -5623,7 +5632,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-others/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'wevois-others/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'wevois-other/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'wevois-other/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 
     //gwalior
@@ -5863,7 +5872,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'gwalior/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'gwalior/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'gwalior/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
     //Tonk
     { path: 'tonk/home', component: HomeComponent },
@@ -6101,7 +6110,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'tonk/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'tonk/:id/survey-houses', component: SurveyHousesComponent },
-
+    { path: 'tonk/:id/marker-approval-test', component:MarkerApprovalTestComponent },
     
 
     //Ratangarh
@@ -6340,5 +6349,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: 'ratangarh/:id/survey-verification', component: SurveyVerificationComponent },
     { path: 'ratangarh/:id/survey-houses', component: SurveyHousesComponent },
+    { path: 'ratangarh/:id/marker-approval-test', component:MarkerApprovalTestComponent },
 
 ]; 
