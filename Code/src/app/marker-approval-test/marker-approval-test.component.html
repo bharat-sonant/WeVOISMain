@@ -80,16 +80,20 @@
                     <h5> {{markerData.totalLineMarkers}} </h5>
                     <p>Markers</p>
                 </div>
+                <div class="col-md-6 markers markers-heading-main">
+                    <h5> {{markerData.isApprovedCount}} </h5>
+                    <p style="margin-left:-19px;">isApprovedCount</p>
+                </div>
                 <div class="col-md-6 markers Already-heading-main" [hidden]="isAlreadyShow==false">
                     <h5> {{markerData.alreadyCardLineCount}} </h5>
                     <p>Already Card</p>
                 </div>
-                <hr style="margin-left:0">
+                <hr style="margin-left: -42px;">
                 <div class="col-md-12 text-left ml-10 markera-all">
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
-                        </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="text-align:right;">
+                        </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="margin-left: 45px;">
                         <i class="fas fa-eye"></i>Approve Marker</span>
                 </div>
                 <div class="col-md-6 Confirm-main">
