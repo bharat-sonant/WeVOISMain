@@ -1,0 +1,340 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+
+                <option value="1">
+                    Zone 1
+                </option>
+            </select>
+        </div>
+        <div class="col-md-4 ward-header-outer">
+            <h1 class="ward-header"> Marker Approval </h1>
+        </div>
+
+        <div class="col-md-4 text-right total-house extra-class" id="houseCount">
+
+            <div class="fix-home">
+                <div id="divLastUpdate" class="float-fourth fix-home-iner">
+                    <i class="far fa-clock"></i><span class="house"><span class="clock-span">
+                            {{markerData.lastScanTime}}</span></span><br>
+                    <h6>Last Marked At</h6>
+                </div>
+                <div class="float-first cardboard-icon-main" [hidden]="isAlreadyShow==false">
+                    <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="cardboard-span">
+                            {{markerData.alreadyCardCount}}</span></span><br>
+                    <h6>Already Card Count</h6>
+                </div>
+                <div class="float-second circle-icon-main">
+                    <i class="fas fa-check-circle"></i> <span class="house"><span class="circle-span">
+                            {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
+                    <h6>Approved Lines</h6>
+                </div>
+                <div class="float-third">
+                    <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
+                    <h6>Total Marker</h6>
+                </div>
+                <div class="arrow" onclick="show()">
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</section>
+
+<div #gmap class="divmap" id="divMap"></div>
+<div class="display" id="popup">
+    <div class="house-card-box">
+        <div id="divDetails" class="house-card-box-iner">
+            <div class="row house-card-box-iner2">
+                <div class="col-md-12 arrow-btn-div">
+                    <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
+                        << </button>
+                            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);"
+                                autocomplete="off" value="1" />
+                            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                                >>
+                            </button>
+                </div>
+              <!--  <div class="col-md-12 text-left ml-10 markera-all">
+                    <span class="markera-allspan">
+                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
+                        All
+                        Markers</span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);">
+                        <i class="fas fa-eye"></i> View Detail</span>
+                </div>-->
+
+                <div class="col-md-6 markers markers-heading-main">
+                    <h5> {{markerData.totalLineMarkers}} </h5>
+                    <p>Markers</p>
+                </div>
+                <div class="col-md-6 markers Already-heading-main" [hidden]="isAlreadyShow==false">
+                    <h5> {{markerData.alreadyCardLineCount}} </h5>
+                    <p>Already Card</p>
+                </div>
+                <hr style="margin-left:0">
+                <div class="col-md-12 text-left ml-10 markera-all">
+                    <span class="markera-allspan">
+                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
+                        All
+                        </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="text-align:right;">
+                        <i class="fas fa-eye"></i>Approve Marker</span>
+                </div>
+                <div class="col-md-6 Confirm-main">
+                    <div class="row">
+                        <div class="col-md-12 rdoConfirm">
+                            <input id="rdoConfirm" type="radio" name="gender">&nbsp; Confirm
+                        </div>
+
+                        <div class="col-md-12 rdoReject">
+                            <input id="rdoReject" type="radio" name="gender">&nbsp; Reject
+                        </div>
+                        <div class="col-md-12 txtReamrk">
+                            <textarea id="txtReamrk" class="txtReamrk-iner" placeholder="Remark"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="col-md-12 pl-5 pr-46">
+                    <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
+                        Line</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="image-box">
+        <div id="divLoader" class="loaderClass">
+            <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+        </div>
+        <div class="row">
+            <div class="col-md-12 house-type">
+                <h3> {{markerData.houseType}}
+                    <br /> {{markerData.alreadyCard}}
+                </h3>
+            </div>
+            <div class="col-md-12">
+                <div class="main-box">
+                    <a href="{{markerData.markerImgURL}}" target="_blank">
+                        <img id="markingImg" class="markerdata-img" [src]="markerData.markerImgURL" />
+                    </a>
+                </div>
+            </div>
+            <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
+                ward
+                <span><i class="far fa-hand-point-right"></i></span>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="driver-helper-box">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-house.svg"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>आवासीय व आवासीय परिसर</p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-shop.svg" class="shop-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>व्यसायिक दूकान, प्रतिष्ठान, खान-पान <br /> के स्थान,व्यावसायिक परिसर </p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation warehouse-img-box">
+                    <h5> <img src="../assets/img/marking-warehouse.svg"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>लघु एवं कुटीर उद्योग, गोदाम, कोल्ड<br /> स्टोरेज </p>
+                    </h6>
+                </div>
+            </div>
+
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-institute.svg" class="institute-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>व्यसायिक कार्यालय, बैंक, कोचिंग आदि </p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-hotel.svg" class="hotel-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>गेस्ट हाउस, छात्रावास/हॉस्टल, होटल व <br /> रेस्ट्रोरेंट</p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-mela.svg" class="mela-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>शादी हॉल/उत्सव व मेला</p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-thela.svg" class="thela-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>फल /सब्ज़ी ठेला, व्यसायिक ठेला व थड़ी</p>
+                    </h6>
+                </div>
+            </div>
+            <div class="main-box">
+                <div class="designation">
+                    <h5> <img src="../assets/img/marking-hospital.svg" class="hospital-svg-img"> </h5>
+                </div>
+                <div class="all-details">
+                    <h6>
+                        <p>क्लिनिक, डिस्पेंसरी व अस्पताल</p>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!--Vehicle Status Start-->
+<ng-template #contentLineMarkers>
+    <div class="grey-img-div">
+
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+    </div>
+    <div class="modal-body divStatus">
+        <div id="divHouseType"
+            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+            <input type="hidden" id="houseIndex" value="0">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-12">
+                    <select id="ddlHouseType" class="caret-select-vehicle">
+                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
+                            {{dt.houseType}}
+                        </option>
+                    </select>
+
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="updateHouseType();" style="width: 100px;">
+                        Save</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();"
+                        style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
+                        Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div id="divConfirm"
+            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <input type="hidden" id="deleteMarkerId" value="0">
+                <input type="hidden" id="deleteAlreadyCard" value="">
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="deleteMarker();">
+                        Confirm</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
+                        Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div id="divStatus" class="content-scroll">
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of markerList">
+                    <div class="markerList-iner">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
+                                    style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i
+                                    class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                    (click)="setHouseType(dt.index);" [hidden]="isActionShow==false"></i></h3><br />
+                            <span [hidden]="dt.status==''">
+                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
+                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
+                            </span>
+                           
+                                <span style="font-size:11px">
+                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved Date : {{dt.approveDate}}</span> 
+
+                                </span>
+
+
+
+
+
+                            
+                        </div>
+                    </div>
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
+                            (click)="approveMarkerStatus(dt.index);">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
+                        </span>
+                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
+                            (click)="saveMarkerStatus(dt.index);">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-template>
+<!--Vehicle Status End-->
