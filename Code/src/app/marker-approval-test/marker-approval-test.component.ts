@@ -64,6 +64,8 @@ export class MarkerApprovalTestComponent {
     alreadyCard: "",
     lastScanTime: "",
     isApprovedCount: "0",
+    wardno:"0",
+    lineno:"0"
   };
 
   ngOnInit() {
@@ -166,6 +168,7 @@ export class MarkerApprovalTestComponent {
         this.markerData.totalMarkers = data["marked"].toString();
         this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
         this.markerData.approvedLines = data["approved"].toString();
+       
       }
     });
   }
@@ -294,6 +297,8 @@ export class MarkerApprovalTestComponent {
               let markingBy = "";
               let ApproveId = 0;
               let approveName=""
+              this.markerData.wardno=this.selectedZone;
+              this.markerData.lineno=this.lineNo;
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
@@ -348,11 +353,13 @@ export class MarkerApprovalTestComponent {
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 let houseType = houseTypeDetail.houseType;
-                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName});
+                this.markerList.push({lineNo:lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName,zone:this.selectedZone});
+                console.log(this.markerList)
                 let markerURL = this.getMarkerIcon(type);
                 this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
                 this.getUsername( index, userId);
                 this.getApproveUsername(ApproveId,index);
+               
               }
             }
           }
@@ -396,6 +403,126 @@ export class MarkerApprovalTestComponent {
     }
 
   }
+  getOtherMarkerData(){
+    let zoneNo=$("#ddlZoneMarker").val();
+    let lineNo=$("#txtLine").val()
+    if(zoneNo =="0"){
+      this.commonService.setAlertMessage("error","Select zone number");
+      return;
+    }
+    if(lineNo ==""){
+      this.commonService.setAlertMessage("error","Select line number");
+      return;
+    }
+    let newMarkerList = this.markerList.filter(item => item.lineNo!= this.lineNo && item.zoneNo==this.selectedZone);
+    this.markerList=newMarkerList
+    let path="EntityMarkingData/MarkedHouses/"+zoneNo+ "/" + lineNo;
+    let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          let count=0;
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (data[index]["latLng"] != undefined) {
+              let lat = data[index]["latLng"].split(",")[0];
+              let lng = data[index]["latLng"].split(",")[1];
+              let imageName = data[index]["image"];
+              let userId = data[index]["userId"];
+              let date = "";
+             
+              if (data[index]["date"] != null) {
+                date = data[index]["date"].split(" ")[0];
+              }
+              let approveDate = data[index]["approveDate"];
+              let status = "";
+              let statusClass = "";
+              let isRevisit = "0";
+              let cardNumber = "";
+              let isApprove = "0";
+              let servingCount = 0;
+              let markingBy = "";
+              let ApproveId = 0;
+              let approveName=""
+              this.markerData.wardno=this.selectedZone;
+              this.markerData.lineno=this.lineNo;
+              if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
+                servingCount = parseInt(data[index]["totalHouses"]);
+                if (isNaN(servingCount)) {
+                  servingCount = 0;
+                }
+              }
+              
+              if (data[index]["isApprove"] != null) {
+                if(data[index]["isApprove"]=="1"){
+                  count++;
+                }
+                isApprove = data[index]["isApprove"];
+              }
+              this.markerData.isApprovedCount=count.toString();
+              if (data[index]["status"] != null) {
+                // status = data[index]["status"];
+              }
+              if (data[index]["cardNumber"] != null) {
+                cardNumber = data[index]["cardNumber"];
+                status = "Surveyed";
+              }
+              if (data[index]["revisitKey"] != null) {
+                status = "Revisit";
+              }
+              if (data[index]["rfidNotFoundKey"] != null) {
+                status = "RFID not matched";
+              }
+              if (data[index]["revisitCardDeleted"] != null) {
+                status = "Revisit Deleted";
+                isRevisit = "1";
+                statusClass = "status-deleted";
+              }
+              if (data[index]["approveById"] != null) {
+
+                ApproveId = data[index]["approveById"];
+              }
+              
+
+              let city = this.commonService.getFireStoreCity();
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let type = data[index]["houseType"];
+              let alreadyInstalled = "नहीं";
+              if (data[index]["alreadyInstalled"] == true) {
+                this.markerData.alreadyCardLineCount =
+                  this.markerData.alreadyCardLineCount + 1;
+                alreadyInstalled = "हाँ";
+              }
+              let alreadyCard = "";
+              if (alreadyInstalled == "हाँ") {
+                alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
+              }
+              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+              if (houseTypeDetail != undefined) {
+                let houseType = houseTypeDetail.houseType;
+                this.markerList.push({lineNo:lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName,zone:zoneNo});
+                
+                this.getUsername( index, userId);
+                this.getApproveUsername(ApproveId,index);
+               
+              }
+            }
+          }
+          $(this.divLoader).hide();
+        }
+        else {
+          $(this.divLoader).hide();
+        }
+      }
+      else {
+        $(this.divLoader).hide();
+      }
+
+    });
+
+    
+    }
   setHouseType(index: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -449,7 +576,7 @@ export class MarkerApprovalTestComponent {
       let width = windowWidth - 300;
       height = (windowHeight * 90) / 100;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      let divHeight = height - 50 + "px";
+      let divHeight = height - 140 + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", marginTop);
@@ -1069,4 +1196,7 @@ export class markerDetail {
   alreadyCard: string;
   lastScanTime: string;
   isApprovedCount:string;
+  wardno:string;
+  lineno:string
+
 }
