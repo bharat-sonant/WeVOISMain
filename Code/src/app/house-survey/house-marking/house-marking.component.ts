@@ -291,7 +291,7 @@ export class HouseMarkingComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
-              let approveName=""
+              let approveName = ""
 
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
@@ -341,15 +341,16 @@ export class HouseMarkingComponent {
               if (alreadyInstalled == "हाँ") {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
               }
+              let houseType="";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
-                let houseType = houseTypeDetail.houseType;
-                this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName });
+                houseType = houseTypeDetail.houseType;                
+              }
+              this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName });
                 let markerURL = this.getMarkerIcon(type);
                 this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
-                this.getUsername( index, userId);
-                this.getApproveUsername(ApproveId,index);
-              }
+                this.getUsername(index, userId);
+                this.getApproveUsername(ApproveId, index);
             }
           }
           $(this.divLoader).hide();
@@ -365,30 +366,26 @@ export class HouseMarkingComponent {
     });
 
   }
-  getUsername( index: any, userId: any) {
+  getUsername(index: any, userId: any) {
     let path = "EntityMarkingData/MarkerAppAccess" + "/" + userId + "/" + "name";
-    console.log(path);
     let usernameInstance = this.db.object(path).valueChanges().subscribe((data) => {
       usernameInstance.unsubscribe();
-      console.log(data)
       let detail = this.markerList.find(item => item.index == index);
       if (detail != undefined) {
         detail.markingBy = data;
-        console.log(detail.markingBy)
       }
-
     })
   }
-  getApproveUsername(ApproveId: any,index:any) {
+  getApproveUsername(ApproveId: any, index: any) {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
       let detail = this.markerList.find(item => item.index == index);
       if (detail != undefined) {
         detail.approveName = userDetail.name;
-        
+
       }
-     
+
     }
 
   }
