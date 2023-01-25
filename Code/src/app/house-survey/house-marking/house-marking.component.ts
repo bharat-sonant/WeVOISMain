@@ -270,7 +270,6 @@ export class HouseMarkingComponent {
       this.markerList = [];
       if (data != null) {
         let keyArray = Object.keys(data);
-        console.log(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
