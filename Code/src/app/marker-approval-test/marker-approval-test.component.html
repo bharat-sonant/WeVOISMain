@@ -68,7 +68,7 @@
                                 >>
                             </button>
                 </div>
-              <!--  <div class="col-md-12 text-left ml-10 markera-all">
+                <!--  <div class="col-md-12 text-left ml-10 markera-all">
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
@@ -93,7 +93,8 @@
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
-                        </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="margin-left: 45px;">
+                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);"
+                        style="margin-left: 45px;">
                         <i class="fas fa-eye"></i>Approve Marker</span>
                 </div>
                 <div class="col-md-6 Confirm-main">
@@ -110,7 +111,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div class="col-md-12 pl-5 pr-46">
                     <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
@@ -240,42 +241,29 @@
 <!--Vehicle Status Start-->
 <ng-template #contentLineMarkers>
     <div class="header-12">
-    
+
         <div class="pop-up-header">
-            <h5 style="font-size: 18px;text-align:left">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]</h5>
+            <h5 style="font-size: 18px;text-align:left">Ward {{this.markerData.wardno}} [Line
+                {{this.markerData.lineno}}]</h5>
             <div style="margin-left: 256px;margin-top: -55px;">
-            <select class="caret-select" id="ddlZoneMarker" >
-            <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
-                {{zone.zoneName}}
-            </option>
-        </select>&nbsp;&nbsp;
-        <input type="text" id="txtLine"/>&nbsp;&nbsp;
-        <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
-    </div> 
+                <select class="caret-select" id="ddlZoneMarker">
+                    <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                        {{zone.zoneName}}
+                    </option>
+                </select>&nbsp;&nbsp;
+                <input type="text" id="txtLine" />&nbsp;&nbsp;
+                <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
+            </div>
             <div class="img-close-outer">
-            <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-           
-        </div>
-       
-          
-   
-        </div>
-        
-        <!-- <hr style="margin-top: -15px;"> -->
-    </div>
-       
-<!--<div class="header-12">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
-        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+            </div>
 
-    </div>
-    <div class="header-12">
-    
-        <div class="pop-up-header">
-           <h5 style="font-size: 18px;">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]</h5>
-           
+
+
         </div>
-        </div>-->
+    </div>
+
     <div class="modal-body divStatus">
         <div id="divHouseType"
             style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
@@ -317,6 +305,38 @@
                 </div>
             </div>
         </div>
+        <div id="divConfirmApprove"
+            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 21%; padding: 20px; border: 1px solid lightgray; width:500px">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <input type="hidden" id="approveMarkerId" value="0">
+                <input type="hidden" id="approveAlreadyCard" value="">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="checkbox" id="chkApprovedEntity">
+                        <label>Entity type theek se check ki hai</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="checkbox" id="chkApprovedMarkar">
+                        <label>Markar duplicate nahi hai</label>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                        <button class="btn btn-success " (click)="approveMarkerStatus();">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                        <button class="btn btn-danger " (click)="cancelMarkerApproveDelete();"
+                            style="text-transform: uppercase;">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerList">
@@ -335,23 +355,25 @@
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
-                           
-                                <span style="font-size:11px">
-                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved Date : {{dt.approveDate}}</span> 
 
-                                </span>
+                            <span style="font-size:11px">
+                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                    Date : {{dt.approveDate}}</span>
 
-
-
+                            </span>
 
 
-                            
+
+
+
+
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
-                            (click)="approveMarkerStatus(dt.index);">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"></span>
+                        <!--(click)="approveMarkerStatus(dt.index);"--> <span
+                            (click)="confirmationMarkerApprove(dt.markerNo,dt.alreadyCard);">
                             <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
                         </span>
                         <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"

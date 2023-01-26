@@ -50,6 +50,9 @@ export class MarkerApprovalTestComponent {
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
   divConfirm = "#divConfirm";
+  divConfirmApprove="#divConfirmApprove";
+  approveMarkerId="#approveMarkerId";
+  approveAlreadyCard="#approveAlreadyCard";
   isActionShow: any;
 
   markerData: markerDetail = {
@@ -593,12 +596,23 @@ export class MarkerApprovalTestComponent {
     $(this.deleteAlreadyCard).val(alreadyCard);
     $(this.divConfirm).show();
   }
+  
+  confirmationMarkerApprove(markerNo: any, alreadyCard: any) {
+    $(this.approveMarkerId).val(markerNo);
+    $(this.divConfirmApprove).show();
+  }
 
   cancelMarkerDelete() {
     $(this.deleteMarkerId).val("0");
     $(this.deleteAlreadyCard).val("");
     $(this.divConfirm).hide();
   }
+  cancelMarkerApproveDelete() {
+    $(this.deleteMarkerId).val("0");
+    $(this.deleteAlreadyCard).val("");
+    $(this.divConfirmApprove).hide();
+  }
+
 
   deleteMarker() {
     let markerNo = $(this.deleteMarkerId).val();
@@ -606,6 +620,7 @@ export class MarkerApprovalTestComponent {
     this.removeMarker(markerNo, alreadyCard);
     $(this.divConfirm).hide();
   }
+
 
   removeMarker(markerNo: any, alreadyCard: any) {
     $(this.divLoader).show();
@@ -847,7 +862,10 @@ export class MarkerApprovalTestComponent {
     }
   }
 
-  approveMarkerStatus(markerNo: any) {
+  approveMarkerStatus() {
+    let markerNo=this.approveMarkerId
+    let Entity= $("#ChkEntity").val();
+    let Markar=$("#ChkMarkar").val();
     let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
