@@ -724,7 +724,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkerIcon(type: any) {
-    let url = "../assets/img/final-marker-2.svg";
+    let url = "../assets/img/marking-house.png";
     if (type == 1 || type == 19 || type==25) {
       url = "../assets/img/marking-house.png";
     } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
