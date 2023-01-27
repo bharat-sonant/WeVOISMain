@@ -10,7 +10,6 @@
     margin-left: 20px!important;
     border-radius: 5px;
     padding: 10px;
-    border: none!important;
     width: 170px;
 }
 
@@ -715,7 +714,7 @@ button:focus-visible {
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 265px;
+    top: 280px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
@@ -783,7 +782,6 @@ button:focus-visible {
     opacity: 0.5;
     margin-left: -11px;
     margin-top: -10px;
-   
 }
 
 .imgLoader {
@@ -1403,7 +1401,6 @@ table td {
     .header {
         height: 160px;
     }
-   
     .house-card-box {
         top: 160px !important;
     }
@@ -1442,12 +1439,14 @@ table td {
         position: fixed !important;
     }
 }
+
 .pop-up-header h5 {
     // margin-bottom: 0px;
     margin-top: 16px;
     font-size: 18px;
     font-weight: bold;
 }
+
 .header-12 {
     background: #f1f1f1 !important;
     border-bottom: 2px solid #000;
@@ -1461,6 +1460,7 @@ table td {
     // margin-top: -80px;
     margin-top: -23px;
 }
+
 .img-close-outer {
     width: 100%;
     text-align: right;

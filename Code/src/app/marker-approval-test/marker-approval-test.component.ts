@@ -352,18 +352,17 @@ export class MarkerApprovalTestComponent {
               let alreadyCard = "";
               if (alreadyInstalled == "हाँ") {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
-              }
+              }              
+              let houseType = "";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
-                let houseType = houseTypeDetail.houseType;
-                this.markerList.push({lineNo:lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName,zone:this.selectedZone});
-                console.log(this.markerList)
-                let markerURL = this.getMarkerIcon(type);
-                this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
-                this.getUsername( index, userId);
-                this.getApproveUsername(ApproveId,index);
-               
+                houseType = houseTypeDetail.houseType;
               }
+              this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName });
+              let markerURL = this.getMarkerIcon(type);
+              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+              this.getUsername(index, userId);
+              this.getApproveUsername(ApproveId, index);
             }
           }
           $(this.divLoader).hide();
@@ -885,8 +884,8 @@ export class MarkerApprovalTestComponent {
   }
 
   getMarkerIcon(type: any) {
-    let url = "../assets/img/final-marker-2.svg";
-    if (type == 1 || type == 19) {
+    let url = "../assets/img/marking-house.png";
+    if (type == 1 || type == 19 || type==25) {
       url = "../assets/img/marking-house.png";
     } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
       url = "../assets/img/marking-shop.png";
