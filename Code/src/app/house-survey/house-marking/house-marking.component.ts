@@ -263,6 +263,7 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    console.log(this.houseTypeList);
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
@@ -341,16 +342,16 @@ export class HouseMarkingComponent {
               if (alreadyInstalled == "हाँ") {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
               }
-              let houseType="";
+              let houseType = "";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
-                houseType = houseTypeDetail.houseType;                
+                houseType = houseTypeDetail.houseType;
               }
               this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName });
-                let markerURL = this.getMarkerIcon(type);
-                this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
-                this.getUsername(index, userId);
-                this.getApproveUsername(ApproveId, index);
+              let markerURL = this.getMarkerIcon(type);
+              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+              this.getUsername(index, userId);
+              this.getApproveUsername(ApproveId, index);
             }
           }
           $(this.divLoader).hide();
@@ -725,7 +726,7 @@ export class HouseMarkingComponent {
 
   getMarkerIcon(type: any) {
     let url = "../assets/img/final-marker-2.svg";
-    if (type == 1 || type == 19) {
+    if (type == 1 || type == 19 || type==25) {
       url = "../assets/img/marking-house.png";
     } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
       url = "../assets/img/marking-shop.png";
