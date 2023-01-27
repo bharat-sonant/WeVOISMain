@@ -174,12 +174,11 @@ export class WardScancardSummaryComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName ="-WardScanTypes.xlsx";
+      let fileName ="WardScanSummary.xlsx";
       if (type == "1") {
-        fileName = "-WardScanTypes.xlsx";
+        fileName = "WardScanSummary.xlsx";
       }
       this.commonService.exportExcel(htmlString, fileName);
-      $('#divLoaderMain').hide();
     }
   }
   setDate(filterVal: any, type: string) {
