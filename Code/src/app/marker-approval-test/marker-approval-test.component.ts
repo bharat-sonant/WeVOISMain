@@ -50,9 +50,9 @@ export class MarkerApprovalTestComponent {
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
   divConfirm = "#divConfirm";
-  divConfirmApprove="#divConfirmApprove";
-  approveMarkerId="#approveMarkerId";
-  approveAlreadyCard="#approveAlreadyCard";
+  divConfirmApprove = "#divConfirmApprove";
+  approveMarkerId = "#approveMarkerId";
+  approveAlreadyCard = "#approveAlreadyCard";
   isActionShow: any;
 
   markerData: markerDetail = {
@@ -67,8 +67,8 @@ export class MarkerApprovalTestComponent {
     alreadyCard: "",
     lastScanTime: "",
     isApprovedCount: "0",
-    wardno:"0",
-    lineno:"0"
+    wardno: "0",
+    lineno: "0"
   };
 
   ngOnInit() {
@@ -171,7 +171,7 @@ export class MarkerApprovalTestComponent {
         this.markerData.totalMarkers = data["marked"].toString();
         this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
         this.markerData.approvedLines = data["approved"].toString();
-       
+
       }
     });
   }
@@ -277,7 +277,7 @@ export class MarkerApprovalTestComponent {
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
-          let count=0;
+          let count = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
             if (data[index]["latLng"] != undefined) {
@@ -286,7 +286,7 @@ export class MarkerApprovalTestComponent {
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
-             
+
               if (data[index]["date"] != null) {
                 date = data[index]["date"].split(" ")[0];
               }
@@ -299,23 +299,23 @@ export class MarkerApprovalTestComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
-              let approveName=""
-              this.markerData.wardno=this.selectedZone;
-              this.markerData.lineno=this.lineNo;
+              let approveName = ""
+              this.markerData.wardno = this.selectedZone;
+              this.markerData.lineno = this.lineNo;
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
                   servingCount = 0;
                 }
               }
-              
+
               if (data[index]["isApprove"] != null) {
-                if(data[index]["isApprove"]=="1"){
+                if (data[index]["isApprove"] == "1") {
                   count++;
                 }
                 isApprove = data[index]["isApprove"];
               }
-              this.markerData.isApprovedCount=count.toString();
+              this.markerData.isApprovedCount = count.toString();
               if (data[index]["status"] != null) {
                 // status = data[index]["status"];
               }
@@ -338,7 +338,7 @@ export class MarkerApprovalTestComponent {
 
                 ApproveId = data[index]["approveById"];
               }
-              
+
 
               let city = this.commonService.getFireStoreCity();
               let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
@@ -352,13 +352,13 @@ export class MarkerApprovalTestComponent {
               let alreadyCard = "";
               if (alreadyInstalled == "हाँ") {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
-              }              
+              }
               let houseType = "";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId);
@@ -378,53 +378,46 @@ export class MarkerApprovalTestComponent {
     });
 
   }
-  getUsername( index: any, userId: any) {
+  getUsername(index: any, userId: any) {
     let path = "EntityMarkingData/MarkerAppAccess" + "/" + userId + "/" + "name";
-    console.log(path);
     let usernameInstance = this.db.object(path).valueChanges().subscribe((data) => {
       usernameInstance.unsubscribe();
-      console.log(data)
       let detail = this.markerList.find(item => item.index == index);
       if (detail != undefined) {
         detail.markingBy = data;
-        console.log(detail.markingBy)
       }
-
     })
   }
-  getApproveUsername(ApproveId: any,index:any) {
+  getApproveUsername(ApproveId: any, index: any) {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
       let detail = this.markerList.find(item => item.index == index);
       if (detail != undefined) {
         detail.approveName = userDetail.name;
-        
       }
-     
     }
-
   }
-  getOtherMarkerData(){
-    let zoneNo=$("#ddlZoneMarker").val();
-    let lineNo=$("#txtLine").val()
-    if(zoneNo =="0"){
-      this.commonService.setAlertMessage("error","Select zone number");
+  getOtherMarkerData() {
+    let zoneNo = $("#ddlZoneMarker").val();
+    let lineNo = $("#txtLine").val()
+    if (zoneNo == "0") {
+      this.commonService.setAlertMessage("error", "Select zone number");
       return;
     }
-    if(lineNo ==""){
-      this.commonService.setAlertMessage("error","Select line number");
+    if (lineNo == "") {
+      this.commonService.setAlertMessage("error", "Select line number");
       return;
     }
-    let newMarkerList = this.markerList.filter(item => item.lineNo!= this.lineNo && item.zoneNo==this.selectedZone);
-    this.markerList=newMarkerList
-    let path="EntityMarkingData/MarkedHouses/"+zoneNo+ "/" + lineNo;
+    this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
+
+    let path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
     let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
-          let count=0;
+          let count = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
             if (data[index]["latLng"] != undefined) {
@@ -433,7 +426,7 @@ export class MarkerApprovalTestComponent {
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
-             
+
               if (data[index]["date"] != null) {
                 date = data[index]["date"].split(" ")[0];
               }
@@ -446,23 +439,23 @@ export class MarkerApprovalTestComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
-              let approveName=""
-              this.markerData.wardno=this.selectedZone;
-              this.markerData.lineno=this.lineNo;
+              let approveName = ""
+              this.markerData.wardno = this.selectedZone;
+              this.markerData.lineno = this.lineNo;
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
                   servingCount = 0;
                 }
               }
-              
+
               if (data[index]["isApprove"] != null) {
-                if(data[index]["isApprove"]=="1"){
+                if (data[index]["isApprove"] == "1") {
                   count++;
                 }
                 isApprove = data[index]["isApprove"];
               }
-              this.markerData.isApprovedCount=count.toString();
+              this.markerData.isApprovedCount = count.toString();
               if (data[index]["status"] != null) {
                 // status = data[index]["status"];
               }
@@ -485,10 +478,9 @@ export class MarkerApprovalTestComponent {
 
                 ApproveId = data[index]["approveById"];
               }
-              
 
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -500,15 +492,14 @@ export class MarkerApprovalTestComponent {
               if (alreadyInstalled == "हाँ") {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
               }
+              let houseType = "";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
-                let houseType = houseTypeDetail.houseType;
-                this.markerList.push({lineNo:lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId,approveName:approveName,zone:zoneNo});
-                
-                this.getUsername( index, userId);
-                this.getApproveUsername(ApproveId,index);
-               
+                houseType = houseTypeDetail.houseType;
               }
+              this.markerList.push({ lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, zone: zoneNo });
+              this.getUsername(index, userId);
+              this.getApproveUsername(ApproveId, index);
             }
           }
           $(this.divLoader).hide();
@@ -523,8 +514,8 @@ export class MarkerApprovalTestComponent {
 
     });
 
-    
-    }
+
+  }
   setHouseType(index: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -595,7 +586,7 @@ export class MarkerApprovalTestComponent {
     $(this.deleteAlreadyCard).val(alreadyCard);
     $(this.divConfirm).show();
   }
-  
+
   confirmationMarkerApprove(markerNo: any, alreadyCard: any) {
     $(this.approveMarkerId).val(markerNo);
     $(this.divConfirmApprove).show();
@@ -863,10 +854,10 @@ export class MarkerApprovalTestComponent {
 
   approveMarkerStatus() {
     //let markerNo=this.approveMarkerId
-    let Entity="chkApprovedEntity"
-    let Markar="chkApprovedMarkar"
+    let Entity = "chkApprovedEntity"
+    let Markar = "chkApprovedMarkar"
     if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
-    
+
       this.commonService.setAlertMessage("error", "Choose Entity checkbox !!! ");
       return;
     }
@@ -885,7 +876,7 @@ export class MarkerApprovalTestComponent {
 
   getMarkerIcon(type: any) {
     let url = "../assets/img/marking-house.png";
-    if (type == 1 || type == 19 || type==25) {
+    if (type == 1 || type == 19 || type == 25) {
       url = "../assets/img/marking-house.png";
     } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
       url = "../assets/img/marking-shop.png";
@@ -1198,7 +1189,7 @@ export class MarkerApprovalTestComponent {
     this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     this.markerData.totalLineMarkers = "0";
     this.markerData.totalLines = "0";
-    this.markerData.isApprovedCount="0";
+    this.markerData.isApprovedCount = "0";
   }
 
   clearLineData() {
@@ -1207,7 +1198,7 @@ export class MarkerApprovalTestComponent {
     this.markerData.houseType = "";
     this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     this.markerData.totalLineMarkers = "0";
-    this.markerData.isApprovedCount="0";
+    this.markerData.isApprovedCount = "0";
   }
 }
 export class markerDetail {
@@ -1221,8 +1212,8 @@ export class markerDetail {
   alreadyCardLineCount: number;
   alreadyCard: string;
   lastScanTime: string;
-  isApprovedCount:string;
-  wardno:string;
-  lineno:string
+  isApprovedCount: string;
+  wardno: string;
+  lineno: string
 
 }

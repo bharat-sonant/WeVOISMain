@@ -247,10 +247,6 @@
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
             </div>
-
-
-
-
         </div>
     </div>
 
@@ -307,9 +303,6 @@
                         <label>Markar duplicate nahi hai</label>
                     </div>
                 </div>
-
-
-
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                         <button class="btn btn-success" (click)="approveMarkerStatus()">
@@ -355,18 +348,11 @@
                                     Date : {{dt.approveDate}}</span>
 
                             </span>
-
-
-
-
-
-
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"></span>
-                        <!--(click)="approveMarkerStatus(dt.index);"--><span (click)="confirmationMarkerApprove(dt.markerNo,dt.alreadyCard);">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.markerNo,dt.alreadyCard);">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
                         </span>
                         <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
