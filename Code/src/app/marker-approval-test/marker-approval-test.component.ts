@@ -863,16 +863,25 @@ export class MarkerApprovalTestComponent {
   }
 
   approveMarkerStatus() {
-    let markerNo=this.approveMarkerId
-    let Entity= $("#ChkEntity").val();
-    let Markar=$("#ChkMarkar").val();
-    let markerDatails = this.markerList.find((item) => item.index == markerNo);
+    //let markerNo=this.approveMarkerId
+    let Entity="chkApprovedEntity"
+    let Markar="chkApprovedMarkar"
+    if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
+    
+      this.commonService.setAlertMessage("error", "Choose Entity checkbox !!! ");
+      return;
+    }
+    if ((<HTMLInputElement>document.getElementById(Markar)).checked == false) {
+      this.commonService.setAlertMessage("error", "Choose Markar checkbox !!!");
+      return;
+    }
+    /*let markerDatails = this.markerList.find((item) => item.index == markerNo);
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
       this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
-    }
+    }*/
   }
 
   getMarkerIcon(type: any) {
