@@ -531,7 +531,6 @@ export class MarkerApprovalTestComponent {
   }
 
   setHouseType(index: any, zoneNo: any, lineNo: any) {
-    console.log(zoneNo);
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
     $(this.houseLineNo).val(lineNo);
