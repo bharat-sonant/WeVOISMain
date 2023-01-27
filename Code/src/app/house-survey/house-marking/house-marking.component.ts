@@ -263,7 +263,6 @@ export class HouseMarkingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
-    console.log(this.houseTypeList);
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
