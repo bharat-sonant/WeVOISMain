@@ -65,7 +65,7 @@ export class WardScancardSummaryComponent implements OnInit {
     if (circleWardList.length > 0) {      
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, helper: "" });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0,helperId:0, helper: "" });
         }
       }
       this.getWardDetail();
@@ -82,12 +82,20 @@ export class WardScancardSummaryComponent implements OnInit {
         data => {
           helperInstance.unsubscribe();
           let helper = "";
+          let helperId="0";
           let scanned = 0;
           let notScanned = 0;
           if (data != null) {
             helper = data.toString();
           }
-
+        let dbPath="WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helper";
+        let helperIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+          helperdata => {
+            helperIdInstance.unsubscribe();
+            if (helperdata != null) {
+              helperId = helperdata.toString();
+            }
+          })
           dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
           let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
             notScannedData => {
@@ -113,6 +121,7 @@ export class WardScancardSummaryComponent implements OnInit {
                   let detail = this.wardDataList.find(item => item.wardNo == wardNo);
                   if (detail != undefined) {
                     detail.helper = helper;
+                    detail.helperId=helperId;
                     detail.scanned = scanned;
                     detail.notScanned = notScanned;
                   }
@@ -124,7 +133,55 @@ export class WardScancardSummaryComponent implements OnInit {
       );
     }
   }
-
+  exportWardScanTypeList(type:any) {
+    if (this.wardDataList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "WardNo";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "HelperId";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Helper";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Scanned";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += " Not Scanned Card";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.wardDataList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardDataList[i]["wardNo"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardDataList[i]["helperId"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardDataList[i]["helper"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardDataList[i]["scanned"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardDataList[i]["notScanned"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName ="-WardScanTypes.xlsx";
+      if (type == "1") {
+        fileName = "-WardScanTypes.xlsx";
+      }
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+  }
   setDate(filterVal: any, type: string) {
     this.showLoder();
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
@@ -135,6 +192,7 @@ export class WardScancardSummaryComponent implements OnInit {
           this.wardDataList[i]["helper"] = "";
           this.wardDataList[i]["scanned"] = 0;
           this.wardDataList[i]["notScanned"] = 0;
+          this.wardDataList[i]["helperId"]="0";
         }
         this.getWardDetail();        
       }
@@ -144,3 +202,4 @@ export class WardScancardSummaryComponent implements OnInit {
     });    
   }
 }
+

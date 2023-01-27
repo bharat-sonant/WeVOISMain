@@ -16,9 +16,13 @@
                         <option value="Circle2" [hidden]="cityName!='sikar'">Circle2</option>
                         <option value="Circle3" [hidden]="cityName!='sikar'">Circle3</option>
                     </select>
-        </div>
+       
+        </div> 
         <div class="col-md-6" style="text-align:center; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
-
+        <i class="fa-solid fa-file-export"style="font-size: 20px;cursor: pointer;color: #1fda2f;margin-left:600px"
+                        (click)="exportWardScanTypeList(type)"></i>
+                <h6 style="font-size:9px;text-align:right">Export</h6>
+           
         </div>
     </div>
 </section>
@@ -48,7 +52,7 @@
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
-                                                    {{data.helper}}</td>
+                                            {{data.helper}}&nbsp;<span [hidden]="data.helperId==0" style="font-weight: bold;">({{data.helperId}})</span></td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
                                                     {{data.scanned}}</td>
                                                 <td class="text-right" style="border-right:1px solid #dee2e6">
