@@ -227,6 +227,9 @@ export class CommonService {
     else if (cityName == "ratangarh") {
       latLng.push({ lat: 28.074173, lng: 74.595064 });
     }
+    else if (cityName == "nokha") {
+      latLng.push({ lat: 27.55713, lng: 73.4700985 });
+    }
     return latLng;
   }
 
