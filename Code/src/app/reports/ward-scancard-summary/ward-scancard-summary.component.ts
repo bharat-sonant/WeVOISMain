@@ -133,7 +133,7 @@ export class WardScancardSummaryComponent implements OnInit {
       );
     }
   }
-  exportWardScanTypeList(type:any) {
+  exportWardScanTypeList() {
     if (this.wardDataList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -174,10 +174,7 @@ export class WardScancardSummaryComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName ="WardScanSummary.xlsx";
-      if (type == "1") {
-        fileName = "WardScanSummary.xlsx";
-      }
+      let fileName ="WardScanSummary.xlsx";      
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
