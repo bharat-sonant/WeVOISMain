@@ -342,6 +342,19 @@ export class FirebaseService {
       databaseName = "dtdratangarh";
       databaseURL = "https://dtdratangarh.firebaseio.com";
     }
+    else if (city == 'nokha') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdnokha.firebaseio.com",
+        projectId: "dtdnokha",
+        storageBucket: "dtdnokha.appspot.com",
+        messagingSenderId: "381118272786",
+        //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
+      };
+      databaseName = "dtdnokha";
+      databaseURL = "https://dtdnokha.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
