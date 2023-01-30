@@ -374,8 +374,8 @@ export class MarkerApprovalTestComponent {
               this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
-              this.getUsername(index, userId,this.selectedZone,lineNo);
-              this.getApproveUsername(ApproveId, index,this.selectedZone,lineNo);
+              this.getUsername(index, userId, this.selectedZone, lineNo);
+              this.getApproveUsername(ApproveId, index, this.selectedZone, lineNo);
             }
           }
           $(this.divLoader).hide();
@@ -391,21 +391,21 @@ export class MarkerApprovalTestComponent {
     });
 
   }
-  getUsername(index: any, userId: any,zoneNo:any,lineNo:any) {
+  getUsername(index: any, userId: any, zoneNo: any, lineNo: any) {
     let path = "EntityMarkingData/MarkerAppAccess" + "/" + userId + "/" + "name";
     let usernameInstance = this.db.object(path).valueChanges().subscribe((data) => {
       usernameInstance.unsubscribe();
-      let detail = this.markerList.find(item => item.index == index && item.zoneNo==zoneNo && item.lineNo==lineNo);
+      let detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
       if (detail != undefined) {
         detail.markingBy = data;
       }
     })
   }
-  getApproveUsername(ApproveId: any, index: any,zoneNo:any,lineNo:any) {
+  getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
-      let detail = this.markerList.find(item => item.index == index && item.zoneNo==zoneNo && item.lineNo==lineNo);
+      let detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
       if (detail != undefined) {
         detail.approveName = userDetail.name;
       }
@@ -423,8 +423,8 @@ export class MarkerApprovalTestComponent {
       this.commonService.setAlertMessage("error", "Select line number");
       return;
     }
-    if(this.markerData.wardno==zoneNo && this.markerData.lineno==lineNo){
-      this.commonService.setAlertMessage("error","sorry ! ward "+this.markerData.wardno+" and line "+this.markerData.lineno+" already selected");
+    if (this.markerData.wardno == zoneNo && this.markerData.lineno == lineNo) {
+      this.commonService.setAlertMessage("error", "sorry ! ward " + this.markerData.wardno + " and line " + this.markerData.lineno + " already selected");
       return;
     }
 
@@ -520,25 +520,25 @@ export class MarkerApprovalTestComponent {
                 houseType = houseTypeDetail.houseType;
               }
               this.markerList.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
-              this.getUsername(index, userId,zoneNo,lineNo);
-              this.getApproveUsername(ApproveId, index,zoneNo,lineNo);
+              this.getUsername(index, userId, zoneNo, lineNo);
+              this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
           }
-          if(count==0){
-            this.commonService.setAlertMessage("error","No marker found in ward "+zoneNo+" on line "+lineNo+" !!!");
+          if (count == 0) {
+            this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
           }
-          else{
-            this.commonService.setAlertMessage("success","Marker added for ward "+zoneNo+" and line "+lineNo+" !!!");
+          else {
+            this.commonService.setAlertMessage("success", "Marker added for ward " + zoneNo + " and line " + lineNo + " !!!");
           }
           $(this.divLoader).hide();
         }
         else {
-          this.commonService.setAlertMessage("error","No marker found in ward "+zoneNo+" on line "+lineNo+" !!!");
+          this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
           $(this.divLoader).hide();
         }
       }
       else {
-        this.commonService.setAlertMessage("error","No marker found in ward "+zoneNo+" on line "+lineNo+" !!!");
+        this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
         $(this.divLoader).hide();
       }
     });
@@ -685,7 +685,7 @@ export class MarkerApprovalTestComponent {
 
   removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any) {
     $(this.divLoader).show();
-    let markerDatails = this.markerList.find((item) => item.index == markerNo);
+    let markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo==zoneNo && item.lineNo==lineNo);
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
@@ -730,10 +730,14 @@ export class MarkerApprovalTestComponent {
               }
             }
           }
+
           let newMarkerList = [];
           if (this.markerList.length > 0) {
             for (let i = 0; i < this.markerList.length; i++) {
               if (this.markerList[i]["index"] == markerNo && this.markerList[i]["zoneNo"] == zoneNo && this.markerList[i]["lineNo"] == lineNo) {
+                if (this.markerList[i]["approveName"] != "") {
+                  this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) - 1).toFixed(0);
+                }
               }
               else {
                 newMarkerList.push({ zoneNo: this.markerList[i]["zoneNo"], lineNo: this.markerList[i]["lineNo"], index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["type"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], statusClass: this.markerList[i]["statusClass"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"], houseTypeId: this.markerList[i]["houseTypeId"], isApprove: this.markerList[i]["isApprove"], servingCount: this.markerList[i]["servingCount"], approveDate: this.markerList[i]["approveDate"], markingBy: this.markerList[i]["markingBy"], ApproveId: this.markerList[i]["ApproveId"], approveName: this.markerList[i]["approveName"], modifiedHouseTypeHistoryId: this.markerList[i]["modifiedHouseTypeHistoryId"] })
@@ -753,9 +757,10 @@ export class MarkerApprovalTestComponent {
                 this.markerData.alreadyCardCount = this.markerData.alreadyCardCount - 1;
                 this.markerData.alreadyCardLineCount = this.markerData.alreadyCardLineCount - 1;
                 this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/").update({ alreadyInstalled: total });
-                let wardDetail = this.markerList.find((item) => item.index == markerNo);
+                let wardDetail = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
                 if (wardDetail != undefined) {
                   wardDetail.alreadyInstalled = Number(wardDetail.alreadyInstalled) - 1;
+
                 }
               }
             );
@@ -945,13 +950,15 @@ export class MarkerApprovalTestComponent {
     let markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
-      markerDatails.approveDate=this.commonService.getTodayDateTime();
-      this.markerData.isApprovedCount=(Number(this.markerData.isApprovedCount)+1).toFixed(0);
+      markerDatails.approveDate = this.commonService.getTodayDateTime();
+      if (this.markerData.wardno == zoneNo && this.markerData.lineno == lineNo) {
+        this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) + 1).toFixed(0);
+      }
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
       this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;
-      this.getApproveUsername(localStorage.getItem("userID"),markerNo,zoneNo,lineNo);
+      this.getApproveUsername(localStorage.getItem("userID"), markerNo, zoneNo, lineNo);
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
       $(this.divConfirmApprove).hide();
     }
