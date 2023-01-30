@@ -43,6 +43,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardApprovedLines: 0,
     lastUpdate: "---",
     wardNo: "0",
+    lineNo:"0",
     lastScan: ""
 
   };
@@ -585,7 +586,9 @@ export class WardMarkingSummaryComponent implements OnInit {
               let cardNumber = "";
               let servingCount = 0;
               let ApproveId = 0;
+              let className=""
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
+                className = "commercial-list";
                 servingCount = parseInt(data[index]["totalHouses"]);
                 if (isNaN(servingCount)) {
                   servingCount = 0;
@@ -641,7 +644,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                   cardNumber: cardNumber,
                   servingCount: servingCount,
                   approveDate: approveDate,
-                  ApproveId: ApproveId
+                  ApproveId: ApproveId,
+                  class:className
 
                 });
               }
@@ -781,6 +785,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   showLineDetail(content: any, wardNo: any, lineNo: any, index: any, userId: any) {
     this.markerDetailList = [];
+    this.markerData.lineNo=lineNo;
     this.getLineDetail(wardNo, lineNo);
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -789,7 +794,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     let width = windowWidth - 300;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 140 + "px";
+    let divHeight = height - 130 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
@@ -1027,5 +1032,6 @@ export class markerDatail {
   lastUpdate: string;
   wardNo: string
   lastScan: string;
+  lineNo:string
 
 }

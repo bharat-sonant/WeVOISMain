@@ -251,7 +251,7 @@
    <div class="header-12">
     
     <div class="pop-up-header">
-       <h5 style="font-size: 18px;">Ward {{this.markerDetailList[0]["wardNo"]}} [Line {{this.markerDetailList[0]["lineNo"]}}]</h5>
+       <h5 style="font-size: 18px;">Ward {{this.markerData.wardNo}} [Line {{this.markerData.lineNo}}]</h5>
        <div class="img-close-outer">
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
        
@@ -262,53 +262,11 @@
 </div>
    
     <div class="modal-body content-scroll-outer">
-        <div id="divHouseType"
-            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-            <input type="hidden" id="houseWardNo" value="0">
-            <input type="hidden" id="houseLineNo" value="0">
-            <input type="hidden" id="houseIndex" value="0">
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <div class="col-md-12">
-                    <select id="ddlHouseType" class="caret-select-vehicle">
-                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
-                            {{dt.houseType}}
-                        </option>
-                    </select>
-
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-success " (click)="updateHouseType();">
-                        Save</button>
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;">
-                        Cancel</button>
-                </div>
-            </div>
-        </div>
-        <div id="divConfirm"
-            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <input type="hidden" id="deleteMarkerId" value="0">
-                <input type="hidden" id="deleteAlreadyCard" value="">
-                <input type="hidden" id="deleteWardNo" value="">
-                <input type="hidden" id="deleteLineNo" value="0">
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-success " (click)="deleteMarker();">
-                        Confirm</button>
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
-                        Cancel</button>
-                </div>
-            </div>
-        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row">
-                <div class="col-md-2" *ngFor="let dt of markerDetailList">
-                    <div class="dt-img-outer">
+                <div class="col-md-2 {{dt.class}}" *ngFor="let dt of markerDetailList">
+                   
+                    <div class="dt-img-outer" >
                         <a href="{{dt.imageUrl}}" target="_blank">
                             <img class="dt-img" [src]="dt.imageUrl" />
                         </a>
@@ -318,22 +276,17 @@
                     <div class="main-tag">
                         <div class="f-left">
                             <div style="width:100%!important ;">
-                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
-                                        style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i
-                                        class="fa-solid fa-pen-to-square" style="cursor: pointer;"
-                                        (click)="setHouseType(dt.wardNo,dt.lineNo,dt.index);"
-                                        [hidden]="isActionShow==false"></i></h3>
-                            </div><br />
-                            <span [hidden]="dt.status==''">
-                                <h3> Status : {{dt.status}}&nbsp;<b>{{dt.cardNumber}}</b> </h3>
-                            </span>
-                        </div>
+                               <h3 class="f-left-heading">{{dt.type}}<span [hidden]="dt.servingCount==0"
+                                        style="font-weight: bold;" > ({{dt.servingCount}})</span></h3>
+                            </div>
+                            
                     </div>
 
                 </div>
             </div>
         </div>
     </div>
+</div>
 </ng-template>
 <!--Line Markers End-->
 
