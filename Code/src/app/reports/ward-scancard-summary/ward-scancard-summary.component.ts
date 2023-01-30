@@ -158,7 +158,7 @@ export class WardScancardSummaryComponent implements OnInit {
       htmlString += "WardNo";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Helper Code";
+      htmlString += "Employee Code";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Helper";
