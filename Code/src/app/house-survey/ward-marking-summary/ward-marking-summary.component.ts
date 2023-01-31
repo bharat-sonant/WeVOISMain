@@ -586,7 +586,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let cardNumber = "";
               let servingCount = 0;
               let ApproveId = 0;
-              let className=""
+              let className="house-list";
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 className = "commercial-list";
                 servingCount = parseInt(data[index]["totalHouses"]);
