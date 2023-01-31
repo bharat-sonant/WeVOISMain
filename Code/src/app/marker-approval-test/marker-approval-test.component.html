@@ -329,7 +329,7 @@
             </select>&nbsp;&nbsp;
             <input type="text" id="txtLine" class="caret-select" />&nbsp;&nbsp;
             <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
-           <span (click)="removeAddMarker()" style="cursor:pointer">Remove Added Lines</span>
+    <span id="btnRemoveIncludedLines" (click)="removeAddLines()" style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
         </div>
         <div id="divStatus" class="content-scroll">
 
@@ -348,7 +348,10 @@
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
-
+                            <span style="font-weight:bold;font-size:11px"  [hidden]="this.isShowWardAndLine==false">
+                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                
+                            </span><br/>
                             <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved

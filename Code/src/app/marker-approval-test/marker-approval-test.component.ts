@@ -39,7 +39,7 @@ export class MarkerApprovalTestComponent {
   Approvename: any
   userList: any[] = [];
   public isAlreadyShow = false;
-
+  isShowWardAndLine:any;
   houseTypeList: any[] = [];
   divHouseType = "#divHouseType";
   houseWardNo = "#houseWardNo";
@@ -58,7 +58,7 @@ export class MarkerApprovalTestComponent {
   approveLineNo = "#approveLineNo";
   deleteZoneNo = "#deleteZoneNo";
   deletelineNo = "#deleteLineNo";
-
+  btnRemoveIncludedLines="#btnRemoveIncludedLines";
   markerData: markerDetail = {
     totalMarkers: "0",
     totalLines: "0",
@@ -80,6 +80,7 @@ export class MarkerApprovalTestComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
+    this.isShowWardAndLine=false;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
     }
@@ -411,7 +412,7 @@ export class MarkerApprovalTestComponent {
   getOtherMarkerData() {
 
     let zoneNo = $("#ddlZoneMarker").val();
-    let lineNo = $("#txtLine").val()
+    let lineNo = $("#txtLine").val();
     if (zoneNo == "0") {
       this.commonService.setAlertMessage("error", "Select zone number");
       return;
@@ -525,6 +526,8 @@ export class MarkerApprovalTestComponent {
             this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
           }
           else {
+            this.isShowWardAndLine=true;
+            $(this.btnRemoveIncludedLines).show();
             this.commonService.setAlertMessage("success", "Marker added for ward " + zoneNo + " and line " + lineNo + " !!!");
           }
           $(this.divLoader).hide();
@@ -681,10 +684,12 @@ export class MarkerApprovalTestComponent {
     this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo);
     $(this.divConfirm).hide();
   }
-  removeAddMarker(){
+  removeAddLines(){
     this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
     $("#ddlZoneMarker").val("0");
     $("#txtLine").val("");
+    this.isShowWardAndLine=false;
+    $(this.btnRemoveIncludedLines).hide();
     setTimeout(()=>{
       this.commonService.setAlertMessage("success", "Remove successfully !!!");
     },100)
