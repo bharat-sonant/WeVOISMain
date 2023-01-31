@@ -625,6 +625,10 @@ export class MarkerApprovalTestComponent {
   }
 
   showLineDetail(content: any) {
+    if(this.selectedZone=="0"){
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
     if (this.markerList.length > 0) {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
@@ -640,7 +644,7 @@ export class MarkerApprovalTestComponent {
       $("#divStatus").css("height", divHeight);
     }
     else{
-      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      this.commonService.setAlertMessage("error", "No Marker Found !!!");
     }
   }
 
