@@ -76,10 +76,7 @@ export class MarkerApprovalTestComponent {
   };
 
   ngOnInit() {
-
-
-
-
+    this.markerList=[];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
@@ -543,7 +540,7 @@ export class MarkerApprovalTestComponent {
       }
     });
   }
-
+ 
   setHouseType(index: any, zoneNo: any, lineNo: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -639,6 +636,9 @@ export class MarkerApprovalTestComponent {
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
     }
+    else{
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+    }
   }
 
   closeModel() {
@@ -681,9 +681,15 @@ export class MarkerApprovalTestComponent {
     this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo);
     $(this.divConfirm).hide();
   }
-
-
-  removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any) {
+  removeAddMarker(){
+    this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
+    $("#ddlZoneMarker").val("0");
+    $("#txtLine").val("");
+    setTimeout(()=>{
+      this.commonService.setAlertMessage("success", "Remove successfully !!!");
+    },100)
+    }
+removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any) {
     $(this.divLoader).show();
     let markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo==zoneNo && item.lineNo==lineNo);
     if (markerDatails != undefined) {
