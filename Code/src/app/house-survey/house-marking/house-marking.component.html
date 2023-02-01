@@ -4,8 +4,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-                [(ngModel)]="selectedZone">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                     ngSelected="zone.zoneNo == selectedZone?'selected':''">
                     {{zone.zoneName}}
@@ -62,30 +61,39 @@
                 <div class="col-md-12 arrow-btn-div">
                     <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
                         << </button>
-                            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);"
-                                autocomplete="off" value="1" />
-                            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                    <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
+                    <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
                                 >>
                             </button>
                 </div>
-                <div class="col-md-12 text-left ml-10 markera-all">
+                <!--  <div class="col-md-12 text-left ml-10 markera-all">
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
                         Markers</span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);">
                         <i class="fas fa-eye"></i> View Detail</span>
-                </div>
+                </div>-->
 
                 <div class="col-md-6 markers markers-heading-main">
                     <h5> {{markerData.totalLineMarkers}} </h5>
                     <p>Markers</p>
                 </div>
+                <div class="col-md-6 markers markers-heading-main">
+                    <h5> {{markerData.isApprovedCount}} </h5>
+                    <p style="margin-left:-19px;">Approved</p>
+                </div>
                 <div class="col-md-6 markers Already-heading-main" [hidden]="isAlreadyShow==false">
                     <h5> {{markerData.alreadyCardLineCount}} </h5>
                     <p>Already Card</p>
                 </div>
-
-
+                <div style="border-bottom: 1px solid lightgrey"></div>
+                <div class="col-md-12 text-left ml-10 markera-all" style="padding-top: 10px;">
+                    <span class="markera-allspan">
+                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
+                        All
+                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="margin-left: 35px;">
+                        <i class="fas fa-eye">&nbsp;</i>Approve Marker</span>
+                </div>
                 <div class="col-md-6 Confirm-main">
                     <div class="row">
                         <div class="col-md-12 rdoConfirm">
@@ -100,6 +108,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-12 pl-5 pr-46">
                     <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
@@ -228,15 +237,24 @@
 
 <!--Vehicle Status Start-->
 <ng-template #contentLineMarkers>
-    <div class="grey-img-div">
+    <div class="header-12">
 
-        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+        <div class="pop-up-header">
+            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]
+            </h5>
 
+            <div class="img-close-outer">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+            </div>
+        </div>
     </div>
+
     <div class="modal-body divStatus">
-        <div id="divHouseType"
-            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseIndex" value="0">
+            <input type="hidden" id="houseWardNo" value="0">
+            <input type="hidden" id="houseLineNo" value="0">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <div class="col-md-12">
@@ -252,18 +270,18 @@
                         Save</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();"
-                        style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
                         Cancel</button>
                 </div>
             </div>
         </div>
-        <div id="divConfirm"
-            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <input type="hidden" id="deleteMarkerId" value="0">
                 <input type="hidden" id="deleteAlreadyCard" value="">
+                <input type="hidden" id="deleteZoneNo" value="">
+                <input type="hidden" id="deleteLineNo" value="">
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                     <button class="btn btn-success " (click)="deleteMarker();">
                         Confirm</button>
@@ -274,7 +292,47 @@
                 </div>
             </div>
         </div>
+        <div id="divConfirmApprove" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <input type="hidden" id="approveMarkerId" value="0">
+                <input type="hidden" id="approveZoneNo" value="0">
+                <input type="hidden" id="approveLineNo" value="0">
+                <input type="hidden" id="approveAlreadyCard" value="">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="checkbox" id="chkApprovedEntity">&nbsp;&nbsp;I have checked entity type carefully
+
+                    </div>
+                    <div class="col-md-12">
+                        <input type="checkbox" id="chkApprovedMarkar">&nbsp;&nbsp;I am sure, There is no other marker image same as this marker <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(No duplicate marker)
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                        <button class="btn btn-success" (click)="approveMarkerStatus()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                        <button class="btn btn-danger " (click)="cancelMarkerApproveDelete()" style="text-transform: uppercase;">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="border-bottom: solid 1px lightgray;">
+            <select class="caret-select" id="ddlZoneMarker">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                    {{zone.zoneName}}
+                </option>
+            </select>&nbsp;&nbsp;
+            <input type="text" id="txtLine" class="caret-select" />&nbsp;&nbsp;
+            <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
+            <span id="btnRemoveIncludedLines" (click)="removeAddLines()" style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
+        </div>
         <div id="divStatus" class="content-scroll">
+
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerList">
                     <div class="markerList-iner">
@@ -284,42 +342,34 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
-                                    style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i
-                                    class="fa-solid fa-pen-to-square" style="cursor: pointer;"
-                                    (click)="setHouseType(dt.index);" [hidden]="isActionShow==false"></i></h3><br />
-                            <span [hidden]="dt.status==''">
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo);"
+                                    [hidden]="isActionShow==false"></i></h3><br />
+                            <span [hidden]="dt.status==''" style="width:100%">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
-                           
-                                <span style="font-size:11px">
-                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved Date : {{dt.approveDate}}</span> 
+                            <div style="font-weight:bold;font-size:11px; width: 100%;" [hidden]="this.isShowWardAndLine==false">
+                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
 
-                                </span>
+                            </div>
+                            <span style="font-size:11px; width: 100%;">
+                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                    Date : {{dt.approveDate}}</span>
 
-
-
-
-
-                            
+                            </span>
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
-                            (click)="approveMarkerStatus(dt.index);">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; "></i>pprove
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo);">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
                         </span>
-                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
-                            (click)="saveMarkerStatus(dt.index);">
+                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo);">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
-                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
-                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled);">
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo);">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
                     </div>
