@@ -127,6 +127,7 @@ import { CardScanningReportComponent } from '../../reports/card-scanning-report/
 import { SurveyVerificationComponent } from '../../house-survey/survey-verification/survey-verification.component';
 import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-houses.component';
 import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-approval-test.component';
+import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -257,7 +258,8 @@ import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-app
     CardScanningReportComponent,
     SurveyVerificationComponent,
     SurveyHousesComponent,
-    MarkerApprovalTestComponent
+    MarkerApprovalTestComponent,
+    SupervisorReportComponent
   ]
 })
 

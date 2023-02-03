@@ -18,6 +18,7 @@ import { SpeedTestModule } from 'ng-speed-test';
 
 
 
+
 //import * as express from 'express';
 //import * as cors from '@Types/cors';
 
@@ -150,7 +151,8 @@ if (city != null) {
   ],
   declarations: [
     AppComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+   
  
   
    
