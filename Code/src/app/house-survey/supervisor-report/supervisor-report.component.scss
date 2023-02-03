@@ -2352,3 +2352,30 @@ input {
     // margin-right: 17px;
     // margin-top: 5px;
 }
+
+.header-12 {
+    background: #f1f1f1 !important;
+    border-bottom: 2px solid #000;
+}
+
+.pop-up-header {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #000;
+    // background-color: red;
+}
+
+.pop-up-header h5 {
+    // margin-bottom: 0px;
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.img-close-outer {
+    width: 100%;
+    text-align: right;
+    float: left;
+    // margin-top: 28px;
+    margin: -28px;
+}
