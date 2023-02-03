@@ -14,14 +14,18 @@ export class SupervisorReportComponent implements OnInit {
   supervisorJsonList: any[] = [];
   supervisorList: any[] = [];
   superviosorDetailList: any[] = [];
+  currentDateList:any[]=[];
   constructor(public fs: FirebaseService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getSurviorSummary();
+    this.saveCurrentDateTime();
+
 
   }
   updateSupervisorReport() {
+    this.supervisorJsonList=[];
     let dbPath = "EntityMarkingData/MarkedHouses/";
     let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       supervisorInstance.unsubscribe();
@@ -78,11 +82,15 @@ export class SupervisorReportComponent implements OnInit {
       let filePath = "/MarkingSurviorSummary/";
       this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
       this.getSurviorSummary();
+      this.saveCurrentDateTime();
 
+     
 
     });
   }
+ 
   getSurviorSummary() {
+    this.supervisorList=[];
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FmarkingSurviorDetail.json?alt=media"
     let surviorInstance = this.httpService.get(path).subscribe((surviordata) => {
       surviorInstance.unsubscribe();
@@ -97,13 +105,23 @@ export class SupervisorReportComponent implements OnInit {
 
     })
   }
+saveCurrentDateTime(){
+    this.currentDateList=[];
+    let currentDate = localStorage.getItem("loginDate");
+    let currentTime=this.commonService.getCurrentTime();
+    this.currentDateList.push({currentDate:currentDate,currentTime:currentTime});
+    let fileName = "upDate.json";
+    let filePath = "/MarkingSurviorSummary/";
+    this.commonService.saveJsonFile(this.currentDateList, fileName, filePath);
+    
+  }
   showSurviorDetail(content: any, supervisorId: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
     let height = 870;
     let width = 500;
-    height = (windowHeight * 90) / 100;
+    height = (windowHeight * 80) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 140 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);

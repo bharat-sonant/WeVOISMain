@@ -6,9 +6,13 @@
         <div class="col-md-10 col-lg-12 col-xl-12 main-headers Employees-heading">
             Supervisor-report
         </div>
+       
         <div style="text-align:right;margin-top: -33px; z-index: 999;">
-            <button class="refresh" (click)="updateSupervisorReport()" type="button"><i class="fas fa-redo-alt"></i></button><br>
+            <button class="refresh" (click)="updateSupervisorReport()" type="button"><i class="fas fa-redo-alt"></i></button>
+            <div *ngFor="let data of currentDateList" style="font-weight:3px">
+                {{data.currentDate}}/{{data.currentTime}}</div>
         </div>
+        
     </div>
 </section>
 <div class="main-content">
