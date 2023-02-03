@@ -548,18 +548,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   //#endregion
 
   getLineDetail(wardNo: any, lineNo: any) {
@@ -654,59 +642,6 @@ export class WardMarkingSummaryComponent implements OnInit {
         }
       }
     });
-  }
-  setHouseType(wardNo: any, lineNo: any, index: any) {
-    $(this.divHouseType).show();
-    $(this.houseWardNo).val(wardNo);
-    $(this.houseLineNo).val(lineNo);
-    $(this.houseIndex).val(index);
-    let detail = this.markerDetailList.find(item => item.index == index);
-    if (detail != undefined) {
-      let houseTypeId = detail.houseTypeId;
-      $(this.ddlHouseType).val(houseTypeId);
-    }
-  }
-
-  updateHouseType() {
-    let wardNo = $(this.houseWardNo).val();
-    let lineNo = $(this.houseLineNo).val();
-    let index = $(this.houseIndex).val();
-    let houseTypeId = $(this.ddlHouseType).val();
-    let detail = this.markerDetailList.find(item => item.index == index);
-    if (detail != undefined) {
-      detail.houseTypeId = houseTypeId;
-      let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
-      if (houseTypeDetail != undefined) {
-        detail.type = houseTypeDetail.houseType;
-        if (detail.cardNumber != "") {
-          let cardType = "";
-          if (houseTypeDetail.entityType == "residential") {
-            cardType = "आवासीय"
-          }
-          else {
-            cardType = "व्यावसायिक";
-          }
-          let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + detail.cardNumber;
-          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType });
-        }
-      }
-      let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + index;
-      this.db.object(dbPath).update({ houseType: houseTypeId });
-    }
-
-    $(this.houseWardNo).val("0");
-    $(this.houseLineNo).val("0");
-    $(this.houseIndex).val("0");
-    $(this.divHouseType).hide();
-    this.commonService.setAlertMessage("success", "Saved successfully !!!");
-
-  }
-
-  cancelHouseType() {
-    $(this.houseWardNo).val("0");
-    $(this.houseLineNo).val("0");
-    $(this.houseIndex).val("0");
-    $(this.divHouseType).hide();
   }
 
   openExportMarkerData(content: any) {
@@ -1018,8 +953,8 @@ export class WardMarkingSummaryComponent implements OnInit {
         });
     }
   }
-
 }
+
 export class markerDatail {
   totalLines: string;
   totalMarkers: number;
