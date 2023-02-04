@@ -64,26 +64,13 @@ import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mappi
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
-import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
-import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
-import { VtsMonthlyReportComponent } from '../../finance-report/vts-monthly-report/vts-monthly-report.component';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
-import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
-import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
-import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
-import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
-import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
-import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
-import { FieldExecutiveTrackingComponent } from '../../field-executive-tracking/field-executive-tracking.component';
-import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
-import { FieldExecutiveAttendanceComponent } from '../../reports/field-executive-attendance/field-executive-attendance.component';
 import { VehicleFuelReportComponent } from '../../reports/vehicle-fuel-report/vehicle-fuel-report.component';
 import { EmployeePenaltyComponent } from '../../finance-report/employee-penalty/employee-penalty.component';
 import { PenaltyPortalServiceComponent } from '../../PortalServices/penalty-portal-service/penalty-portal-service.component';
 import { AccountDetailComponent } from '../../salary-management/account-detail/account-detail.component';
 import { EmployeeSalaryComponent } from '../../salary-management/employee-salary/employee-salary.component';
 import { SalaryHoldingManagementComponent } from '../../salary-management/salary-holding-management/salary-holding-management.component';
-import { FeDailyWorkReportComponent } from '../../reports/fe-daily-work-report/fe-daily-work-report.component';
 import { KmlToJsonComponent } from '../../PortalServices/kml-to-json/kml-to-json.component';
 import { SalaryTransactionComponent } from '../../salary-management/salary-transaction/salary-transaction.component';
 import { DustbinServiceComponent } from '../../Dustbin/dustbin-service/dustbin-service.component';
@@ -196,26 +183,13 @@ import { SupervisorReportComponent } from '../../house-survey/supervisor-report/
     VehicleAssignedComponent,
     LogBookComponent,
     WardScancardSummaryComponent,
-    GarbageCaptureAnalysisComponent,
-    VtsReportComponent,
-    VtsMonthlyReportComponent,
     ChangePasswordComponent,
-    VtsRouteComponent,
-    CreateRoutesComponent,
-    UploadRouteExcelComponent,
-    BvgRoutesComponent,
-    VtsAnalysisComponent,
-    PenaltySummaryComponent,
-    FieldExecutiveTrackingComponent,
-    ShowRouteComponent,
-    FieldExecutiveAttendanceComponent,
     VehicleFuelReportComponent,
     EmployeePenaltyComponent,
     PenaltyPortalServiceComponent,
     AccountDetailComponent,
     EmployeeSalaryComponent,
     SalaryHoldingManagementComponent,
-    FeDailyWorkReportComponent,
     KmlToJsonComponent,
     SalaryTransactionComponent,
     DustbinServiceComponent,
