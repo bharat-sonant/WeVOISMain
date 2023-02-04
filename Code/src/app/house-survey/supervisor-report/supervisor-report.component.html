@@ -1,27 +1,34 @@
-<div id="divLoader" class="loaderClass">
+<div id="divLoaderCounts" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br /><span
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
+<div id="divLoaderMain" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
+
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-10 col-lg-12 col-xl-12 main-headers Employees-heading">
-            Supervisor report
+        <div class="col-md-3 Ward-Marking-heading">
+            Supervisor Report
         </div>
-        <div style="text-align:right;margin-top: -33px; z-index: 999;">
-            <button class="refresh" (click)="updateSupervisorReport()" type="button"><i class="fas fa-redo-alt"></i></button><br>
+        <div class="col-md-9 text-right total-house fix-home-outer">
+            <div class="fix-home">
+                <div class="float-first fix-home-iner" style="padding-top: 0px;" [hidden]="isActionShow==false">
+                    <button class="refresh" (click)="updateSupervisorReport();"><i class="fas fa-redo-alt"></i></button><br>
+                    <h6>Last updated on {{lastUpdatedTime}}</h6>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-7 card-outer">
-            <div id="divLoader" class="loaderClass">
-                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-            </div>
-            <div class="card custom-header-outer">
+        <div class="col-md-6 card-outer">
 
-                <div class="card-body">
+            <div class="card card-body-outer">
+                <div class="card-body card-body2">
                     <form>
-
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div id="divList" class="table-wrapper table-one">
@@ -34,7 +41,7 @@
 
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" style="cursor: pointer;" *ngFor="let data of supervisorList; let i=index" (click)="showSurviorDetail(content,data.supervisorId)">
+                                            <tr id="tr{{i}}" style="cursor: pointer;" *ngFor="let data of supervisorList; let i=index" (click)="showSurviorDetail(data.supervisorId,i)">
                                                 <td class="text-left br-1">
                                                     {{data.supervisorName}}
                                                 </td>
@@ -51,22 +58,41 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 card-main">
-            <div class="card card-body-outer">
-                <div id="content" #content class="card-body card-body2">
+        <div class="col-md-6 loaderClass-outer">
+            <div class="card custom-header-outer">
+                <div class="card-header custom-header">
                     <div class="row">
-
+                        <div class="col-md-12 text-keft">
+                            <h5>{{supervisorName}}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body card-body3">
+                    <div class="row">
                         <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll table-outer table-one">
+                                            <table class="table table-outer-iner">
+                                                <thead>
+                                                    <th class="ward-table-heading" style="width:50%">Approve Date</th>
+                                                    <th class="ward-table-heading" style="width:50%">Approve Markers</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="table-row" id="tr{{i}}" *ngFor="let data of superviosorDetailList; let i=index">
+                                                        <td class="table-data" style="width:50%">
+                                                            {{data.date}}</td>
+                                                        <td class="table-data" style="width:50%">
+                                                            {{data.counts}}</td>
 
-                                    </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
+
                                 </div>
                             </form>
                         </div>
@@ -76,41 +102,3 @@
         </div>
     </div>
 </div>
-<ng-template #content>
-    <div class="header-12">
-
-        <div class="pop-up-header">
-            <h5 style="font-size: 18px;">Supervisor Date Wise Detail</h5>
-            <div class="img-close-outer">
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-            </div>
-        </div>
-
-        <!-- <hr style="margin-top: -15px;"> -->
-    </div>
-    <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
-
-        <div id="divHouseStatus" class="content-scroll">
-            <div class="row">
-                <div class="table-wrapper table-one">
-                    <table class="table table-one-iner">
-                        <thead>
-                            <th class="ward-table-heading" style="width:50%">Date</th>
-                            <th class="ward-table-heading" style="width:50%">Markers</th>
-                        </thead>
-                        <tbody>
-                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of superviosorDetailList; let i=index">
-                                <td class="table-data" style="width:50%">
-                                    {{data.date}}</td>
-                                <td class="table-data" style="width:50%">
-                                    {{data.counts}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</ng-template>
