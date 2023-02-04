@@ -14,18 +14,13 @@ export class SupervisorReportComponent implements OnInit {
   supervisorJsonList: any[] = [];
   supervisorList: any[] = [];
   superviosorDetailList: any[] = [];
-  currentDateList:any[]=[];
   constructor(public fs: FirebaseService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getSurviorSummary();
-    this.saveCurrentDateTime();
-
-
   }
   updateSupervisorReport() {
-    this.supervisorJsonList=[];
     let dbPath = "EntityMarkingData/MarkedHouses/";
     let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       supervisorInstance.unsubscribe();
@@ -43,7 +38,6 @@ export class SupervisorReportComponent implements OnInit {
               for (let k = 0; k <= keyArray2.length; k++) {
                 let marker = keyArray2[k];
                 let markerData = lineData[marker];
-                let detailList = [];
                 if (markerData != null) {
                   if (markerData["approveById"] != null) {
                     let supervisorId = markerData["approveById"];
@@ -56,41 +50,29 @@ export class SupervisorReportComponent implements OnInit {
                     let counts = 1;
                     let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId)
                     if (detail == undefined) {
+                      let detailList = [];
                       detailList.push({ image: image, houseType: houseType, ward: ward, line: line, approveDate: approveDate })
                       this.supervisorJsonList.push({ supervisorId: supervisorId, supervisorName: supervisorName, counts: counts, detailList: detailList })
-
                     }
                     else {
                       detail.counts += 1;
-                      detailList = detail.detailList;
-                      detailList.push({ image: image, houseType: houseType, ward: ward, line: line, approveDate: approveDate });
-                      detail.detailList = detailList;
+                      detail.detailList.push({ image: image, houseType: houseType, ward: ward, line: line, approveDate: approveDate });
                     }
                   }
                 }
-
               }
             }
           }
-
         }
-
-
-
       }
       let fileName = "markingSurviorDetail.json";
       let filePath = "/MarkingSurviorSummary/";
       this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
       this.getSurviorSummary();
-      this.saveCurrentDateTime();
-
-     
-
     });
   }
- 
+
   getSurviorSummary() {
-    this.supervisorList=[];
     const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FmarkingSurviorDetail.json?alt=media"
     let surviorInstance = this.httpService.get(path).subscribe((surviordata) => {
       surviorInstance.unsubscribe();
@@ -100,28 +82,20 @@ export class SupervisorReportComponent implements OnInit {
         let supervisorName = surviordata[key]["supervisorName"];
         let approvedMarkers = surviordata[key]["counts"];
         let detailList = surviordata[key]["detailList"];
-        this.supervisorList.push({ supervisorName: supervisorName, counts: approvedMarkers, key: key, detailList: detailList })
+        let supervisorId=surviordata[key]["detailList"];
+        this.supervisorList.push({ supervisorId:supervisorId,supervisorName: supervisorName, counts: approvedMarkers, key: key, detailList: detailList })
       }
-
     })
   }
-saveCurrentDateTime(){
-    this.currentDateList=[];
-    let currentDate = localStorage.getItem("loginDate");
-    let currentTime=this.commonService.getCurrentTime();
-    this.currentDateList.push({currentDate:currentDate,currentTime:currentTime});
-    let fileName = "upDate.json";
-    let filePath = "/MarkingSurviorSummary/";
-    this.commonService.saveJsonFile(this.currentDateList, fileName, filePath);
-    
-  }
+
   showSurviorDetail(content: any, supervisorId: any) {
+    this.superviosorDetailList=[];
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
     let height = 870;
     let width = 500;
-    height = (windowHeight * 80) / 100;
+    height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 140 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -131,7 +105,7 @@ saveCurrentDateTime(){
     let detail = this.supervisorList.find(item => item.supervisorId == supervisorId);
     if (detail != undefined) {
       let list = detail.detailList;
-      for (let i = 0; i <= list.length; i++) {
+      for (let i = 0; i < list.length; i++) {
         if (list[i]["approveDate"] != null) {
           let date = list[i]["approveDate"];
           let supervisordetail = this.superviosorDetailList.find(item => item.date == date);
@@ -145,8 +119,6 @@ saveCurrentDateTime(){
       }
     }
   }
-
-
 
   closeModel() {
     this.modalService.dismissAll();

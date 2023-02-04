@@ -4,15 +4,11 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-10 col-lg-12 col-xl-12 main-headers Employees-heading">
-            Supervisor-report
+            Supervisor report
         </div>
-       
         <div style="text-align:right;margin-top: -33px; z-index: 999;">
-            <button class="refresh" (click)="updateSupervisorReport()" type="button"><i class="fas fa-redo-alt"></i></button>
-            <div *ngFor="let data of currentDateList" style="font-weight:3px">
-                {{data.currentDate}}/{{data.currentTime}}</div>
+            <button class="refresh" (click)="updateSupervisorReport()" type="button"><i class="fas fa-redo-alt"></i></button><br>
         </div>
-        
     </div>
 </section>
 <div class="main-content">
@@ -96,20 +92,12 @@
     <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
 
         <div id="divHouseStatus" class="content-scroll">
-
-
-
-
             <div class="row">
-
-
                 <div class="table-wrapper table-one">
                     <table class="table table-one-iner">
                         <thead>
-                            <th class="ward-table-heading" style="width:50%">Approve Date</th>
-                            <th class="ward-table-heading" style="width:50%">Approve Markers</th>
-
-
+                            <th class="ward-table-heading" style="width:50%">Date</th>
+                            <th class="ward-table-heading" style="width:50%">Markers</th>
                         </thead>
                         <tbody>
                             <tr class="table-row" id="tr{{i}}" *ngFor="let data of superviosorDetailList; let i=index">
@@ -117,8 +105,6 @@
                                     {{data.date}}</td>
                                 <td class="table-data" style="width:50%">
                                     {{data.counts}}</td>
-
-
                             </tr>
                         </tbody>
                     </table>
