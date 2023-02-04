@@ -34,15 +34,6 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8E" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divMapReview").show();
         }
-        if (userAccessList[i]["pageId"] == "8G" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divVTSRoute").show();
-        }
-        if (userAccessList[i]["pageId"] == "8J" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divCreateRoute").show();
-        }
-        if (userAccessList[i]["pageId"] == "8K" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divUploadRouteExcel").show();
-        }
         if (userAccessList[i]["pageId"] == "8M" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divPenalty").show();
         }
