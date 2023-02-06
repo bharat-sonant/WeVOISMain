@@ -73,7 +73,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.isActionShow = false;
     }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.getLastUpdate();
+    this.getMarkerSummary();
     this.getMarkerCityName();
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
@@ -82,13 +82,16 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   }
 
-  getLastUpdate() {
-    let dbPath = "EntityMarkingData/MarkingSurveyData/markerSummarylastUpdate";
-    let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
-      lastUpdateData => {
-        lastUpdateInstance.unsubscribe();
-        if (lastUpdateData != null) {
-          this.markerData.lastUpdate = lastUpdateData;
+  getMarkerSummary() {
+    let dbPath = this.commonService.fireStoragePath+this.commonService.getFireStoreCity()+"%2FSurveyManagement%2FMarkingManagement%2FMarkingSummary.json?alt=media";
+    let markerSummaryInstance = this.httpService.get(dbPath).subscribe(
+      data => {
+        markerSummaryInstance.unsubscribe();
+        if (data != null) {
+           this.markerData.lastUpdate = data["markerSummarylastUpdate"];
+           this.markerData.totalHouses=data["totalHouses"];
+           this.markerData.totalMarkers=data["totalMarkers"];
+           
         }
       }
     );
@@ -124,12 +127,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getWards() {
-    let path = "EntityMarkingData/MarkingSurveyData/MarkerSummary/"
-    let wardInstance = this.db.object(path).valueChanges().subscribe((data) => {
-      wardInstance.unsubscribe();
-      this.markerData.totalMarkers = data["totalMarkers"];
-      this.markerData.totalHouses = data["totalHouses"];
-    })
+    
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
@@ -861,13 +859,19 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.db.object(dbPath).update({ markerSummarylastUpdate: lastUpdate });
       dbPath = "EntityMarkingData/MarkingSurveyData/MarkerSummary";
       this.db.object(dbPath).update({ totalHouses: this.totalHousesCount, totalMarkers: this.totalMarkersCount });
+      const markingSummary={
+        markerSummarylastUpdate: lastUpdate,
+        totalHouses: this.totalHousesCount, 
+        totalMarkers: this.totalMarkersCount
+      }
+      this.commonService.saveJsonFile(markingSummary,"MarkingSummary.json","/SurveyManagement/MarkingManagement/");
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
-        this.markerData.totalHouses = 0;
-        this.markerData.totalMarkers = 0;
+        this.markerData.totalHouses =  this.markerData.totalHouses;
+        this.markerData.totalMarkers = this.markerData.totalMarkers;
         this.getWards();
       }, 5000);
 
@@ -879,7 +883,6 @@ export class WardMarkingSummaryComponent implements OnInit {
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
         markerData => {
           markerInstance.unsubscribe();
-
           if (markerData != null) {
 
             let keyArray = Object.keys(markerData);
