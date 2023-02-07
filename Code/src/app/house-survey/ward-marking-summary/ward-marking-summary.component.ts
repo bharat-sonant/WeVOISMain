@@ -44,7 +44,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     wardApprovedLines: 0,
     lastUpdate: "---",
     wardNo: "0",
-    lineNo:"0",
+    lineNo: "0",
     lastScan: ""
 
   };
@@ -66,8 +66,8 @@ export class WardMarkingSummaryComponent implements OnInit {
   public totalTypeCount: any;
   isActionShow: any;
   userId: any
-  inProgressWards:any[]=[];
-    ngOnInit() {
+  inProgressWards: any[] = [];
+  ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
@@ -80,22 +80,18 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getAssignedWard();
-  
-   
-
-
   }
 
   getMarkerSummary() {
-    let dbPath = this.commonService.fireStoragePath+this.commonService.getFireStoreCity()+"%2FSurveyManagement%2FMarkingManagement%2FMarkingSummary.json?alt=media";
+    let dbPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyManagement%2FMarkingManagement%2FMarkingSummary.json?alt=media";
     let markerSummaryInstance = this.httpService.get(dbPath).subscribe(
       data => {
         markerSummaryInstance.unsubscribe();
         if (data != null) {
-           this.markerData.lastUpdate = data["markerSummarylastUpdate"];
-           this.markerData.totalHouses=data["totalHouses"];
-           this.markerData.totalMarkers=data["totalMarkers"];
-           
+          this.markerData.lastUpdate = data["markerSummarylastUpdate"];
+          this.markerData.totalHouses = data["totalHouses"];
+          this.markerData.totalMarkers = data["totalMarkers"];
+
         }
       }
     );
@@ -129,25 +125,21 @@ export class WardMarkingSummaryComponent implements OnInit {
       }
     });
   }
- 
+
   getWards() {
-    
+
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
         let url = this.cityName + "/13A3/house-marking/" + wardNo;
-        let cssClass="not-start";
-        let preCssClass="not-start";
-        let inProgress="0";
-         let newDetail=this.inProgressWards.find(item=>item.ward==wardNo);
-         if(newDetail!=undefined){
-          cssClass="inProgress";
-          preCssClass="inProgress",
-          inProgress="1";
-         }
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, houses: 0, complex: 0, houseInComplex: 0, status: "", cssClass: cssClass,inProgress:inProgress,preCssClass:preCssClass});
+        let preCssClass = "";
+        let newDetail = this.inProgressWards.find(item => item.ward == wardNo);
+        if (newDetail != undefined) {
+          preCssClass = "inProgress";
+        }
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, houses: 0, complex: 0, houseInComplex: 0, status: "", cssClass: "not-start", preCssClass: preCssClass });
 
         if (i == 1) {
           setTimeout(() => {
@@ -159,13 +151,10 @@ export class WardMarkingSummaryComponent implements OnInit {
         if (wardNo != "0") {
           this.getWardSummary(i, wardNo);
         }
-        
+
       }
     }
     this.wardList[0]["zoneNo"] = "--All--";
-    // console.log(this.inProgressWards);
-    // console.log(this.wardProgressList);
-
   }
 
   exportMarkers() {
@@ -370,14 +359,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.wardProgressList[index]["markers"] = markers;
           if (markers > 0) {
             this.wardProgressList[index]["status"] = "In progress";
-            if( this.wardProgressList[index]["InProgress"]=="0"){
-              this.wardProgressList[index]["cssClass"] = "in-progress";
-            }
-            else{
-              this.wardProgressList[index]["cssClass"] = "inProgress";
-
-            }
-            
+            this.wardProgressList[index]["cssClass"] = "in-progress";
           }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
 
@@ -418,30 +400,29 @@ export class WardMarkingSummaryComponent implements OnInit {
       let id = "tr" + i;
       let element = <HTMLElement>document.getElementById(id);
       let className = element.className;
-      if (className != null) { 
-        $("#tr" + i).removeClass("active");        
-          $("#tr" + i).addClass(this.wardProgressList[i]["preCssClass"]);
+      if (className != null) {
+        $("#tr" + i).removeClass("active");
+        $("#tr" + i).addClass(this.wardProgressList[i]["preCssClass"]);
       }
       if (i == index) {
-        
-        $("#tr" + i).removeClass(this.wardProgressList[i]["preCssClass"]); 
+        $("#tr" + i).removeClass(this.wardProgressList[i]["preCssClass"]);
         $("#tr" + i).addClass("active");
       }
     }
-    
+
   }
 
   getMarkingDetail(wardNo: any, listIndex: any) {
     this.markerData.lastScan = ""
     let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
-      let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-        totalmarkingInstance.unsubscribe();
-        let lastscandata = data.split(":");
-        let scandata = lastscandata[0] + ":" + lastscandata[1];
-        if (data != null) {
-          this.markerData.lastScan = scandata;
-        }
-      });
+    let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      totalmarkingInstance.unsubscribe();
+      let lastscandata = data.split(":");
+      let scandata = lastscandata[0] + ":" + lastscandata[1];
+      if (data != null) {
+        this.markerData.lastScan = scandata;
+      }
+    });
     this.selectedZone = wardNo;
     $('#divLoader').show();
     setTimeout(() => {
@@ -478,7 +459,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.getLineHousesInComplex(wardNo, i);
         this.getLineAlreadyCard(wardNo, i);
       }
-      
+
     }
   }
 
@@ -601,7 +582,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let cardNumber = "";
               let servingCount = 0;
               let ApproveId = 0;
-              let className="house-list";
+              let className = "house-list";
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 className = "commercial-list";
                 servingCount = parseInt(data[index]["totalHouses"]);
@@ -631,7 +612,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (data[index]["approveById"] != null) {
 
                 ApproveId = data[index]["approveById"];
-                
+
               }
 
 
@@ -660,7 +641,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   servingCount: servingCount,
                   approveDate: approveDate,
                   ApproveId: ApproveId,
-                  class:className
+                  class: className
 
                 });
               }
@@ -747,7 +728,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   showLineDetail(content: any, wardNo: any, lineNo: any, index: any, userId: any) {
     this.markerDetailList = [];
-    this.markerData.lineNo=lineNo;
+    this.markerData.lineNo = lineNo;
     this.getLineDetail(wardNo, lineNo);
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -888,18 +869,18 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.db.object(dbPath).update({ markerSummarylastUpdate: lastUpdate });
       dbPath = "EntityMarkingData/MarkingSurveyData/MarkerSummary";
       this.db.object(dbPath).update({ totalHouses: this.totalHousesCount, totalMarkers: this.totalMarkersCount });
-      const markingSummary={
+      const markingSummary = {
         markerSummarylastUpdate: lastUpdate,
-        totalHouses: this.totalHousesCount, 
+        totalHouses: this.totalHousesCount,
         totalMarkers: this.totalMarkersCount
       }
-      this.commonService.saveJsonFile(markingSummary,"MarkingSummary.json","/SurveyManagement/MarkingManagement/");
+      this.commonService.saveJsonFile(markingSummary, "MarkingSummary.json", "/SurveyManagement/MarkingManagement/");
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
-        this.markerData.totalHouses =  this.markerData.totalHouses;
+        this.markerData.totalHouses = this.markerData.totalHouses;
         this.markerData.totalMarkers = this.markerData.totalMarkers;
         this.getWards();
       }, 5000);
@@ -985,23 +966,22 @@ export class WardMarkingSummaryComponent implements OnInit {
         });
     }
   }
-  getAssignedWard(){
-    let path="EntityMarkingData/MarkerAppAccess";
+  getAssignedWard() {
+    let path = "EntityMarkingData/MarkerAppAccess";
     let assignWardInstance = this.db.object(path).valueChanges().subscribe(
       data => {
         assignWardInstance.unsubscribe();
-        let keyArray=Object.keys(data);
-        for(let i=0;i<keyArray.length;i++){
-          let key =keyArray[i];
-          if(data[key]["assignedWard"]!=undefined)
-        {  
-          this.inProgressWards.push({ward:data[key]["assignedWard"]});
-        } 
-      } 
-      this.getWards();
-    });   
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let key = keyArray[i];
+          if (data[key]["assignedWard"] != undefined) {
+            this.inProgressWards.push({ ward: data[key]["assignedWard"] });
+          }
+        }
+        this.getWards();
+      });
   }
- 
+
 }
 
 export class markerDatail {
@@ -1016,6 +996,6 @@ export class markerDatail {
   lastUpdate: string;
   wardNo: string
   lastScan: string;
-  lineNo:string
+  lineNo: string
 
 }
