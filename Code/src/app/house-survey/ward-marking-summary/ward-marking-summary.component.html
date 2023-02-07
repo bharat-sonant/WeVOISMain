@@ -68,7 +68,7 @@
                                                 Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0" style="cursor:pointer ;">
+                                            <tr class="table-row {{data.cssClass}}" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0" style="cursor:pointer ;">
                                                 <td class="table-data">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data">
@@ -83,7 +83,7 @@
                                                 </td>
                                                 <td class="text-right table-data">
                                                     {{data.approvedLines}} / {{data.wardLines}}</td>
-                                                <td class="text-left {{data.cssClass}} table-data">
+                                                <td class="text-left table-data">
                                                     {{data.status}}</td>
                                             </tr>
                                         </tbody>

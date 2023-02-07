@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { style } from "@angular/animations";
 
 @Component({
   selector: "app-ward-marking-summary",
@@ -65,7 +66,8 @@ export class WardMarkingSummaryComponent implements OnInit {
   public totalTypeCount: any;
   isActionShow: any;
   userId: any
-  ngOnInit() {
+  inProgressWards:any[]=[];
+    ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
@@ -77,7 +79,9 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.getMarkerCityName();
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
-    this.getWards();
+    this.getAssignedWard();
+  
+   
 
 
   }
@@ -125,7 +129,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       }
     });
   }
-
+ 
   getWards() {
     
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
@@ -134,7 +138,17 @@ export class WardMarkingSummaryComponent implements OnInit {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["zoneNo"];
         let url = this.cityName + "/13A3/house-marking/" + wardNo;
-        this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, houses: 0, complex: 0, houseInComplex: 0, status: "", cssClass: "not-start" });
+        let cssClass="not-start";
+        let preCssClass="not-start";
+        let inProgress="0";
+         let newDetail=this.inProgressWards.find(item=>item.ward==wardNo);
+         if(newDetail!=undefined){
+          cssClass="inProgress";
+          preCssClass="inProgress",
+          inProgress="1";
+         }
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, houses: 0, complex: 0, houseInComplex: 0, status: "", cssClass: cssClass,inProgress:inProgress,preCssClass:preCssClass});
+
         if (i == 1) {
           setTimeout(() => {
             $("#tr1").addClass("active");
@@ -145,9 +159,13 @@ export class WardMarkingSummaryComponent implements OnInit {
         if (wardNo != "0") {
           this.getWardSummary(i, wardNo);
         }
+        
       }
     }
     this.wardList[0]["zoneNo"] = "--All--";
+    // console.log(this.inProgressWards);
+    // console.log(this.wardProgressList);
+
   }
 
   exportMarkers() {
@@ -352,7 +370,14 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.wardProgressList[index]["markers"] = markers;
           if (markers > 0) {
             this.wardProgressList[index]["status"] = "In progress";
-            this.wardProgressList[index]["cssClass"] = "in-progress";
+            if( this.wardProgressList[index]["InProgress"]=="0"){
+              this.wardProgressList[index]["cssClass"] = "in-progress";
+            }
+            else{
+              this.wardProgressList[index]["cssClass"] = "inProgress";
+
+            }
+            
           }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
 
@@ -393,13 +418,17 @@ export class WardMarkingSummaryComponent implements OnInit {
       let id = "tr" + i;
       let element = <HTMLElement>document.getElementById(id);
       let className = element.className;
-      if (className != null) {
-        $("#tr" + i).removeClass(className);
+      if (className != null) { 
+        $("#tr" + i).removeClass("active");        
+          $("#tr" + i).addClass(this.wardProgressList[i]["preCssClass"]);
       }
       if (i == index) {
+        
+        $("#tr" + i).removeClass(this.wardProgressList[i]["preCssClass"]); 
         $("#tr" + i).addClass("active");
       }
     }
+    
   }
 
   getMarkingDetail(wardNo: any, listIndex: any) {
@@ -602,7 +631,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (data[index]["approveById"] != null) {
 
                 ApproveId = data[index]["approveById"];
-                console.log(ApproveId);
+                
               }
 
 
@@ -956,6 +985,23 @@ export class WardMarkingSummaryComponent implements OnInit {
         });
     }
   }
+  getAssignedWard(){
+    let path="EntityMarkingData/MarkerAppAccess";
+    let assignWardInstance = this.db.object(path).valueChanges().subscribe(
+      data => {
+        assignWardInstance.unsubscribe();
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          let key =keyArray[i];
+          if(data[key]["assignedWard"]!=undefined)
+        {  
+          this.inProgressWards.push({ward:data[key]["assignedWard"]});
+        } 
+      } 
+      this.getWards();
+    });   
+  }
+ 
 }
 
 export class markerDatail {
