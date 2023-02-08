@@ -159,13 +159,13 @@ export class DailyFuelReportComponent implements OnInit {
                       locationInstance.unsubscribe();
                       let distance = "0";
                       if (locationData != null) {
-                        distance = (Number(locationData) / 1000).toFixed(3);
-                        this.fuelDetail.totalKm = (Number(this.fuelDetail.totalKm) +Number(distance)).toFixed(3);
+                        distance = (Number(locationData) / 1000).toFixed(3);                        
                       }
                       let detail = this.vehicleList.find(item => item.vehicle == vehicle);
                       if (detail != undefined) {
                         let wardListDetail = detail.wardList.find(item => item.zone == zone);
                         if (wardListDetail == undefined) {
+                          this.fuelDetail.totalKm = (Number(this.fuelDetail.totalKm) +Number(distance)).toFixed(3);
                           detail.wardList.push({ zone: zone, km: distance, driver: name });
                         }
                       }
