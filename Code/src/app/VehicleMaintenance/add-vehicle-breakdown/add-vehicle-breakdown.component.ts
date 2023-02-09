@@ -17,7 +17,6 @@ export class AddVehicleBreakdownComponent implements OnInit {
   db: any;
   toDayDate: any;
   selectedYear: any;
-  selectedMonth: any;
   selectedMonthName: any;
   entryType: any;
   breakdownList: any[] = [];
@@ -73,7 +72,6 @@ export class AddVehicleBreakdownComponent implements OnInit {
       this.cancel();
     }
     $(this.txtDate).val(this.toDayDate);
-    this.selectedMonth = this.toDayDate.split('-')[1];
     this.getVehicles();
   }
 
@@ -227,9 +225,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
     }
     let jsonData = {};
     let lastKey = Number(this.breakdownId);
-    let year = date.toString().split('-')[0];
-    let monthName = this.commonService.getCurrentMonthName(Number(date.toString().split('-')[1]) - 1);
-    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleBreakdown%2F" + year + "%2F" + monthName + ".json?alt=media";
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleBreakdown%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let vehicleBreakdownInstance = this.httpService.get(path).subscribe(vehicleBreakdownData => {
       vehicleBreakdownInstance.unsubscribe();
       if (vehicleBreakdownData != null) {
@@ -259,7 +255,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
         }
         jsonData[lastKey.toString()]["mechanics"] = mechanics;
         jsonData[lastKey.toString()]["mechanicName"] = mechanicName;
-        this.saveData(jsonData, year, monthName);
+        this.saveData(jsonData, this.selectedYear, this.selectedMonthName);
       }
     });
   }
