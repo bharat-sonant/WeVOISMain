@@ -245,6 +245,8 @@ export class AddVehicleBreakdownComponent implements OnInit {
               if (mechanics == "") {
                 mechanics = empId;
                 mechanicName = this.mechanicList[i]["name"];
+
+                
               }
               else {
                 mechanics = mechanics + "," + empId;
