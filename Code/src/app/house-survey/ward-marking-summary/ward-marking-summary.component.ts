@@ -359,7 +359,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.wardProgressList[index]["markers"] = markers;
           if (markers > 0) {
             this.wardProgressList[index]["status"] = "In progress";
-            this.wardProgressList[index]["cssClass"] = "in-progress";
+            // this.wardProgressList[index]["cssClass"] = "in-progress";
           }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
 
@@ -880,8 +880,8 @@ export class WardMarkingSummaryComponent implements OnInit {
         $(this.divLoaderCounts).hide();
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
-        this.markerData.totalHouses = this.markerData.totalHouses;
-        this.markerData.totalMarkers = this.markerData.totalMarkers;
+        this.markerData.totalHouses = this.totalHousesCount;
+        this.markerData.totalMarkers = this.totalMarkersCount;
         this.getWards();
       }, 5000);
 
