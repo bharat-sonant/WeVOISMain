@@ -411,8 +411,12 @@ export class MarkerApprovalTestComponent {
     }
   }
   getOtherMarkerData() {
-    this.markerListIncluded=[];
+    let height:any=$("#divStatusHeight").val();
+    // // console.log(height);
+    $("#divStatus1").css("height",height);
+    $("#divStatus2").css("height",height);
 
+    this.markerListIncluded=[];
     let zoneNo = $("#ddlZoneMarker").val();
     let lineNo = $("#txtLine").val();
     if (zoneNo == "0") {
@@ -547,12 +551,20 @@ export class MarkerApprovalTestComponent {
     });
   }
  
-  setHouseType(index: any, zoneNo: any, lineNo: any) {
+  setHouseType(index: any, zoneNo: any, lineNo: any,type:any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
     $(this.houseLineNo).val(lineNo);
     $(this.houseWardNo).val(zoneNo);
-    let detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    $("#type").val(type);
+    let detail;
+    if(type=="marker"){
+      detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    }
+    else if(type=="includedMarker"){
+      detail=this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    }
+    
     if (detail != undefined) {
       let houseTypeId = detail.houseTypeId;
       $(this.ddlHouseType).val(houseTypeId);
@@ -564,7 +576,14 @@ export class MarkerApprovalTestComponent {
     let zoneNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let houseTypeId = $(this.ddlHouseType).val();
-    let detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+    let type= $("#type").val();
+    let detail;
+    if(type=="marker"){
+      detail=this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+    }
+    else if(type=="includedMarker"){
+      detail=this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+    }
     if (detail != undefined) {
       let preHouseTypeId = detail.houseTypeId;
       let modifiedHouseTypeHistoryId = detail.modifiedHouseTypeHistoryId;
@@ -587,16 +606,17 @@ export class MarkerApprovalTestComponent {
         }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
         this.db.object(dbPath).update({ houseType: houseTypeId });
-        this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId);
+        this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId,type);
       }
 
     }
+   
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
     this.commonService.setAlertMessage("success", "Saved successfully !!!");
   }
 
-  saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any) {
+  saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any,type:any) {
     const data = {
       preHouseTypeId: preHouseTypeId,
       newHouseTypeId: houseTypeId,
@@ -611,10 +631,21 @@ export class MarkerApprovalTestComponent {
       this.db.list("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId).push(data);
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
       this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
-      let detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
-      if (detail != undefined) {
+
+      let detail; 
+      if(type=="marker")
+      {
+        detail=this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+      }
+      else if(type=="includedMarker"){
+        detail=this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+
+      }
+      if (detail != undefined)
+      {
         detail.modifiedHouseTypeHistoryId = modifiedHouseTypeHistoryId;
       }
+      
     }
     else {
       let dbPath = "EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId;
@@ -625,7 +656,6 @@ export class MarkerApprovalTestComponent {
   cancelHouseType() {
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
-    console.log( $(this.houseWardNo).val());
   }
 
   showLineDetail(content: any) {
@@ -646,6 +676,11 @@ export class MarkerApprovalTestComponent {
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
+      $("#divStatusHeight").val(divHeight)
+      // console.log($("#divStatusHeight").val());
+     
+      
+
     }
     else{
       this.commonService.setAlertMessage("error", "No Marker Found !!!");

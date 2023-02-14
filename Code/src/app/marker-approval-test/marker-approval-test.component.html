@@ -239,6 +239,8 @@
 <ng-template #contentLineMarkers>
     <div class="header-12">
 
+        <input type="hidden" id="divStatusHeight" value="0">
+
         <div class="pop-up-header">
             <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]
             </h5>
@@ -255,6 +257,8 @@
             <input type="hidden" id="houseIndex" value="0">
             <input type="hidden" id="houseWardNo" value="0">
             <input type="hidden" id="houseLineNo" value="0">
+            <input type="hidden" id="type" value="0">
+            
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <div class="col-md-12">
@@ -344,7 +348,7 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo);"
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                     [hidden]="isActionShow==false"></i></h3><br />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
@@ -385,7 +389,7 @@
 <!-- ////////////////////////////////////////// -->
 
     <div id="divIncludedStatus" [hidden]="markerListIncluded.length==0">
-        <div id="divStatus" class="content-scroll col-md-6" style="display: inline-block;">
+        <div id="divStatus1" class="content-scroll col-md-6" style="display: inline-block;">
             <div class="row ">
                 <div class="col-md-4" *ngFor="let dt of markerList" >
                     <div class="markerList-iner">
@@ -395,7 +399,7 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo);"
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                     [hidden]="isActionShow==false"></i></h3><br />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
@@ -432,7 +436,7 @@
 
         </div>
         <!-- //////////////// -->
-        <div id="divStatus" class="content-scroll col-md-6" style="display: inline-block;">
+        <div id="divStatus2" class="content-scroll col-md-6" style="display: inline-block;">
 
             <div class="row">
                 <div class="col-md-4" *ngFor="let dt of markerListIncluded" >
@@ -443,7 +447,7 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo);"
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
                                     [hidden]="isActionShow==false"></i></h3><br />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
