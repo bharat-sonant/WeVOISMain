@@ -72,8 +72,9 @@ export class MarkerApprovalTestComponent {
     lastScanTime: "",
     isApprovedCount: "0",
     wardno: "0",
-    lineno: "0"
+    lineno: "0",
   };
+  markerListIncluded:any[]=[];
 
   ngOnInit() {
     this.markerList=[];
@@ -410,6 +411,7 @@ export class MarkerApprovalTestComponent {
     }
   }
   getOtherMarkerData() {
+    this.markerListIncluded=[];
 
     let zoneNo = $("#ddlZoneMarker").val();
     let lineNo = $("#txtLine").val();
@@ -471,7 +473,7 @@ export class MarkerApprovalTestComponent {
               if (data[index]["isApprove"] != null) {
                 isApprove = data[index]["isApprove"];
               }
-              this.markerData.isApprovedCount = count.toString();
+              
               if (data[index]["status"] != null) {
                 // status = data[index]["status"];
               }
@@ -517,7 +519,8 @@ export class MarkerApprovalTestComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
+              
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -622,6 +625,7 @@ export class MarkerApprovalTestComponent {
   cancelHouseType() {
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
+    console.log( $(this.houseWardNo).val());
   }
 
   showLineDetail(content: any) {
@@ -650,6 +654,7 @@ export class MarkerApprovalTestComponent {
 
   closeModel() {
     this.modalService.dismissAll();
+    this.markerListIncluded=[];
   }
 
   confirmationMarkerDelete(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any) {
@@ -689,6 +694,7 @@ export class MarkerApprovalTestComponent {
     $(this.divConfirm).hide();
   }
   removeAddLines(){
+    this.markerListIncluded=[];
     this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
     $("#ddlZoneMarker").val("0");
     $("#txtLine").val("");
@@ -697,6 +703,7 @@ export class MarkerApprovalTestComponent {
     setTimeout(()=>{
       this.commonService.setAlertMessage("success", "Remove successfully !!!");
     },100)
+ 
     }
 removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any) {
     $(this.divLoader).show();
