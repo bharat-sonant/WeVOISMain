@@ -41,19 +41,26 @@ export class DustbinManageComponent implements OnInit {
 
   getZoneList() {
     this.zoneList = [];
-    this.dustbinStorageList = [];
-    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
-    if (this.dustbinStorageList != null) {
-      let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
-      this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
-      for (let i = 0; i < list.length; i++) {
-        this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
+    this.dustbinService.getDustbinZone().then((zones: any) => {
+      if (zones != null) {
+        console.log(zones);
+        let list = zones.toString().split(',');
+        for (let i = 0; i < list.length; i++) {
+          this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
+        }
+        this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
+        this.selectedZone = this.zoneList[0]["zoneNo"];
+        this.dustbinStorageList = [];
+        this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+        if (this.dustbinStorageList != null) {
+          this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
+          this.selectedStatus = "enabled";
+          this.getDustbins();
+        }
       }
-      this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
-      this.selectedZone = this.zoneList[0]["zoneNo"];
-      this.selectedStatus = "enabled";
-      this.getDustbins();
-    }
+
+    });
+
   }
 
   changeZoneSelection(filterVal: any) {
