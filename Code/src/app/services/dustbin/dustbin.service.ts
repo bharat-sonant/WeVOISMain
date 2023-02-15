@@ -14,6 +14,23 @@ export class DustbinService {
   db: any;
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
 
+  getDustbinZone() {
+    return new Promise((resolve) => {
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/AvailableZone/zone";
+      let zoneInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          zoneInstance.unsubscribe();
+          if (data != null) {
+            resolve(data);
+          }
+        }, error => {
+          resolve(null);
+        });
+    });
+  }
+
+
   updateDustbinDetail(dustbinId: any, data: any, type: any) {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
