@@ -1468,3 +1468,15 @@ table td {
     // margin-top: 28px;
     margin: -28px;
 }
+.modified-count-box{
+    width: 225px;
+    min-height: 50px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    // box-shadow: 0 1px 5px 1px #80bd7b;
+    position: fixed;
+    right: 15px;
+    top: 585px;
+    border: 1px solid #80bd7b;
+    padding: 10px;
+}

@@ -39,7 +39,7 @@ export class MarkerApprovalTestComponent {
   Approvename: any
   userList: any[] = [];
   public isAlreadyShow = false;
-  isShowWardAndLine: any;
+  isShowWardAndLine:any;
   houseTypeList: any[] = [];
   divHouseType = "#divHouseType";
   houseWardNo = "#houseWardNo";
@@ -58,7 +58,7 @@ export class MarkerApprovalTestComponent {
   approveLineNo = "#approveLineNo";
   deleteZoneNo = "#deleteZoneNo";
   deletelineNo = "#deleteLineNo";
-  btnRemoveIncludedLines = "#btnRemoveIncludedLines";
+  btnRemoveIncludedLines="#btnRemoveIncludedLines";
   markerData: markerDetail = {
     totalMarkers: "0",
     totalLines: "0",
@@ -73,15 +73,16 @@ export class MarkerApprovalTestComponent {
     isApprovedCount: "0",
     wardno: "0",
     lineno: "0",
+    totalHouseTypeModifiedCount:"0",
   };
-  markerListIncluded: any[] = [];
+  markerListIncluded:any[]=[];
 
   ngOnInit() {
-    this.markerList = [];
+    this.markerList=[];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
-    this.isShowWardAndLine = false;
+    this.isShowWardAndLine=false;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
     }
@@ -178,6 +179,7 @@ export class MarkerApprovalTestComponent {
         this.markerData.totalMarkers = data["marked"].toString();
         this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
         this.markerData.approvedLines = data["approved"].toString();
+        this.markerData.totalHouseTypeModifiedCount=data["totalHouseTypeModifiedCount"].toString();
 
       }
     });
@@ -399,13 +401,13 @@ export class MarkerApprovalTestComponent {
       if (detail != undefined) {
         detail.markingBy = data;
       }
-      else {
-        detail = this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+      else{
+        detail=this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
         if (detail != undefined) {
           detail.markingBy = data;
         }
       }
-
+     
     })
   }
   getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
@@ -413,25 +415,25 @@ export class MarkerApprovalTestComponent {
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
       let detail;
-      detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+       detail=this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
       if (detail != undefined) {
         detail.approveName = userDetail.name;
       }
-      else {
-        detail = this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+      else{
+        detail=this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
         if (detail != undefined) {
           detail.approveName = userDetail.name;
         }
       }
-
+      
     }
   }
   getOtherMarkerData() {
-    let height: any = $("#divStatusHeight").val();
-    $("#divStatus1").css("height", height);
-    $("#divStatus2").css("height", height);
+    let height:any=$("#divStatusHeight").val();
+    $("#divStatus1").css("height",height);
+    $("#divStatus2").css("height",height);
 
-    this.markerListIncluded = [];
+    this.markerListIncluded=[];
     let zoneNo = $("#ddlZoneMarker").val();
     let lineNo = $("#txtLine").val();
     if (zoneNo == "0") {
@@ -492,7 +494,7 @@ export class MarkerApprovalTestComponent {
               if (data[index]["isApprove"] != null) {
                 isApprove = data[index]["isApprove"];
               }
-
+              
               if (data[index]["status"] != null) {
                 // status = data[index]["status"];
               }
@@ -538,7 +540,7 @@ export class MarkerApprovalTestComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-
+              
               this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
@@ -548,7 +550,7 @@ export class MarkerApprovalTestComponent {
             this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
           }
           else {
-            this.isShowWardAndLine = true;
+            this.isShowWardAndLine=true;
             $(this.btnRemoveIncludedLines).show();
             this.commonService.setAlertMessage("success", "Marker added for ward " + zoneNo + " and line " + lineNo + " !!!");
           }
@@ -565,21 +567,21 @@ export class MarkerApprovalTestComponent {
       }
     });
   }
-
-  setHouseType(index: any, zoneNo: any, lineNo: any, type: any) {
+ 
+  setHouseType(index: any, zoneNo: any, lineNo: any,type:any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
     $(this.houseLineNo).val(lineNo);
     $(this.houseWardNo).val(zoneNo);
     $("#type").val(type);
     let detail;
-    if (type == "marker") {
+    if(type=="marker"){
       detail = this.markerList.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
     }
-    else if (type == "includedMarker") {
-      detail = this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    else if(type=="includedMarker"){
+      detail=this.markerListIncluded.find(item => item.index == index && item.zoneNo == zoneNo && item.lineNo == lineNo);
     }
-
+    
     if (detail != undefined) {
       let houseTypeId = detail.houseTypeId;
       $(this.ddlHouseType).val(houseTypeId);
@@ -591,13 +593,13 @@ export class MarkerApprovalTestComponent {
     let zoneNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let houseTypeId = $(this.ddlHouseType).val();
-    let type = $("#type").val();
+    let type= $("#type").val();
     let detail;
-    if (type == "marker") {
-      detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+    if(type=="marker"){
+      detail=this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
     }
-    else if (type == "includedMarker") {
-      detail = this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+    else if(type=="includedMarker"){
+      detail=this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
     }
     if (detail != undefined) {
       let preHouseTypeId = detail.houseTypeId;
@@ -621,17 +623,17 @@ export class MarkerApprovalTestComponent {
         }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
         this.db.object(dbPath).update({ houseType: houseTypeId });
-        this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId, type);
+        this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId,type);
       }
 
     }
-
+   
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
     this.commonService.setAlertMessage("success", "Saved successfully !!!");
   }
 
-  saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any, type: any) {
+  saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any,type:any) {
     const data = {
       preHouseTypeId: preHouseTypeId,
       newHouseTypeId: houseTypeId,
@@ -647,22 +649,42 @@ export class MarkerApprovalTestComponent {
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
       this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
 
-      let detail;
-      if (type == "marker") {
-        detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+      let detail; 
+      if(type=="marker")
+      {
+        detail=this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
       }
-      else if (type == "includedMarker") {
-        detail = this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+      else if(type=="includedMarker"){
+        detail=this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
 
       }
-      if (detail != undefined) {
+      if (detail != undefined)
+      {
         detail.modifiedHouseTypeHistoryId = modifiedHouseTypeHistoryId;
       }
+
+        this.markerData.totalHouseTypeModifiedCount=Number(this.markerData.totalHouseTypeModifiedCount)+1;
+        let path="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+zoneNo+"/totalHouseTypeModifiedCount"
+        let modifiedCountInstance =  this.db.object(path).valueChanges().subscribe((data)=>{
+        modifiedCountInstance.unsubscribe();
+        let count=1;
+        if(data!=null){
+         count=Number(data)+1;
+          this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+zoneNo).update({totalHouseTypeModifiedCount:count});
+        }
+         else{
+          this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+zoneNo).update({totalHouseTypeModifiedCount:count});
+         }
+     
+      });
+      
     }
+
     else {
       let dbPath = "EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId;
       this.db.list(dbPath).push(data);
     }
+    
   }
 
   cancelHouseType() {
@@ -671,7 +693,7 @@ export class MarkerApprovalTestComponent {
   }
 
   showLineDetail(content: any) {
-    if (this.selectedZone == "0") {
+    if(this.selectedZone=="0"){
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
@@ -689,28 +711,28 @@ export class MarkerApprovalTestComponent {
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
       $("#divStatusHeight").val(divHeight)
-
+     
     }
-    else {
+    else{
       this.commonService.setAlertMessage("error", "No Marker Found !!!");
     }
   }
 
   closeModel() {
     this.modalService.dismissAll();
-    this.markerListIncluded = [];
+    this.markerListIncluded=[];
   }
 
-  confirmationMarkerDelete(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any) {
+  confirmationMarkerDelete(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
     $(this.deleteMarkerId).val(markerNo);
     $(this.deleteAlreadyCard).val(alreadyCard);
     $(this.deleteZoneNo).val(zoneNo);
     $(this.deletelineNo).val(lineNo);
     $("#type").val(type)
-    $(this.divConfirm).show();
+    $(this.divConfirm).show(); 
   }
 
-  confirmationMarkerApprove(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any) {
+  confirmationMarkerApprove(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
     $(this.divConfirmApprove).show();
     $(this.approveMarkerId).val(markerNo);
     $(this.approveZoneNo).val(zoneNo);
@@ -735,32 +757,32 @@ export class MarkerApprovalTestComponent {
     let alreadyCard = $(this.deleteAlreadyCard).val();
     let zoneNo = $(this.deleteZoneNo).val();
     let lineNo = $(this.deletelineNo).val();
-    let type = $("#type").val()
-    this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo, type);
+    let type   = $("#type").val()
+    this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo,type);
     $(this.divConfirm).hide();
   }
-
-  removeAddLines() {
-    this.markerListIncluded = [];
+  removeAddLines(){
+    this.markerListIncluded=[];
+    this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
     $("#ddlZoneMarker").val("0");
     $("#txtLine").val("");
-    this.isShowWardAndLine = false;
+    this.isShowWardAndLine=false;
     $(this.btnRemoveIncludedLines).hide();
-    setTimeout(() => {
-      this.commonService.setAlertMessage("success", "Include Line remove successfully !!!");
-    }, 100)
-
-  }
-
-  removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any) {
-    $(this.divLoader).show();
-
-    let markerDatails;
-    if (type == "marker") {
-      markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    setTimeout(()=>{
+      this.commonService.setAlertMessage("success", "Remove successfully !!!");
+    },100)
+ 
     }
-    else if (type == "includedMarker") {
-      markerDatails = this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
+    $(this.divLoader).show();
+    
+    let markerDatails;
+    if(type=="marker")
+    {
+      markerDatails= this.markerList.find((item) => item.index == markerNo && item.zoneNo==zoneNo && item.lineNo==lineNo);  
+    }
+    else if(type=="includedMarker"){
+      markerDatails= this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo==zoneNo && item.lineNo==lineNo); 
     }
 
     if (markerDatails != undefined) {
@@ -791,11 +813,12 @@ export class MarkerApprovalTestComponent {
             if (data != null) {
               let marksCount = Number(data) - 1;
               this.markerData.totalMarkers = (Number(this.markerData.totalMarkers) - 1).toString();
-              if (type == "marker") {
-
+              if(type=="marker")
+              {
+               
                 this.markerData.totalLineMarkers = (Number(this.markerData.totalLineMarkers) - 1).toString();
               }
-
+              
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
               const data1 = {
                 marksCount: marksCount,
@@ -813,8 +836,8 @@ export class MarkerApprovalTestComponent {
           }
 
           let newMarkerList = [];
-
-          if (type == "marker") {
+       
+          if(type=="marker"){
             if (this.markerList.length > 0) {
               for (let i = 0; i < this.markerList.length; i++) {
                 if (this.markerList[i]["index"] == markerNo && this.markerList[i]["zoneNo"] == zoneNo && this.markerList[i]["lineNo"] == lineNo) {
@@ -829,28 +852,28 @@ export class MarkerApprovalTestComponent {
               this.markerList = newMarkerList;
             }
           }
-          else if (type == "includedMarker") {
-            if (this.markerListIncluded.length > 0) {
+          else if(type=="includedMarker"){
+             if (this.markerListIncluded.length > 0) {
               for (let i = 0; i < this.markerListIncluded.length; i++) {
-                let key = this.markerListIncluded[i];
+                let key=this.markerListIncluded[i];
 
 
                 if (key["index"] == markerNo && key["zoneNo"] == zoneNo && key["lineNo"] == lineNo) {
                   if (key["approveName"] != "") {
-                    if (type == "marker") {
+                    if(type=="marker"){
                       this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) - 1).toFixed(0);
                     }
-
+                   
                   }
                 }
                 else {
-                  newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key["status"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy: key["markingBy"], ApproveId: key["ApproveId"], approveName: key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"] })
+                  newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key["status"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy:key["markingBy"], ApproveId:key["ApproveId"], approveName:key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"] })
                 }
               }
               this.markerListIncluded = newMarkerList;
             }
           }
-
+          
           if (alreadyCard == "हाँ") {
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/alreadyInstalled";
             let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -862,7 +885,7 @@ export class MarkerApprovalTestComponent {
                 }
                 this.markerData.alreadyCardCount = this.markerData.alreadyCardCount - 1;
                 this.markerData.alreadyCardLineCount = this.markerData.alreadyCardLineCount - 1;
-                this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/").update({ alreadyInstalled: total });
+               this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/").update({ alreadyInstalled: total });
                 let wardDetail = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
                 if (wardDetail != undefined) {
                   wardDetail.alreadyInstalled = Number(wardDetail.alreadyInstalled) - 1;
@@ -883,7 +906,23 @@ export class MarkerApprovalTestComponent {
               }
             );
           }
-          this.updateCount(date, userId, zoneNo, "remove");
+        
+          if(markerDatails.modifiedHouseTypeHistoryId!=""){
+            
+             this.markerData.totalHouseTypeModifiedCount=Number(this.markerData.totalHouseTypeModifiedCount)-1;
+             let path="EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+zoneNo+"/totalHouseTypeModifiedCount"
+             let modifiedCountInstance =  this.db.object(path).valueChanges().subscribe((data)=>{
+             modifiedCountInstance.unsubscribe();
+             let count=1;
+             if(data!=null){
+              count=Number(data)-1;
+               this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/"+zoneNo).update({totalHouseTypeModifiedCount:count});
+             }
+     
+            });
+          }
+
+         this.updateCount(date, userId, zoneNo, "remove");
           this.commonService.setAlertMessage("success", "Marker deleted successfully !!!");
         }
         else {
@@ -1025,16 +1064,17 @@ export class MarkerApprovalTestComponent {
     $(this.divLoader).hide();
   }
 
-  saveMarkerStatus(markerNo: any, zoneNo: any, lineNo: any, type: any) {
+  saveMarkerStatus(markerNo: any, zoneNo: any, lineNo: any,type:any) {
     let markerDatails;
-    if (type == "marker") {
-      markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    if(type=="marker")
+    {
+      markerDatails=this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
     }
-    else if (type == "includedMarker") {
-      markerDatails = this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    else if(type=="includedMarker"){
+      markerDatails=this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
 
     }
-
+ 
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
@@ -1053,7 +1093,7 @@ export class MarkerApprovalTestComponent {
     let lineNo = $(this.approveLineNo).val();
     let Entity = "chkApprovedEntity";
     let Markar = "chkApprovedMarkar";
-    let type = $("#type").val()
+    let type   = $("#type").val()
     if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
       this.commonService.setAlertMessage("error", "Choose Entity checkbox !!! ");
       return;
@@ -1063,13 +1103,13 @@ export class MarkerApprovalTestComponent {
       return;
     }
     let markerDatails;
-    if (type == "marker") {
-      markerDatails = this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    if(type=="marker"){
+      markerDatails=this.markerList.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
     }
-    else if (type == "includedMarker") {
-      markerDatails = this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
+    else if(type=="includedMarker"){
+      markerDatails=this.markerListIncluded.find((item) => item.index == markerNo && item.zoneNo == zoneNo && item.lineNo == lineNo);
     }
-
+      
     if (markerDatails != undefined) {
       markerDatails.isApprove = "1";
       markerDatails.approveDate = this.commonService.getTodayDateTime();
@@ -1402,6 +1442,7 @@ export class MarkerApprovalTestComponent {
     this.markerData.totalLineMarkers = "0";
     this.markerData.totalLines = "0";
     this.markerData.isApprovedCount = "0";
+    this.markerData.totalHouseTypeModifiedCount="0";
   }
 
   clearLineData() {
@@ -1426,6 +1467,7 @@ export class markerDetail {
   lastScanTime: string;
   isApprovedCount: string;
   wardno: string;
-  lineno: string
+  lineno: string;
+  totalHouseTypeModifiedCount:any;
 
 }
