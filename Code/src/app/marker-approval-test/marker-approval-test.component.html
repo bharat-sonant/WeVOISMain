@@ -91,7 +91,7 @@
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
-                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="margin-left: 35px;">
+                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers,'approvedMarker');" style="margin-left: 35px;">
                         <i class="fas fa-eye">&nbsp;</i>Approve Marker</span>
                 </div>
                 <div class="col-md-6 Confirm-main">
@@ -144,12 +144,21 @@
     </div>
 
 
-    <div class="modified-count-box" >
-       <div class="col-md-6 markers markers-heading-main" >
+    <div class="modified-count-box" style="padding: 0px;">
+        <div id="divDetails" class="house-card-box-iner" >
+            <div class="row house-card-box-iner2">
+        <div class="col-md-6 markers markers-heading-main" >
            <h5> {{markerData.totalHouseTypeModifiedCount}} </h5>
-       </div>
-       <div class="col-md-6 markers markers-heading-main" style="padding: 0px;"><p>Modified Entities</p></div>
-       
+           <p>Modified Entities</p>
+        </div>
+
+        <div class="col-md-6 markers markers-heading-main" >
+            <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;"> {{markerData.totalRemovedMarkersCount}} </h5>
+            <p>Deleted Entities</p>
+         </div>
+
+            </div>
+        </div>
     </div>
 
 
@@ -499,3 +508,47 @@
     </div>
 </ng-template>
 <!--Vehicle Status End-->
+
+<ng-template #contentDeletedMarkers>
+    <div class="header-12">
+
+
+        <div class="pop-up-header">
+            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}}
+            </h5>
+
+            <div class="img-close-outer">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-body divStatus">
+        <div id="divStatus" class="content-scroll">
+
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of deletedMarkerList">
+                    <div class="markerList-iner">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 class="f-left-heading"> {{dt.houseType}}       
+                            </h3><br />
+                            <span style="font-weight:bold;font-size:11px">
+                               Line {{dt.lineNo}}
+                                
+                            </span><br/>
+                            <span style="font-size:11px">
+                                Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

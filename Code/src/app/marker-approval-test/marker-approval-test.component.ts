@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgTemplateOutlet } from "@angular/common";
 @Component({
   selector: 'app-marker-approval-test',
   templateUrl: './marker-approval-test.component.html',
@@ -74,11 +75,16 @@ export class MarkerApprovalTestComponent {
     wardno: "0",
     lineno: "0",
     totalHouseTypeModifiedCount:"0",
+    totalRemovedMarkersCount:"0",
   };
   markerListIncluded:any[]=[];
+  deletedMarkerList:any[]=[];
+  
 
   ngOnInit() {
     this.markerList=[];
+    this.deletedMarkerList=[];
+
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.isActionShow = true;
@@ -152,6 +158,8 @@ export class MarkerApprovalTestComponent {
     this.getLastScanTime();
     this.getAllLinesFromJson();
     this.getLineApprove();
+    this.getTotalRemovedMarkersCount();
+   
   }
 
   getLastScanTime() {
@@ -182,6 +190,16 @@ export class MarkerApprovalTestComponent {
         this.markerData.totalHouseTypeModifiedCount=data["totalHouseTypeModifiedCount"].toString();
 
       }
+    });
+  }
+
+  getTotalRemovedMarkersCount(){
+    
+    let dbPath="EntityMarkingData/RemovedMarkers/"+this.selectedZone+"/totalRemovedMarkersCount";
+    let deleteCountInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+      deleteCountInstance.unsubscribe();
+      this.markerData.totalRemovedMarkersCount=Number(data);
+      
     });
   }
 
@@ -692,36 +710,62 @@ export class MarkerApprovalTestComponent {
     $(this.divHouseType).hide();
   }
 
-  showLineDetail(content: any) {
+  showLineDetail(content: any,type:any) {
     if(this.selectedZone=="0"){
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
-    if (this.markerList.length > 0) {
-      this.modalService.open(content, { size: "lg" });
-      let windowHeight = $(window).height();
-      let windowWidth = $(window).width();
-      let height = 870;
-      let width = windowWidth - 300;
-      height = (windowHeight * 90) / 100;
-      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      let divHeight = height - 140 + "px";
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-      $("div .modal-dialog-centered").css("margin-top", marginTop);
-      $("#divStatus").css("height", divHeight);
-      $("#divStatusHeight").val(divHeight)
-     
-    }
-    else{
-      this.commonService.setAlertMessage("error", "No Marker Found !!!");
+   
+    if(type=="deletedMarker" ){
+      this.deletedMarkerList=[];
+      let dbPath="EntityMarkingData/RemovedMarkers/"+this.selectedZone;
+      let deleteCountInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+        deleteCountInstance.unsubscribe();
+        if(data!=null)
+        {
+          this.openPopUp(content);
+          this. getDeletedMarkerData(data);
+        }
+        else {
+          this.commonService.setAlertMessage("error", "No Deleted Marker Found !!!");
+          
+        }
+      });
+      
+    }else{      
+      if (this.markerList.length == 0) {
+        this.commonService.setAlertMessage("error", "No Marker Found !!!");
+      }
+      else{
+        this.openPopUp(content);
+      }
     }
   }
+  openPopUp(content:any){
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 870;
+    let width = windowWidth - 300;
+    height = (windowHeight * 90) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 140 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
+    $("#divStatusHeight").val(divHeight);
+
+  }
+
+
+
 
   closeModel() {
     this.modalService.dismissAll();
     this.markerListIncluded=[];
-  }
+    this.deletedMarkerList=[];
+    }
 
   confirmationMarkerDelete(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
     $(this.deleteMarkerId).val(markerNo);
@@ -921,6 +965,25 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
      
             });
           }
+
+           
+          let path="EntityMarkingData/RemovedMarkers/"+zoneNo+"/totalRemovedMarkersCount"
+          let totalRemovedCountInstance =  this.db.object(path).valueChanges().subscribe((data)=>{
+          totalRemovedCountInstance.unsubscribe();
+          let count=1;
+          if(data!=null){
+          count=Number(data)+1;
+          this.db.object("EntityMarkingData/RemovedMarkers/"+zoneNo).update({totalRemovedMarkersCount:count});
+          this.markerData.totalRemovedMarkersCount=Number(this.markerData.totalRemovedMarkersCount)+1;
+          }
+         else{
+          this.db.object("EntityMarkingData/RemovedMarkers/"+zoneNo).update({totalRemovedMarkersCount:count});
+          this.markerData.totalRemovedMarkersCount=count;
+         }
+  
+         });
+
+
 
          this.updateCount(date, userId, zoneNo, "remove");
           this.commonService.setAlertMessage("success", "Marker deleted successfully !!!");
@@ -1443,6 +1506,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     this.markerData.totalLines = "0";
     this.markerData.isApprovedCount = "0";
     this.markerData.totalHouseTypeModifiedCount="0";
+    this.markerData.totalRemovedMarkersCount="0";
   }
 
   clearLineData() {
@@ -1452,6 +1516,50 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     this.markerData.markerImgURL = "../assets/img/img-not-available-01.jpg";
     this.markerData.totalLineMarkers = "0";
     this.markerData.isApprovedCount = "0";
+  }
+
+  getDeletedMarkerData(data:any){
+    this.deletedMarkerList=[];
+    if(data!=null){
+      let lineKeysArray=Object.keys(data);
+      for(let i=0;i<lineKeysArray.length;i++){
+        let lineKey=lineKeysArray[i];
+        if(lineKey!="totalRemovedMarkersCount"){
+          let indexKeyArray=Object.keys(data[lineKey]);
+          for(let j=0;j<indexKeyArray.length;j++){
+
+            let indexKey=indexKeyArray[j];
+            let dataKey=data[lineKey][indexKey];
+
+           
+            let removedBy="";
+            let houseType="";
+            let removedDate=dataKey["removeDate"];
+            
+
+            let image=dataKey["image"];
+            let city = this.commonService.getFireStoreCity();
+            let imageUrl= "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            
+            let removedById=dataKey["removeBy"];
+            let removedByDetail=this.userList.find(item=>item.userId==removedById)
+            if(removedByDetail!=undefined){
+            removedBy=removedByDetail.name;
+
+            let housetypeId=dataKey["houseType"];
+            let houseTypeDetail = this.houseTypeList.find(item => item.id == housetypeId);
+            if (houseTypeDetail != undefined) {
+              houseType = houseTypeDetail.houseType;
+            }
+
+
+           this.deletedMarkerList.push({lineNo:lineKey,houseType:houseType,removedBy:removedBy,removedDate:removedDate,imageUrl:imageUrl});
+           
+           }
+          }
+        }
+      }
+    }
   }
 }
 export class markerDetail {
@@ -1469,5 +1577,6 @@ export class markerDetail {
   wardno: string;
   lineno: string;
   totalHouseTypeModifiedCount:any;
+  totalRemovedMarkersCount:any;
 
 }
