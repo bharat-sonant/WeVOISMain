@@ -79,7 +79,9 @@ export class MarkerApprovalTestComponent {
   };
   markerListIncluded:any[]=[];
   deletedMarkerList:any[]=[];
-  
+  locationCordinates:any[]=[];  
+  workingPersonUrl="../assets/img/people-on-work.png"
+  surveyorMarker:any;
 
   ngOnInit() {
     this.markerList=[];
@@ -98,6 +100,7 @@ export class MarkerApprovalTestComponent {
     this.showHideAlreadyCardInstalled();
     this.getHouseType();
     this.getZones();
+   
   }
 
   showHideAlreadyCardInstalled() {
@@ -159,6 +162,7 @@ export class MarkerApprovalTestComponent {
     this.getAllLinesFromJson();
     this.getLineApprove();
     this.getTotalRemovedMarkersCount();
+    this.getSurveyorLoaction();
    
   }
 
@@ -1560,6 +1564,40 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
         }
       }
     }
+  }
+  getSurveyorLoaction(){
+    let dbPath="EntityMarkingData/MarkerAppAccess";
+    let assignedWardInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+      assignedWardInstance.unsubscribe();
+      let keyArray=Object.keys(data);
+      for(let i=0;i<keyArray.length;i++){
+        let key=keyArray[i];
+        let assignedWard=data[key]["assignedWard"];
+        if(assignedWard!=undefined){
+          let lastLocationInstance=this.db.object("EntityMarkingData/SurveyorLastLocation/"+ key).valueChanges().subscribe((locationData)=>{
+            lastLocationInstance.unsubscribe();
+            if(assignedWard==this.selectedZone)
+            {
+            
+              let location = locationData.toString().split(",");
+              let lat = Number(location[0]);
+              let lng = Number(location[1]);
+              console.log(lat,lng);
+                if (this.surveyorMarker != null) {
+                  this.surveyorMarker.setMap(null);
+                }
+                
+                this.surveyorMarker = new google.maps.Marker({
+                  position: { lat: Number(lat), lng: Number(lng) },
+                  map: this.map,
+                  icon:this.workingPersonUrl
+                });
+              
+            }
+          });
+        }
+      }
+    });
   }
 }
 export class markerDetail {
