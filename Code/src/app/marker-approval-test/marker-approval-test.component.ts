@@ -80,8 +80,8 @@ export class MarkerApprovalTestComponent {
   markerListIncluded:any[]=[];
   deletedMarkerList:any[]=[];
   locationCordinates:any[]=[];  
-  workingPersonUrl="../assets/img/people-on-work.png"
-  surveyorMarker:any;
+  workingPersonUrl="../assets/img/walking.png"
+  surveyorMarker:any[]=[];
 
   ngOnInit() {
     this.markerList=[];
@@ -1566,6 +1566,12 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     }
   }
   getSurveyorLoaction(){
+     if ( this.surveyorMarker.length > 0) {
+      for (let i = 0; i <  this.surveyorMarker.length; i++) {
+        this.surveyorMarker[i]["marker"].setMap(null);
+      }
+      this.surveyorMarker = [];
+     } 
     let dbPath="EntityMarkingData/MarkerAppAccess";
     let assignedWardInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
       assignedWardInstance.unsubscribe();
@@ -1576,23 +1582,27 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
         if(assignedWard!=undefined){
           let lastLocationInstance=this.db.object("EntityMarkingData/SurveyorLastLocation/"+ key).valueChanges().subscribe((locationData)=>{
             lastLocationInstance.unsubscribe();
-            if(assignedWard==this.selectedZone)
-            {
-            
-              let location = locationData.toString().split(",");
-              let lat = Number(location[0]);
-              let lng = Number(location[1]);
-              console.log(lat,lng);
-                if (this.surveyorMarker != null) {
-                  this.surveyorMarker.setMap(null);
-                }
-                
-                this.surveyorMarker = new google.maps.Marker({
-                  position: { lat: Number(lat), lng: Number(lng) },
-                  map: this.map,
-                  icon:this.workingPersonUrl
-                });
-              
+            if(locationData!=null){
+              if(assignedWard==this.selectedZone)
+              {
+                let location = locationData.toString().split(",");
+                let lat = Number(location[0]);
+                let lng = Number(location[1]);
+                console.log(lat,lng);
+                  let marker = new google.maps.Marker({
+                    position: { lat: Number(lat), lng: Number(lng) },
+                    map: this.map,
+                    icon:{
+                      url:this.workingPersonUrl,
+                      fillOpacity: 1,
+                      strokeWeight: 1,
+                      scaledSize: new google.maps.Size(40, 50),
+                      origin: new google.maps.Point(0, 0),
+                    }
+                  }); 
+                  
+                  this.surveyorMarker.push({marker});
+              }
             }
           });
         }
