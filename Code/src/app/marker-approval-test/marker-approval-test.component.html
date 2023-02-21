@@ -544,7 +544,7 @@
                                Line {{dt.lineNo}}
                                 
                             </span><br/>
-                            <span style="font-size:11px">
+                            <span style="font-size:11px" [hidden]="dt.removedBy==''">
                                 Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
                             </span>
                         </div>
