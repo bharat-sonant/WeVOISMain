@@ -1723,19 +1723,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
       }
     });
     // console.log(this.modificationDataList);
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
     
-    let width = windowWidth - 400;
-    let height = (windowHeight * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 150 + "px";
-    $("div .table-box").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .table-box").css("height", ""+height + "px").css("width", "" + width + "px");
-    // $("div .modal-title").css("margin-top", marginTop);
-    $(".row").css("height", divHeight);
-    $(".table").val(divHeight);
-    $(".table").css("height", divHeight);
     
   }
 

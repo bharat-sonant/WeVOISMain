@@ -628,7 +628,6 @@ button:focus-visible {
 }
 
 // .para-text {}
-
 .text-bg {
     background: #e7e7e7;
     padding: 5px;
@@ -932,7 +931,6 @@ thead th {
 table td {
     padding: 12px 12px !important;
     font-size: 12px;
-    font-weight: bold;
     color: #707070;
 }
 
@@ -1468,7 +1466,8 @@ table td {
     // margin-top: 28px;
     margin: -28px;
 }
-.modified-count-box{
+
+.modified-count-box {
     width: 225px;
     min-height: 50px;
     border-radius: 5px;
@@ -1480,8 +1479,94 @@ table td {
     border: 1px solid #80bd7b;
     padding: 10px;
 }
+
+table td {
+    font-size: 12px;
+    padding: 12px 12px;
+}
+
+table th {
+    font-size: 14px;
+    color: #0ba118;
+}
+
+.table-wrapper th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1 !important;
+    color: #000;
+    z-index: 11;
+}
+
+tbody {
+    overflow-y: scroll;
+    // height: 80vh;
+}
+
 .table-one {
     height: 70vh;
     overflow: hidden;
     overflow-y: scroll;
+}
+
+.table-scroll {
+    padding: 0px;
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+table tr:hover {
+    background: #f3f3f3;
+}
+
+.table-one-iner {
+    border-bottom: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    margin-bottom: 0px!important
+}
+
+.table-heading1 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading2 {
+    border-right: 1px solid #dee2e6;
+    width: 25%;
+}
+
+.table-heading3 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading4 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading5 {
+    border-right: 1px solid #dee2e6;
+    width: 15%;
+}
+
+.table-data1 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data2 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data3 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data4 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data5 {
+    border-right: 1px solid #dee2e6
 }
