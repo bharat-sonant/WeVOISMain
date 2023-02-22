@@ -1480,3 +1480,8 @@ table td {
     border: 1px solid #80bd7b;
     padding: 10px;
 }
+.table-one {
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}

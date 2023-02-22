@@ -1685,6 +1685,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     });
   }
   getModifiedMarkersList(modificationId:any,lineNo:any){
+    this.modificationDataList=[];
     $("#divModifiedEntities").show();
     let dbPath="EntityMarkingData/ModifiedHouseTypeHistory/"+modificationId;
     let modificationInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
@@ -1717,20 +1718,33 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
               if(updatedByDetail!=undefined){
                 updatedBy=updatedByDetail.name;}
 
-
-
-        this.modificationDataList.push({lineNo:lineNo, updatedBy: updatedBy,updateDate:updateDate,newHouseType:newHouseType,preHouseType:preHouseType})       
+        this.modificationDataList.push({lineNo:lineNo, updatedBy: updatedBy,updateDate:updateDate,newHouseType:newHouseType,preHouseType:preHouseType})  
+        
       }
     });
-    console.log(this.modificationDataList);
+    // console.log(this.modificationDataList);
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
     
-
+    let width = windowWidth - 400;
+    let height = (windowHeight * 90) / 100;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 150 + "px";
+    $("div .table-box").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .table-box").css("height", ""+height + "px").css("width", "" + width + "px");
+    // $("div .modal-title").css("margin-top", marginTop);
+    $(".row").css("height", divHeight);
+    $(".table").val(divHeight);
+    $(".table").css("height", divHeight);
+    
   }
 
-
-
+  closeSubModel(id:any){
+    $(id).hide();
+  }
 
 }
+
 export class markerDetail {
   totalMarkers: string;
   totalLines: string;

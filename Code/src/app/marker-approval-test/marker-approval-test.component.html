@@ -563,22 +563,51 @@
             <h5 style="font-size: 18px;text-align:center">Modified Entity Types [Ward {{this.markerData.wardno}}]
             </h5>
 
-            <div class="img-close-outer">
+            <div class="img-close-outer" >
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
             </div>
         </div>
     </div>
 
-    <div id="divModifiedEntities" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+    <div id="divModifiedEntities" class="table-box" style="display: none; position: absolute;z-index: 9999;background-color: #fff;  padding: 20px; border: 1px solid lightgray;">
        
 
         <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Modified Entities</h5>
-        <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+        <div class="img-close-outer">
+            <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#divModifiedEntities')">
 
-          
-          
-            
+        </div>
+        <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+            <div class="table-wrapper table-one" >
+                <table class="table table-one-iner">
+                    <thead>
+                        <th class="table-heading1">Date</th>
+                        <th class="text-right table-heading2">
+                            User Name</th>
+                        <th class="text-right table-heading3">
+                            Pre-House Type</th>
+                        <th class="text-right table-heading3">
+                            New-House Type</th>
+                        <th class="text-right table-heading4">
+                            Line No</th>    
+                    </thead>
+                    <tbody > 
+                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of modificationDataList; let i=index" >
+                            <td class="table-data1">
+                                {{dt.updateDate}}</td>
+                            <td class="text-right table-data2">
+                                {{dt.updatedBy}}</td>
+                            <td class="text-right table-data3">
+                                {{dt.preHouseType}}</td>
+                            <td class="text-right table-data3">
+                                {{dt.newHouseType}}</td>
+                            <td class="text-right table-data4">
+                                {{dt.lineNo}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
