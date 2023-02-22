@@ -145,17 +145,17 @@
 
 
     <div class="modified-count-box" style="padding: 0px;">
-        <div id="divDetails" class="house-card-box-iner">
+        <div id="divDetails" class="house-card-box-iner" >
             <div class="row house-card-box-iner2">
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;"> {{markerData.totalHouseTypeModifiedCount}} </h5>
-                    <p>Modified Entities</p>
-                </div>
+        <div class="col-md-6 markers markers-heading-main" >
+           <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;"> {{markerData.totalHouseTypeModifiedCount}} </h5>
+           <p>Modified Entities</p>
+        </div>
 
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;"> {{markerData.totalRemovedMarkersCount}} </h5>
-                    <p>Deleted Entities</p>
-                </div>
+        <div class="col-md-6 markers markers-heading-main" >
+            <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;"> {{markerData.totalRemovedMarkersCount}} </h5>
+            <p>Deleted Entities</p>
+         </div>
 
             </div>
         </div>
@@ -538,7 +538,7 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.houseType}}
+                            <h3 class="f-left-heading"> {{dt.houseType}}       
                             </h3><br />
                             <span style="font-weight:bold;font-size:11px">
                                Line {{dt.lineNo}}
@@ -563,15 +563,15 @@
             <h5 style="font-size: 18px;text-align:center">Modified Entity Types [Ward {{this.markerData.wardno}}]
             </h5>
 
-            <div class="img-close-outer">
+            <div class="img-close-outer" >
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
             </div>
         </div>
     </div>
 
-    <div id="divModifiedEntities" class="table-box" style="display: none; position: absolute;z-index: 9999;background-color: #fff;  padding: 20px; border: 1px solid lightgray; width:80%!important; left:10%;top:20px;">
-
+    <div id="divModifiedEntities" class="table-box" style="display: none; position: absolute;z-index: 9999;background-color: #fff;  padding: 20px; border: 1px solid lightgray;">
+       
 
         <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Modified Entities</h5>
         <div class="img-close-outer">
@@ -579,30 +579,30 @@
 
         </div>
         <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-            <div class="table-wrapper table-one">
+            <div class="table-wrapper table-one" >
                 <table class="table table-one-iner">
                     <thead>
                         <th class="table-heading1">Date</th>
-                        <th class="table-heading2">
+                        <th class="text-right table-heading2">
                             User Name</th>
-                        <th class="table-heading3">
+                        <th class="text-right table-heading3">
                             Pre-House Type</th>
-                        <th class="table-heading3">
+                        <th class="text-right table-heading3">
                             New-House Type</th>
-                        <th class="table-heading4">
-                            Line No</th>
+                        <th class="text-right table-heading4">
+                            Line No</th>    
                     </thead>
-                    <tbody>
-                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of modificationDataList; let i=index">
+                    <tbody > 
+                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of modificationDataList; let i=index" >
                             <td class="table-data1">
                                 {{dt.updateDate}}</td>
-                            <td class="table-data2">
+                            <td class="text-right table-data2">
                                 {{dt.updatedBy}}</td>
-                            <td class="table-data3">
+                            <td class="text-right table-data3">
                                 {{dt.preHouseType}}</td>
-                            <td class="table-data3">
+                            <td class="text-right table-data3">
                                 {{dt.newHouseType}}</td>
-                            <td class="table-data4">
+                            <td class="text-right table-data4">
                                 {{dt.lineNo}}</td>
                         </tr>
                     </tbody>
@@ -623,13 +623,13 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp; <i class="fas fa-eye" style="cursor: pointer;" (click)="getModifiedMarkersList(dt.modificationId,dt.lineNo)"></i>
+                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp; <i class="fas fa-eye" style="cursor: pointer;" (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)"></i>       
                             </h3><br />
-                            <span style="font-weight:bold;font-size:11px">
-                               Line {{dt.lineNo}},zone {{dt.zoneNo}}
+                             <span style="font-weight:bold;font-size:11px">
+                               Line {{dt.lineNo}}
                                 
                             </span>
-
+                            
                         </div>
                     </div>
                 </div>

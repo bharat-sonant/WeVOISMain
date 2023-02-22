@@ -84,8 +84,8 @@ export class MarkerApprovalTestComponent {
   workingPersonUrl="../assets/img/walking.png"
   surveyorMarker:any[]=[];
   modifiedMarkerList:any[]=[];
-  completeMarkerList:any[]=[]
   modificationDataList:any[]=[];
+  modificationDataFilterList:any[]=[];
 
   ngOnInit() {
     this.markerList=[];
@@ -744,9 +744,8 @@ export class MarkerApprovalTestComponent {
       
     }
     else if(type=="modifiedMarker"){
-      this.openPopUp(content);
-      this.getMarkersList();
-     
+      // this.openPopUp(content);
+      this.getMarkersList(content);
     }
     
     
@@ -775,9 +774,6 @@ export class MarkerApprovalTestComponent {
     $("#divStatusHeight").val(divHeight);
 
   }
-
-
-
 
   closeModel() {
     this.modalService.dismissAll();
@@ -1589,6 +1585,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     let dbPath="EntityMarkingData/MarkerAppAccess";
     let assignedWardInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
       assignedWardInstance.unsubscribe();
+      if(data!=null){
       let keyArray=Object.keys(data);
       for(let i=0;i<keyArray.length;i++){
         let key=keyArray[i];
@@ -1620,10 +1617,11 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
           });
         }
       }
+      }
     });
   }
-  getMarkersList(){
-    this.completeMarkerList=[]
+  getMarkersList(content:any){
+    this.modifiedMarkerList=[];
     let dbpath="EntityMarkingData/MarkedHouses/"+this.selectedZone;
     let dataInstance=this.db.object(dbpath).valueChanges().subscribe((data)=>{
       dataInstance.unsubscribe();
@@ -1635,8 +1633,9 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
           for(let j=0;j< markerKeyArray.length;j++){
             let marker=markerKeyArray[j];
             if(data[lineKey][marker]["latLng"]!=undefined){
+              
               let key=data[lineKey][marker];
-
+              if(key["modifiedHouseTypeHistoryId"]!=null){
               // To get image url....
               let imageName=key["image"];
               let city = this.commonService.getFireStoreCity();
@@ -1648,44 +1647,28 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-
-              this.completeMarkerList.push({zoneNo:this.selectedZone,imageUrl:imageUrl,modifiedHouseTypeHistoryId:key["modifiedHouseTypeHistoryId"],houseType: houseType,lineNo:lineKey})
+              this.modifiedMarkerList.push({zoneNo:this.selectedZone,imageUrl:imageUrl,modifiedHouseTypeHistoryId:key["modifiedHouseTypeHistoryId"],houseType: houseType,lineNo:lineKey})
             }
           }
+          }
         }
-        this.getModifiedMarkers();
-        // console.log(this.completeMarkerList);
-
-      } 
-    });
-  }
-  getModifiedMarkers(){
-    this.modifiedMarkerList=[];
-    let dbPath="EntityMarkingData/ModifiedHouseTypeHistory";
-    let modifiedIdInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
-      modifiedIdInstance.unsubscribe();
-      let keyArrray=Object.keys(data);
-      for(let i=0;i<keyArrray.length;i++){
-        let key=keyArrray[i];
+        if(this.modifiedMarkerList.length>0){
+          this.openPopUp(content);
+        }
+        else{
+          this.commonService.setAlertMessage("error","No Modified House Type marker found");
+        }
        
-        
-           let modifyDetail=  this.completeMarkerList.find(item=>item.modifiedHouseTypeHistoryId==key);
-           if(modifyDetail!=undefined){
-            this.modifiedMarkerList.push({
-              zoneNo:modifyDetail.zoneNo,
-              lineNo:modifyDetail.lineNo,
-              imageUrl:modifyDetail.imageUrl,
-              houseType:modifyDetail.houseType,
-              modificationId:key,
-            });
-           }
-        
-        // console.log(key)
+      } 
+      else{
+        this.commonService.setAlertMessage("error","No Modified House Type marker found");
       }
     });
   }
+  
   getModifiedMarkersList(modificationId:any,lineNo:any){
     this.modificationDataList=[];
+    this.modificationDataFilterList=[];
     $("#divModifiedEntities").show();
     let dbPath="EntityMarkingData/ModifiedHouseTypeHistory/"+modificationId;
     let modificationInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
@@ -1697,7 +1680,9 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
         let preHouseTypeId=data[key]["preHouseTypeId"];
         let updatedById=data[key]["updatedById"];
         let updateDate=data[key]["updateDate"];
-
+        let date = new Date(updateDate);
+        let timeSpan = date.getTime();
+      
       // For new Housetype name
         let newHouseType="";
               let newHouseTypeDetail = this.houseTypeList.find(item => item.id == newHouseTypeId);
@@ -1718,12 +1703,13 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
               if(updatedByDetail!=undefined){
                 updatedBy=updatedByDetail.name;}
 
-        this.modificationDataList.push({lineNo:lineNo, updatedBy: updatedBy,updateDate:updateDate,newHouseType:newHouseType,preHouseType:preHouseType})  
+        this.modificationDataList.push({lineNo:lineNo, updatedBy: updatedBy,updateDate:updateDate,newHouseType:newHouseType,preHouseType:preHouseType,timeSpan:timeSpan})  
         
       }
+      this.modificationDataFilterList = this.modificationDataList.sort((a, b) =>
+      b.timespan > a.timespan ? 1 : -1);
+
     });
-    // console.log(this.modificationDataList);
-    
     
   }
 
