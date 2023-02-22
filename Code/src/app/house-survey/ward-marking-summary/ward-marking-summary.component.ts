@@ -903,6 +903,7 @@ export class WardMarkingSummaryComponent implements OnInit {
               let totalHouseCount = 0;
               let totalComplexCount = 0;
               let totalHouseInComplexCount = 0;
+              let totalModifiedHouseTypeCount = 0;
 
               for (let i = 0; i < keyArray.length; i++) {
                 let markerCount = 0;
@@ -929,6 +930,9 @@ export class WardMarkingSummaryComponent implements OnInit {
                     else {
                       houseCount = houseCount + 1;
                     }
+                    if (lineData[markerNo]["modifiedHouseTypeHistoryId"] != null) {
+                      totalModifiedHouseTypeCount = totalModifiedHouseTypeCount + 1;
+                    }
                   }
                 }
 
@@ -950,22 +954,52 @@ export class WardMarkingSummaryComponent implements OnInit {
               }
 
               let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
-              this.db.object(dbPath).update({ marked: totalMarkerCount, complexCount: totalComplexCount, houseCount: totalHouseCount, housesInComplex: totalHouseInComplexCount });
+              this.db.object(dbPath).update({ marked: totalMarkerCount, complexCount: totalComplexCount, houseCount: totalHouseCount, housesInComplex: totalHouseInComplexCount, totalHouseTypeModifiedCount: totalModifiedHouseTypeCount });
+              this.updateDeleteCounts(zoneNo);
               index++;
               this.updateCounts(index);
             }
             else {
+              this.updateDeleteCounts(zoneNo);
               index++;
               this.updateCounts(index);
             }
           }
           else {
+            this.updateDeleteCounts(zoneNo);
             index++;
             this.updateCounts(index);
           }
         });
     }
   }
+
+  updateDeleteCounts(ward: any) {
+    let dbPath = "EntityMarkingData/RemovedMarkers/" + ward;
+    let deleteInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      deleteInstance.unsubscribe();
+      if (data != null) {
+        let counts = 0;
+        let lineArray = Object.keys(data);
+        if (lineArray.length > 0) {
+          for (let i = 0; i < lineArray.length; i++) {
+            let lineNo = lineArray[i];
+            if (lineNo != "totalRemovedMarkersCount") {
+              let lineObj = data[lineNo];
+              let markerArrray = Object.keys(lineObj);
+              if (markerArrray.length > 0) {
+                counts = counts + markerArrray.length;
+              }
+            }
+          }
+        }
+        this.db.object(dbPath).update({ totalRemovedMarkersCount: counts });
+      }
+    })
+  }
+
+
+
   getAssignedWard() {
     let path = "EntityMarkingData/MarkerAppAccess";
     let assignWardInstance = this.db.object(path).valueChanges().subscribe(
