@@ -1617,7 +1617,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
         let assignedWard=data[key]["assignedWard"];
         if(assignedWard!=undefined){
           let lastLocationInstance=this.db.object("EntityMarkingData/SurveyorLastLocation/"+ key).valueChanges().subscribe((locationData)=>{
-            lastLocationInstance.unsubscribe();
+           // lastLocationInstance.unsubscribe();
             if(locationData!=null){
               if(assignedWard==this.selectedZone)
               {

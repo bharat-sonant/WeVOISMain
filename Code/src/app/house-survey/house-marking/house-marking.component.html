@@ -513,7 +513,7 @@
 
             <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;">
                 <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;" (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
-                <p style="display: inline-block;">Please confirm to approve line </p>
+                <p style="display: inline-block;">I have checked all markers carefully before approve line. </p>
             </div>
             <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;" [hidden]="this.markerData.lineApprovedBy==''">
                 <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.</p>
