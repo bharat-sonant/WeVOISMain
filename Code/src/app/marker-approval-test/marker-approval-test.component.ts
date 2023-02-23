@@ -735,7 +735,7 @@ export class MarkerApprovalTestComponent {
         deleteCountInstance.unsubscribe();
         if(data!=null)
         {
-          this.openPopUp(content);
+          this.openPopUp(content,type);
           this. getDeletedMarkerData(data);
         }
         else {
@@ -747,7 +747,7 @@ export class MarkerApprovalTestComponent {
     }
     else if(type=="modifiedMarker"){
       // this.openPopUp(content);
-      this.getMarkersList(content);
+      this.getMarkersList(content,type);
     }
     
     
@@ -756,20 +756,26 @@ export class MarkerApprovalTestComponent {
         this.commonService.setAlertMessage("error", "No Marker Found !!!");
       }
       else{
-        this.openPopUp(content);
+        this.openPopUp(content,type);
         this.markerApprovalStatus();
       }
     }
   }
-  openPopUp(content:any){
+  openPopUp(content:any,type:any){
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
     let height = 870;
+    
     let width = windowWidth - 300;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 200 + "px";
+    
+    let divHeight = height - 140 + "px";
+    if(type=="approvedMarker")
+   { 
+    divHeight = height - 200 + "px";
+   }
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
@@ -1640,7 +1646,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
       }
     });
   }
-  getMarkersList(content:any){
+  getMarkersList(content:any,type:any){
     this.modifiedMarkerList=[];
     let dbpath="EntityMarkingData/MarkedHouses/"+this.selectedZone;
     let dataInstance=this.db.object(dbpath).valueChanges().subscribe((data)=>{
@@ -1673,7 +1679,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
           }
         }
         if(this.modifiedMarkerList.length>0){
-          this.openPopUp(content);
+          this.openPopUp(content,type);
         }
         else{
           this.commonService.setAlertMessage("error","No Modified House Type marker found");

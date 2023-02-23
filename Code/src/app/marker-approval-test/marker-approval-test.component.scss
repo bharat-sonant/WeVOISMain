@@ -628,6 +628,7 @@ button:focus-visible {
 }
 
 // .para-text {}
+
 .text-bg {
     background: #e7e7e7;
     padding: 5px;
@@ -713,7 +714,7 @@ button:focus-visible {
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 280px;
+    top: 222px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
@@ -931,6 +932,7 @@ thead th {
 table td {
     padding: 12px 12px !important;
     font-size: 12px;
+    font-weight: bold;
     color: #707070;
 }
 
@@ -1475,11 +1477,10 @@ table td {
     // box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 585px;
+    top: 528px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
-
 table td {
     font-size: 12px;
     padding: 12px 12px;
