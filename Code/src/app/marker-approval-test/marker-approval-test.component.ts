@@ -195,7 +195,9 @@ export class MarkerApprovalTestComponent {
       totalInstance.unsubscribe();
       if (data != null) {
         this.markerData.totalMarkers = data["marked"].toString();
-        this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
+        if (data["alreadyInstalled"] != null) {
+          this.markerData.alreadyCardCount = data["alreadyInstalled"].toString();
+        }
         this.markerData.approvedLines = data["approved"].toString();
         this.markerData.totalHouseTypeModifiedCount=data["totalHouseTypeModifiedCount"].toString();
 
