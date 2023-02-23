@@ -111,7 +111,7 @@
 
 
                 <div class="col-md-12 pl-5 pr-46">
-                  
+
                 </div>
             </div>
         </div>
@@ -505,26 +505,26 @@
         </div>
         <!-- //////////////////////////////////////////////// -->
         <footer style="border-top: solid 1px grey;display:flex;justify-content: space-between;">
-            
-                <div class="markers" style="width:20%;padding:10px;">
-                    <p>Approved/Total</p>
-                    <h5> {{markerData.isApprovedCount}}/{{markerData.totalLineMarkers}} </h5>
-                </div>
 
-                <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;" >
-                    <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;" (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
-                    <p style="display: inline-block;">Please confirm to approve line </p> 
-                </div>
-                <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;" [hidden]="this.markerData.lineApprovedBy==''">
-                    <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.</p>
-                      
-                </div>
-                <div class="pr-46" style="padding-top: 5px;width:20%;">
-                    <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
+            <div class="markers" style="width:20%;padding:10px;">
+                <p>Approved/Total Markers</p>
+                <h5> {{markerData.isApprovedCount}}/{{markerData.totalLineMarkers}} </h5>
+            </div>
+
+            <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;">
+                <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;" (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
+                <p style="display: inline-block;">Please confirm to approve line </p>
+            </div>
+            <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;" [hidden]="this.markerData.lineApprovedBy==''">
+                <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.</p>
+
+            </div>
+            <div class="pr-46" style="padding-top: 5px;width:20%;">
+                <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
                         Line</button>
-                </div>
+            </div>
 
-          
+
         </footer>
     </div>
 </ng-template>
