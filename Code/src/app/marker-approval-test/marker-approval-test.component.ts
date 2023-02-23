@@ -771,7 +771,7 @@ export class MarkerApprovalTestComponent {
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     
-    let divHeight = height - 140 + "px";
+    let divHeight = height - 100 + "px";
     if(type=="approvedMarker")
    { 
     divHeight = height - 200 + "px";
