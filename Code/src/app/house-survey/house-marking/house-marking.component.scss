@@ -627,8 +627,7 @@ button:focus-visible {
     padding-bottom: 10px;
 }
 
-.para-text {}
-
+// .para-text {}
 .text-bg {
     background: #e7e7e7;
     padding: 5px;
@@ -714,7 +713,7 @@ button:focus-visible {
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 280px;
+    top: 222px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
@@ -1302,7 +1301,7 @@ table td {
 }
 
 .markerList-iner {
-    width: 100%
+    width: 100%;
 }
 
 .markerList-iner-img {
@@ -1467,4 +1466,108 @@ table td {
     float: left;
     // margin-top: 28px;
     margin: -28px;
+}
+
+.modified-count-box {
+    width: 225px;
+    min-height: 50px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    // box-shadow: 0 1px 5px 1px #80bd7b;
+    position: fixed;
+    right: 15px;
+    top: 528px;
+    border: 1px solid #80bd7b;
+    padding: 10px;
+}
+
+table td {
+    font-size: 12px;
+    padding: 12px 12px;
+}
+
+table th {
+    font-size: 14px;
+    color: #0ba118;
+}
+
+.table-wrapper th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1 !important;
+    color: #000;
+    z-index: 11;
+}
+
+tbody {
+    overflow-y: scroll;
+    // height: 80vh;
+}
+
+.table-one {
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.table-scroll {
+    padding: 0px;
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+table tr:hover {
+    background: #f3f3f3;
+}
+
+.table-one-iner {
+    border-bottom: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    margin-bottom: 0px!important
+}
+
+.table-heading1 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading2 {
+    border-right: 1px solid #dee2e6;
+    width: 25%;
+}
+
+.table-heading3 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading4 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading5 {
+    border-right: 1px solid #dee2e6;
+    width: 15%;
+}
+
+.table-data1 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data2 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data3 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data4 {
+    border-right: 1px solid #dee2e6
+}
+
+.table-data5 {
+    border-right: 1px solid #dee2e6
 }

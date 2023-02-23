@@ -91,7 +91,7 @@
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
-                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);" style="margin-left: 35px;">
+                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers,'approvedMarker');" style="margin-left: 35px;">
                         <i class="fas fa-eye">&nbsp;</i>Approve Marker</span>
                 </div>
                 <div class="col-md-6 Confirm-main">
@@ -111,8 +111,7 @@
 
 
                 <div class="col-md-12 pl-5 pr-46">
-                    <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
-                        Line</button>
+
                 </div>
             </div>
         </div>
@@ -142,6 +141,28 @@
             </button>
         </div>
     </div>
+
+
+    <div class="modified-count-box" style="padding: 0px;">
+        <div id="divDetails" class="house-card-box-iner">
+            <div class="row house-card-box-iner2">
+                <div class="col-md-6 markers markers-heading-main">
+                    <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;"> {{markerData.totalHouseTypeModifiedCount}} </h5>
+                    <p>Modified Entities</p>
+                </div>
+
+                <div class="col-md-6 markers markers-heading-main">
+                    <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;"> {{markerData.totalRemovedMarkersCount}} </h5>
+                    <p>Deleted Entities</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
 </div>
 <div class="driver-helper-box">
     <div class="row">
@@ -239,6 +260,9 @@
 <ng-template #contentLineMarkers>
     <div class="header-12">
 
+        <input type="hidden" id="divStatusHeight" value="0">
+        <input type="hidden" id="type" value="0">
+
         <div class="pop-up-header">
             <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]
             </h5>
@@ -255,6 +279,7 @@
             <input type="hidden" id="houseIndex" value="0">
             <input type="hidden" id="houseWardNo" value="0">
             <input type="hidden" id="houseLineNo" value="0">
+
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <div class="col-md-12">
@@ -331,7 +356,9 @@
             <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
             <span id="btnRemoveIncludedLines" (click)="removeAddLines()" style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
         </div>
-        <div id="divStatus" class="content-scroll">
+        <!-- ////////////////////////////////// -->
+
+        <div id="divStatus" class="content-scroll" [hidden]="markerListIncluded.length>0">
 
             <div class="row">
                 <div class="col-md-2" *ngFor="let dt of markerList">
@@ -342,17 +369,17 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo);"
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                     [hidden]="isActionShow==false"></i></h3><br />
-                            <span [hidden]="dt.status==''" style="width:100%">
+                            <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
-                            <div style="font-weight:bold;font-size:11px; width: 100%;" [hidden]="this.isShowWardAndLine==false">
-                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-
-                            </div>
-                            <span style="font-size:11px; width: 100%;">
+                            <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
+                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                
+                            </span><br/>
+                            <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
                                     Date : {{dt.approveDate}}</span>
@@ -361,15 +388,15 @@
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo);">
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
                             <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
                         </span>
-                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo);">
+                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
                             &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo);">
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo);">
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
                             &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
                         </span>
                     </div>
@@ -378,6 +405,249 @@
             </div>
 
         </div>
+
+        <!-- ////////////////////////////////////////// -->
+        <div id="divIncludedStatus" [hidden]="markerListIncluded.length==0">
+            <div id="divStatus1" class="content-scroll col-md-6" style="display: inline-block;">
+                <div class="row ">
+                    <div class="col-md-4" *ngFor="let dt of markerList">
+                        <div class="markerList-iner">
+                            <a href="{{dt.imageUrl}}" target="_blank">
+                                <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                            </a>
+                        </div>
+                        <div class="main-tag">
+                            <div class="f-left">
+                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
+                                        [hidden]="isActionShow==false"></i></h3><br />
+                                <span [hidden]="dt.status==''">
+                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
+                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
+                                </span>
+                                <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
+                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                
+                            </span><br/>
+                                <span style="font-size:11px">
+                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                    Date : {{dt.approveDate}}</span>
+
+                                </span>
+                            </div>
+                        </div>
+                        <div style="text-align: left; margin-bottom: 20px;">
+                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
+                        </span>
+                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- //////////////// -->
+            <div id="divStatus2" class="content-scroll col-md-6" style="display: inline-block;">
+
+                <div class="row">
+                    <div class="col-md-4" *ngFor="let dt of markerListIncluded">
+                        <div class="markerList-iner">
+                            <a href="{{dt.imageUrl}}" target="_blank">
+                                <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                            </a>
+                        </div>
+                        <div class="main-tag">
+                            <div class="f-left">
+                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
+                                        [hidden]="isActionShow==false"></i></h3><br />
+                                <span [hidden]="dt.status==''">
+                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
+                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
+                                </span>
+                                <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
+                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                
+                            </span><br/>
+                                <span style="font-size:11px">
+                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                    Date : {{dt.approveDate}}</span>
+
+                                </span>
+                            </div>
+                        </div>
+                        <div style="text-align: left; margin-bottom: 20px;">
+                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'includedMarker');">
+                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
+                        </span>
+                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');">
+                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
+                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        </span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- //////////////////////////////////////////////// -->
+        <footer style="border-top: solid 1px grey;display:flex;justify-content: space-between;">
+
+            <div class="markers" style="width:20%;padding:10px;">
+                <p>Approved/Total Markers</p>
+                <h5> {{markerData.isApprovedCount}}/{{markerData.totalLineMarkers}} </h5>
+            </div>
+
+            <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;">
+                <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;" (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
+                <p style="display: inline-block;">Please confirm to approve line </p>
+            </div>
+            <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;" [hidden]="this.markerData.lineApprovedBy==''">
+                <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.</p>
+
+            </div>
+            <div class="pr-46" style="padding-top: 5px;width:20%;">
+                <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
+                        Line</button>
+            </div>
+
+
+        </footer>
     </div>
 </ng-template>
 <!--Vehicle Status End-->
+
+
+<!-- deleted Entities content -->
+<ng-template #contentDeletedMarkers>
+    <div class="header-12">
+
+
+        <div class="pop-up-header">
+            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}}
+            </h5>
+
+            <div class="img-close-outer">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-body divStatus">
+        <div id="divStatus" class="content-scroll">
+
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of deletedMarkerList">
+                    <div class="markerList-iner">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 class="f-left-heading"> {{dt.houseType}}
+                            </h3><br />
+                            <span style="font-weight:bold;font-size:11px">
+                               Line {{dt.lineNo}}
+                                
+                            </span><br/>
+                            <span style="font-size:11px" [hidden]="dt.removedBy==''">
+                                Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- modifies Entities content -->
+<ng-template #contentModifiedMarkers>
+    <div class="header-12">
+        <div class="pop-up-header">
+            <h5 style="font-size: 18px;text-align:center">Modified Entity Types [Ward {{this.markerData.wardno}}]
+            </h5>
+
+            <div class="img-close-outer">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="divModifiedEntities" style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
+        <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Modified Entities</h5>
+        <div class="img-close-outer">
+            <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#divModifiedEntities')">
+
+        </div>
+        <div class="row" style="border-top: 1px solid lightgray; margin-right: 10px; margin-left: 10px;">
+            <div class="table-wrapper table-one">
+                <table class="table table-one-iner">
+                    <thead>
+                        <th class="table-heading1">Date</th>
+                        <th class="table-heading2">
+                            User Name</th>
+                        <th class="table-heading3">
+                            Pre-House Type</th>
+                        <th class="table-heading3">
+                            New-House Type</th>
+                        <th class="table-heading4">
+                            Line No</th>
+                    </thead>
+                    <tbody>
+                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of modificationDataList; let i=index">
+                            <td class="table-data1">
+                                {{dt.updateDate}}</td>
+                            <td class="table-data2">
+                                {{dt.updatedBy}}</td>
+                            <td class="table-data3">
+                                {{dt.preHouseType}}</td>
+                            <td class="table-data3">
+                                {{dt.newHouseType}}</td>
+                            <td class="table-data4">
+                                {{dt.lineNo}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-body divStatus">
+        <div id="divStatus" class="content-scroll">
+
+            <div class="row">
+                <div class="col-md-2" *ngFor="let dt of modifiedMarkerList">
+                    <div class="markerList-iner">
+                        <a href="{{dt.imageUrl}}" target="_blank">
+                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                        </a>
+                    </div>
+                    <div class="main-tag">
+                        <div class="f-left">
+                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp; <i class="fas fa-eye" style="cursor: pointer;" (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)"></i>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
