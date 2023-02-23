@@ -77,6 +77,8 @@ export class MarkerApprovalTestComponent {
     lineno: "0",
     totalHouseTypeModifiedCount:"0",
     totalRemovedMarkersCount:"0",
+    lineApprovedBy:"",
+    lineApprovedDate:"",
   };
   markerListIncluded:any[]=[];
   deletedMarkerList:any[]=[];
@@ -755,6 +757,7 @@ export class MarkerApprovalTestComponent {
       }
       else{
         this.openPopUp(content);
+        this.markerApprovalStatus();
       }
     }
   }
@@ -766,7 +769,7 @@ export class MarkerApprovalTestComponent {
     let width = windowWidth - 300;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 140 + "px";
+    let divHeight = height - 200 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", marginTop);
@@ -1201,6 +1204,12 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
       this.commonService.setAlertMessage("success", "Marker approved successfuly !!!");
       $(this.divConfirmApprove).hide();
     }
+    if(this.markerData.isApprovedCount==this.markerData.totalLineMarkers){
+      let element =(<HTMLInputElement>document.getElementById("approveCheck"));
+      element.disabled=false;
+
+
+    }
   }
 
   getMarkerIcon(type: any) {
@@ -1398,29 +1407,29 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
     let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       countInstance.unsubscribe();
-      let element = <HTMLButtonElement>document.getElementById("btnSave");
+      // let element = <HTMLButtonElement>document.getElementById("btnSave");
       if (data != null) {
-        $("#btnSave").css("background", "#0ba118");
-        element.disabled = false;
+        // $("#btnSave").css("background", "#0ba118");
+        // element.disabled = false;
         this.markerData.totalLineMarkers = data.toString();
       } else {
-        $("#btnSave").css("background", "#626262");
-        element.disabled = true;
+        // $("#btnSave").css("background", "#626262");
+        // element.disabled = true;
       }
     });
-    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
-    let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      approveInstance.unsubscribe();
-      if (data != null) {
-        if (data["status"] == "Confirm") {
-          $("#btnSave").html("Reject Line");
-        } else {
-          $("#btnSave").html("Approve Line");
-        }
-      } else {
-        $("#btnSave").html("Approve Line");
-      }
-    });
+    // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    // let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   approveInstance.unsubscribe();
+    //   if (data != null) {
+    //     if (data["status"] == "Confirm") {
+    //       $("#btnSave").html("Reject Line");
+    //     } else {
+    //       $("#btnSave").html("Approve Line");
+    //     }
+    //   } else {
+    //     $("#btnSave").html("Approve Line");
+    //   }
+    // });
   }
 
   saveData() {
@@ -1450,10 +1459,18 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
       status = "Confirm";
       approveById = localStorage.getItem("userID");
       $("#btnSave").html("Reject Line");
+      $("#approveLineCheckDiv").hide();
+      $("#approveLineStatusDiv").show();
+     
+     
     } else {
       status = "Reject";
       approveById = "0";
       $("#btnSave").html("Approve Line");
+      $("#approveLineStatusDiv").hide();
+      $("#approveLineCheckDiv").show();
+      let element=(<HTMLInputElement>document.getElementById("approveCheck"));
+      element.checked=false;
     }
 
     if (lineNo == "") {
@@ -1462,9 +1479,12 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     }
     this.lineNo = lineNo;
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    this.markerData.lineApprovedBy=localStorage.getItem("userName");
+    this.markerData.lineApprovedDate=this.commonService.getTodayDateTime();
     const data = {
       status: status,
-      approveById: approveById
+      approveById: approveById,
+      approvedDate:this.commonService.getTodayDateTime()
     };
     this.db.object(dbPath).update(data);
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
@@ -1716,6 +1736,74 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
   closeSubModel(id:any){
     $(id).hide();
   }
+  markerApprovalStatus(){
+    this.markerData.lineApprovedBy="";
+    let element =(<HTMLInputElement>document.getElementById("approveCheck"));
+    if(this.markerData.isApprovedCount==this.markerData.totalLineMarkers){
+      element.disabled=false;
+    }
+    else{
+      element.disabled=true;
+    }
+    let btnElement = <HTMLButtonElement>document.getElementById("btnSave");
+    if ( element.checked == true) {
+      $("#btnSave").css("background", "#0ba118");
+      btnElement.disabled = false;
+    }
+     else {
+      $("#btnSave").css("background", "#626262");
+      btnElement.disabled = true;
+    }
+
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      approveInstance.unsubscribe();
+      if (data != null) {
+        if (data["status"] == "Confirm") {
+          btnElement.disabled = false;
+          this.markerData.lineApprovedDate=data["approvedDate"];
+          let approvedById=data["approveById"];
+          let detail=this.userList.find(item=>item.userId== approvedById);
+          if(detail!=undefined){
+            this.markerData.lineApprovedBy=detail.name;
+          }
+          $("#btnSave").html("Reject Line");
+
+
+          $("#approveLineCheckDiv").hide();
+          $("#approveLineStatusDiv").show();
+          console.log(this.markerData.lineApprovedBy,this.markerData.lineApprovedDate)
+
+          
+        } else {
+          $("#btnSave").html("Approve Line");
+          $("#approveLineStatusDiv").hide();
+          $("#approveLineCheckDiv").show();
+         
+        }
+      } else {
+        $("#btnSave").html("Approve Line");
+        $("#approveLineStatusDiv").hide();
+        $("#approveLineCheckDiv").show();
+        
+      }
+    });
+  }
+  checkvalue(id:any){
+    if(id=="approveCheck"){
+     let element=<HTMLInputElement>document.getElementById("approveCheck");
+     let btnElement = <HTMLButtonElement>document.getElementById("btnSave");
+     if ( element.checked == true) {
+      $("#btnSave").css("background", "#0ba118");
+      btnElement.disabled = false;
+    }
+     else {
+      $("#btnSave").css("background", "#626262");
+      btnElement.disabled = true;
+    }
+    }
+
+  }
 
 }
 
@@ -1735,5 +1823,7 @@ export class markerDetail {
   lineno: string;
   totalHouseTypeModifiedCount:any;
   totalRemovedMarkersCount:any;
+  lineApprovedBy:any;
+  lineApprovedDate:any;
 
 }
