@@ -1778,13 +1778,8 @@ export class HouseMarkingComponent {
             this.markerData.lineApprovedBy = detail.name;
           }
           $("#btnSave").html("Reject Line");
-
-
           $("#approveLineCheckDiv").hide();
           $("#approveLineStatusDiv").show();
-          console.log(this.markerData.lineApprovedBy, this.markerData.lineApprovedDate)
-
-
         } else {
           $("#btnSave").html("Approve Line");
           $("#approveLineStatusDiv").hide();
