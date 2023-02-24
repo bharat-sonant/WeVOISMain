@@ -25,6 +25,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
   fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
   vehicleBreakdownJSONData: any;
   mechanicList: any[] = [];
+  preDate: any;
   txtDate = "#txtDate";
   ddlVehicle = "#ddlVehicle";
   chkCanRun = "chkCanRun";
@@ -100,6 +101,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
       if (vehicleBreakdownData != null) {
         this.vehicleBreakdownJSONData = vehicleBreakdownData;
         if (this.entryType == "entry") {
+          this.preDate = this.vehicleBreakdownJSONData[this.breakdownId]["date"];
           $(this.txtDate).val(this.vehicleBreakdownJSONData[this.breakdownId]["date"]);
           $(this.ddlVehicle).val(this.vehicleBreakdownJSONData[this.breakdownId]["vehicle"]);
           $(this.txtDescription).val(this.vehicleBreakdownJSONData[this.breakdownId]["description"]);
@@ -133,7 +135,10 @@ export class AddVehicleBreakdownComponent implements OnInit {
         $(this.divLoader).hide();
       }
     }, error => {
-      $(this.divLoader).hide();
+      if (error["status"] != "404") {
+        this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+        $(this.divLoader).hide();
+      }
     });
   }
 
@@ -190,15 +195,47 @@ export class AddVehicleBreakdownComponent implements OnInit {
           jsonData["lastKey"] = lastKey;
         }
         else {
-          lastKey = Number(this.breakdownId);
+          if (this.preDate != null) {
+            let preYear = this.preDate.toString().split('-')[0];
+            let preMonthName = this.commonService.getCurrentMonthName(Number(this.preDate.toString().split('-')[1]) - 1);
+            if (preYear == year && preMonthName == monthName) {
+              lastKey = Number(this.breakdownId);
+            }
+            else {
+              lastKey = Number(jsonData["lastKey"]);
+              lastKey++;
+              jsonData["lastKey"] = lastKey;
+              this.deletePreData(preMonthName, preYear);
+            }
+          }
         }
         jsonData[lastKey.toString()] = data;
+
         this.saveData(jsonData, year, monthName);
       }
     }, error => {
-      jsonData["lastKey"] = lastKey;
-      jsonData[lastKey] = data;
-      this.saveData(jsonData, year, monthName);
+      if (error["status"] == "404") {
+        jsonData["lastKey"] = lastKey;
+        jsonData[lastKey] = data;
+        this.saveData(jsonData, year, monthName);
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+        $(this.divLoader).hide();
+      }
+    });
+  }
+
+  deletePreData(preMonthName: any, preYear: any) {
+    const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleBreakdown%2F" + preYear + "%2F" + preMonthName + ".json?alt=media";
+    let vehicleBreakdownInstance = this.httpService.get(path).subscribe(vehicleBreakdownData => {
+      vehicleBreakdownInstance.unsubscribe();
+      if (vehicleBreakdownData != null) {
+        let jsonData = {};
+        jsonData = vehicleBreakdownData;
+        delete jsonData[this.breakdownId.toString()];
+        this.saveData(jsonData, preYear, preMonthName);
+      }
     });
   }
 
@@ -245,8 +282,6 @@ export class AddVehicleBreakdownComponent implements OnInit {
               if (mechanics == "") {
                 mechanics = empId;
                 mechanicName = this.mechanicList[i]["name"];
-
-                
               }
               else {
                 mechanics = mechanics + "," + empId;
@@ -259,6 +294,11 @@ export class AddVehicleBreakdownComponent implements OnInit {
         jsonData[lastKey.toString()]["mechanicName"] = mechanicName;
         this.saveData(jsonData, this.selectedYear, this.selectedMonthName);
       }
+    }, error => {
+      if (error["status"] != "404") {
+        this.commonService.setAlertMessage("error", "Please check internet connection !!!");
+        $(this.divLoader).hide();
+      }
     });
   }
 
@@ -268,7 +308,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
       this.commonService.setAlertMessage("success", "Data saved successfully !!!");
       $(this.divLoader).hide();
       this.cancel();
-    }, 500);
+    }, 2000);
   }
 
   checkDate(filterVal: any) {
