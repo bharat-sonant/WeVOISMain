@@ -1530,7 +1530,14 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
           this.houseMarker[i]["marker"].setMap(null);
         }
       }
+      this.houseMarker=[];
     }
+    if (this.surveyorMarker.length > 0) {
+      for (let i = 0; i < this.surveyorMarker.length; i++) {
+          this.surveyorMarker[i]["marker"].setMap(null);
+      }
+    }
+    this.surveyorMarker=[];
   }
 
   clearAllData() {
@@ -1604,12 +1611,7 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     }
   }
   getSurveyorLoaction(){
-     if ( this.surveyorMarker.length > 0) {
-      for (let i = 0; i <  this.surveyorMarker.length; i++) {
-        this.surveyorMarker[i]["marker"].setMap(null);
-      }
-      this.surveyorMarker = [];
-     } 
+     
     let dbPath="EntityMarkingData/MarkerAppAccess";
     let assignedWardInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
       assignedWardInstance.unsubscribe();
@@ -1621,6 +1623,13 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
         if(assignedWard!=undefined){
           let lastLocationInstance=this.db.object("EntityMarkingData/SurveyorLastLocation/"+ key).valueChanges().subscribe((locationData)=>{
             // lastLocationInstance.unsubscribe();
+            if (this.surveyorMarker.length > 0) {
+              for (let i = 0; i < this.surveyorMarker.length; i++) {
+                if (this.surveyorMarker[i]["key"] == key) {
+                  this.surveyorMarker[i]["marker"].setMap(null);
+                }
+              }
+            }
             if(locationData!=null){
               if(assignedWard==this.selectedZone)
               {
