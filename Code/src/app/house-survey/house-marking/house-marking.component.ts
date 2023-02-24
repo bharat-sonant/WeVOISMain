@@ -1522,7 +1522,14 @@ export class HouseMarkingComponent {
           this.houseMarker[i]["marker"].setMap(null);
         }
       }
+      this.houseMarker=[];
     }
+    if (this.surveyorMarker.length > 0) {
+      for (let i = 0; i < this.surveyorMarker.length; i++) {
+          this.surveyorMarker[i]["marker"].setMap(null);
+      }
+    }
+    this.surveyorMarker=[];
   }
 
   clearAllData() {
@@ -1597,12 +1604,7 @@ export class HouseMarkingComponent {
     }
   }
   getSurveyorLoaction() {
-    if (this.surveyorMarker.length > 0) {
-      for (let i = 0; i < this.surveyorMarker.length; i++) {
-        this.surveyorMarker[i]["marker"].setMap(null);
-      }
-      this.surveyorMarker = [];
-    }
+
     let dbPath = "EntityMarkingData/MarkerAppAccess";
     let assignedWardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       assignedWardInstance.unsubscribe();
@@ -1613,7 +1615,14 @@ export class HouseMarkingComponent {
           let assignedWard = data[key]["assignedWard"];
           if (assignedWard != undefined) {
             let lastLocationInstance = this.db.object("EntityMarkingData/SurveyorLastLocation/" + key).valueChanges().subscribe((locationData) => {
-              // lastLocationInstance.unsubscribe();
+              //lastLocationInstance.unsubscribe();
+              if (this.surveyorMarker.length > 0) {
+                for (let i = 0; i < this.surveyorMarker.length; i++) {
+                  if (this.surveyorMarker[i]["key"] == key) {
+                    this.surveyorMarker[i]["marker"].setMap(null);
+                  }
+                }
+              }
               if (locationData != null) {
                 if (assignedWard == this.selectedZone) {
                   let location = locationData.toString().split(",");
@@ -1631,7 +1640,7 @@ export class HouseMarkingComponent {
                     }
                   });
 
-                  this.surveyorMarker.push({ marker });
+                  this.surveyorMarker.push({ key: key, marker: marker });
                 }
               }
             });
