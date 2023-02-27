@@ -64,6 +64,9 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8Y" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divScanCardManipulation").show();
         }
+        if (userAccessList[i]["pageId"] == "8Z" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divSetNearbyWard").show();
+        }
       }
     }
   }
