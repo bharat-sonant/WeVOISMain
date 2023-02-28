@@ -1,6 +1,6 @@
 /// <reference types="@types/googlemaps" />
 
-import { Component, OnInit,ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireDatabase } from "angularfire2/database";
@@ -29,11 +29,11 @@ export class SetNearbyWardComponent implements OnInit {
   cityName: any;
   houseMarker: any[] = [];
   db: any;
-  
-  
- 
 
- 
+
+
+
+
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -41,7 +41,7 @@ export class SetNearbyWardComponent implements OnInit {
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
     this.getZones();
-    this.selectedZone="0";
+    this.selectedZone = "0";
   }
 
 
@@ -51,23 +51,46 @@ export class SetNearbyWardComponent implements OnInit {
     // console.log(this.zoneList)
 
   }
-  getAllWardBoundaries(){
-    for(let i=0;i<this.zoneList.length;i++){
-     let zone=this.zoneList[i]["zoneNo"];
-     let zoneKML:any;
-     if(zone!=0){
-      this.commonService.getWardBoundary(zone, zoneKML, 2).then((data: any) => {
+  getAllWardBoundaries() {
+    for (let i = 0; i < this.zoneList.length; i++) {
+      let zone = this.zoneList[i]["zoneNo"];
+      let zoneKML: any;
+      if (zone != 0) {
+        this.commonService.getWardBoundary(zone, zoneKML, 2).then((data: any) => {
 
-        zoneKML = data;
-        zoneKML[0]["line"].setMap(this.map);
-        const bounds = new google.maps.LatLngBounds();
-        for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
-          bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
-        }
-        this.map.fitBounds(bounds);
-      });
+          zoneKML = data;
+          //zoneKML[0]["line"].setMap(this.map);
 
-     }
+          let aa=[];
+          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+            aa.push({lat:Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"])})
+          }
+
+          const polygon=new google.maps.Polyline({
+            path: aa,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,            
+          });
+          let statusString = '<div style="width: 100px;background-color: white;float: left;">';
+          statusString += '<div style="float: left;width: 100px;text-align:center;font-size:12px;"> ' + zone + '';
+          statusString += '</div></div>';
+          var infowindow = new google.maps.InfoWindow({
+            content: statusString,
+          });
+
+          infowindow.open(this.map, polygon);
+          
+          polygon.setMap(this.map);
+          const bounds = new google.maps.LatLngBounds();
+          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+            bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
+          }
+          this.map.fitBounds(bounds);
+        });
+
+      }
     }
 
   }
@@ -78,10 +101,10 @@ export class SetNearbyWardComponent implements OnInit {
   //   }
 
   //   this.selectedZone = filterVal;
-   
+
   //   this.getWardDetail();
   // }
- 
+
 }
 
 
