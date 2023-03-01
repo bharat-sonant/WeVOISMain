@@ -314,7 +314,7 @@
                                     <div class="f-left">
                                         <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
                                         <h3>{{dt.entityType}} <b [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp;
-                                            <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);" [hidden]="isActionShow==false"></i>
+                                            <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(i);" [hidden]="isActionShow==true"></i>
                                         </h3><br />
                                     </div>
                                 </div>

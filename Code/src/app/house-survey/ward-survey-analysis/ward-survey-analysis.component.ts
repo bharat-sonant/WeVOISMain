@@ -568,6 +568,7 @@ export class WardSurveyAnalysisComponent {
       });
     }
     else {
+      /*
       let city = this.commonService.getFireStoreCity();
       let wardNo = this.selectedZone;
       marker.addListener("click", function () {
@@ -588,6 +589,7 @@ export class WardSurveyAnalysisComponent {
         let element = <HTMLImageElement>document.getElementById("imgVertual");
         element.src = imageURL;
       });
+      */
     }
     if (map == this.mapRevisit) {
       this.revisitMarker.push({ marker });
