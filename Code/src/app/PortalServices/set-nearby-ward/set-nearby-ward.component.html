@@ -8,7 +8,7 @@
             <h1 class="ward-header">Set NearBy Ward </h1>
         </div>
 
-        
+
     </div>
     <div class="row w-100">
         <div class="col-12 p-0">
@@ -25,29 +25,27 @@
         <div class="house-card-box-iner" id="divDetails">
             <div class="row row-box">
                 <div class="col-md-4 no-gutters-iner">
-                    <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone" style="border: 1px solid black;">
+                    <select class="caret-select" id="ddlZone" [(ngModel)]="selectedZone" style="border: 1px solid black;">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                   ngSelected="zone.zoneNo == selectedZone?'selected':''">
                   {{zone.zoneName}}
                 </option>
               </select>
                 </div>
-              
-                    
-
-                </div> 
-                <div  style="margin-top: 10px;">
-                    <ul class="col-md-10" style="list-style: none;border: 1px solid black;text-align: left;height: 250px;overflow-y: scroll;margin-left: 20px;border-radius: 5px;">
-                        <li *ngFor="let zone of zoneList" value={{zone.zoneNo}} [hidden]="zone.zoneNo==0" style="padding: 10px;padding-right: 5px;">
-                            <input type="checkbox" style="margin-right: 5px;">{{zone.zoneName}}</li>
-                    </ul>
 
 
 
-                </div>
-            
             </div>
+            <div style="margin-top: 10px;">
+                <ul class="col-md-10" style="list-style: none;border: 1px solid black;text-align: left;height: 250px;overflow-y: scroll;margin-left: 20px;border-radius: 5px;">
+                    <li *ngFor="let zone of zoneList" value={{zone.zoneNo}} [hidden]="zone.zoneNo==0" style="padding: 10px;padding-right: 5px;">
+                        <input type="checkbox" style="margin-right: 5px;">{{zone.zoneName}}</li>
+                </ul>
+
+
+
+            </div>
+
         </div>
     </div>
-
-
+</div>
