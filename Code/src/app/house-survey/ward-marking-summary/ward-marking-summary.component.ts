@@ -176,74 +176,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getExportMarkerData(index: any, type: any) {
     if (index == this.wardList.length) {
-      this.updateMarkerAddress(0, type);
-    }
-    else {
-      let zoneNo = this.wardList[index]["zoneNo"];
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
-      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-        markerData => {
-          markerInstance.unsubscribe();
-          if (markerData != null) {
-            let keyArray = Object.keys(markerData);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let lineNo = keyArray[i];
-                let lineData = markerData[lineNo];
-                let markerKeyArray = Object.keys(lineData);
-                for (let j = 0; j < markerKeyArray.length; j++) {
-                  let markerNo = markerKeyArray[j];
-                  if (lineData[markerNo]["houseType"] != null) {
-                    let houseType = "";
-                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
-                    if (detail != undefined) {
-                      houseType = detail.houseType;
-                    }
-                    let lat = "";
-                    let lng = "";
-                    if (lineData[markerNo]["latLng"] != null) {
-                      lat = lineData[markerNo]["latLng"].split(',')[0];
-                      lng = lineData[markerNo]["latLng"].split(',')[1];
-                    }
-                    let address = "";
-                    let cardNumber = "";
-                    if (lineData[markerNo]["address"] != null) {
-                      address = lineData[markerNo]["address"];
-                    }
-                    if (lineData[markerNo]["cardNumber"] != null) {
-                      cardNumber = lineData[markerNo]["cardNumber"];
-                    }
-                    this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
-                  }
-                }
-              }
-              index++;
-              if (type != "All") {
-                index = this.wardList.length;
-              }
-              this.getExportMarkerData(index, type);
-            }
-            else {
-              index++;
-              if (type != "All") {
-                index = this.wardList.length;
-              }
-              this.getExportMarkerData(index, type);
-            }
-          }
-          else {
-            index++;
-            if (type != "All") {
-              index = this.wardList.length;
-            }
-            this.getExportMarkerData(index, type);
-          }
-        });
-    }
-  }
-
-  updateMarkerAddress(index: any, type: any) {
-    if (index == this.markerExportList.length) {
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -293,48 +225,100 @@ export class WardMarkingSummaryComponent implements OnInit {
       let fileName = this.commonService.getFireStoreCity() + "-" + type + "-MarkersData.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
       $(this.divLoaderMain).hide();
+      //this.updateMarkerAddress(0, type);
     }
     else {
-      let zoneNo = this.markerExportList[index]["Zone"];
-      let LineNo = this.markerExportList[index]["Line"];
-      let markerNo = this.markerExportList[index]["MarkerNo"];
-      let address = this.markerExportList[index]["address"];
-      if (address == "") {
-        let cardNumber = this.markerExportList[index]["cardNumber"];
-        if (cardNumber != "") {
-          let dbPath = "Houses/" + zoneNo + "/" + LineNo + "/" + cardNumber + "/address";
-          let addressInstance = this.db.object(dbPath).valueChanges().subscribe(
-            addressData => {
-              addressInstance.unsubscribe();
-              if (addressData != null) {
-                address = addressData.toString();
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + LineNo + "/" + markerNo;
-                //this.db.object(dbPath).update({ address: address });
-                this.markerExportList[index]["address"] = address;
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        markerData => {
+          markerInstance.unsubscribe();
+          if (markerData != null) {
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let markerKeyArray = Object.keys(lineData);
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  if (lineData[markerNo]["houseType"] != null) {
+                    let houseType = "";
+                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
+                    if (detail != undefined) {
+                      houseType = detail.houseType;
+                    }
+                    let lat = "";
+                    let lng = "";
+                    if (lineData[markerNo]["latLng"] != null) {
+                      lat = lineData[markerNo]["latLng"].split(',')[0];
+                      lng = lineData[markerNo]["latLng"].split(',')[1];
+                    }
+                    let address = "";
+                    let cardNumber = "";
+                    if (lineData[markerNo]["address"] != null) {
+                      address = lineData[markerNo]["address"];
+                    }
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      cardNumber = lineData[markerNo]["cardNumber"];
+                    }
+                    if (address == "") {
+                      if (cardNumber != "") {
+                        let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNumber + "/address";
+                        let addressInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          addressData => {
+                            addressInstance.unsubscribe();
+                            if (addressData != null) {
+                              address = addressData.toString();
+                              dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                              this.db.object(dbPath).update({ address: address });
+                              this.markerExportList[index]["address"] = address;
+                            }
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                          }
+                        );
+                      }
+                      else {
+                        if (index == 0) {
+                          address = this.markerCityName;
+                        }
+                        else {
+                          address = this.markerExportList[index - 1]["address"];
+                        }
+                        let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                        this.db.object(dbPath).update({ address: address });
+                        this.markerExportList[index]["address"] = address;
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                      }
+                    }
+                    else{
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                    }
+                  }
+                }
               }
               index++;
-              this.updateMarkerAddress(index, type);
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
             }
-          );
-        }
-        else {
-          if (index == 0) {
-            address = this.markerCityName;
+            else {
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
+            }
           }
           else {
-            address = this.markerExportList[index - 1]["address"];
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
+            }
+            this.getExportMarkerData(index, type);
           }
-          let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + LineNo + "/" + markerNo;
-          this.db.object(dbPath).update({ address: address });
-          this.markerExportList[index]["address"] = address;
-          index++;
-          this.updateMarkerAddress(index, type);
-        }
-      }
-      else {
-        index++;
-        this.updateMarkerAddress(index, type);
-      }
+        });
     }
   }
 
