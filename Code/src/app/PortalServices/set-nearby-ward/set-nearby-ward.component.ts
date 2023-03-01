@@ -24,16 +24,9 @@ export class SetNearbyWardComponent implements OnInit {
 
   public selectedZone: any;
   zoneList: any[];
-  marker = new google.maps.Marker();
   zoneKML: any;
   cityName: any;
-  houseMarker: any[] = [];
   db: any;
-
-
-
-
-
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -44,34 +37,31 @@ export class SetNearbyWardComponent implements OnInit {
     this.selectedZone = "0";
   }
 
-
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
     this.getAllWardBoundaries();
-    // console.log(this.zoneList)
-
   }
+
   getAllWardBoundaries() {
     for (let i = 0; i < this.zoneList.length; i++) {
       let zone = this.zoneList[i]["zoneNo"];
       let zoneKML: any;
       if (zone != 0) {
         this.commonService.getWardBoundary(zone, zoneKML, 2).then((data: any) => {
-
           zoneKML = data;
-          //zoneKML[0]["line"].setMap(this.map);
-
-          let aa=[];
+          var polyCords=[];
           for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
-            aa.push({lat:Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"])})
+            polyCords.push(new google.maps.LatLng(Number(zoneKML[0]["latLng"][i]["lat"]), Number(zoneKML[0]["latLng"][i]["lng"])));
           }
 
-          const polygon=new google.maps.Polyline({
-            path: aa,
+          const polygon=new google.maps.Polygon({
+            paths: polyCords,
             geodesic: true,
             strokeColor: "#FF0000",
             strokeOpacity: 1.0,
-            strokeWeight: 2,            
+            strokeWeight: 2,
+            fillColor: '#FFF',
+            
           });
           let statusString = '<div style="width: 100px;background-color: white;float: left;">';
           statusString += '<div style="float: left;width: 100px;text-align:center;font-size:12px;"> ' + zone + '';
@@ -81,13 +71,16 @@ export class SetNearbyWardComponent implements OnInit {
           });
 
           infowindow.open(this.map, polygon);
-          
+          polygon.addListener("click", function () {
+            alert(zone)
+          });          
           polygon.setMap(this.map);
           const bounds = new google.maps.LatLngBounds();
           for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
             bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
           }
           this.map.fitBounds(bounds);
+
         });
 
       }
