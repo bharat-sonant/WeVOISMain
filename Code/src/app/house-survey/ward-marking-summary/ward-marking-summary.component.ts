@@ -225,7 +225,6 @@ export class WardMarkingSummaryComponent implements OnInit {
       let fileName = this.commonService.getFireStoreCity() + "-" + type + "-MarkersData.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
       $(this.divLoaderMain).hide();
-      //this.updateMarkerAddress(0, type);
     }
     else {
       let zoneNo = this.wardList[index]["zoneNo"];
@@ -272,22 +271,15 @@ export class WardMarkingSummaryComponent implements OnInit {
                               address = addressData.toString();
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
-                              this.markerExportList[index]["address"] = address;
                             }
                             this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
                           }
                         );
                       }
-                      else {
-                        if (index == 0) {
-                          address = this.markerCityName;
-                        }
-                        else {
-                          address = this.markerExportList[index - 1]["address"];
-                        }
+                      else {                        
+                       address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-                        this.db.object(dbPath).update({ address: address });
-                        this.markerExportList[index]["address"] = address;
+                        this.db.object(dbPath).update({ address: address });                       
                         this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
                       }
                     }
@@ -346,8 +338,6 @@ export class WardMarkingSummaryComponent implements OnInit {
             // this.wardProgressList[index]["cssClass"] = "in-progress";
           }
           this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
-
-
           let houseCount = 0;
           if (data["houseCount"] != null) {
             houseCount = Number(data["houseCount"]);
