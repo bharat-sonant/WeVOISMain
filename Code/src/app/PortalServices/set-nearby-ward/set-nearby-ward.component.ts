@@ -27,6 +27,9 @@ export class SetNearbyWardComponent implements OnInit {
   zoneKML: any;
   cityName: any;
   db: any;
+  nearByWards:any[]=[];
+  nearByWardsArray:any[]=[];  
+  nearByWardJsonObj:object;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -35,6 +38,7 @@ export class SetNearbyWardComponent implements OnInit {
     this.map = this.commonService.setMap(this.gmap);
     this.getZones();
     this.selectedZone = "0";
+    
   }
 
   getZones() {
@@ -57,7 +61,7 @@ export class SetNearbyWardComponent implements OnInit {
           const polygon=new google.maps.Polygon({
             paths: polyCords,
             geodesic: true,
-            strokeColor: "#FF0000",
+            strokeColor: this.getColor(),
             strokeOpacity: 1.0,
             strokeWeight: 2,
             fillColor: '#FFF',
@@ -70,35 +74,86 @@ export class SetNearbyWardComponent implements OnInit {
             content: statusString,
           });
 
+          
+          let nearByWards=this.nearByWards;
+          
           infowindow.open(this.map, polygon);
           polygon.addListener("click", function () {
-            alert(zone)
-          });          
+          let selectedZone=$("#ddlZone").val();
+          if(selectedZone=="0"){
+              alert("please select zone");
+              return;
+          }
+            let detail=nearByWards.find(item=>item==zone);
+            if(detail==undefined){
+               nearByWards.push(zone); 
+            }
+          });  
+                 
           polygon.setMap(this.map);
           const bounds = new google.maps.LatLngBounds();
           for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
             bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
           }
           this.map.fitBounds(bounds);
-
+          
         });
-
       }
     }
+    
 
   }
-  // changeZoneSelection(filterVal: any) {
-  //   if (filterVal == "0") {
-  //     this.commonService.setAlertMessage("error", "Please select zone !!!");
-  //     return;
-  //   }
+  getColor(){
+    var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    return "#"+randomColor;
+  }
+  changeZoneSelection(filterVal: any) {
+    if (filterVal == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
+    this.selectedZone = filterVal;
+    this.getNearByWards()
+   
+}
+  deleteNearByWard(zone:any){
+    this.nearByWards=this.nearByWards.filter(item=>item!=zone);
 
-  //   this.selectedZone = filterVal;
+  }  
+  saveData(){
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
+    let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
+      nearByWardsInstance.unsubscribe();
+      if(this.selectedZone=="0"){
+        this.commonService.setAlertMessage("error", "Please select zone !!!");
+        return;
+      }
+      if(data!=undefined){
+        data[this.selectedZone.toString()]=this.nearByWards;
+        this.commonService.saveCommonJsonFile(data,"NearByWards.json",this.commonService.getFireStoreCity() + "/NearByWards/");
+        this.commonService.setAlertMessage("success", "Data saved Successfully !!!");
+      }
+    },error=>{
+      const data={}
+      data[this.selectedZone.toString()]=this.nearByWards;
+      this.commonService.saveCommonJsonFile(data,"NearByWards.json",this.commonService.getFireStoreCity() + "/NearByWards/");
+      this.commonService.setAlertMessage("success", "Data saved Successfully !!!");
 
-  //   this.getWardDetail();
-  // }
+    });  
+  }
+  getNearByWards(){
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
+    let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
+      nearByWardsInstance.unsubscribe();
+      if(this.selectedZone=="0"){
+        this.commonService.setAlertMessage("error", "Please select zone !!!");
+        return;
+      }
+      if(data!=undefined){
+        this.nearByWards=data[this.selectedZone.toString()];
+      }
+    });
+  }
+  
 
 }
-
-
-

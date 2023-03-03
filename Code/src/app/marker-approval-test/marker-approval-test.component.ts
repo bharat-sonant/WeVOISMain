@@ -88,8 +88,12 @@ export class MarkerApprovalTestComponent {
   modifiedMarkerList:any[]=[];
   modificationDataList:any[]=[];
   modificationDataFilterList:any[]=[];
+  nearByWards:any[]=[];
+  nearByWardsPolygon:any[]=[];
+  nearByStatus:any;
 
   ngOnInit() {
+    this.nearByStatus="show";
     this.markerList=[];
     this.deletedMarkerList=[];
 
@@ -139,6 +143,13 @@ export class MarkerApprovalTestComponent {
   }
 
   changeZoneSelection(filterVal: any) {
+    
+      for(let i=0;i<this.nearByWardsPolygon.length;i++){
+          this.nearByWardsPolygon[i].setMap(null);
+      }
+      this.nearByWardsPolygon=[];
+    
+
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -820,7 +831,6 @@ export class MarkerApprovalTestComponent {
     $(this.divConfirmApprove).hide();
   }
 
-
   deleteMarker() {
     let markerNo = $(this.deleteMarkerId).val();
     let alreadyCard = $(this.deleteAlreadyCard).val();
@@ -842,7 +852,7 @@ export class MarkerApprovalTestComponent {
     },100)
  
     }
-removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
+  removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any) {
     $(this.divLoader).show();
     
     let markerDatails;
@@ -1820,6 +1830,95 @@ removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any,type:any)
     }
     }
 
+  }
+  getNearByWards(){
+    this.nearByWards=[];
+    if(this.nearByStatus=="hide"){
+      for(let i=0;i<this.nearByWardsPolygon.length;i++){
+        this.nearByWardsPolygon[i].setMap(null);
+    }
+    this.nearByWardsPolygon=[];
+      $("#btnNearBy").html("Show Near By Wards");
+      this.nearByStatus="show";
+
+    }
+    else{
+      $("#btnNearBy").html("Hide Near By Wards");
+      this.nearByStatus="hide";
+      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FNearByWards.json?alt=media";
+      let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
+        nearByWardsInstance.unsubscribe();
+        if(this.selectedZone=="0"){
+          this.commonService.setAlertMessage("error", "Please select zone !!!");
+          return;
+        }
+        if(data!=undefined){
+          let jsonKeyArray=Object.keys(data);
+          // console.log(jsonKeyArray)
+          for(let i=0;i<jsonKeyArray.length;i++){
+           let key=jsonKeyArray[i];
+           if(this.selectedZone==key){
+            this.nearByWards=data[key];
+            
+            this.showNearByWards();
+            
+           }
+           else{
+            this.commonService.setAlertMessage("error", "No Data Found !!!");
+           }
+          }  
+        }
+      });
+    }
+   
+  }
+
+  showNearByWards(){
+    
+    if(this.nearByWards.length!=0){
+      for(let i=0;i<this.nearByWards.length;i++){
+        let zone=this.nearByWards[i];
+        let zoneKML:any;
+        this.commonService.getWardBoundary(zone,zoneKML, 4).then((data: any) => {
+          zoneKML = data;
+          let aa=[];
+          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+            aa.push({lat:Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"])})
+          }
+
+          const polygon=new google.maps.Polyline({
+            path: aa,
+            geodesic: true,
+            strokeColor: this.getColor(),
+            strokeOpacity: 1.0,
+            strokeWeight: 2,            
+          });
+          this.nearByWardsPolygon.push(polygon);
+          let statusString = '<div style="width: 100px;background-color: white;float: left;">';
+          statusString += '<div style="float: left;width: 100px;text-align:center;font-size:12px;"> ' + zone + '';
+          statusString += '</div></div>';
+          var infowindow = new google.maps.InfoWindow({
+            content: statusString,
+          });
+          
+          infowindow.open(this.map, polygon);
+        
+          
+          polygon.setMap(this.map);
+          const bounds = new google.maps.LatLngBounds();
+          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+            bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
+          }
+          this.map.fitBounds(bounds);
+        });
+      }
+    }
+    
+
+  }
+  getColor(){
+    var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    return "#"+randomColor;
   }
 
 }
