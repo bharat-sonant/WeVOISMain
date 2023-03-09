@@ -87,7 +87,7 @@ export class HouseMarkingComponent {
   modifiedMarkerList: any[] = [];
   modificationDataList: any[] = [];
   modificationDataFilterList: any[] = [];
-  deleteReason:any="0";
+  
 
   ngOnInit() {
     this.markerList = [];
@@ -794,7 +794,6 @@ export class HouseMarkingComponent {
     $(this.deleteZoneNo).val(zoneNo);
     $(this.deletelineNo).val(lineNo);
     $("#type").val(type)
-    this.deleteReason="0";
     $(this.divConfirm).show();
     
   }
@@ -820,17 +819,12 @@ export class HouseMarkingComponent {
 
 
   deleteMarker() {
-    this.deleteReason=$("#reasonSelect").val();
-    if(this.deleteReason=="0"){
-      this.commonService.setAlertMessage("error", "Please Select a Delete Reason!!!");
-      return;
-    }
     let markerNo = $(this.deleteMarkerId).val();
     let alreadyCard = $(this.deleteAlreadyCard).val();
     let zoneNo = $(this.deleteZoneNo).val();
     let lineNo = $(this.deletelineNo).val();
     let type = $("#type").val()
-    this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo, type,this.deleteReason);
+    this.removeMarker(markerNo, alreadyCard, zoneNo, lineNo, type);
     $(this.divConfirm).hide();
   }
   removeAddLines() {
@@ -845,7 +839,7 @@ export class HouseMarkingComponent {
     }, 100)
 
   }
-  removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any,reason:any) {
+  removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any) {
     $(this.divLoader).show();
 
     let markerDatails;
@@ -865,8 +859,6 @@ export class HouseMarkingComponent {
         if (data != null) {
           data["removeDate"] = this.commonService.getTodayDateTime();
           data["removeBy"] = localStorage.getItem("userID");
-          data["reason"]=reason;
-
 
           dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + markerNo;
           this.db.object(dbPath).update(data);

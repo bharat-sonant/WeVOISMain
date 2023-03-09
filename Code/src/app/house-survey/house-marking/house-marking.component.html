@@ -302,25 +302,8 @@
         </div>
         <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
-                <div class="col-md-12" style="padding-top: 10px; border-top: 1px solid rgba(128, 128, 128, 0.471);">
-                    <label for="" style="font-weight: bold;" >Delete Reason</label>
-                <select id="reasonSelect" class="caret-select-reason" [(ngModel)]="deleteReason" style="padding-top: 10px;">
-                    <option  value="0">
-                        --Select--
-                    </option>
-                    <option  value="Marking is not visible properly">
-                        Marking is not visible properly
-                    </option>
-                    <option  value="Duplicate marking">
-                        Duplicate marking
-                    </option>
-                    <option  value="Garbage data">
-                        Garbage data
-                    </option>    
-                </select>
-                </div>
                 
-            <div class="row" >
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <input type="hidden" id="deleteMarkerId" value="0">
                 <input type="hidden" id="deleteAlreadyCard" value="">
                 <input type="hidden" id="deleteZoneNo" value="">
