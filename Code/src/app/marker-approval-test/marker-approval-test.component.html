@@ -591,6 +591,7 @@
                             </span><br/>
                             <span style="font-size:11px" [hidden]="dt.removedBy==''">
                                 Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
+                                <span [hidden]="dt.reason==undefined">Deleted Reason : {{dt.reason}}</span> 
                             </span>
                         </div>
                     </div>

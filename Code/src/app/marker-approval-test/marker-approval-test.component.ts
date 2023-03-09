@@ -1602,6 +1602,7 @@ export class MarkerApprovalTestComponent {
             let removedBy="";
             let houseType="";
             let removedDate=dataKey["removeDate"];
+            let removeReason=dataKey["reason"]
             
 
             let image=dataKey["image"];
@@ -1620,7 +1621,7 @@ export class MarkerApprovalTestComponent {
             }
 
 
-           this.deletedMarkerList.push({lineNo:lineKey,houseType:houseType,removedBy:removedBy,removedDate:removedDate,imageUrl:imageUrl});
+           this.deletedMarkerList.push({lineNo:lineKey,houseType:houseType,removedBy:removedBy,removedDate:removedDate,imageUrl:imageUrl,reason:removeReason});
            
            
           }
