@@ -144,7 +144,7 @@ export class MarkerApprovalTestComponent {
   }
 
   changeZoneSelection(filterVal: any) {
-    
+    $("#btnNearBy").html("Show Near By Wards");
       for(let i=0;i<this.nearByWardsPolygon.length;i++){
           this.nearByWardsPolygon[i].setMap(null);
       }
@@ -1864,17 +1864,14 @@ export class MarkerApprovalTestComponent {
         if(data!=undefined){
           let jsonKeyArray=Object.keys(data);
           // console.log(jsonKeyArray)
-          for(let i=0;i<jsonKeyArray.length;i++){
-           let key=jsonKeyArray[i];
-           if(this.selectedZone==key){
-            this.nearByWards=data[key];
-            
-            this.showNearByWards();
-            
-           }
-           else{
+          let detail=jsonKeyArray.find(item=>item==this.selectedZone)
+          if(detail!=undefined){
+            this.nearByWards=data[detail];
+            this.showNearByWards(); 
+          }
+          else{
             this.commonService.setAlertMessage("error", "No Data Found !!!");
-           }
+            $("#btnNearBy").html("Show Near By Wards");
           }  
         }
       });
@@ -1914,11 +1911,11 @@ export class MarkerApprovalTestComponent {
         
           
           polygon.setMap(this.map);
-          const bounds = new google.maps.LatLngBounds();
-          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
-            bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
-          }
-          this.map.fitBounds(bounds);
+          // const bounds = new google.maps.LatLngBounds();
+          // for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+          //   bounds.extend({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
+          // }
+          // this.map.fitBounds(bounds);
         });
       }
     }
