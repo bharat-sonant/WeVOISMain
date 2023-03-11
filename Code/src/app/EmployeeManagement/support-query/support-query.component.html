@@ -50,7 +50,7 @@
                                         <option value="PF">PF</option>
                                     </select>
 
-                                    <select id="ddlFilterManager" class="filter-select filter-input" (change)="filterData()" [hidden]="userType=='manager'">
+                                    <select id="ddlFilterManager" class="filter-select filter-input" (change)="filterData()" [hidden]="isShowAll==false">
                                         <option *ngFor="let dt of managerFilterList" value={{dt.empId}}>
                                             {{dt.name}}
                                         </option>
@@ -61,9 +61,12 @@
                                             Query Status
                                         </option>
                                         <option value="pending">Pending</option>
-                                        <option value="assigned" [hidden]="userType=='manager'">Assigned</option>
+                                        <option value="assigned" [hidden]="isShowAll==true">Assigned</option>
                                         <option value="resolved">Resolved</option>
                                     </select>
+                                    <span id="spShowAll" style="padding-left: 10px;">
+                                        <input id="chkShowAll" type="checkbox" (click)="showAll();"> Show All
+                                    </span>
                                 </div>
 
                             </div>
@@ -88,14 +91,16 @@
                                                 Category</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Description</th>
-                                            <th class="text-left br-1" style="border:none!important;" [hidden]="userType=='manager'">
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Assigned To</th>
+                                            <th class="text-left br-1" style="border:none!important;" [hidden]="isShowAll==false">
                                                 Query Status</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Action</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of complaintList; let i=index">
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                <td class="td-1" style="border-right:1px solid #dee2e6">
                                                     {{data.date}}
                                                 </td>
                                                 <td class="text-left br-1">
@@ -106,7 +111,9 @@
                                                     {{data.category}}</td>
                                                 <td class="text-left br-1">
                                                     {{data.description}}</td>
-                                                <td class="text-left br-1" [hidden]="userType=='manager'">
+                                                <td class="text-left br-1">
+                                                    {{data.assignedToName}}</td>
+                                                <td class="text-left br-1" [hidden]="isShowAll==false">
                                                     <div style="cursor: pointer; color:green ; " [hidden]="data.status!='resolved'" (click)="openModel(contentResolvedDetail,data.id,'adminResolved');">
                                                         <i class="fa-solid fa-r"></i>esolved
                                                     </div>
@@ -119,13 +126,13 @@
 
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <div style="color:navy ; cursor: pointer;" (click)="openModel(contentAssign,data.id,'assign');" [hidden]="userType=='manager' || data.status=='resolved'">
+                                                    <div style="color:navy ; cursor: pointer;" (click)="openModel(contentAssign,data.id,'assign');" [hidden]="data.assignedTo!='0' || data.status=='resolved'">
                                                         <i class="fa-solid fa-user-pen"></i>
                                                     </div>
-                                                    <div style="color:green ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status!='resolved' || userType!='manager'">
+                                                    <div style="color:green ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status!='resolved' || data.assignedTo=='0'">
                                                         <i class="fa-solid fa-r"></i>solved
                                                     </div>
-                                                    <div style="color:red ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status=='resolved' || userType!='manager'">
+                                                    <div style="color:red ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status=='resolved' || data.assignedTo=='0'">
                                                         <i class="fa-solid fa-p"></i>ending
                                                     </div>
 

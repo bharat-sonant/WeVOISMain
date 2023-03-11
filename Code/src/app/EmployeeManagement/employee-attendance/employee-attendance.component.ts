@@ -54,7 +54,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     $(this.txtDateFrom).val(this.selectedDate);
     $(this.txtDateTo).val(this.selectedDate);
     this.getSelectedYearMonthName();
-    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStorePath = this.commonService.fireStoragePath;
     this.getEmployees();
   }
 

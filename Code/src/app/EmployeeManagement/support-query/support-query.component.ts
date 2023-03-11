@@ -31,11 +31,16 @@ export class SupportQueryComponent implements OnInit {
   resolvedId = "#resolvedId";
   txtResolvedDate = "#txtResolvedDate";
   txtResolvedDescription = "#txtResolvedDescription";
-  detailBy="#detailBy";
+  detailBy = "#detailBy";
   detailDate = "#detailDate";
   detailDescription = "#detailDescription";
   public userType: any;
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
+  spShowAll = "#spShowAll";
+  isShowAll: any;
+  chkShowAll = "chkShowAll";
+  roleId: any;
+  showAllData:any;
 
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
@@ -43,13 +48,24 @@ export class SupportQueryComponent implements OnInit {
   }
 
   setDefault() {
+    this.isShowAll = false;
+    this.showAllData=false;
     this.toDayDate = this.commonService.setTodayDate();
+    this.roleId = localStorage.getItem("roleId");
+    if (this.roleId == "10" || this.roleId == "17") {
+      $(this.spShowAll).show();
+      this.isShowAll = true;
+    }
+    else {
+      $(this.spShowAll).hide();
+    }
     if (localStorage.getItem("isAdmin") == "1") {
       this.userType = "admin";
     }
     else if (localStorage.getItem("isManager") == "1") {
       this.userType = "manager";
     }
+
     this.getCityList();
     this.getManagers();
     this.getYear();
@@ -59,13 +75,13 @@ export class SupportQueryComponent implements OnInit {
     const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
     let cityInstance = this.httpService.get(path).subscribe(data => {
       cityInstance.unsubscribe();
-      let list=JSON.parse(JSON.stringify(data));
-      for(let i=0;i<list.length;i++){
-        if(list[i]["cityName"]!="Test"){
-          this.cityList.push({city:list[i]["cityName"]});
+      let list = JSON.parse(JSON.stringify(data));
+      for (let i = 0; i < list.length; i++) {
+        if (list[i]["cityName"] != "Test") {
+          this.cityList.push({ city: list[i]["cityName"] });
         }
       }
-      this.cityList=this.commonService.transformNumeric(this.cityList,"city");
+      this.cityList = this.commonService.transformNumeric(this.cityList, "city");
     });
   }
 
@@ -78,7 +94,7 @@ export class SupportQueryComponent implements OnInit {
         this.managerList.push({ empId: list[i]["userId"], name: list[i]["name"] });
       }
       this.managerFilterList = this.managerList;
-      this.managerFilterList[0]["name"] = "All Manager";
+      this.managerFilterList[0]["name"] = "---All---";
     }
   }
 
@@ -113,8 +129,13 @@ export class SupportQueryComponent implements OnInit {
               name = name + " (" + data[id]["empId"] + ")";
             }
             let assignedTo = "0";
+            let assignedToName = "--";
             if (data[id]["assignedTo"] != null) {
               assignedTo = data[id]["assignedTo"];
+              let assignDetail = this.managerList.find(item => item.empId == assignedTo);
+              if (assignDetail != undefined) {
+                assignedToName = assignDetail.name;
+              }
             }
             let resolvedDate = "";
             if (data[id]["resolvedDate"] != null) {
@@ -125,7 +146,8 @@ export class SupportQueryComponent implements OnInit {
               resolvedDescription = data[id]["resolvedDescription"];
             }
             let timeStamps = new Date(data[id]["date"]).getTime();
-            this.allComplaintList.push({ id: id, date: data[id]["date"], city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps, status: data[id]["status"], assignedTo: assignedTo, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription });
+            let date=data[id]["date"].split('-')[2]+" "+this.commonService.getCurrentMonthShortName(Number(data[id]["date"].split('-')[1]))+" "+data[id]["date"].split('-')[0];
+            this.allComplaintList.push({ id: id, date: date, city: data[id]["city"], name: name, empId: data[id]["empId"], category: data[id]["category"], description: data[id]["description"], timeStamps: timeStamps, status: data[id]["status"], assignedTo: assignedTo, assignedToName: assignedToName, resolvedDate: resolvedDate, resolvedDescription: resolvedDescription });
             this.allComplaintList = this.allComplaintList.sort((a, b) =>
               b.timeStamps > a.timeStamps ? 1 : -1
             );
@@ -139,9 +161,20 @@ export class SupportQueryComponent implements OnInit {
     });
   }
 
+  showAll() {
+    if((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked==true){
+      this.showAllData=true;
+      this.filterData();
+    }
+    else{
+      this.showAllData=false;
+      this.filterData();
+    }
+  }
+
   filterData() {
     this.complaintList = this.allComplaintList;
-    if (this.userType == "manager") {
+    if (this.showAllData == false) {
       this.complaintList = this.complaintList.filter(item => item.assignedTo == localStorage.getItem("userID"));
     }
     if ($(this.ddlCity).val() != "0") {
@@ -173,6 +206,15 @@ export class SupportQueryComponent implements OnInit {
     let windowHeight = $(window).height();
     let height = 250;
     let width = 400;
+    if(type=="resolved"){
+      let detail = this.complaintList.find((item) => item.id == id);
+      if (detail != undefined) {
+        if(detail.assignedTo!=localStorage.getItem("userID")){
+          return;
+        }
+      }
+
+    }
     if (type != "assign") {
       height = 430;
     }
@@ -191,8 +233,8 @@ export class SupportQueryComponent implements OnInit {
         }
         else if (type == "adminResolved") {
 
-          let empDetail=this.managerList.find(item=>item.empId==detail.assignedTo);
-          if(empDetail!=undefined){
+          let empDetail = this.managerList.find(item => item.empId == detail.assignedTo);
+          if (empDetail != undefined) {
             $(this.detailBy).html(empDetail.name);
           }
           $(this.detailDate).html(detail.resolvedDate);

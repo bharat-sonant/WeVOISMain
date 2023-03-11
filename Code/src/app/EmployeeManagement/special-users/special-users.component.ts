@@ -33,7 +33,7 @@ export class SpecialUsersComponent implements OnInit {
   getUserList() {
     $(this.divLoader).show();
     this.userList = [];
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FSpecialUsers.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FSpecialUsers.json?alt=media";
     let userInstance = this.httpService.get(path).subscribe(userData => {
       userInstance.unsubscribe();
       if (userData != null) {

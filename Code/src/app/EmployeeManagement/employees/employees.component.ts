@@ -43,7 +43,7 @@ export class EmployeesComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStorePath = this.commonService.fireStoragePath;
     $(this.ddlDesignation).val("all");
     $(this.ddlUser).val("active");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
