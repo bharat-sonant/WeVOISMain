@@ -63,7 +63,8 @@
 <br />
 <br />
 <button (click)="uploadDustbinData();" style="margin-left: 20px; margin-top: 10px;">Update Dustbin Detail</button> &nbsp; &nbsp;
-<button (click)="uploadImage();" style="margin-left: 20px; margin-top: 10px;">Upload Image</button>
+<button (click)="uploadImage();" style="margin-left: 20px; margin-top: 10px;">Upload Image</button>&nbsp; &nbsp;
+<button (click)="addMarkerAgainstCardNo();" style="margin-left: 20px; margin-top: 10px;">Add Marker Against Card Number</button>
 
 
 <br />
@@ -75,7 +76,9 @@
 <br />
 <br />
 <input id="txtwardLineMarker" type="text">
-<button (click)="removeLineApprove();" style="margin-left: 20px; margin-top: 10px;">Remove Marker Lines Approved</button>
+<button (click)="removeLineApprove();" style="margin-left: 20px; margin-top: 10px;">Remove Marker Lines Approved</button><br/>
+
+<button (click)="updateRevisitMarker();" style="margin-left: 20px; margin-top: 10px;">Revisit Marker Update</button>
 
 
 <br />
@@ -90,7 +93,7 @@
 
 <br />
 <br />
-<button (click)="exportHouseData();" style="margin-left: 20px; margin-top: 10px;">Export House Data</button>
+<button (click)="exportAllHouseData();" style="margin-left: 20px; margin-top: 10px;">Export House Data</button>
 
 <br />
 <br />
@@ -149,6 +152,15 @@
 <br />
 
 
+
+
+<button (click)="removeMarkerRejectStatus();" style="margin-left: 20px; margin-top: 10px;">Remove MarkersMarkers Reject Status </button>
+
+
+<br />
+<br />
+
+
 <button (click)="getD2DMatkers();" style="margin-left: 20px; margin-top: 10px;">Get JaipurD2D Marker</button> &nbsp;&nbsp; <button (click)="updateMalviyaNagarData();" style="margin-left: 20px; margin-top: 10px;">Update MAlviyanagar marker</button>&nbsp;&nbsp;
 <button (click)="moveMalviyanagarImages();" style="margin-left: 20px; margin-top: 10px;">Move Images Malviyanagar marker</button>&nbsp;&nbsp;
 <br />
@@ -157,5 +169,40 @@
 <br />
 <br />
 <button (click)="createUserJson();" style="margin-left: 20px; margin-top: 10px;">Create user json</button>&nbsp;&nbsp;
+<br />
+<br />
+<button (click)="getSurveyorHouseCounts();" style="margin-left: 20px; margin-top: 10px;">Get Surveyor House Counts</button>&nbsp;&nbsp;
+<br />
+<br />
+<br />
+<br />
+<button (click)="cardNotInCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Card Not in CardWard Mapping</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateMalviyaNagarHouseData();" style="margin-left: 20px; margin-top: 10px;">Update Malviya Nagar House Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateMurlipuraHouseData();" style="margin-left: 20px; margin-top: 10px;">Update Murlipura House Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="getHouseData();" style="margin-left: 20px; margin-top: 10px;">Get Ward House Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="compairMarkerHouseData();" style="margin-left: 20px; margin-top: 10px;">Compaire Marker & House Data</button>
+
+<br />
+<br />
 <br />
 <br />
