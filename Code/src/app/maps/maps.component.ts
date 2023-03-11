@@ -206,7 +206,6 @@ export class MapsComponent {
         this.activeCount++;
         let zoneNo = this.zoneRouteList[index]["zoneNo"];
         this.commonService.getWardBoundary(zoneNo, null, "4").then((boundaryData: any) => {
-          console.log(boundaryData);
           let wardBoundary = boundaryData;
           wardBoundary[0]["line"].setMap(this.map);
           for (let i = 0; i < wardBoundary[0]["latLng"].length; i = (i + 5)) {
