@@ -70,7 +70,7 @@ export class SettingsComponent implements OnInit {
   }
 
   setDefault() {
-    this.firestotagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.firestotagePath = this.commonService.fireStoragePath;
     this.getCommonNavigatorSetting();
     this.getCommonReaderSetting();
     this.getCityHaltSetting();

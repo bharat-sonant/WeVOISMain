@@ -152,7 +152,7 @@ export class SetNearbyWardComponent implements OnInit {
   }
   saveData() {
     const path =
-      "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +
+    this.commonService.fireStoragePath +
       this.commonService.getFireStoreCity() +
       "%2FNearByWards%2FNearByWards.json?alt=media";
     let nearByWardsInstance = this.httpService.get(path).subscribe(
@@ -192,7 +192,7 @@ export class SetNearbyWardComponent implements OnInit {
   }
   getNearByWards() {
     this.nearByWards = [];
-    const path ="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +this.commonService.getFireStoreCity() +"%2FNearByWards%2FNearByWards.json?alt=media";
+    const path =this.commonService.fireStoragePath +this.commonService.getFireStoreCity() +"%2FNearByWards%2FNearByWards.json?alt=media";
     let nearByWardsInstance = this.httpService.get(path).subscribe((data) => {
       nearByWardsInstance.unsubscribe();
       if (this.selectedZone == "0") {
@@ -217,7 +217,6 @@ export class SetNearbyWardComponent implements OnInit {
   setPolygonListner(){
   let nearByWards: any[];
   nearByWards = this.nearByWards;
-  console.log(nearByWards);
   let commonService = this.commonService;
 
   for (let i = 0; i < this.polygonsArray.length; i++) {
@@ -234,12 +233,10 @@ export class SetNearbyWardComponent implements OnInit {
       let detail = nearByWards.find((item) => item == key["zone"]);
       if (detail == undefined) {
          if(selectedZone == key["zone"]){
-          console.log(key["zone"]);
         commonService.setAlertMessage("error", "Same Zone");
         return;
        }
         nearByWards.push(key["zone"]);
-        console.log(nearByWards);
       } else {
         commonService.setAlertMessage("error","Zone " + key["zone"] + " already exist.");
         
