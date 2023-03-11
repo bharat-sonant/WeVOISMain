@@ -147,7 +147,7 @@ export class LogBookComponent implements OnInit {
       this.logBookData.reason = zoneDetail.reason;
       let imageUrl = this.imageNotAvailablePath;
       if (zoneDetail.image != "") {
-        imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FLogBookImages%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + zoneDetail.image + "?alt=media";
+        imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLogBookImages%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + zoneDetail.image + "?alt=media";
       }
 
       this.logBookData.imageUrl = imageUrl;

@@ -59,7 +59,7 @@ export class VehicleFuelReportComponent implements OnInit {
   }
 
   getFuelMonthData() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDieselEntriesData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
@@ -251,7 +251,7 @@ export class VehicleFuelReportComponent implements OnInit {
   getTrackDetail() {
     $('#divLoader').show();
     this.vehicleTrackList = [];
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FVehicleWardKM%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedVehicle + ".json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleWardKM%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedVehicle + ".json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
@@ -322,7 +322,7 @@ export class VehicleFuelReportComponent implements OnInit {
     let workDetailList = [];
     for (let i = stratDays; i <= days; i++) {
       let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
       let workDetailInstance = this.httpService.get(path).subscribe(workData => {
         workDetailInstance.unsubscribe();
         if (workData != null) {

@@ -263,7 +263,7 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.remark = tripDetails.remark;
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
-      this.tripData.imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media";
+      this.tripData.imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media";
 
       this.setFilledStatus();
       this.setTripAnalysis();
