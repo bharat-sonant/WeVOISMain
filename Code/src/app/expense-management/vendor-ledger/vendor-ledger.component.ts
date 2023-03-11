@@ -51,7 +51,7 @@ export class VendorLedgerComponent implements OnInit {
   }
 
   setDefault() {
-    this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.firebaseStoragePath = this.commonService.fireStoragePath;
     this.toDayDate = this.commonService.setTodayDate();
     this.getVendorList();
     this.getYear();
