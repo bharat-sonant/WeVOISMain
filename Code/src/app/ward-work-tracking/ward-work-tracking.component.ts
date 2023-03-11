@@ -117,7 +117,7 @@ export class WardWorkTrackingComponent {
 
   setDefault() {
     this.isShowHouses=true;
-    this.firebaseStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.firebaseStoragePath = this.commonService.fireStoragePath;
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       $(this.divParshadDetail).hide();
       this.isParshadShow = false;
@@ -890,7 +890,7 @@ export class WardWorkTrackingComponent {
 
   getTimerTime() {
     this.progressData.totalTimer = 0;
-    const timerTimeJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FTimingForLines%2F" + this.selectedZone + ".json?alt=media";
+    const timerTimeJsonPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FTimingForLines%2F" + this.selectedZone + ".json?alt=media";
     let timerTimeInstance = this.httpService.get(timerTimeJsonPath).subscribe(timerTimeData => {
       timerTimeInstance.unsubscribe();
       if (timerTimeData != null) {
@@ -925,7 +925,7 @@ export class WardWorkTrackingComponent {
 
 
   getMinimumCardToBeScanned() {
-    const minimumCardToBeScannedJsonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FMinimumCardToBeScannedForLines%2F" + this.selectedZone + ".json?alt=media";
+    const minimumCardToBeScannedJsonPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FMinimumCardToBeScannedForLines%2F" + this.selectedZone + ".json?alt=media";
     let minimumCardToBeScannedInstance = this.httpService.get(minimumCardToBeScannedJsonPath).subscribe(minimumCardToBeScannedData => {
       minimumCardToBeScannedInstance.unsubscribe();
       if (minimumCardToBeScannedData != null) {
