@@ -458,7 +458,7 @@ export class RoutesTrackingComponent implements OnInit {
   }
 
   getLocationHistoryFromStorage(monthDate: any, type: any) {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
     let locationHistoryInstance = this.httpService.get(path).subscribe(data => {
       locationHistoryInstance.unsubscribe();
       if (data != null) {
