@@ -43,7 +43,6 @@ export class DustbinManageComponent implements OnInit {
     this.zoneList = [];
     this.dustbinService.getDustbinZone().then((zones: any) => {
       if (zones != null) {
-        console.log(zones);
         let list = zones.toString().split(',');
         for (let i = 0; i < list.length; i++) {
           this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });

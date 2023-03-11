@@ -47,7 +47,7 @@ export class DustbinServiceComponent implements OnInit {
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStorePath = this.commonService.fireStoragePath;
     this.selectedDate = this.commonService.setTodayDate();
     this.yearList = [];
     this.dustbinList = [];
@@ -283,7 +283,7 @@ export class DustbinServiceComponent implements OnInit {
     this.db.object(dbPath).update(data);
 
     let JsonObj = {};
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + date + ".json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + date + ".json?alt=media";
     let dustbinPlanHistoryInstance = this.httpService.get(path).subscribe(planHistoryData => {
       dustbinPlanHistoryInstance.unsubscribe();
       JsonObj = planHistoryData;
