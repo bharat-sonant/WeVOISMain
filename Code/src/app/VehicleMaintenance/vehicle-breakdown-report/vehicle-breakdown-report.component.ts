@@ -20,7 +20,7 @@ export class VehicleBreakdownReportComponent implements OnInit {
   selectedMonthName: any;
   allBreakdownList: any[] = [];
   breakdownList:any[]=[];
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
   ddlYear = "#ddlYear";
   ddlMonth = "#ddlMonth";
   ddlStatus="#ddlStatus";

@@ -22,7 +22,7 @@ export class AddVehicleBreakdownComponent implements OnInit {
   breakdownList: any[] = [];
   vehicleList: any[] = [];
   breakdownId: any;
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
   vehicleBreakdownJSONData: any;
   mechanicList: any[] = [];
   preDate: any;
