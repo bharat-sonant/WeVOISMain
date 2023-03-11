@@ -26,7 +26,7 @@ export class MarkerApprovalTestComponent {
   allLines: any[];
   polylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
   lines: any[] = [];
   wardLineCount: any;
   zoneKML: any;
@@ -121,7 +121,7 @@ export class MarkerApprovalTestComponent {
   }
 
   getHouseType() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
       houseTypeInstance.unsubscribe();
       if (data != null) {
@@ -397,7 +397,7 @@ export class MarkerApprovalTestComponent {
 
 
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -567,7 +567,7 @@ export class MarkerApprovalTestComponent {
               }
 
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -1323,13 +1323,14 @@ export class MarkerApprovalTestComponent {
       let wardNo = this.selectedZone;
 
       let markerDetail = this.markerData;
+      let fireStoragePath=this.commonService.fireStoragePath;
       let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
         $("#divLoader").show();
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+        let imageURL = fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1607,7 +1608,7 @@ export class MarkerApprovalTestComponent {
 
             let image=dataKey["image"];
             let city = this.commonService.getFireStoreCity();
-            let imageUrl= "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            let imageUrl= this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
             
             let removedById=dataKey["removeBy"];
             let removedByDetail=this.userList.find(item=>item.userId==removedById)
@@ -1695,7 +1696,7 @@ export class MarkerApprovalTestComponent {
               // To get image url....
               let imageName=key["image"];
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
 
               // To get Housetype name from housetype id
               let houseType="";
@@ -1854,7 +1855,7 @@ export class MarkerApprovalTestComponent {
     else{
       $("#btnNearBy").html("Hide Near By Wards");
       this.nearByStatus="hide";
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FNearByWards.json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FNearByWards.json?alt=media";
       let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
         nearByWardsInstance.unsubscribe();
         if(this.selectedZone=="0"){
