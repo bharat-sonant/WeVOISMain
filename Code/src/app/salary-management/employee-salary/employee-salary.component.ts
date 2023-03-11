@@ -57,7 +57,7 @@ export class EmployeeSalaryComponent implements OnInit {
 
   setDefault() {
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStoragePath = this.commonService.fireStoragePath;
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);
     this.setDefaultValues();

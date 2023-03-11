@@ -36,7 +36,7 @@ export class SalaryCalculationsComponent implements OnInit {
   maxTaskCount = 10;
   wardWagesList: any[];
 
-  storagePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity();
+  storagePath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity();
 
   ngOnInit() {
 
@@ -48,12 +48,14 @@ export class SalaryCalculationsComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.todayDate = this.commonService.setTodayDate();
-    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStoragePath = this.commonService.fireStoragePath;
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.getWardWagesList();
     this.getYear();
 
   }
+
+  
 
   getWardWagesList() {
     this.wardWagesList = [];
@@ -129,7 +131,6 @@ export class SalaryCalculationsComponent implements OnInit {
   setEmployeeData(index: int) {
     let employeeId = this.employeeIds[index];
 
-    console.log("employeeId:" + employeeId);
     if (employeeId != undefined) {
 
       let designationId = this.employees[employeeId]["GeneralDetails"]["designationId"];

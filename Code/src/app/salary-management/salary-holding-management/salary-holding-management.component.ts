@@ -49,7 +49,7 @@ export class SalaryHoldingManagementComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStoragePath = this.commonService.fireStoragePath;
     this.userId = localStorage.getItem("userID");
     this.toDayDate = this.commonService.setTodayDate();
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);

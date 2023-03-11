@@ -50,7 +50,7 @@ export class SalaryTransactionComponent implements OnInit {
     this.userId = localStorage.getItem("userID");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStoragePath = this.commonService.fireStoragePath;
     this.toDayDate = this.commonService.setTodayDate();
     this.uploadYear = this.toDayDate.split('-')[0];
     let date = this.commonService.getPreviousMonth(this.toDayDate, 1);

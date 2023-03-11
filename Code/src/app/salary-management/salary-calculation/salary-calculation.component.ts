@@ -76,7 +76,7 @@ export class SalaryCalculationComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStoragePath = this.commonService.fireStoragePath;
     this.todayDate = this.commonService.setTodayDate();
     this.getYear();
     this.getWardWagesList();
@@ -85,7 +85,7 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getWardWagesList() {
-    const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSettings%2FWages.json?alt=media";
+    const pathDate = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FWages.json?alt=media";
     let wardLineInstance = this.httpService.get(pathDate).subscribe(wardWageData => {
       wardLineInstance.unsubscribe();
       if (wardWageData != null) {

@@ -52,7 +52,7 @@ export class StaffAccountDetailComponent implements OnInit {
     this.isLockUnlock = localStorage.getItem("isLock")
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
-    this.fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    this.fireStorePath = this.commonService.fireStoragePath;
     this.designationList = [];
     this.designationUpdateList = [];
     this.allAccountList = [];
