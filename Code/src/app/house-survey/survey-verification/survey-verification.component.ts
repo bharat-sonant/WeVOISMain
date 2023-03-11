@@ -28,7 +28,7 @@ export class SurveyVerificationComponent {
   cardMarkers: any[] = [];
   toDayDate: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
-  fileStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fileStoragePath = this.commonService.fireStoragePath;
   lines: any[] = [];
   wardLineCount: any;
   lineNo: any;
@@ -168,12 +168,12 @@ export class SurveyVerificationComponent {
   }
 
   getVarifiedCardJSON() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FLastUpdate.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FLastUpdate.json?alt=media";
     let lastUpdateInstance = this.httpService.get(path).subscribe(lastUpdatedata => {
       lastUpdateInstance.unsubscribe();
       if (lastUpdatedata != null) {
         this.verifiedDetail.lastUpdate = lastUpdatedata["date"];
-        const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FHouseAndItsVerifiedCards.json?alt=media";
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FHouseAndItsVerifiedCards.json?alt=media";
         let verifiedInstance = this.httpService.get(path).subscribe(data => {
           verifiedInstance.unsubscribe();
           this.houseVerifiedCardList = JSON.parse(JSON.stringify(data));
@@ -543,7 +543,7 @@ export class SurveyVerificationComponent {
     let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
     let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
     this.verifiedDetail.lastUpdate = lastUpdate;
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FLastUpdate.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2F" + this.selectedZone + "%2FLastUpdate.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(lastUpdateData => {
       fuelInstance.unsubscribe();
       if (lastUpdateData != null) {

@@ -9,10 +9,6 @@
                     ngSelected="zone.zoneNo == selectedZone?'selected':''">
                     {{zone.zoneName}}
                 </option>
-
-                <option value="1">
-                    Zone 1
-                </option>
             </select>
         </div>
         <div class="col-md-4 ward-header-outer">
@@ -302,23 +298,23 @@
         </div>
         <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
-                
+
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <input type="hidden" id="deleteMarkerId" value="0">
                 <input type="hidden" id="deleteAlreadyCard" value="">
                 <input type="hidden" id="deleteZoneNo" value="">
                 <input type="hidden" id="deleteLineNo" value="">
 
-                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                        <button class="btn btn-success " (click)="deleteMarker();">
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="deleteMarker();">
                             Confirm</button>
-                    </div>
-                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                        <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
                             Cancel</button>
-                    </div>
+                </div>
 
-               
+
             </div>
         </div>
         <div id="divConfirmApprove" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">

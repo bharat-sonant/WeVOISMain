@@ -30,7 +30,7 @@ export class EmployeeMarkingComponent implements OnInit {
   };
   isFirst = true;
   db: any;
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -122,7 +122,6 @@ export class EmployeeMarkingComponent implements OnInit {
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
     //dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
     let wardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      console.log(data);
       wardInstance.unsubscribe();
       if (data != undefined) {
         let keyArray = Object.keys(data);

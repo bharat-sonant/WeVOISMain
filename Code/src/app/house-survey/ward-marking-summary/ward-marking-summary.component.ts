@@ -112,7 +112,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   getHouseType() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
       houseTypeInstance.unsubscribe();
       if (data != null) {
@@ -593,7 +593,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
               let city = this.commonService.getFireStoreCity();
 
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {

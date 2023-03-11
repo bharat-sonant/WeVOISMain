@@ -25,7 +25,7 @@ export class HouseMarkingComponent {
   allLines: any[];
   polylines = [];
   invisibleImageUrl = "../assets/img/invisible-location.svg";
-  fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStoragePath = this.commonService.fireStoragePath;
   lines: any[] = [];
   wardLineCount: any;
   zoneKML: any;
@@ -116,7 +116,7 @@ export class HouseMarkingComponent {
   }
 
   getHouseType() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
       houseTypeInstance.unsubscribe();
       if (data != null) {
@@ -385,7 +385,7 @@ export class HouseMarkingComponent {
 
 
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -555,7 +555,7 @@ export class HouseMarkingComponent {
               }
 
               let city = this.commonService.getFireStoreCity();
-              let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -1299,13 +1299,14 @@ export class HouseMarkingComponent {
       let wardNo = this.selectedZone;
 
       let markerDetail = this.markerData;
+      let fireStoragePath=this.commonService.fireStoragePath;
       let city = this.commonService.getFireStoreCity();
       marker.addListener("click", function () {
         $("#divLoader").show();
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+        let imageURL = fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1582,7 +1583,7 @@ export class HouseMarkingComponent {
 
             let image = dataKey["image"];
             let city = this.commonService.getFireStoreCity();
-            let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
 
             let removedById = dataKey["removeBy"];
             let removedByDetail = this.userList.find(item => item.userId == removedById)
@@ -1670,7 +1671,7 @@ export class HouseMarkingComponent {
                 // To get image url....
                 let imageName = key["image"];
                 let city = this.commonService.getFireStoreCity();
-                let imageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
+                let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
 
                 // To get Housetype name from housetype id
                 let houseType = "";

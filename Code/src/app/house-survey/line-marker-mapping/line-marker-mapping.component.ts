@@ -437,7 +437,7 @@ export class LineMarkerMappingComponent {
       data["image"] = lastKey + ".jpg";
       let newImageName = lastKey + ".jpg";
       const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
-      const ref = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathOld);
+      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
       ref.getDownloadURL()
         .then((url) => {
           var xhr = new XMLHttpRequest();
@@ -445,7 +445,7 @@ export class LineMarkerMappingComponent {
           xhr.onload = (event) => {
             var blob = xhr.response;
             const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
-            const ref1 = this.storage.storage.app.storage("https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/").ref(pathNew);
+            const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
             ref1.put(blob).then((promise) => {
               // ref.delete();
               this.movedMarkerCount = this.movedMarkerCount + 1;

@@ -28,7 +28,7 @@ export class SupervisorReportComponent implements OnInit {
 
   getLastUpdate() {
     this.lastUpdatedTime = "---";
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FlastUpdated.json?alt=media"
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FlastUpdated.json?alt=media"
     let lastUpdateInstance = this.httpService.get(path).subscribe((data) => {
       lastUpdateInstance.unsubscribe();
       if (data != null) {
@@ -40,7 +40,7 @@ export class SupervisorReportComponent implements OnInit {
   getSurviorSummary() {
     this.supervisorList = [];
    
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FmarkingSurviorDetail.json?alt=media"
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FmarkingSurviorDetail.json?alt=media"
     let surviorInstance = this.httpService.get(path).subscribe((surviordata) => {
       surviorInstance.unsubscribe();
       if (surviordata != null) {
@@ -84,7 +84,6 @@ export class SupervisorReportComponent implements OnInit {
     if (detail != undefined) {
       this.supervisorName = detail.supervisorName;
       let list = detail.detailList;
-      console.log(detail)
       for (let i = 0; i < list.length; i++) {
         if (list[i]["approveDate"] != null) {
           let date = list[i]["approveDate"].split(" ")[0];

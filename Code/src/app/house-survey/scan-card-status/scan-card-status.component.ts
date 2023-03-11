@@ -19,7 +19,7 @@ export class ScanCardStatusComponent implements OnInit {
   public lastUpdateDate: any;
   txtSearch = "#txtSearch";
   divLoader = "#divLoader";
-  replaceKey:any;
+  replaceKey: any;
   rowsProgressListIndex: any;
   summaryData: summary = {
     installed: 0,
@@ -40,17 +40,15 @@ export class ScanCardStatusComponent implements OnInit {
     this.getScanCardStatus();
   }
 
-  setReplaceKey(){
-    const path="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
-    let cityDataInstance=this.httpService.get(path).subscribe(cityData => {
+  setReplaceKey() {
+    const path = this.commonService.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
       cityDataInstance.unsubscribe();
-      if(cityData!=null){
-        let cityList=JSON.parse(JSON.stringify(cityData));
-        let detail=cityList.find(item=>item.cityName==this.commonService.getFireStoreCity());
-        if(detail!=undefined)
-        {
-          this.replaceKey=detail.key;
-          console.log(this.replaceKey)
+      if (cityData != null) {
+        let cityList = JSON.parse(JSON.stringify(cityData));
+        let detail = cityList.find(item => item.cityName == this.commonService.getFireStoreCity());
+        if (detail != undefined) {
+          this.replaceKey = detail.key;
         }
       }
     });
@@ -58,21 +56,21 @@ export class ScanCardStatusComponent implements OnInit {
 
   getScanCardStatus() {
     $(this.divLoader).show();
-    const lastUpdatePath="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FCardScanData%2FlastUpdate.json?alt=media";
-    let lastUpdateInstance=this.httpService.get(lastUpdatePath).subscribe(lastUpdateData => {
+    const lastUpdatePath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCardScanData%2FlastUpdate.json?alt=media";
+    let lastUpdateInstance = this.httpService.get(lastUpdatePath).subscribe(lastUpdateData => {
       lastUpdateInstance.unsubscribe();
-      if(lastUpdateData!=null){
+      if (lastUpdateData != null) {
         this.summaryData.date = lastUpdateData["lastUpdate"];
       }
     });
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FCardScanData%2FscanCardStatus.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCardScanData%2FscanCardStatus.json?alt=media";
     let scanCardStatusInstance = this.httpService.get(path).subscribe(scanCardStatusData => {
       scanCardStatusInstance.unsubscribe();
       if (scanCardStatusData != null) {
-        this.scanCardList=JSON.parse(JSON.stringify(scanCardStatusData));
-        this.scanCardList=this.commonService.transformNumeric(this.scanCardList,"serialNo");
-        this.summaryData.installed=this.scanCardList.filter(item=>item.cardInstalled=='yes').length;
-        this.summaryData.unInstalled=this.scanCardList.filter(item=>item.cardInstalled=='no').length;
+        this.scanCardList = JSON.parse(JSON.stringify(scanCardStatusData));
+        this.scanCardList = this.commonService.transformNumeric(this.scanCardList, "serialNo");
+        this.summaryData.installed = this.scanCardList.filter(item => item.cardInstalled == 'yes').length;
+        this.summaryData.unInstalled = this.scanCardList.filter(item => item.cardInstalled == 'no').length;
         this.scanCardFilterList = this.scanCardList;
         this.progressList = this.scanCardFilterList.slice(0, this.rowsProgressListIndex);
         $(this.divLoader).hide();
@@ -117,7 +115,7 @@ export class ScanCardStatusComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let key = keyArray[i];
               if (scanCardData[key]["serialNo"] != null) {
-               // data[i.toString()] = { serialNo: scanCardData[key]["serialNo"], scanDate: scanCardData[key]["date"], cardInstalled: scanCardData[key]["cardInstalled"] };
+                // data[i.toString()] = { serialNo: scanCardData[key]["serialNo"], scanDate: scanCardData[key]["date"], cardInstalled: scanCardData[key]["cardInstalled"] };
 
                 let cardNo = scanCardData[key]["serialNo"];
                 let serialNo = Number(cardNo.toString().substring(this.replaceKey.length, cardNo.toString().length));
@@ -141,13 +139,13 @@ export class ScanCardStatusComponent implements OnInit {
           this.commonService.saveJsonFile(cardList, "scanCardStatus.json", filePath);
         }
         setTimeout(() => {
-          this.commonService.setAlertMessage("success","Data update successfully !!!");
+          this.commonService.setAlertMessage("success", "Data update successfully !!!");
           this.getScanCardStatus();
         }, 9000);
       })
   }
 
-  exportScanCardStatus(){
+  exportScanCardStatus() {
     $(this.divLoader).show();
     if (this.scanCardList.length > 0) {
       let htmlString = "";
