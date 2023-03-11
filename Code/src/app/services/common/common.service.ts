@@ -230,6 +230,9 @@ export class CommonService {
     else if (cityName == "nokha") {
       latLng.push({ lat: 27.55713, lng: 73.4700985 });
     }
+    else if (cityName == "losal") {
+      latLng.push({ lat: 27.3966561, lng: 74.9193112 });
+    }
     return latLng;
   }
 
@@ -806,7 +809,7 @@ export class CommonService {
   }
 
   setDesignation() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FDesignations.json?alt=media";
+    const path = this.fireStoragePath + "Common%2FDesignations.json?alt=media";
     let Instance = this.httpService.get(path).subscribe(dataDate => {
       Instance.unsubscribe();
       let designationList = [];
@@ -834,7 +837,7 @@ export class CommonService {
       wardCheckList.push({ wardNo: "30" });
       wardCheckList.push({ wardNo: "31" });
     }
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
+    const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
@@ -1037,9 +1040,9 @@ export class CommonService {
     });
   }
 
-  getAllowMarkingWards(){
+  getAllowMarkingWards() {
     return new Promise((resolve) => {
-      let markingWards=[];
+      let markingWards = [];
       markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
       let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWardForMarking.json?alt=media";
       let markingWardInstance = this.httpService.get(path).subscribe(data => {
@@ -1052,11 +1055,11 @@ export class CommonService {
             }
           }
         }
-        
+
         resolve(markingWards);
-      },error=>{
+      }, error => {
         resolve(null);
-      });      
+      });
     });
   }
 
@@ -1305,7 +1308,7 @@ export class CommonService {
       if (cityName == "jaipur-office") {
         cityName = "jaipur"
       }
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
@@ -1366,7 +1369,7 @@ export class CommonService {
   getWardLine(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       let dat1 = new Date(date);
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         let list = JSON.parse(JSON.stringify(dataDate));
@@ -1386,7 +1389,7 @@ export class CommonService {
         this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
           resolve(JSON.stringify(data));
         }, error => {
-          const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+          const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
           let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
             wardLineInstance.unsubscribe();
             if (data != null) {
@@ -1482,7 +1485,7 @@ export class CommonService {
   getDefaultAllWards() {
     return new Promise((resolve) => {
       let allWardList = [];
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FAllWard.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAllWard.json?alt=media";
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
@@ -1510,7 +1513,7 @@ export class CommonService {
   getCityWiseWard() {
     return new Promise((resolve) => {
       let allWardList = [];
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FCircleWiseWards.json?alt=media";
       let fuelInstance = this.httpService.get(path).subscribe(data => {
         fuelInstance.unsubscribe();
         if (data != null) {
@@ -1566,7 +1569,7 @@ export class CommonService {
   saveJsonFile(listArray: any, fileName: any, filePath: any) {
     return new Promise((resolve) => {
 
-      let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+      let fireStorePath = this.fireStoragePath;
       var jsonFile = JSON.stringify(listArray);
       var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
       const path = this.getFireStoreCity() + filePath + fileName;
@@ -1594,7 +1597,7 @@ export class CommonService {
   }
 
   saveCommonJsonFile(listArray: any, fileName: any, filePath: any) {
-    let fireStorePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+    let fireStorePath = this.fireStoragePath;
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
     const path = filePath + fileName;
@@ -1621,7 +1624,7 @@ export class CommonService {
 
   getCarePrefix() {
     return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
+      const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
       let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
         cityDataInstance.unsubscribe();
         if (cityData != null) {
@@ -1656,7 +1659,7 @@ export class CommonService {
   getWardLineWeightageList(lineWeightageList: any, date: any, zoneNo: any) {
     return new Promise((resolve) => {
       let dat1 = new Date(date);
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         if (dataDate == null) {
@@ -1673,7 +1676,7 @@ export class CommonService {
             }
           }
           if (jsonDate != "") {
-            const pathDate = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+            const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
             let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
               wardLineInstance.unsubscribe();
               if (data != null) {
@@ -1701,7 +1704,7 @@ export class CommonService {
 
   getWeightageUpdateHistoryJson(zoneNo: any) {
     return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLineWeightageJson%2F" + zoneNo + "%2FweightageUpdateHistoryJson.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         resolve(JSON.stringify(dataDate));
@@ -1714,7 +1717,7 @@ export class CommonService {
   getWardForLineWeitage() {
     return new Promise((resolve) => {
       let wardForWeightageList = [];
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
       let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
         jsonInstance.unsubscribe();
         if (dataDate != null) {
@@ -1734,7 +1737,7 @@ export class CommonService {
 
   setWardForLineWeitage() {
     let wardForWeightageList = [];
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
+    const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLineWeightageJson%2FwardLineWeightageAllowed.json?alt=media";
     let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
       jsonInstance.unsubscribe();
       if (dataDate == null) {

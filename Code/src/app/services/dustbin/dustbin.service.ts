@@ -54,7 +54,7 @@ export class DustbinService {
 
   getDustbinWardMappingJson() {
     return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingDustbinWard.json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingDustbinWard.json?alt=media";
       let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
         dutbinWardJSONInstance.unsubscribe();
         resolve(DustbinWardJsonData);
@@ -79,7 +79,7 @@ export class DustbinService {
 
   getDustbinPickingPlanHistoryDateWise(year: any, monthName: any, date: any) {
     return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + year + "%2F" + monthName + "%2F" + date + ".json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + year + "%2F" + monthName + "%2F" + date + ".json?alt=media";
       let dustbinPlanHistoryInstance = this.httpService.get(path).subscribe(planHistoryData => {
         dustbinPlanHistoryInstance.unsubscribe();
         resolve(planHistoryData);
@@ -125,7 +125,7 @@ export class DustbinService {
 
   getDustbinHistoryJson(year: any, monthName: any, zone: any) {
     return new Promise((resolve) => {
-      const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinData%2F" + year + "%2F" + monthName + "%2F" + zone + ".json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2F" + year + "%2F" + monthName + "%2F" + zone + ".json?alt=media";
       let dutbinJSONInstance = this.httpService.get(path).subscribe(planJsonData => {
         dutbinJSONInstance.unsubscribe();
         resolve(planJsonData);
