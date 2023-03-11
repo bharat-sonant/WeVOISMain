@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { CommonService } from "../services/common/common.service";
 @Component({
   selector: 'app-manage-ward-supervisor',
   templateUrl: './manage-ward-supervisor.component.html',
@@ -9,14 +10,13 @@ import { ActivatedRoute } from '@angular/router';
 export class ManageWardSupervisorComponent implements OnInit {
 supervisorList:any[]=[];
 wardList:any[]=[];
-constructor(private http:HttpClient,public actRoute:ActivatedRoute) { }
+constructor(private http:HttpClient,public actRoute:ActivatedRoute,private commonService: CommonService) { }
 ngOnInit() {
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
-    console.log(this.wardList);
     this.getSupervisor()
   }
 getSupervisor(){
- const path="https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+"VehicleMaintenence%2FMasters%2Fward-supervisor%2Fward-supervisor.json?alt=media"
+ const path=this.commonService.fireStoragePath+"VehicleMaintenence%2FMasters%2Fward-supervisor%2Fward-supervisor.json?alt=media"
   let supervisorInstance=this.http.get(path).subscribe((supervisorJsondata)=>{
   supervisorInstance.unsubscribe();
   let keyArray = Object.keys(supervisorJsondata);
