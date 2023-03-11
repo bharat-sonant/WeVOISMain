@@ -110,7 +110,7 @@ export class EmployeePenaltyComponent implements OnInit {
 
   getPenality() {
     $(this.divLoader).show();
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPenality%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPenality%2F" + this.selectedYear + "%2F" + this.selectedMonthName + ".json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {
