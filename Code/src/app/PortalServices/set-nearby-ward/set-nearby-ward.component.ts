@@ -60,9 +60,7 @@ export class SetNearbyWardComponent implements OnInit {
       let zone = this.zoneList[i]["zoneNo"];
       let zoneKML: any;
       if (zone != 0) {
-        this.commonService
-          .getWardBoundary(zone, zoneKML, 2)
-          .then((data: any) => {
+        this.commonService.getWardBoundary(zone, zoneKML, 2).then((data: any) => {
             zoneKML = data;
             var polyCords = [];
             for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
@@ -73,15 +71,33 @@ export class SetNearbyWardComponent implements OnInit {
                 )
               );
             }
+            let polygon:any;
+            if(zone==this.selectedZone){
+              let color=this.getColor();
+              polygon = new google.maps.Polygon({
+                paths: polyCords,
+                geodesic: true,
+                strokeColor: color,
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.35
+              });
 
-            const polygon = new google.maps.Polygon({
-              paths: polyCords,
-              geodesic: true,
-              strokeColor: this.getColor(),
-              strokeOpacity: 1.0,
-              strokeWeight: 2,
-              fillColor: "#FFF",
-            });
+            }
+            else{
+              polygon = new google.maps.Polygon({
+                paths: polyCords,
+                geodesic: true,
+                strokeColor: this.getColor(),
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                fillColor: "#FFF",
+              });
+  
+
+            }
+
             this.polygonsArray.push({
               zone: zone,
               polygon: polygon,
@@ -149,6 +165,7 @@ export class SetNearbyWardComponent implements OnInit {
   }
   deleteNearByWard(zone: any) {
     this.nearByWards = this.nearByWards.filter((item) => item != zone);
+   
   }
   saveData() {
     const path =
@@ -214,7 +231,8 @@ export class SetNearbyWardComponent implements OnInit {
     
 
   }
-  setPolygonListner(){
+  setPolygonListner(){  
+   
   let nearByWards: any[];
   nearByWards = this.nearByWards;
   let commonService = this.commonService;
@@ -222,8 +240,7 @@ export class SetNearbyWardComponent implements OnInit {
   for (let i = 0; i < this.polygonsArray.length; i++) {
     let key = this.polygonsArray[i];
     let polygon = key["polygon"];
-   
- 
+  
     polygon.addListener("click", function () {
       let selectedZone = $("#ddlZone").val();
       if (selectedZone == "0") {
@@ -237,10 +254,12 @@ export class SetNearbyWardComponent implements OnInit {
         return;
        }
         nearByWards.push(key["zone"]);
+
       } else {
         commonService.setAlertMessage("error","Zone " + key["zone"] + " already exist.");
         
       }
+      
     });
   }
   }
