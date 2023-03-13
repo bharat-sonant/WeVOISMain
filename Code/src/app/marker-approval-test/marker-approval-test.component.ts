@@ -145,6 +145,7 @@ export class MarkerApprovalTestComponent {
 
   changeZoneSelection(filterVal: any) {
     $("#btnNearBy").html("Show Near By Wards");
+    this.nearByStatus="show";
       for(let i=0;i<this.nearByWardsPolygon.length;i++){
           this.nearByWardsPolygon[i].setMap(null);
       }
@@ -283,6 +284,7 @@ export class MarkerApprovalTestComponent {
 
   getAllLinesFromJson() {
     this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+     
       if (this.polylines.length > 0) {
         for (let i = 0; i < this.polylines.length; i++) {
           if (this.polylines[i] != null) {
@@ -324,6 +326,7 @@ export class MarkerApprovalTestComponent {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
+      console.log(data)
       this.markerList = [];
       if (data != null) {
         let keyArray = Object.keys(data);
@@ -1323,14 +1326,14 @@ export class MarkerApprovalTestComponent {
       let wardNo = this.selectedZone;
 
       let markerDetail = this.markerData;
-      let fireStoragePath=this.commonService.fireStoragePath;
       let city = this.commonService.getFireStoreCity();
+      let commonService=this.commonService;
       marker.addListener("click", function () {
         $("#divLoader").show();
         setTimeout(() => {
           $("#divLoader").hide();
         }, 2000);
-        let imageURL = fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+        let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1855,28 +1858,36 @@ export class MarkerApprovalTestComponent {
     else{
       $("#btnNearBy").html("Hide Near By Wards");
       this.nearByStatus="hide";
-      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FNearByWards.json?alt=media";
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
       let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
         nearByWardsInstance.unsubscribe();
         if(this.selectedZone=="0"){
+          $("#btnNearBy").html("Show Near By Wards");
+          this.nearByStatus="show";
           this.commonService.setAlertMessage("error", "Please select zone !!!");
           return;
         }
         if(data!=undefined){
           let jsonKeyArray=Object.keys(data);
-          // console.log(jsonKeyArray)
           let detail=jsonKeyArray.find(item=>item==this.selectedZone)
           if(detail!=undefined){
             this.nearByWards=data[detail];
             this.showNearByWards(); 
           }
           else{
-            this.commonService.setAlertMessage("error", "No Data Found !!!");
+            this.commonService.setAlertMessage("error", "No Zone Data Found !!!");
             $("#btnNearBy").html("Show Near By Wards");
-          }  
+            this.nearByStatus="show";
+          } 
+           
         }
+      },error=>
+      {
+        this.commonService.setAlertMessage("error", "No Data Found !!!");
+        $("#btnNearBy").html("Show Near By Wards");
+        this.nearByStatus="show";
       });
-    }
+  }
    
   }
 
@@ -1893,13 +1904,23 @@ export class MarkerApprovalTestComponent {
             aa.push({lat:Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"])})
           }
 
-          const polygon=new google.maps.Polyline({
-            path: aa,
+          const polygon=new google.maps.Polygon({
+            paths: aa,
             geodesic: true,
             strokeColor: this.getColor(),
             strokeOpacity: 1.0,
-            strokeWeight: 2,            
+            strokeWeight: 2,      
           });
+          polygon.setOptions({
+            fillColor: polygon["strokeColor"],
+            fillOpacity: 0.35
+          });
+          
+         
+          
+          $("#tr"+i).css("color",polygon["strokeColor"]);
+           
+          
           this.nearByWardsPolygon.push(polygon);
           let statusString = '<div style="width: 100px;background-color: white;float: left;">';
           statusString += '<div style="float: left;width: 100px;text-align:center;font-size:12px;"> ' + zone + '';

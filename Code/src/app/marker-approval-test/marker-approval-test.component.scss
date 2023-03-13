@@ -1580,3 +1580,20 @@ table tr:hover {
     border: 1px solid lightgray!important;
     font-size: 12px;
 }
+.div-nearByWards{
+    position:absolute;
+    right:15px;
+    top:655px;
+    width: 225px;
+    max-height:20%;
+    overflow-y:scroll;
+    // animation:dropDown 2s ease-in-out linear;
+}
+// @keyframes dropDown{
+//     from{
+//         max-height:0%;
+//     }
+//     to{
+//         max-height:20%;
+//     }
+// }
