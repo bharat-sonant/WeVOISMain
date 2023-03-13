@@ -284,7 +284,6 @@ export class MarkerApprovalTestComponent {
 
   getAllLinesFromJson() {
     this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
-     
       if (this.polylines.length > 0) {
         for (let i = 0; i < this.polylines.length; i++) {
           if (this.polylines[i] != null) {
@@ -307,6 +306,7 @@ export class MarkerApprovalTestComponent {
       this.wardLineCount = wardLines["totalLines"];
       this.markerData.totalLines = this.wardLineCount;
       let lineNo = 0;
+
       for (let i = 0; i < keyArray.length - 3; i++) {
         lineNo = Number(keyArray[i]);
         let points = wardLines[lineNo]["points"];
@@ -314,11 +314,36 @@ export class MarkerApprovalTestComponent {
         for (let j = 0; j < points.length; j++) {
           latLng.push({ lat: points[j][0], lng: points[j][1] });
         }
-        this.lines.push({ lineNo: lineNo, latlng: latLng, color: "#87CEFA", });
-        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
+
+        this.getLineApproveStatus(lineNo,latLng,i);
       }
       this.getMarkedHouses(this.lineNo);
+      
     });
+  }
+  getLineApproveStatus(lineNo:any,latLng:any,i:any){
+    let dbPath="EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo+"/ApproveStatus/status"
+        let approveStatusInstance=this.db.object(dbPath).valueChanges().subscribe(approveStatus=>{
+          // approveStatusInstance.unsubscribe();
+          
+         
+          let color="";
+          if(approveStatus=="Confirm"){
+            color="#00f645";
+            this.lines.push({ lineNo: lineNo, latlng: latLng, color:color,approveStatus:approveStatus });
+            this.plotLineOnMap(lineNo, latLng, i, this.selectedZone,approveStatus);
+          }
+          else{
+            color="#fa0000";
+            this.lines.push({ lineNo: lineNo, latlng: latLng, color:color,approveStatus:approveStatus });
+            this.plotLineOnMap(lineNo, latLng, i, this.selectedZone,approveStatus);
+
+          }
+
+          // this.lines.push({ lineNo: lineNo, latlng: latLng, color:color, });
+          // this.plotLineOnMap(lineNo, latLng, i, this.selectedZone,approveStatus);
+        });
+
   }
 
   getMarkedHouses(lineNo: any) {
@@ -326,7 +351,6 @@ export class MarkerApprovalTestComponent {
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
-      console.log(data)
       this.markerList = [];
       if (data != null) {
         let keyArray = Object.keys(data);
@@ -1263,17 +1287,29 @@ export class MarkerApprovalTestComponent {
     return url;
   }
 
-  plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
+  plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any,lineApproveStatus:any) {
+   
     if (wardNo == this.selectedZone) {
       if (this.polylines[index] != undefined) {
         this.polylines[index].setMap(null);
       }
       let strokeWeight = 2;
       let status = "";
+      if (lineApproveStatus == "Confirm") {
+        strokeWeight = 4;
+        status = "LineCompleted";
+      }
+      else{
+        strokeWeight = 2;
+        status = "skip";
+
+      }
       if (lineNo == this.lineNo) {
         strokeWeight = 5;
         status = "requestedLine";
       }
+      
+
       let line = new google.maps.Polyline({
         path: latlng,
         strokeColor: this.commonService.getLineColor(status),
@@ -1378,14 +1414,27 @@ export class MarkerApprovalTestComponent {
       }
     }
     // previousLine
+     
     let firstLine = this.lines.find(
       (item) => item.lineNo == Number(this.previousLine)
     );
+    
+    let status="";
+    let strokeWeight=2;
+    if(firstLine.approveStatus=="Confirm")
+    {
+      status="LineCompleted";
+      strokeWeight=4;
+    }
+    else{
+      status="skip";
+      strokeWeight=2;
+    }
     this.polylines[Number(this.previousLine) - 1].setMap(null);
     let line = new google.maps.Polyline({
       path: firstLine.latlng,
-      strokeColor: this.commonService.getLineColor(""),
-      strokeWeight: 2,
+      strokeColor: this.commonService.getLineColor(status),
+      strokeWeight: strokeWeight,
     });
     this.polylines[Number(this.previousLine) - 1] = line;
     this.polylines[Number(this.previousLine) - 1].setMap(this.map);
@@ -1500,7 +1549,10 @@ export class MarkerApprovalTestComponent {
       $("#approveLineStatusDiv").hide();
       $("#approveLineCheckDiv").show();
       let element=(<HTMLInputElement>document.getElementById("approveCheck"));
+      let btnElement = <HTMLButtonElement>document.getElementById("btnSave");
       element.checked=false;
+      btnElement.disabled = true;
+
     }
 
     if (lineNo == "") {
@@ -1812,7 +1864,7 @@ export class MarkerApprovalTestComponent {
 
           $("#approveLineCheckDiv").hide();
           $("#approveLineStatusDiv").show();
-          console.log(this.markerData.lineApprovedBy,this.markerData.lineApprovedDate)
+          // console.log(this.markerData.lineApprovedBy,this.markerData.lineApprovedDate)
 
           
         } else {
