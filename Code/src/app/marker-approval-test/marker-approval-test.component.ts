@@ -1947,6 +1947,7 @@ export class MarkerApprovalTestComponent {
     
     if(this.nearByWards.length!=0){
       for(let i=0;i<this.nearByWards.length;i++){
+        
         let zone=this.nearByWards[i];
         let zoneKML:any;
         this.commonService.getWardBoundary(zone,zoneKML, 4).then((data: any) => {
@@ -1955,11 +1956,11 @@ export class MarkerApprovalTestComponent {
           for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
             aa.push({lat:Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"])})
           }
-
+        
           const polygon=new google.maps.Polygon({
             paths: aa,
             geodesic: true,
-            strokeColor: this.getColor(),
+            strokeColor: this.getColor(i),
             strokeOpacity: 1.0,
             strokeWeight: 2,      
           });
@@ -1996,9 +1997,33 @@ export class MarkerApprovalTestComponent {
     
 
   }
-  getColor(){
-    var randomColor = Math.floor(Math.random()*16777215).toString(16);
-    return "#"+randomColor;
+  getColor(index:number){
+    // var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    // return "#"+randomColor;
+    switch(index){
+      case 0:
+      return "#7400FF";
+      case 1:
+      return "#6A2D42";
+      case 2:
+      return "#8AF123";
+      case 3:
+      return "#23F1EE";
+      case 4:
+      return "#6A0976";
+      case 5:
+      return "#EF0C46";
+      case 6:
+      return "#0651A4";
+      case 7:
+      return "#6E7B32";
+      case 8:
+      return "#F7C600";
+      case 9:
+      return "#6DD8F5";
+      case 10:
+      return "#F14723";
+    }
   }
 
 }
