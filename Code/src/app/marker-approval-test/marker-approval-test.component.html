@@ -118,7 +118,7 @@
 
     </div>
 
-    <div class="image-box">
+    <div class="image-box" id="markerImageBox" >
         <div id="divLoader" class="loaderClass">
             <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
         </div>
@@ -126,7 +126,13 @@
             <div class="col-md-12 house-type">
                 <h3> {{markerData.houseType}}
                     <br /> {{markerData.alreadyCard}}
+                    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#markerImageBox')" style="float: right;">
                 </h3>
+                <!-- <div class="img-close-outer"> -->
+                   
+        
+                <!-- </div> -->
+   
             </div>
             <div class="col-md-12">
                 <div class="main-box">
@@ -135,10 +141,10 @@
                     </a>
                 </div>
             </div>
-            <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
+            <!-- <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
                 ward
                 <span><i class="far fa-hand-point-right"></i></span>
-            </button>
+            </button> -->
         </div>
     </div>
 
@@ -161,12 +167,12 @@
     </div>
 
     
-    <button  class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 605px;" (click)="getNearByWards()"> 
+    <button  class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;" (click)="getNearByWards()"> 
         <span id="btnNearBy">Show Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'" style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'" style="margin-left: 5px;"></i>
         <!-- <span><i class="far fa-hand-point-right"></i></span> -->
         
     </button>
-    <div class="div-nearByWards"  [hidden]="nearByStatus=='show'" style="background-color: rgb(255, 255, 255);">
+    <div class="div-nearByWards"  [hidden]="nearByStatus=='show'">
         <table>
             <tbody>
                 <tr class="table-row" *ngFor="let data of nearByWards;let i=index">    

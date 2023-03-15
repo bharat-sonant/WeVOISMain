@@ -713,10 +713,11 @@ button:focus-visible {
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
-    right: 15px;
-    top: 222px;
+    left: 90px;
+    top: 121px;
     border: 1px solid #80bd7b;
     padding: 10px;
+    display: none;
 }
 
 .house-type {
@@ -1477,7 +1478,7 @@ table td {
     // box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 528px;
+    top: 220px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
@@ -1583,10 +1584,12 @@ table tr:hover {
 .div-nearByWards{
     position:absolute;
     right:15px;
-    top:655px;
+    top:346px;
     width: 225px;
-    max-height:15%;
+    max-height:30vh;
     overflow-y:scroll;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 255);
     // animation:dropDown 2s ease-in-out linear;
 }
 // @keyframes dropDown{

@@ -1366,7 +1366,9 @@ export class MarkerApprovalTestComponent {
       let commonService=this.commonService;
       marker.addListener("click", function () {
         $("#divLoader").show();
+        // $("#markerImageBox").show();
         setTimeout(() => {
+          $("#markerImageBox").show();
           $("#divLoader").hide();
         }, 2000);
         let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
