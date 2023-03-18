@@ -1,6 +1,6 @@
 /// <reference types="@types/googlemaps" />
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild,HostListener } from "@angular/core";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireDatabase, listChanges } from "angularfire2/database";
@@ -39,6 +39,7 @@ export class SetNearbyWardComponent implements OnInit {
   nearByWards: any[] = [];
   nearByWardJsonObj: object;
   polygonsArray: any[] = [];
+ 
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -55,7 +56,7 @@ export class SetNearbyWardComponent implements OnInit {
   }
 
   getAllWardBoundaries() {
-
+    this.polygonsArray=[];
     for (let i = 0; i < this.zoneList.length; i++) {
       let zone = this.zoneList[i]["zoneNo"];
       let zoneKML: any;
@@ -81,7 +82,7 @@ export class SetNearbyWardComponent implements OnInit {
                 strokeOpacity: 1.0,
                 strokeWeight: 2,
                 fillColor: color,
-                fillOpacity: 0.35
+                fillOpacity: 0.90
               });
 
             }
@@ -141,8 +142,9 @@ export class SetNearbyWardComponent implements OnInit {
             this.map.fitBounds(bounds);
           });
       }
-    }
+    }  
   }
+
   getColor() {
     var randomColor = Math.floor(Math.random() * 16777215).toString(16);
     return "#" + randomColor;
@@ -153,9 +155,10 @@ export class SetNearbyWardComponent implements OnInit {
       return;
     }
     this.selectedZone = filterVal;
-    for(let i = 0; i < this.polygonsArray.length; i++){
-    let key =this.polygonsArray[i];
   
+    for(let i = 0; i < this.polygonsArray.length; i++){
+
+    let key =this.polygonsArray[i];
      let polygon=key["polygon"];
      polygon.setMap(null)
     }
@@ -165,6 +168,13 @@ export class SetNearbyWardComponent implements OnInit {
   }
   deleteNearByWard(zone: any) {
     this.nearByWards = this.nearByWards.filter((item) => item != zone);
+
+    // let detail=this.polygonsArray.find(item=>item.zone==zone);
+    //   if (detail!=undefined){
+    //     let polygon=detail.polygon;
+    //     google.maps.event.clearListeners(polygon, 'click');
+    //   }
+    // this.setPolygonListner(zone);
    
   }
   saveData() {
@@ -222,45 +232,142 @@ export class SetNearbyWardComponent implements OnInit {
         }
        
       }
-        this.setPolygonListner();
+        this.setPolygonListner("");
     }
     ,error=>{
-     this.setPolygonListner();
+     this.setPolygonListner("");
     }
     );
     
 
   }
-  setPolygonListner(){  
-   
+  setPolygonListner(zone:any){  
   let nearByWards: any[];
+  let polygonsArray:any[]=[]
+  polygonsArray=this.polygonsArray;
   nearByWards = this.nearByWards;
   let commonService = this.commonService;
+  function getColor(){
+    var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    return "#" + randomColor;
+  }
+  let map=this.map;
+  let listners:any[]=[];
+    if(zone==""){
+      // let nearByWards: any[];
+      // nearByWards = this.nearByWards;
 
-  for (let i = 0; i < this.polygonsArray.length; i++) {
-    let key = this.polygonsArray[i];
-    let polygon = key["polygon"];
-  
-    polygon.addListener("click", function () {
-      let selectedZone = $("#ddlZone").val();
-      if (selectedZone == "0") {
-        commonService.setAlertMessage("error", "Please Select Zone");
-        return;
-      }
-      let detail = nearByWards.find((item) => item == key["zone"]);
-      if (detail == undefined) {
-         if(selectedZone == key["zone"]){
-        commonService.setAlertMessage("error", "Same Zone");
-        return;
-       }
-        nearByWards.push(key["zone"]);
+      for (let i = 0; i < this.polygonsArray.length; i++) {
+        let key = this.polygonsArray[i];
+        let polygon = key["polygon"];
+        let fillDetail=this.nearByWards.find(item=>item==key["zone"]);
+        if(fillDetail!=undefined){
+          polygon.setOptions({
+          fillColor: polygon["strokeColor"],
+          fillOpacity: 0.30
+        });
+        }
+        listners[i]=polygon.addListener("click", function () {
+          let selectedZone = $("#ddlZone").val();
+          if (selectedZone == "0") {
+            commonService.setAlertMessage("error", "Please Select Zone");
+            return;
+          }
+          let sameZoneDetail = nearByWards.find((item) => item == key["zone"]);
+          if (sameZoneDetail == undefined) {
+             if(selectedZone == key["zone"]){
+            commonService.setAlertMessage("error", "Same Zone");
+            return;
+           }
+            nearByWards.push(key["zone"]);
+            // if (flag) {
+            //   polygon.setOptions({
+            //     fillColor: polygon["strokeColor"],
+            //     fillOpacity: 0.35
+            //   });
+            // } else {
+            //   polygon.setOptions({
+            //     fillColor: null,
+            //     fillOpacity: 0
+            //   });
+            // }
+            // flag = !flag;
+            
+            polygon.setOptions({
+            fillColor: polygon["strokeColor"],  
+            fillOpacity: 0.35 });
+            console.log("a");
+          } 
+          else {  
+            polygon.setMap(null);
+            // polygon.setmap(map)
+            let zoneKML: any;
+            commonService.getWardBoundary(key["zone"], zoneKML, 2).then((data: any) => {
+              zoneKML = data;
+              var polyCords = [];
+              for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+                polyCords.push(
+                  new google.maps.LatLng(
+                    Number(zoneKML[0]["latLng"][i]["lat"]),
+                    Number(zoneKML[0]["latLng"][i]["lng"])
+                  )
+                );
+              }
+              let newPolygon:any;
+              newPolygon = new google.maps.Polygon({
+                paths: polyCords,
+                geodesic: true,
+                strokeColor: getColor(),
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                fillColor: "#FFF",
+              });
+              newPolygon.setMap(map);
+              // newPolygon.addListener()
+              polygon=newPolygon;
+              // polygon.addListener(listners[i])
+              console.log(i,listners[i])
+            });
+           
 
-      } else {
-        commonService.setAlertMessage("error","Zone " + key["zone"] + " already exist.");
+            // let refDetail=polygonsArray.find(item=>item.zone==key["zone"]);
+            // if(refDetail!=undefined){
+            //   console.log(refDetail)
+            //   // refDetail.polygon.setMap(map);
+            //   // refDetail.polygon.addListener(listners[i]);
+            //   // console.log(nearByWards)
+            // }
+            // nearByWards = nearByWards.filter((item) => item != key["zone"]);
+            commonService.setAlertMessage("error","Zone " + key["zone"] + " deleted.");  
+           
+          }
+        });
         
-      }
       
-    });
+      }
+    }
+    // else{
+    //   let detail=this.polygonsArray.find(item=>item.zone==zone);
+    //   if (detail!=undefined){
+    //     let polygon=detail.polygon;
+    //     polygon.setMap(null);
+    //     console.log(detail)
+      //   // polygon.removeEventListner("click",function(){
+      //   // console.log('a');
+      //   // })
+      //   // google.maps.event.clearListeners(polygon, 'click');
+      //   // nearByWards=  nearByWards.filter((item) => item != zone);
+      //   // console.log( nearByWards)
+      //   nearByWards=  nearByWards.filter((item) => item != zone);
+      //   polygon.clearListeners();
+
+      // }
+    // }
+   
+  // console.log(listners)
   }
-  }
+  //  @HostListener('polygon:click', ['$event'])
+  // onClick(event: MouseEvent) {
+  //   console.log('clicked!', event);
+  // }
 }
