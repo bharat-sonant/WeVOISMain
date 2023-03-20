@@ -25,10 +25,7 @@ export class ManageMarkingDataComponent implements OnInit {
 
   setMarkerData() {
     $(this.divLoader).show();
-    this.getMarkerData('data');
-  }
-
-  getMarkerData(type: any) {
+    this.db.object("EntityMarkingData/WardLineMapping").remove();
     this.allMarkerList = [];
     let index = 1;
     let dbPath = "EntityMarkingData/MarkedHouses";
@@ -60,9 +57,7 @@ export class ManageMarkingDataComponent implements OnInit {
             }
           }
         }
-        if (type == "data") {
           this.addFlatMarkerData(0);
-        }
       }
       else {
         $(this.divLoader).hide();
@@ -72,7 +67,7 @@ export class ManageMarkingDataComponent implements OnInit {
 
   addFlatMarkerData(index: any) {
     if (index == this.allMarkerList.length) {
-      this.db.object("EntityMarkingData/MarkerData/").update({ lastKey: index });
+      this.db.object("EntityMarkingData/Markers/").update({ lastKey: index });
       this.commonService.setAlertMessage("success", "Markers added successfully !!!");
       $(this.divLoader).hide();
       return;
@@ -102,14 +97,14 @@ export class ManageMarkingDataComponent implements OnInit {
                 const pathNew = this.commonService.getFireStoreCity() + "/MarkingImages/" + newImage;
                 const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
                 ref1.put(blob).then((promise) => {
-                  let dbPath = "EntityMarkingData/MarkerData/" + newMarkerNo;
+                  let dbPath = "EntityMarkingData/Markers/" + newMarkerNo;
                   this.db.object(dbPath).update(data);
                   this.setWardLineMapping(zoneNo, lineNo, newMarkerNo);
                   index++;
                   this.addFlatMarkerData(index);
 
                 }).catch((error) => {
-                  let dbPath = "EntityMarkingData/MarkerData/" + newMarkerNo;
+                  let dbPath = "EntityMarkingData/Markers/" + newMarkerNo;
                   this.db.object(dbPath).update(data);
                   this.setWardLineMapping(zoneNo, lineNo, newMarkerNo);
                   index++;
@@ -120,7 +115,7 @@ export class ManageMarkingDataComponent implements OnInit {
               xhr.send();
             })
             .catch((error) => {
-              let dbPath = "EntityMarkingData/MarkerData/" + newMarkerNo;
+              let dbPath = "EntityMarkingData/Markers/" + newMarkerNo;
               this.db.object(dbPath).update(data);
               this.setWardLineMapping(zoneNo, lineNo, newMarkerNo);
               index++;
@@ -142,7 +137,7 @@ export class ManageMarkingDataComponent implements OnInit {
   setMarkerMapping() {
     $(this.divLoader).hide();
     this.db.object("EntityMarkingData/WardLineMapping").remove();
-    let dbPath = "EntityMarkingData/MarkerData";
+    let dbPath = "EntityMarkingData/Markers";
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         markerInstance.unsubscribe();
@@ -158,13 +153,10 @@ export class ManageMarkingDataComponent implements OnInit {
             }
           }
         }
-        this.commonService.setAlertMessage("success", "Markers mapping successfully !!!");
+        this.commonService.setAlertMessage("success", "Markers mapping done successfully !!!");
         $(this.divLoader).hide();
       }
     )
   }
-
-
-
 }
 
