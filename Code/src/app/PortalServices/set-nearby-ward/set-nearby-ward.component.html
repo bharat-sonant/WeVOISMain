@@ -13,7 +13,7 @@
     <div class="row w-100">
         <div class="col-12 p-0">
             <div class="display1">
-                <i class="bi bi-chevron-down" onclick="show()"></i>
+
             </div>
         </div>
     </div>
@@ -24,44 +24,36 @@
     <div class="house-card-box">
         <div class="house-card-box-iner" id="divDetails">
             <div class="row row-box">
-                <div class="col-md-4 no-gutters-iner">
+                <div class="col-md-4 no-gutters-iner" style="margin-bottom: 20px;">
                     <select class="caret-select" id="ddlZone" [(ngModel)]="selectedZone" (change)="changeZoneSelection($event.target.value)" style="border: 1px solid black;">
-                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                  ngSelected="zone.zoneNo == selectedZone?'selected':''">
-                  {{zone.zoneName}}
-                </option>
-              </select>
+                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                            {{zone.zoneName}}
+                        </option>
+                    </select>
                 </div>
-            </div> 
-               
-                    <div class="table-wrapper table-one" >
-                        <table class="table table-main" >
-                            <thead>
-                                <th class="table-heading" style="text-align: center;">Near By Wards</th>
-                               
-                            </thead>
-                            <tbody>
-                                <tr  class="table-row"  *ngFor="let data of nearByWards; let i=index">     
-                                    <td class="table-data"><span>{{data}}</span> <span style="float:right;font-size: 20px;cursor: pointer;" ><i class="bi bi-x deleteWardBtn" style="color: red;" (click)=" deleteNearByWard(data)" ></i></span></td>
-                                    
-                                </tr>
-                                <!-- <tr class="table-row" style="cursor: pointer;">
-                                    <td class="table-data">fg</td>
-                                </tr> -->
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                   
-            
-            
-                <div class="col-md-12" style="text-align: right; float: right;">
-                    <button class="btn btn-success" id="saveBtn" style="width: 100px;" (click)="saveData()">
-                        Save</button>
-                </div>
-               
-            
             </div>
 
+            <div class="table-wrapper table-one">
+                <table class="table table-line">
+                    <thead>
+                        <th class="table-heading" style="text-align: center;">Near By Wards</th>
+
+                    </thead>
+                    <tbody>
+                        <tr class="table-row" *ngFor="let data of nearByWards; let i=index">
+                            <td class="table-data"><span>{{data}}</span> <span style="float:right;font-size: 20px;cursor: pointer;"><i
+                                        class="bi bi-x deleteWardBtn" style="color: red;"
+                                        (click)=" deleteNearByWard(data)"></i></span></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12" style="text-align: right; float: right;">
+                <button class="btn btn-success" id="saveBtn" style="width: 100px;" (click)="saveData()">
+                    Save</button>
+            </div>
         </div>
     </div>
+</div>

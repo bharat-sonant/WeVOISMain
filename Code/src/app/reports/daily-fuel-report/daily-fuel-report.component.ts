@@ -76,6 +76,7 @@ export class DailyFuelReportComponent implements OnInit {
     for (let i = 3; i < vehicles.length; i++) {
       this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], diesel: [], wardList: [] });
     }
+    console.log(this.vehicleList)
     this.getDieselQty();
     this.getDailyWorkDetail();
   }

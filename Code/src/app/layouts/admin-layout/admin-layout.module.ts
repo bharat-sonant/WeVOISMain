@@ -116,6 +116,7 @@ import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-h
 import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-approval-test.component';
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
+import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -235,7 +236,8 @@ import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set
     SurveyHousesComponent,
     MarkerApprovalTestComponent,
     SupervisorReportComponent,
-    SetNearbyWardComponent
+    SetNearbyWardComponent,
+    ManageMarkingDataComponent
   ]
 })
 

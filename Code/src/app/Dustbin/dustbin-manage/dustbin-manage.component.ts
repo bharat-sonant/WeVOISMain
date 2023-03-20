@@ -51,6 +51,7 @@ export class DustbinManageComponent implements OnInit {
         this.selectedZone = this.zoneList[0]["zoneNo"];
         this.dustbinStorageList = [];
         this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+        console.log(this.dustbinStorageList);
         if (this.dustbinStorageList != null) {
           this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
           this.selectedStatus = "enabled";
@@ -76,7 +77,7 @@ export class DustbinManageComponent implements OnInit {
     this.dustbinList = [];
     let list = [];
     if (this.dustbinStorageList.length > 0) {
-      list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone);
+      list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone.toString().trim());
       this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
       if (this.selectedStatus == "enabled") {
         list = list.filter(item => item.isDisabled != "yes");
