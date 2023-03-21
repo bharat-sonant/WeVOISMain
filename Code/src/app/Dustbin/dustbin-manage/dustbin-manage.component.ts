@@ -51,7 +51,6 @@ export class DustbinManageComponent implements OnInit {
         this.selectedZone = this.zoneList[0]["zoneNo"];
         this.dustbinStorageList = [];
         this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
-        console.log(this.dustbinStorageList);
         if (this.dustbinStorageList != null) {
           this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
           this.selectedStatus = "enabled";
