@@ -167,16 +167,17 @@
     </div>
 
     
-    <button  class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;" (click)="getNearByWards()"> 
-        <span id="btnNearBy">Show Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'" style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'" style="margin-left: 5px;"></i>
+    <button  class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;" > 
+        <span id="btnNearBy">Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'" style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'" style="margin-left: 5px;"></i>
         <!-- <span><i class="far fa-hand-point-right"></i></span> -->
         
     </button>
-    <div class="div-nearByWards"  [hidden]="nearByStatus=='show'">
+    <div class="div-nearByWards">
+        <h6 [hidden]="nearByWards[0]!=null" style="margin-top: 25%;margin-left: 15%;">No DATA AVAILABLE</h6>
         <table>
             <tbody>
                 <tr class="table-row" *ngFor="let data of nearByWards;let i=index">    
-                    <td class="table-data" id="tr{{i}}"><span>{{data}}</span></td>
+                    <td class="table-data" id="tr{{i}}"><span><input type="checkbox" style="height:15px;width: 15px;" id="checkBox{{i}}" (change)="showNearByWards(i,data)">&nbsp;&nbsp; {{data}}</span></td>
                 </tr>
             </tbody>
         </table>
