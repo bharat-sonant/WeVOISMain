@@ -264,7 +264,22 @@ export class VehicleFuelReportComponent implements OnInit {
               for (let k = 0; k < list.length; k++) {
                 let distance = (Number(list[k]["distance"])).toFixed(1) + " KM";
                 let orderBy = new Date(date).getTime();
-                this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                if (list[k]["ward"].includes("BinLifting")) {
+                  let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
+                  if (detail == undefined) {
+                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                  }
+                  else {
+                    detail.ward = detail.ward + ", " + list[k]["ward"];
+                    if(!detail.name.includes(list[k]["name"]))
+                    {
+                      detail.name=detail.name+", "+list[k]["name"];
+                    }
+                  }
+                }
+                else {
+                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                }
               }
             }
           }
@@ -349,6 +364,7 @@ export class VehicleFuelReportComponent implements OnInit {
     }, 24000);
   }
 
+  
   getWardRunningDetail(workData: any, monthDate: any, workDetailList: any) {
     if (workData != null) {
       let keyArray = Object.keys(workData);

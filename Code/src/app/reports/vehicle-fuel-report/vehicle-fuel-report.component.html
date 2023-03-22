@@ -1,21 +1,19 @@
 <div id="divLoader" class="loaderClass">
-  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
 <section class="halt-data">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-10 halt-header pl-0 pr-0">
-        <!------------- Header Start ---------->
+    <div class="container-fluid">
         <div class="row">
-          <div class="col-md-5 text-left" style="margin-top: 5.5px;margin-left: 10px;">
-            <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
-              style="width: 150px;" [(ngModel)]="selectedYear">
+            <div class="col-md-10 halt-header pl-0 pr-0">
+                <!------------- Header Start ---------->
+                <div class="row">
+                    <div class="col-md-5 text-left" style="margin-top: 5.5px;margin-left: 10px;">
+                        <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" style="width: 150px;" [(ngModel)]="selectedYear">
               <option value="0">Year</option>
               <option value={{yer.year}} *ngFor="let yer of yearList"
                 ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
-              style="width: 150px;">
+                        <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)" style="width: 150px;">
               <option value="0">Month</option>
               <option value="01">January</option>
               <option value="02">February</option>
@@ -30,188 +28,179 @@
               <option value="11">November</option>
               <option value="12">December</option>
             </select>
-          </div>
-          <div class="col-md-4 text-left">
-            <h5 class="hide">Vehicle Fuel Report</h5>
-          </div>
-          <div class="col-md-3 text-right pr-20">
-
-
-          </div>
-          <div class="field-box">
-            <div class="refresh" (click)="updateVehicleRunning();">
-             <h1><i class="fas fa-sync-alt" style="color:#57e663"></i>
-              <p>Update</p></h1> 
-            </div>
-            <div class="totalKM">
-              <h1>{{fuelDetail.totalMonthQuantity}} <br>
-                <p>Quantity</p>
-              </h1>
-            </div>
-            <div class="totalhalt">
-              <h1>{{fuelDetail.totalMonthAmount}} <br>
-                <p>Amount</p>
-              </h1>
-            </div>
-          </div>
-        </div>
-        <!------------- Header End ---------->
-        <div class="row" style="margin-top: 8px;">
-          <!------------- Halt Scroll List Start ---------->
-          <div class="col-md-5 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
-            <div class="halt-bg" style="border-bottom: 5px solid green;">
-              <div class="halt-details" style="width: 100%; border-bottom: none;">
-                <h5 class="stopped-time">Total Quantity : <br><strong><i class="fas fa-gas-pump"></i>
-                    {{fuelDetail.totalQuantity}}</strong></h5>
-                <h5 class="break-time">Total Amount : <br><strong><i class="fas fa-rupee-sign"></i>
-                    {{fuelDetail.totalAmount}} </strong></h5>
-              </div>
-            </div>
-            <div class="scrollable-halt">
-              <div class="halt-bg" style="height: calc(100vh - 130px);">
-                <div class="dth">
-                  <div class="table-bg">
-                    <div class="tableFixHead" style="overflow-x: hidden;">
-                      <table class="table table-hover" style="margin-top: 0px!important;">
-                        <thead>
-                          <tr>
-                            <th class="text-left" scope="col">
-                              Date
-                            </th>
-                            <th class="text-right" scope="col">
-                              Meter Reading
-                            </th>
-                            <th class="text-right" scope="col">
-                              Quantity
-                            </th>
-                            <th class="text-right" scope="col">
-                              Amount
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <!---->
-                          <tr *ngFor="let data of vehicleFuelList, let i=index">
-                            <td class="text-left"
-                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                              {{data.date}}
-                            </td>
-                            <td class="text-right"
-                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                              {{data.meterReading}}
-                            </td>
-                            <td class="text-right"
-                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                              {{data.quantity}}
-                            </td>
-                            <td class="text-right"
-                              style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                              {{data.amount}}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!------------- Halt Scroll List End ---------->
-
-          <div class="col-md-7 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
-            <div class="row">
-
-              <div class="col-md-12">
-                <div class="map-bg" style="padding-bottom: 5px;">
-                  <div class="row total-halt">
-                    <div class="col-md-5 mob-r-15" style="padding-right: 0px;">
-                      <div class="dh-back">
-
-                      </div>
+                    <div class="col-md-4 text-left">
+                        <h5 class="hide">Vehicle Fuel Report</h5>
                     </div>
-                    <div class="col-md-4 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
-                      <div class="dh-back">
-                        <i class="fas fa-truck-pickup" style="color:#333!important; margin-right: 7px;"></i>  {{fuelDetail.vehicleName}}
-                      </div>
-                    </div>
-                    <div class="col-md-3 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
-                      <div class="on-map">
-                        <i class="fas fa-route"></i>&nbsp; {{fuelDetail.totalDistance}}
-                      </div>
-                    </div>
-                  </div>
+                    <div class="col-md-3 text-right pr-20">
 
-                  <div class="mob-mt-5"
-                    style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
-                    <div id="haltMap" style="width:100%;height:85vh; ">
-                      <div class="dth">
-                        <div class="table-bg">
-                          <div class="tableFixHead" style="overflow-x: hidden;">
-                            <table class="table table-hover" style="margin-top: 0px!important;">
-                              <thead>
-                                <tr>
-                                  <th class="text-left" scope="col">
-                                    Date
-                                  </th>
-                                  <th class="text-left" scope="col">
-                                    Driver
-                                  </th>
-                                  <th class="text-left" scope="col">
-                                    Ward
-                                  </th>
-                                  <th class="text-right" scope="col">
-                                    Distance Covered
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <!---->
-                                <tr *ngFor="let data of vehicleTrackList, let i=index">
-                                  <td class="text-left"
-                                    style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                    {{data.date}}
-                                  </td>
-                                  <td class="text-left"
-                                    style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                    {{data.name}}
-                                  </td>
-                                  <td class="text-left"
-                                    style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                    {{data.ward}}
-                                  </td>
-                                  <td class="text-right"
-                                    style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                    {{data.distance}}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
+
+                    </div>
+                    <div class="field-box">
+                        <div class="refresh" (click)="updateVehicleRunning();">
+                            <h1><i class="fas fa-sync-alt" style="color:#57e663"></i>
+                                <p>Update</p>
+                            </h1>
                         </div>
-                      </div>
+                        <div class="totalKM">
+                            <h1>{{fuelDetail.totalMonthQuantity}} <br>
+                                <p>Quantity</p>
+                            </h1>
+                        </div>
+                        <div class="totalhalt">
+                            <h1>{{fuelDetail.totalMonthAmount}} <br>
+                                <p>Amount</p>
+                            </h1>
+                        </div>
                     </div>
-                  </div>
-
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                <!------------- Header End ---------->
+                <div class="row" style="margin-top: 8px;">
+                    <!------------- Halt Scroll List Start ---------->
+                    <div class="col-md-5 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+                        <div class="halt-bg" style="border-bottom: 5px solid green;">
+                            <div class="halt-details" style="width: 100%; border-bottom: none;">
+                                <h5 class="stopped-time">Total Quantity : <br><strong><i class="fas fa-gas-pump"></i>
+                    {{fuelDetail.totalQuantity}}</strong></h5>
+                                <h5 class="break-time">Total Amount : <br><strong><i class="fas fa-rupee-sign"></i>
+                    {{fuelDetail.totalAmount}} </strong></h5>
+                            </div>
+                        </div>
+                        <div class="scrollable-halt">
+                            <div class="halt-bg" style="height: calc(100vh - 130px);">
+                                <div class="dth">
+                                    <div class="table-bg">
+                                        <div class="tableFixHead" style="overflow-x: hidden;">
+                                            <table class="table table-hover" style="margin-top: 0px!important;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-left" scope="col">
+                                                            Date
+                                                        </th>
+                                                        <th class="text-right" scope="col">
+                                                            Meter Reading
+                                                        </th>
+                                                        <th class="text-right" scope="col">
+                                                            Quantity
+                                                        </th>
+                                                        <th class="text-right" scope="col">
+                                                            Amount
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!---->
+                                                    <tr *ngFor="let data of vehicleFuelList, let i=index">
+                                                        <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            {{data.date}}
+                                                        </td>
+                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            {{data.meterReading}}
+                                                        </td>
+                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            {{data.quantity}}
+                                                        </td>
+                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            {{data.amount}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!------------- Halt Scroll List End ---------->
 
-      </div>
-      <!------------- Ward Scroll List Start ---------->
-      <div class="col-md-2 halt-header pr-0 pl-0 mob-space mt-top">
-        <div class="scroll-list">
-          <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index"
-            (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
-            <div class="ward-details">
-              <h6>{{list.vehicle}}</h6>
+                    <div class="col-md-7 mob-map mob-space-25" style="padding-left: 0px; padding-right: 25px;">
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <div class="map-bg" style="padding-bottom: 5px;">
+                                    <div class="row total-halt">
+                                        <div class="col-md-5 mob-r-15" style="padding-right: 0px;">
+                                            <div class="dh-back">
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
+                                            <div class="dh-back">
+                                                <i class="fas fa-truck-pickup" style="color:#333!important; margin-right: 7px;"></i> {{fuelDetail.vehicleName}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
+                                            <div class="on-map">
+                                                <i class="fas fa-route"></i>&nbsp; {{fuelDetail.totalDistance}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mob-mt-5" style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
+                                        <div id="haltMap" style="width:100%;height:85vh; ">
+                                            <div class="dth">
+                                                <div class="table-bg">
+                                                    <div class="tableFixHead" style="overflow-x: hidden;">
+                                                        <table class="table table-hover" style="margin-top: 0px!important;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-left" scope="col">
+                                                                        Date
+                                                                    </th>
+                                                                    <th class="text-left" scope="col">
+                                                                        Driver
+                                                                    </th>
+                                                                    <th class="text-left" scope="col">
+                                                                        Ward
+                                                                    </th>
+                                                                    <th class="text-right" scope="col">
+                                                                        Distance Covered
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <!---->
+                                                                <tr *ngFor="let data of vehicleTrackList, let i=index">
+                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; width: 100px!important;">
+                                                                        {{data.date}}
+                                                                    </td>
+                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.name}}
+                                                                    </td>
+                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.ward}}
+                                                                    </td>
+                                                                    <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.distance}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-          </div>
+            <!------------- Ward Scroll List Start ---------->
+            <div class="col-md-2 halt-header pr-0 pl-0 mob-space mt-top">
+                <div class="scroll-list">
+                    <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index" (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
+                        <div class="ward-details">
+                            <h6>{{list.vehicle}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!------------- Ward Scroll List End ---------->
         </div>
-      </div>
-      <!------------- Ward Scroll List End ---------->
     </div>
-  </div>
 </section>
