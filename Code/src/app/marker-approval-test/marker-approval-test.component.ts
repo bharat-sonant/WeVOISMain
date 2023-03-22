@@ -8,8 +8,7 @@ import { Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
-import { NgTemplateOutlet } from "@angular/common";
-import { isNumber } from "@ng-bootstrap/ng-bootstrap/util/util";
+
 @Component({
   selector: 'app-marker-approval-test',
   templateUrl: './marker-approval-test.component.html',
@@ -704,7 +703,7 @@ export class MarkerApprovalTestComponent {
    
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
-    this.commonService.setAlertMessage("success", "Saved successfully !!!");
+    this.commonService.setAlertMessage("success", "House Type updated successfully !!!");
   }
 
   saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any,type:any) {
@@ -885,7 +884,7 @@ export class MarkerApprovalTestComponent {
     this.isShowWardAndLine=false;
     $(this.btnRemoveIncludedLines).hide();
     setTimeout(()=>{
-      this.commonService.setAlertMessage("success", "Remove successfully !!!");
+      this.commonService.setAlertMessage("success", "Included line removed successfully !!!");
     },100)
  
     }
@@ -1936,14 +1935,14 @@ export class MarkerApprovalTestComponent {
             }, 0);
           }
           else{
-            this.commonService.setAlertMessage("error", "No NearBy Zone Data Found !!!");
+            this.commonService.setAlertMessage("error", "No Near By Zone Data Found !!!");
             // $("#btnNearBy").html("Show Near By Wards");
             this.nearByStatus="show";
           } 
         }
       },error=>
       {
-        this.commonService.setAlertMessage("error", "No NearBy Wards Data Found !!!");
+        this.commonService.setAlertMessage("error", "No Near By Wards Data Found !!!");
         // $("#btnNearBy").html("Show Near By Wards");
         this.nearByStatus="show";
       });
