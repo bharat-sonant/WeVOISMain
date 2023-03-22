@@ -9,6 +9,10 @@
                     ngSelected="zone.zoneNo == selectedZone?'selected':''">
                     {{zone.zoneName}}
                 </option>
+
+                <option value="1">
+                    Zone 1
+                </option>
             </select>
         </div>
         <div class="col-md-4 ward-header-outer">
@@ -114,7 +118,7 @@
 
     </div>
 
-    <div class="image-box">
+    <div class="image-box" id="markerImageBox">
         <div id="divLoader" class="loaderClass">
             <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
         </div>
@@ -122,7 +126,13 @@
             <div class="col-md-12 house-type">
                 <h3> {{markerData.houseType}}
                     <br /> {{markerData.alreadyCard}}
+                    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#markerImageBox')" style="float: right;">
                 </h3>
+                <!-- <div class="img-close-outer"> -->
+
+
+                <!-- </div> -->
+
             </div>
             <div class="col-md-12">
                 <div class="main-box">
@@ -131,10 +141,10 @@
                     </a>
                 </div>
             </div>
-            <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
+            <!-- <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
                 ward
                 <span><i class="far fa-hand-point-right"></i></span>
-            </button>
+            </button> -->
         </div>
     </div>
 
@@ -155,6 +165,28 @@
             </div>
         </div>
     </div>
+
+
+    <button class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;"> 
+        <span id="btnNearBy">Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'" style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'" style="margin-left: 5px;"></i>
+        <!-- <span><i class="far fa-hand-point-right"></i></span> -->
+        
+    </button>
+    <div class="div-nearByWards">
+        <h6 [hidden]="nearByWards[0]!=null" style="margin-top: 25%;margin-left: 15%;">No DATA AVAILABLE</h6>
+        <table>
+            <tbody>
+                <tr class="table-row" *ngFor="let data of nearByWards;let i=index">
+                    <td class="table-data" id="tr{{i}}"><span><input type="checkbox" style="height:15px;width: 15px;" id="checkBox{{i}}" (change)="showNearByWards(i,data)">&nbsp;&nbsp; {{data}}</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+
 
 
 
@@ -298,23 +330,36 @@
         </div>
         <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
-
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+            <div class="col-md-12" style="padding-top: 10px; border-top: 1px solid rgba(128, 128, 128, 0.471);">
+                <label for="" style="font-weight: bold;">Delete Reason</label>
+                <select id="reasonSelect" class="caret-select-reason" [(ngModel)]="deleteReason" style="padding-top: 10px;">
+                <option  value="0">
+                    --Select--
+                </option>
+                <option  value="Marking is not visible properly">
+                    Marking is not visible properly
+                </option>
+                <option  value="Duplicate marking">
+                    Duplicate marking
+                </option>
+                <option  value="Garbage data">
+                    Garbage data
+                </option>    
+            </select>
+            </div>
+            <div class="row">
                 <input type="hidden" id="deleteMarkerId" value="0">
                 <input type="hidden" id="deleteAlreadyCard" value="">
                 <input type="hidden" id="deleteZoneNo" value="">
                 <input type="hidden" id="deleteLineNo" value="">
-
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                     <button class="btn btn-success " (click)="deleteMarker();">
-                            Confirm</button>
+                        Confirm</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                     <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
-                            Cancel</button>
+                        Cancel</button>
                 </div>
-
-
             </div>
         </div>
         <div id="divConfirmApprove" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
@@ -567,6 +612,7 @@
                             </span><br/>
                             <span style="font-size:11px" [hidden]="dt.removedBy==''">
                                 Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
+                                <span [hidden]="dt.reason==undefined">Reason : {{dt.reason}}</span>
                             </span>
                         </div>
                     </div>

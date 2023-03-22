@@ -712,10 +712,11 @@ button:focus-visible {
     background-color: #ffffff;
     box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
-    right: 15px;
-    top: 222px;
+    left: 90px;
+    top: 121px;
     border: 1px solid #80bd7b;
     padding: 10px;
+    display: none;
 }
 
 .house-type {
@@ -1476,7 +1477,7 @@ table td {
     // box-shadow: 0 1px 5px 1px #80bd7b;
     position: fixed;
     right: 15px;
-    top: 528px;
+    top: 220px;
     border: 1px solid #80bd7b;
     padding: 10px;
 }
@@ -1571,3 +1572,35 @@ table tr:hover {
 .table-data5 {
     border-right: 1px solid #dee2e6
 }
+
+.caret-select-reason {
+    margin-top: 0px!important;
+    margin-left: 0px!important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid lightgray!important;
+    font-size: 12px;
+}
+
+.div-nearByWards {
+    position: absolute;
+    right: 15px;
+    top: 346px;
+    width: 225px;
+    height: 135px;
+    // max-height:15.7px;
+    overflow-y: scroll;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 255);
+    // animation:dropDown 2s ease-in-out linear;
+}
+
+// @keyframes dropDown{
+//     from{
+//         max-height:0%;
+//     }
+//     to{
+//         max-height:20%;
+//     }
+// }
