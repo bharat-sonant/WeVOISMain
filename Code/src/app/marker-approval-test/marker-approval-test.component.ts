@@ -1727,7 +1727,7 @@ export class MarkerApprovalTestComponent {
                     }
                   }); 
                   
-                  this.surveyorMarker.push({marker});
+                  this.surveyorMarker.push({key:key,marker:marker});
               }
             }
           });
