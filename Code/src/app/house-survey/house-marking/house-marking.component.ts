@@ -1727,7 +1727,7 @@ export class HouseMarkingComponent {
                     }
                   }); 
                   
-                  this.surveyorMarker.push({marker});
+                  this.surveyorMarker.push({key:key,marker:marker});
               }
             }
           });
