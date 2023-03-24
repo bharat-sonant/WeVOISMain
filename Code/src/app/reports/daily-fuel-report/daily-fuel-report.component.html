@@ -91,8 +91,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
-                                                        {{dt.zone}}
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList " [innerHTML]="dt.zone">
                                                     </div>
                                                 </td>
                                                 <td class="text-left br-1">
@@ -102,8 +101,7 @@
 
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
-                                                        {{dt.driver}}
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList " [innerHTML]="dt.driver">
                                                     </div>
                                                 </td>
                                             </tr>
