@@ -261,7 +261,7 @@ export class RouteTrackingComponent {
   }
 
   setWardBoundary() {
-    this.commonService.getWardBoundary(this.selectedZoneNo, this.zoneKML,2).then((data: any) => {
+    this.commonService.getWardBoundary(this.selectedZoneNo, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
       }
@@ -669,7 +669,7 @@ export class RouteTrackingComponent {
 
           for (let i = 0; i < keyArray.length - 2; i++) {
             let index = keyArray[i];
-            let time=index.toString().split('-')[0];
+            let time = index.toString().split('-')[0];
             let totalDistance = 0;
             this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
 
@@ -929,7 +929,9 @@ export class RouteTrackingComponent {
 
           for (let i = 0; i < keyArray.length - 3; i++) {
             let index = keyArray[i];
-            totalKM += parseFloat(routePath[index]["distance-in-meter"]);
+            if (routePath[index]["distance-in-meter"] != null) {
+              totalKM += parseFloat(routePath[index]["distance-in-meter"]);
+            }
           }
 
           let startTime = keyArray[0];
@@ -943,7 +945,13 @@ export class RouteTrackingComponent {
           let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
           if (monthDetails != undefined) {
             monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-            monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+            if (!isNaN(totalMinutes)) {
+              monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+            }
+            else {
+              monthDetails.hour = "0 hr 0 min";
+            }
+
             let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
             let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
               driverData => {
