@@ -90,6 +90,58 @@ export class DustbinManageComponent implements OnInit {
     }
   }
 
+
+  exportToExcel() {
+    let exportList = this.commonService.transformNumeric(this.dustbinStorageList, "zone");
+    if (exportList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Zone No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Ward No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Address";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Latitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Longitude";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      if (exportList.length > 0) {
+        for (let i = 0; i < exportList.length; i++) {
+          if (exportList[i]["isDisabled"] == "no") {
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += exportList[i]["zone"];
+            htmlString += "</td>";
+            htmlString += "<td t='s'>";
+            htmlString += exportList[i]["ward"];
+            htmlString += "</td>";
+            htmlString += "<td t='s'>";
+            htmlString += exportList[i]["address"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += exportList[i]["lat"];
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += exportList[i]["lng"];
+            htmlString += "</td>";
+            htmlString += "</tr>";
+          }
+        }
+      }
+      htmlString += "</table>";
+      let fileName = this.commonService.getFireStoreCity() + "-Dustbins.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
+
   addUpdateDustbin() {
     if (this.isValidate() == false) {
       return;
@@ -234,6 +286,8 @@ export class DustbinManageComponent implements OnInit {
   closeModel() {
     this.modalService.dismissAll();
   }
+
+
 }
 
 export class dustbinSummary {

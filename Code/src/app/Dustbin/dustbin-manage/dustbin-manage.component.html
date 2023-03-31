@@ -5,10 +5,15 @@
         </div>
         <div class="col-md-4 Ward-Marking-heading">
             Manage Dustbin
-            
+
         </div>
         <div class="col-md-4 Ward-Marking-heading">
-
+            <span style="float: right; text-align: center; font-size: 10px!important; padding-right: 20px">
+                <i class="fa-solid fa-file-export"
+                    style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                    (click)="exportToExcel();"></i><br />
+                Export to Excel
+            </span>
         </div>
 
 
@@ -19,7 +24,7 @@
 </section>
 
 <div class="main-content">
-   
+
     <div class="row">
         <div class="col-md-5 loaderClass-outer">
             <div id="divLoader" class="loaderClass">
@@ -177,5 +182,5 @@
         </div>
     </div>
 
-    
+
 </ng-template>

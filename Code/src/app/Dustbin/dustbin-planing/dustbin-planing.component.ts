@@ -332,7 +332,12 @@ export class DustbinPlaningComponent implements OnInit {
     this.selectedYear = $(this.ddlYear).val();
     this.selectedMonth = $(this.ddlMonth).val();
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    if($(this.ddlZone).val()=="0"){
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
     this.selectedZone = $(this.ddlZone).val();
+    
     this.getDustbins();
     setTimeout(() => {
       this.removeAssignedPlan();
