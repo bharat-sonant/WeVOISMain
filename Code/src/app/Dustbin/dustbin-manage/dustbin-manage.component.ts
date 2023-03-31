@@ -244,7 +244,6 @@ export class DustbinManageComponent implements OnInit {
       dustbinStorageDetail.lng = data.lng;
       dustbinStorageDetail.address = data.address;
       dustbinStorageDetail.pickFrequency = data.pickFrequency;
-      dustbinStorageDetail.isDisabled = data.isDisabled;
     }
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
     this.closeModel();
