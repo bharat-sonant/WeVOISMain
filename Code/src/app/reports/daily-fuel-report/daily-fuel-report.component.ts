@@ -118,7 +118,7 @@ export class DailyFuelReportComponent implements OnInit {
     $(this.divLoader).show();
     setTimeout(() => {
       $(this.divLoader).hide();
-    }, 6000);
+    }, 12000);
     this.workDetailList = [];
     this.zoneDetailList = [];
 
