@@ -123,6 +123,9 @@ export class MonthlyFuelReportComponent implements OnInit {
           if (day < this.monthDays) {
             this.getDailyWorkDetail((day + 1));
           }
+          else {
+            this.saveMonthlyFuelReportJson();
+          }
         });
       }
       else {
@@ -147,6 +150,9 @@ export class MonthlyFuelReportComponent implements OnInit {
               if (day < this.monthDays) {
                 this.getDailyWorkDetail((day + 1));
               }
+              else {
+                this.saveMonthlyFuelReportJson();
+              }
             });
           }
           else {
@@ -170,30 +176,73 @@ export class MonthlyFuelReportComponent implements OnInit {
           this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
             if (employee["designation"] == "Transportation Executive") {
               for (let k = 1; k <= 5; k++) {
-                if (workData[empId]["task" + k] != null) {
-                  let zone = workData[empId]["task" + k]["task"];
-                  let vehicle = workData[empId]["task" + k]["vehicle"];
+                let task = "task" + k;
+                if (workData[empId][task] != null) {
+                  let zone = workData[empId][task]["task"];
+                  let vehicle = workData[empId][task]["vehicle"];
+                  let startTime = "";
+                  let endTime = "23:59";
                   if (vehicle != "NotApplicable") {
-                    let dbLocationPath = "LocationHistory/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                    if (workData[empId][task]["in-out"] != null) {
+                      let data = workData[empId]["task" + k]["in-out"];
+                      let inOutKeyArray = Object.keys(data);
+                      for (let i = 0; i < inOutKeyArray.length; i++) {
+                        let time = inOutKeyArray[i];
+                        if (data[time] == "In") {
+                          startTime = time.split(":")[0] + ":" + time.split(":")[1];
+                        }
+                      }
+                      for (let i = inOutKeyArray.length - 1; i >= 0; i--) {
+                        let time = inOutKeyArray[i];
+                        if (data[time] == "Out") {
+                          endTime = time.split(":")[0] + ":" + time.split(":")[1];
+                        }
+                      }
+                    }
+
+                    let dbLocationPath = "LocationHistory/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
                     if (zone.includes("BinLifting")) {
-                      dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/TotalCoveredDistance";
+                      dbLocationPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
                     }
                     let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
                       locationData => {
                         locationInstance.unsubscribe();
                         let distance = "0";
                         if (locationData != null) {
-                          distance = (Number(locationData) / 1000).toFixed(3);
-                        }
-                        let detail = this.vehicleList.find(item => item.vehicle == vehicle);
-                        if (detail != undefined) {
-                          detail.km = (Number(detail.km) + Number(distance)).toFixed(3);
-                          if (detail.qty != "0.00") {
-                            detail.avg = (Number(detail.km) / Number(detail.qty)).toFixed(2);
+                          let keyArray = Object.keys(locationData);
+                          if (keyArray.length > 0) {
+                            let startDate = new Date(monthDate + " " + startTime);
+                            let endDate = new Date(monthDate + " " + endTime);
+                            let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
+                            if (diffMs < 0) {
+                              endDate = new Date(this.commonService.getNextDate(monthDate, 1) + " " + endTime);
+                              diffMs = endDate.getTime() - startDate.getTime();
+                            }
+                            let diffMins = Math.round(diffMs / 60000); // minutes
+                            for (let l = 0; l <= diffMins; l++) {
+                              let locationList = keyArray.filter(item => item.includes(startTime));
+                              if (locationList.length > 0) {
+                                for (let m = 0; m < locationList.length; m++) {
+                                  if (locationData[locationList[m]]["distance-in-meter"] != null) {
+                                    let coveredDistance = locationData[locationList[m]]["distance-in-meter"];
+                                    distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+                                  }
+                                }
+                              }
+                              startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
+                              startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+                            }
+                            if (distance != "0") {
+                              distance = (Number(distance) / 1000).toFixed(3);
+                              let detail = this.vehicleList.find(item => item.vehicle == vehicle);
+                              if (detail != undefined) {
+                                detail.km = (Number(detail.km) + Number(distance)).toFixed(3);
+                                if (detail.qty != "0.00") {
+                                  detail.avg = (Number(detail.km) / Number(detail.qty)).toFixed(2);
+                                }
+                              }
+                            }
                           }
-                        }
-                        if (this.monthDays == Number(monthDate.split('-')[2])) {
-                          this.saveMonthlyFuelReportJson();
                         }
                         resolve(null);
                       });

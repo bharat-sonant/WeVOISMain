@@ -257,6 +257,7 @@ export class VehicleFuelReportComponent implements OnInit {
       fuelInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
+        let totalDistance=0;
 
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -265,6 +266,7 @@ export class VehicleFuelReportComponent implements OnInit {
             if (list.length > 0) {
               for (let k = 0; k < list.length; k++) {
                 let distance = (Number(list[k]["distance"])).toFixed(1) + " KM";
+                totalDistance+=Number(list[k]["distance"]);
                 let orderBy = new Date(date).getTime();
                 if (list[k]["ward"].includes("BinLifting")) {
                   let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
@@ -285,9 +287,7 @@ export class VehicleFuelReportComponent implements OnInit {
               }
             }
           }
-          let sum: number = 0;
-          this.vehicleTrackList.forEach(a => sum += Number(a.distanceInMeter));
-          this.fuelDetail.totalDistance = (sum).toFixed(1) + " KM";
+          this.fuelDetail.totalDistance = (totalDistance).toFixed(1) + " KM";
           this.vehicleTrackList = this.vehicleTrackList.sort((a, b) =>
             a.orderBy > b.orderBy ? 1 : -1
           );
