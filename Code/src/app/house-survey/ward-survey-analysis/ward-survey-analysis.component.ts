@@ -585,7 +585,7 @@ export class WardSurveyAnalysisComponent {
       });
     }
     else {
-
+/*
       let city = this.commonService.getFireStoreCity();
       let wardNo = this.selectedZone;
       marker.addListener("click", function () {
@@ -606,7 +606,7 @@ export class WardSurveyAnalysisComponent {
         let element = <HTMLImageElement>document.getElementById("imgVertual");
         element.src = imageURL;
       });
-
+*/
     }
     if (map == this.mapRevisit) {
       this.revisitMarker.push({ marker });
@@ -733,7 +733,38 @@ export class WardSurveyAnalysisComponent {
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
               this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
-              this.db.object(dbPath).remove();
+              let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+                revisitKeyData => {
+                  revisitInstance.unsubscribe();
+                  if (revisitKeyData != null) {
+                    this.db.object(dbPath).remove();
+                    dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lineRevisitCount"
+                    let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      count => {
+                        lineRevisitCountInstance.unsubscribe();
+                        if (count != null) {
+                          let revisitCount = Number(count) - 1;
+                          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+                          this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
+                        }
+                      }
+                    );
+
+                    dbPath = "EntitySurveyData/TotalRevisitRequest/" + wardNo;
+                    let totalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      count => {
+                        totalRevisitCountInstance.unsubscribe();
+                        if (count != null) {
+                          let revisitCount = Number(count) - 1;
+                          dbPath = "EntitySurveyData/TotalRevisitRequest/" + wardNo;
+                          this.db.database.ref(dbPath).set(revisitCount);
+                        }
+                      }
+                    );
+                  }
+
+                }
+              );
               this.progressData.totalSurveyed = Number(this.progressData.totalSurveyed) + 1;
               this.progressData.totalLineSurveyed = Number(this.progressData.totalLineSurveyed) + 1;
               this.updateSurveyedCounts(lineNo);
