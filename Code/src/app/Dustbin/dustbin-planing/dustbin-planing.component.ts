@@ -795,7 +795,7 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   setAssignedPlan(dustbinId: any, date: any, planName: any) {
-    if (Number(date.split('-')[2]) >= Number(this.todayDate.toString().split('-')[2])) {
+    if (new Date(date) >= new Date(this.todayDate)) {
       let day = "day" + Number(date.split('-')[2]);
       let spanId = "lbl-" + dustbinId + "-" + day;
       let spanData = $('#' + spanId).html();
