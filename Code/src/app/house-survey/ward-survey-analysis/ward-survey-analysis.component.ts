@@ -509,6 +509,7 @@ export class WardSurveyAnalysisComponent {
       });
     } else if (revisitKey != "") {
       let wardNo = this.selectedZone;
+      let city = this.commonService.getFireStoreCity();
       let progressData = this.progressData;
       let houseTypeList = this.houseTypeList;
       let db = this.db;
@@ -536,6 +537,22 @@ export class WardSurveyAnalysisComponent {
               progressData.revisitDate = revisitDate;
             }
           }
+          $("#divOldCardDetail").hide();
+          $("#divCardDetail").hide();
+          $('#divRevisitDetail').show();
+          $("#divVirtualSurvey").show();
+          $("#virtualWardNo").val(wardNo);
+          $("#virtualLineNo").val(lineNo);
+          $("#virtualMarkerNo").val(markerNo);
+          $("#virtualLat").val(lat);
+          $("#virtualLng").val(lng);
+          $("#virtualHouseType").val(entityType);
+          $("#lblEntityTypeVirtual").html(entityType);
+          $("#virtualImageName").val(imageName);
+          $("#virtualAddress").val(address);
+          let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+          let element = <HTMLImageElement>document.getElementById("imgVertual");
+          element.src = imageURL;
         });
       });
     }
@@ -568,7 +585,7 @@ export class WardSurveyAnalysisComponent {
       });
     }
     else {
-      /*
+
       let city = this.commonService.getFireStoreCity();
       let wardNo = this.selectedZone;
       marker.addListener("click", function () {
@@ -589,7 +606,7 @@ export class WardSurveyAnalysisComponent {
         let element = <HTMLImageElement>document.getElementById("imgVertual");
         element.src = imageURL;
       });
-      */
+
     }
     if (map == this.mapRevisit) {
       this.revisitMarker.push({ marker });
@@ -641,10 +658,10 @@ export class WardSurveyAnalysisComponent {
                   cardType = "व्यावसायिक";
                 }
               }
-              if(houseTypeId==""){
+              if (houseTypeId == "") {
                 $("#divLoaderUpdate").hide();
-                this.commonService.setAlertMessage("error","Please update house type before process this marker!!!");
-                return;   
+                this.commonService.setAlertMessage("error", "Please update house type before process this marker!!!");
+                return;
               }
 
               let date = new Date();
@@ -715,7 +732,8 @@ export class WardSurveyAnalysisComponent {
 
               dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
               this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
-
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
+              this.db.object(dbPath).remove();
               this.progressData.totalSurveyed = Number(this.progressData.totalSurveyed) + 1;
               this.progressData.totalLineSurveyed = Number(this.progressData.totalLineSurveyed) + 1;
               this.updateSurveyedCounts(lineNo);
