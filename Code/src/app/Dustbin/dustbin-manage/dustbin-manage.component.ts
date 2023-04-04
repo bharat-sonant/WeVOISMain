@@ -76,7 +76,7 @@ export class DustbinManageComponent implements OnInit {
     this.dustbinList = [];
     let list = [];
     if (this.dustbinStorageList.length > 0) {
-      list = this.dustbinStorageList.filter(item => item.zone == this.selectedZone.toString().trim());
+      list = this.dustbinStorageList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
       this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
       if (this.selectedStatus == "enabled") {
         list = list.filter(item => item.isDisabled != "yes");
