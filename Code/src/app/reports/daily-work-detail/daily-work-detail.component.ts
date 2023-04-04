@@ -220,7 +220,7 @@ export class DailyWorkDetailComponent implements OnInit {
             let endTime = "";
             let trips = "0";
             let workPercentage = "";
-            let actualWorkPercentage="";
+            let actualWorkPercentage="0%";
             let wardRunKm = "0.000";
             if (summaryData["dutyOutTime"] != null) {
               endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
