@@ -14,6 +14,7 @@ export class FirebaseService {
   getDatabaseByCity(city: any) {
     let databaseName = "";
     let databaseURL = "";
+    let storageBucket="";
 
     if (city == 'sikar') {
       this.fireBase = {
@@ -50,8 +51,8 @@ export class FirebaseService {
         storageBucket: "dtdnavigator.appspot.com",
         messagingSenderId: "381118272786"
       };
-      databaseName="dtdnavigatortesting";
-      databaseURL= "https://dtdnavigatortesting.firebaseio.com";
+      databaseName = "dtdnavigatortesting";
+      databaseURL = "https://dtdnavigatortesting.firebaseio.com";
       /*
             this.fireBase = {
               apiKey: "AIzaSyAXeDgQu4b7pNzCbFf0GmYm-0xYmZ6LEbw",
@@ -367,6 +368,20 @@ export class FirebaseService {
       };
       databaseName = "dtdlosal";
       databaseURL = "https://dtdlosal.firebaseio.com";
+    }
+    else if (city == 'jaipur-test') {
+      this.fireBase = {
+        apiKey: "AIzaSyDY3RKGXoZ8IhMZomjJigmLDTJHiu6dFE8",
+        authDomain: "wevois-qa-main.firebaseapp.com",
+        databaseURL: "https://dtdjaipurtest.firebaseio.com",
+        projectId: "wevois-qa-main",
+        storageBucket: "wevois-qa-main.appspot.com",
+        messagingSenderId: "422543231527",
+        appId: "1:422543231527:web:16b4b0a7ddd94e5955dc02"
+      };
+      databaseName = "dtdjaipurtest";
+      databaseURL = "https://dtdjaipurtest.firebaseio.com";
+      storageBucket="wevois-qa-main.appspot.com";
     }
 
     return new AngularFireDatabase(

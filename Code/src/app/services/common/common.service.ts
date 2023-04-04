@@ -155,6 +155,9 @@ export class CommonService {
     else if (cityName == "test") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "jaipur-test") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     else if (cityName == "jaipur-office") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }

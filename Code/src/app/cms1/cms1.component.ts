@@ -7,6 +7,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 import { AngularFirestore } from "@angular/fire/firestore";
 import * as firebase from 'firebase/app';
 import { keyframes } from '@angular/animations';
+import { Condition } from 'selenium-webdriver';
 
 @Component({
   selector: 'app-cms1',
@@ -787,7 +788,7 @@ export class Cms1Component implements OnInit {
           type: "Rectangular",
           ward: wardNo,
           zone: "A",
-          createdDate: "2022-11-30"
+          createdDate: "2023-03-01"
         }
         jsonObj[key] = data;
         key++;
@@ -2172,6 +2173,94 @@ export class Cms1Component implements OnInit {
     );
 
 
+  }
+
+  getVirtualCardData() {
+    let dbPath="EntitySurveyData/VirtualCardHistory";
+    let instance=this.db.object(dbPath).valueChanges().subscribe(
+      data=>{
+        instance.unsubscribe();
+        if(data!=null){
+          let keyArray=Object.keys(data);
+          console.log(keyArray.length);
+        }
+      }
+    );
+    let virtualCardList = [];
+    return
+    dbPath = "Houses";
+    console.log(dbPath);
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseInstance.unsubscribe();
+        console.log(data);
+        if (data != null) {
+          let wardArray = Object.keys(data);
+          if (wardArray.length > 0) {
+            for (let i = 0; i < wardArray.length; i++) {
+              let zoneNo = wardArray[i];
+              console.log(zoneNo);
+              let zoneObject = data[zoneNo];
+              let lineArray = Object.keys(zoneObject);
+              if (lineArray.length > 0) {
+                for (let j = 0; j < lineArray.length; j++) {
+                  let lineNo = lineArray[j];
+                  console.log(lineNo);
+                  let lineObject = zoneObject[lineNo];
+                  let cardArray = Object.keys(lineObject);
+                  if (cardArray.length > 0) {
+                    for (let k = 0; k < cardArray.length; k++) {
+                      let cardNo = cardArray[k];
+                      console.log(lineObject[cardNo]);
+                      if (lineObject[cardNo]["surveyorId"] != null) {
+                        if (lineObject[cardNo]["surveyorId"] == "-2") {
+                          virtualCardList.push({ zone: zoneNo, lineNo: lineNo, cardNo: cardNo });
+
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          console.log(virtualCardList);
+          if (virtualCardList.length > 0) {
+            let htmlString = "";
+            htmlString = "<table>";
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += "Zone No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Line No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Card No";
+            htmlString += "</td>";
+            htmlString += "</tr>";
+            if (virtualCardList.length > 0) {
+              for (let i = 0; i < virtualCardList.length; i++) {
+                htmlString += "<tr>";
+                htmlString += "<td>";
+                htmlString += virtualCardList[i]["zone"];
+                htmlString += "</td>";
+                htmlString += "<td t='s'>";
+                htmlString += virtualCardList[i]["lineNo"];
+                htmlString += "</td>";
+                htmlString += "<td t='s'>";
+                htmlString += virtualCardList[i]["cardNo"];
+                htmlString += "</td>";
+                htmlString += "</tr>";
+              }
+            }
+            htmlString += "</table>";
+            let fileName = this.commonService.getFireStoreCity() + "-VirtualCards.xlsx";
+            this.commonService.exportExcel(htmlString, fileName);
+          }
+        }
+      }
+    );
   }
 
   updateMurlipuraHouseData() {

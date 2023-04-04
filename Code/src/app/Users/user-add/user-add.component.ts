@@ -118,6 +118,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("isActual"))).checked = true;
         }
       }
+      if (data["isActualWorkPercentage"] != undefined) {
+        if (data["isActualWorkPercentage"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isActualWorkPercentage"))).checked = true;
+        }
+      }
       if (data["isLock"] != undefined) {
         if (data["isLock"] == 1) {
           (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
@@ -223,6 +228,7 @@ export class UserAddComponent implements OnInit {
     let officeAppUserId: any = $("#officeAppUserId").val();
     let isTaskManager: any = 0;
     let isActual: any = 0;
+    let isActualWorkPercentage:any=0;
     let isLock: any = 0;
     let isAdmin: any = 0;
     let isManager: any = 0;
@@ -267,6 +273,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isLock = 1;
     element = <HTMLInputElement>document.getElementById("isAdmin");
     if (element.checked == true) isAdmin = 1;
+    element = <HTMLInputElement>document.getElementById("isActualWorkPercentage");
+    if (element.checked == true) isActualWorkPercentage = 1;
     element = <HTMLInputElement>document.getElementById("isManager");
     if (element.checked == true) isManager = 1;
     if (this.userid == null) {
@@ -293,6 +301,7 @@ export class UserAddComponent implements OnInit {
       isTaskManager: isTaskManager,
       haltDisableAccess: haltDisableAccess,
       isActual: isActual,
+      isActualWorkPercentage:isActualWorkPercentage,
       isLock: isLock,
       isAdmin: isAdmin,
       isManager: isManager,

@@ -86,6 +86,7 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "ratangarh", name: "Ratangarh", storagePath: "Ratangarh" });
     this.cityList.push({ city: "nokha", name: "Nokha", storagePath: "Nokha" });
     this.cityList.push({ city: "losal", name: "Losal", storagePath: "Losal" });
+    this.cityList.push({ city: "jaipur-test", name: "Jaipur Test", storagePath: "Jaipur-Test" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
@@ -175,6 +176,11 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("isAdmin", userDetails.isAdmin);
       } else {
         localStorage.setItem("isAdmin", "0");
+      }
+      if (userDetails.isActualWorkPercentage != 0) {
+        localStorage.setItem("isActualWorkPercentage", userDetails.isActualWorkPercentage);
+      } else {
+        localStorage.setItem("isActualWorkPercentage", "0");
       }
       if (userDetails.isManager != null) {
         localStorage.setItem("isManager", userDetails.isManager);

@@ -89,6 +89,7 @@ export class UsersService {
               let isActual = 0;
               let isLock = 0;
               let isAdmin = 0;
+              let isActualWorkPercentage=0;
               let isManager = 0;
               let roleId = 0;
               let accessCities = "";
@@ -97,6 +98,9 @@ export class UsersService {
               }
               if (data[key]["isActual"] != undefined) {
                 isActual = data[key]["isActual"];
+              }
+              if (data[key]["isActualWorkPercentage"] != undefined) {
+                isActualWorkPercentage = data[key]["isActualWorkPercentage"];
               }
               if (data[key]["isLock"] != undefined) {
                 isLock = data[key]["isLock"];
@@ -131,6 +135,7 @@ export class UsersService {
                   isTaskManager: data[key]["isTaskManager"],
                   haltDisableAccess: haltDisableAccess,
                   isActual: isActual,
+                  isActualWorkPercentage:isActualWorkPercentage,
                   isLock: isLock,
                   isAdmin: isAdmin,
                   isManager: isManager,
