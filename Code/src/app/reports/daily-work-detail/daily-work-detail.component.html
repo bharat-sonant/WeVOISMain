@@ -74,6 +74,9 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Work Time
                                             </th>
+                                            <th class="text-left br-1" style="border:none!important;" [hidden]="isShowActual==false">
+                                                Actual Work Percentage
+                                            </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Work Percentage
                                             </th>
@@ -115,6 +118,10 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.workTime}}
+
+                                                </td>
+                                                <td class="text-right br-1" [hidden]="isShowActual==false">
+                                                    {{data.actualWorkPercentage}}
 
                                                 </td>
                                                 <td class="text-right br-1">

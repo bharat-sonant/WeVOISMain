@@ -20,6 +20,7 @@ export class DailyWorkDetailComponent implements OnInit {
   selectedMonthName: any;
   selectedYear: any;
   txtDate = "#txtDate";
+  isShowActual:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -28,6 +29,13 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   setDefault() {
+    this.isShowActual=false;
+    if(localStorage.getItem("isActualWorkPercentage")!=null){
+      console.log(localStorage.getItem("isActualWorkPercentage"))
+      if(localStorage.getItem("isActualWorkPercentage")=="1"){
+        this.isShowActual=true;
+      }
+    }
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
     this.getSelectedYearMonthName();
@@ -212,6 +220,7 @@ export class DailyWorkDetailComponent implements OnInit {
             let endTime = "";
             let trips = "0";
             let workPercentage = "";
+            let actualWorkPercentage="";
             let wardRunKm = "0.000";
             if (summaryData["dutyOutTime"] != null) {
               endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
@@ -221,6 +230,7 @@ export class DailyWorkDetailComponent implements OnInit {
             }
             if (summaryData["workPercentage"] != null) {
               workPercentage = summaryData["workPercentage"] + "%";
+              actualWorkPercentage = summaryData["workPercentage"] + "%";
             }
             if (summaryData["updatedWorkPercentage"] != null) {
               workPercentage = summaryData["updatedWorkPercentage"] + "%";
@@ -236,6 +246,7 @@ export class DailyWorkDetailComponent implements OnInit {
               detail.trips = trips;
               detail.wardRunKm = wardRunKm;
               detail.workPercentage = workPercentage;
+              detail.actualWorkPercentage=actualWorkPercentage;
               let sTime = new Date(this.selectedDate + " " + startTime);
               let eTime = new Date();
               if (endTime != "") {
