@@ -161,6 +161,10 @@ export class PortalAccessComponent implements OnInit {
         // $("#jaipurSanganerBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         // $("#jaipurVidhyadharBox").show();
+      } else if (this.accessCity[i]["city"] == "mnz-test") {
+        $("#jaipurMPZBox").show();
+      } else if (this.accessCity[i]["city"] == "mpz-test") {
+        $("#jaipurMNZBox").show();
       }
     }
   }

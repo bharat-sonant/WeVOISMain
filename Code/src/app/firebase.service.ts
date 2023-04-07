@@ -383,6 +383,30 @@ export class FirebaseService {
       databaseURL = "https://dtdjaipurtest.firebaseio.com";
       storageBucket="wevois-qa-main.appspot.com";
     }
+    else if (city == 'mnz-test') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdmnz-test.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdmnz-test";
+      databaseURL = "https://dtdmnz-test.firebaseio.com";
+    }
+    else if (city == 'mpz-test') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdmpz-test.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdmpz-test";
+      databaseURL = "https://dtdmpz-test.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

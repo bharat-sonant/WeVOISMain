@@ -197,10 +197,16 @@ export class CommonService {
     else if (cityName == "jaipur-malviyanagar") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "mnz-test") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     else if (cityName == "jaipur-mansarovar") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
     else if (cityName == "jaipur-murlipura") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "mpz-test") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
     else if (cityName == "jaipur-sanganer") {
