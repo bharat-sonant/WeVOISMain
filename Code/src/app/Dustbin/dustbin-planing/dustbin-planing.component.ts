@@ -52,6 +52,12 @@ export class DustbinPlaningComponent implements OnInit {
   mapDate = "#mapDate";
   deleteDustbinId = "#deleteDustbinId";
   divDustbin = "#divDustbin";
+  previousPlanList: any[];
+  divNewPlan = "#divNewPlan";
+  divPreviousPlan = "#divPreviousPlan";
+  txtPreviousPlanDate = "#txtPreviousPlanDate";
+  ddlPreviousPlanList = "#ddlPreviousPlanList";
+  txtPrePlanDate = "#txtPrePlanDate";
 
   bins: any;
   createdAt: any;
@@ -332,12 +338,12 @@ export class DustbinPlaningComponent implements OnInit {
     this.selectedYear = $(this.ddlYear).val();
     this.selectedMonth = $(this.ddlMonth).val();
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-    if($(this.ddlZone).val()=="0"){
+    if ($(this.ddlZone).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
     }
     this.selectedZone = $(this.ddlZone).val();
-    
+
     this.getDustbins();
     setTimeout(() => {
       this.removeAssignedPlan();
@@ -449,6 +455,11 @@ export class DustbinPlaningComponent implements OnInit {
       highPriority: this.highPriority
     };
     if ($Key == "0") {
+      let planDetail = this.planList.find(item => item.planName == planName.toString() && item.date == planDate);
+      if (planDetail != undefined) {
+        this.commonService.setAlertMessage("error", "Plan Name " + planName.toString() + " already exist on date " + planDate + " !!!");
+        return;
+      }
       this.addPlan(plan, dbPath, "Plan added successfully !!!");
     }
     else {
@@ -487,6 +498,7 @@ export class DustbinPlaningComponent implements OnInit {
   updatePlan(plan: any) {
     this.dustbinService.getDustbinPlanDetail(plan.date, plan.key).then((planDetailData: any) => {
       if (planDetailData != null) {
+        $("#divChkPrePlan").hide();
         $(this.key).val(plan.key);
         $(this.prePlanDate).val(plan.date);
         $(this.txtPlanName).val(planDetailData["planName"]);
@@ -523,6 +535,101 @@ export class DustbinPlaningComponent implements OnInit {
       }
     });
   }
+
+  openPreviousPlan() {
+    if ((<HTMLInputElement>document.getElementById("chkPreviousPlans")).checked == true) {
+      $(this.divNewPlan).hide();
+      $(this.divPreviousPlan).show();
+    }
+  }
+
+
+  backToNewPlan() {
+    $(this.divNewPlan).show();
+    $(this.divPreviousPlan).hide();
+    $(this.txtPreviousPlanDate).val("");
+    $(this.txtPrePlanDate).val("");
+    this.previousPlanList = [];
+    (<HTMLInputElement>document.getElementById("chkPreviousPlans")).checked = false;
+  }
+
+
+  addPreviousPlan() {
+    if ($(this.ddlPreviousPlanList).val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select plan !!!");
+      return;
+    }
+    if ($(this.txtPrePlanDate).val() == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    let planId = $(this.ddlPreviousPlanList).val();
+    let planDate = $(this.txtPrePlanDate).val();
+    if (new Date(planDate.toString()) < new Date(this.todayDate)) {
+      this.commonService.setAlertMessage("error", "plan date can not be less than today date !!!");
+      return;
+    }
+
+    let detail = this.previousPlanList.find(item => item.planId == planId);
+    if (detail != undefined) {
+      let planData = detail.planData;
+      let planDetail = this.planList.find(item => item.planName == planData.planName && item.date == planDate);
+      if (planDetail != undefined) {
+        this.commonService.setAlertMessage("error", "Plan Name " + planData.planName + " already exist on date " + planDate + " !!!");
+        return;
+      }
+      console.log(planData);
+      let dbPath = "DustbinData/DustbinPickingPlans/" + planDate;
+      const plan = {
+        $Key: "0",
+        bins: planData.bins,
+        createdAt: this.createdAt,
+        createdBy: this.userId,
+        dustbinPickingPosition: this.dustbinPickingPosition,
+        isAssigned: this.isAssigned,
+        pickingSequence: planData.pickingSequence,
+        planName: planData.planName,
+        totalDustbin: planData.totalDustbin,
+        updatedAt: this.commonService.getTodayDateTime(),
+        updatedBy: this.userId,
+        zone: planData.zone,
+        maxDustbinCapacity: Number(planData.maxDustbinCapacity),
+        isConfirmed: this.isConfirmed,
+        pickedDustbin: this.pickedDustbin,
+        highPriority: planData.highPriority
+      };
+      this.addPlan(plan, dbPath, "Plan added successfully !!!");
+      this.backToNewPlan();
+    }
+  }
+
+  getPreviousPlans() {
+    let date = $("#txtPreviousPlanDate").val();
+    if (date == "") {
+      this.commonService.setAlertMessage("error", "Please select date !!!");
+      return;
+    }
+    this.previousPlanList = [];
+    this.dustbinService.getDustbinPickingPlansByDate(date).then((planListData: any) => {
+      if (planListData != null) {
+        console.log(planListData);
+        let keyArray = Object.keys(planListData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let planId = keyArray[i];
+            let palnData = planListData[planId];
+            let planName = planListData[planId]["planName"];
+            if (planName != "") {
+              this.previousPlanList.push({ planId: planId, planName: planName, planData: palnData });
+            }
+          }
+        }
+      }
+    });
+  }
+
+
+
 
   deleteConfirmPlan() {
     this.dustbinService.deletePlan($(this.deletePlanDate).val(), $(this.deletePlanId).val());
@@ -1269,7 +1376,7 @@ export class DustbinPlaningComponent implements OnInit {
     let width = 0;
     let marginTop = "0px";
     if (type == "updatePlan" || type == "addPlan") {
-      height = 380;
+      height = 400;
       width = 350;
       marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     }

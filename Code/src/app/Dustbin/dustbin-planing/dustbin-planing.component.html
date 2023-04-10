@@ -90,7 +90,8 @@
                                 <tbody>
                                     <tr *ngFor="let dt of dustbinList;let i=index">
                                         <td class=" thFixed" style=" border-right:none;">
-                                            <b> {{i+1}}.</b>&nbsp; {{dt.address}}<br /><b>{{dt.isBroken}}</b></td>
+                                            <b> {{i+1}}.</b>&nbsp; {{dt.address}}<br /><b>{{dt.isBroken}}</b>
+                                        </td>
                                         <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold; ">{{dt.pickFrequency}}</td>
                                         <td class="tdStyle">
                                             <div style="width:100%" *ngFor="let days of dt.day1" [innerHTML]="days.status">
@@ -101,7 +102,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day1" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'01');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay1" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -114,7 +115,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day2" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'02');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay2" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -126,7 +127,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day3" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'03');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay3" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -138,7 +139,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day4" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'04');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay4" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -150,7 +151,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day5" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'05');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay5" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -162,7 +163,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day6" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'06');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay6" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -174,7 +175,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day7" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'07');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay7" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -186,7 +187,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day8" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan,'addDustbin','',dt.dustbin,'08');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay8" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -198,7 +199,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day9" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'09');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay9" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -210,7 +211,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day10" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'10');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay10" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -222,7 +223,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day11" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'11');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay11" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -234,7 +235,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day12" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'12');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay12" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -246,7 +247,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day13" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'13');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay13" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -258,7 +259,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day14" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'14');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay14" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -270,7 +271,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day15" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'15');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay15" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -282,7 +283,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day16" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'16');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay16" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -294,7 +295,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day17" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'17');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay17" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -306,7 +307,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day18" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'18');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay18" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -318,7 +319,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day19" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'19');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay19" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -330,7 +331,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day20" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'20');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay20" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -342,7 +343,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day21" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'21');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay21" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -354,7 +355,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day22" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'22');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay22" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -366,7 +367,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day23" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'23');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay23" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -378,7 +379,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day24" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'24');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay24" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -390,7 +391,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day25" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'25');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay25" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -402,7 +403,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day26" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'26');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay26" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -414,7 +415,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day27" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'27');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay27" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -426,7 +427,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day28" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'28');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay28" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -438,7 +439,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day29" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'29');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay29" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -450,7 +451,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day30" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'30');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay30" class="rowWidth"></div>
                                         </td>
                                         <td class="tdStyle">
@@ -462,7 +463,7 @@
                                                 <i id="btn-{{dt.dustbin}}-day31" class="fas fa-plus-circle"
                                                     style="cursor:pointer;"
                                                     (click)="openModel(contentDustbinPlan, 'addDustbin','',dt.dustbin,'31');"></i>
-                                            </span><br/>
+                                            </span><br />
                                             <div [innerHTML]="dt.wardDay31" class="rowWidth"></div>
                                         </td>
                                     </tr>
@@ -521,32 +522,77 @@
             <div class="modal-body">
                 <input id="key" type="hidden" value="0" />
                 <input id="prePlanDate" type="hidden" value="">
-                <label>Plan Name</label>
-                <div class="wrap-input-effects" required>
-                    <input id="txtPlanName" type="text" class="input-green" placeholder="Plan Name" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-book" aria-hidden="true"></i>
-                    </span>
+                <div id="divNewPlan">
+                    <div id="divChkPrePlan" class="wrap-input-effects" required>
+                        <input type="checkbox" id="chkPreviousPlans" (change)="openPreviousPlan();" /> Set Plan from previous plans
+                    </div>
+                    <label>Plan Name</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtPlanName" type="text" class="input-green" placeholder="Plan Name" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-book" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <label>Date</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtPlanDate" class="date-input input-green" type="date" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <label>Max. Dustbin Capacity</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtDustbinCapacity" class="input-green" type="number" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <input type="button" class="btn btn-success" value="Submit" (click)="addUpdatePlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
                 </div>
-                <label>Date</label>
-                <div class="wrap-input-effects" required>
-                    <input id="txtPlanDate" class="date-input input-green" type="date" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-calendar-day" aria-hidden="true"></i>
-                    </span>
-                </div>
-                <label>Max. Dustbin Capacity</label>
-                <div class="wrap-input-effects" required>
-                    <input id="txtDustbinCapacity" class="input-green" type="number" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-trash" aria-hidden="true"></i>
-                    </span>
+                <div id="divPreviousPlan" style="display: none;">
+                    <div class="wrap-input-effects" style="padding-bottom: 20px;">
+                        <label style="float: right; cursor: pointer; font-weight: bold;" (click)="backToNewPlan();">Create New </label>
+
+                    </div>
+                    <label>Previous Plan Date</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtPreviousPlanDate" class="date-input input-green" type="date" (change)="getPreviousPlans();" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <label>Plan Name</label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlPreviousPlanList" class="input-green">
+                            <option value="0">
+                                --Select Plan--
+                            </option>
+                            <option value="{{dt.planId}}" *ngFor="let dt of previousPlanList">
+                                {{dt.planName}}
+                            </option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-book" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <label>Plan Date</label>
+                    <div class="wrap-input-effects" required>
+                        <input id="txtPrePlanDate" class="date-input input-green" type="date" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <input type="button" class="btn btn-success" value="Submit" (click)="addPreviousPlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
                 </div>
 
-                <input type="button" class="btn btn-success" value="Submit" (click)="addUpdatePlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
             </div>
         </div>
     </div>
@@ -583,7 +629,7 @@
                 </div>
                 <div style="float: left; width: 100%;   margin-top: 10px; padding-bottom: 10px;">
                     <div style="float: left; width: 33.33%; text-align: center; font-size: 12px;margin-top: 5px;">
-                        <input type="checkbox" id="chkHigh"><br/> Is High Priority
+                        <input type="checkbox" id="chkHigh"><br /> Is High Priority
                     </div>
                     <div class="text-center" style="width: 33.33%;float: left;font-size: 12px;  margin-top: 5px;">
                         <img src="../../../assets/img/dustbin-report-blue.png" style="padding-right: 6px;"> <span id="maxCapacity" style="font-weight: bold;"> 0</span> <br>Max Dustbin Capacity
@@ -680,7 +726,8 @@
             </div>
             <div class="modal-body">
                 <div id="divDustbin" style="display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
+                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?
+                    </h5>
                     <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                         <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                             <button class="btn btn-success " (click)="deleteDustbin();">
@@ -700,7 +747,7 @@
 
                             <div class="col-md-9">
                                 <button id="btnSave" class="btn btn-success " (click)="updateDustbinSequence();">
-                                    Update Sequence  </button>
+                                    Update Sequence </button>
                             </div>
                             <div class="col-md-1" style="margin-top: -3px;">
                                 <i class="far fa-arrow-alt-circle-up arrow" (click)="setSequenceIndex('up');"></i>
