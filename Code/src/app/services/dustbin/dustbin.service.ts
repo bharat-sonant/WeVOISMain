@@ -110,6 +110,24 @@ export class DustbinService {
     });
   }
 
+  getDustbinPickingPlansByDate(date: any) {
+    return new Promise((resolve) => {
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
+      if(date==this.commonService.setTodayDate()){
+        dbPath = "DustbinData/DustbinPickingPlans/" + date;
+      }
+      let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
+        planListData => {
+          dustbinPlanInstance.unsubscribe();
+          resolve(planListData);
+        }
+      );
+    });
+  }
+
   getWardAssignedDustbin(year: any, monthName: any) {
     return new Promise((resolve) => {
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
