@@ -578,7 +578,7 @@ export class DustbinPlaningComponent implements OnInit {
         return;
       }
       if (new Date(planDateTo.toString()) > new Date(this.commonService.getNextDate(this.todayDate, this.planAddDays-1))) {
-        this.commonService.setAlertMessage("error", "plan date to can not be more than " + this.commonService.getNextDate(this.todayDate, 5) + " date !!!");
+        this.commonService.setAlertMessage("error", "plan date to can not be more than " + this.commonService.getNextDate(this.todayDate, this.planAddDays-1) + " date !!!");
         return;
       }
     }

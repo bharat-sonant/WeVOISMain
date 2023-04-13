@@ -524,7 +524,7 @@
                 <input id="prePlanDate" type="hidden" value="">
                 <div id="divNewPlan">
                     <div id="divChkPrePlan" class="wrap-input-effects" required>
-                        <input type="checkbox" id="chkPreviousPlans" (change)="openPreviousPlan();" /> Set Plan from previous plans
+                        <input type="checkbox" id="chkPreviousPlans" (change)="openPreviousPlan();" /> Copy plans from previous date
                     </div>
                     <label>Plan Name</label>
                     <div class="wrap-input-effects" required>
@@ -554,7 +554,7 @@
                     <input type="button" class="btn btn-success" value="Submit" (click)="addUpdatePlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
                 </div>
                 <div id="divPreviousPlan" style="display: none;">
-                    <div class="wrap-input-effects" style="padding-bottom: 20px;">
+                    <div class="wrap-input-effects" style="padding-bottom: 5px;">
                         <label style="float: right; cursor: pointer; font-weight: bold;" (click)="backToNewPlan();">Create New </label>
 
                     </div>
@@ -581,8 +581,9 @@
                             <i class="fas fa-book" aria-hidden="true"></i>
                         </span>
                     </div>
+                    <label>Apply coppied plan</label>
                     <div style="width:48%">
-                        <label>Plan Date From</label>
+                        <label>From</label>
                         <div class="wrap-input-effects">
                             <input id="txtPrePlanDateFrom" class="date-input input-green" type="date" />
                             <span class="focus-input"></span>
@@ -592,7 +593,7 @@
                         </div>
                     </div>
                     <div style="width:48%; float: right; margin-top: -74px;">
-                        <label>Plan Date To</label>
+                        <label>To</label>
                         <div class="wrap-input-effects">
                             <input id="txtPrePlanDateTo" class="date-input input-green" type="date" />
                             <span class="focus-input"></span>

@@ -1,0 +1,76 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-5" style="padding-left: 10px;    margin-top: -8px;">
+            <select class="caret-select" id="ddlYear" style="width: 200px; height:36px" (change)="changeSelection();" [(ngModel)]="selectedZone">
+                <option value={{zone.zoneNo}} *ngFor="let zone of zoneList"
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">{{zone.zoneName}}</option>
+            </select>
+            <input id="txtDate" class="date-input" type="date" (change)="changeSelection();" [(ngModel)]="selectedDate">
+        </div>
+        <div class="col-md-3 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+            Ward Scan Card Images
+        </div>
+        <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
+
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row" style="width:200%">
+        <div class="col-md-6 card-main">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+
+
+            <div class="card card-main-iner">
+                <div class="card-body card-body2">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-head1">S.No.</th>
+                                            <th class="table-head1">Date</th>
+
+                                            <th class="table-head1">Complain type</th>
+
+
+
+                                            <th class="table-head1">Zone</th>
+                                            <th class="table-head1">Name</th>
+                                            <th class="table-head1">Complaint</th>
+
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of complainList; let i=index" class="{{data.trClass}}">
+                                                <td class="table-data-1">{{i+1}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.dateTime}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.complainType}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.zone}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.name}}</td>
+                                                <td class="table-data-1">
+                                                    {{data.message}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

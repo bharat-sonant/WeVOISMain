@@ -117,6 +117,8 @@ import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-app
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
+import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -237,7 +239,8 @@ import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data
     MarkerApprovalTestComponent,
     SupervisorReportComponent,
     SetNearbyWardComponent,
-    ManageMarkingDataComponent
+    ManageMarkingDataComponent,
+    WardwiseScanCardComponent
   ]
 })
 

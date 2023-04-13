@@ -110,6 +110,7 @@ import { MarkerApprovalTestComponent } from '../../marker-approval-test/marker-a
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
+import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -340,6 +341,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'sikar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'sikar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'sikar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -556,6 +558,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-greater/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-greater/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-greater/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
     //reengus
@@ -775,6 +778,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'reengus/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'reengus/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'reengus/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -991,6 +995,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'shahpura/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'shahpura/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'shahpura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1207,6 +1212,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'test/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'test/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
 
@@ -1426,6 +1432,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-office/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-office/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-office/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
     { path: 'kishangarh/dashboard', component: DashboardComponent },
@@ -1641,6 +1650,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'kishangarh/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'kishangarh/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'kishangarh/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
     { path: 'niwai/dashboard', component: DashboardComponent },
@@ -1856,6 +1868,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'niwai/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'niwai/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'niwai/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2072,6 +2085,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaisalmer/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaisalmer/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaisalmer/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
     //Salasar
@@ -2289,6 +2303,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'salasar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'salasar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'salasar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Behror
     { path: 'behror/home', component: HomeComponent },
     { path: 'behror/dashboard', component: DashboardComponent },
@@ -2504,6 +2521,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'behror/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'behror/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'behror/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2719,6 +2737,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -2934,6 +2953,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-jhotwara/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-jhotwara/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-jhotwara/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
     { path: 'jaipur-jagatpura/account-detail', component: AccountDetailComponent },
@@ -3148,6 +3170,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-jagatpura/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-jagatpura/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-jagatpura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3363,6 +3386,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-malviyanagar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-malviyanagar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-malviyanagar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3578,6 +3602,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-mansarovar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-mansarovar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-mansarovar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -3792,6 +3819,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-murlipura/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-murlipura/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-murlipura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
     //jaipur-sanganer
@@ -4008,6 +4036,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-sanganer/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-sanganer/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-sanganer/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4223,6 +4252,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-vidhyadhar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-vidhyadhar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-vidhyadhar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
     { path: 'bhiwadi/account-detail', component: AccountDetailComponent },
@@ -4437,6 +4469,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'bhiwadi/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'bhiwadi/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'bhiwadi/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
     { path: 'chhapar/account-detail', component: AccountDetailComponent },
@@ -4651,6 +4686,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'chhapar/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'chhapar/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'chhapar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Churu
     { path: 'churu/home', component: HomeComponent },
     { path: 'churu/account-detail', component: AccountDetailComponent },
@@ -4865,6 +4903,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'churu/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'churu/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'churu/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5081,6 +5120,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'wevois-other/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'wevois-other/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'wevois-other/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
     //gwalior
@@ -5298,6 +5338,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'gwalior/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'gwalior/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'gwalior/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
+
+
     //Tonk
     { path: 'tonk/home', component: HomeComponent },
     { path: 'tonk/account-detail', component: AccountDetailComponent },
@@ -5512,6 +5555,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'tonk/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'tonk/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'tonk/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -5727,6 +5771,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'ratangarh/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'ratangarh/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'ratangarh/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -5942,6 +5987,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'nokha/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'nokha/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'nokha/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6157,6 +6203,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'losal/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'losal/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'losal/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
 
@@ -6374,6 +6421,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'jaipur-test/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'jaipur-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'jaipur-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
     
 
@@ -6591,6 +6639,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'mnz-test/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'mnz-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'mnz-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 
     
@@ -6808,5 +6857,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/supervisor-report', component: SupervisorReportComponent },
     { path: 'mpz-test/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: 'mpz-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: 'mpz-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
 
 ]; 
