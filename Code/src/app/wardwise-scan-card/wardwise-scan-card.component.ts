@@ -11,7 +11,7 @@ import { FirebaseService } from "../firebase.service";
 })
 export class WardwiseScanCardComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private http: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   cardList: any[];
   db: any;
@@ -39,6 +39,7 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   changeSelection() {
+    
     if (this.selectedZone == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -47,6 +48,7 @@ export class WardwiseScanCardComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Date can not be more than today date !!!");
       return;
     }
+    this.cardList=[];
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
@@ -58,16 +60,29 @@ export class WardwiseScanCardComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
+            let imageURL = "";
             if (cardNo.includes("Scanned") || cardNo.includes("ImagesData")) {
-
             }
             else {
-              console.log(cardNo);
+              this.getcardImagePath(cardNo);              
             }
           }
         }
       }
     );
+  }
+
+  getcardImagePath(cardNo:any){
+    let imageURL="";
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHousesCardScanImages%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + cardNo + ".jpg";
+    let monthWiseInstance = this.httpService.get(path).subscribe((data) => {
+      monthWiseInstance.unsubscribe();
+      imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHousesCardScanImages%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + cardNo + ".jpg?alt=media";
+      this.cardList.push({ cardNo: cardNo, imageURL: imageURL });
+    }, error => {
+      imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardNo + ".jpg?alt=media";
+      this.cardList.push({ cardNo: cardNo, imageURL: imageURL });
+    });
   }
 
 }

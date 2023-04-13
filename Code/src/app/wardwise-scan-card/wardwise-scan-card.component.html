@@ -21,7 +21,7 @@
     </div>
 </section>
 <div class="main-content">
-    <div class="row" style="width:200%">
+    <div class="row">
         <div class="col-md-6 card-main">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
@@ -37,30 +37,20 @@
                                     <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-head1">S.No.</th>
-                                            <th class="table-head1">Date</th>
-
-                                            <th class="table-head1">Complain type</th>
-
-
-
-                                            <th class="table-head1">Zone</th>
-                                            <th class="table-head1">Name</th>
-                                            <th class="table-head1">Complaint</th>
+                                            <th class="table-head1">Scan Card Image</th>
+                                            <th class="table-head1">Card Number</th>
 
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of complainList; let i=index" class="{{data.trClass}}">
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let dt of cardList; let i=index">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-1">
-                                                    {{data.dateTime}}</td>
+                                                    <a href="{{dt.imageURL}}" target="_blank">
+                                                        <img class="dt-img" [src]="dt.imageURL" style="height:50px" />
+                                                    </a>
+                                                </td>
                                                 <td class="table-data-1">
-                                                    {{data.complainType}}</td>
-                                                <td class="table-data-1">
-                                                    {{data.zone}}</td>
-                                                <td class="table-data-1">
-                                                    {{data.name}}</td>
-                                                <td class="table-data-1">
-                                                    {{data.message}}</td>
+                                                    {{dt.cardNo}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
