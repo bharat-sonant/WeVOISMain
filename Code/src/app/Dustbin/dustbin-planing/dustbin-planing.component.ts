@@ -27,7 +27,7 @@ export class DustbinPlaningComponent implements OnInit {
   zoneList: any[] = [];
   dustbinStorageList: any[] = [];
   dustbinList: any[] = [];
-  planList: any;
+  planList: any[]=[];
   dustbinPlanList: any[] = [];
 
   ddlMonth = "#ddlMonth";
