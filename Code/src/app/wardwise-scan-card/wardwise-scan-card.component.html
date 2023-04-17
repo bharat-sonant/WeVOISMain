@@ -1,6 +1,11 @@
 <div id="divLoader" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
+<div id="divMainLoader" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br /><span
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting card scan images data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-5" style="padding-left: 10px;    margin-top: -8px;">
@@ -26,31 +31,44 @@
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
-
-
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div class="table-wrapper table-one">
+                                <div id="divList" class="table-wrapper table-one" (scroll)="onContainerScroll();">
                                     <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-head1">S.No.</th>
-                                            <th class="table-head1">Scan Card Image</th>
-                                            <th class="table-head1">Card Number</th>
+                                            <th class="table-head2">Scan Card Image</th>
+                                            <th class="table-head3">Card Number</th>
 
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let dt of cardList; let i=index">
+                                            <tr class="table-row" *ngFor="let dt of cardFinalList; let i=index">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-1">
                                                     <a href="{{dt.imageURL}}" target="_blank">
-                                                        <img class="dt-img" [src]="dt.imageURL" style="height:50px" />
+                                                        <img class="dt-img" [src]="dt.imageURL" style="height:100px" />
                                                     </a>
                                                 </td>
                                                 <td class="table-data-1">
-                                                    {{dt.cardNo}}</td>
+                                                    <span [hidden]="dt.cardNo==''">{{dt.cardNo}}</span>
+                                                    <div [hidden]="dt.cardNo!=''">
+                                                        <div style="width:60%; float: left;">
+                                                            <div class="wrap-input-effects">
+                                                                <input id="txtCardNo{{i}}" class="input-green" type="text" autocomplete="off" />
+                                                                <span class="focus-input"></span>
+                                                                <span class="symbol-input">
+                                                                    {{cardPrefix}}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div style="width:40%; float: right;">
+                                                            <input type="button" class="btn btn-success" value="Submit" (click)="updateScanData(i);" style="width: 80%; height: 40px; margin-left: 10px;  padding-top: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

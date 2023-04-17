@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
+import { AngularFireStorage } from "@angular/fire/storage";
 
 @Component({
   selector: 'app-wardwise-scan-card',
@@ -11,9 +12,10 @@ import { FirebaseService } from "../firebase.service";
 })
 export class WardwiseScanCardComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   cardList: any[];
+  cardFinalList: any[];
   db: any;
   cityName: any;
   todayDate: any;
@@ -21,6 +23,10 @@ export class WardwiseScanCardComponent implements OnInit {
   selectedZone: any;
   selectedYear: any;
   selectedMonthName: any;
+  cardPrefix: any;
+  rowDataList: any;
+  divLoader="#divLoader";
+  divMainLoader="#divMainLoader";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -31,6 +37,7 @@ export class WardwiseScanCardComponent implements OnInit {
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;
     this.getZoneList();
+    this.getCardPrefix();
   }
 
   getZoneList() {
@@ -38,8 +45,21 @@ export class WardwiseScanCardComponent implements OnInit {
     this.selectedZone = "0";
   }
 
+  getCardPrefix() {
+    let path = this.commonService.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let cityDetailInstance = this.httpService.get(path).subscribe((data) => {
+      cityDetailInstance.unsubscribe();
+      if (data != null) {
+        let city = this.commonService.getFireStoreCity();
+        let detail = JSON.parse(JSON.stringify(data)).find(item => item.cityName == city);
+        if (detail != undefined) {
+          this.cardPrefix = detail.key;
+        }
+      }
+    });
+  }
+
   changeSelection() {
-    
     if (this.selectedZone == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -48,32 +68,86 @@ export class WardwiseScanCardComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Date can not be more than today date !!!");
       return;
     }
-    this.cardList=[];
+    $(this.divMainLoader).show();
+    this.cardList = [];
+    this.cardFinalList = [];
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let houseCollectionInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         houseCollectionInstance.unsubscribe();
-        console.log(data);
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let cardNo = keyArray[i];
-            let imageURL = "";
-            if (cardNo.includes("Scanned") || cardNo.includes("ImagesData")) {
-            }
-            else {
-              this.getcardImagePath(cardNo);              
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let cardNo = keyArray[i];
+              if (cardNo.includes("ImagesData")) {
+                let cardData = data[cardNo];
+                this.getNotScanedCard(cardData);
+              }
+              if (cardNo.includes("Scanned") || cardNo.includes("ImagesData")) {
+                if (cardNo.includes("Scanned")) {
+                  setTimeout(() => {
+                    let element = <HTMLElement>document.getElementById("divList");
+                    element.scrollTop = 0;
+                    this.rowDataList = 100;
+                    this.cardFinalList = this.cardList.slice(0, this.rowDataList);
+                    $(this.divMainLoader).hide();
+                  }, 3000);
+                }
+              }
+              else {
+                this.getCardImagePath(cardNo);
+              }
             }
           }
+        }
+        else{
+          $(this.divMainLoader).hide();
+          this.commonService.setAlertMessage("error","No Scan card record found !!!");
         }
       }
     );
   }
 
-  getcardImagePath(cardNo:any){
-    let imageURL="";
+  getNotScanedCard(cardData: any) {
+    let keyArray = Object.keys(cardData);
+    if (cardData["lastKey"] != null) {
+      for (let i = 0; i < keyArray.length; i++) {
+        let key = parseInt(keyArray[i]);
+        let imageURL = "";
+        if (!isNaN(key)) {
+          let latLng = cardData[key]["latLng"];
+          let scanBy = cardData[key]["scanBy"];
+          let scanTime = cardData[key]["scanTime"];
+          imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHousesCardScanImages%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + ".jpg?alt=media";
+          this.cardList.push({ cardNo: "", imageURL: imageURL, latLng: latLng, scanBy: scanBy, scanTime: scanTime, key: key });
+        }
+      }
+    }
+    else {
+      for (let i = 0; i < keyArray.length; i++) {
+        let lineNo = parseInt(keyArray[i]);
+        if (!isNaN(lineNo)) {
+          let lineData = cardData[lineNo];
+          let lineArray = Object.keys(lineData);
+          for (let j = 0; j < lineArray.length; j++) {
+            let imageURL = "";
+            let key = lineArray[j];
+            let latLng = lineData[key]["latLng"];
+            let scanBy = lineData[key]["scanBy"];
+            let scanTime = lineData[key]["scanTime"];
+            imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHousesCollectionImagesData%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + lineNo + "%2F" + key + ".jpg?alt=media";
+            this.cardList.push({ cardNo: "", imageURL: imageURL, latLng: latLng, scanBy: scanBy, scanTime: scanTime, lineNo: lineNo, key: key });
+          }
+        }
+      }
+    }
+  }
+
+  getCardImagePath(cardNo: any) {
+    let imageURL = "";
     let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHousesCardScanImages%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + cardNo + ".jpg";
     let monthWiseInstance = this.httpService.get(path).subscribe((data) => {
       monthWiseInstance.unsubscribe();
@@ -85,4 +159,115 @@ export class WardwiseScanCardComponent implements OnInit {
     });
   }
 
+
+  onContainerScroll() {
+    let element = <HTMLElement>document.getElementById("divList");
+    if ((element.offsetHeight + element.scrollTop + 10) >= element.scrollHeight) {
+      this.rowDataList = this.rowDataList + 200;
+      this.cardFinalList = this.cardList.slice(0, this.rowDataList);
+    }
+  }
+
+  updateScanData(index: any) {
+    let scanBy = this.cardList[index]["scanBy"];
+    let scanTime = this.cardList[index]["scanTime"];
+    let latLng = this.cardList[index]["latLng"];
+    let lineNo = this.cardList[index]["lineNo"];
+    let key = this.cardList[index]["key"];
+    let cardImage = key + ".jpg";
+    if ($("#txtCardNo" + index).val() == "") {
+      this.commonService.setAlertMessage("error", "Please enter card number!!!");
+      return
+    }
+    $(this.divLoader).show();
+    let cardNumber = this.cardPrefix + $("#txtCardNo" + index).val();
+    const data = {
+      scanBy: scanBy,
+      scanTime: scanTime,
+      latLng: latLng
+    }
+    let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + cardNumber;
+    let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+      preData => {
+        cardInstance.unsubscribe();
+        if (preData == null) {
+          this.updatetotalScanCounts();
+        }
+        this.db.object(dbPath).update(data);
+        this.removeImageDataRecord(key, lineNo);
+        this.cardList[index]["cardNo"] = cardNumber;
+        let preImageName = cardImage;
+        let newImageName = cardNumber + ".jpg";
+        let newPath = this.commonService.getFireStoreCity() + "/HousesCardScanImages/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/";
+        let oldPath = newPath;
+        if (lineNo != undefined) {
+          oldPath = this.commonService.getFireStoreCity() + "/HousesCollectionImagesData/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + lineNo + "/";
+        }
+        const oldRef = this.storage.ref(oldPath + preImageName);
+        const newRef = this.storage.ref(newPath + newImageName);
+        this.renameScanCardImages(oldRef, newRef);
+      }
+    );
+  }
+
+  removeImageDataRecord(key: any, lineNo: any) {
+    let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData/" + key;
+    if (lineNo != undefined) {
+      dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData/" + lineNo + "/" + key;
+    }
+    this.db.object(dbPath).remove();
+  }
+
+  updatetotalScanCounts() {
+    let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/totalActualScanned";
+    let totalActualScannedInstance = this.db.object(dbPath).valueChanges().subscribe(countData => {
+      totalActualScannedInstance.unsubscribe();
+      let count = 1;
+      if (countData != null) {
+        count = count + Number(countData);
+      }
+      dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      this.db.object(dbPath).update({ totalActualScanned: count });
+    });
+    dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/totalScanned";
+    let totalScannedInstance = this.db.object(dbPath).valueChanges().subscribe(countData => {
+      totalScannedInstance.unsubscribe();
+      let count = 1;
+      if (countData != null) {
+        count = count + Number(countData);
+      }
+      dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      this.db.object(dbPath).update({ totalScanned: count });
+    })
+  }
+
+  renameScanCardImages(oldRef: any, newRef: any) {
+    // Rename the file
+    oldRef.getDownloadURL().toPromise().then((url) => {
+      // Copy the file to the new location
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = () => {
+        const blob = xhr.response;
+        newRef.put(blob).then(() => {
+          this.commonService.setAlertMessage("success", "Scan card updated successfully !!!");
+          $(this.divLoader).hide();
+          /*
+          // Delete the old file
+          oldRef.delete().toPromise().then(() => {
+            console.log('File renamed successfully');
+
+          }).catch((error) => {
+            console.error('Error deleting old file:', error);
+          });
+          */
+        }).catch((error) => {
+          this.commonService.setAlertMessage("success", "Scan card updated successfully !!!");
+        });
+      };
+      xhr.open('GET', url);
+      xhr.send();
+    }).catch((error) => {
+    });
+  }
 }

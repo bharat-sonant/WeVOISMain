@@ -291,12 +291,9 @@ export class DustbinAnalysisComponent implements OnInit {
 
     this.planDetail.planId = planId;
     this.planDetail.vehicle = plan.vehicle;
-    this.planDetail.pickedCount =
-      this.getDustbinCounts("picked").toString() + "/";
-    this.planDetail.assignedCount =
-      this.getDustbinCounts("totalAssigned").toString();
-    this.planDetail.notAtLocationCount =
-      this.getDustbinCounts("notAtLocation").toString();
+    this.planDetail.pickedCount = this.getDustbinCounts("picked").toString() + "/";
+    this.planDetail.assignedCount = this.getDustbinCounts("totalAssigned").toString();
+    this.planDetail.notAtLocationCount = this.getDustbinCounts("notAtLocation").toString();
     this.planDetail.dutyStartTime = "";
     this.planDetail.dutyEndTime = "";
   }
