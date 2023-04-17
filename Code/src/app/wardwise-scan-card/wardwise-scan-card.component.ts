@@ -11,7 +11,6 @@ import { AngularFireStorage } from "@angular/fire/storage";
   styleUrls: ['./wardwise-scan-card.component.scss']
 })
 export class WardwiseScanCardComponent implements OnInit {
-
   constructor(public fs: FirebaseService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   cardList: any[];
@@ -25,8 +24,9 @@ export class WardwiseScanCardComponent implements OnInit {
   selectedMonthName: any;
   cardPrefix: any;
   rowDataList: any;
-  divLoader="#divLoader";
-  divMainLoader="#divMainLoader";
+  divLoader = "#divLoader";
+  divMainLoader = "#divMainLoader";
+  lastUpdateDate: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -36,6 +36,7 @@ export class WardwiseScanCardComponent implements OnInit {
   setDefault() {
     this.todayDate = this.commonService.setTodayDate();
     this.selectedDate = this.todayDate;
+    this.lastUpdateDate = "---";
     this.getZoneList();
     this.getCardPrefix();
   }
@@ -68,11 +69,45 @@ export class WardwiseScanCardComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Date can not be more than today date !!!");
       return;
     }
+    this.lastUpdateDate = "---";
     $(this.divMainLoader).show();
     this.cardList = [];
     this.cardFinalList = [];
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+    this.getDataFromJSON();
+  }
+
+  getDataFromJSON() {
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHouseCardScanJSON%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2FlastUpdateDate.json?alt=media";
+    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
+      lastUpdateInstance.unsubscribe();
+      if (data != null) {
+        this.lastUpdateDate = data["lastUpdateDate"];
+        path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FHouseCardScanJSON%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2Flist.json?alt=media";
+        let listInstance = this.httpService.get(path).subscribe(listData => {
+          listInstance.unsubscribe();
+          if (listData != null) {
+            this.cardList = JSON.parse(JSON.stringify(listData));
+            let element = <HTMLElement>document.getElementById("divList");
+            element.scrollTop = 0;
+            this.rowDataList = 100;
+            this.cardFinalList = this.cardList.slice(0, this.rowDataList);
+            $(this.divMainLoader).hide();
+          }
+          else {
+            this.getDataFromDatabase();
+          }
+        }, error => {
+          this.getDataFromDatabase();
+        });
+      }
+    }, error => {
+      this.getDataFromDatabase();
+    });
+  }
+
+  getDataFromDatabase() {
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let houseCollectionInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -93,8 +128,13 @@ export class WardwiseScanCardComponent implements OnInit {
                     element.scrollTop = 0;
                     this.rowDataList = 100;
                     this.cardFinalList = this.cardList.slice(0, this.rowDataList);
+                    if (this.selectedDate != this.todayDate) {
+                      if (data["ImagesData"] == null) {
+                        this.saveJSONData();
+                      }
+                    }
                     $(this.divMainLoader).hide();
-                  }, 3000);
+                  }, 12000);
                 }
               }
               else {
@@ -103,12 +143,20 @@ export class WardwiseScanCardComponent implements OnInit {
             }
           }
         }
-        else{
+        else {
           $(this.divMainLoader).hide();
-          this.commonService.setAlertMessage("error","No Scan card record found !!!");
+          this.commonService.setAlertMessage("error", "No Scan card record found !!!");
         }
       }
     );
+  }
+
+  saveJSONData() {
+    let filePath = "/HouseCardScanJSON/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/";
+    this.commonService.saveJsonFile(this.cardList, "list.json", filePath)
+    this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+    const obj = { "lastUpdateDate": this.lastUpdateDate };
+    this.commonService.saveJsonFile(obj, "lastUpdateDate.json", filePath);
   }
 
   getNotScanedCard(cardData: any) {
@@ -216,6 +264,29 @@ export class WardwiseScanCardComponent implements OnInit {
       dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData/" + lineNo + "/" + key;
     }
     this.db.object(dbPath).remove();
+    if (this.selectedDate != this.todayDate) {
+      setTimeout(() => {
+        dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData";
+        let imageDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+          imageData => {
+            imageDataInstance.unsubscribe();
+            if (imageData != null) {
+              let keyArray = Object.keys(imageData);
+              let isData = false;
+              for (let i = 0; i < keyArray.length; i++) {
+                let keys = parseInt(keyArray[i]);
+                if (!isNaN(keys)) {
+                  isData = true;
+                }
+              }
+              if (isData == false) {
+                this.db.object(dbPath).remove();
+                this.saveJSONData();
+              }
+            }
+          });
+      }, 200);
+    }
   }
 
   updatetotalScanCounts() {
@@ -269,5 +340,12 @@ export class WardwiseScanCardComponent implements OnInit {
       xhr.send();
     }).catch((error) => {
     });
+  }
+
+  updateCardColectionData(){
+    $(this.divMainLoader).show();
+    this.cardList = [];
+    this.cardFinalList = [];
+    this.getDataFromDatabase();
   }
 }
