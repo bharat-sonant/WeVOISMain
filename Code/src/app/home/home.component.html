@@ -1,61 +1,52 @@
-
 <div id="divLoader" class="loaderClass">
-  
-  <span class="imgLoader"> 
+
+    <span class="imgLoader"> 
     <img src="../../../assets/img/loading.gif" width="70"><br/><br/>
-    We are preparing system for the <span><b>"{{userDetail.cityName}}"</b></span> <br> <span class="wait">Please wait...</span></span>
+    We are preparing system for <span><b>"{{userDetail.cityName}}"</b></span> <br> <span class="wait">Please wait...</span></span>
 </div>
 <section class="d-page">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12 center">
-        <div class="absolute">
-          <div class="half-circle">
-            <div class="welcome-text">
-              <h3>WELCOME TO <br>
-                <span class="highlight-text"> WeVOIS</span>
-              </h3>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 center">
+                <div class="absolute">
+                    <div class="half-circle">
+                        <div class="welcome-text">
+                            <h3>WELCOME TO <br>
+                                <span class="highlight-text"> WeVOIS</span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="row more-pages-header">
-      <div class="col-md-12">
-        Welcome <span class="imp-text"> {{userDetail.name}}</span>
-      </div>
-    </div>
+        <div class="row more-pages-header">
+            <div class="col-md-12">
+                Welcome <span class="imp-text"> {{userDetail.name}}</span>
+            </div>
+        </div>
 
-    <div class="height-mob">
-      <div class="row mob-responsive" style="display: flex; justify-content: center;">
-        <div class="col-md-2 mt-15" style="padding-right: 8px;" routerLinkActive="active" *ngFor="let usr of accessList ">
-         <div class="more-cards rainbow" [routerLink]="[usr.url]">
-           <div class="vertical">
-           <i class="{{usr.img}}" style="font-weight: bold;"></i> <br>
-           <h3>{{usr.name}}</h3>
-         </div>
-       </div>
-         </div>
-         </div>
-         </div>
+        <div class="height-mob">
+            <div class="row mob-responsive" style="display: flex; justify-content: center;">
+                <div class="col-md-2 mt-15" style="padding-right: 8px;" routerLinkActive="active" *ngFor="let usr of accessList ">
+                    <div class="more-cards rainbow" [routerLink]="[usr.url]">
+                        <div class="vertical">
+                            <i class="{{usr.img}}" style="font-weight: bold;"></i> <br>
+                            <h3>{{usr.name}}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="row">
-      <div class="col-md-12 text-center home-footer">
-        Copyright by <b
-          style="color: #f1f1f1;  border-right: 2px solid rgb(165, 165, 165);  padding-right: 10px;">WeVOIS</b>
-        &nbsp; <a href="https://www.facebook.com/wevois/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-        &nbsp; <a href="https://twitter.com/wevois?lang=en" target="_blank"><i class="fab fa-twitter"></i></a>
-        &nbsp; <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank"><i
-            class="fab fa-linkedin-in"></i></a>
-        &nbsp; <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank" ><i
+        <div class="row">
+            <div class="col-md-12 text-center home-footer">
+                Copyright by <b style="color: #f1f1f1;  border-right: 2px solid rgb(165, 165, 165);  padding-right: 10px;">WeVOIS</b> &nbsp; <a href="https://www.facebook.com/wevois/" target="_blank"><i class="fab fa-facebook-f"></i></a> &nbsp; <a href="https://twitter.com/wevois?lang=en"
+                    target="_blank"><i class="fab fa-twitter"></i></a> &nbsp; <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank"><i
+            class="fab fa-linkedin-in"></i></a> &nbsp; <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank"><i
             class="fab fa-instagram" style="color: green;"></i></a>
-      </div>
+            </div>
+        </div>
+
     </div>
-    
-  </div>
 </section>
-
-
-
-

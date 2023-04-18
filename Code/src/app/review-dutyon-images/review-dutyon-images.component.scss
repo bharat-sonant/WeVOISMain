@@ -1,3 +1,28 @@
+.custom-date-input {
+    height: 40px;
+}
+
+.btn-hvr {
+    cursor: pointer;
+    width: 50px;
+    height: 44px;
+    border-radius: 5px;
+    ;
+    background: #888!important;
+}
+
+.btn-hvr:hover {
+    background: #979797!important;
+}
+
+.report-controls {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 .header {
     height: 57px;
     width: 100%;
@@ -558,6 +583,7 @@ table tr:hover {
     border-right: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
     margin-bottom: 0px!important;
+    white-space: nowrap!important;
 }
 
 .table-head1 {
@@ -567,12 +593,12 @@ table tr:hover {
 
 .table-head2 {
     border-right: 1px solid #dee2e6;
-    width: 45%;
+    width: 20%;
 }
 
 .table-head3 {
     border-right: 1px solid #dee2e6;
-    width: 45%;
+    width: 70%;
 }
 
 .table-head4 {
@@ -584,10 +610,6 @@ table tr:hover {
     border-right: 1px solid #dee2e6;
     width: 17%;
     padding-right: 20px;
-}
-
-.table-row {
-    cursor: pointer;
 }
 
 .table-data-1 {
