@@ -687,11 +687,11 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (zoneDetails != undefined) {
       let startTime = zoneDetails.dutyOnTime;
       let startList = startTime.split(",");
-      //if (startList.length > 1) {
+      if (startList.length > 1) {
         $(this.dutyDetail).show();
-      //} else {
-        //$(this.dutyDetail).hide();
-      //}
+      } else {
+        $(this.dutyDetail).hide();
+      }
 
       let sTime = this.commonService.tConvert(startList[startList.length - 1]);
       this.workerDetails.startTime = sTime;
