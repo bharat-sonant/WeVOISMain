@@ -119,6 +119,7 @@ import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
+import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 
 @NgModule({
   imports: [
@@ -242,7 +243,8 @@ import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-d
     SetNearbyWardComponent,
     ManageMarkingDataComponent,
     WardwiseScanCardComponent,
-    ReviewDutyonImagesComponent
+    ReviewDutyonImagesComponent,
+    ReviewTripImagesComponent
   ]
 })
 

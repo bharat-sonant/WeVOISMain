@@ -112,6 +112,7 @@ import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
+import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -344,6 +345,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'sikar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'sikar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'sikar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -562,6 +564,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-greater/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-greater/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-greater/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //reengus
@@ -783,6 +786,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'reengus/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'reengus/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'reengus/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1001,6 +1005,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'shahpura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'shahpura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'shahpura/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1219,6 +1224,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'test/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
 
@@ -1440,6 +1446,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-office/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-office/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-office/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //kishangarh
@@ -1659,6 +1666,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'kishangarh/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'kishangarh/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'kishangarh/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Nawai
@@ -1878,6 +1886,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'niwai/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'niwai/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'niwai/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2096,6 +2105,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaisalmer/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaisalmer/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaisalmer/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Salasar
@@ -2315,6 +2325,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'salasar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'salasar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'salasar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Behror
@@ -2534,6 +2545,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'behror/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'behror/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'behror/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2751,6 +2763,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -2968,6 +2981,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-jhotwara/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-jhotwara/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-jhotwara/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //jaipur-jagatpura
@@ -3186,6 +3200,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-jagatpura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-jagatpura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-jagatpura/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3403,6 +3418,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-malviyanagar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-malviyanagar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-malviyanagar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3620,6 +3636,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-mansarovar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-mansarovar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-mansarovar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //jaipur-murlipura
@@ -3838,6 +3855,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-murlipura/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-murlipura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-murlipura/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //jaipur-sanganer
@@ -4056,6 +4074,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-sanganer/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-sanganer/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-sanganer/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4273,6 +4292,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-vidhyadhar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-vidhyadhar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-vidhyadhar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Bhiwadi
@@ -4491,6 +4511,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'bhiwadi/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'bhiwadi/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'bhiwadi/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Chhapar
@@ -4709,6 +4730,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'chhapar/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'chhapar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'chhapar/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Churu
@@ -4927,6 +4949,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'churu/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'churu/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'churu/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5145,6 +5168,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'wevois-other/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'wevois-other/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'wevois-other/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //gwalior
@@ -5364,6 +5388,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'gwalior/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'gwalior/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'gwalior/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     //Tonk
@@ -5582,6 +5607,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'tonk/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'tonk/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'tonk/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -5799,6 +5825,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'ratangarh/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'ratangarh/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'ratangarh/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6016,6 +6043,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'nokha/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'nokha/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'nokha/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6233,6 +6261,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'losal/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'losal/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'losal/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
 
@@ -6452,6 +6481,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'jaipur-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'jaipur-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'jaipur-test/:id/review-trip-images', component: ReviewTripImagesComponent },
 
     
 
@@ -6671,6 +6701,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'mnz-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'mnz-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'mnz-test/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 
     
@@ -6890,5 +6921,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: 'mpz-test/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: 'mpz-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
+    { path: 'mpz-test/:id/review-trip-images', component: ReviewTripImagesComponent },
 
 ]; 
