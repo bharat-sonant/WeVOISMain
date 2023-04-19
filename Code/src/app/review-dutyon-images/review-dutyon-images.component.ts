@@ -21,7 +21,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   selectedDate: any;
   selectedYear: any;
   selectedMonthName: any;
-  divLoader = "#divLoader";
+  divMainLoader = "#divMainLoader";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -38,14 +38,23 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   getZones() {
-    this.zoneList = [];
-    this.zoneDutyOnList = [];
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    for (let i = 1; i < this.zoneList.length; i++) {
-      this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
-      this.getDutyOnImages(this.zoneList[i]["zoneNo"]);
-    }
-    this.getDustbinDutyOnImages();
+    $(this.divMainLoader).show();
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardDutyOnImageJSON%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
+    let tripInstance = this.httpService.get(path).subscribe(data => {
+      tripInstance.unsubscribe();
+      if (data != null) {
+        this.zoneDutyOnList = JSON.parse(JSON.stringify(data));
+      }
+      $(this.divMainLoader).hide();
+    }, error => {
+      this.zoneList = [];
+      this.zoneDutyOnList = [];
+      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+      for (let i = 1; i < this.zoneList.length; i++) {
+        this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
+      }
+      this.getDutyOnImages(0);
+    });
   }
 
   getDustbinDutyOnImages() {
@@ -90,6 +99,16 @@ export class ReviewDutyonImagesComponent implements OnInit {
             this.getDutyOnTime(planName);
           }
         }
+        if (this.selectedDate == this.todayDate) {
+          $(this.divMainLoader).hide();
+        }
+        else {
+          setTimeout(() => {
+            $(this.divMainLoader).hide();
+            let filePath = "/WardDutyOnImageJSON/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+            this.commonService.saveJsonFile(this.zoneDutyOnList, this.selectedDate + ".json", filePath);
+          }, 3000);
+        }
       });
   }
 
@@ -112,12 +131,12 @@ export class ReviewDutyonImagesComponent implements OnInit {
                       for (let k = 0; k < keyArray.length; k++) {
                         let time = keyArray[i];
                         if (data["task" + j]["in-out"][time] == "In") {
-                          time=time.toString().split(':')[0]+":"+time.toString().split(':')[1];
-                          k=keyArray.length;
-                          j=6;
-                          let dutyOnDetail=detail.dutyOnImages.find(item=>item.driverId==driverId);
-                          if(dutyOnDetail!=undefined){
-                            dutyOnDetail.time=time;
+                          time = time.toString().split(':')[0] + ":" + time.toString().split(':')[1];
+                          k = keyArray.length;
+                          j = 6;
+                          let dutyOnDetail = detail.dutyOnImages.find(item => item.driverId == driverId);
+                          if (dutyOnDetail != undefined) {
+                            dutyOnDetail.time = time;
                           }
                         }
                       }
@@ -147,33 +166,41 @@ export class ReviewDutyonImagesComponent implements OnInit {
     }
   }
 
-  getDutyOnImages(zone: any) {
-    let dbPath = "WasteCollectionInfo/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
-    let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
-      summaryData => {
-        summaryInstance.unsubscribe();
-        if (summaryData != null) {
-          if (summaryData["dutyOnImage"] != null) {
-            let list = summaryData["dutyOnImage"].split(',');
-            let timeList = summaryData["dutyInTime"].split(',');
-            let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
-            if (detail != undefined) {
-              for (let i = 0; i < list.length; i++) {
-                let imageName = list[i];
-                let time = timeList[i];
-                if (imageName != "") {
-                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-                  detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---" });
+  getDutyOnImages(index: any) {
+    if (index == this.zoneDutyOnList.length) {
+      this.getDustbinDutyOnImages();
+    }
+    else {
+      let zone = this.zoneDutyOnList[index]["zoneNo"];
+      let dbPath = "WasteCollectionInfo/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+      let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
+        summaryData => {
+          summaryInstance.unsubscribe();
+          if (summaryData != null) {
+            if (summaryData["dutyOnImage"] != null) {
+              let list = summaryData["dutyOnImage"].split(',');
+              let timeList = summaryData["dutyInTime"].split(',');
+              let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
+              if (detail != undefined) {
+                for (let i = 0; i < list.length; i++) {
+                  let imageName = list[i];
+                  let time = timeList[i];
+                  if (imageName != "") {
+                    let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---" });
+                  }
                 }
               }
-            }
-            if (detail.dutyOnImages.length > 0) {
-              this.getDriverHelper(zone);
+              if (detail.dutyOnImages.length > 0) {
+                this.getDriverHelper(zone);
+              }
             }
           }
+          index++;
+          this.getDutyOnImages(index);
         }
-      }
-    );
+      );
+    }
   }
 
   getDriverHelper(zone: any) {
