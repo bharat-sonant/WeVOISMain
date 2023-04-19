@@ -62,14 +62,14 @@ export class WardSurveySummaryComponent implements OnInit {
   cardHousesList: any[];
   lineuptoLoop: any;
   wardLineMarkerImageList: any[] = [];
-  isActionShow:any;
+  isActionShow: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.isActionShow=true;
-    if(this.cityName=="jaipur-malviyanagar" || this.cityName=="jaipur-murlipura"){
-      this.isActionShow=false;
+    this.isActionShow = true;
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      this.isActionShow = false;
     }
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -316,19 +316,19 @@ export class WardSurveySummaryComponent implements OnInit {
                       // }
 
                       //}
-/*
-                      let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
-                      if (detail != undefined) {
-                        detail.count = detail.count + 1;
-                        detail.zoneNo = detail.zoneNo + ", " + zoneNo;
-                        detail.lineNo = detail.lineNo + ", " + lineNo;
-
-                        console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
-                      }
-                      else {
-                        this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
-                      }
-*/
+                      /*
+                                            let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
+                                            if (detail != undefined) {
+                                              detail.count = detail.count + 1;
+                                              detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                                              detail.lineNo = detail.lineNo + ", " + lineNo;
+                      
+                                              console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
+                                            }
+                                            else {
+                                              this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
+                                            }
+                      */
 
                     } else if (lineData[markerNo]["revisitKey"] != null) {
                       revisitCount = revisitCount + 1;
@@ -473,17 +473,19 @@ export class WardSurveySummaryComponent implements OnInit {
                   */
                   let cardCount = 1;
                   let surveyorId = cardObj[cardNo]["surveyorId"];
-                  let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
-                  if (this.dateSummaryList.length == 0) {
-                    this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
-                  }
-                  else {
-                    let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
-                    if (summaryDetail != undefined) {
-                      summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                  if (cardObj[cardNo]["createdDate"] != null) {
+                    let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
+                    if (this.dateSummaryList.length == 0) {
+                      this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
                     }
                     else {
-                      this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                      let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                      if (summaryDetail != undefined) {
+                        summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                      }
+                      else {
+                        this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                      }
                     }
                   }
 
@@ -908,9 +910,9 @@ export class WardSurveySummaryComponent implements OnInit {
             markedHouseInstance.unsubscribe();
             if (markedHouseData != null) {
               for (let i = 1; i <= this.wardLineCount; i++) {
-                
-                  this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
-                  if (markedHouseData[i] != null) {
+
+                this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
+                if (markedHouseData[i] != null) {
                   let markedCount = 0;
                   let surveyedCount = 0;
                   let houseCount = 0;
