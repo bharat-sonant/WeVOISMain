@@ -168,6 +168,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   totalMinutesInWard: any;
   wardInInfo: any;
   dutyStatusList: any[];
+  dutyOnImageList: any[];
   instancesList: any[];
 
   divRemark = "#divRemark";
@@ -454,6 +455,11 @@ export class RealtimeMonitoringComponent implements OnInit {
           } else {
             zoneDetails.dutyOnTime = "---";
           }
+          if (summaryData["dutyOnImage"] != null) {
+            zoneDetails.dutyOnImage = summaryData["dutyOnImage"];
+          } else {
+            zoneDetails.dutyOnImage = "---";
+          }
           if (summaryData["dutyOutTime"] != null) {
             zoneDetails.dutyOffTime = summaryData["dutyOutTime"];
           } else {
@@ -738,8 +744,8 @@ export class RealtimeMonitoringComponent implements OnInit {
           this.workerDetails.totalTime = this.commonService.getHrsFull(totalMinutes);
         }
       }
-      if(zoneNo.includes('(')){
-        zoneNo=zoneNo.toString().replace("(","~").replace(")","");
+      if (zoneNo.includes('(')) {
+        zoneNo = zoneNo.toString().replace("(", "~").replace(")", "");
       }
       let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
       element.href = this.cityName + "/route-tracking/" + zoneNo;
@@ -1359,6 +1365,41 @@ export class RealtimeMonitoringComponent implements OnInit {
         }
         for (let i = 0; i < reachOnList.length; i++) {
           this.getReachOnTime(reachOnList[i].trim());
+        }
+      }
+    }
+  }
+
+  
+  openDutyOnImageModel(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 400;
+    let width = 650;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 26 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
+    this.getDutyOnImages();
+  }
+
+  getDutyOnImages() {
+    this.dutyOnImageList = [];
+    let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
+    if (zoneDetails != undefined) {
+      if (zoneDetails.dutyOnImage != "---") {
+        let dutyOnList = zoneDetails.dutyOnTime.toString().split(",");
+        let dutyOnImageList = zoneDetails.dutyOnImage.toString().split(",");
+        for(let i=0;i<dutyOnImageList.length;i++){
+          let imageName=dutyOnImageList[i].toString().trim();
+          let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.toDayDate + "%2F" + imageName + "?alt=media";
+          let time="---";
+          if(dutyOnList[i]!=null){
+            time=dutyOnList[i];
+          }
+          this.dutyOnImageList.push({imageUrl:imageUrl,time:time});
         }
       }
     }
