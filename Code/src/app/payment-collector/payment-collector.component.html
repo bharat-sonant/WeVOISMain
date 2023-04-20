@@ -1,0 +1,303 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 no-gutters-iner">
+            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
+                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
+                    NEW</span></button>
+        </div>
+        <div class="col-md-8 Surveyor-box">
+            Manage Payment Collector
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 card-main">
+            <div class="card card-main-iner">
+                <div class="card-body card-body2">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-head1">S.No.</th>
+                                            <th class="table-head2">Name</th>
+                                            <th class="table-head3">Login ID
+                                            </th>
+                                            <th class="text-right table-head3">
+                                                Assigned</th>
+
+                                            <th class="text-right table-head3">
+                                                Status</th>
+                                            <th class="text-right table-head2" style="width:100px!important">
+                                                Action</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}">
+                                                <td class="table-data-1">{{i+1}}</td>
+                                                <td class="table-data-2">
+                                                    {{data.name}}</td>
+                                                <td class="table-data-3">
+                                                    {{data.empId}}</td>
+                                                <td class="table-data-3">
+                                                    {{data.wardNo}}</td>
+
+                                                <td class="text-right table-data-3">
+                                                    <span class="actives" [hidden]="data.isActive==false">
+                                                        Active
+                                                    </span>
+                                                    <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
+                                                </td>
+                                                <td class="text-center table-data-2">
+                                                    <i class="fas fa-map-marked-alt marked-icon" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"></i>
+                                                    <i class="far fa-times-circle circle-icon" (click)="openModel(contentConfirmation,data.empId,'delete')" title="Remove Assignment"></i>
+
+
+                                                    <a href="{{data.docImageUrl}}" target="blank" title="Document">
+                                                        <i class="fa fa-download download-icon" style="color: green;padding-right: 10px;cursor: pointer;"></i>
+                                                    </a>
+                                                    <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
+                                                        <i class="fa-solid fa-qrcode" style="padding-right: 10px;cursor: pointer;"></i></a>
+                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentEmployee,data.empId,'update');" title="Edit Entry"></i>
+
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divMessage form-group-outer" class="col-md-12 pr-1 text-center">
+                                <div class="form-group">
+                                    <h5>No data available</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 cards-main">
+            <!--
+            <div class="card custom-header-outer">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b></b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body-2">
+                    <div class="row ml-0 mr-10">
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points">0 </span><br /> Total Marker
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points">0</span><br /> Working Days
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                            <div class="table-heading">
+                                <h3>
+                                    <span class="tbl-points"> 0</span><br /> Avg. Per Day
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                            <div class="table-heading current-heading">
+                                <h3>
+                                    <span class="tbl-points"> 0</span> <br /> Current Ward Marking
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1 table-outer">
+                                        <div class="table-wrapper table-scroll table-scroll-2">
+                                            <table class="table table-scroll-iner">
+                                                <thead>
+                                                    <th class="table-heading-1">Date</th>
+                                                    <th class="text-right table-heading-2">
+                                                        Markers</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of markerList; let i=index">
+                                                        <td class="date-details">
+                                                            {{data.date}}</td>
+                                                        <td class="text-right markers-details">
+                                                            {{data.markers}}</td>
+                                                    </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-md-6 main-div">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="table-wrapper table-scroll table-main">
+                                            <table class="table table-main-iner">
+                                                <thead>
+                                                    <th class="ward-heading">Ward No.
+                                                    </th>
+                                                    <th class="text-right markers-heading">
+                                                        Markers</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of markerWardList; let i=index">
+                                                        <td class="ward-data">
+                                                            {{data.wardNo}}</td>
+                                                        <td class="text-right markers-data">
+                                                            {{data.markers}}</td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+        </div>
+    </div>
+</div>
+
+
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteId" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeAssignment()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Delete Confirmation End-->
+
+
+<!--ward assign  Start-->
+<ng-template #contentWard>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="empID" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <select id="ddlWard" class="input-green">
+                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                            {{zone.zoneName}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required style="display: none;">
+                    <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
+                </div>
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT" (click)="saveWard();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--ward assign End-->
+
+
+<!--employee  Start-->
+<ng-template #contentEmployee>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="key" type="hidden" value="0" />
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtName" class="input-green" placeholder="Name" autocomplete="off" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." autocomplete="off" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-mobile-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input type="password" id="txtPassword" class="input-green" placeholder="Password" autocomplete="off" />
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-key" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
+                </div>
+                <div class="wrap-input-effects" required>
+                    <input class="active-input" type="checkbox" id="chkAcive"> Is Active
+
+                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveEmployee();" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->

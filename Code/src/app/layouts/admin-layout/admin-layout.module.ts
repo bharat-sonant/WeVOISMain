@@ -120,6 +120,7 @@ import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
+import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
 
 @NgModule({
   imports: [
@@ -244,7 +245,8 @@ import { ReviewTripImagesComponent } from '../../reports/review-trip-images/revi
     ManageMarkingDataComponent,
     WardwiseScanCardComponent,
     ReviewDutyonImagesComponent,
-    ReviewTripImagesComponent
+    ReviewTripImagesComponent,
+    PaymentCollectorComponent
   ]
 })
 
