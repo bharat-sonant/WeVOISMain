@@ -27,7 +27,7 @@ export class DustbinPlaningComponent implements OnInit {
   zoneList: any[] = [];
   dustbinStorageList: any[] = [];
   dustbinList: any[] = [];
-  planList: any[]=[];
+  planList: any[] = [];
   dustbinPlanList: any[] = [];
 
   ddlMonth = "#ddlMonth";
@@ -539,6 +539,18 @@ export class DustbinPlaningComponent implements OnInit {
 
   openPreviousPlan() {
     if ((<HTMLInputElement>document.getElementById("chkPreviousPlans")).checked == true) {
+      let windowHeight = $(window).height();
+      let height = 0;
+      let width = 0;
+      let marginTop = "0px";
+
+      height = 600;
+      width = 350;
+      marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+      $('div .modal-dialog-centered').css("margin-top", "26px");
+      this.previousPlanList = [];
       $(this.divNewPlan).hide();
       $(this.divPreviousPlan).show();
     }
@@ -552,20 +564,60 @@ export class DustbinPlaningComponent implements OnInit {
     $(this.txtPrePlanDateFrom).val("");
     $(this.txtPrePlanDateTo).val("");
     this.previousPlanList = [];
+    let windowHeight = $(window).height();
+    let height = 0;
+    let width = 0;
+    let marginTop = "0px";
+
+    height = 400;
+    width = 350;
+    marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
     (<HTMLInputElement>document.getElementById("chkPreviousPlans")).checked = false;
   }
 
+  selectPlan(index: any) {
+    let planId = "chk" + this.previousPlanList[index]["planId"];
+    if (planId == "chkAll") {
+      if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
+        for (let i = 1; i < this.previousPlanList.length; i++) {
+          planId = "chk" + this.previousPlanList[i]["planId"];
+          (<HTMLInputElement>document.getElementById(planId)).checked = true;
+        }
+      }
+      else {
+        for (let i = 1; i < this.previousPlanList.length; i++) {
+          planId = "chk" + this.previousPlanList[i]["planId"];
+          (<HTMLInputElement>document.getElementById(planId)).checked = false;
+        }
+      }
+    }
+    else {
+      if ((<HTMLInputElement>document.getElementById(planId)).checked == false) {
+        (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
+      }
+    }
+  }
 
-  addPreviousPlan() {
-    if ($(this.ddlPreviousPlanList).val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select plan !!!");
+  validateSelectedPlans() {
+    let isSelectedPlans = false;
+    for (let i = 1; i < this.previousPlanList.length; i++) {
+      let planId = "chk" + this.previousPlanList[i]["planId"];
+      if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
+        isSelectedPlans = true;
+        i = this.previousPlanList.length;
+      }
+    }
+    if (isSelectedPlans == false) {
+      this.commonService.setAlertMessage("error", "Please select at least one plan !!!");
       return;
     }
     if ($(this.txtPrePlanDateFrom).val() == "") {
       this.commonService.setAlertMessage("error", "Please select date !!!");
       return;
     }
-    let planId = $(this.ddlPreviousPlanList).val();
     let planDateFrom = $(this.txtPrePlanDateFrom).val();
     if (new Date(planDateFrom.toString()) < new Date(this.todayDate)) {
       this.commonService.setAlertMessage("error", "plan date from can not be less than today date !!!");
@@ -577,13 +629,30 @@ export class DustbinPlaningComponent implements OnInit {
         this.commonService.setAlertMessage("error", "plan date to can not be more than plan date to !!!");
         return;
       }
-      if (new Date(planDateTo.toString()) > new Date(this.commonService.getNextDate(this.todayDate, this.planAddDays-1))) {
-        this.commonService.setAlertMessage("error", "plan date to can not be more than " + this.commonService.getNextDate(this.todayDate, this.planAddDays-1) + " date !!!");
+      if (new Date(planDateTo.toString()) > new Date(this.commonService.getNextDate(this.todayDate, this.planAddDays - 1))) {
+        this.commonService.setAlertMessage("error", "plan date to can not be more than " + this.commonService.getNextDate(this.todayDate, this.planAddDays - 1) + " date !!!");
         return;
       }
     }
+    $(this.divLoader).show();
+    this.addSelectedPlans(planDateFrom,planDateTo);
+  }
 
-    let detail = this.previousPlanList.find(item => item.planId == planId);
+  addSelectedPlans(planDateFrom: any, planDateTo: any) {
+    for (let i = 1; i < this.previousPlanList.length; i++) {
+      let planId = "chk" + this.previousPlanList[i]["planId"];
+      if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
+        this.addPreviousPlan(planId, planDateFrom, planDateTo);
+      }
+      setTimeout(() => {
+        this.backToNewPlan();
+        $(this.divLoader).hide();
+      }, 3000);
+    }
+  }
+
+  addPreviousPlan(planId: any, planDateFrom: any, planDateTo: any) {
+    let detail = this.previousPlanList.find(item => item.planId == planId.replace("chk",""));
     if (detail != undefined) {
       let planData = detail.planData;
       let planDate = planDateFrom;
@@ -591,20 +660,20 @@ export class DustbinPlaningComponent implements OnInit {
         this.savePreviousPlanData(1, planData, planDate, 1);
       }
       else {
-        if(planDateFrom==planDateTo){
+        if (planDateFrom == planDateTo) {
           this.savePreviousPlanData(1, planData, planDate, 1);
         }
-        else{
+        else {
           let days = this.commonService.getDaysBetweenDates(planDateFrom, planDateTo);
           this.savePreviousPlanData(0, planData, planDate, days);
-        }        
+        }
       }
     }
   }
 
   savePreviousPlanData(index: any, planData: any, planDate: any, days: any) {
     if (index > days) {
-      this.backToNewPlan();
+      
     }
     else {
       let planDetail = this.planList.find(item => item.planName == planData.planName && item.date == planDate);
@@ -651,6 +720,7 @@ export class DustbinPlaningComponent implements OnInit {
         console.log(planListData);
         let keyArray = Object.keys(planListData);
         if (keyArray.length > 0) {
+          this.previousPlanList.push({ planId: "All", planName: "All Plans" });
           for (let i = 0; i < keyArray.length; i++) {
             let planId = keyArray[i];
             let palnData = planListData[planId];
@@ -662,6 +732,15 @@ export class DustbinPlaningComponent implements OnInit {
         }
       }
     });
+  }
+
+  showPreviousPlansList() {
+    $("#ulPreviousPlans").show();
+  }
+
+  hidePreviousPlansList() {
+    alert("aaaa")
+    $("#ulPreviousPlans").hide();
   }
 
   deleteConfirmPlan() {

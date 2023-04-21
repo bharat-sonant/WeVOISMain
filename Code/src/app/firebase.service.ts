@@ -371,17 +371,16 @@ export class FirebaseService {
     }
     else if (city == 'jaipur-test') {
       this.fireBase = {
-        apiKey: "AIzaSyDY3RKGXoZ8IhMZomjJigmLDTJHiu6dFE8",
-        authDomain: "wevois-qa-main.firebaseapp.com",
-        databaseURL: "https://dtdjaipurtest.firebaseio.com",
-        projectId: "wevois-qa-main",
-        storageBucket: "wevois-qa-main.appspot.com",
-        messagingSenderId: "422543231527",
-        appId: "1:422543231527:web:16b4b0a7ddd94e5955dc02"
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdjaipur-test.firebaseio.com",
+        projectId: "dtdjaipur-test",
+        storageBucket: "dtdjaipur-test.appspot.com",
+        messagingSenderId: "381118272786",
+        //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
       };
-      databaseName = "dtdjaipurtest";
-      databaseURL = "https://dtdjaipurtest.firebaseio.com";
-      storageBucket="wevois-qa-main.appspot.com";
+      databaseName = "dtdjaipur-test";
+      databaseURL = "https://dtdjaipur-test.firebaseio.com";
     }
     else if (city == 'mnz-test') {
       this.fireBase = {

@@ -567,19 +567,12 @@
                         </span>
                     </div>
                     <label>Plan Name</label>
-                    <div class="wrap-input-effects" required>
-                        <select id="ddlPreviousPlanList" class="input-green">
-                            <option value="0">
-                                --Select Plan--
-                            </option>
-                            <option value="{{dt.planId}}" *ngFor="let dt of previousPlanList">
-                                {{dt.planName}}
-                            </option>
-                        </select>
-                        <span class="focus-input"></span>
-                        <span class="symbol-input">
-                            <i class="fas fa-book" aria-hidden="true"></i>
-                        </span>
+                    <div class="wrap-input-effects" required style="height:220px; overflow-y: scroll;">
+                        <ul id="ulPreviousPlans" class="list-group">
+                            <li *ngFor="let data of previousPlanList; let i=index" class="list-group-item bg-light" style="list-style: none;  padding: 5px 7px;  font-size: 14px; cursor: pointer; border: 1px solid lightgray;">
+                                <input id="chk{{data.planId}}" (change)="selectPlan(i);" type="checkbox" /> {{data.planName}}
+                            </li>
+                        </ul>
                     </div>
                     <label style="font-weight: bold;">Apply coppied plan</label>
                     <div style="width:48%">
@@ -605,7 +598,7 @@
 
 
 
-                    <input type="button" class="btn btn-success" value="Submit" (click)="addPreviousPlan();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
+                    <input type="button" class="btn btn-success" value="Submit" (click)="validateSelectedPlans();" style="width: 100%; height: 45px; margin-bottom: 10px;  padding-top: 4px;" />
                 </div>
 
             </div>
