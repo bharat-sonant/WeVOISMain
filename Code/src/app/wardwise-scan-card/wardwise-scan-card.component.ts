@@ -216,6 +216,14 @@ export class WardwiseScanCardComponent implements OnInit {
     }
   }
 
+  checkLength(index:any){
+    let value=$("#txtCardNo" + index).val();
+    if(value.toString().length>10){
+      value=value.toString().substring(0,value.toString().length-1);
+      $("#txtCardNo" + index).val(value);
+    }
+  }
+
   updateScanData(index: any) {
     let scanBy = this.cardList[index]["scanBy"];
     let scanTime = this.cardList[index]["scanTime"];
