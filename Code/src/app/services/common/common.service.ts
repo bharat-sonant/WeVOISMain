@@ -242,6 +242,9 @@ export class CommonService {
     else if (cityName == "losal") {
       latLng.push({ lat: 27.3966561, lng: 74.9193112 });
     }
+    else if (cityName == "jammu-survey") {
+      latLng.push({ lat: 32.7346044, lng: 74.8570259 });
+    }
     return latLng;
   }
 

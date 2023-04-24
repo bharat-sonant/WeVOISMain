@@ -406,6 +406,18 @@ export class FirebaseService {
       databaseName = "dtdmpz-test";
       databaseURL = "https://dtdmpz-test.firebaseio.com";
     }
+    else if (city == 'jammu-survey') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdjammu-survey.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdjammu-survey";
+      databaseURL = "https://dtdjammu-survey.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
