@@ -374,8 +374,8 @@ export class FirebaseService {
         apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
         authDomain: "dtdnavigator.firebaseapp.com",
         databaseURL: "https://dtdjaipur-test.firebaseio.com",
-        projectId: "dtdjaipur-test",
-        storageBucket: "dtdjaipur-test.appspot.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
         messagingSenderId: "381118272786",
         //appId: "1:381118272786:web:7721ceb096f806bcec0fcb"
       };
