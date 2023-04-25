@@ -238,15 +238,14 @@ export class WardTripAnalysisComponent implements OnInit {
   getTripData(index: any) {
     this.selectedTrip = index;
     for (let i = 1; i <= Number(this.tripData.tripCount); i++) {
-      let element=<HTMLDivElement>document.getElementById("tripDiv"+i);
-      let className=element.className;
-      $('#tripDiv'+i).removeClass(className);
-      if(i==index){
-        $('#tripDiv'+i).addClass("col-md-3 text-center trip-summary active-trip");
+      let element = <HTMLDivElement>document.getElementById("tripDiv" + i);
+      let className = element.className;
+      $('#tripDiv' + i).removeClass(className);
+      if (i == index) {
+        $('#tripDiv' + i).addClass("col-md-3 text-center trip-summary active-trip");
       }
-      else
-      {
-        $('#tripDiv'+i).addClass("col-md-3 text-center trip-summary");
+      else {
+        $('#tripDiv' + i).addClass("col-md-3 text-center trip-summary");
       }
     }
 
@@ -293,27 +292,15 @@ export class WardTripAnalysisComponent implements OnInit {
 
   setTripAnalysis() {
     if (this.tripDetail.analysisBy != "") {
-      let userData = this.commonService.getPortalUserDetailById(
-        this.tripDetail.analysisBy
-      );
-      if (userData != undefined) {
-        let date = this.tripDetail.analysisAt.split(" ");
-        let analysisTime =
-          date[0].split("-")[2] +
-          " " +
-          this.commonService.getCurrentMonthName(
-            Number(date[0].split("-")[1]) - 1
-          ) +
-          ", " +
-          date[1];
-        this.tripData.analysisDetail =
-          "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
-      } else {
-        this.commonService.setAlertMessage(
-          "error",
-          "Something went wrong, Please logout and login again."
-        );
-      }
+      this.commonService.getPortalUserDetailById(this.tripDetail.analysisBy).then((userData: any) => {
+        if (userData != undefined) {
+          let date = this.tripDetail.analysisAt.split(" ");
+          let analysisTime = date[0].split("-")[2] + " " + this.commonService.getCurrentMonthName(Number(date[0].split("-")[1]) - 1) + ", " + date[1];
+          this.tripData.analysisDetail = "BY : " + userData["name"] + "<br/> (" + analysisTime + ")";
+        } else {
+          this.commonService.setAlertMessage("error", "Something went wrong, Please logout and login again.");
+        }
+      });
     } else {
       this.tripData.analysisDetail = "";
     }

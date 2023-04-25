@@ -9,18 +9,18 @@ import { Router, } from "@angular/router";
   styleUrls: ["./portal-access.component.scss"],
 })
 export class PortalAccessComponent implements OnInit {
-  constructor(private commonService: CommonService,private modalService: NgbModal,public router: Router) { }
-  accessCity:any[]=[];
+  constructor(private commonService: CommonService, private modalService: NgbModal, public router: Router) { }
+  accessCity: any[] = [];
   ngOnInit() {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     this.getCityAccess();
-    
+
   }
 
-  getCityAccess(){
+  getCityAccess() {
     let isBaseCity = false;
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "sikar") {
@@ -82,7 +82,7 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "jaipur-test") {
         $("#jaipurTestBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "jammu-survey") {
+      } else if (this.accessCity[i]["city"] == "jammu-survey") {
         $("#jammuSurveyBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
@@ -103,10 +103,10 @@ export class PortalAccessComponent implements OnInit {
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.closeMapModel();
-    window.location.href = "/" + cityName + "/home";    
+    window.location.href = "/" + cityName + "/home";
   }
 
-  
+
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
