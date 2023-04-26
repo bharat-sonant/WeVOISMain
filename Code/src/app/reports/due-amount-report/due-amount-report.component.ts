@@ -249,7 +249,6 @@ export class DueAmountReportComponent implements OnInit {
     let monthFrom = 1;
     let monthTo = 12;
     let year = this.todayDate.split('-')[0];
-    let currentMonth = this.todayDate.split('-')[1];
 
     if (Number(this.selectedYear) < Number(this.chargeStartYear)) {
       this.commonService.setAlertMessage("error", "No Data Found !!!");
@@ -260,7 +259,7 @@ export class DueAmountReportComponent implements OnInit {
       monthFrom = Number(this.chargeStartMonth);
     }
     if (Number(this.selectedYear) == Number(year)) {
-      monthTo = Number(currentMonth);
+      monthTo =Number(this.commonService.getPreviousMonth(this.todayDate,1).toString().split('-')[1]);
     }
 
     this.wardCardPaymentList = [];
