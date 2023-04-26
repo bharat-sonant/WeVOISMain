@@ -292,4 +292,58 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       }
     );
   }
+
+  
+  updateWardWiseCard() {
+    $(this.divLoader).show();
+    this.getWardWiseCards(1);
+  }
+
+  getWardWiseCards(index: any) {
+    if (index == this.zoneList.length) {
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("success", "Ward wise JSON updated successfully !!!");
+    }
+    else {
+      let zoneNo = this.zoneList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let instance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          instance.unsubscribe();
+          let houseCounts = 0;
+          if (data != null) {
+            let cardList = [];
+            let lineArray = Object.keys(data);
+            if (lineArray.length > 0) {
+              for (let i = 0; i < lineArray.length; i++) {
+                let lineNo = lineArray[i];
+                let houseData = data[lineNo];
+                let houseArray = Object.keys(houseData);
+                for (let j = 0; j < houseArray.length; j++) {
+                  let cardNo = houseArray[j];
+                  let entityType="1";
+                  let amount=0;
+                  if(houseData[cardNo]["houseType"]!=null){
+                    entityType=houseData[cardNo]["houseType"];
+                  }
+                  cardList.push({ cardNo: cardNo,entityType:entityType });
+                }
+                houseCounts = houseCounts + houseArray.length;
+              }
+            }
+            let fileName = zoneNo + ".json";
+            let filePath = "/WardWiseCardJSON/";
+            this.commonService.saveJsonFile(cardList, fileName, filePath);
+            index++;
+            this.getWardWiseCards(index);
+          }
+          else {
+            index++;
+            this.getWardWiseCards(index);
+          }
+        }
+      );
+    }
+
+  }
 }

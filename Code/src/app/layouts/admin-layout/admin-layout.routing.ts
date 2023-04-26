@@ -114,6 +114,8 @@ import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-sca
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
+import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
+import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -348,6 +350,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'sikar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'sikar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'sikar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'sikar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -568,6 +572,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-greater/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-greater/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-greater/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-greater/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //reengus
@@ -791,6 +797,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'reengus/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'reengus/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'reengus/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'reengus/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1011,6 +1019,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'shahpura/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'shahpura/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'shahpura/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'shahpura/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1231,6 +1241,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'test/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'test/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'test/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'test/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
 
@@ -1454,6 +1466,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-office/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-office/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-office/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-office/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //kishangarh
@@ -1675,6 +1689,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'kishangarh/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'kishangarh/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'kishangarh/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'kishangarh/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Nawai
@@ -1896,6 +1912,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'niwai/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'niwai/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'niwai/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'niwai/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2116,6 +2134,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaisalmer/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaisalmer/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaisalmer/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaisalmer/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Salasar
@@ -2337,6 +2357,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'salasar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'salasar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'salasar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'salasar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Behror
@@ -2558,6 +2580,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'behror/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'behror/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'behror/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'behror/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2777,6 +2801,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -2996,6 +3022,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-jhotwara/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-jhotwara/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-jhotwara/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-jhotwara/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //jaipur-jagatpura
@@ -3216,6 +3244,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-jagatpura/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-jagatpura/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-jagatpura/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-jagatpura/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3435,6 +3465,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-malviyanagar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-malviyanagar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-malviyanagar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-malviyanagar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3654,6 +3686,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-mansarovar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-mansarovar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-mansarovar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-mansarovar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //jaipur-murlipura
@@ -3874,6 +3908,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-murlipura/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-murlipura/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-murlipura/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-murlipura/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //jaipur-sanganer
@@ -4094,6 +4130,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-sanganer/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-sanganer/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-sanganer/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-sanganer/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4313,6 +4351,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-vidhyadhar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-vidhyadhar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-vidhyadhar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-vidhyadhar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Bhiwadi
@@ -4533,6 +4573,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'bhiwadi/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'bhiwadi/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'bhiwadi/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'bhiwadi/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Chhapar
@@ -4753,6 +4795,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'chhapar/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'chhapar/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'chhapar/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'chhapar/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //Churu
@@ -4973,6 +5017,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'churu/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'churu/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'churu/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'churu/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5193,6 +5239,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'wevois-other/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'wevois-other/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'wevois-other/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'wevois-other/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     //gwalior
@@ -5414,6 +5462,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'gwalior/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'gwalior/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'gwalior/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'gwalior/:id/collected-amount-report', component: CollectedAmountReportComponent },
+
 
 
     //Tonk
@@ -5634,6 +5685,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'tonk/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'tonk/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'tonk/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'tonk/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -5853,6 +5906,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'ratangarh/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'ratangarh/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'ratangarh/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'ratangarh/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6072,6 +6127,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'nokha/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'nokha/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'nokha/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'nokha/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6291,6 +6348,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'losal/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'losal/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'losal/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'losal/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
 
@@ -6512,6 +6571,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jaipur-test/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jaipur-test/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jaipur-test/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jaipur-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     
 
@@ -6733,6 +6794,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'mnz-test/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'mnz-test/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'mnz-test/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'mnz-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 
     
@@ -6954,6 +7017,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'mpz-test/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'mpz-test/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'mpz-test/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'mpz-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
     
 
@@ -7176,5 +7241,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: 'jammu-survey/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: 'jammu-survey/:id/payment-collector', component: PaymentCollectorComponent },
+    { path: 'jammu-survey/:id/due-amount-report', component: DueAmountReportComponent },
+    { path: 'jammu-survey/:id/collected-amount-report', component: CollectedAmountReportComponent },
 
 ]; 

@@ -121,6 +121,8 @@ import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-sca
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
+import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
+import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
 
 @NgModule({
   imports: [
@@ -246,7 +248,9 @@ import { PaymentCollectorComponent } from '../../payment-collector/payment-colle
     WardwiseScanCardComponent,
     ReviewDutyonImagesComponent,
     ReviewTripImagesComponent,
-    PaymentCollectorComponent
+    PaymentCollectorComponent,
+    DueAmountReportComponent,
+    CollectedAmountReportComponent
   ]
 })
 

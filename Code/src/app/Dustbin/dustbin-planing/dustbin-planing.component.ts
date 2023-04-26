@@ -59,6 +59,7 @@ export class DustbinPlaningComponent implements OnInit {
   ddlPreviousPlanList = "#ddlPreviousPlanList";
   txtPrePlanDateFrom = "#txtPrePlanDateFrom";
   txtPrePlanDateTo = "#txtPrePlanDateTo";
+  chkAllPlans = "#chkAllPlans";
 
   bins: any;
   createdAt: any;
@@ -560,6 +561,8 @@ export class DustbinPlaningComponent implements OnInit {
   backToNewPlan() {
     $(this.divNewPlan).show();
     $(this.divPreviousPlan).hide();
+    $(this.chkAllPlans).hide();
+    (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
     $(this.txtPreviousPlanDate).val("");
     $(this.txtPrePlanDateFrom).val("");
     $(this.txtPrePlanDateTo).val("");
@@ -579,16 +582,22 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   selectPlan(index: any) {
-    let planId = "chk" + this.previousPlanList[index]["planId"];
+    let planId = "chk";
+    if (index == "All") {
+      planId = "chkAll";
+    }
+    else {
+      planId = "chk" + this.previousPlanList[index]["planId"];
+    }
     if (planId == "chkAll") {
       if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
-        for (let i = 1; i < this.previousPlanList.length; i++) {
+        for (let i = 0; i < this.previousPlanList.length; i++) {
           planId = "chk" + this.previousPlanList[i]["planId"];
           (<HTMLInputElement>document.getElementById(planId)).checked = true;
         }
       }
       else {
-        for (let i = 1; i < this.previousPlanList.length; i++) {
+        for (let i = 0; i < this.previousPlanList.length; i++) {
           planId = "chk" + this.previousPlanList[i]["planId"];
           (<HTMLInputElement>document.getElementById(planId)).checked = false;
         }
@@ -603,7 +612,7 @@ export class DustbinPlaningComponent implements OnInit {
 
   validateSelectedPlans() {
     let isSelectedPlans = false;
-    for (let i = 1; i < this.previousPlanList.length; i++) {
+    for (let i = 0; i < this.previousPlanList.length; i++) {
       let planId = "chk" + this.previousPlanList[i]["planId"];
       if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
         isSelectedPlans = true;
@@ -635,11 +644,11 @@ export class DustbinPlaningComponent implements OnInit {
       }
     }
     $(this.divLoader).show();
-    this.addSelectedPlans(planDateFrom,planDateTo);
+    this.addSelectedPlans(planDateFrom, planDateTo);
   }
 
   addSelectedPlans(planDateFrom: any, planDateTo: any) {
-    for (let i = 1; i < this.previousPlanList.length; i++) {
+    for (let i = 0; i < this.previousPlanList.length; i++) {
       let planId = "chk" + this.previousPlanList[i]["planId"];
       if ((<HTMLInputElement>document.getElementById(planId)).checked == true) {
         this.addPreviousPlan(planId, planDateFrom, planDateTo);
@@ -652,7 +661,7 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   addPreviousPlan(planId: any, planDateFrom: any, planDateTo: any) {
-    let detail = this.previousPlanList.find(item => item.planId == planId.replace("chk",""));
+    let detail = this.previousPlanList.find(item => item.planId == planId.replace("chk", ""));
     if (detail != undefined) {
       let planData = detail.planData;
       let planDate = planDateFrom;
@@ -673,7 +682,7 @@ export class DustbinPlaningComponent implements OnInit {
 
   savePreviousPlanData(index: any, planData: any, planDate: any, days: any) {
     if (index > days) {
-      
+
     }
     else {
       let planDetail = this.planList.find(item => item.planName == planData.planName && item.date == planDate);
@@ -709,6 +718,8 @@ export class DustbinPlaningComponent implements OnInit {
   }
 
   getPreviousPlans() {
+    (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
+    $(this.chkAllPlans).hide();
     let date = $("#txtPreviousPlanDate").val();
     if (date == "") {
       this.commonService.setAlertMessage("error", "Please select date !!!");
@@ -717,10 +728,9 @@ export class DustbinPlaningComponent implements OnInit {
     this.previousPlanList = [];
     this.dustbinService.getDustbinPickingPlansByDate(date).then((planListData: any) => {
       if (planListData != null) {
-        console.log(planListData);
         let keyArray = Object.keys(planListData);
         if (keyArray.length > 0) {
-          this.previousPlanList.push({ planId: "All", planName: "All Plans" });
+          $(this.chkAllPlans).show();
           for (let i = 0; i < keyArray.length; i++) {
             let planId = keyArray[i];
             let palnData = planListData[planId];
@@ -732,15 +742,6 @@ export class DustbinPlaningComponent implements OnInit {
         }
       }
     });
-  }
-
-  showPreviousPlansList() {
-    $("#ulPreviousPlans").show();
-  }
-
-  hidePreviousPlansList() {
-    alert("aaaa")
-    $("#ulPreviousPlans").hide();
   }
 
   deleteConfirmPlan() {
