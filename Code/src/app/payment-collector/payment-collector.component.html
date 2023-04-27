@@ -13,7 +13,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6 card-main">
+        <div class="col-md-7 card-main">
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
                     <form>
@@ -35,7 +35,9 @@
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}">
+                                            <tr class="table-row" id="tr{{i}}"
+                                                *ngFor="let data of userList; let i=index" class="{{data.trClass}}"
+                                                (click)="getCollectionDetail(data.empId,i);" style="cursor: pointer;">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
@@ -48,19 +50,28 @@
                                                     <span class="actives" [hidden]="data.isActive==false">
                                                         Active
                                                     </span>
-                                                    <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
+                                                    <span class="inactive"
+                                                        [hidden]="data.isActive==true">Inactive</span>
                                                 </td>
                                                 <td class="text-center table-data-2">
-                                                    <i class="fas fa-map-marked-alt marked-icon" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward"></i>
-                                                    <i class="far fa-times-circle circle-icon" (click)="openModel(contentConfirmation,data.empId,'delete')" title="Remove Assignment"></i>
+                                                    <i class="fas fa-map-marked-alt marked-icon"
+                                                        (click)="openModel(contentWard,data.empId,'ward');"
+                                                        title="Assign Ward"></i>
+                                                    <i class="far fa-times-circle circle-icon"
+                                                        (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                        title="Remove Assignment"></i>
 
 
                                                     <a href="{{data.docImageUrl}}" target="blank" title="Document">
-                                                        <i class="fa fa-download download-icon" style="color: green;padding-right: 10px;cursor: pointer;"></i>
+                                                        <i class="fa fa-download download-icon"
+                                                            style="color: green;padding-right: 10px;cursor: pointer;"></i>
                                                     </a>
                                                     <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
-                                                        <i class="fa-solid fa-qrcode" style="padding-right: 10px;cursor: pointer;"></i></a>
-                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentEmployee,data.empId,'update');" title="Edit Entry"></i>
+                                                        <i class="fa-solid fa-qrcode"
+                                                            style="padding-right: 10px;cursor: pointer;"></i></a>
+                                                    <i class="far fa-edit edit-icon"
+                                                        (click)="openModel(contentEmployee,data.empId,'update');"
+                                                        title="Edit Entry"></i>
 
                                                 </td>
                                             </tr>
@@ -68,56 +79,43 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 cards-main">
-            <!--
+        <div class="col-md-5 cards-main">
+
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-12 text-center">
-                            <h5> <b></b></h5>
+                        <div class="col-md-12 text-left">
+                            <h5> <b>{{collectionData.name}}</b></h5>
                         </div>
                     </div>
 
                 </div>
                 <div class="card-body card-body-2">
                     <div class="row ml-0 mr-10">
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                        <div class="col-md-6 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points">0 </span><br /> Total Marker
+                                    <span class="tbl-points">{{collectionData.totalCollection}} </span><br /> Total
+                                    Collection
                                 </h3>
                             </div>
                         </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
+                        <div class="col-md-6 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points">0</span><br /> Working Days
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> 0</span><br /> Avg. Per Day
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading current-heading">
-                                <h3>
-                                    <span class="tbl-points"> 0</span> <br /> Current Ward Marking
+                                    <span class="tbl-points">{{collectionData.totalDays}}</span><br /> Working Days
                                 </h3>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <form>
                                 <div class="row">
                                     <div class="col-md-12 pr-1 table-outer">
@@ -126,57 +124,26 @@
                                                 <thead>
                                                     <th class="table-heading-1">Date</th>
                                                     <th class="text-right table-heading-2">
-                                                        Markers</th>
+                                                        Collection</th>
+
+                                                    <th class="text-right table-heading-2">
+                                                        Details</th>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let data of markerList; let i=index">
+                                                    <tr *ngFor="let data of collectionList; let i=index">
                                                         <td class="date-details">
                                                             {{data.date}}</td>
                                                         <td class="text-right markers-details">
-                                                            {{data.markers}}</td>
+                                                            {{data.collection}}</td>
+                                                        <td class="text-right markers-details">
+                                                            <i class="far fa-eye eye-icon" style="cursor: pointer;"
+                                                                (click)="showCollectionDetail(contentCollectionDetail,data.date);"></i>
+                                                        </td>
                                                     </tr>
 
 
                                                 </tbody>
                                             </table>
-                                        </div>
-                                    </div>
-                                    <div class="div-message" id="divMessage" class="col-md-12 pr-1 text-center">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="col-md-6 main-div">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll table-main">
-                                            <table class="table table-main-iner">
-                                                <thead>
-                                                    <th class="ward-heading">Ward No.
-                                                    </th>
-                                                    <th class="text-right markers-heading">
-                                                        Markers</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr *ngFor="let data of markerWardList; let i=index">
-                                                        <td class="ward-data">
-                                                            {{data.wardNo}}</td>
-                                                        <td class="text-right markers-data">
-                                                            {{data.markers}}</td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-main">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -185,7 +152,7 @@
                     </div>
                 </div>
             </div>
--->
+
         </div>
     </div>
 </div>
@@ -196,7 +163,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
+                    assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -242,7 +210,8 @@
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT" (click)="saveWard();" />
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
+                    (click)="saveWard();" />
             </div>
         </div>
     </div>
@@ -277,7 +246,8 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
-                    <input type="password" id="txtPassword" class="input-green" placeholder="Password" autocomplete="off" />
+                    <input type="password" id="txtPassword" class="input-green" placeholder="Password"
+                        autocomplete="off" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-key" aria-hidden="true"></i>
@@ -290,9 +260,61 @@
                     <input class="active-input" type="checkbox" id="chkAcive"> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveEmployee();" />
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                    (click)="saveEmployee();" />
             </div>
         </div>
     </div>
 </ng-template>
 <!--employee End-->
+
+
+<!--ward assign  Start-->
+<ng-template #contentCollectionDetail>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="table-wrapper table-scroll-popup table-scroll-2">
+                        <table class="table table-scroll-iner">
+                            <thead>
+                                <th>Card No</th>
+                                <th>
+                                    Payment Method</th>
+                                <th>
+                                    Merchant Transaction Id</th>
+                                <th>
+                                    Reference No</th>
+                                <th class="text-right">
+                                    Amount</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of collectionDetailList; let i=index">
+                                    <td class="date-details">
+                                        {{data.cardNo}}</td>
+                                    <td class="markers-details">
+                                        {{data.payMethod}}</td>
+                                    <td class="markers-details">
+                                        {{data.merchantTransactionId}}</td>
+                                    <td class="markers-details">
+                                        {{data.retrievalReferenceNo}}</td>
+                                    <td class="text-right markers-details">
+                                        {{data.transactionAmount}}</td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--ward assign End-->

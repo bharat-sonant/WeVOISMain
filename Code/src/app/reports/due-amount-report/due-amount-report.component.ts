@@ -120,6 +120,7 @@ export class DueAmountReportComponent implements OnInit {
             let entityTypeId = keyArray[i];
             this.entityTypeList.push({ entityTypeId: entityTypeId, entityType: data[entityTypeId]["name"], amount: data[entityTypeId]["amount"] });
           }
+          console.log(this.entityTypeList);
         }
       }
     )
@@ -305,7 +306,7 @@ export class DueAmountReportComponent implements OnInit {
       this.processedCards = index + 1;
       let cardNo = this.wardCardPaymentList[index]["cardNo"];
       let charges = this.wardCardPaymentList[index]["charges"];
-      let dbPath = "PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
+      let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
       let collectionInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           collectionInstance.unsubscribe();
@@ -364,7 +365,7 @@ export class DueAmountReportComponent implements OnInit {
       amount: amount,
       status: "Pending"
     }
-    let dbPath = "PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear + "/" + monthName;
+    let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear + "/" + monthName;
     this.db.object(dbPath).update(data);
 
   }

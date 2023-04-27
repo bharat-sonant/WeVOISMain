@@ -19,9 +19,16 @@ export class PaymentCollectorComponent implements OnInit {
 
   zoneList: any[];
   userList: any[];
+  collectionList: any[];
+  collectionDetailList:any[];
   lastEmpId: any;
   db: any;
   fileName: any;
+  collectionData: collectionDatail = {
+    totalCollection: "0",
+    totalDays: 0,
+    name: "",
+  };
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -62,12 +69,93 @@ export class PaymentCollectorComponent implements OnInit {
                 docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media"
               });
             }
+            if (this.userList.length > 0) {
+              setTimeout(() => {
+                this.getCollectionDetail(this.userList[0]["empId"], 0);
+              }, 600);
+            }
           }
         }
       }
     }, error => {
       this.lastEmpId = 100;
     });
+  }
+
+  getCollectionDetail(empId: any, index: any) {
+    this.setActiveClass(index);
+    this.collectionList = [];
+    this.collectionData.name = "";
+    this.collectionData.totalCollection = "0";
+    this.collectionData.totalDays = 0;
+    let detail = this.userList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      this.collectionData.name = detail.name;
+    }
+    let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId;
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let dateArray = Object.keys(data);
+          this.collectionData.totalDays = dateArray.length;
+          let totalAmount = 0;
+          for (let i = 0; i < dateArray.length; i++) {
+            let date = dateArray[i];
+            let collection = 0;
+            let detailArray = [];
+            let keyArray = Object.keys(data[date]);
+            if (keyArray.length > 0) {
+              for (let j = 0; j < keyArray.length; j++) {
+                let key = keyArray[j];
+                if (data[date][key]["cardNo"] != null) {
+                  if (data[date][key]["transactionAmount"] != null) {
+                    totalAmount += Number(data[date][key]["transactionAmount"]);
+                    collection += Number(data[date][key]["transactionAmount"]);
+                  }
+                  detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
+                }
+              }
+            }
+            this.collectionList.push({ date: date, collection: collection, detailArray: detailArray });
+          }
+          this.collectionData.totalCollection = totalAmount.toFixed(2);
+        }
+      });
+  }
+
+  showCollectionDetail(content: any, date: any) {
+    this.collectionDetailList=[];
+    let detail=this.collectionList.find(item=>item.date==date);
+    if(detail!=undefined){
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 600;
+      let width = 800;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");      
+      this.collectionDetailList=detail.detailArray;
+    }
+  }
+
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.userList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        if (className != "in-active") {
+          $("#tr" + i).removeClass(className);
+        }
+      }
+      if (i == index) {
+        if (this.userList[i]["isActive"] == true) {
+          $("#tr" + i).addClass("active");
+        }
+      }
+    }
   }
 
 
@@ -322,4 +410,11 @@ export class PaymentCollectorComponent implements OnInit {
       }
     });
   }
+}
+
+
+export class collectionDatail {
+  totalCollection: string;
+  totalDays: number;
+  name: string;
 }

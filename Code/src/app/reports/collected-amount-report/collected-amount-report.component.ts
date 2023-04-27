@@ -304,7 +304,7 @@ export class CollectedAmountReportComponent implements OnInit {
       this.processedCards = index + 1;
       let cardNo = this.wardCardPaymentList[index]["cardNo"];
       let charges = this.wardCardPaymentList[index]["charges"];
-      let dbPath = "PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
+      let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
       let collectionInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           collectionInstance.unsubscribe();
