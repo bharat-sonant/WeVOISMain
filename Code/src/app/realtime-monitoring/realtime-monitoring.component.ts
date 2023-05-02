@@ -541,6 +541,9 @@ export class RealtimeMonitoringComponent implements OnInit {
             } else {
               $(this.vehicleStatusH3).css("color", "red");
             }
+            if (summaryData["wardCoveredDistance"] != null) {
+              this.workerDetails.wardKM = (parseFloat(summaryData["wardCoveredDistance"]) / 1000).toFixed(2);
+            }
             setTimeout(() => {
               this.getEmployeeData();
             }, 1500);
