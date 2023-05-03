@@ -26,12 +26,12 @@
                                             <th class="table-head2">Name</th>
                                             <th class="table-head3">Login ID
                                             </th>
-                                            <th class="text-right table-head3">
+                                            <th class="text-left table-head3">
                                                 Assigned</th>
 
-                                            <th class="text-right table-head3">
+                                            <th class="text-center table-head3">
                                                 Status</th>
-                                            <th class="text-right table-head2" style="width:100px!important">
+                                            <th class="text-center table-head2" style="width:100px!important">
                                                 Action</th>
                                         </thead>
                                         <tbody>
@@ -46,7 +46,7 @@
                                                 <td class="table-data-3">
                                                     {{data.wardNo}}</td>
 
-                                                <td class="text-right table-data-3">
+                                                <td class="text-center table-data-3">
                                                     <span class="actives" [hidden]="data.isActive==false">
                                                         Active
                                                     </span>
@@ -190,13 +190,14 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward & Device</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <input id="empID" type="hidden" value="0" />
+                <label>Ward</label>
                 <div class="wrap-input-effects" required>
                     <select id="ddlWard" class="input-green">
                         <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
@@ -205,6 +206,18 @@
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <label>Device Serial No.</label>
+                <div class="wrap-input-effects" required>
+                    <select id="ddlDevice" class="input-green">
+                        <option value="0">--Select Device--</option>
+                        <option value={{dt.device}} *ngFor="let dt of deviceList">
+                            {{dt.device}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required style="display: none;">
