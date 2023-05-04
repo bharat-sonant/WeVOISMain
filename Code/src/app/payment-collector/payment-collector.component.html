@@ -28,7 +28,6 @@
                                             </th>
                                             <th class="text-left table-head3">
                                                 Assigned</th>
-
                                             <th class="text-center table-head3">
                                                 Status</th>
                                             <th class="text-center table-head2" style="width:100px!important">
@@ -43,10 +42,11 @@
                                                     {{data.name}}</td>
                                                 <td class="table-data-3">
                                                     {{data.empId}}</td>
-                                                <td class="table-data-3">
-                                                    {{data.wardNo}}</td>
+                                                    <td class="table-data-3">
+                                                        <span [hidden]="data.wardNo==''">{{data.wardNo}} ({{data.deviceNo}})</span>
+                                                        </td>
 
-                                                <td class="text-center table-data-3">
+                                                <td class="text-center table-data-4">
                                                     <span class="actives" [hidden]="data.isActive==false">
                                                         Active
                                                     </span>
