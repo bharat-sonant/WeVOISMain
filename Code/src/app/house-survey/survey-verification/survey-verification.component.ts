@@ -367,7 +367,11 @@ export class SurveyVerificationComponent {
             for (let j = 0; j < cardKeyArray.length; j++) {
               let cardNo = cardKeyArray[j];
               this.verifiedCardList.push({ cardNo: cardNo, lineNo: lineNo });
+              let detail=this.allCardList.find(item=>item.cardNo==cardNo);
+              if(detail==undefined)
+              {
               this.allCardList.push({ cardNo: cardNo });
+              }
             }
           }
           if (this.verifiedCardList.length > 0) {
@@ -433,7 +437,11 @@ export class SurveyVerificationComponent {
                 latLng = cardData[cardNo]["latLng"].toString().replace("(", "").replace(")", "");
               }
               this.houseCardList.push({ cardNo: cardNo, lineNo: lineNo, latLng: latLng });
+              let detail=this.allCardList.find(item=>item.cardNo==cardNo);
+              if(detail==undefined)
+              {
               this.allCardList.push({ cardNo: cardNo });
+              }
             }
           }
         }
