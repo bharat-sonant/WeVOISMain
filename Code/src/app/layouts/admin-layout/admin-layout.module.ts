@@ -123,6 +123,8 @@ import { ReviewTripImagesComponent } from '../../reports/review-trip-images/revi
 import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
 import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
 import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
+import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
+
 
 @NgModule({
   imports: [
@@ -250,7 +252,8 @@ import { CollectedAmountReportComponent } from '../../reports/collected-amount-r
     ReviewTripImagesComponent,
     PaymentCollectorComponent,
     DueAmountReportComponent,
-    CollectedAmountReportComponent
+    CollectedAmountReportComponent,
+    SurveyVerifiedReportComponent
   ]
 })
 

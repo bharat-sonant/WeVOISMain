@@ -264,6 +264,7 @@ export class PaymentCollectorComponent implements OnInit {
       qrImage: "qrCode.png"
     };
     jsonData[this.lastEmpId.toString()] = data;
+    console.log(this.lastEmpId);
     let url = "https://jaipurgreaterd2d.web.app/payment-receiver-detail/" + this.lastEmpId + "~" + this.commonService.getFireStoreCity();
     // this.uploadQRCode(url);
 
