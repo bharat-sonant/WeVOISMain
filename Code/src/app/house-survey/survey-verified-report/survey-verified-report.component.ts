@@ -24,6 +24,7 @@ export class SurveyVerifiedReportComponent {
   txtCardNo="#txtCardNo";
   ddlZone="#ddlZone";
   chkDuplicate="chkDuplicate";
+  chkNotInZone="chkNotInZone";
   rowDataList:any;
 
   ngOnInit() {
@@ -73,11 +74,15 @@ export class SurveyVerifiedReportComponent {
       for (let i = 0; i < list.length; i++) {
         if (list[i]["color"] != "purple") {
           counts++;
+          let notInZone=0;
+          if(list[i]["color"]=="red"){
+            notInZone=1;
+          }
           let detail = this.cardList.find(item => item.cardNo == list[i]["cardNo"]);
           if (detail == undefined) {
             let verifyLineNoList = [];
-            verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });
-            this.cardList.push({ cardNo: list[i]["cardNo"], houseLineNo: list[i]["houseLineNo"], verifyLineNoList: verifyLineNoList, count: 1 });
+            verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });            
+            this.cardList.push({ cardNo: list[i]["cardNo"], houseLineNo: list[i]["houseLineNo"], verifyLineNoList: verifyLineNoList, count: 1,notInZone:notInZone });
           }
           else {
             detail.verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });
@@ -112,6 +117,9 @@ export class SurveyVerifiedReportComponent {
     let list=this.cardList;
     if((<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked == true){
       list=this.cardList.filter(item=>item.count>1);
+    }
+    if((<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked == true){
+      list=list.filter(item=>item.notInZone==1);
     }
     if(cardNo!=""){
       list=list.filter(item=>item.cardNo.toString().toUpperCase().includes(cardNo.toString().toUpperCase()));

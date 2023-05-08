@@ -6,6 +6,16 @@
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
             Survey Verification Report
         </div>
+        <div style="position: absolute;margin-top: -10px; z-index: 999; color: #fff; right: 0px; float: right;width:400px;display: flex;">
+            <div style="text-align: center; width: 45%;">
+            {{totalVerifiedCount}}<br/>
+            <span style="font-size: 8px;">Total Verified Cards</span>
+             </div>
+
+            <div style="text-align: center; width: 45%;">
+                {{multipleCardsCount}}<br/>
+                <span style="font-size: 8px;">Multiple Cards </span> </div>
+        </div>
     </div>
 </section>
 <div class="main-content">
@@ -44,23 +54,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-4 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b>{{totalVerifiedCount}}</b><br/>
-                                    Total Verified Cards 
+                                    <input type="checkbox" id="chkNotInZone" (change)="getFilter();"/> Not In Selected Zone
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b>{{multipleCardsCount}}</b><br/>
-                                    Multiple Cards 
-                                </div>
-                            </div>
-                        </div>
-<!--
+                        <!--
                         <div class="col-md-3 text-left" style="padding-right:0px!important;">
                             <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
                                 <i class="fa-solid fa-file-export"
