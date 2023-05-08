@@ -499,7 +499,7 @@ export class SurveyVerificationComponent {
         this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'green', mapLineNo: mapLineNo });
       }
     }
-   // console.log("Same Line =>" + sameLineCount);
+    //console.log("Same Line =>" + sameLineCount);
     for (let i = 0; i < this.verifiedCardList.length; i++) {
       let isExistInVerified = 0;
       let isExistInHouses = 0;
@@ -521,7 +521,7 @@ export class SurveyVerificationComponent {
         this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
       }
     }
-   // console.log("Different Line =>" + differentLineCount);
+    //console.log("Different Line =>" + differentLineCount);
 
     for (let i = 0; i < this.houseCardList.length; i++) {
       let isExistInVerified = 0;
@@ -543,7 +543,7 @@ export class SurveyVerificationComponent {
         this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'purple', mapLineNo: mapLineNo });
       }
     }
-   // console.log("Not in Verified =>" + notInVerifiedCount);
+    //console.log("Not in Verified =>" + notInVerifiedCount);
 
     for (let i = 0; i < this.verifiedCardList.length; i++) {
       let isExistInVerified = 0;
@@ -566,7 +566,7 @@ export class SurveyVerificationComponent {
         this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'red', mapLineNo: mapLineNo });
       }
     }
-   // console.log("Not in Houses =>" + notInHousesCount);
+    //console.log("Not in Houses =>" + notInHousesCount);
     this.updateLatLng(0);
   }
 
