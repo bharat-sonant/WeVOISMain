@@ -28,9 +28,36 @@ export class Cms1Component implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     //this.getNameList();
-    //this.getCardTypeList();
+    this.getCardTypeList();
     this.getAllRevisitRequests();
     //this.getDeletedRevisit();
+  }
+
+  removeVerifiedCards(){
+    let wardNo="125-R2";
+    let dbPath="SurveyVerifierData/VerifiedHouses/"+wardNo;
+    let instance=this.db.object(dbPath).valueChanges().subscribe(
+      data=>{
+        instance.unsubscribe();
+        if(data!=null)
+        {
+          let keyArray=Object.keys(data);
+          for(let i=0;i<keyArray.length;i++){
+            let lineNo=keyArray[i];
+            let lineObject=data[lineNo];
+            let lineArray=Object.keys(lineObject);
+            for(let j=0;j<lineArray.length;j++){
+              let cardNo=lineArray[j];
+              if(lineObject[cardNo]["latLng"]==null){
+                console.log(lineNo+" >> "+cardNo);
+                dbPath="SurveyVerifierData/VerifiedHouses/"+wardNo+"/"+lineNo+"/"+cardNo;
+                this.db.object(dbPath).remove();
+              }
+            }
+          }
+        }
+      }
+    )
   }
 
   createUserJson() {
@@ -48,22 +75,23 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(3, 0);
+    this.addDevices(1592, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 5) {
+    if (index <= 30) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
         lastActive: "25/07/2022 09:10",
-        name: "TON-" + lastDevice,
+        name: "SIK-" + lastDevice,
         readerAppVersion: "1.0.2.9",
         status: "1"
       }
-      let dbPath = "Devices/Tonk/" + key;
+console.log("SIK-" + lastDevice);
+      let dbPath = "Devices/Sikar/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
@@ -2004,7 +2032,21 @@ export class Cms1Component implements OnInit {
           for (let i = 0; i < keyArray.length; i++) {
             let houseTypeId = keyArray[i];
             let houseType = data[houseTypeId]["name"].split('(')[0];
-            this.cardTypeList.push({ houseTypeId: houseTypeId, houseType: houseType });
+            let entityType = data[houseTypeId]["entity-type"];
+            if (entityType == "residential") {
+              entityType = "आवासीय";
+              if (houseTypeId == "19") {
+                entityType = "आवासीय परिसर";
+              }
+            }
+            else {
+              entityType = "व्यावसायिक";
+              if (houseTypeId == "20") {
+                entityType = "व्यावसायिक परिसर";
+              }
+            }
+
+            this.cardTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, entityType: entityType });
           }
           console.log(this.cardTypeList);
         }
@@ -2176,19 +2218,19 @@ export class Cms1Component implements OnInit {
   }
 
   getVirtualCardData() {
-    let dbPath="EntitySurveyData/VirtualCardHistory";
-    let instance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
-        instance.unsubscribe();
-        if(data!=null){
-          let keyArray=Object.keys(data);
-          console.log(keyArray.length);
-        }
-      }
-    );
+    //let dbPath="EntitySurveyData/VirtualCardHistory";
+    // let instance=this.db.object(dbPath).valueChanges().subscribe(
+    //   data=>{
+    //     instance.unsubscribe();
+    //     if(data!=null){
+    //       let keyArray=Object.keys(data);
+    //      console.log(keyArray.length);
+    //     }
+    //  }
+    // );
     let virtualCardList = [];
-    return
-    dbPath = "Houses";
+    // return
+    let dbPath = "Houses";
     console.log(dbPath);
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -2214,8 +2256,16 @@ export class Cms1Component implements OnInit {
                       console.log(lineObject[cardNo]);
                       if (lineObject[cardNo]["surveyorId"] != null) {
                         if (lineObject[cardNo]["surveyorId"] == "-2") {
-                          virtualCardList.push({ zone: zoneNo, lineNo: lineNo, cardNo: cardNo });
+                          let entityType = "";
+                          if (lineObject[cardNo]["houseType"] != null) {
+                            let houseType = lineObject[cardNo]["houseType"];
+                            let detail = this.cardTypeList.find(item => item.houseTypeId == houseType);
+                            if (detail != undefined) {
+                              entityType = detail.entityType;
+                            }
 
+                          }
+                          virtualCardList.push({ zone: zoneNo, lineNo: lineNo, cardNo: cardNo, entityType: entityType });
                         }
                       }
                     }
@@ -2238,6 +2288,9 @@ export class Cms1Component implements OnInit {
             htmlString += "<td>";
             htmlString += "Card No";
             htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Entity Type";
+            htmlString += "</td>";
             htmlString += "</tr>";
             if (virtualCardList.length > 0) {
               for (let i = 0; i < virtualCardList.length; i++) {
@@ -2250,6 +2303,9 @@ export class Cms1Component implements OnInit {
                 htmlString += "</td>";
                 htmlString += "<td t='s'>";
                 htmlString += virtualCardList[i]["cardNo"];
+                htmlString += "</td>";
+                htmlString += "<td t='s'>";
+                htmlString += virtualCardList[i]["entityType"];
                 htmlString += "</td>";
                 htmlString += "</tr>";
               }
@@ -2451,6 +2507,35 @@ export class Cms1Component implements OnInit {
 
         }
       });
+  }
+
+  getHouseCounts() {
+    let dbPath = "Houses/150-R6-test";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        let houseCounts = 0;
+        if (data != null) {
+          let lineArray = Object.keys(data);
+          if (lineArray.length > 0) {
+            for (let i = 0; i < lineArray.length; i++) {
+              let lineNo = lineArray[i];
+              let houseData = data[lineNo];
+              let houseArray = Object.keys(houseData);
+              houseCounts = houseCounts + houseArray.length;
+            }
+          }
+        }
+        console.log(houseCounts);
+      }
+    );
+  }
+
+  getNextDates() {
+    let date = $("#txtDates").val();
+    
+   let date1= this.commonService.getNextDate(date,5);
+    $("#lblNextData").html(date1);
   }
 
 

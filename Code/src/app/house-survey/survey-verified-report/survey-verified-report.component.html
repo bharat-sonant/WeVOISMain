@@ -28,7 +28,7 @@
                 <div class="card-header custom-header">
                     <div class="row align">
                         
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <select class="filter-select filter-input" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
@@ -54,10 +54,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-3 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <input type="checkbox" id="chkNotInZone" (change)="getFilter();"/> Not In Selected Zone
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="exportList();"></i><br>
+                                    Export
                                 </div>
                             </div>
                         </div>

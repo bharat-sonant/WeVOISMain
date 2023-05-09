@@ -17,15 +17,15 @@ export class SurveyVerifiedReportComponent {
   cityName: any;
   cardList: any[];
   cardFilterList: any[];
-  cardFinalList:any[];
+  cardFinalList: any[];
   divLoaderUpdate = "#divLoaderUpdate";
   public totalVerifiedCount: any;
-  public multipleCardsCount:any;
-  txtCardNo="#txtCardNo";
-  ddlZone="#ddlZone";
-  chkDuplicate="chkDuplicate";
-  chkNotInZone="chkNotInZone";
-  rowDataList:any;
+  public multipleCardsCount: any;
+  txtCardNo = "#txtCardNo";
+  ddlZone = "#ddlZone";
+  chkDuplicate = "chkDuplicate";
+  chkNotInZone = "chkNotInZone";
+  rowDataList: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -36,7 +36,7 @@ export class SurveyVerifiedReportComponent {
   setDefaults() {
     this.selectedZone = 0;
     this.totalVerifiedCount = 0;
-    this.multipleCardsCount=0;
+    this.multipleCardsCount = 0;
     this.getZones();
   }
 
@@ -56,13 +56,13 @@ export class SurveyVerifiedReportComponent {
 
   getCardList() {
     this.cardList = [];
-    this.cardFinalList=[];
-    this.cardFilterList=[];
+    this.cardFinalList = [];
+    this.cardFilterList = [];
     this.totalVerifiedCount = 0;
-    this.multipleCardsCount=0;
-    (<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked=false;
+    this.multipleCardsCount = 0;
+    (<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked = false;
     $(this.txtCardNo).val("");
-    
+
     let element = <HTMLElement>document.getElementById("divList");
     element.scrollTop = 0;
     this.rowDataList = 100;
@@ -74,15 +74,15 @@ export class SurveyVerifiedReportComponent {
       for (let i = 0; i < list.length; i++) {
         if (list[i]["color"] != "purple") {
           counts++;
-          let notInZone=0;
-          if(list[i]["color"]=="red"){
-            notInZone=1;
+          let notInZone = 0;
+          if (list[i]["color"] == "red") {
+            notInZone = 1;
           }
           let detail = this.cardList.find(item => item.cardNo == list[i]["cardNo"]);
           if (detail == undefined) {
             let verifyLineNoList = [];
-            verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });            
-            this.cardList.push({ cardNo: list[i]["cardNo"], houseLineNo: list[i]["houseLineNo"], verifyLineNoList: verifyLineNoList, count: 1,notInZone:notInZone });
+            verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });
+            this.cardList.push({ cardNo: list[i]["cardNo"], houseLineNo: list[i]["houseLineNo"], verifyLineNoList: verifyLineNoList, count: 1, notInZone: notInZone });
           }
           else {
             detail.verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"] });
@@ -90,14 +90,14 @@ export class SurveyVerifiedReportComponent {
           }
         }
       }
-      this.multipleCardsCount=(this.cardList.filter(item=>item.count>1).length)
-      this.totalVerifiedCount = counts;      
+      this.multipleCardsCount = (this.cardList.filter(item => item.count > 1).length)
+      this.totalVerifiedCount = counts;
       this.cardFilterList = this.cardList;
-      this.cardFinalList=this.cardFilterList.slice(0, this.rowDataList);
+      this.cardFinalList = this.cardFilterList.slice(0, this.rowDataList);
       $(this.divLoaderUpdate).hide();
-    },error=>{
+    }, error => {
       $(this.divLoaderUpdate).hide();
-      this.commonService.setAlertMessage("error","Data not found. Please update from Survey Verfication !!!")
+      this.commonService.setAlertMessage("error", "Data not found. Please update from Survey Verfication !!!")
     });
   }
 
@@ -109,22 +109,60 @@ export class SurveyVerifiedReportComponent {
     }
   }
 
-  getFilter(){
+  getFilter() {
     let element = <HTMLElement>document.getElementById("divList");
     element.scrollTop = 0;
     this.rowDataList = 100;
-    let cardNo=$(this.txtCardNo).val();
-    let list=this.cardList;
-    if((<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked == true){
-      list=this.cardList.filter(item=>item.count>1);
+    let cardNo = $(this.txtCardNo).val();
+    let list = this.cardList;
+    if ((<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked == true) {
+      list = this.cardList.filter(item => item.count > 1);
     }
-    if((<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked == true){
-      list=list.filter(item=>item.notInZone==1);
+    if ((<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked == true) {
+      list = list.filter(item => item.notInZone == 1);
     }
-    if(cardNo!=""){
-      list=list.filter(item=>item.cardNo.toString().toUpperCase().includes(cardNo.toString().toUpperCase()));
+    if (cardNo != "") {
+      list = list.filter(item => item.cardNo.toString().toUpperCase().includes(cardNo.toString().toUpperCase()));
     }
-    this.cardFilterList=list;
-    this.cardFinalList=this.cardFilterList.slice(0, this.rowDataList);
+    this.cardFilterList = list;
+    this.cardFinalList = this.cardFilterList.slice(0, this.rowDataList);
+  }
+
+  exportList() {
+    if (this.cardList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Card Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Varified Line Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Houses Line Number";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.cardList.length; i++) {
+        let verifyLineNoList = this.cardList[i]["verifyLineNoList"];
+        for (let j = 0; j < verifyLineNoList.length; j++) {
+          htmlString += "<tr>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += verifyLineNoList[j]["lineNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardList[i]["houseLineNo"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "</table>";
+      let fileName = "Zone-" + this.selectedZone + "-VerifiedCards.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+
+    }
   }
 }
