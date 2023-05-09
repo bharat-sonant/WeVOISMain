@@ -1373,7 +1373,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
   }
 
-  
+
   openDutyOnImageModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -1395,14 +1395,14 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (zoneDetails.dutyOnImage != "---") {
         let dutyOnList = zoneDetails.dutyOnTime.toString().split(",");
         let dutyOnImageList = zoneDetails.dutyOnImage.toString().split(",");
-        for(let i=0;i<dutyOnImageList.length;i++){
-          let imageName=dutyOnImageList[i].toString().trim();
+        for (let i = 0; i < dutyOnImageList.length; i++) {
+          let imageName = dutyOnImageList[i].toString().trim();
           let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.toDayDate + "%2F" + imageName + "?alt=media";
-          let time="---";
-          if(dutyOnList[i]!=null){
-            time=dutyOnList[i];
+          let time = "---";
+          if (dutyOnList[i] != null) {
+            time = dutyOnList[i];
           }
-          this.dutyOnImageList.push({imageUrl:imageUrl,time:time});
+          this.dutyOnImageList.push({ imageUrl: imageUrl, time: time });
         }
       }
     }
@@ -1951,6 +1951,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.workerDetails.totalLines = wardLines["totalLines"];
       var linePath = [];
       for (let i = 0; i < keyArray.length - 3; i++) {
+
         let lineNo = Number(keyArray[i]);
         try {
           let points = wardLines[lineNo]["points"];
