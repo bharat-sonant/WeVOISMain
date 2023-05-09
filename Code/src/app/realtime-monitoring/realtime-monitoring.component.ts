@@ -1950,7 +1950,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       let keyArray = Object.keys(wardLines);
       this.workerDetails.totalLines = wardLines["totalLines"];
       var linePath = [];
-      for (let i = 1; i < keyArray.length - 3; i++) {
+      for (let i = 0; i < keyArray.length - 3; i++) {
         let lineNo = Number(keyArray[i]);
         try {
           let points = wardLines[lineNo]["points"];
