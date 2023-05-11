@@ -6,97 +6,86 @@
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
             Survey Verification Report
         </div>
-        <div style="position: absolute;margin-top: -10px; z-index: 999; color: #fff; right: 0px; float: right;width:400px;display: flex;">
+        <div
+            style="position: absolute;margin-top: -10px; z-index: 999; color: #fff; right: 0px; float: right;width:400px;display: flex;">
             <div style="text-align: center; width: 45%;">
-            {{totalVerifiedCount}}<br/>
-            <span style="font-size: 8px;">Total Verified Cards</span>
-             </div>
+                {{totalVerifiedCount}}<br />
+                <span style="font-size: 8px;">Total Verified Cards</span>
+            </div>
 
             <div style="text-align: center; width: 45%;">
-                {{multipleCardsCount}}<br/>
-                <span style="font-size: 8px;">Multiple Cards </span> </div>
-                
+                {{multipleCardsCount}}<br />
+                <span style="font-size: 8px;">Multiple Cards </span>
+            </div>
+
 
             <div style="text-align: center; width: 45%;">
-                {{notVerifiedCardsCount}}<br/>
-                <span style="font-size: 8px;">Not Verified </span> </div>
-                <div style="text-align: center; width: 45%;">
-                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="exportList();"></i><br/>
-                    <span style="font-size: 8px;">Export </span> </div>
+                {{notVerifiedCardsCount}}<br />
+                <span style="font-size: 8px;">Not Verified </span>
+            </div>
+            <div style="text-align: center; width: 45%;">
+                <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                    (click)="exportList('all');"></i><br />
+                <span style="font-size: 8px;">Export All</span>
+            </div>
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-7" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
-            <div  class="card" style="margin-top:-6px;  height: 88vh!important">
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
-                    <div class="row align">
-                        
-                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
+                    <div class="row" style="text-align: left!important; margin-bottom: 20px;">
+                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <select class="filter-select filter-input" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+                                    <select class="filter-select filter-input" id="ddlZone"
+                                        (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
                                         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                                          ngSelected="zone.zoneNo == selectedZone?'selected':''">
-                                          {{zone.zoneName}}
+                                            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                                            {{zone.zoneName}}
                                         </option>
-                                      </select>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
                             <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <input id="txtCardNo" class="filter-select filter-input" type="text" (keyup)="getFilter();" placeholder="Search by card number" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7 text-left" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <input type="checkbox" id="chkDuplicate" (change)="getFilter();"/> Show Multiple
-
-                                    <input type="checkbox" id="chkNotInZone" (change)="getFilter();" style="margin-left: 10px;"/> Not In Selected Zone
-
-                                    <input type="checkbox" id="chkNotVerified" (change)="getFilter();" style="margin-left: 10px;"/> Not Verified
-                                </div>
-                            </div>
-                        </div>
-                       <!-- <div class="col-md-3 text-center" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 26px!important;">
+                                    <input id="txtCardNo" class="filter-select filter-input" type="text"
+                                        (keyup)="getFilter();" placeholder="Search by card number" />
                                 </div>
                             </div>
                         </div>                        
-                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    
-                                </div>
-                            </div>
+                        <div class="col-md-3" style="text-align: center;" [hidden]="isShowFilter==false">
+
+                            <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                                (click)="exportList('filtered');"></i><br />
+                            <span style="font-size: 12px;">Export Filtered </span>
                         </div>
-                        
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
-                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
-                                <i class="fa-solid fa-file-export"
-                                    style="cursor:pointer; color:green;  font-size: 24px; "
-                                    (click)="exportToExcel();"></i><br />
-                                Export to Excel
-                            </span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="checkbox" id="chkDuplicate" (change)="getFilter();" /> Show Multiple
+
+                            <input type="checkbox" id="chkNotInZone" (change)="getFilter();"
+                                style="margin-left: 10px;" /> Not In Selected Zone
+
+                            <input type="checkbox" id="chkNotVerified" (change)="getFilter();"
+                                style="margin-left: 10px;" /> Not Verified
                         </div>
-                        -->
+
                     </div>
                 </div>
                 <div class="card-body">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one"  (scroll)="onContainerScroll();">
+                                <div id="divList" class="table-wrapper table-one" (scroll)="onContainerScroll();">
                                     <table class="table table-line">
                                         <thead>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -110,14 +99,17 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of cardFinalList; let i=index">
                                                 <td class="text-left br-1">
-                                                    {{data.cardNo}} <img src="../../../assets/img/ward_monitoring.svg" style="float:right; height:20px;cursor: pointer;" (click)="showMarkerOnMap(data.latLng,data.color);"/>
+                                                    {{data.cardNo}} <img src="../../../assets/img/ward_monitoring.svg"
+                                                        style="float:right; height:20px;cursor: pointer;"
+                                                        (click)="showMarkerOnMap(data.verifyLineNoList,data.color);" />
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <div style="width: 100%; line-height: 20px;" *ngFor="let dt of data.verifyLineNoList;">
+                                                    <div style="width: 100%; line-height: 20px;"
+                                                        *ngFor="let dt of data.verifyLineNoList;">
                                                         {{dt.lineNo}}
                                                     </div>
-                                                    
-                                                   
+
+
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.houseLineNo}}
@@ -132,9 +124,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 88vh!important;">                
-<div #gmap class="gmap" id="divMap"></div>
+        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;">
+                <div #gmap class="gmap" id="divMap"></div>
             </div>
         </div>
     </div>

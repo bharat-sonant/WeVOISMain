@@ -113,20 +113,16 @@
 
                 <div class="col-md-12 total-house fix-home-outer">
                     <div class="fix-home">
-                        <div id="divLineRevisitCount" class="float-l">
+                        <div id="divLineRevisitCount" class="float-l house-damage-icon-div">
                             <img src="../assets/img/purple-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
                                 {{verifiedDetail.purpleCount}}</span><br>
                         </div>
-                        <div id="divLineOldCardCount" class="float-l">
+                        <div id="divLineOldCardCount" class="float-l house-damage-icon-div">
                             <img src="../assets/img/red-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
                                 {{verifiedDetail.redCount}}</span><br>
                         </div>
-                        <div style="padding-top: 20px; border-left: 1px solid lightgray;" class="float-l">
+                        <div style="padding-top: 20px;" class="float-l">
                             <input id="chkShowAll" type="checkbox" (change)="showAllMarkers();"> Show All
-                        </div>                        
-                        <div style="padding-top: 20px; width :100%; margin-left:10px;" >
-                            <input id="txtCardNo" type="text" class="cardNo-input" autocomplete="off" placeholder="Card No." /> <button type="button" style="width:42%; margin-left: 10px!important;" id="btnCardNo" (click)="showMarkerByCardNo();">Show Card</button>
-
                         </div>
                     </div>
 
@@ -136,12 +132,12 @@
         </div>
     </div>
 
-    <div class="house-card-box" style="top:323px!important; ">
+    <div class="house-card-box" style="top:270px!important; ">
         <div class="house-card-box-iner">
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="padding-top: 20px;text-align: left!important;">
                     <div class="border-bottom">
-                       &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers" (change)="showVerifiedMarkersOnMap();" /> Show All Verified Markers
+                       &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers" (change)="showVerifiedMarkersOnMap();" /> Show New Markers
                         
                     </div>
                 </div>
