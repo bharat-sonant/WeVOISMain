@@ -8,7 +8,11 @@
         <div class="col-md-8 Surveyor-box">
             Manage Payment Collector
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-2" style="color:#fff; text-align: right; padding-right: 10px;">
+            <div style="margin-top:-10px; width: 100%; padding-bottom: 0px; font-size: 22px;">
+            {{collectionData.sumTotalCollection}}</div>
+           <div style="font-size: 8px; width: 100%; ">Total Collection</div> 
+        </div>
     </div>
 </section>
 <div class="main-content">
@@ -36,14 +40,15 @@
                                         <tbody>
                                             <tr class="table-row" id="tr{{i}}"
                                                 *ngFor="let data of userList; let i=index" class="{{data.trClass}}"
-                                                (click)="getCollectionDetail(data.empId,i);" style="cursor: pointer;">
+                                                (click)="showCollectionDetail(data.empId,i);" style="cursor: pointer;">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
                                                 <td class="table-data-3">
                                                     {{data.empId}}</td>
                                                     <td class="table-data-3">
-                                                        <span [hidden]="data.wardNo==''">{{data.wardNo}} ({{data.deviceNo}})</span>
+                                                        <span [hidden]="data.wardNo==''">{{data.wardNo}} ({{data.deviceNo}})</span><br/>
+                                                        <span [hidden]="data.collectedAmount==0"><b> Collection : {{data.collectedAmount}}</b></span>
                                                         </td>
 
                                                 <td class="text-center table-data-4">
@@ -137,7 +142,7 @@
                                                             {{data.collection}}</td>
                                                         <td class="text-right markers-details">
                                                             <i class="far fa-eye eye-icon" style="cursor: pointer;"
-                                                                (click)="showCollectionDetail(contentCollectionDetail,data.date);"></i>
+                                                                (click)="openCollectionDetail(contentCollectionDetail,data.date);"></i>
                                                         </td>
                                                     </tr>
 

@@ -29,6 +29,7 @@ export class PaymentCollectorComponent implements OnInit {
     totalCollection: "0",
     totalDays: 0,
     name: "",
+    sumTotalCollection:"0"
   };
 
   ngOnInit() {
@@ -91,12 +92,15 @@ export class PaymentCollectorComponent implements OnInit {
                 wardNo: wardNo,
                 deviceNo: deviceNo,
                 qrCodeImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["qrImage"] + "?alt=media",
-                docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media"
+                docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media",
+                collectedAmount: 0,
+                collectionList: []
               });
+              this.getCollectionDetail(empId);
             }
             if (this.userList.length > 0) {
               setTimeout(() => {
-                this.getCollectionDetail(this.userList[0]["empId"], 0);
+                this.showCollectionDetail(this.userList[0]["empId"], 0);
               }, 600);
             }
           }
@@ -107,7 +111,46 @@ export class PaymentCollectorComponent implements OnInit {
     });
   }
 
-  getCollectionDetail(empId: any, index: any) {
+  getCollectionDetail(empId: any) {
+    let collectionList=[];
+    let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId;
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let totalCollectionAmount = 0;
+          let dateArray = Object.keys(data);
+          for (let i = 0; i < dateArray.length; i++) {
+            let date = dateArray[i];
+            let totalAmount=0;
+            let keyArray = Object.keys(data[date]);
+            if (keyArray.length > 0) {              
+            let detailArray = [];
+              for (let j = 0; j < keyArray.length; j++) {
+                let key = keyArray[j];
+                if (data[date][key]["cardNo"] != null) {
+                  if (data[date][key]["transactionAmount"] != null) {
+                    totalCollectionAmount += Number(data[date][key]["transactionAmount"]);
+                    totalAmount+=Number(data[date][key]["transactionAmount"]);
+                  }
+                  detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
+                }
+              }
+              collectionList.push({date:date,collection:totalAmount.toFixed(2),detailArray:detailArray});
+              
+            }
+          }
+          let detail = this.userList.find(item => item.empId == empId);
+          if (detail != undefined) {
+            detail.collectedAmount = totalCollectionAmount.toFixed(2);
+            detail.collectionList = collectionList;
+            this.collectionData.sumTotalCollection=(Number(this.collectionData.sumTotalCollection)+totalCollectionAmount).toFixed(2);
+          }
+        }
+      });
+  }
+
+  showCollectionDetail(empId: any, index: any) {
     this.setActiveClass(index);
     this.collectionList = [];
     this.collectionData.name = "";
@@ -116,40 +159,14 @@ export class PaymentCollectorComponent implements OnInit {
     let detail = this.userList.find(item => item.empId == empId);
     if (detail != undefined) {
       this.collectionData.name = detail.name;
+      this.collectionData.totalCollection = Number(detail.collectedAmount).toFixed(2);
+      this.collectionData.totalDays = detail.collectionList.length;
+      this.collectionList = detail.collectionList;
+      console.log(this.collectionList);
     }
-    let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId;
-    let instance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        instance.unsubscribe();
-        if (data != null) {
-          let dateArray = Object.keys(data);
-          this.collectionData.totalDays = dateArray.length;
-          let totalAmount = 0;
-          for (let i = 0; i < dateArray.length; i++) {
-            let date = dateArray[i];
-            let collection = 0;
-            let detailArray = [];
-            let keyArray = Object.keys(data[date]);
-            if (keyArray.length > 0) {
-              for (let j = 0; j < keyArray.length; j++) {
-                let key = keyArray[j];
-                if (data[date][key]["cardNo"] != null) {
-                  if (data[date][key]["transactionAmount"] != null) {
-                    totalAmount += Number(data[date][key]["transactionAmount"]);
-                    collection += Number(data[date][key]["transactionAmount"]);
-                  }
-                  detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
-                }
-              }
-            }
-            this.collectionList.push({ date: date, collection: collection, detailArray: detailArray });
-          }
-          this.collectionData.totalCollection = totalAmount.toFixed(2);
-        }
-      });
   }
 
-  showCollectionDetail(content: any, date: any) {
+  openCollectionDetail(content: any, date: any) {
     this.collectionDetailList = [];
     let detail = this.collectionList.find(item => item.date == date);
     if (detail != undefined) {
@@ -402,7 +419,7 @@ export class PaymentCollectorComponent implements OnInit {
       let deviceNo = $("#ddlDevice").val();
       let detail = this.userList.find(item => item.deviceNo == deviceNo);
       if (detail != undefined) {
-        this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to "+detail.name+" !!!");
+        this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
         return;
       }
       let element = <HTMLInputElement>document.getElementById("chkRemove");
@@ -464,4 +481,5 @@ export class collectionDatail {
   totalCollection: string;
   totalDays: number;
   name: string;
+  sumTotalCollection:string;
 }
