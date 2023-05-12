@@ -152,6 +152,7 @@ export class CollectedAmountReportComponent implements OnInit {
       if (data != null) {
         this.lastUpdateDate = data["lastUpdateDate"];
         this.wardCardList = JSON.parse(JSON.stringify(data["cards"]));
+        console.log(this.wardCardList);
         this.wardCardFinalList = this.wardCardList.slice(0, this.rowDataList);
         this.setTotalInFooter();
       }
@@ -258,7 +259,7 @@ export class CollectedAmountReportComponent implements OnInit {
       monthFrom = Number(this.chargeStartMonth);
     }
     if (Number(this.selectedYear) == Number(year)) {
-      monthTo =Number(this.commonService.getPreviousMonth(this.todayDate,1).toString().split('-')[1]);
+      monthTo = Number(this.commonService.getPreviousMonth(this.todayDate, 1).toString().split('-')[1]);
     }
 
     this.wardCardPaymentList = [];
@@ -303,7 +304,6 @@ export class CollectedAmountReportComponent implements OnInit {
     else {
       this.processedCards = index + 1;
       let cardNo = this.wardCardPaymentList[index]["cardNo"];
-      let charges = this.wardCardPaymentList[index]["charges"];
       let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
       let collectionInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
@@ -316,22 +316,23 @@ export class CollectedAmountReportComponent implements OnInit {
               if (data[monthName] != null) {
                 if (data[monthName]["status"] == 'Paid') {
                   amount = data[monthName]["amount"];
+                  totalAmount += Number(amount);
+                  this.setCollectedTotalAmount(cardNo, totalAmount);
+                  this.setMonthAmountInList(cardNo, monthName, amount);
+                }
+                else{
+                  this.setMonthAmountInList(cardNo, monthName, amount);
                 }
               }
-              else {
-                amount = charges;
+              else{
+                this.setMonthAmountInList(cardNo, monthName, amount);
               }
-              totalAmount += Number(amount);
-              this.setDueTotalAmount(cardNo, totalAmount);
-              this.setMonthAmountInList(cardNo, monthName, amount);
             }
           }
-          else {
+          else{
             for (let i = monthFrom; i <= monthTo; i++) {
               let monthName = this.commonService.getCurrentMonthShortName(i);
-              let amount = charges;
-              totalAmount += Number(amount);
-              this.setDueTotalAmount(cardNo, totalAmount);
+              let amount = "0";
               this.setMonthAmountInList(cardNo, monthName, amount);
             }
           }
@@ -349,7 +350,7 @@ export class CollectedAmountReportComponent implements OnInit {
     }
   }
 
-  setDueTotalAmount(cardNo: any, totalAmount: any) {
+  setCollectedTotalAmount(cardNo: any, totalAmount: any) {
     let detail = this.wardCardPaymentList.find(item => item.cardNo == cardNo);
     if (detail != undefined) {
       detail.totalAmount = Number(totalAmount).toFixed(2);
@@ -422,7 +423,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jan"] != undefined) {
             htmlString += this.wardCardList[i]["Jan"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -430,7 +431,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Feb"] != undefined) {
             htmlString += this.wardCardList[i]["Feb"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -438,7 +439,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Mar"] != undefined) {
             htmlString += this.wardCardList[i]["Mar"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -446,7 +447,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Apr"] != undefined) {
             htmlString += this.wardCardList[i]["Apr"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -454,7 +455,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["May"] != undefined) {
             htmlString += this.wardCardList[i]["May"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -462,7 +463,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jun"] != undefined) {
             htmlString += this.wardCardList[i]["Jun"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -470,7 +471,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jul"] != undefined) {
             htmlString += this.wardCardList[i]["Jul"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -478,7 +479,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Aug"] != undefined) {
             htmlString += this.wardCardList[i]["Aug"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -486,7 +487,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Sep"] != undefined) {
             htmlString += this.wardCardList[i]["Sep"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -494,7 +495,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Oct"] != undefined) {
             htmlString += this.wardCardList[i]["Oct"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -502,7 +503,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Nov"] != undefined) {
             htmlString += this.wardCardList[i]["Nov"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -510,7 +511,7 @@ export class CollectedAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Dec"] != undefined) {
             htmlString += this.wardCardList[i]["Dec"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
