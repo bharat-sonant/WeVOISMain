@@ -162,7 +162,6 @@ export class PaymentCollectorComponent implements OnInit {
       this.collectionData.totalCollection = Number(detail.collectedAmount).toFixed(2);
       this.collectionData.totalDays = detail.collectionList.length;
       this.collectionList = detail.collectionList;
-      console.log(this.collectionList);
     }
   }
 
@@ -281,7 +280,6 @@ export class PaymentCollectorComponent implements OnInit {
       qrImage: "qrCode.png"
     };
     jsonData[this.lastEmpId.toString()] = data;
-    console.log(this.lastEmpId);
     let url = "https://jaipurgreaterd2d.web.app/payment-receiver-detail/" + this.lastEmpId + "~" + this.commonService.getFireStoreCity();
     // this.uploadQRCode(url);
 
