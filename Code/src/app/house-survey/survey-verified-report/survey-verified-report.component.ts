@@ -19,6 +19,7 @@ export class SurveyVerifiedReportComponent {
   zoneKML: any;
   cityName: any;
   cardList: any[];
+  cardMultipleList: any[];
   cardFilterList: any[];
   cardFinalList: any[];
   allMarkers: any[] = [];
@@ -30,14 +31,18 @@ export class SurveyVerifiedReportComponent {
   public totalVerifiedCount: any;
   public multipleCardsCount: any;
   public notVerifiedCardsCount: any;
+  public notInHousesCardsCount: any;
+  public notSameLineCardsCount: any;
+
   txtCardNo = "#txtCardNo";
   ddlZone = "#ddlZone";
   chkDuplicate = "chkDuplicate";
   chkNotInZone = "chkNotInZone";
   chkNotVerified = "chkNotVerified";
+  chkNotInLine = "chkNotInLine";
   rowDataList: any;
   markerList: any[] = [];
-  public isShowFilter:any;
+  public isShowFilter: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -51,9 +56,11 @@ export class SurveyVerifiedReportComponent {
     this.totalVerifiedCount = 0;
     this.multipleCardsCount = 0;
     this.notVerifiedCardsCount = 0;
+    this.notInHousesCardsCount = 0;
+    this.notSameLineCardsCount = 0;
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
-    this.isShowFilter=false;
+    this.isShowFilter = false;
     this.getZones();
   }
 
@@ -74,7 +81,7 @@ export class SurveyVerifiedReportComponent {
     }
     this.markerList = [];
     this.selectedZone = filterVal;
-    this.isShowFilter=false;
+    this.isShowFilter = false;
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -172,14 +179,19 @@ export class SurveyVerifiedReportComponent {
 
   getCardList() {
     this.cardList = [];
+    this.cardMultipleList = [];
     this.cardFinalList = [];
     this.cardFilterList = [];
     this.totalVerifiedCount = 0;
     this.multipleCardsCount = 0;
     this.notVerifiedCardsCount = 0;
+    this.notInHousesCardsCount = 0;
+    this.notSameLineCardsCount = 0;
+
     (<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotVerified)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkNotInLine)).checked = false;
     $(this.txtCardNo).val("");
 
     let element = <HTMLElement>document.getElementById("divList");
@@ -194,33 +206,60 @@ export class SurveyVerifiedReportComponent {
         counts++;
         let notInZone = 0;
         let notVerified = 0;
+        let notInSameLine = 0;
         if (list[i]["color"] == "red") {
           notInZone = 1;
         }
         if (list[i]["color"] == "purple") {
           notVerified = 1;
         }
-        let detail = this.cardList.find(item => item.cardNo == list[i]["cardNo"]);
-        if (detail == undefined) {
-          let verifyLineNoList = [];
-          verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"], latLng: list[i]["latLng"], color: list[i]["color"] });
-          this.cardList.push({ cardNo: list[i]["cardNo"], color: list[i]["color"], houseLineNo: list[i]["houseLineNo"], latLng: list[i]["latLng"], verifyLineNoList: verifyLineNoList, count: 1, notInZone: notInZone, notVerified: notVerified });
+        if (list[i]["color"] == "yellow") {
+          notInSameLine = 1;
         }
-        else {
-          detail.verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"], latLng: list[i]["latLng"], color: list[i]["color"] });
-          detail.count = detail.count + 1;
-        }
+        //let detail = this.cardList.find(item => item.cardNo == list[i]["cardNo"]);
+        // if (detail == undefined) {
+        let verifyLineNoList = [];
+        verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"], latLng: list[i]["latLng"], color: list[i]["color"] });
+        this.cardList.push({ cardNo: list[i]["cardNo"], color: list[i]["color"], houseLineNo: list[i]["houseLineNo"],lineNo: list[i]["verifiedLineNo"], latLng: list[i]["latLng"], verifyLineNoList: verifyLineNoList, count: 1, notInZone: notInZone, notVerified: notVerified, notInSameLine: notInSameLine });
+        // }
+        // else {
+        //   detail.verifyLineNoList.push({ lineNo: list[i]["verifiedLineNo"], latLng: list[i]["latLng"], color: list[i]["color"] });
+        //   detail.count = detail.count + 1;
+        // }
       }
       this.multipleCardsCount = (this.cardList.filter(item => item.count > 1).length);
-      this.notVerifiedCardsCount = (this.cardList.filter(item => item.notVerified == 1).length);
-      this.totalVerifiedCount = counts;
+      this.notVerifiedCardsCount = (this.cardList.filter(item => item.color == "purple").length);
+      this.notInHousesCardsCount = (this.cardList.filter(item => item.color == "red").length);
+      this.notSameLineCardsCount = (this.cardList.filter(item => item.color == "yellow").length);
+      this.totalVerifiedCount = this.cardList.filter(item => item.color != "purple").length;
       this.cardFilterList = this.cardList;
       this.cardFinalList = this.cardFilterList.slice(0, this.rowDataList);
-      $(this.divLoaderUpdate).hide();
+      this.getMultipleCards();
     }, error => {
       $(this.divLoaderUpdate).hide();
       this.commonService.setAlertMessage("error", "Data not found. Please update from Survey Verfication !!!")
     });
+  }
+
+  getMultipleCards() {
+    let distinct = this.cardList.map(item => item.cardNo).filter((value, index, self) => self.indexOf(value) === index);
+    if (distinct.length > 1) {
+      let multipleCount = 0;
+      for (let i = 0; i < distinct.length; i++) {
+        let list = this.cardList.filter(item => item.cardNo == distinct[i]);
+        if (list.length > 2) {
+          for (let j = 0; j < list.length; j++) {
+            if(j==0){
+              multipleCount++;
+            }
+            this.cardMultipleList.push({ cardNo: list[j]["cardNo"], color: list[j]["color"], houseLineNo: list[j]["houseLineNo"], latLng: list[j]["latLng"],lineNo:list[j]["lineNo"] });
+          }
+        }
+      }
+      this.multipleCardsCount=multipleCount;
+      console.log(this.cardMultipleList);
+    }    
+    $(this.divLoaderUpdate).hide();
   }
 
   onContainerScroll() {
@@ -278,19 +317,23 @@ export class SurveyVerifiedReportComponent {
     element.scrollTop = 0;
     this.rowDataList = 100;
     let cardNo = $(this.txtCardNo).val();
-    this.isShowFilter=false;
+    this.isShowFilter = false;
     let list = this.cardList;
     if ((<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked == true) {
-      list = this.cardList.filter(item => item.count > 1);
-      this.isShowFilter=true;
+      list = this.cardMultipleList;
+      this.isShowFilter = true;
     }
     if ((<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked == true) {
       list = list.filter(item => item.notInZone == 1);
-      this.isShowFilter=true;
+      this.isShowFilter = true;
     }
     if ((<HTMLInputElement>document.getElementById(this.chkNotVerified)).checked == true) {
       list = list.filter(item => item.notVerified == 1);
-      this.isShowFilter=true;
+      this.isShowFilter = true;
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkNotInLine)).checked == true) {
+      list = list.filter(item => item.notInSameLine == 1);
+      this.isShowFilter = true;
     }
     if (cardNo != "") {
       list = list.filter(item => item.cardNo.toString().toUpperCase().includes(cardNo.toString().toUpperCase()));
@@ -303,10 +346,9 @@ export class SurveyVerifiedReportComponent {
     let list = [];
     if (type == "all") {
       list = this.cardList;
-
     }
-    else {
-      list = this.cardFinalList;
+    else  {
+      list = this.cardFilterList;
     }
     if (list.length > 0) {
       let htmlString = "";
@@ -323,6 +365,7 @@ export class SurveyVerifiedReportComponent {
       htmlString += "</td>";
       htmlString += "</tr>";
       for (let i = 0; i < list.length; i++) {
+        /*
         let verifyLineNoList = list[i]["verifyLineNoList"];
         let lineNos = "";
         for (let j = 0; j < verifyLineNoList.length; j++) {
@@ -333,12 +376,13 @@ export class SurveyVerifiedReportComponent {
             lineNos += ", " + verifyLineNoList[j]["lineNo"];
           }
         }
+        */
         htmlString += "<tr>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["cardNo"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += lineNos;
+        htmlString += list[i]["lineNo"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["houseLineNo"];

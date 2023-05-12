@@ -70,13 +70,16 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <input type="checkbox" id="chkDuplicate" (change)="getFilter();" /> Show Multiple
+                            <input type="radio" id="chkDuplicate" name="chkradio" (change)="getFilter();" /> Verified multiple time <b>({{multipleCardsCount}})</b><br/>
 
-                            <input type="checkbox" id="chkNotInZone" (change)="getFilter();"
-                                style="margin-left: 10px;" /> Not In Selected Zone
+                            <input type="radio" id="chkNotVerified" name="chkradio" (change)="getFilter();"
+                                 /> Exists in houses but not verified  <b>({{notVerifiedCardsCount}})</b> <img src="../assets/img/purple-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"><br/>
 
-                            <input type="checkbox" id="chkNotVerified" (change)="getFilter();"
-                                style="margin-left: 10px;" /> Not Verified
+                            <input type="radio" id="chkNotInZone" name="chkradio" (change)="getFilter();"
+                                 /> Verified but not the part of selected ward  <b>({{notInHousesCardsCount}})</b> <img src="../assets/img/red-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"><br/>
+
+                                <input type="radio" id="chkNotInLine" name="chkradio" (change)="getFilter();"
+                                 /> Verified but not exist in ward on same line  <b>({{notSameLineCardsCount}})</b> <img src="../assets/img/yellow-home.png" style="margin-top: 10px; margin-bottom: 10px; width: 20px;"><br/>
                         </div>
 
                     </div>
@@ -104,11 +107,13 @@
                                                         (click)="showMarkerOnMap(data.verifyLineNoList,data.color);" />
                                                 </td>
                                                 <td class="text-left br-1">
+                                                    {{data.lineNo}}
+                                                    <!--
                                                     <div style="width: 100%; line-height: 20px;"
                                                         *ngFor="let dt of data.verifyLineNoList;">
                                                         {{dt.lineNo}}
                                                     </div>
-
+-->
 
                                                 </td>
                                                 <td class="text-left br-1">
