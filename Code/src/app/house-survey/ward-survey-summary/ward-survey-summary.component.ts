@@ -112,6 +112,8 @@ export class WardSurveySummaryComponent implements OnInit {
     );
   }
 
+  duplicateHouseCardList:any[]=[];
+
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
@@ -420,6 +422,7 @@ export class WardSurveySummaryComponent implements OnInit {
         if (houseData != null) {
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
+            let cardsCount=0;
 
             let wardLastLineNo = keyArray[keyArray.length - 1];
             for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
@@ -439,58 +442,68 @@ export class WardSurveySummaryComponent implements OnInit {
                   //  console.log(zoneNo + " >> " + line + " >> " + cardNo);
                   //this.updateHousesDataHouseType(zoneNo, line, cardNo, cardObj[cardNo]["cardType"]);
                   // }
-
-                  if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
-                    complexCount = complexCount + 1;
-                    let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
-                    if (isNaN(servingCount)) {
-                      servingCount = 1;
+                  if (cardObj[cardNo]["latLng"] != null) {
+                    let duplicateDetail=this.duplicateHouseCardList.find(item=>item.cardNo==cardNo);
+                    if(duplicateDetail!=undefined){
+                      console.log(cardNo,line);
                     }
-                    houseHoldCount = houseHoldCount + servingCount;
-                    houseCount = houseCount + servingCount;
-                    if (cardObj[cardNo]["houseType"] == "19") {
-                      residencialCount = residencialCount + servingCount;
+                    else{
+                      this.duplicateHouseCardList.push({cardNo:cardNo});
                     }
-                    else {
-                      commercialCount = commercialCount + servingCount;
-                    }
-                  } else {
-                    houseCount = houseCount + 1;
-                    if (cardObj[cardNo]["houseType"] == "1") {
-                      residencialCount = residencialCount + 1;
-                    }
-                    else {
-                      commercialCount = commercialCount + 1;
-                    }
-                  }
-                  /*
-                  let cardData=cardObj[cardNo];
-                  //console.log(cardData);
-                  cardData["line"]=line;
-                  cardData["ward"]=zoneNo;
-                  dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
-                  this.db.object(dbPath).update(cardData);
-                  */
-                  let cardCount = 1;
-                  let surveyorId = cardObj[cardNo]["surveyorId"];
-                  if (cardObj[cardNo]["createdDate"] != null) {
-                    let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
-                    if (this.dateSummaryList.length == 0) {
-                      this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
-                    }
-                    else {
-                      let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
-                      if (summaryDetail != undefined) {
-                        summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                    cardsCount++;
+                    if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                      complexCount = complexCount + 1;
+                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
+                      }
+                      houseHoldCount = houseHoldCount + servingCount;
+                      houseCount = houseCount + servingCount;
+                      if (cardObj[cardNo]["houseType"] == "19") {
+                        residencialCount = residencialCount + servingCount;
                       }
                       else {
-                        this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                        commercialCount = commercialCount + servingCount;
+                      }
+                    } else {
+                      houseCount = houseCount + 1;
+                      if (cardObj[cardNo]["houseType"] == "1") {
+                        residencialCount = residencialCount + 1;
+                      }
+                      else {
+                        commercialCount = commercialCount + 1;
                       }
                     }
-                  }
+                    /*
+                    let cardData=cardObj[cardNo];
+                    //console.log(cardData);
+                    cardData["line"]=line;
+                    cardData["ward"]=zoneNo;
+                    dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
+                    this.db.object(dbPath).update(cardData);
+                    */
+                    let cardCount = 1;
+                    let surveyorId = cardObj[cardNo]["surveyorId"];
+                    if (cardObj[cardNo]["createdDate"] != null) {
+                      let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
+                      if (this.dateSummaryList.length == 0) {
+                        this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                      }
+                      else {
+                        let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                        if (summaryDetail != undefined) {
+                          summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                        }
+                        else {
+                          this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                        }
+                      }
+                    }
 
+                  }
                 }
               }
+
 
               totalComplexCount = totalComplexCount + complexCount;
               totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
@@ -506,6 +519,8 @@ export class WardSurveySummaryComponent implements OnInit {
                 houseCount: houseCount
               });
             }
+            
+           // console.log(cardsCount);
           }
         }
         dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;

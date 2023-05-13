@@ -496,6 +496,7 @@ export class SurveyVerificationComponent {
             let filePath = "/SurveyVerificationJson/" + this.selectedZone + "/";
             this.commonService.saveJsonFile(this.verifiedCardList, fileName, filePath);
           }
+          console.log(this.verifiedCardList.length)
           this.getHouseCardData();
         }
         else {
@@ -572,6 +573,7 @@ export class SurveyVerificationComponent {
           let filePath = "/SurveyVerificationJson/" + this.selectedZone + "/";
           this.commonService.saveJsonFile(this.houseCardList, fileName, filePath);
         }
+        console.log("houses => "+this.houseCardList.length)
         this.getVerifiedHouseData();
       }
     );
