@@ -94,6 +94,8 @@
                                     <table class="table table-line">
                                         <thead>
                                             <th class="text-left br-1" style="border:none!important;">
+                                                Sno.</th>
+                                            <th class="text-left br-1" style="border:none!important;">
                                                 Card Number</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Varified Line Number</th>
@@ -103,6 +105,9 @@
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of cardFinalList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>
                                                 <td class="text-left br-1">
                                                     {{data.cardNo}} <img src="../../../assets/img/ward_monitoring.svg"
                                                         style="float:right; height:20px;cursor: pointer;"
