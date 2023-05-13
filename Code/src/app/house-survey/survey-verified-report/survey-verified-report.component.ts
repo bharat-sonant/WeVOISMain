@@ -270,6 +270,31 @@ export class SurveyVerifiedReportComponent {
     }
   }
 
+  
+  showMarkerOnMap(latLng: any,color:any) {
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        this.markerList[i]["marker"].setMap(null);
+      }
+    }
+    this.markerList = [];
+    let lat = latLng.split(',')[0];
+        let lng = latLng.split(',')[1];
+        let markerURL = this.getMarkerIcon(color);
+        let marker = new google.maps.Marker({
+          position: { lat: Number(lat), lng: Number(lng) },
+          map: this.map,
+          icon: {
+            url: markerURL,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scaledSize: new google.maps.Size(25, 25),
+            origin: new google.maps.Point(0, 0),
+          },
+        });
+        this.markerList.push({ marker: marker });
+  }
+/*
   showMarkerOnMap(verifyLineNoList: any[]) {
     if (this.markerList.length > 0) {
       for (let i = 0; i < this.markerList.length; i++) {
@@ -297,7 +322,7 @@ export class SurveyVerifiedReportComponent {
       }
     }
   }
-
+*/
   getMarkerIcon(color: any) {
     let markerIcon = "../assets/img/red-home.png";
     if (color == "green") {
@@ -313,6 +338,12 @@ export class SurveyVerifiedReportComponent {
   }
 
   getFilter() {
+    if (this.markerList.length > 0) {
+      for (let i = 0; i < this.markerList.length; i++) {
+        this.markerList[i]["marker"].setMap(null);
+      }
+    }
+    this.markerList = [];
     let element = <HTMLElement>document.getElementById("divList");
     element.scrollTop = 0;
     this.rowDataList = 100;
