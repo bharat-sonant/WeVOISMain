@@ -233,8 +233,18 @@ export class SurveyVerificationComponent {
         houseVerifiedMarkerList = this.houseVerifiedCardList.filter(item => item.mapLineNo == lineNo);
       }
 
+      let sameLinelist=houseVerifiedMarkerList.filter(item => item.color == "green");
+      let diffLineList=houseVerifiedMarkerList.filter(item => item.color == "yellow");
+      let diffCount=0;
+      for(let i=0;i<diffLineList.length;i++){
+        let detail=sameLinelist.find(item=>item.cardNo==diffLineList[i]["cardNo"]);
+        if(detail==undefined){
+          diffCount++;
+        }
+      }
+
       this.verifiedDetail.greenCount = houseVerifiedMarkerList.filter(item => item.color == "green").length;
-      this.verifiedDetail.yellowCount = houseVerifiedMarkerList.filter(item => item.color == "yellow").length;
+      this.verifiedDetail.yellowCount = diffCount;
       this.verifiedDetail.purpleCount = houseVerifiedMarkerList.filter(item => item.color == "purple").length;
       this.verifiedDetail.redCount = houseVerifiedMarkerList.filter(item => item.color == "red").length;
 
@@ -286,13 +296,14 @@ export class SurveyVerificationComponent {
                       entityType = detail.houseType;
                     }
                     this.houseMarkerCardList.push({ lineNo: lineNo, imageUrl: imageUrl, entityType: entityType, latLng: lineData[markerNo]["latLng"] });
-                    let lat = lineData[markerNo]["latLng"].split(",")[0];
-                    let lng = lineData[markerNo]["latLng"].split(",")[1];
-                    let markerURL = this.getMarkerIcon("red");
-                    this.setMarkers(lat, lng, markerURL, "");
+                    if (lineData[markerNo]["latLng"] != "") {
+                      let lat = lineData[markerNo]["latLng"].split(",")[0];
+                      let lng = lineData[markerNo]["latLng"].split(",")[1];
+                      let markerURL = this.getMarkerIcon("red");
+                      this.setMarkers(lat, lng, markerURL, "");
+                    }
                   }
                 }
-
               }
             }
             $(this.divLoaderUpdate).hide();
@@ -535,6 +546,8 @@ export class SurveyVerificationComponent {
     )
   }
 
+  duplicateHouseCardList: any[] = [];
+
 
   getHouseCardData() {
     let dbPath = "Houses/" + this.selectedZone;
@@ -552,11 +565,18 @@ export class SurveyVerificationComponent {
               let latLng = "";
               if (cardData[cardNo]["latLng"] != null) {
                 latLng = cardData[cardNo]["latLng"].toString().replace("(", "").replace(")", "");
-              }
-              this.houseCardList.push({ cardNo: cardNo, lineNo: lineNo, latLng: latLng });
-              let detail = this.verifiedCardList.find(item => item.cardNo == cardNo);
-              if (detail == undefined) {
-                this.allCardList.push({ cardNo: cardNo, lineNo: lineNo });
+                let duplicateDetail = this.houseCardList.find(item => item.cardNo == cardNo);
+                if (duplicateDetail == undefined) {
+                  this.duplicateHouseCardList.push({ cardNo: cardNo });
+                }
+                else {
+                  console.log(cardNo);
+                }
+                this.houseCardList.push({ cardNo: cardNo, lineNo: lineNo, latLng: latLng });
+                // let detail = this.verifiedCardList.find(item => item.cardNo == cardNo);
+                // if (detail == undefined) {
+                //    this.allCardList.push({ cardNo: cardNo, lineNo: lineNo });
+                // }
               }
             }
           }
@@ -573,7 +593,7 @@ export class SurveyVerificationComponent {
           let filePath = "/SurveyVerificationJson/" + this.selectedZone + "/";
           this.commonService.saveJsonFile(this.houseCardList, fileName, filePath);
         }
-        console.log("houses => "+this.houseCardList.length)
+        console.log("houses => " + this.houseCardList.length)
         this.getVerifiedHouseData();
       }
     );
@@ -595,20 +615,14 @@ export class SurveyVerificationComponent {
       let houseLineNo = "";
       let mapLineNo = "";
       let latLng = "";
-
-
       let detail = this.houseCardList.find(item => item.cardNo == cardNo && item.lineNo == lineNo);
       if (detail != undefined) {
-
         isExistInVerified = 1;
         isExistInHouses = 1;
         verifiedLineNo = lineNo;
         houseLineNo = detail.lineNo;
         if (this.verifiedCardList[i]["latLng"] != "") {
           latLng = this.verifiedCardList[i]["latLng"];
-        }
-        else {
-          latLng = detail.latLng;
         }
         mapLineNo = lineNo;
         this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'green', mapLineNo: mapLineNo });
@@ -624,22 +638,41 @@ export class SurveyVerificationComponent {
       let latLng = "";
       let cardNo = this.verifiedCardList[i]["cardNo"];
       let lineNo = this.verifiedCardList[i]["lineNo"];
-      let detail = this.houseCardList.find(item => item.cardNo == cardNo && item.lineNo != lineNo);
-      if (detail != undefined) {
-
-        isExistInVerified = 1;
-        isExistInHouses = 1;
-        verifiedLineNo = lineNo;
-        houseLineNo = detail.lineNo;
-        if (this.verifiedCardList[i]["latLng"] != "") {
-          latLng = this.verifiedCardList[i]["latLng"];
+      let sameLineDetail = this.houseVerifiedCardList.find(item => item.cardNo == cardNo && item.lineNo == lineNo);
+      if (sameLineDetail == undefined) {
+        let detail = this.houseCardList.find(item => item.cardNo == cardNo && item.lineNo != lineNo);
+        if (detail != undefined) {
+          isExistInVerified = 1;
+          isExistInHouses = 1;
+          verifiedLineNo = lineNo;
+          houseLineNo = detail.lineNo;
+          if (this.verifiedCardList[i]["latLng"] != "") {
+            latLng = this.verifiedCardList[i]["latLng"];
+          }
+          mapLineNo = lineNo;
+          this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
         }
-        else {
-          latLng = detail.latLng;
-        }
-        mapLineNo = lineNo;
-        this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
       }
+
+
+      /*
+            let detail = this.houseCardList.find(item => item.cardNo == cardNo && item.lineNo == lineNo);
+            if (detail != undefined) {
+      
+              isExistInVerified = 1;
+              isExistInHouses = 1;
+              verifiedLineNo = lineNo;
+              houseLineNo = detail.lineNo;
+              if (this.verifiedCardList[i]["latLng"] != "") {
+                latLng = this.verifiedCardList[i]["latLng"];
+              }
+              else {
+                latLng = detail.latLng;
+              }
+              mapLineNo = lineNo;
+              this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
+            }
+            */
     }
 
 
@@ -679,7 +712,6 @@ export class SurveyVerificationComponent {
       let lineNo = this.verifiedCardList[i]["lineNo"];
       let detail = this.houseCardList.find(item => item.cardNo == cardNo);
       if (detail == undefined) {
-
         isExistInVerified = 1;
         isExistInHouses = 0;
         verifiedLineNo = lineNo;
@@ -690,7 +722,7 @@ export class SurveyVerificationComponent {
       }
     }
 
-    this.updateLatLng(0);
+    this.updateNotInZone(0);
   }
 
   updateNotInZone(index: any) {

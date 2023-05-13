@@ -242,23 +242,43 @@ export class SurveyVerifiedReportComponent {
   }
 
   getMultipleCards() {
-    let distinct = this.cardList.map(item => item.cardNo).filter((value, index, self) => self.indexOf(value) === index);
-    if (distinct.length > 1) {
-      let multipleCount = 0;
-      for (let i = 0; i < distinct.length; i++) {
-        let list = this.cardList.filter(item => item.cardNo == distinct[i]);
-        if (list.length > 2) {
-          for (let j = 0; j < list.length; j++) {
-            if(j==0){
-              multipleCount++;
-            }
-            this.cardMultipleList.push({ cardNo: list[j]["cardNo"], color: list[j]["color"], houseLineNo: list[j]["houseLineNo"], latLng: list[j]["latLng"],lineNo:list[j]["lineNo"] });
+    let duplicatList=[];
+    for(let i=0;i<this.cardList.length;i++){
+     let detail=duplicatList.find(item=>item.cardNo==this.cardList[i]["cardNo"]);
+     if(detail==undefined){
+      duplicatList.push({cardNo: this.cardList[i]["cardNo"],count:1});
+      duplicatList=this.commonService.transformString(duplicatList,"cardNo");
+     }
+     else{
+      detail.count++;
+     }
+    }
+
+    console.log(duplicatList);
+
+
+
+    let list=duplicatList.filter(item=>item.count>1);
+
+    console.log(list);
+    for(let i=0;i<list.length;i++){
+      for(let j=0;j<this.cardList.length;j++){
+        if(list[i]["cardNo"]==this.cardList[j]["cardNo"]){
+          let detail=this.cardMultipleList.find(item=>item.cardNo==list[i]["cardNo"]);
+          if(detail==undefined){
+            this.cardMultipleList.push({cardNo: this.cardList[j]["cardNo"], color: this.cardList[j]["color"], houseLineNo: this.cardList[j]["houseLineNo"],lineNo: this.cardList[j]["lineNo"], latLng: this.cardList[j]["latLng"], verifyLineNoList: this.cardList[j]["verifyLineNoList"], notInZone: this.cardList[j]["notInZone"], notVerified: this.cardList[j]["notVerified"], notInSameLine: this.cardList[j]["notInSameLine"],count:1});
           }
-        }
+          else{
+            detail.lineNo=detail.lineNo+", "+this.cardList[j]["lineNo"];
+          }
+          
+        }      
       }
-      this.multipleCardsCount=multipleCount;
-      console.log(this.cardMultipleList);
-    }    
+    }
+    
+
+    this.multipleCardsCount=list.length;
+       
     $(this.divLoaderUpdate).hide();
   }
 
