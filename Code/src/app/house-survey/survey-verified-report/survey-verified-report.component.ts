@@ -37,6 +37,7 @@ export class SurveyVerifiedReportComponent {
   public imageURL: any;
   public entityType: any;
   public isVirtual: any;
+  public imageHouseURL: any;
 
   txtCardNo = "#txtCardNo";
   ddlZone = "#ddlZone";
@@ -57,6 +58,7 @@ export class SurveyVerifiedReportComponent {
 
   setDefaults() {
     this.imageURL = "../../../assets/img/system-generated-image.jpg";
+    this.imageHouseURL = "../../../assets/img/system-generated-image.jpg";
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedZone = 0;
     this.totalVerifiedCount = 0;
@@ -80,6 +82,8 @@ export class SurveyVerifiedReportComponent {
       return;
     }
     $(this.divLoaderUpdate).show();
+    this.imageURL = "../../../assets/img/system-generated-image.jpg";
+    this.imageHouseURL = "../../../assets/img/system-generated-image.jpg";
     if (this.markerList.length > 0) {
       for (let i = 0; i < this.markerList.length; i++) {
         this.markerList[i]["marker"].setMap(null);
@@ -88,6 +92,8 @@ export class SurveyVerifiedReportComponent {
     this.markerList = [];
     this.selectedZone = filterVal;
     this.isShowFilter = false;
+    this.isVirtual = "";
+    this.entityType = "";
     $(this.divCardDetail).hide();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
@@ -291,7 +297,8 @@ export class SurveyVerifiedReportComponent {
 
 
   showMarkerOnMap(latLng: any, color: any, cardNo: any, entityType: any, isVirtual: any) {
-    this.imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "House.jpg?alt=media";
+    this.imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardNo + ".jpg?alt=media";
+    this.imageHouseURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "House.jpg?alt=media";
     this.entityType = entityType;
     this.isVirtual = isVirtual;
     if (this.markerList.length > 0) {
@@ -361,6 +368,10 @@ export class SurveyVerifiedReportComponent {
 
   getFilter() {
     $(this.divCardDetail).hide();
+    this.imageURL = "../../../assets/img/system-generated-image.jpg";
+    this.imageHouseURL = "../../../assets/img/system-generated-image.jpg";
+    this.isVirtual = "";
+    this.entityType = "";
     if (this.markerList.length > 0) {
       for (let i = 0; i < this.markerList.length; i++) {
         this.markerList[i]["marker"].setMap(null);

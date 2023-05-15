@@ -150,12 +150,23 @@
         </div>
     </div>
 </div>
-<div id="divCardDetail"
-    style="right:15px; width:200px; display: none; height:400px;border: 1px solid gray;border-radius: 5px; padding: 10px; z-index: 999; position: absolute; top:65px; background-color: #fff;">
-    <div style="width:100%; min-height:280px;">
-        <img [src]="imageURL" style="width:100%;height:auto"  />
+<div id="divCardDetail" class="row"
+    style="right:15px;width:350px; display: none; height:auto;border: 1px solid gray;border-radius: 5px; padding: 10px; z-index: 999; position: absolute; top:65px; background-color: #fff;">
+    <div class="col-md-6">
+        <div>Card Image</div>
+        <div style="width:100%; min-height:180px;">
+            <a href="{{imageURL}}" target="_blank">
+            <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
+        </div>
     </div>
-    <div>
+    <div class="col-md-6">
+        <div>House Image</div>
+        <div style="width:100%; min-height:180px;">            
+            <a href="{{imageHouseURL}}" target="_blank">
+            <img [src]="imageHouseURL" style="width:100%;height:auto; display: block;" /></a>
+        </div>
+    </div>
+    <div class="col-md-12">
         {{entityType}}<br />
         {{isVirtual}}
     </div>

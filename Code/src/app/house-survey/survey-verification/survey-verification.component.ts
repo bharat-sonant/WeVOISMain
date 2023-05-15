@@ -231,20 +231,10 @@ export class SurveyVerificationComponent {
       }
       else {
         houseVerifiedMarkerList = this.houseVerifiedCardList.filter(item => item.mapLineNo == lineNo);
-      }
-
-      let sameLinelist=houseVerifiedMarkerList.filter(item => item.color == "green");
-      let diffLineList=houseVerifiedMarkerList.filter(item => item.color == "yellow");
-      let diffCount=0;
-      for(let i=0;i<diffLineList.length;i++){
-        let detail=sameLinelist.find(item=>item.cardNo==diffLineList[i]["cardNo"]);
-        if(detail==undefined){
-          diffCount++;
-        }
-      }
+      }      
 
       this.verifiedDetail.greenCount = houseVerifiedMarkerList.filter(item => item.color == "green").length;
-      this.verifiedDetail.yellowCount = diffCount;
+      this.verifiedDetail.yellowCount = houseVerifiedMarkerList.filter(item => item.color == "yellow").length;
       this.verifiedDetail.purpleCount = houseVerifiedMarkerList.filter(item => item.color == "purple").length;
       this.verifiedDetail.redCount = houseVerifiedMarkerList.filter(item => item.color == "red").length;
 
