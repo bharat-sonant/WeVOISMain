@@ -77,8 +77,10 @@ export class SetNearbyWardComponent implements OnInit {
           let polygon: any;
           let strokeColor = this.getColor();
           let fillColor = "#fff";
+          let fillOpacity=0.35;
           if (zone == this.selectedZone) {
-            fillColor = strokeColor;
+            fillColor = "#000000";
+            fillOpacity=0.75;
             if (this.nearByWardJsonObj != null) {
               if (this.nearByWardJsonObj[this.selectedZone] != null) {
                 if (this.nearByWardJsonObj[this.selectedZone].length > 0) {
@@ -90,6 +92,8 @@ export class SetNearbyWardComponent implements OnInit {
             }
           }
 
+
+
           polygon = new google.maps.Polygon({
             paths: polyCords,
             geodesic: true,
@@ -97,6 +101,7 @@ export class SetNearbyWardComponent implements OnInit {
             strokeOpacity: 1.0,
             strokeWeight: 2,
             fillColor: fillColor,
+            fillOpacity: fillOpacity,
           });
 
           this.polygonsArray.push({
