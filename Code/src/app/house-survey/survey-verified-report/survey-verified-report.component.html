@@ -12,7 +12,7 @@
                 {{totalVerifiedCount}}<br />
                 <span style="font-size: 8px;">Total Verified Cards</span>
             </div>
-<!--
+            <!--
             <div style="text-align: center; width: 45%;">
                 {{multipleCardsCount}}<br />
                 <span style="font-size: 8px;">Multiple Cards </span>
@@ -60,7 +60,7 @@
                                         (keyup)="getFilter();" placeholder="Search by card number" />
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="col-md-3" style="text-align: center;" [hidden]="isShowFilter==false">
 
                             <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
@@ -70,19 +70,26 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="radio" id="chkDuplicate" name="chkradio" (change)="getFilter();" /> Verified multiple time <b>({{multipleCardsCount}})</b>
+                            <input type="radio" id="chkDuplicate" name="chkradio" (change)="getFilter();"
+                                style="margin-top: 10px;" /> Verified multiple time <b>({{multipleCardsCount}})</b>
                         </div>
                         <div class="col-md-6">
                             <input type="radio" id="chkNotVerified" name="chkradio" (change)="getFilter();"
-                                 /> In Ward but not Verified  <b>({{notVerifiedCardsCount}})</b> <img src="../assets/img/purple-home.png" style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
+                                style="margin-top: 10px;" /> In Ward but not Verified <b>({{notVerifiedCardsCount}})</b>
+                            <img src="../assets/img/purple-home.png"
+                                style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
                         </div>
                         <div class="col-md-6">
-                           <input type="radio" id="chkNotInZone" name="chkradio" (change)="getFilter();"
-                                 /> Exists in different ward  <b>({{notInHousesCardsCount}})</b> <img src="../assets/img/red-home.png" style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
+                            <input type="radio" id="chkNotInZone" name="chkradio" (change)="getFilter();"
+                                style="margin-top: 10px;" /> Exists in different ward <b>({{notInHousesCardsCount}})</b>
+                            <img src="../assets/img/red-home.png"
+                                style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
                         </div>
                         <div class="col-md-6">
-                                <input type="radio" id="chkNotInLine" name="chkradio" (change)="getFilter();"
-                                 /> Verified in different line  <b>({{notSameLineCardsCount}})</b> <img src="../assets/img/yellow-home.png" style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
+                            <input type="radio" id="chkNotInLine" name="chkradio" (change)="getFilter();"
+                                style="margin-top: 10px;" /> Verified in different line
+                            <b>({{notSameLineCardsCount}})</b> <img src="../assets/img/yellow-home.png"
+                                style="width: 19px;margin-left: 6px;margin-bottom: 4px;">
                         </div>
                     </div>
                 </div>
@@ -111,7 +118,7 @@
                                                 <td class="text-left br-1">
                                                     {{data.cardNo}} <img src="../../../assets/img/ward_monitoring.svg"
                                                         style="float:right; height:20px;cursor: pointer;"
-                                                        (click)="showMarkerOnMap(data.latLng,data.color);" />
+                                                        (click)="showMarkerOnMap(data.latLng,data.color,data.cardNo,data.entityType,data.isVirtual);" />
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.lineNo}}
@@ -141,5 +148,15 @@
                 <div #gmap class="gmap" id="divMap"></div>
             </div>
         </div>
+    </div>
+</div>
+<div id="divCardDetail"
+    style="right:15px; width:200px; display: none; height:400px;border: 1px solid gray;border-radius: 5px; padding: 10px; z-index: 999; position: absolute; top:65px; background-color: #fff;">
+    <div style="width:100%; min-height:280px;">
+        <img [src]="imageURL" style="width:100%;height:auto"  />
+    </div>
+    <div>
+        {{entityType}}<br />
+        {{isVirtual}}
     </div>
 </div>

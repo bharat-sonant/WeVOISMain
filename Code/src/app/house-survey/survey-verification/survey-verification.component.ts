@@ -572,7 +572,19 @@ export class SurveyVerificationComponent {
                 else {
                   console.log(cardNo);
                 }
-                this.houseCardList.push({ cardNo: cardNo, lineNo: lineNo, latLng: latLng });
+                let entityType="";
+                let isVirtual="";
+                if(cardData[cardNo]["surveyorId"]=="-2"){
+                  isVirtual="Virtual Card";
+                }
+                if(cardData[cardNo]["houseType"]!=null){
+                  let detail=this.houseTypeList.find(item=>item.id==cardData[cardNo]["houseType"]);
+                  if(detail!=undefined){
+                    entityType=detail.houseType;
+                  }
+                }
+
+                this.houseCardList.push({ cardNo: cardNo, lineNo: lineNo, latLng: latLng, isVirtual:isVirtual,entityType:entityType});
                 // let detail = this.verifiedCardList.find(item => item.cardNo == cardNo);
                 // if (detail == undefined) {
                 //    this.allCardList.push({ cardNo: cardNo, lineNo: lineNo });
@@ -625,7 +637,7 @@ export class SurveyVerificationComponent {
           latLng = this.verifiedCardList[i]["latLng"];
         }
         mapLineNo = lineNo;
-        this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'green', mapLineNo: mapLineNo });
+        this.houseVerifiedCardList.push({ cardNo: cardNo,isVirtual:detail.isVirtual,entityType:detail.entityType, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'green', mapLineNo: mapLineNo });
       }
     }
 
@@ -650,7 +662,7 @@ export class SurveyVerificationComponent {
             latLng = this.verifiedCardList[i]["latLng"];
           }
           mapLineNo = lineNo;
-          this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
+          this.houseVerifiedCardList.push({ cardNo: cardNo,isVirtual:detail.isVirtual,entityType:detail.entityType, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'yellow', mapLineNo: mapLineNo });
         }
       }
 
@@ -693,7 +705,7 @@ export class SurveyVerificationComponent {
         houseLineNo = this.houseCardList[i]["lineNo"];
         latLng = this.houseCardList[i]["latLng"];
         mapLineNo = this.houseCardList[i]["lineNo"];
-        this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'purple', mapLineNo: mapLineNo });
+        this.houseVerifiedCardList.push({ cardNo: cardNo,isVirtual:this.houseCardList[i]["isVirtual"],entityType:this.houseCardList[i]["entityType"], isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'purple', mapLineNo: mapLineNo });
       }
     }
 
@@ -718,7 +730,7 @@ export class SurveyVerificationComponent {
         houseLineNo = "";
         latLng = latLng;
         mapLineNo = lineNo;
-        this.houseVerifiedCardList.push({ cardNo: cardNo, isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'red', mapLineNo: mapLineNo });
+        this.houseVerifiedCardList.push({ cardNo: cardNo,isVirtual:"",entityType:"", isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'red', mapLineNo: mapLineNo });
       }
     }
 
