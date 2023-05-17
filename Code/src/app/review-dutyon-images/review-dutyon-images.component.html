@@ -4,12 +4,12 @@
 <div id="divMainLoader" class="loaderClassMain">
     <span class="spanLoader" id="spLoader">
         <img src="../../../assets/img/loading.gif" width="50"><br /><span
-            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting duty on images
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting duty on/off images
             data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-5" style="padding-left: 10px;margin-top: -8px;">
+        <div class="col-md-4" style="padding-left: 10px;margin-top: -8px;">
             <div class="col-md-12 col-sm-12 searh-pad">
                 <button class="btn-hvr" (click)="setDate('previous');"><span style="color: #fff;">
           << </span></button>
@@ -18,13 +18,8 @@
 
             </div>
         </div>
-        <div class="col-md-3 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
-            Ward Duty On Images
-        </div>
-        <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
-
-        </div>
-        <div class="col-md-1">
+        <div class="col-md-4 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+            Ward Duty On/Off Images
         </div>
     </div>
 </section>
@@ -39,12 +34,12 @@
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-one-iner">
+                                <div id="divList" class="table-wrapper table-one" style="white-space: nowrap;">
+                                    <table class="table table-one-iner" >
                                         <thead>
                                             <th class="table-head1">S.No.</th>
                                             <th class="table-head2">Zone</th>
-                                            <th class="table-head3">Duty On Images</th>
+                                            <th class="table-head3">Duty On/Off Images</th>
                                         </thead>
                                         <tbody>
                                             <tr class="table-row" *ngFor="let dt of zoneDutyOnList; let i=index">
@@ -54,17 +49,21 @@
                                                 </td>
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
-                                                        <a href="{{dtImage.imageUrl}}" target="_blank" *ngFor="let dtImage of dt.dutyOnImages;" style="color:#000">
-                                                            <div style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                                <img [src]="dtImage.imageUrl" />
+                                                            <div *ngFor="let dtImage of dt.dutyOnImages;" style="width:240px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                                <a href="{{dtImage.imageUrl}}" target="_blank"  style="color:#000">
+                                                                <img [src]="dtImage.imageUrl" style="width:100px;height:150px;" /></a>
+                                                                <a href="{{dtImage.imageDutyOffUrl}}" target="_blank"  style="color:#000" [hidden]="dtImage.imageDutyOffUrl==''">
+                                                                <img [src]="dtImage.imageDutyOffUrl"style="width:100px; height:150px; margin-left:10px;" /></a>
                                                                 <br/>
                                                                 <div style="text-align: left;">
-                                                                    <b>D : </b> {{dtImage.driver}}<br/>
-                                                                    <b>H : </b> {{dtImage.helper}}<br/>
-                                                                    <b>V : </b> {{dtImage.vehicle}}<br/>
-                                                                    <b>T : </b> {{dtImage.time}}</div>
+                                                                    <b>Driver : </b> {{dtImage.driver}}<br/>
+                                                                    <b>Helper : </b> {{dtImage.helper}}<br/>
+                                                                    <b>Vehicle : </b> {{dtImage.vehicle}}<br/>
+                                                                    <b>In Time : </b> {{dtImage.time}}<br/>
+                                                                    <span [hidden]="dtImage.timeDutyOff==''">
+                                                                    <b>Off Time : </b> {{dtImage.timeDutyOff}}</span>
+                                                                </div>
                                                             </div>
-                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
