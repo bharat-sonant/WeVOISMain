@@ -169,6 +169,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   wardInInfo: any;
   dutyStatusList: any[];
   dutyOnImageList: any[];
+  dutyOffImageList:any[];
   instancesList: any[];
 
   divRemark = "#divRemark";
@@ -464,6 +465,11 @@ export class RealtimeMonitoringComponent implements OnInit {
             zoneDetails.dutyOffTime = summaryData["dutyOutTime"];
           } else {
             zoneDetails.dutyOffTime = "---";
+          }
+          if (summaryData["dutyOutImage"] != null) {
+            zoneDetails.dutyOffImage = summaryData["dutyOutImage"];
+          } else {
+            zoneDetails.dutyOffImage = "---";
           }
           if (summaryData["wardReachedOn"] != null) {
             zoneDetails.wardReachTime = this.commonService.tConvert(summaryData["wardReachedOn"]);
@@ -1378,7 +1384,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 400;
-    let width = 650;
+    let width = 900;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     let divHeight = height - 26 + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -1403,6 +1409,41 @@ export class RealtimeMonitoringComponent implements OnInit {
             time = dutyOnList[i];
           }
           this.dutyOnImageList.push({ imageUrl: imageUrl, time: time });
+        }
+      }
+    }
+  }
+
+  
+  openDutyOffImageModel(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 400;
+    let width = 900;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height - 26 + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divStatus").css("height", divHeight);
+    this.getDutyOffImages();
+  }
+
+  getDutyOffImages() {
+    this.dutyOffImageList = [];
+    let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
+    if (zoneDetails != undefined) {
+      if (zoneDetails.dutyOnImage != "---") {
+        let dutyOffList = zoneDetails.dutyOffTime.toString().split(",");
+        let dutyOffImageList = zoneDetails.dutyOffImage.toString().split(",");
+        for (let i = 0; i < dutyOffImageList.length; i++) {
+          let imageName = dutyOffImageList[i].toString().trim();
+          let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + this.selectedZone + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.toDayDate + "%2F" + imageName + "?alt=media";
+          let time = "---";
+          if (dutyOffList[i] != null) {
+            time = dutyOffList[i];
+          }
+          this.dutyOffImageList.push({ imageUrl: imageUrl, time: time });
         }
       }
     }

@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="col-md-2 hvr btm-end text-center">
                                     <div class="widgets-inner">
-                                        <h3><b>{{workerDetails.endTime}}</b>
+                                        <h3 style="cursor: pointer;" (click)="openDutyOffImageModel(contentDutyOffImages)"><b>{{workerDetails.endTime}}</b>
                                         </h3>
                                         <p># Duty off</p>
                                     </div>
@@ -471,7 +471,7 @@
 </ng-template>
 <!--Vehicle Status End-->
 
-<!--Vehicle Status Start-->
+<!--Duty On Images Start-->
 <ng-template #contentDutyOnImages>
     <div class="modal-header" style="padding-top: 5px!important;padding-bottom: 5px!important;">
         <h5 class="modal-title" id="exampleModalLongTitle">Duty On Images</h5>
@@ -480,19 +480,42 @@
     <div class="modal-body" style="float: left;padding: 20px 12px 10px 15px;">
         <div class="col-md-12" style="margin-top: -10px; margin-left: -20px;">
             <div style="width: 100%; display: flex;">
-                <a href="{{dtImage.imageUrl}}" target="_blank" *ngFor="let dtImage of dutyOnImageList;" style="color:#000; border:0">
-                    <div style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                        <img [src]="dtImage.imageUrl" style="max-height: 300px;" />
+                    <div *ngFor="let dtImage of dutyOnImageList;" style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                       <a href="{{dtImage.imageUrl}}" target="_blank"  style="text-decoration: none; border:0px;">
+                        <img [src]="dtImage.imageUrl" style="max-height: 300px;" /></a>
                         <br/>
                         <div style="text-align: left;">
-                            <b>Time : </b> {{dtImage.time}}</div>
+                            In Time <b>: </b> {{dtImage.time}}</div>
                     </div>
-                </a>
             </div>
         </div>
     </div>
 </ng-template>
-<!--Vehicle Status End-->
+<!--Duty On Images End-->
+
+
+<!--Duty Off Images Start-->
+<ng-template #contentDutyOffImages>
+    <div class="modal-header" style="padding-top: 5px!important;padding-bottom: 5px!important;">
+        <h5 class="modal-title" id="exampleModalLongTitle">Duty Off Images</h5>
+        <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+    </div>
+    <div class="modal-body" style="float: left;padding: 20px 12px 10px 15px;">
+        <div class="col-md-12" style="margin-top: -10px; margin-left: -20px;">
+            <div style="width: 100%; display: flex;">                
+                    <div *ngFor="let dtImage of dutyOffImageList;"  style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                        <a href="{{dtImage.imageUrl}}" target="_blank" style="text-decoration: none;">
+                        <img [src]="dtImage.imageUrl" style="max-height: 300px;" /></a>
+                        <br/>
+                        <div style="text-align: left;">
+                            Out Time <b>: </b> {{dtImage.time}}</div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Duty Off Images End-->
 
 
 <!--Application Status Start-->
