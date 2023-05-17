@@ -7,49 +7,48 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-9" style="padding-left: 0px;padding-right:7px;">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-6 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                         << </button>
-                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value,'current');" />
-                                    <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                            <input id="txtDate" class="filter-select filter-input" type="date"
+                                                (change)="setDate($event.target.value,'current');" />
+                                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
                                                 >>
                                             </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-7 text-center" style="padding-right:0px!important;">
                             <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <b> {{fuelDetail.totalFuel}}</b>
                                     <br /><span style="font-size: 10px;"> Diesel</span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-center" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <b> {{fuelDetail.totalAmount}}</b>
+                                    <br /><span style="font-size: 10px;"> Diesel Amount</span>
+                                </div>
+                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <b> {{fuelDetail.totalKm}}</b> <br /><span style="font-size: 10px;"> Km
                                         Running</span>
 
                                 </div>
+                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">                                    
+                                        <i class="fa-solid fa-file-export"
+                                            style="cursor:pointer; color:green;  font-size: 24px; "
+                                            (click)="exportToExcel();"></i><br />
+                                            <span style="font-size: 10px;"> Export to Excel   </span>                                
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 text-left" style="padding-right:0px!important;">
-                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
-                                <i class="fa-solid fa-file-export"
-                                    style="cursor:pointer; color:green;  font-size: 24px; "
-                                    (click)="exportToExcel();"></i><br />
-                                Export to Excel
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -66,6 +65,9 @@
                                                 Vehicle Number</th>
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Diesel Qty
+                                            </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Diesel Amount
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Ward No.
@@ -90,8 +92,27 @@
                                                         {{diesel.qty}}
                                                     </div>
                                                 </td>
+                                                <td class="text-right br-1">
+                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                        
+                                                        <span style="float:left;">
+                                                            <a href="{{diesel.slipImageUrl}}" target="_blank"
+                                                                style="color:#000">
+                                                                <i class="fa-solid fa-file-invoice"
+                                                                    style="font-size: 20px;"></i>
+                                                            </a>
+                                                            &nbsp;
+                                                            <a href="{{diesel.meterImageUrl}}" target="_blank"
+                                                                style="color:#000">
+                                                                <i class="bi bi-speedometer"
+                                                                    style="font-size: 20px;"></i></a>
+                                                        </span>
+                                                        {{diesel.amount}}
+                                                    </div>
+                                                </td>
                                                 <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList " [innerHTML]="dt.zone">
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                        [innerHTML]="dt.zone">
                                                     </div>
                                                 </td>
                                                 <td class="text-left br-1">
@@ -101,13 +122,15 @@
 
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList " [innerHTML]="dt.driver">
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                        [innerHTML]="dt.driver">
                                                     </div>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -121,7 +144,8 @@
         </div>
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -130,7 +154,8 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>

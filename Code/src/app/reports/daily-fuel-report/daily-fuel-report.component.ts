@@ -28,7 +28,8 @@ export class DailyFuelReportComponent implements OnInit {
   fuelDetail: fuelDetail = {
     date: "",
     totalFuel: "0.00",
-    totalKm: "0.000"
+    totalKm: "0.000",
+    totalAmount:"0.00"
   }
 
   ngOnInit() {
@@ -92,23 +93,36 @@ export class DailyFuelReportComponent implements OnInit {
 
   getDieselQty() {
     let totalFuel = 0;
+    let totalAmount=0;
     let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    let dieselInstance = this.db.list(dbPath).valueChanges().subscribe(
+    let dieselInstance = this.db.object(dbPath).valueChanges().subscribe(
       dieselData => {
         dieselInstance.unsubscribe();
-        if (dieselData.length > 0) {
-          for (let i = 0; i < dieselData.length; i++) {
-            if (dieselData[i]["vehicle"] != null) {
-              let detail = this.vehicleList.find(item => item.vehicle == dieselData[i]["vehicle"]);
+        if(dieselData!=null){
+          let keyArray=Object.keys(dieselData);
+          for(let i=0;i<keyArray.length;i++){
+            let key=keyArray[i];
+            if (dieselData[key]["vehicle"] != null) {
+              let detail = this.vehicleList.find(item => item.vehicle == dieselData[key]["vehicle"]);
               if (detail != undefined) {
-                if (dieselData[i]["quantity"] != null) {
-                  detail.diesel.push({ qty: dieselData[i]["quantity"] });
-                  totalFuel += Number(dieselData[i]["quantity"]);
+                let qty="";
+                let amount="";
+                if (dieselData[key]["quantity"] != null) {
+                  qty=dieselData[key]["quantity"];
+                  totalFuel += Number(dieselData[key]["quantity"]);
                 }
+                if (dieselData[key]["amount"] != null) {
+                  amount=dieselData[key]["amount"];
+                  totalAmount += Number(dieselData[key]["amount"]);
+                }
+                let meterImageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FmeterReadingImage?alt=media";   
+                let slipImageUrl= this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FamountSlipImage?alt=media";   
+                detail.diesel.push({ qty: qty, amount:amount,meterImageUrl:meterImageUrl,slipImageUrl:slipImageUrl }); 
               }
             }
           }
           this.fuelDetail.totalFuel = totalFuel.toFixed(2);
+          this.fuelDetail.totalAmount=totalAmount.toFixed(2);
         }
       }
     );
@@ -458,4 +472,5 @@ export class fuelDetail {
   date: string;
   totalFuel: string;
   totalKm: string;
+  totalAmount:string;
 }
