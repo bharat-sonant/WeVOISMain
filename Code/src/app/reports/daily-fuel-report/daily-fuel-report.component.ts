@@ -398,7 +398,7 @@ export class DailyFuelReportComponent implements OnInit {
         let diesel = this.vehicleList[i]["diesel"];
         if (diesel.length > 0) {
           for (let j = 0; j < diesel.length; j++) {
-            list.push({ vehicle: vehicle, dieselQty: diesel[j]["qty"], zone: "", km: "", driver: "" });
+            list.push({ vehicle: vehicle, dieselQty: diesel[j]["qty"],amount:diesel[j]["amount"], zone: "", km: "", driver: "" });
           }
         }
         let wardDetailList = this.vehicleList[i]["wardList"];
@@ -410,13 +410,13 @@ export class DailyFuelReportComponent implements OnInit {
               list[j]["driver"] = wardDetailList[j]["driver"];
             }
             else {
-              list.push({ vehicle: vehicle, dieselQty: "", zone: wardDetailList[j]["zone"], km: wardDetailList[j]["km"], driver: wardDetailList[j]["driver"] });
+              list.push({ vehicle: vehicle, dieselQty: "",amount:"", zone: wardDetailList[j]["zone"], km: wardDetailList[j]["km"], driver: wardDetailList[j]["driver"] });
             }
           }
         }
         if (list.length > 0) {
           for (let j = 0; j < list.length; j++) {
-            exportList.push({ vehicle: vehicle, dieselQty: list[j]["dieselQty"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
+            exportList.push({ vehicle: vehicle, dieselQty: list[j]["dieselQty"],amount:list[j]["amount"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
           }
         }
       }
@@ -428,6 +428,9 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Diesel Quantity";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Diesel Amount";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Ward No.";
@@ -447,6 +450,9 @@ export class DailyFuelReportComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["dieselQty"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["amount"];
           htmlString += "</td>";
           htmlString += "<td t='s'>";
           htmlString += exportList[i]["zone"];
