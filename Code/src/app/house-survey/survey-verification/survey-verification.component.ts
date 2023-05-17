@@ -219,6 +219,35 @@ export class SurveyVerificationComponent {
         this.cardMarkers[i]["marker"].setMap(null);
       }
     }
+    
+    // previousLine
+    let firstLine = this.lines.find(
+      (item) => item.lineNo == Number(this.previousLine)
+    );
+    this.polylines[Number(this.previousLine) - 1].setMap(null);
+    let line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor(""),
+      strokeWeight: 2,
+    });
+    this.polylines[Number(this.previousLine) - 1] = line;
+    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
+
+    // new Line
+    this.lineNo = $("#txtLineNo").val();
+    this.polylines[Number(this.lineNo) - 1].setMap(null);
+    firstLine = this.lines.find((item) => item.lineNo == Number(this.lineNo));
+    line = new google.maps.Polyline({
+      path: firstLine.latlng,
+      strokeColor: this.commonService.getLineColor("requestedLine"),
+      strokeWeight: 5,
+    });
+    this.polylines[Number(this.lineNo) - 1] = line;
+    this.polylines[Number(this.lineNo) - 1].setMap(this.map);
+    this.previousLine = this.lineNo;
+
+
+
     this.cardMarkers = [];
     this.verifiedDetail.greenCount = 0;
     this.verifiedDetail.yellowCount = 0;
@@ -389,7 +418,7 @@ export class SurveyVerificationComponent {
       let wardLines = JSON.parse(data);
       let keyArray = Object.keys(wardLines);
       this.wardLineCount = wardLines["totalLines"];
-      for (let i = 1; i <= this.wardLineCount; i++) {
+      for (let i = 0; i <= this.wardLineCount; i++) {
         let lineNo = Number(keyArray[i]);
         try {
           let points = wardLines[lineNo]["points"];
