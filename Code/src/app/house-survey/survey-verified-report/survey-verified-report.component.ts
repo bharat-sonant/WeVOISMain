@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 //services
 import { CommonService } from "../../services/common/common.service";
 import { AngularFireStorage } from "angularfire2/storage";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-survey-verified-report',
@@ -14,13 +15,16 @@ export class SurveyVerifiedReportComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
+  db: any;
   selectedZone: any;
   zoneList: any;
   zoneKML: any;
   cityName: any;
+  houseTypeList:any[];
   cardList: any[];
   cardMultipleList: any[];
+  cardReverifiedList: any[];
   cardFilterList: any[];
   cardFinalList: any[];
   allMarkers: any[] = [];
@@ -34,6 +38,7 @@ export class SurveyVerifiedReportComponent {
   public notVerifiedCardsCount: any;
   public notInHousesCardsCount: any;
   public notSameLineCardsCount: any;
+  public reverifiedCardsCount: any;
   public imageURL: any;
   public entityType: any;
   public isVirtual: any;
@@ -45,6 +50,7 @@ export class SurveyVerifiedReportComponent {
   chkNotInZone = "chkNotInZone";
   chkNotVerified = "chkNotVerified";
   chkNotInLine = "chkNotInLine";
+  chkReverified = "chkReverified";
   divCardDetail = "#divCardDetail";
   rowDataList: any;
   markerList: any[] = [];
@@ -66,10 +72,31 @@ export class SurveyVerifiedReportComponent {
     this.notVerifiedCardsCount = 0;
     this.notInHousesCardsCount = 0;
     this.notSameLineCardsCount = 0;
+    this.reverifiedCardsCount = 0;
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
     this.isShowFilter = false;
+    this.getHouseType();
     this.getZones();
+  }
+
+  
+
+  getHouseType() {
+    this.houseTypeList=[];
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
+        }
+      }
+    });
   }
 
   getZones() {
@@ -195,16 +222,19 @@ export class SurveyVerifiedReportComponent {
     this.cardMultipleList = [];
     this.cardFinalList = [];
     this.cardFilterList = [];
+    this.cardReverifiedList=[];
     this.totalVerifiedCount = 0;
     this.multipleCardsCount = 0;
     this.notVerifiedCardsCount = 0;
     this.notInHousesCardsCount = 0;
     this.notSameLineCardsCount = 0;
+    this.reverifiedCardsCount = 0;
 
     (<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotVerified)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotInLine)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReverified)).checked = false;
     $(this.txtCardNo).val("");
 
     let element = <HTMLElement>document.getElementById("divList");
@@ -273,10 +303,12 @@ export class SurveyVerifiedReportComponent {
         if (list[i]["cardNo"] == this.cardList[j]["cardNo"]) {
           let detail = this.cardMultipleList.find(item => item.cardNo == list[i]["cardNo"]);
           if (detail == undefined) {
+
             this.cardMultipleList.push({ cardNo: this.cardList[j]["cardNo"], color: this.cardList[j]["color"], houseLineNo: this.cardList[j]["houseLineNo"], lineNo: this.cardList[j]["lineNo"], latLng: this.cardList[j]["latLng"], verifyLineNoList: this.cardList[j]["verifyLineNoList"], notInZone: this.cardList[j]["notInZone"], notVerified: this.cardList[j]["notVerified"], notInSameLine: this.cardList[j]["notInSameLine"], count: 1 });
           }
           else {
             detail.lineNo = detail.lineNo + ", " + this.cardList[j]["lineNo"];
+            detail.verifyLineNoList.push({ lineNo: this.cardList[j]["lineNo"], latLng: this.cardList[j]["latLng"], color: this.cardList[j]["color"] });
           }
 
         }
@@ -284,7 +316,40 @@ export class SurveyVerifiedReportComponent {
     }
 
     this.multipleCardsCount = list.length;
-    $(this.divLoaderUpdate).hide();
+    this.getReverifiedCards();
+  }
+
+  getReverifiedCards() {
+    let dbPath = "SurveyVerifierData/HousesByVerifier/" + this.selectedZone;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineData = data[lineNo];
+            let lineArray = Object.keys(lineData);
+            for (let j = 0; j < lineArray.length; j++) {
+              let cardNo = lineArray[j];
+              let entityType="";
+              let detail=this.houseTypeList.find(item=>item.id==lineData[cardNo]["houseType"]);
+              if(detail!=undefined){
+                entityType=detail.houseType;
+              }
+              let imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierCardImage%2F" + lineData[cardNo]["cardImage"] + "?alt=media";
+              let imageHouseURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierHouseImage%2F" + lineData[cardNo]["houseImage"] + "?alt=media";
+              
+              let verifyLineNoList = [];
+              verifyLineNoList.push({ lineNo: lineNo, latLng: lineData[cardNo]["latLng"].replace("(", "").replace(")", ""), color: "green" });
+              this.cardReverifiedList.push({ cardNo: cardNo, color: "", houseLineNo: "", lineNo: lineNo, latLng: lineData[cardNo]["latLng"].replace("(", "").replace(")", ""), entityType: entityType,imageURL:imageURL,imageHouseURL:imageHouseURL, isVirtual: "", verifyLineNoList: verifyLineNoList });
+            }
+          }
+        }
+        this.reverifiedCardsCount = this.cardReverifiedList.length;
+        $(this.divLoaderUpdate).hide();
+      }
+    );
   }
 
   onContainerScroll() {
@@ -296,9 +361,16 @@ export class SurveyVerifiedReportComponent {
   }
 
 
-  showMarkerOnMap(latLng: any, color: any, cardNo: any, entityType: any, isVirtual: any) {
+  showMarkerOnMap(latLng: any, color: any, cardNo: any, entityType: any, isVirtual: any,verifyLineNoList:any) {
+    if ((<HTMLInputElement>document.getElementById(this.chkNotVerified)).checked == true) {
     this.imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardNo + ".jpg?alt=media";
     this.imageHouseURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "House.jpg?alt=media";
+    }
+    else{
+      this.imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierCardImage%2F" + cardNo + ".jpg?alt=media";
+    this.imageHouseURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierHouseImage%2F" + cardNo + "House.jpg?alt=media";
+   
+    }
     this.entityType = entityType;
     this.isVirtual = isVirtual;
     if (this.markerList.length > 0) {
@@ -307,21 +379,25 @@ export class SurveyVerifiedReportComponent {
       }
     }
     this.markerList = [];
-    let lat = latLng.split(',')[0];
-    let lng = latLng.split(',')[1];
-    let markerURL = this.getMarkerIcon(color);
-    let marker = new google.maps.Marker({
-      position: { lat: Number(lat), lng: Number(lng) },
-      map: this.map,
-      icon: {
-        url: markerURL,
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scaledSize: new google.maps.Size(25, 25),
-        origin: new google.maps.Point(0, 0),
-      },
-    });
-    this.markerList.push({ marker: marker });
+    if (verifyLineNoList.length > 0) {
+      for (let i = 0; i < verifyLineNoList.length; i++) {
+        let lat = verifyLineNoList[i]["latLng"].split(',')[0];
+        let lng = verifyLineNoList[i]["latLng"].split(',')[1];
+        let markerURL = this.getMarkerIcon(verifyLineNoList[i]["color"]);
+        let marker = new google.maps.Marker({
+          position: { lat: Number(lat), lng: Number(lng) },
+          map: this.map,
+          icon: {
+            url: markerURL,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scaledSize: new google.maps.Size(25, 25),
+            origin: new google.maps.Point(0, 0),
+          },
+        });
+        this.markerList.push({ marker: marker });
+      }
+    }
   }
   /*
     showMarkerOnMap(verifyLineNoList: any[]) {
@@ -387,6 +463,11 @@ export class SurveyVerifiedReportComponent {
     if ((<HTMLInputElement>document.getElementById(this.chkDuplicate)).checked == true) {
       list = this.cardMultipleList;
       this.isShowFilter = true;
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkReverified)).checked == true) {
+      list = this.cardReverifiedList;
+      this.isShowFilter = true;
+      $(this.divCardDetail).show();
     }
     if ((<HTMLInputElement>document.getElementById(this.chkNotInZone)).checked == true) {
       list = list.filter(item => item.notInZone == 1);

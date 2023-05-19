@@ -35,6 +35,7 @@ export class SurveyVerificationComponent {
   lineNo: any;
   chkShowAll = "chkShowAll";
   chkVerifiedMarkers = "chkVerifiedMarkers";
+  chkReVerified="chkReVerified";
   divLoaderUpdate = "#divLoaderUpdate";
   previousLine: any;
   houseCardList: any[] = [];
@@ -43,6 +44,7 @@ export class SurveyVerificationComponent {
   allCardList: any[] = [];
   houseVerifiedCardList: any[] = [];
   houseMarkerCardList: any[] = [];
+  reVerifiedCardList: any[] = [];
   verifiedDetail: verifiedDetail = {
     lastUpdate: "---",
     greenCount: 0,
@@ -67,6 +69,7 @@ export class SurveyVerificationComponent {
     this.selectedZone = 0;
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = true;
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked = false;
     this.getHouseType();
     this.getZones();
   }
@@ -92,7 +95,9 @@ export class SurveyVerificationComponent {
 
   changeZoneSelection(filterVal: any) {
     this.houseMarkerCardList = [];
+    this.reVerifiedCardList=[];
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked = false;
     if (filterVal == "0") {
       this.commonService.setAlertMessage("error", "Please select zone !!!");
       return;
@@ -118,6 +123,7 @@ export class SurveyVerificationComponent {
 
   getNextPrevious(type: any) {
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     let lineNo = $("#txtLineNo").val();
     if (lineNo == "") {
@@ -140,6 +146,7 @@ export class SurveyVerificationComponent {
 
   getCurrentLineDetail(event: any) {
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     if (event.key == "Enter") {
       let lineNo = $("#txtLineNo").val();
@@ -160,6 +167,7 @@ export class SurveyVerificationComponent {
 
   showAllMarkers() {
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked = false;
     if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == true) {
       this.showVerifiedCardsOnMap("0");
     }
@@ -170,6 +178,7 @@ export class SurveyVerificationComponent {
 
   clearAllOnMap() {
     (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked = false;
+    (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked == false;
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = true;
     this.lines = [];
     this.lineNo = 1;
@@ -219,34 +228,6 @@ export class SurveyVerificationComponent {
         this.cardMarkers[i]["marker"].setMap(null);
       }
     }
-    
-    // previousLine
-    let firstLine = this.lines.find(
-      (item) => item.lineNo == Number(this.previousLine)
-    );
-    this.polylines[Number(this.previousLine) - 1].setMap(null);
-    let line = new google.maps.Polyline({
-      path: firstLine.latlng,
-      strokeColor: this.commonService.getLineColor(""),
-      strokeWeight: 2,
-    });
-    this.polylines[Number(this.previousLine) - 1] = line;
-    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
-
-    // new Line
-    this.lineNo = $("#txtLineNo").val();
-    this.polylines[Number(this.lineNo) - 1].setMap(null);
-    firstLine = this.lines.find((item) => item.lineNo == Number(this.lineNo));
-    line = new google.maps.Polyline({
-      path: firstLine.latlng,
-      strokeColor: this.commonService.getLineColor("requestedLine"),
-      strokeWeight: 5,
-    });
-    this.polylines[Number(this.lineNo) - 1] = line;
-    this.polylines[Number(this.lineNo) - 1].setMap(this.map);
-    this.previousLine = this.lineNo;
-
-
 
     this.cardMarkers = [];
     this.verifiedDetail.greenCount = 0;
@@ -281,18 +262,26 @@ export class SurveyVerificationComponent {
   }
 
 
-  showVerifiedMarkersOnMap() {
+  showVerifiedMarkersOnMap(type:any) {
+    
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
+    if(type=="marker"){
+      (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked=false;
+    }
+    else{
+      (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked=false;
+    }
     if (this.cardMarkers.length > 0) {
       for (let i = 0; i < this.cardMarkers.length; i++) {
         this.cardMarkers[i]["marker"].setMap(null);
       }
     }
     this.cardMarkers = [];
-    if ((<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked == false) {
+    if ((<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked == false && (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked == false) {
       this.showVerifiedCardsOnMap(this.lineNo);
     }
-    else {
+    else if((<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked == true) {
+      (<HTMLInputElement>document.getElementById(this.chkReVerified)).checked=false;
       if (this.houseMarkerCardList.length == 0) {
         $(this.divLoaderUpdate).show();
         let dbPath = "SurveyVerifierData/MarkedHousesByVerifier/" + this.selectedZone;
@@ -334,6 +323,54 @@ export class SurveyVerificationComponent {
         for (let i = 0; i < this.houseMarkerCardList.length; i++) {
           let lat = this.houseMarkerCardList[i]["latLng"].split(",")[0];
           let lng = this.houseMarkerCardList[i]["latLng"].split(",")[1];
+          let markerURL = this.getMarkerIcon("red");
+          this.setMarkers(lat, lng, markerURL, "");
+        }
+      }
+    }
+    else{
+      (<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked=false;
+      if (this.reVerifiedCardList.length == 0) {
+        $(this.divLoaderUpdate).show();
+        let dbPath = "SurveyVerifierData/HousesByVerifier/" + this.selectedZone;
+        let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            markerInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = data[lineNo];
+                let lineArray = Object.keys(lineData);
+                for (let j = 0; j < lineArray.length; j++) {
+                  let cardNo = lineArray[j];
+                    let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierCardImage%2F" + lineData[cardNo]["cardImage"] + "?alt=media";
+                    let houseImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerifierData%2FHousesByVerifierHouseImage%2F" + lineData[cardNo]["houseImage"] + "?alt=media";
+                    let entityType = "";
+                    let detail = this.houseTypeList.find(item => item.id == lineData[cardNo]["houseType"]);
+                    if (detail != undefined) {
+                      entityType = detail.houseType;
+                    }
+                    this.reVerifiedCardList.push({cardNo:cardNo, lineNo: lineNo, imageUrl: imageUrl,houseImageUrl:houseImageUrl, entityType: entityType, latLng: lineData[cardNo]["latLng"].replace("(","").replace(")","") });
+                    if (lineData[cardNo]["latLng"] != "") {
+                      let lat = lineData[cardNo]["latLng"].replace("(","").replace(")","").split(",")[0];
+                      let lng = lineData[cardNo]["latLng"].replace("(","").replace(")","").split(",")[1];
+                      let markerURL = this.getMarkerIcon("red");
+                      this.setMarkers(lat, lng, markerURL, "");
+                    }
+                  
+                }
+              }
+            }
+            $(this.divLoaderUpdate).hide();
+          }
+        );
+
+      }
+      else {
+        for (let i = 0; i < this.reVerifiedCardList.length; i++) {
+          let lat = this.reVerifiedCardList[i]["latLng"].split(",")[0];
+          let lng = this.reVerifiedCardList[i]["latLng"].split(",")[1];
           let markerURL = this.getMarkerIcon("red");
           this.setMarkers(lat, lng, markerURL, "");
         }
@@ -382,7 +419,26 @@ export class SurveyVerificationComponent {
     return markerIcon;
   }
 
+  showReVerifiedCardDetails(content: any) {
+    if((<HTMLInputElement>document.getElementById(this.chkReVerified)).checked==true){
+    if (this.reVerifiedCardList.length > 0) {
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let windowWidth = $(window).width();
+      let height = 870;
+      let width = windowWidth - 300;
+      height = (windowHeight * 90) / 100;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      let divHeight = height - 130 + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", marginTop);
+      $("#divStatus").css("height", divHeight);
+    }}
+  }
+
   showMarkerDetails(content: any) {
+    if((<HTMLInputElement>document.getElementById(this.chkVerifiedMarkers)).checked == true){
     if (this.houseMarkerCardList.length > 0) {
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
@@ -397,6 +453,7 @@ export class SurveyVerificationComponent {
       $("div .modal-dialog-centered").css("margin-top", marginTop);
       $("#divStatus").css("height", divHeight);
     }
+  }
   }
 
   getAllLinesFromJson() {
@@ -439,10 +496,7 @@ export class SurveyVerificationComponent {
     if (wardNo == this.selectedZone) {
       let strokeWeight = 2;
       let status = "";
-      if (lineNo == this.lineNo) {
-        strokeWeight = 5;
-        status = "requestedLine";
-      }
+      
       let line = new google.maps.Polyline({
         path: latlng,
         strokeColor: this.commonService.getLineColor(status),
@@ -526,7 +580,6 @@ export class SurveyVerificationComponent {
             let filePath = "/SurveyVerificationJson/" + this.selectedZone + "/";
             this.commonService.saveJsonFile(this.verifiedCardList, fileName, filePath);
           }
-          console.log(this.verifiedCardList.length)
           this.getHouseCardData();
         }
         else {
@@ -589,7 +642,6 @@ export class SurveyVerificationComponent {
                   this.duplicateHouseCardList.push({ cardNo: cardNo });
                 }
                 else {
-                  console.log(cardNo);
                 }
                 let entityType="";
                 let isVirtual="";
@@ -624,7 +676,6 @@ export class SurveyVerificationComponent {
           let filePath = "/SurveyVerificationJson/" + this.selectedZone + "/";
           this.commonService.saveJsonFile(this.houseCardList, fileName, filePath);
         }
-        console.log("houses => " + this.houseCardList.length)
         this.getVerifiedHouseData();
       }
     );

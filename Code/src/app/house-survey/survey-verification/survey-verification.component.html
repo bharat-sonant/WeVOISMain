@@ -137,7 +137,7 @@
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="padding-top: 20px;text-align: left!important;">
                     <div class="border-bottom">
-                       &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers" (change)="showVerifiedMarkersOnMap();" /> Show New Markers
+                       &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers" (change)="showVerifiedMarkersOnMap('marker');" /> Show New Markers
                         
                     </div>
                 </div>
@@ -151,7 +151,87 @@
             </div>
         </div>
     </div>
+
+    <div class="house-card-box" style="top:390px!important; ">
+        <div class="house-card-box-iner">
+            <div class="row row-box">
+                <div class="col-md-12 row-box-iner" style="padding-top: 20px;text-align: left!important;">
+                    <div class="border-bottom">
+                       &nbsp;&nbsp; <input type="checkbox" id="chkReVerified" (change)="showVerifiedMarkersOnMap('reverified');" /> Show Re-Verified Cards
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row row-box">
+                <div class="col-md-12 row-box-iner" style="text-align: left!important;">
+                    &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showReVerifiedCardDetails(contentLineSurveyed)" >
+                        <i class="far fa-eye eye-icon" ></i> View Card Images
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+<!--Survey Line Start-->
+<ng-template #contentLineSurveyed>
+    <div class="header-12" >
+
+        <div class="pop-up-header">
+            <h5 style="font-size: 18px;">Zone {{selectedZone}}</h5>
+            <div class="img-close-outer">
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
+
+            </div>
+        </div>
+
+        <!-- <hr style="margin-top: -15px;"> -->
+    </div>
+    <div class="modal-body content-scroll-outer">
+        <div id="divStatus" class="content-scroll">
+            <div class="row">
+                <div class="col-md-3 " *ngFor="let dt of reVerifiedCardList; let i=index" style="margin-right: -10px;">
+                    <div class="row" style="margin: 0px;">
+                        <div class="{{dt.class}}">
+                            <div style="width: 47%; float:left; margin-left: 5px; border:1px solid lightgray;">
+                                <div class="content-scroll-iner">
+                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                        Card Image</div>
+
+                                    <a href="{{dt.imageUrl}}" target="_blank">
+                                        <img [src]="dt.imageUrl" class="imageurl" />
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div style="width: 47%; float:left; margin-left: 5px;">
+                                <div class="content-scroll-iner">
+                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                        House Image</div>
+                                    <a href="{{dt.houseImageUrl}}" target="_blank">
+                                        <img [src]="dt.houseImageUrl" class="imageurl" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div style="width: 100%; float:left; margin-left: 5px;">
+                                <div class="main-tag">
+                                    <div class="f-left">
+                                        <h3 class="f-left-heading"><b>({{dt.cardNo}})</b></h3><br />
+                                        <h3>{{dt.entityType}} </h3><br />
+                                        <h3>Line No {{dt.lineNo}} </h3><br />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-template>
+<!--Survey Line End-->
 
 <!--Line Markers Start-->
 <ng-template #contentLineMarkers>
