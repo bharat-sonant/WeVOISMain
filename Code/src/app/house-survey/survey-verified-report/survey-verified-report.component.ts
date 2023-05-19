@@ -22,6 +22,7 @@ export class SurveyVerifiedReportComponent {
   zoneKML: any;
   cityName: any;
   houseTypeList:any[];
+  cardWardMappingList:any[];
   cardList: any[];
   cardMultipleList: any[];
   cardReverifiedList: any[];
@@ -76,9 +77,21 @@ export class SurveyVerifiedReportComponent {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
-    this.isShowFilter = false;
+    this.isShowFilter = false;    
+    this.getCardWardMappingJSON()
     this.getHouseType();
     this.getZones();
+  }
+
+  getCardWardMappingJSON(){
+    this.cardWardMappingList=[];
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2FCardWardMapping.json?alt=media";
+    let cardWardInstance = this.httpService.get(path).subscribe(data => {
+      cardWardInstance.unsubscribe();
+      if (data != null) {
+        this.cardWardMappingList=JSON.parse(JSON.stringify(data));
+      }
+    });
   }
 
   
@@ -310,11 +323,9 @@ export class SurveyVerifiedReportComponent {
             detail.lineNo = detail.lineNo + ", " + this.cardList[j]["lineNo"];
             detail.verifyLineNoList.push({ lineNo: this.cardList[j]["lineNo"], latLng: this.cardList[j]["latLng"], color: this.cardList[j]["color"] });
           }
-
         }
       }
     }
-
     this.multipleCardsCount = list.length;
     this.getReverifiedCards();
   }
@@ -332,6 +343,11 @@ export class SurveyVerifiedReportComponent {
             let lineArray = Object.keys(lineData);
             for (let j = 0; j < lineArray.length; j++) {
               let cardNo = lineArray[j];
+              let houseLineNo="";
+              let cardWardDetail=this.cardWardMappingList.find(item=>item.cardNo==cardNo);
+              if(cardWardDetail!=undefined){
+                houseLineNo="Zone "+cardWardDetail.ward+"  Line No "+cardWardDetail.line;
+              }
               let entityType="";
               let detail=this.houseTypeList.find(item=>item.id==lineData[cardNo]["houseType"]);
               if(detail!=undefined){
@@ -342,7 +358,7 @@ export class SurveyVerifiedReportComponent {
               
               let verifyLineNoList = [];
               verifyLineNoList.push({ lineNo: lineNo, latLng: lineData[cardNo]["latLng"].replace("(", "").replace(")", ""), color: "green" });
-              this.cardReverifiedList.push({ cardNo: cardNo, color: "", houseLineNo: "", lineNo: lineNo, latLng: lineData[cardNo]["latLng"].replace("(", "").replace(")", ""), entityType: entityType,imageURL:imageURL,imageHouseURL:imageHouseURL, isVirtual: "", verifyLineNoList: verifyLineNoList });
+              this.cardReverifiedList.push({ cardNo: cardNo, color: "", houseLineNo: houseLineNo, lineNo: lineNo, latLng: lineData[cardNo]["latLng"].replace("(", "").replace(")", ""), entityType: entityType,imageURL:imageURL,imageHouseURL:imageHouseURL, isVirtual: "", verifyLineNoList: verifyLineNoList });
             }
           }
         }
