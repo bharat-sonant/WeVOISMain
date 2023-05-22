@@ -84,9 +84,10 @@ export class WardWorkTrackingComponent {
   divTotalHouse = "#divTotalHouse";
   divNotSacnned = "#divNotSacnned";
   divScannedHouses = "#divScannedHouses";
+  chkIsTimerEnable = "chkIsTimerEnable";
   wardLinesDataObj: any;
   isShowAllHouse = false;
-  isShowHouses:any;
+  isShowHouses: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -116,7 +117,7 @@ export class WardWorkTrackingComponent {
   }
 
   setDefault() {
-    this.isShowHouses=true;
+    this.isShowHouses = true;
     this.firebaseStoragePath = this.commonService.fireStoragePath;
     if (this.cityName == "reengus" || this.cityName == "shahpura" || this.cityName == "niwai" || this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       $(this.divParshadDetail).hide();
@@ -552,8 +553,8 @@ export class WardWorkTrackingComponent {
     if (localStorage.getItem("userType") == "External User") {
       $(this.divSetting).hide();
       this.isShowAllHouse = true;
-      if(this.cityName=="bhiwadi"){
-        this.isShowHouses=false;
+      if (this.cityName == "bhiwadi") {
+        this.isShowHouses = false;
       }
     }
     (<HTMLInputElement>document.getElementById(this.chkIsShowLineNo)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingLineShow"));
@@ -733,15 +734,44 @@ export class WardWorkTrackingComponent {
   }
 
   getZoneLineDetail() {
+    (<HTMLInputElement>document.getElementById(this.chkIsTimerEnable)).checked = false;
     this.zoneLineList = [];
     for (let i = 0; i < this.lines.length; i++) {
       this.zoneLineList.push({ lineNo: this.lines[i]["lineNo"], length: 0, timerTime: 0, actualCoveredTime: 0, houseCount: 0, minimumCardToBeScanned: 0 });
       this.getLineActualCoveredTime(this.lines[i]["lineNo"]);
       if (i == this.lines.length - 1) {
+        this.getIsEnableTimeFeature();
         this.getTimerTime();
         this.getWardLineLengthAndHouses();
         this.getMinimumCardToBeScanned();
       }
+    }
+  }
+
+  getIsEnableTimeFeature() {
+    let dbPath = "Settings/WardSettings/" + this.selectedZone + "/isLineStopFeatureEnabled";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(isLineStopFeatureEnabled => {
+      instance.unsubscribe();
+      if (isLineStopFeatureEnabled != null) {
+        if (isLineStopFeatureEnabled == "yes") {
+          (<HTMLInputElement>document.getElementById(this.chkIsTimerEnable)).checked = true;
+        }
+      }
+    });
+  }
+
+  updateTimeFeature() {
+    let isLineStopFeatureEnabled = "no";
+    if ((<HTMLInputElement>document.getElementById(this.chkIsTimerEnable)).checked == true) {
+      isLineStopFeatureEnabled = "yes";
+    }
+    let dbPath = "Settings/WardSettings/" + this.selectedZone + "/";
+    this.db.object(dbPath).update({ isLineStopFeatureEnabled: isLineStopFeatureEnabled });
+    if (isLineStopFeatureEnabled == "yes") {
+      this.commonService.setAlertMessage("success", "Time feature Enabled !!!");
+    }
+    else{
+      this.commonService.setAlertMessage("success", "Time feature Disabled !!!");
     }
   }
 
@@ -753,7 +783,7 @@ export class WardWorkTrackingComponent {
     }
   }
 
-  exportLineSummary(){
+  exportLineSummary() {
     if (this.lineSummaryList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -865,8 +895,8 @@ export class WardWorkTrackingComponent {
             if (scanBy != undefined) {
               if (scanBy != "-1") {
                 lineDetail.scanCount = Number(lineDetail.scanCount) + 1;
-                let scanPercentage=((lineDetail.scanCount/lineDetail.houseCount)*100).toFixed(2);
-                lineDetail.scanPercentage=Number(scanPercentage);
+                let scanPercentage = ((lineDetail.scanCount / lineDetail.houseCount) * 100).toFixed(2);
+                lineDetail.scanPercentage = Number(scanPercentage);
               }
             }
           });
